@@ -1,0 +1,28 @@
+.loader-wrapper
+  position: relative
+  padding: 0
+  margin: 0
+  width: 100%
+  z-index: 3001
+  background: white
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  +desktop
+    height: calc(100vh - #{$navbar-height} - 10px)
+  +mobile
+    height: calc(100vh - #{$navbar-mobile-height} - 10px)
+  &.loader-wrapper--fullscreen
+    position: fixed
+    height: 100vh
+    top: 0
+    left: 0
+
+.loader-1
+  margin: auto
+  background-position: left
+  background-repeat: no-repeat
+  height: 100px
+  width: 100px
+  animation: spinAround 3s linear infinite

@@ -1,0 +1,61 @@
+.tabs
+  position: relative
+  display: flex;
+  justify-content: flex-start;
+  height: 40px
+  overflow-y: hidden
+  transition: height 0.2s;
+  +mobile
+    flex-direction: column
+    width: 100%
+
+.tab
+  order: 2
+  transition: background-color 100ms linear
+  padding: 13px 24px 12px 24px
+  height: 40px
+  font-size: 12px
+  color: $greyish
+  text-transform: uppercase
+  font-weight: $font-medium
+  border-bottom: 2px solid $greyish
+  cursor: pointer
+  line-height: 13px
+  letter-spacing: 1px
+  white-space: nowrap
+  &:not(:first-child)
+    +desktop
+      margin-left: 4px
+  &:hover
+    background-color: white
+  +mobile
+    width: 100%
+
+.tab--selected
+  +mobile
+    order: 1
+    z-index: 100
+  color: $red
+  background-color: white
+  border-color: $red
+
+.tab__roll-down--expanded
+  .icon
+      transform: rotate(180deg)
+
+.tab__roll-down
+  z-index: 101
+  position: absolute
+  top: 0px
+  right: 0px
+  left: 0px
+  text-align: right
+  .icon
+    margin-top: 8px
+    margin-right: 10px
+    fill: $red
+    width: 24px
+    height: 24px
+    transition: transform 0.2s;
+  +desktop
+    display: none

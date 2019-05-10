@@ -1,0 +1,1487 @@
+.company-signup,
+.payment-setup
+  margin: auto
+  max-width: 715px
+  min-width: 250px
+  +desktop
+    margin-bottom: 100px
+  .form-error
+    +desktop
+      max-width: 350px;
+    +mobile
+      margin-top: 60px
+  .button
+    font-weight: $font-semi-bold
+    +mobile
+      width: 100%
+      margin-top: 20px
+
+.company-signup__steps,
+.payment-setup__steps
+  font-size: 12px
+  text-transform: uppercase
+  height: 15px;
+  font-weight: $font-semi-bold;
+  letter-spacing: 1px;
+  text-align: center;
+  color: $greyish
+  .company-signup__steps--current,
+  .payment-setup__steps--current
+    color: $steel-gray
+  span
+    margin: 0px 10px
+
+.company-signup-work-with,
+.payment-setup-work-with
+  +mobile
+    display: none
+  position: fixed
+  bottom: 0
+  width: 100%
+  .companies-section
+    border-top: solid 2px $more-gray
+
+.company-signup__content-container
+  margin-top: 58px
+  +mobile
+    margin-top: 38px
+    & > .columns
+      margin-bottom: 0
+
+.company-signup__benefit-pod
+  ul, p
+    margin-top: 18px
+  li
+    display: flex
+    align-items: center
+    line-height: 14px
+    margin-bottom: 10px
+  div
+    min-width: 30px
+
+.company-signup__next-button
+  +mobile
+    width: 100%
+    margin-top: 20px
+
+.company-signup__content,
+.payment-setup__content
+  +desktop
+    margin-top: -18px
+
+.company-edit__hiring-pod
+  min-height: 100px
+
+.company-edit__hiring-pod__update, .company-edit__manager-pod__contact
+  font-weight: 600
+  color: $red
+  text-decoration: underline
+  display: block
+  &:hover
+    color: $red
+  +mobile
+    margin: 10px 0 0 0
+
+.company-edit__hiring-pod__extras
+  height: 18px
+  margin-top: 10px
+  line-height: 18px
+  &:empty
+    display: none
+  +mobile
+    height: auto
+    margin-right: 100px
+
+.company-edit__hiring-pod__description
+  line-height: 18px
+  margin: 16px 0 10px 0
+  +mobile
+    display: none
+
+.company-edit__hiring-pod__perk
+  line-height: 18px
+  margin: 5px 0
+  svg
+    vertical-align: middle
+  span
+    vertical-align: top
+    margin-left: 14px
+
+.company-edit__hiring-pod__select
+  margin: 32px 0
+
+.company-signup__hiring_pod__logo-container
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  display: flex
+  justify-content: center
+  align-items: start
+  +mobile
+    align-items: center
+
+.company-signup__hiring_pod__logo-circle
+  width: 74px
+  height: 72px
+  margin: 14px 18px 0 0
+  img
+    margin: auto
+    display: block
+
+  +mobile
+    margin: 0 18px 0 0
+
+.company-edit__hiring-pod__title, .company-edit__manager-pod__details
+  +mobile
+    align-items: baseline
+    flex-wrap: wrap
+    margin-right: 100px
+    h1
+      +mobile
+        margin-right: 10px !important
+    i
+      +mobile
+        margin-right: 5px
+
+.company-edit__hiring-pod__title
+  .empty
+    height: 20px
+  h2
+    margin-top: 12px !important
+    font-size: 12px !important
+
+.company-edit__hiring-pod__title__billing-description
+  font-size: 12px
+  line-height: 20px
+  strong
+    font-weight: $font-semi-bold
+    color: $steel-gray
+
+
+.company-signup__content-container--step-complete
+  text-align: center
+  .loader
+    margin-bottom: 20px
+
+$company-card-padding: 18px
+$company-card-padding-mobile: 16px
+$column-gap: 1.5rem
+
+.company-dashboard__grid
+  display: grid
+  +desktop
+    margin: -($column-gap / 2)
+    grid-template-columns: 1fr 1fr 1fr
+    grid-template-rows: auto auto 1fr
+  +mobile
+    grid-template-columns: 100%
+    grid-template-rows: auto
+
+.intro-your-company
+  display: none
+
+.intro-live-roles
+  display: flex
+  flex-direction: column
+
+.intro-your-company, .intro-live-roles
+  .codi-container
+    margin-top: -12px
+  .conversation-element.codi
+    color: $grey-darker
+    max-width: calc(100% - 60px)
+
+.company-dashboard--with-intro-your-company
+  .your-company
+    +desktop
+      grid-area: 1 / 2 / 2 / 4
+    h2
+      visibility: hidden
+  .intro-your-company
+    +desktop
+      grid-area: 1 / 1 / 2 / 2
+    display: flex
+    flex-direction: column
+  .stats
+    display: none
+
+
+.company-dashboard__placeholder
+  height: 311px
+  background-color: $steel-gray
+
+.your-company
+  +desktop
+    grid-area: 1 / 1 / 2 / 3
+
+.your-company__card
+  height: 311px
+  padding: $company-card-padding
+  +mobile
+    height: 220px
+    padding: $company-card-padding-mobile
+  hr
+    margin: 8px (-$company-card-padding)
+    +mobile
+      margin: 8px (-$company-card-padding-mobile)
+    border: 0
+    border-top: 1px solid $pale-gray
+
+.your-company__logo
+  width: 60px
+  height: 60px
+  margin-right: 15px
+  .icon
+    fill: $red
+
+
+.your-company__name-line
+  display: flex
+  font-weight: $font-semi-bold
+  align-items: center
+  color: $grey-darker
+  margin-bottom: 18px
+
+.your-company__name
+  flex: 1
+  font-size: 18px
+  height: 60px
+
+.your-company__blurb
+  line-height: 18px
+  font-size: 12px
+  height: 72px
+  overflow: hidden
+  position: relative
+  color: $grey-darker
+  +mobile
+    display: none
+
+.your-company__payment-setup
+  +desktop
+    height: 60px
+  +mobile
+    height: 70px
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  p
+    line-height: 18px
+
+.your-company__payment-setup--disabled
+  color: $dark-red
+  font-weight: $font-semi-bold
+
+.your-company__payment-setup__button
+  +desktop
+    margin-top: 18px
+  +mobile
+    position: absolute
+    bottom: 14px
+
+
+
+.your-company__package
+  padding-top: 6px
+
+.your-company__package-top-line
+  display: flex
+  margin-bottom: 12px
+
+.your-company__package-logo
+  width: 40px
+  height: 40px
+  background-repeat: no-repeat
+  margin-right: 10px
+
+.your-company__package-link
+  +desktop
+    a:after
+      content: 'Upgrade/View packages'
+  +mobile
+    a:after
+      content: 'Upgrade/View'
+
+.your-company__package-name
+  color: $steel-gray
+  font-size: 14px
+  line-height: 14px
+  font-weight: $font-semi-bold
+  flex: 1
+
+.your-company__package-header
+  text-transform: uppercase
+  font-weight: $font-medium
+  letter-spacing: 0.9px
+  font-size: 9px
+  line-height: 24px
+
+.your-company__package-description
+  font-size: 12px
+  line-height: 1.5
+  color: $grey-darker
+  +mobile
+    display: none
+
+.your-company__edit
+  width: 60px
+
+.stats
+  +desktop
+    grid-area: 1 / 3 / 2 / 4
+
+.live-roles
+  +desktop
+    grid-area: 2 / 1 / 3 / 3
+
+.activity
+  +desktop
+    grid-area: 2 / 3 / 4 / 4
+  display: flex
+  flex-direction: column
+  .company-dashboard__placeholder
+    flex: 1
+
+.unpublished-roles
+  +desktop
+    grid-area: 3 / 1 / 4 / 3
+
+.company-dashboard section
+  +desktop
+    padding: $column-gap / 2
+
+.company-edit
+  margin: auto
+  max-width: 815px
+  min-width: 250px
+
+.company-edit--loading
+  &:after
+    @include spinner
+    position: unset !important
+    height: 40px
+    width: 40px
+    margin-left: calc(50% - (1em / 2))
+    margin-top: 50px
+
+.company-edit__name-and-logo
+  margin-left: 0
+  margin-right: 0
+  .column
+    &:first-of-type
+      margin-right: 10px
+      padding-left: 0
+    &:not(:first-of-type)
+      padding-right: 0
+    padding-bottom: 0
+    .field
+      .label
+        margin-top: 0
+
+$description-height: 300px
+.company-edit__description
+  height: $description-height
+  .ql-container
+    height: calc(#{$description-height} - 80px)
+
+.company-edit__users
+    width: 100%
+    margin-top: 10px
+    +desktop
+      min-width: 450px
+
+.company-edit__user-header--notify
+  width: 60px
+  text-align: right
+
+.company-edit__user-header--admin
+  width: 30px
+
+.company-edit__user-header
+  margin: 12px 0
+  th
+    color: $steel-gray
+    font-weight: $font-regular
+    font-size: 12px
+
+.company-edit__user
+  td
+    color: $steel-gray
+    font-weight: $font-semi-bold
+    font-size: 14px
+
+.company-edit__user--name, .company-edit__user--email
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+    max-width: 0
+    min-width: 180px
+
+.company-edit__user-header--email, .company-edit__user--email
+  +mobile
+    display: none
+
+.company-edit__user--notify
+  .checkbox
+    margin-top: 5px
+
+.company-edit__user--admin
+  text-align: right
+  width: 60px
+  svg
+    margin-right: 5px
+    margin-top: 6px
+    fill: white
+    background: $red
+    border-radius: 10px
+    cursor: pointer
+
+.company-edit__integrations
+  margin-top: 18px
+  margin-bottom: 20px
+
+.company-edit__integration
+  background-color: transparent
+  float: none !important
+  padding: 0
+  margin-top: 0 !important
+  margin-right: 10px
+  height: 40px
+  +mobile
+    margin-right: 3px
+  img
+    margin: 0 25px 0 0
+    height: 40px
+  &:hover
+    background-color: transparent !important
+
+.company-edit__connected-integration
+  margin-bottom: 12px
+  img
+    vertical-align: middle
+  .button,span
+    vertical-align: middle
+    margin-left: 18px
+    height: 30px
+    width: 165px
+
+.company-edit__side-pods
+  margin-top: 40px
+  position: relative
+  +mobile
+    margin-top: 0
+
+.company-edit__side-pods--container
+  position: absolute
+  width: 100%
+  +mobile
+    position: initial
+
+.company-edit__manager-pod
+  .wh-formx
+    margin-top: 30px
+
+.company-edit__manager-pod__details
+  +mobile
+    span
+      line-height: 18px
+      margin-top: 8px
+    margin-right: 40px
+
+.company-edit__field-footer
+  flex-direction: row-reverse
+
+.company-edit__integration-placeholder
+  @include center(320px, 360px)
+  &> div
+    padding: 18px
+    margin: auto 0;
+    width: 320px
+    background: white
+    border-radius: 5px
+    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.3)
+    p
+      line-height: 18px
+      margin-bottom: 20px
+
+.company-edit__admin-pod
+  h2
+    margin-top: 10px !important
+    margin-bottom: 10px !important
+  h3
+    margin-top: 10px
+  label
+    display: block
+  div.is-flex
+    justify-content: space-between
+  span.is-error
+    margin: 5px 0
+  .button
+    margin-top: 5px
+
+.stats svg
+  width: 100%
+
+.stats__item
+  display: grid
+  grid-template-columns: 50px 140px 1fr
+  grid-template-rows: 36px auto
+  height: 68px
+  border-bottom: 1px solid $pale-gray
+  align-items: center
+
+.stats__icon
+  grid-area: 1 / 1 / 3 / 2
+  display: flex
+  justify-content: center
+  align-items: center
+  margin: 0 auto
+  height: 100%
+  width: 50px
+  border-right: 1px solid $pale-gray
+  .icon
+    fill: $steel-gray !important
+    width: 18px
+    height: 18px
+
+.stats__likes .icon
+  width: 24px
+  height: 24px
+
+.stats__codi
+  grid-template-columns: 50px 1fr
+  height: 107px
+  .icon
+    width: 32px
+    height: 32px
+  .stats__value-line
+    font-size: 12px
+    line-height: 1.5
+    margin-right: 9px
+    color: $grey-darker
+
+.stats__caption
+  grid-area: 1 / 2 / 2 / 3
+  font-size: 9px
+  margin-left: 16px
+  line-height: 24px
+  align-self: end
+  color: $steel-gray
+  letter-spacing: 1px
+  text-transform: uppercase
+
+.stats__value-line
+  align-self: start
+  margin-left: 16px
+  grid-area: 2 / 2 / 3 / 3
+
+.stats__value
+  font-size: 24px
+  line-height: 24px
+  color: $red
+  letter-spacing: 0.4px
+  display: inline-block
+  width: 60px
+
+.stats__increase
+  display: inline-block
+  padding-left: 6px
+  color: $steel-gray
+  font-weight: $font-medium
+  font-size: 12px
+
+.stats__chart
+  grid-area: 1 / 3 / 3 / 4
+  padding-right: 16px
+  height: 42px
+  align-self: center
+
+.activity__container
+  background: white
+  height: 100%
+  color: $steel-gray
+  padding: 18px
+  line-height: 18px
+  strong
+    color: $steel-gray
+    font-weight: $font-semi-bold
+
+.activity__item
+  display: flex
+  .icon
+    fill: $steel-gray
+    &.like
+      width: 24px
+      height: 24px
+      margin-left: -3px
+    &.codi
+      width: 32px
+      height: 32px
+      margin-left: -6px
+  &:not(:last-child)
+    .activity__content
+      padding-bottom: 20px
+
+.activity__icon-holder
+  width: 44px
+  align-self: stretch
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMSA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8bGluZSB4MT0iMCIgeTA9IjAiIHgyPSIwIiB5Mj0iNTAiIHN0cm9rZT0iIzZlN2Y4OSIgc3Ryb2tlLWRhc2hhcnJheT0iNyAzIi8+Cjwvc3ZnPgo=')
+  background-repeat: repeat-y
+  background-position: 9px 0px
+  background-size: 1px 44px
+
+.activity__content
+  flex: 1
+
+.activity__show-more
+  width: 100%
+  margin-top: 24px
+
+.company-job
+  padding: 15px 18px 18px 18px
+  height: 395px
+  font-size: 12px
+  line-height: 18px
+
+.company-job__head-row
+  display: flex
+  justify-content: space-between
+
+.company-job__logo
+  width: 48px
+  height: 48px
+  margin-right: 15px
+
+.company-job__basic-info
+  margin-top: 18px
+
+.company-job__stats
+  display: flex
+  fill: $steel-gray
+  svg
+    fill: $steel-gray
+
+.company-job__stat
+  display: flex
+  flex-direction: column
+  align-items: center
+  padding: 9px
+  .icon
+    margin-bottom: 4px
+
+.company-job__like .icon
+  width: 24px
+  height: 24px
+  margin-top: -3px
+  margin-bottom: 1px
+
+.company-job__stat-number
+  color: $steel-gray
+  font-size: 11px
+  line-height: 18px
+  text-align: center
+
+.company-job__title
+  font-weight: $font-semi-bold
+  a:hover
+    color: $red
+
+.company-job__thats-you
+  color: $steel-gray
+
+.company-job__posted
+  color: $steel-gray
+  font-weight: $font-medium
+  margin-top: 12px
+  font-size: 9px
+  line-height: 18px
+  height: 18px
+  letter-spacing: 0.9px
+  text-transform: uppercase
+
+.company-job__tags
+  margin-top: 12px
+  height: 70px
+  overflow: hidden
+
+.company-job__candidate-info
+  margin-top: 12px
+  height: 54px
+
+.company-job__buttons
+  position: absolute
+  bottom: 18px
+  .button
+    margin-right: 12px
+
+.add-job
+  height: 395px
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  cursor: pointer
+
+.add-job__icon
+  .icon
+    fill: $red
+    width: 20px
+    height: 20px
+
+.add-job__add
+  color: $red
+  font-size: 12px
+  font-weight: $font-semi-bold
+  letter-spacing: 1px
+  text-transform: uppercase
+  line-height: normal
+
+.company-applications__title
+  display: flex
+  justify-content: space-between
+  margin-bottom: 18px
+  +mobile
+    flex-direction: column-reverse
+  h1
+    margin-bottom: 0
+  .select
+    width: 400px
+    +mobile
+      margin-bottom: 20px
+      width: 100%
+  .button
+    margin-top: 0
+    padding: 0px 100px
+    +mobile
+      padding: 0
+      margin-bottom: 20px
+  .icon
+    width: 12px
+    fill: $red
+    margin-right: 8px
+
+.company-application
+  height: 430px
+  padding: 24px 20px 20px 20px
+  &:hover
+    background-color: $snow
+    .company-application__name
+      a
+        color: $red
+
+.company-applications__title__company-name
+  margin-left: 5px
+  +mobile
+    display: none
+
+.company-application__name
+  font-size: 16px
+  line-height: 20px
+  font-weight: $font-semi-bold
+
+.company-application__job-details
+  font-weight: $font-medium
+  overflow-y: hidden
+  height: 22px
+  margin-top: 7px
+  display: flex
+  .company-name
+    max-width: 85px
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+
+.company-application__applied-on-section
+  display: flex
+  justify-content: space-between
+
+.company-application__applied-on
+  color: $steel-gray
+  font-size: 9px
+  line-height: 18px
+  height: 18px
+  letter-spacing: 0.9px
+  font-weight: $font-medium
+  text-transform: uppercase
+
+.company-application__view-cv
+  color: $steel-gray
+  line-height: 18px
+
+.company-application__infobox
+  font-size: 12px
+  line-height: 18px
+  margin-top: 18px
+  border-top: 1px solid $grey
+  border-bottom: 1px solid $grey
+  padding-top: 8px
+  padding-bottom: 8px
+  height: 96px
+
+.company-application__infobox--short
+  height: 70px
+
+.company-application__infobox-row
+  display: flex
+  height: 26px
+  align-items: center
+
+.company-application__infobox-icon
+  width: 24px
+  height: 16px
+  flex-shrink: 0
+  .icon
+    width: 16px
+    height: 16px
+    fill: $steel-gray
+    &.job-location
+      width: 24px
+      height: 24px
+      margin-top: -4px
+      margin-left: -4px
+
+.company-application__infobox-content
+  flex-grow: 1
+  flex-shrink: 1
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+.company-application__match
+  text-transform: uppercase
+  font-size: 11px
+  font-weight: $font-semi-bold
+  letter-spacing: 0.5px
+  line-height: 18px
+  height: 18px
+  margin-top: 18px
+  color: $red
+  display: flex
+
+  .match-circle
+    display: inline-block
+    margin-right: 5px
+    vertical-align: sub
+
+  svg
+    height: 24px
+    width: 24px
+
+  .circle-value
+    position: absolute
+    path
+      fill: $red
+
+  .background
+    background-color: $lighter-red
+    width: 18px
+    height: 18px
+    border-radius: 9px
+
+  .foreground
+    background-color: $red
+    width: 18px
+    height: 18px
+    border-radius: 9px
+
+.company-application__tags
+  margin-top: 18px
+  height: 70px
+  overflow: hidden
+  line-height: 0px
+  .tag--unselected
+    opacity: 0.4
+
+.company-application__job
+  background-color: white
+  display: grid
+  padding: 18px
+  grid-template-columns: 75px 1fr 108px
+  grid-template-rows: auto auto auto
+  margin-bottom: 18px
+  line-height: 18px
+  height: 96px
+  +mobile
+    display: flex
+
+.company-application__job-logo
+  grid-area: 1 / 1 / 4 / 2
+  width: 60px
+  height: 60px
+  margin-right: 15px
+
+.company-application__job-title
+  grid-area: 1 / 2 / 2 / 3
+  font-size: 18px
+  font-weight: $font-semi-bold
+  line-height: 22px
+  height: 22px
+  cursor: pointer
+  &:hover
+    color: $red
+  +mobile
+    height: 100%
+    display: flex
+    flex-direction: column
+    justify-content: center
+
+.company-application__job-location
+  grid-area: 2 / 2 / 3 / 3
+  font-size: 12px
+  +mobile
+    display: none
+
+.company-application__job-posted
+  grid-area: 3 / 2 / 4 / 3
+  text-transform: uppercase
+  font-size: 9px
+  font-weight: $font-medium
+  letter-spacing: 0.9px
+  color: $steel-gray
+  +mobile
+    display: none
+
+.company-application__job-stats
+  grid-area: 1 / 3 / 4 / 4
+  display: flex
+  fill: $steel-gray
+  color: $steel-gray
+  +mobile
+    display: none
+
+.company-application__job.skeleton
+  .company-application__job-logo
+    @include skeleton
+  .company-application__job-title
+    +desktop
+      @include skeleton
+      height: 22px
+      width: 200px
+    +mobile
+      &>a
+        @include skeleton
+        height: 22px
+        width: 200px
+  .company-application__job-location
+    @include skeleton
+    height: 16px
+    width: 140px
+  .company-application__job-stats
+    fill: $skeleton-background-color
+
+.company-applications__tabs-spacer
+  height: 40px
+  background-color: white
+  width: 100%
+  margin-bottom: 18px
+  border-bottom: 3px solid $skeleton-background-color
+
+.company-application.skeleton
+  .tags li
+    @include skeleton
+  .company-application__name
+    @include skeleton
+    height: 19px
+    width: 160px
+    margin-bottom: 2px
+  .company-application__applied-on
+    @include skeleton
+    height: 18px
+    width: 100px
+  .company-application__view-cv
+    @include skeleton
+    height: 19px
+    width: 30px
+  .company-application__infobox
+    margin-top: 16px
+  .company-application__infobox-row
+    .icon
+      fill: $skeleton-background-color
+  .company-application__match, .company-application__notes
+    span
+      @include skeleton
+      vertical-align: super
+      display: inline-block
+      margin-left: 10px
+      width: 100px
+      height: 18px
+    .icon
+      fill: $skeleton-background-color
+  .company-application__notes
+    span
+      background-color: $skeleton-background-color
+    .icon
+     fill: $skeleton-background-color
+  .tag
+    height: 30px
+  .company-application__cta-buttons
+    .button
+      width: 120px
+    .button--inverted
+      width: 60px
+      margin-left: 18px
+
+
+.clickable
+  cursor: pointer
+
+.ellipsis-container
+    width: 100%
+    height: 100%
+.ellipsis-container--vcenter
+  display: flex
+  align-items: center
+
+.company-application__notes
+  white-space: pre-wrap
+  margin-top: 16px
+  color: $steel-gray
+  svg
+    margin-right: 8px
+  &>div
+    width: 280px
+    height: 30px
+    line-height: 15px
+    overflow: hidden
+
+.company-application__notes--empty
+  color: $greyish
+
+
+.company-application__cta-buttons
+  position: absolute
+  bottom: 20px
+  width: calc(100% - 40px)
+  .button
+    height: 30px
+
+.company-application__cta-buttons__application-buttons, .company-application__cta-buttons__admin-buttons
+  .button:first-child
+    width: 120px
+    margin-right: 18px
+
+.company-applications__tabs
+  margin-bottom: 18px
+
+.company-applications__popup
+  &>div
+    p
+      line-height: 22px
+      color: $steel-gray
+      margin-bottom: 20px
+      font-size: 14px
+    h1
+      padding: 0 0 16px 0
+      margin: 0
+      color: $steel-gray
+
+.company-applications__popup--job-selection
+  .job-selection__jobs
+    margin-bottom: 24px
+    max-height: 196px
+    overflow-y: scroll
+  .job-selection__job
+    display: flex
+    justify-content: space-between
+    text-align: left
+    border-bottom: 1px solid $pale-gray
+    width: 100%
+    &:first-child
+      border-top: 1px solid $pale-gray
+  .job-selection__job__title
+    font-size: 14px
+    line-height: 18px
+    font-weight: $font-semi-bold
+    color: $grey-darker
+    padding: 13px 10px 11px 0
+  .job-selection__job__checkbox
+    margin-top: 5px
+
+.company-applications__loader
+  color: transparent !important
+  pointer-events: none
+  position: relative
+  height: 100px
+  &:after
+    @include spinner
+    height: 40px
+    width: 40px
+    left: calc(50% - (1em / 2))
+    top: calc(50% - (1em / 2))
+
+.company-applications__loader--small
+  height: 30px
+  margin-bottom: 30px
+  &:after
+    height: 20px
+    width: 20px
+
+.company-applications__header
+  .company-application__job
+    margin-top: 24px
+
+.company-applications__application-summaries
+  margin-top: 24px
+
+.company-applications__application-summary
+  position: relative
+  &>.columns
+    &>h3
+      margin-left: 20px
+  margin-bottom: 20px
+  .company-application__job
+    margin-bottom: 24px
+  .company-applications__tabs
+    margin-bottom: 18px
+  .company-applications__view-applicants
+    .button
+      width: 250px
+      .icon
+        width: 12px
+        margin-left: 10px
+        fill: $red
+
+.company-applications__application-summary__loading
+  position: absolute
+  top: 96px
+  bottom: 0px
+  left: 0px
+  right: 0px
+  background-color: rgba(255,255,255,0.5)
+  .company-applications__loader
+    margin-top: 180px
+
+.companies__load-more
+  width: 100%
+  text-align: center
+
+.companies__beneath-tags
+  justify-content: space-between
+  +mobile
+    flex-direction: column
+  h3
+    white-space: nowrap
+    +desktop
+      margin-top: 10px
+  span
+    min-width: 50px
+    margin: 8px 10px 0 0
+
+.companies__sort-dropdown
+  justify-content: flex-end
+  .field
+    +desktop
+      width: 200px
+    +mobile
+      width: 100%
+
+.companies__company-card
+  &:hover
+    background-color: $snow
+    .title
+      a
+        color: $red
+  height: 100px
+  +mobile
+    height: 180px
+  padding: 9px
+  margin: 0 0 24px 0 !important
+  +mobile
+    margin: 0 0 12px 0 !important
+  overflow: hidden
+  white-space: nowrap
+  .column
+    padding: 0
+    margin: 9px
+  .logo
+    width: 64px
+    min-width: 64px
+    height: 64px
+  .empty-logo
+    width: 100%
+    height: 100%
+    border: 1px solid silver;
+  .title
+    color: $grey-darker
+    font-size: 18px
+    font-weight: $font-semi-bold
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+  .info
+    position: relative
+    width: 100%
+    margin-left: 18px
+    display: grid
+  .company-details
+    position: absolute
+    bottom: 0
+    display: grid
+    grid-template-columns: 60px 1fr
+    grid-template-rows: auto auto
+    span
+      white-space: nowrap
+      line-height: 15px
+      color: $steel-gray
+      &:nth-child(odd)
+        font-weight: $font-medium
+        font-size: 9px
+        text-transform: uppercase
+        grid-column-start: 1
+      &:nth-child(even)
+        font-size: 12px
+        grid-column-start: 2
+      &:nth-child(>2)
+        grid-row-start: 2
+  .stats
+    position: relative
+    display: flex
+    +mobile
+      margin-top: 18px
+  .counts
+    display: flex
+    fill: $steel-gray
+    color: $steel-gray
+  .count
+    display: flex
+    flex-direction: column
+    align-items: center
+    width: 18px
+    margin: 0 9px
+    font-size: 11px
+    line-height: 24px
+    letter-spacing: 0.5px
+  .package
+    width: 35px
+    height: 35px
+    margin-left: 9px
+  .pending
+    position: absolute
+    bottom: 0
+    right: 0
+    text-transform: uppercase
+    line-height: 12px
+    +mobile
+      bottom: -20px
+      right: unset
+
+.companies__company-card.skeleton
+  .logo
+    @include skeleton
+  .empty-logo
+    border: 0
+  .title
+    @include skeleton
+    height: 22px
+    width: 200px
+  .company-details
+    span
+      @include skeleton
+      color: $skeleton-background-color
+      height: 12px
+      width: 100px
+      margin-bottom: 2px
+  .counts
+    fill: $skeleton-background-color
+
+.company-edit__payment-details
+  color: $steel-gray
+  +mobile
+    margin-bottom: 60px
+  .payment__card-form
+    margin-bottom: 4px
+  .button
+    width: 200px
+    float: right
+    +mobile
+      width: 100%
+
+@include keyframes(status-button-good)
+  0%   { bottom: -50px; opacity: 1 }
+  8%   { bottom: 0px; }
+  50%  { bottom: 0px; opacity: 1 }
+  100% { bottom: 20px; opacity: 0 }
+
+@include keyframes(status-button-bad)
+  0%   { bottom: -50px; opacity: 1 }
+  8%   { bottom: 0px; }
+  50%  { bottom: 0px; opacity: 1 }
+  100% { bottom: 0px; opacity: 1 }
+
+.status-button
+  height: 50px
+  display: flex
+  justify-content: space-between
+  align-items: flex-end
+  .button
+    min-width: 200px
+.status
+  position: relative
+  width: 100%
+  height: 100%
+  overflow: hidden
+.status__label
+  position: absolute
+  opacity: 0
+  bottom: 0px
+  font-size: 12px
+  font-weight: $font-medium
+  display: flex
+  svg
+    width: 12px
+    height: 12px
+    margin-top: 8px
+    margin-right: 4px
+    fill: $green
+    +mobile
+      width: 24px
+      height: 24px
+      margin-bottom: 3px
+
+.status--good
+  color: $green
+  .status__label
+    @include animation('status-button-good 5s 1')
+.status--bad
+ color: $red
+ .status__label
+   svg
+     fill: $red
+   opacity: 1
+   @include animation('status-button-bad 5s 1')
+
+.company-edit__payment-details__card-details,
+.company-edit__payment-details__billing-and-pricing
+  margin-bottom: 24px
+.company-edit__payment-details__billing-and-pricing,
+.company-edit__payment-details__no-payment-details,
+.company-edit__payment-details__cancel-plan
+  p
+    line-height: 18px
+    margin-bottom: 18px
+
+@include keyframes(drop-into-place)
+  0%   { margin-top: -50px; }
+  100% { margin-top: 0px; }
+
+.company-edit__payment-details__cancel-plan
+  +desktop
+    margin-bottom: 400px
+
+.company-edit__invoices-pod
+  &> span:first-of-type
+    margin-bottom: 12px
+    display: block
+  .table
+    width: 100%
+    thead
+      th:first-child
+        width: 68px
+        text-align: center
+      th:not(:first-child)
+        padding-left: 18px
+      th
+        text-transform: uppercase
+        font-size: 9px
+        line-height: 2
+        font-weight: $font-medium
+        color: $greyish !important
+        letter-spacing: 0.9px
+    tbody
+      tr
+        height: 35px
+        line-height: 22px
+      th
+        text-align: center
+        font-size: 12px
+        font-weight: $font-semi-bold
+        text-decoration: underline
+        a
+          color: $steel-gray
+      td
+        color: $steel-gray
+        padding-left: 18px
+      tr:not(.is-selected)
+        &:nth-child(odd)
+          background-color: $pale-gray
+          &:hover
+            background-color: $pale-gray
+  tr.skeleton
+    font-size: 0 !important
+    &>td>span
+      margin-top: 6px
+    span
+      display: block
+      width: 50px
+      height: 20px
+      @include skeleton
+
+.company-edit__invoices-pod__contact
+  &>span
+    display: block
+    height: 20px
+
+.company-edit__banner
+  display: flex
+  justify-content: space-between
+  align-items: flex-start
+  +mobile
+    flex-direction: column
+    margin-bottom: 10px
+
+.company-edit__disabled-banner
+  color: $dark-red
+  font-weight: $font-semi-bold
+  display: flex
+  align-items: center
+  text-transform: uppercase
+  .icon
+    margin-right: 5px
+    fill: $dark-red
+
+.create-offer__post-create-info
+  margin-top: 18px
+  &>div
+    padding: 8px
+    background: $white
+
+.create-offer__post-create-info__link
+  display: flex
+  align-items: baseline
+  a
+    color: $red
+  textarea
+    margin-top: 10px
+    margin-right: 6px
+    height: 52px
+    resize: none
+    width: 75%
+    padding: 4px
+
+.create-offer__existing-offer
+  border: 1px solid $red
+  background-color: $lighter-red
+  padding: 18px
+  color: $steel-gray
+  p
+    margin-bottom: 6px
+  div, strong
+    line-height: 18px
+  strong
+    color: $steel-gray
+    display: inline-block
+    width: 170px
+
+.create-offer__offer-details__zero-fee
+  color: $dark-red !important
+  margin-bottom: 20px
+
+.main-wrapper--register-company
+  min-height: unset !important
+
+.generic-popup__popup--cancel-plan
+  .button
+    display: block
+    margin: 5px auto
+    width: 200px

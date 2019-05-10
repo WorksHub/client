@@ -1,0 +1,30 @@
+.get-started
+  padding-top: 108px
+  text-align: center
+  h2
+    font-size: 18px
+
+.get-started__choices
+  margin-top: 14px
+  display: flex
+  justify-content: center
+
+.get-started__choice
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  height: 160px
+  &:hover
+    .button
+      background-color: $button-hover
+  img
+    height: 80px
+    margin-top: 10px
+  .button
+    width: 135px
+    height: 40px
+    font-size: 12px
+    font-weight: $font-semi-bold
+
+.get-started__choice + .get-started__choice
+  margin-left: 24px

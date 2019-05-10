@@ -1,0 +1,401 @@
+.payment-setup
+  max-width: 815px
+
+.payment-setup__steps
+  height: 30px
+  line-height: 18px
+  +desktop
+    margin-bottom: 70px
+
+.payment-setup__content-container
+  +mobile
+    margin-top: 2px
+
+.payment-setup__content
+  position: relative
+  color: $steel-gray
+  p
+    line-height: 18px
+    margin-bottom: 18px
+  h1
+    color: $steel-gray
+    font-size: 14px
+    font-weight: $font-medium
+    line-height: 18px
+    margin-bottom: 18px
+  .payment__card-form
+    font-size: 12px
+    .button-container
+      left: 8px
+      right: 8px
+      bottom: 0px
+
+.payment-flow-overlay__container
+  @include center(520px, 360px)
+  width: 520px
+  min-height: 300px
+  +mobile
+    left: 10px
+    width: calc(100% - 40px)
+    margin: auto 10px
+  padding: 24px 48px 48px 48px
+  margin: auto 0
+  margin-top: -100px
+  background: white
+  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.3)
+  position: relative
+  p
+    line-height: 15px
+
+.payment-flow-overlay__container--loading,
+.payment-setup--loading
+  @include spinner
+  height: 40px
+  width: 40px
+  min-width: unset
+  left: calc(50% - (1em * 1.6))
+  top: calc(50% - 1em)
+
+.payment-flow-overlay__card-payment,
+.payment__card-form
+  .button-container
+    position: absolute
+    bottom: 48px
+    right: 48px
+    left: 48px
+    .button
+      width: 100%
+
+.payment__card-form__terms
+  margin-top: 10px
+  margin-bottom: 18px !important
+  a
+    text-decoration: underline
+
+.payment-flow-overlay__step-indicators
+  display: flex
+  justify-content: center
+  margin-bottom: 48px
+
+.payment-flow-overlay__step-indicator
+  margin: 0 10px
+  font-size: 9px
+  font-weight: $font-semi-bold
+  color: $red
+  background-color: $light-red
+  height: 20px
+  width: 20px
+  padding: 0 8px
+  line-height: 20px
+  border-radius: 10px
+  text-align: center
+
+.payment-flow-overlay__step-indicator--selected
+  background-color: $red
+  color: $white
+.StripeForm
+  background-color: white
+  border: 1px solid $steel-gray
+  padding: 14px
+  margin-top: 16px
+  .error
+    color: $red
+    line-height: 6px
+    margin-top: 12px
+    &:empty
+      display: none
+
+.payment-setup__pay-success
+  background: white
+  padding: 24px
+  svg
+    fill: $green
+  .icon
+    width: 38px
+    height: 38px
+  h1
+    font-size: 18px
+  p
+    margin-bottom: 24px
+  .columns
+    .button
+      margin-top: 0px
+    +desktop
+      padding: 0 110px
+
+.card-data
+  padding: 18px
+  height: 80px
+  width: 100%
+  background-color: white
+  display: flex
+  margin-bottom: 18px
+.card-data__brand
+  margin-right: 18px
+  img, div.empty
+    width: 48px
+  div.empty
+    height: 48px
+    @include skeleton
+.card-data__info
+  line-height: 22px
+  font-size: 14px
+
+.card-data.skeleton
+  .card-data__info
+    div
+      @include skeleton
+      font-size: 0px
+      height: 22px
+      width: 200px
+      &:last-child
+        margin-top: 2px
+
+        @include keyframes(payment-card-final-reveal)
+  0%   { clip-path: circle(0% at 50% 50%);   -webkit-clip-path: circle(0% at 50% 50%); }
+  100% { clip-path: circle(100% at 50% 50%); -webkit-clip-path: circle(100% at 50% 50%); }
+
+@include keyframes(payment-card-final-reveal-content)
+  0%   { margin-top: 500px; opacity: 0 }
+  40%  { margin-top: 500px; opacity: 0 }
+  100% { margin-top: 0px; opacity: 1 }
+
+.payment-publish-celebration
+  position: absolute
+  top: 0
+  bottom: 0
+  right: 0
+  left: 0
+  +mobile
+    position: fixed
+    z-index: 1000
+  background-color: $red
+  display: flex
+  flex-direction: column
+  justify-content: space-around
+  @include animation('payment-card-final-reveal 0.5s 1')
+  h1
+    color: white
+
+.payment-publish-celebration__content
+  padding: 18px
+  text-align: center
+  @include animation('payment-card-final-reveal-content 1s 1')
+  animation-timing-function: cubic-bezier(.11,1.92,.15,.8)
+
+.payment-publish-celebration__close
+  cursor: pointer
+  position: absolute;
+  top: 12px;
+  right: 12px
+  svg
+    fill: white
+    width: 32px
+    height: 32px
+
+.payment-setup__pay-confirm-container
+  background: white
+  padding: 24px
+  position: relative
+  font-size: 14px
+  margin: 0 auto
+  +desktop
+    max-width: 462px
+  h1:first-child
+    margin-right: 80px
+  img
+    position: absolute
+    width: 68px
+    height: 68px
+    top: 25px
+    right: 25px
+  .li
+    display: flex
+    justify-contents: flex-start
+    align-items: center
+    &>.icon
+      margin-right: 10px
+  .li.coupon
+    color: $green
+  .is-flex
+    justify-content: space-between
+  strong
+    color: $steel-gray
+    font-weight: $font-medium
+    line-height: 24px
+  i
+    line-height: 18px
+    font-size: 13px
+    color: $greyish
+    width: 60%
+    margin-top: 10px
+  .button.is-full-width
+    margin-top: 5px
+  hr
+    background-color: $pale-gray
+    margin: 10px 0px
+    &.fixed
+      height: 10px
+      position: absolute
+      left: 0
+      right: 0
+      margin: 20px 0;
+
+.payment-setup__payment-details__calculator
+  line-height: 18px
+  &.no-breakdown
+    +mobile
+      h1:first-child
+        min-height: 60px
+
+.payment-setup__payment-details__card
+  p
+    font-size: 12px
+    margin-bottom: 0px
+
+.payment-setup__payment-details__card--upgrading
+  margin-top: 50px
+  p
+    margin-bottom: 18px
+  a
+    text-decoration: underline
+
+.payment-setup__pay-confirm__select-billing-period
+  background-color: transparent
+  padding: 0
+  overflow-x: hidden
+  .column
+    cursor: pointer
+    padding: 10px 0px 20px 0px
+    display: flex
+    flex-direction: column
+    align-items: center
+    background-color: white
+    border: 1px solid transparent
+    +desktop
+      margin-left: 0 !important
+    +mobile
+      width: 100%
+      flex: 1 0 100%;
+      transition: margin-left 0.5s
+    &:not(:first-of-type)
+      +desktop
+        margin-left: 12px
+    span
+      line-height: 18px
+      font-size: 12px
+    span:first-child
+      font-weight: $font-medium
+    span:last-child
+      font-size: 9px
+      color: $red
+      text-transform: uppercase
+      font-weight: $font-semi-bold
+      line-height: 12px
+      letter-spacing: 0.5px
+      margin-top: 12px
+    &.checked
+      border: 1px solid $steel-gray
+    &.disabled
+    &.existing, &.disabled
+      span
+        opacity: 0.7
+      pointer-events: none
+    &.existing::after
+      content: 'current'
+      font-size: 8px
+      text-transform: uppercase
+      font-weight: $font-semi-bold
+      margin-top: 8px
+      line-height: 0px
+
+.payment-setup__upgrading-calculator
+  margin-top: 25px
+  .payment-setup__offer-details
+    p
+      margin-right: 70px
+
+.payment-setup__upgrading-calculator--breakdown
+  min-height: 100px
+  margin-top: 0px
+  .is-loading-spinner
+    width: 30px
+    height: 30px
+
+.payment-setup__upgrading-calculator--loading
+  width: 100%
+  display: flex
+  justify-content: center
+
+.payment-setup__upgrading-calculator__estimate
+  line-height: 24px
+  font-size: 13px
+  span:first-child
+    margin-right: 10px
+
+.payment__coupon-form
+  padding-top: 10px
+  font-size: 12px
+  height: 26px
+  overflow-y: hidden
+  transition: height 0.2s
+  line-height: 18px
+  .is-flex
+    cursor: pointer
+    justify-content: flex-start
+  svg
+    fill: $steel-gray
+  form
+    display: flex
+    .button
+      width: 55px
+      margin-left: 10px
+      margin-top: 8px
+
+.payment__coupon-form--expanded
+  height: 100px
+
+.payment__coupon-form__roll-down
+  .icon
+    transition: transform 0.2s
+
+.payment__coupon-form__roll-down--expanded
+  .icon
+    transform: rotate(180deg)
+
+.payment-setup__slide-buttons
+  width: 100%
+  position: absolute !important
+  left: 0
+  right: 0
+  top: 0
+  & > div
+    top: 50px !important
+
+.payment-setup__upgrading-calculator ~ h1
+  color: red
+
+.payment-setup__offer-details
+  line-height: 18px
+  margin-bottom: 18px
+  h3
+    margin-top: 8px
+  strong
+    display: inline-block
+    width: 180px
+
+.payment-setup--error
+  .button, a
+    display: block
+    margin: 0 auto
+  .button + a
+    margin-top: 4px
+
+.payment-setup--error__message
+  padding: 12px
+  background-color: $lighter-red
+  margin-bottom: 20px
+  border: 2px solid $red
+  border-radius: 4px
+  p
+    line-height: 18px

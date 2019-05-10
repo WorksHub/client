@@ -1,0 +1,713 @@
+.how-it-works
+  .button
+    font-size: 12px
+    height: 40px
+    padding: 6px 12px
+  p
+    font-family: $family-secondary
+    font-weight: $font-regular
+    font-size: 16px
+    letter-spacing: 0
+    color: $grey-darker
+    +mobile
+      line-height: 26px
+  h3
+    font-size: 36px
+    line-height: 48px
+    color: $red
+    font-weight: bold
+    +mobile
+      font-size: 24px
+      line-height: 30px
+  h2
+    font-family: $family-secondary
+    font-weight: $font-regular
+    font-size: 16px
+    line-height: 22px
+    letter-spacing: 1px
+    margin-bottom: 22px
+    +mobile
+      font-size: 14px
+  h3 + p
+    margin-top: 40px
+  p + a
+    display: block
+    margin-top: 32px
+
+.how-it-works__header
+  background-color: white
+  min-height: 528px
+  +mobile
+    padding-bottom: 20px
+
+.how-it-works__header__inner,
+.how-it-works__benefits__inner
+  margin: 0 auto
+  padding: 40px
+  display: flex
+  max-width: 1084px
+  +mobile
+    max-width: 675px
+    padding: 18px
+    align-items: center
+
+.how-it-works__header__inner
+  +mobile
+    flex-direction: column-reverse
+
+.how-it-works__header__img
+  flex: 1 0 auto
+  margin-top: -24px
+  +mobile
+    margin-top: -40px
+.how-it-works__header__img-inner
+  max-width: 375px
+  +mobile
+    img
+      width: 3650px
+      padding-left: 20px
+
+.how-it-works__header__copy
+  flex: 1 1 auto
+  max-width: 578px
+  margin-bottom: 76px
+  +desktop
+    padding-left: 24px
+    padding-right: 20px
+    padding-top: 64px
+  h1
+    color: $steel-gray
+    font-weight: bold
+    font-size: 44px
+    line-height: 58px
+    +desktop
+      margin-bottom: 38px
+    +mobile
+      font-size: 28px
+      line-height: 40px
+  p
+    margin-bottom: 24px
+  .button
+    +mobile
+      width: 100%
+
+.how-it-works__explanation
+  position: relative
+
+.how-it-works__explanation__steps
+  margin-bottom: 80px
+
+.how-it-works__explanation--company
+  .how-it-works__explanation__steps
+    +desktop
+      margin-top: -108px
+
+.how-it-works__explanation--candidate
+  .how-it-works__explanation__steps
+    +desktop
+      margin-top: -158px
+
+.how-it-works__explanation__inner
+  padding: 108px 210px
+  max-width: 1084px
+  text-align: center
+  margin: 0 auto
+  position: relative
+  +mobile
+    max-width: 675px
+    padding: 40px 18px
+  a:not(:first-of-type)
+      width: 150px
+      margin: 0 auto
+      display: block
+  h2
+    margin-bottom: 12px
+  h3
+    font-size: 44px
+    line-height: 58px
+    margin-bottom: 26px
+    +mobile
+      font-size: 24px
+      line-height: 30px
+      margin-bottom: 40px
+  p
+    line-height: 26px
+  .get-started-btn
+    +desktop
+      position: absolute
+      bottom: 0px
+      left: calc(50% - 75px)
+      padding-top: 20px
+      padding-bottom: 60px
+  .button
+    width: 150px
+    +mobile
+      width: 100%
+      margin-bottom: 12px
+
+.how-it-works__explanation__copy
+  +desktop
+    width: 50%
+    text-align: left
+  a
+    display: block
+    margin-top: 14px
+    .button
+      max-width: 267px
+      width: 100%
+
+.how-it-works__explanation-step
+  display: flex
+  text-align: left
+  +mobile
+    margin-bottom: 50px
+  +desktop
+    min-height: 228px
+  img
+    margin-bottom: 24px
+  +mobile
+    justify-content: center
+  &:nth-of-type(odd)
+    +desktop
+      justify-content: flex-end
+      .how-it-works__explanation-step__inner
+        padding-left: 50px
+  &:nth-of-type(even)
+    +desktop
+      justify-content: flex-start
+      .how-it-works__explanation-step__inner
+        padding-right: 30px
+        img
+          margin: 0 auto
+          margin-bottom: 24px
+  &:last-of-type
+    margin-bottom: 28px
+.how-it-works__explanation-step__inner
+  display: flex
+  flex-direction: column
+  +mobile
+    align-items: center
+    width: 100%
+  +desktop
+    width: 50%
+
+.how-it-works__explanation-step__description
+  +mobile
+    width: 100%
+    display: flex
+    justify-content: flex-start
+    .how-it-works__step-line__circle
+      margin-right: 18px
+
+.how-it-works__step-line
+  width: 32px
+  position: absolute
+  top: 346px
+  left: calc(50% - 16px)
+
+.how-it-works__step-line__circle
+  min-width: 32px
+  width: 32px
+  height: 32px
+  background-color: $red
+  color: white
+  border-radius: 32px
+  text-align: center
+  font-size: 18px
+  font-weight: $font-medium
+  padding-top: 1px
+
+.how-it-works__step-line__line
+  height: 228px
+  width: 2px
+  background-color: $red
+  margin: 0 auto
+
+.how-it-works__benefits,
+.how-it-works__faq
+  background-color: white
+  padding-top: 74px
+  +mobile
+    padding-top: 44px
+
+.how-it-works__benefits__inner
+  padding: 0 64px
+  +mobile
+    padding: 0 18px
+    padding-bottom: 46px
+  padding-bottom: 64px
+  align-items: center
+  flex-direction: column
+  h3
+    +desktop
+      margin-top: 14px
+  p
+    height: 80px
+    line-height: 26px
+    margin-top: 20px
+
+.how-it-works__benefits-list
+  margin-top: 38px
+  display: flex
+  width: 100%
+  justify-content: space-between
+  +mobile
+    padding: 0 14px
+    align-items: center
+    flex-direction: column
+
+.how-it-works__benefit
+  +desktop
+    max-width: 188px
+  +mobile
+    max-width: 320px
+    margin-bottom: 12px
+    width: 100%
+  font-family: $family-secondary
+  font-weight: $font-regular
+  font-size: 16px
+  line-height: 26px
+  letter-spacing: 1px
+
+.how-it-works__benefit__inner
+  display: flex
+  flex-direction: column
+  justify-content: flex-end
+  align-items: center
+  height: 100%
+  +mobile
+    flex-direction: row
+    justify-content: flex-start
+    img
+      min-width: 95px
+      max-width: 95px
+    p
+      padding-left: 24px
+
+.how-it-works__benefits__buttons,
+.how-it-works__faq__buttons
+  margin-top: 32px
+  .button
+    +desktop
+      width: 267px
+    +mobile
+      width: 100%
+  a + a, a + button
+    +desktop
+      margin-left: 24px
+    +mobile
+      margin-top: 18px
+  +mobile
+    display: flex
+    flex-direction: column
+    width: 100%
+
+.how-it-works__stats
+  padding-top: 87px
+  padding-bottom: 62px
+  +mobile
+    padding-top: 40px
+    padding-bottom: 48px
+
+.how-it-works__stats__inner
+  display: flex
+  padding: 0 40px
+  margin: 0 auto
+  max-width: 1084px
+  .button
+    width: 150px
+    &.button--github
+      margin-top: 24px
+    +mobile
+      margin-top: 24px
+      width: 100%
+  +mobile
+    padding: 0 18px
+    flex-direction: column-reverse
+    max-width: 675px
+    align-items: center
+    a
+      width: 100%
+
+.how-it-works__stats__balls
+  display: flex
+  text-align: center
+  position: relative
+  +desktop
+    width: 60%
+    max-width: 530px
+  +mobile
+    min-height: 600px
+    width: 100%
+  p
+    font-size: 18px
+    line-height: 24px
+
+.how-it-works__stats__ball
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  background-repeat: no-repeat
+  position: absolute
+  strong
+    font-family: $family-secondary
+    font-size: 36px
+    line-height: 24px
+    letter-spacing: -1px
+    color: #434e55
+    margin-bottom: 12px
+    font-weight: normal
+    &:empty
+      display: none
+
+.how-it-works__stats__balls
+  +mobile
+    width: 294px
+
+.how-it-works__stats__ball--blue
+  background-image: url('/images/hiw/balls/blue.svg')
+  width: 294px
+  height: 294px
+  +desktop
+    top: 64px
+  +mobile
+    top: 0px
+    left: 0px
+  strong
+    font-size: 77px
+    line-height: 90px
+  +mobile
+    margin-top: 24px
+  p
+    width: 236px
+
+.how-it-works__stats__ball--orange
+  background-image: url('/images/hiw/balls/orange.svg')
+  width: 244px
+  height: 244px
+  +desktop
+    top: 280px
+    right: 20px
+  +mobile
+    top: 360px
+    left: 0px
+
+  p
+    width: 180px
+
+.how-it-works__stats__ball--grey
+  background-image: url('/images/hiw/balls/grey.svg')
+  width: 186px
+  height: 186px
+  +desktop
+    top: 20px
+    right: 20px
+  p
+    width: 170px
+  +mobile
+    top: 255px
+    right: -50px
+
+.how-it-works__stats__info
+  p + p
+    margin-top: 24px
+  +desktop
+    width: 40%
+    padding-right: 40px
+    margin-left: 8px
+
+.how-it-works__stats--candidate
+  .how-it-works__stats__ball--orange
+    strong
+      font-size: 60px
+      line-height: 60px
+
+.how-it-works__faq
+  +desktop
+    padding-left: 126px
+    padding-right: 126px
+  +mobile
+    padding-left: 18px
+    padding-right: 18px
+    .faq__column
+      margin: 0 !important
+
+.how-it-works__faq__inner
+  +mobile
+    max-width: 675px
+    margin: 0 auto
+  h3
+    +mobile
+      font-size: 28px
+      line-height: 40px
+    +desktop
+      width: 50%
+  .faq__intro
+    margin-top: 30px
+    +mobile
+      margin-top: 12px
+    h2
+      +desktop
+        margin-bottom: 36px
+      +mobile
+        font-size: 14px
+      line-height: 26px
+
+.how-it-works__faq__buttons
+  display: flex
+  justify-content: center
+  padding-bottom: 60px
+
+.how-it-works__type-slider
+  display: flex
+  position: relative
+  +mobile
+    justify-content: center
+
+.how-it-works__type-slider__option
+  display: flex
+  align-items: center
+  img
+    z-index: 2
+    width: 62px
+    height: 62px
+    margin-right: -10px
+  .button
+    height: 40px !important
+    width: 160px !important
+    +mobile
+      font-size: 11px
+      width: 100px !important
+  .button--disabled
+    border-radius: 0px
+    border-left: 0
+    border-right: 0
+    &:hover
+      background-color: white !important
+      color: $red !important
+  &:nth-of-type(even)
+    flex-direction: row-reverse
+    img
+      margin-right: 0px
+      margin-left: -10px
+
+.how-it-works__type-slider__option--disabled
+  img
+    -webkit-filter: grayscale(1)
+    filter: gray
+    filter: grayscale(1)
+
+/* Image adjustments */
+.how-it-works__explanation-step__inner
+  /* Company */
+  img
+    &[src="/images/hiw/company/hiw/hiw1.svg"]
+      width: 80%
+      +mobile
+        width: 54%
+    &[src="/images/hiw/company/hiw/hiw2.svg"]
+      +mobile
+        width: 40%
+      +desktop
+        width: 60%
+        margin-top: -12px !important
+    &[src="/images/hiw/company/hiw/hiw3.svg"]
+      +mobile
+        width: 55%
+      +desktop
+        margin-top: -64px
+    &[src="/images/hiw/company/hiw/hiw4.svg"]
+      +mobile
+        width: 42%
+      +desktop
+        width: 70%
+        margin-top: -16px !important
+    /* Candidate */
+    &[src="/images/hiw/candidate/hiw/hiw1.svg"]
+      width: 100%
+      +mobile
+        width: 50%
+    &[src="/images/hiw/candidate/hiw/hiw2.svg"]
+      +desktop
+        margin-top: 32px !important
+      +mobile
+        width: 60%
+    &[src="/images/hiw/candidate/hiw/hiw3.svg"]
+      +mobile
+        width: 40%
+      +desktop
+        width: 80%
+        margin-top: -18px
+    &[src="/images/hiw/candidate/hiw/hiw4.svg"]
+      +mobile
+        width: 45%
+      +desktop
+        width: 78%
+        margin-top: -48px !important
+
+.how-it-works__benefit__inner
+  /* Company */
+  img
+    &[src="/images/hiw/company/benefits/benefit1.svg"]
+      width: 65%
+      +mobile
+        padding: 0 10px
+    &[src="/images/hiw/company/benefits/benefit2.svg"]
+      width: 80%
+      +mobile
+        padding: 10px
+    &[src="/images/hiw/company/benefits/benefit3.svg"]
+      width: 55%
+      +mobile
+        padding: 20px
+    &[src="/images/hiw/company/benefits/benefit4.svg"]
+      width: 75%
+  /* Candidate */
+  img
+    &[src="/images/hiw/candidate/benefits/benefit1.svg"]
+      width: 70%
+      +mobile
+        padding: 0 10px
+    &[src="/images/hiw/candidate/benefits/benefit2.svg"]
+      width: 100%
+    &[src="/images/hiw/candidate/benefits/benefit3.svg"]
+      width: 96%
+    &[src="/images/hiw/candidate/benefits/benefit4.svg"]
+      width: 96%
+
+.how-it-works-pod
+  box-shadow: unset
+  h2:first-of-type
+    margin-bottom: 18px
+  .button
+    padding: 0
+  a, .button
+    width: 100%
+    display: block
+    text-decoration: none
+  a + a, a + button
+    margin-top: 18px
+    +mobile
+      margin-top: 12px
+  p, .how-it-works-pod__selection-txt
+    font-size: 14px
+    line-height: 21px
+    letter-spacing: 0
+    font-family: $family-secondary
+
+.how-it-works-pod--basic,
+.how-it-works-pod--choice
+  display: flex
+  flex-direction: column
+  +mobile
+    flex-direction: row
+    .how-it-works-pod__basic-info-container
+      padding-right: 8%
+  p
+    margin-bottom: 18px
+  .how-it-works-pod__img
+    max-width: 200px
+    width: 100%
+    margin: 0 auto
+    margin-top: 18px
+    img
+      display: block
+      margin: 0 auto
+      max-width: 200px
+
+.how-it-works-pod__carousel
+  height: 140px
+  display: flex
+  justify-content: space-between
+
+.how-it-works-pod__selection-img
+  user-select: none
+  width: 50%
+  max-width: 140px
+  display: flex
+  align-items: center
+
+.how-it-works-pod__selection-txt
+  height: 62px
+  +mobile
+    text-align: center
+
+.how-it-works-pod__chevron
+  cursor: pointer
+  &:hover
+    .icon
+      fill: $hover-orange
+  .icon
+    fill: $red
+    height: 100%
+    width: 32px
+
+.how-it-works-pod__chevron--disabled
+  pointer-events: none
+  .icon
+    fill: $disabled-gray
+
+.how-it-works-pod__pips-wrapper
+  width: 100%
+  margin-bottom: 8px
+
+.how-it-works-pod__pips
+  display: flex
+  justify-content: center
+
+.how-it-works-pod__pip
+  &:hover
+    .icon
+      fill: $hover-orange
+  .icon
+    fill: $light-red
+    width: 12px
+    height: 12px
+
+.how-it-works-pod__pip--active
+  .icon
+    fill: $red
+
+.how-it-works-pod__pip--clickable
+  cursor: pointer
+
+.how-it-works-pod__pip + .how-it-works-pod__pip
+  margin-left: 14px
+
+.how-it-works-pod--benefits
+  margin-top: 36px !important
+  margin-bottom: 36px !important
+  .how-it-works__type-slider
+    justify-content: center
+    margin-bottom: 12px
+    margin-top: -40px
+  .is-flex
+    align-items: center
+    flex-wrap: wrap
+  .icon
+    width: 14px
+    height: 14px
+    margin-right: 14px
+  ul
+    font-family: $family-secondary
+    font-size: 14px
+    line-height: 21px
+  li
+    display: flex
+    align-items: center
+  li + li
+    margin-top: 18px
+
+.how-it-works-pod--benefits-info
+  flex: 1 1 200px
+
+.how-it-works-pod--benefits-img
+  flex: 20%
+  padding-top: 24px
+  padding-left: 12px
+  img
+    margin: 0 auto
+    min-width: 130px
+    max-width: 150px
+    display: block

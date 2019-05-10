@@ -1,0 +1,149 @@
+.footer
+  background-color: $steel-gray
+  min-height: 534px
+
+.footer__top
+  display: flex
+  justify-content: space-between
+  padding: 60px 40px 20px 40px
+  color: white
+  +mobile
+    flex-direction: column
+    padding: 44px 18px 20px 18px
+
+.footer__info__logo
+  display: flex
+  align-items: center
+  margin-bottom: 58px
+  +mobile
+    margin-bottom: 20px
+
+.footer__info__logo__codi
+  width: 46px
+  height: 46px
+
+.footer__info__logo__title
+  font-size: 18px
+  line-height: 20px
+  font-weight: bold
+  margin-left: 8px
+
+.footer__info__contact
+  font-size: 14px
+  font-weight: $font-medium
+  span a
+    color: white
+  span + span
+    margin-left: 10px
+
+.footer__graphic
+  width: 100%
+  max-width: 492px
+  +mobile
+    margin-top: 20px
+
+.footer__sitemap
+  padding: 35px 40px 20px 40px
+  font-size: 12px
+  color: white
+  +mobile
+    padding: 0px 18px 20px 18px
+    flex-direction: column
+
+.footer__sitemap__pair,
+.footer__sitemap
+  display: flex
+  justify-content: flex-start
+
+
+.footer__sitemap__list__container
+  display: flex
+  flex-wrap: wrap
+  width: 100%
+
+.footer__sitemap__list
+  min-width: 197px
+  justify-content:  flex-start
+  flex-grow: 1
+  flex-shrink: 0
+  margin-bottom: 20px
+  a
+    color: white
+    display: block
+    font-weight: $font-semi-bold
+    line-height: 24px
+  div
+    font-weight: bold
+    margin-bottom: 8px
+
+.footer__bottom
+  background: white
+  min-height: 60px
+  width: 100%
+  padding: 16px 40px 20px 40px
+  font-size: 12px
+  letter-spacing: 0
+  color: $steel-gray
+  a
+    color: $steel-gray
+  +mobile
+    padding: 16px 18px 20px 18px
+
+.footer__social-icons
+  height: 32px
+  display: inline-block
+  vertical-align: top
+  +mobile
+    width: 100%
+
+.footer__social-icon
+  display: inline-block
+  margin-right: 8px
+  max-height: 32px
+  &.is-hidden-desktop
+    margin-right: 0
+    float: right
+  img
+    margin-left: 10px
+    height: 32px
+  .icon
+    width: 32px
+    height: 32px
+    fill: $steel-gray
+    &:hover
+      transition: all 0.3s ease-in-out
+  &.linkedin
+    .icon:hover
+      fill: #0077B5
+  &.twitter
+    .icon:hover
+      fill: #1DA1F2
+  &.facebook
+    .icon:hover
+      fill: #3C5A99
+  &.github
+    .icon:hover
+      fill: #333333
+
+.footer__legal
+  display: inline-block
+  vertical-align: top
+  +desktop
+    float: right
+  +mobile
+    font-size: 10px
+    width: 100%
+
+.footer__legal__item
+  display: inline-block
+  vertical-align: middle
+  img
+    height: 32px
+    display: block
+.footer__legal__item + .footer__legal__item:not(:last-child)
+  &::before
+    content: '|'
+    padding: 0 10px
+
+.footer__legal__item:last-child
+  margin-left: 20px

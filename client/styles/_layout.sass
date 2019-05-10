@@ -1,0 +1,62 @@
+h1, h2, .has-bottom-margin
+  margin-bottom: 18px
+  +mobile
+    margin-bottom: 12px
+
+h1
+  font-weight: $font-semi-bold
+  color: $red
+  font-size: 18px
+  line-height: 22px
+  +mobile
+    line-height: 18px
+
+h2
+  font-weight: $font-semi-bold
+  color: $steel-gray
+  font-size: 18px
+  line-height: 22px
+  +mobile
+    font-size: 14px
+    line-height: 18px
+  .slender
+    font-weight: $font-regular
+
+
+h3
+  font-weight: $font-medium
+  color: $steel-gray
+  font-size: 14px
+  line-height: 22px
+  margin-bottom: 12px
+
+.spread-or-stack
+  display: flex
+  justify-content: space-between
+  +mobile
+    display: block
+
+.main-wrapper
+  +desktop
+    min-height: calc(100vh - #{$navbar-height} - 10px)
+  +mobile
+    min-height: calc(100vh - #{$navbar-mobile-height} - 10px)
+
+.main
+  flex: 1
+  max-width: calc(1366px - #{$left-menu-width})
+  width: 100%
+  margin: 0 auto
+  padding: 24px
+  +mobile
+    padding: 18px
+
+  section
+    margin-bottom: 24px
+    +mobile
+      margin-bottom: 18px
+
+.main--center-content
+  display: flex
+  justify-content: center
+  align-items: center

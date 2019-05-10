@@ -1,0 +1,61 @@
+.global-status
+  z-index: 10
+  width: 100%
+  height: 48px
+  color:  white
+  svg.tick
+    fill: white
+    height: 12px
+    +desktop
+      margin-right: 6px
+      vertical-align: middle
+    +mobile
+      margin-top: 17px
+      margin-right: 18px
+      float: left
+      margin-left: 18px
+  svg.close
+    fill: white
+    margin-top: 15px
+    margin-right: 18px
+  &.error
+    background-color: $dark-red
+  &.success
+    background-color: $green
+
+.global-status__body
+  margin: auto
+  font-weight: $font-semi-bold
+  +desktop
+    padding: 11px 36px
+    line-height: 24px
+    font-size: 14px
+    text-align: center
+  +mobile
+    padding: 9px 46px 9px 18px
+    line-height: 1.25
+    font-size: 12px
+
+.global-status__try-again
+  font-weight: $font-semi-bold
+  text-decoration: underline
+  cursor: pointer
+
+.version-mismatch
+  display: flex
+  flex-direction: column
+  padding: 24px
+  height: 100%
+  justify-content: center
+  align-items: center
+  .icon
+    width: 120px
+    height: 120px
+    margin-bottom: 24px
+  h1
+    line-height: 1.5
+    margin-bottom: 18px
+  p
+    font-size: 14px
+    line-height: 1.5
+    margin-bottom: 18px

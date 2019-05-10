@@ -1,0 +1,32 @@
+$transition-time: 0.2s
+
+.selector
+  display: flex
+  margin-bottom: 24px
+  +mobile
+    width: 100%
+.selector__option
+  text-align: center
+  height: 30px
+  +desktop
+    min-width: 166px
+  +mobile
+    width: 100%
+  color: $greyish
+  font-weight: $font-semi-bold
+  font-size: 11px
+  line-height: 30px
+  text-transform: uppercase
+  border: 1px solid $greyish
+  cursor: pointer
+  background-color: white
+  transition: background-color $transition-time, color $transition-time
+  &:hover
+    background-color: $pale-gray
+  &:not(:first-child)
+    border-left: unset
+.selector__option--selected
+  background-color: $steel-gray
+  color: white
+  &:hover
+    background-color: $steel-gray

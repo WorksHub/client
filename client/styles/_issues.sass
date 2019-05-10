@@ -1,0 +1,1234 @@
+// TODO This is modeled after job page, extract into a common class main and side?
+.issues__main,
+.issue__main
+  +mobile
+    width: 100%
+  +desktop
+    width: 67%
+    margin-right: 12px
+    min-width: 505px
+
+.issues__main__container
+  +mobile
+    flex-direction: column-reverse
+
+.issues__side,
+.issue__side
+  section
+    padding: 7%
+  +mobile
+    width: 100%
+    .how-it-works-pod
+      margin-bottom: 18px
+  +desktop
+    width: 33%
+    min-width: 246px
+    max-width: 350px
+  .card
+    padding: 7%
+
+.issues__list__head
+  margin-bottom: 6px
+  +mobile
+    margin-bottom: 12px
+
+.issue-card, .repo-card
+  display: block
+  padding: 18px
+  margin: 6px 0 6px 0
+  min-height: 100px
+  +mobile
+    margin-bottom: 12px
+  &:first-child
+    margin-top: 0
+  &:last-child
+    margin-bottom: 0
+  overflow: hidden
+  .column
+    padding: 0
+    margin: 9px
+  .logo
+    width: 60px
+    min-width: 60px
+    height: 60px
+  .empty-logo
+    width: 100%
+    height: 100%
+    border: 1px solid silver
+  .title
+    color: $grey-darker
+    font-size: 14px
+    line-height: 18px
+    font-weight: $font-medium
+    overflow: hidden
+    text-overflow: ellipsis
+    margin-top: 2px
+    +mobile
+      height: 100%
+      display: flex
+      align-items: center
+  .header
+    line-height: 1.17
+    margin-bottom: 11px
+    color: $greyish
+    +mobile
+      margin-bottom: 18px
+  .description
+    color: $steel-gray
+  .info
+    width: 100%
+    margin-left: 18px
+    .warning
+      margin-top: 6px
+  .header
+    position: relative
+    line-height: 1.17
+    margin-bottom: 11px
+    color: $greyish
+    .icon
+      position: absolute
+      right: 0
+      width: 18px
+      height: 18px
+      cursor: pointer
+  .issue-details
+    +desktop
+      display: flex
+      justify-content: space-between
+    .tags
+      li
+        margin-bottom: 0
+  .issue-tags
+    +mobile
+      margin-top: 18px
+  ul
+    display: inline-block
+    +mobile
+      display: block
+  .details
+    color: $greyish
+    +mobile
+      display: flex
+    li
+      display: inline
+      +mobile
+        padding-top: 4px
+        display: flex
+      line-height: 18px
+      color: $greyish
+      font-size: 12px
+      margin-right: 18px
+    .star
+      font-size: 18px
+      display: inline-block
+      margin-right: 6px
+    svg
+      vertical-align: middle
+      fill: $greyish
+      margin-right: 6px
+
+.repo-card--clickable
+  &:hover
+    cursor: pointer
+    background-color: $snow
+    .title
+      a
+        color: $red
+
+.issue-card
+  .issue-details
+    margin-top: 15px
+
+.issue-card.skeleton
+  .logo
+    @include skeleton
+  .empty-logo
+    border: 0
+  .title
+    @include skeleton
+    height: 22px
+    width: 200px
+  .header
+    @include skeleton
+    height: 10px
+    width: 200px
+    text-indent: -9999px
+  .issue-details
+    li
+      svg
+        vertical-align: initial
+        fill: $skeleton-background-color !important
+      span
+        @include skeleton(40px, 20px)
+        display: inline-block
+        text-indent: -9999px
+  .issue-status
+    svg
+       height: 15px
+
+.issue-status
+  &.issue-status--open
+    span
+      color: #136D79
+    svg
+      fill: #136D79
+  &.issue-status--closed
+    span
+      color: #b6b6b6
+    svg
+      fill: #b6b6b6
+  &.issue-status--started
+    span
+      color: #2596C6
+    svg
+      fill: #2596C6
+  &.issue-status--submitted
+    span
+      color: $red
+    svg
+      fill: $red
+  .icon
+    margin-top: 5px
+
+.admin-pod
+  display: flex
+  +desktop
+    flex-direction: column
+  +mobile
+    flex-direction: row
+    align-items: center
+    justify-content: space-between
+  &.skeleton
+    .github-info__link
+      .icon
+        display: none
+    .github-info__link__org
+      margin-top: 24px
+      display: block
+      @include skeleton(160px, 25px)
+      text-indent: -9999px
+
+    .manage-issues
+      @include skeleton
+      height: 30px
+      text-indent: -9999px
+
+.manage-issues
+  +mobile
+    width: 100%
+
+.github-info
+  +desktop
+    margin-top: 18px
+  p
+    text-align: left
+
+.github-info__repo
+  margin-top: 18px
+  +mobile
+    margin-top: 12px
+  p
+    color: $greyish
+
+.github-info__more-info
+  color: $greyish !important
+  font-size: 1rem !important
+
+.github-info__link
+  +desktop
+    height: 15px
+  a
+    line-height: 15px
+    vertical-align: top
+
+/* These were modelled on _job.sass. FIXME: factor out common patterns to a mixin? */
+
+
+$issue-section-gap: 20px
+
+.issue__main
+  section
+    margin-top: 36px
+    margin-bottom: 0px
+  +mobile
+    .how-it-works-pod
+      margin-top: 18px
+
+.issue__side-pod
+  +desktop
+    margin-bottom: 18px
+  background: $white
+
+.issue__back__content
+  display: flex
+  justify-content: space-between
+  width: 60px
+
+.issue__section-content
+  background: $white
+  padding: 18px
+
+.issue__header
+  min-height: 160px
+  margin-bottom: $issue-section-gap
+  display: flex
+  flex-direction: column
+  .icon.owner
+    width: 18px
+    height: 18px
+    cursor: pointer
+    &:hover
+      opacity: 0.7
+
+.issue__title, .issue__edit__title
+  margin-left: 18px
+  font-size: 18px
+  line-height: 1.44
+  font-weight: $font-medium
+  color: $grey-darker
+  +mobile
+    font-size: 14px
+    line-height: 18px
+
+.issue__description
+  font-size: 14px
+  line-height: 1.71
+  h1
+    font-size: 14px
+    color: $steel-gray
+    font-weight: $font-medium
+  p
+    margin-bottom: 24px
+  +mobile
+    margin-top: 18px !important
+    margin-bottom: 12px
+
+.issue__description__view-button
+  width: 200px
+  margin: 0 auto
+  margin-top: 18px
+  .button
+    width: 100%
+
+.issue__logo
+  width: 64px
+  height: 64px
+
+.issue__title-container
+  flex: 1 0 auto
+  margin-bottom: 22px
+  align-items: center
+
+.issue__header-buttons
+  flex: 0
+  min-height: 55px
+  .button
+    width: 100%
+    height: 35px
+.issue__infobox-container
+  margin-bottom: 12px
+  .tags
+    min-height: 36px
+
+.issue__infobox
+  display: flex
+  flex-wrap: wrap
+  background: $white
+
+.issue__infobox-row
+  flex: 1 1 150px
+  display: flex
+  height: 30px
+  color: $greyish
+  margin-bottom: 12px
+  align-items: center
+  +mobile
+    flex-basis: 120px
+    &:nth-of-type(2)
+      justify-content: flex-end
+  svg
+    margin-right: 18px
+    +mobile
+      margin-right: 6px
+    fill: $greyish
+  p
+    font-size: 12px
+    align-self: center
+
+.issue__link-container
+  line-height: 18px
+  margin-top: 18px
+  a
+    font-weight: $font-medium
+    color: $red
+    text-decoration: underline
+
+.tags li.issue__compensation
+  background-color: $pale-blue
+  color: $sea-blue
+
+.issue__description-content
+  margin-bottom: 18px
+
+.issue__labels
+  margin-bottom: 12px
+
+.issue__author
+  p
+    line-height: 15px
+  padding: 18px
+  color: $steel-gray
+  +mobile
+    display: flex
+  .icon
+    width: 24px
+    height: 24px
+    margin-right: 12px
+    fill: $greyish
+    +desktop
+      position: absolute
+      top: 18px
+      right: 18px
+  &.skeleton
+    .icon
+      display: none
+    .github-info__link
+      @include skeleton(140px, 15px)
+      text-indent: -9999px
+    .issue__posted-by
+      @include skeleton(150px, 15px)
+      text-indent: -9999px
+    .issue__author__github-avatar--skeleton
+      @include skeleton(36px,36px)
+      margin-right: 18px
+    .issue__author__name
+      @include skeleton(90px,18px)
+      text-indent: -9999px
+      margin-top: 0
+    .issue__author__github-username
+      margin-top: 2px
+      @include skeleton(70px, 15px)
+      text-indent: -9999px
+
+.issue__author__name
+  font-size: 18px
+  line-height: 22px
+  font-weight: $font-medium
+  margin-top: 6px
+
+.issue__logo--skeleton
+  @include skeleton(64px, 64px)
+  min-width: 64px
+
+.issue__title.skeleton
+  @include skeleton(100%, 32px)
+  text-indent: -9999px
+
+.issue__infobox-row.skeleton
+  .icon
+    fill: $skeleton-background-color
+  span
+    margin-top: 4px
+    @include skeleton(90px, 12px)
+
+.issue__top-info.skeleton
+  div
+    @include skeleton(80%, 12px)
+
+.issue__author-details
+  img
+    @include skeleton(36px, 36px)
+    border: 0
+
+.issue__description--skeleton
+  @include skeleton(100%, 200px)
+
+.issue__top-info
+  display: grid
+  grid-template-columns: 1fr 1fr 18px
+  grid-template-rows: 18px
+  margin-bottom: 16px
+  line-height: 16px
+  font-size: 12px
+  color: $greyish
+  span
+    text-align: end
+    margin-right: 18px
+  a
+    color: $greyish
+  .icon
+    margin-top: -3px
+    width: 22px
+    height: 22px
+    fill: $grey
+    grid-area: 1 / 3 / 1 / 3
+
+.issue__author-details
+  display: flex
+  img
+    margin-right: 18px
+    max-width: 36px
+    max-height: 36px
+
+.issue__author__github-username
+  line-height: 15px
+  +mobile
+    margin-left: 6px
+
+.issue__posted-by
+  font-size: 12px
+  height: 12px
+  color: $greyish
+  +desktop
+    margin-top: 18px
+    margin-bottom: 12px
+    line-height: 12px
+  +mobile
+    margin-top: 12px
+    line-height: 15px
+    display: flex
+    justify-content: center
+
+.issue__how-it-works
+  min-height: 200px
+
+.issue__activity
+  min-height: 400px
+
+$issue-sticky-height: 83px
+$issue-sticky-mobile-height: 63px
+$issue-sticky-hide-offset: 8px
+$issue-sticky-hide-mobile-offset: 28px
+
+.issue__start-work-sticky
+  position: absolute
+  +desktop
+    top: calc(#{$navbar-height - $issue-sticky-hide-offset} - #{$issue-sticky-height})
+    left: 0
+    right: 0
+    height: $issue-sticky-height
+  +mobile
+    top: calc(#{$navbar-mobile-height - $issue-sticky-hide-mobile-offset} - #{$issue-sticky-mobile-height})
+    width: 100%
+    height: $issue-sticky-mobile-height
+  background-color: white
+  border-bottom: 1px solid $grey
+  box-shadow: 5px 2px 4px 4px rgba(0, 0, 0, 0.2)
+  transition: top 0.4s
+  padding: 12px
+  -webkit-transform: translate3d(0,0,0)
+  .button
+    height: 30px
+    border-radius: 2px
+
+.issue__start-work-sticky__inner
+  margin: 0 auto
+  display: flex
+  align-items: center
+  justify-content: space-between
+  +desktop
+    height: calc(#{$issue-sticky-height} - 24px) /* 24 == 2 x padding(12px) */
+  +mobile
+    height: calc(#{$issue-sticky-mobile-height} - 24px)
+
+.issue__start-work-sticky--shown
+  +desktop
+    top: $navbar-height - 3px
+  +mobile
+    top: $navbar-mobile-height
+
+.issue__start-work-sticky--logged-in
+  +desktop
+    left: $left-menu-width
+    .issue__start-work-sticky__inner
+      max-width: 1132px
+      min-width: 755px
+      display: grid
+      grid-template-columns: 48px 1fr 263px
+    .issue__start-work-sticky__buttons
+      margin-left: 0
+      display: flex
+      justify-content: flex-end
+
+.issue__start-work-sticky--logged-out
+  +desktop
+    padding-left: 40px
+    padding-right: 28px
+    .issue__start-work-sticky__buttons
+      margin-right: 12px
+
+.issue__start-work-sticky__logo
+  grid-area: 1 / 1 / 1 / 1
+  margin-left: 6px
+  margin-top: 1px
+  +desktop
+    width: 36px
+    height: 36px
+  +mobile
+    width: 24px
+    height: 24px
+  position: relative
+  @include broken-image-placeholder
+  .icon, img
+    +desktop
+      width: 36px
+      height: 36px
+    +mobile
+      width: 24px
+      height: 24px
+
+.issue__start-work-sticky__title
+  grid-area: 1 / 2 / 1 / 2
+  flex: 1
+  font-size: 14px
+  margin-left: 10px
+  height: 36px
+  font-weight: $font-medium
+  color: $grey-darker
+  line-height: 18px
+
+.issue__start-work-sticky__buttons
+  margin-left: 12px
+  +mobile
+    margin-right: 6px
+  +desktop
+    margin-right: 12px
+  &>a
+    margin-right: 12px
+
+.issue__other-issues,
+.issue__company-jobs
+  .is-flex
+    justify-content: space-between
+    a
+      line-height: 18px
+
+.issue__contributors
+  small
+    margin-left: 8px
+    font-size: 12px
+    font-weight: normal
+
+.issue__contributor
+  display: flex
+  .issue__contributor__name,
+  .issue__contributor__gh
+    width: 50%
+
+.issue__company-jobs__list
+  +desktop
+    display: flex
+    flex-direction: row
+  +mobile
+    overflow-x: auto
+    overflow-y: hidden
+    white-space: nowrap
+    margin: 0 -18px
+    padding: 0 18px
+    .card
+      width: 80%
+      white-space: normal
+      vertical-align: top
+  .card + .card
+    margin-left: 12px
+
+.issue__edit
+  padding: 18px
+  .issue__edit__header
+    margin-bottom: 8px
+    padding-bottom: 0
+    min-height: 100px
+    display: flex
+    flex-direction: column
+    .issue__edit__top-info
+      line-height: 16px
+      margin-bottom: 16px
+      a
+        color: $greyish
+    .issue__edit__title-container
+      flex: 1 0 auto
+      align-items: center
+  .issue__edit__status
+    .selector
+      width: 100%
+      .selector__option
+        flex: 1
+  .issue__edit__buttons
+    padding: 18px 0 0 0
+  .issue__edit__level
+    padding: 0 // TODO remove when it is decoupled from header
+
+.issue__edit__buttons
+  margin: 0 !important
+  padding: 18px  // TODO remove when it is decoupled from header
+  +mobile
+    padding: 0
+  .button
+    +mobile
+      width: 100%
+  .button + .button
+    +desktop
+      margin-left: 15px
+    +mobile
+      margin-top: 15px
+
+.issue__edit__level
+  display: flex
+  justify-content: space-between
+  padding: 0 18px  // TODO remove when it is decoupled from header
+  +mobile
+    padding: 0
+    .issue__edit__label
+      align-self: start
+      line-height: 30px
+    .radio-item
+      display: block
+  .button
+    width: 120px
+  .wh-formx
+    flex: 1
+
+.issue__edit__compensation
+  display: flex
+  margin-top: 18px
+  .text-field-control
+    width: 90px
+  +mobile
+    margin-bottom: 36px
+
+
+.issue__edit__label
+  line-height: 1.25
+  align-self: center
+  flex-basis: 60px
+  flex-grow: 0
+  flex-shrink: 0
+
+.issue__edit__updating
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  background-color: rgba(255,255,255,0.7)
+
+.issue__edit__updating__spinner
+  @include spinner
+  width: 32px
+  height: 32px
+  left: calc(50% - 16px)
+  top: calc(50% - 16px)
+
+.generic-popup__popup--start-work
+  li, p
+    text-align: left !important
+  li
+    list-style-type: decimal
+    margin-left: 12px
+    line-height: 1.5
+    margin-bottom: 9px
+  button
+    width: auto
+  .clone
+    font-weight: $font-semi-bold
+    color: $red
+
+.generic-popup__popup--webhook-info
+  +desktop
+    left: calc(50% - (600px / 2))
+    top: calc(50% - (700px / 2))
+    width: 600px
+    height: 700px
+  +mobile
+    .info-content
+      margin-bottom: 12px
+      max-height: 250px
+      overflow: scroll
+  p, h2, h3
+    text-align: left !important
+  p
+    font-size: 14px
+    line-height: 1.5
+  button
+    width: auto
+
+.generic-popup__popup--edit-issue
+  +mobile
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    margin: 0
+    padding: 72px 36px
+    .popup__close
+      top: 36px
+      right: 36px
+  +desktop
+    width: 505px
+    left: calc(50% - (505px / 2))
+    padding: 0
+  text-align: left !important
+  .button
+    border-radius: 2px
+  .radios .radio-item
+    label
+      margin-left: 0px
+      margin-right: 12px
+    +desktop
+      &:first-of-type
+        margin-left: 0
+      &:not(:first-of-type)
+        margin-left: 18px
+    +mobile
+      display: block
+
+  .issue__header
+    margin-bottom: 36px
+    padding-bottom: 0
+
+.generic-popup__popup--edit-issue-confirm
+  .issue__confirm-save__buttons
+    button:not(:last-child)
+      margin-right: 12px
+
+.manage-issues-list
+  .repo
+    display: block
+    background: $white
+    padding: 10px 20px
+    margin: 12px 0
+    .repo__header
+      display: flex
+      justify-content: space-between
+      .repo__header__content
+        align-items: center
+        max-width: 84%
+        cursor: pointer
+      .repo__header__toggle
+        width: 10px
+        height: 10px
+        margin-right: 18px
+        cursor: pointer
+      .repo__header__logo
+        width: 30px
+        height: 30px
+      .repo__header__title
+        margin: 0 20px
+        color: $grey-darker
+        font-size: 14px
+        line-height: 18px
+        font-weight: $font-medium
+        overflow: hidden
+        text-overflow: ellipsis
+    .repo__content
+      margin-top: 20px
+      margin-left: 28px
+  .issue
+    border-top: 1px solid $pale-gray
+    padding: 18px 0
+    justify-content: space-between
+    .manage-issues-list__issue__title
+      font-size: 14px
+      line-height: 18px
+      color: $grey-darker
+      padding-right: 20px
+
+.issue-checkbox
+  margin-right: 14px
+
+.repo__checkbox__container
+  position: relative
+  height: 20px
+  margin-bottom: 20px
+
+.repo__checkbox
+  position: absolute
+  right: 14px
+
+.manage-issues-syncing-repo
+  background: $white
+  min-height: 100px
+  padding: 40px
+  margin: 12px 0
+  display: flex
+  flex-direction: column
+  align-items: center
+
+.manage-issues-syncing-repo__spinner
+  @include spinner
+  position: initial !important
+  width: 50px
+  height: 50px
+  margin: 20px
+
+.manage-issues-syncing-repo__text
+  font-weight: $font-semi-bold
+  font-size: 14px
+  margin: 30px
+
+.manage-issues-syncing-issues
+  background: $white
+  min-height: 100px
+  display: flex
+  flex-direction: column
+  align-items: center
+
+.manage-issues-syncing-issues__spinner
+  @include spinner
+  position: initial !important
+  width: 30px
+  height: 30px
+  margin: 10px
+
+.manage-issues-syncing-issues__text
+  font-weight: $font-semi-bold
+  font-size: 14px
+  margin: 10px
+
+.manage-issues-buttons
+  display: flex
+  margin-top: 20px
+  .button
+    flex-grow: 1
+    &.back
+      margin-right: 9px
+    &.update
+      margin-left: 9px
+    .icon
+      margin-right: 10px
+      width: 11px
+      height: 13px
+      fill: $red
+    +mobile
+      width: 100%
+
+
+.publish-container
+  position: relative
+  height: 30px
+  .publish
+    text-transform: uppercase
+    font-size: 9px
+    font-weight: $font-medium
+    color: $greyish
+    position: absolute
+    right: 0
+    &.publish-all
+      margin-right: 20px
+
+.issues__hiring-pod__header
+  display: flex
+  justify-content: space-between
+  .icon
+    min-width: 32px
+    min-height: 32px
+    margin-left: 8px
+
+.issues__hiring-pod__sign-up
+  margin-top: 24px
+  p
+    font-family: $family-secondary
+    font-size: 14px
+    line-height: 21px !important
+    margin-bottom: 18px
+  a, .button
+    display: block
+    width: 100%
+
+.issues__hiring-pod__jobs
+  .button
+    margin-top: 24px
+
+.issues__hiring-pod__job
+  display: flex
+  flex-direction: column
+  font-size: 12px
+  line-height: normal
+  &:first-of-type
+    margin-top: 10px
+  &:not(:first-of-type)
+    margin-top: 24px
+  strong
+    color: $grey-darker
+  a
+    color: $grey-darker
+    text-decoration: none
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow: hidden
+
+.company-pod
+  padding: 18px
+  margin-bottom: 18px
+  &.is-desktop
+    +mobile
+      display: none
+  &.is-mobile
+    +desktop
+      display: none
+
+.company-header__github-links
+  margin-left: 72px
+
+.company-header__github-link
+  display: flex
+  align-items: center
+  .icon
+    margin-left: 8px
+    fill: $greyish
+
+.company-header__top
+  display: flex
+  align-items: center
+  h1
+    color: $grey-darker
+    margin-left: 12px
+    margin-bottom: 0
+  .logo
+    min-width: 60px
+    height: 60px
+    flex: 0
+
+.issues__header
+  &.skeleton
+    @include  skeleton(350px,20px)
+    text-indent: -9999px
+
+.issues__header--public
+  min-height: 435px
+  +mobile
+    padding-bottom: 20px
+
+.issues__header--public__inner
+  margin: 0 auto
+  padding: 18px
+  display: flex
+  max-width: 1084px
+  +mobile
+    max-width: 675px
+    padding: 18px
+    align-items: center
+
+.issues__header--public__inner
+  +mobile
+    flex-direction: column-reverse
+
+.issues__header--public__img
+  flex: 1 0 auto
+  margin-top: -24px
+  +mobile
+    margin-top: -40px
+.issues__header--public__img-inner
+  max-width: 375px
+  +mobile
+    img
+      width: 3650px
+      padding-left: 20px
+
+.issues__header--public__copy
+  flex: 1 1 auto
+  max-width: 578px
+  margin-bottom: 76px
+  +desktop
+    padding-left: 24px
+    padding-right: 20px
+    padding-top: 64px
+  h1
+    color: $steel-gray
+    font-weight: bold
+    font-size: 48px
+    line-height: 60px
+    letter-spacing: 0
+    +desktop
+      margin-bottom: 38px
+    +mobile
+      font-size: 28px
+      line-height: 40px
+  p
+    font-family: $family-secondary
+    font-weight: $font-regular
+    font-size: 16px
+    line-height: 32px
+    letter-spacing: 0
+    color: $grey-darker
+    margin-bottom: 24px
+    +mobile
+      line-height: 26px
+  .button
+    width: 150px
+    height: 40px
+    font-weight: bold
+    &.find-out-more
+      +desktop
+        margin-left: 32px
+      +mobile
+        margin-top: 18px
+    +mobile
+      width: 100%
+
+.issues__sorting
+  color: $steel-gray
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 18px
+  +mobile
+    flex-direction:  column
+    align-items: flex-start
+
+.issues__count
+  font-size: 14px
+  font-style: italic
+  font-weight: $font-medium
+  flex-grow: 1
+  &.skeleton
+    span
+      @include skeleton(163px,20px)
+      display: block
+      text-indent: -9999px
+  +mobile
+    margin-bottom: 18px
+
+.issues__sorting__dropdown__container
+  height: 44px
+  display: flex
+  flex-grow: 1
+  align-items: center
+  .select
+    font-size: 14px
+  span
+    margin-right: 20px
+  +mobile
+    width: 100%
+
+.issues__sorting__dropdown
+  flex-grow: 1
+  height: 44px
+
+.issues__sorting__dropdown__label
+  font-size: 9px
+  font-weight: $font-medium
+  text-transform: uppercase
+
+.issues__stats__balls
+  display: flex
+  text-align: center
+  position: relative
+  width: 100%
+  +desktop
+    height: 740px
+  +mobile
+    margin: 36px 0
+    min-height: 430px
+
+.issues__stats__ball
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  background-repeat: no-repeat
+  position: absolute
+  p
+    font-family: $family-secondary
+  strong
+    font-family: $family-secondary
+    font-size: 21px
+    line-height: 24px
+    letter-spacing: -1px
+    color: #434e55
+    margin-bottom: 12px
+    font-weight: normal
+    &:empty
+      display: none
+
+.issues__stats__balls
+  +mobile
+    width: 294px
+
+.issues__stats__ball--grey
+  background-image: url('/images/hiw/balls/grey.svg')
+  width: 165px
+  height: 165px
+  +desktop
+    top: 24px
+    right: 24px
+  strong
+    font-size: 26px
+    line-height: 24px
+  p
+    width: 122px
+    font-size: 16px
+    line-height: 21px
+    +mobile
+      font-size: 14px
+  +mobile
+    top: 0
+    right: -50px
+
+.issues__stats__ball--blue
+  background-image: url('/images/hiw/balls/blue.svg')
+  width: 210px
+  height: 210px
+  +desktop
+    top: 138px
+    left: 40px
+  +mobile
+    top: 0
+    left: 0
+  strong
+    font-size: 44px
+    line-height: 36px
+  +mobile
+    margin-top: 24px
+  p
+    font-size: 16px
+    line-height: 21px
+    width: 144px
+    +mobile
+      font-size: 14px
+
+.issues__stats__ball--orange
+  background-image: url('/images/hiw/balls/orange.svg')
+  width: 204px
+  height: 204px
+  +desktop
+    top: 350px
+    right: 20px
+  +mobile
+    width: 170px
+    height: 170px
+    top: 170px
+    right: -40px
+  strong
+    font-size: 30px
+    +mobile
+      font-size: 28px
+  p
+    font-size: 18px
+    line-height: 18px
+    width: 140px
+    +mobile
+      width: 100px
+      font-size: 14px
+
+.issues__stats__ball--yellow
+  background-image: url('/images/hiw/balls/yellow.svg')
+  width: 204px
+  height: 204px
+  +desktop
+    top: 520px
+    left: 40px
+  +mobile
+    width: 190px
+    height: 190px
+    top: 240px
+    left: 0
+  strong
+    font-size: 42px
+  p
+    font-size: 16px
+    line-height: 21px
+    width: 140px
+    +mobile
+      font-size: 14px

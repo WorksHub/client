@@ -1,0 +1,474 @@
+$field-height: 44px
+$field-padding: 12px
+$logo-dimension: 62px
+
+@mixin hover-focus-state
+  border-width: 2px
+  padding: 11px
+
+@mixin form-fieldx
+  border-radius: 0
+  box-shadow: none
+  font-size: 14px
+  background: white
+  input, textarea, select
+    color: $steel-gray
+    border: solid 1px $steel-gray
+    &:focus, &:focus-within, &:hover
+      @include hover-focus-state
+
+@mixin splitter-hr($gap)
+  &:before
+    content: ""
+    position: absolute
+    height: 1px
+    background: $steel-gray
+    left: $gap
+    right: $gap
+
+.wh-formx__layout
+  max-width: 700px
+  margin: 0 auto
+  +mobile
+    max-width: 815px
+
+.wh-formx-page-container
+  margin: auto
+  max-width: 815px
+  min-width: 250px
+
+.wh-formx
+  p
+    color: $steel-gray
+    line-height: 1.5em
+  fieldset
+    border: none
+    margin-top: 10px
+    &:first-of-type
+      margin-top: 0
+  .field
+    margin-bottom: 0.75rem
+    color: $steel-gray
+    +mobile
+      margin-bottom: 0
+    &:last-of-type
+      margin-bottom: 0
+  .help
+    font-size: 12px
+    line-height: 18px
+  .field__error
+    font-weight: $font-medium
+    line-height: 1.6em
+  .field--invalid
+    color: $dark-red !important
+  .field--errored
+    .input, .textarea, .select > select, .text-field-control, .quill
+      color: $dark-red
+      border-color: $dark-red
+  .field:focus-within
+    &.field--errored
+      .input, .textarea
+        background: none
+  .select
+    @include form-fieldx
+    select
+      border-radius: 0
+      height: $field-height
+      width: 100%
+      padding: 12px
+    height: $field-height
+    width: 100%
+    line-height: $field-height
+  .text-field-control
+    @include form-fieldx
+    &:focus-within
+      .input__suggestions
+        @include hover-focus-state
+        padding: 1px 0 0 0
+    .search-icon
+      position: absolute
+      left: 12px
+      top: 12px
+      width: 18px
+      height: 18px
+  .text-field-control--suggestable
+    input
+      padding-left: 40px
+      &:hover, &:focus
+        padding-left: 39px !important
+  .text-field-control--showing-suggestions
+    input
+      border-bottom: 0
+      padding-top: 9px !important /* fixes shift */
+
+  .text-field-markdown-preview
+    border: 1px solid $steel-gray
+    padding: 12px
+  .input, .textarea
+    padding: $field-padding
+    border-radius: 0
+    box-shadow: none
+    font-size: 14px
+    outline: none
+    border: none
+    &::placeholder
+      font-size: 12px
+      line-height: 18px
+      color: $greyish
+  .input
+    height: $field-height
+  .textarea
+    line-height: 24px
+  .label
+    font-size: 12px
+    line-height: 18px
+    font-weight: $font-medium
+    color: $steel-gray
+    margin-bottom: 0px
+    &:first-child
+      margin-top: 12px
+      +mobile
+        margin-top: 10px
+  .help--markdown
+    display: none
+  .input__suggestions
+    border: 1px solid $steel-gray
+    border-top: 0
+    font-size: 14px
+    position: absolute
+    width: 100%
+    background: white
+    z-index: $dropdown-content-z
+    padding: 0px 1px 1px 1px
+    top: calc(#{$field-height} - 2px) /* overlaps input */
+    li
+      padding: 6px 0px 6px 14px
+      cursor: pointer
+      position: relative
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+      &:not(:last-of-type)
+        &:after
+          content: ""
+          position: absolute
+          height: 1px
+          background: $lighter-gray
+          left: 15px
+          right: 15px
+          bottom: 0
+      &:hover
+        background-color: $lighter-gray
+    @include splitter-hr(15px)
+    &:after
+      content: ""
+      position: absolute
+      width: 100%
+      height: calc(100% + #{$field-height})
+      bottom: 0
+      box-shadow: 4px 4px 4px $steel-gray
+      pointer-events: none
+  .label__markdown-menu
+    display: flex
+    justify-content: stretch
+  .label__markdown-left
+    flex: 1
+  .label__markdown-right
+    text-align: right
+    font-weight: $font-regular
+    a
+      font-weight: $font-semi-bold
+  .multiple-buttons .button
+    margin: 4px
+  .help--medium
+    font-size: 1em
+  .buttons
+    margin-top: 8px
+    +mobile
+      display: none
+  .buttons-container
+    display: flex
+    justify-content: flex-end
+    .button:not(:last-child)
+      margin-right: 12px
+  .help--medium
+    font-size: 1em
+  .button
+    border-radius: 2px
+  .tags-container
+    position: relative
+    .field
+      .field__error
+        display: none
+    .field
+      margin: 0
+      input
+        border-bottom: 0
+    &:hover, &:focus-within
+      .tags-selection
+        @include hover-focus-state
+        @include splitter-hr(14px)
+        padding: 1px 0 0 0
+      input
+        @include hover-focus-state
+  .tags-selection
+    color: $steel-gray
+    border: 1px solid $steel-gray
+    border-top: 0
+    background-color: white
+    position: relative
+    padding: 1px
+    @include splitter-hr(15px)
+  .tags-roll
+    width: 28px
+    height: 28px
+    fill: $steel-gray
+    float: right
+    cursor: pointer
+    transition: transform 0.3s ease
+    transform: rotate(180deg)
+    margin-top: 10px
+  .tags
+    padding: 10px 0px 5px 10px
+    overflow: hidden
+    li
+      cursor: pointer
+      opacity: 0.4
+      transition: opacity 200ms linear
+      &.tag--selected
+        opacity: 1
+        padding-right: 28px
+  .tags--selected
+    padding-bottom: 0
+  .tags--unselected
+    padding-top: 0
+    display: block
+  .tags-container--collapsed
+    .tags-roll
+      transform: none
+    .tags
+      transform: none
+    .tags--unselected
+      display: none
+    .tags--no-selected
+      max-height: 46px
+  .tags-loading, .tags-empty
+    text-indent: 15px
+    line-height: 51px
+  .tags-container--errored
+    color: $dark-red
+    .tags-selection
+      color: $dark-red
+      border-color: $dark-red
+    hr
+      background-color: $dark-red
+  .tag
+    position: relative
+    .icon
+      position: absolute
+      top: 8px
+      right: 4px
+      fill: $red
+      width: 14px
+      height: 14px
+  .tag-add
+    position: absolute
+    top: 18px
+    right: 0
+    height: 45px
+    padding: 10px
+    cursor: pointer
+    &:hover
+      opacity: 0.7
+    .icon
+      height: 14px
+      width: 14px
+
+  .logo
+    color: $steel-gray
+    width: $logo-dimension
+    height: $logo-dimension
+    background-color: white
+    border: 1px solid $steel-gray
+    padding: 1px
+    cursor: pointer
+    img
+      width: auto
+      height: calc(#{$logo-dimension} - 4px)
+    .control
+      text-align: center
+    input, label
+      cursor: pointer
+    &:hover
+      border-width: 2px
+      padding: 0px
+    .field__error
+      display: none
+  .logo--errored, .logo__add-new--errored
+    color: $dark-red
+    border-color: $dark-red
+  .logo__add-new
+    cursor: pointer
+  .logo__add-new--empty
+    font-weight: $font-semi-bold
+    font-size: 16px
+    font-variant: small-caps
+    line-height: 18px
+    padding-top: 14px
+    &> div:first-child
+      font-size: 26px
+  .logo__is-loading
+    color: transparent !important
+    pointer-events: none
+    position: relative
+    height: 100%
+    &:after
+      @include spinner
+      left: calc(50% - (1em / 2))
+      top: calc(50% - (1em / 2))
+
+.tag--skeleton
+  background-color: $skeleton-background-color !important
+  border-radius: 5px
+
+.wh-formx--left
+  margin: 0px
+
+.wh-formx--compact
+  max-width: 400px
+
+.form-error
+  display: flex
+  width: 100%
+  line-height: 18px
+  +mobile
+    margin-top: 10px
+
+.form-error__emoji
+  font-size: 14px
+
+.file-input
+  display: none
+
+@mixin checkbox-and-radio
+  width: 20px
+  height: 20px
+  display: inline-block
+  vertical-align: middle
+  margin-right: 5px
+  cursor: pointer
+  background: white
+
+.checkbox
+  color: $steel-gray
+  input[type=checkbox]
+    visibility: hidden
+    width: 0
+    &:checked + label
+      background-repeat: no-repeat
+      background-position: 3px 4px
+      background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiNmZjdjNmUiLz48L3N2Zz4=")
+      border-color: $red
+  label
+    @include checkbox-and-radio
+    border: 1px solid $steel-gray
+
+.checkbox--indeterminate
+  label
+    background-repeat: no-repeat
+    background-position: 3px -1px
+    background-size: 70%
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 9 h-9 h-6 h-9 v6 h9 h6 h9 z' fill='%236e7f89'/%3E%3C/svg%3E");
+    border-color: $steel-gray
+
+.radios
+  display: inline-block
+  input[type=radio]
+    width: 0
+    visibility: hidden
+    &:checked + label, &:checked + .radio > label
+      background-color: white
+      &::after
+        position: absolute
+        content: ' '
+        background-color: $steel-gray
+        border: 0
+        border-radius: 10px
+        width: 12px
+        height: 12px
+        top: 2px
+        left: 2px
+  label
+    @include checkbox-and-radio
+    border: 1px solid $steel-gray
+    border-radius: 10px
+    background-color: $grey
+    transition: background-color 0.3s linear
+    background-color: white
+    margin: 0 6px 0 6px
+    width: 18px
+    height: 18px
+    position: relative
+
+.radio
+  +desktop
+    margin: 16px
+  border: 1px solid $steel-gray
+  border-radius: 20px
+  width: 20px
+  height: 20px
+
+.checkbox--disabled
+  opacity: 0.4
+
+.quill
+  border-color: $steel-gray
+  +desktop
+    max-width: 470px
+  +mobile
+    max-width: 815px
+  .ql-toolbar
+    .ql-formats
+      margin-right: 0 !important
+    .ql-snow
+      +desktop
+        min-width: 442px
+    +mobile
+      max-height: 46px
+  &:hover
+    .ql-toolbar
+      @include hover-focus-state
+      padding: 7px
+    .ql-container
+      @include hover-focus-state
+      padding: 0
+      .ql-editor
+        padding: 12px 14px
+      .ql-editor.ql-blank::before
+        left: 14px
+        right: 14px
+
+.ql-snow
+  .ql-editor
+    ul
+      margin-bottom: 10px
+      padding-left: 0
+    h2
+      margin-bottom: 5px
+
+.rc-slider-track
+  background-color: $red !important
+
+.rc-slider-handle
+  border-color: $red !important
+  width: 22px !important
+  height: 22px !important
+  margin-top: -10px !important
+  margin-left: -11px !important
+  &:focus
+    box-shadow: 0 0 0 5px $light-red !important
+
+.pseudo-link
+  color: $steel-gray
+  font-weight: $font-semi-bold
+  text-decoration: underline

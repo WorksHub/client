@@ -1,0 +1,275 @@
+.package-selector
+  +mobile
+    position: relative
+
+.package-selector--mobile-fullscreen
+  .package-selector__column
+    +mobile
+      padding: 0px 10% 0 10%
+      margin: 0
+      min-width: 100%
+      overflow-y: auto
+      transition: margin-left 0.5s
+      &::-webkit-scrollbar
+        width: 0px
+      &::-webkit-scrollbar-track
+        background: transparent
+      &::-webkit-scrollbar-thumb
+        background: transparent
+      &::-webkit-scrollbar-thumb:hover
+        background: transparent
+
+.package-selector__columns
+  +mobile
+    margin: 0
+  +desktop
+    padding-left: 12px
+    justify-content: center
+
+.package-selector__column
+  color: $steel-gray
+  text-align: center
+  padding: 0
+  +desktop
+    max-width: 300px
+    margin: 1.5%
+  +mobile
+    padding-top: 25px
+    margin-bottom: 5px
+
+.package-selector__column-inner
+  padding: 24px 18px 18px 18px
+  background-color: white
+  +mobile
+    margin-bottom: 40px
+
+.package-selector__title
+  margin-top: 26px
+  color: $steel-gray
+  font-size: 18px
+  font-weight: $font-semi-bold
+  line-height: 18px
+
+.package-selector__logo
+  width: 90px
+  height: 90px
+  margin: auto
+
+.package-selector__price
+  display: flex
+  flex-direction: column
+  color: $steel-gray
+  position: relative
+  max-width: 200px
+  margin: 0 auto
+  height: 50px
+
+.package-selector__amount
+  font-size: 18px
+  font-weight: $font-semi-bold
+  line-height: 22px
+  letter-spacing: 0.5px
+
+.package-selector__amount-per,
+.package-selector__amount-billed
+  height: 14px
+  font-size: 12px
+  line-height: 14px
+  font-style: italic
+
+.package-selector__current-plan
+  text-transform: uppercase
+  font-size: 11px
+  font-weight: $font-semi-bold
+
+.package-selector__button,
+.package-selector__current-plan
+  margin-top: 20px
+  .button
+    width: 100%
+    height: 40px
+    border-radius: 4px
+
+.package-selector__button--restricted
+  background: white
+  color: $greyish
+  border: solid 1px $greyish
+  pointer-events: none
+
+.package-selector__live-jobs
+  border-top: 1px solid $pale-gray
+  border-bottom: 1px solid $pale-gray
+  margin-top: 16px
+  height: 38px
+  text-align: left
+  div
+    margin-top: 7px
+  strong
+    color: $steel-gray
+    font-size: 12px
+    font-weight: $font-semi-bold
+    line-height: 14px
+    margin-right: 3px
+
+.package-selector__perks
+  margin-top: 24px
+
+.package-selector__perk
+  display: flex
+  justify-content: space-between
+  align-items: center
+  text-align: left
+  line-height: 14px
+  margin: 12px 0
+  .icon
+    margin-left: 8px
+    width: 14px
+    min-width: 14px
+    height: 14px
+
+.package-selector__perk--included
+  color: $red
+  font-weight: $font-medium
+
+.package-selector__billing-period-selector
+  width: 100%
+  display: flex
+  justify-content: center
+
+.package-selector__get-in-touch
+  height: 50px
+  span
+    font-style: italic
+    line-height: 12px
+    display: inline-block
+.package-selector__get-in-touch.package-selector__button
+  margin: 0
+
+.package-selector__discount-badge
+  position: absolute
+  right: 0
+  top: -10px
+  text-transform: uppercase
+  display: flex
+  flex-direction: column
+  line-height: 12px
+  color: $greyish
+  border: 1px solid $greyish
+  padding: 5px 6px
+  border-radius: 40px
+  font-size: 11px
+  font-weight: $font-semi-bold
+
+.package-selector__restricted
+  opacity: 0.6
+
+.package-selector__slide-buttons
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  z-index: 10
+
+.package-selector__slide-buttons-inner
+  position: relative
+  .hidden
+    display: none
+  svg:first-child
+    fill: $red
+    height: 37px
+    width: 37px
+  svg:last-child
+    fill: white
+    position: absolute
+    top: 10px
+    left: 10px
+    height: 18px
+    width: 18px
+  &>div
+    position: absolute
+    top: 165px
+    color: white
+  &>div:first-child
+    left: 0px
+  &>div:last-child
+    right: 0px
+
+.package-selector__slide-buttons-disabled
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  background: rgba(255,255,255,0.7)
+  &>div
+    @include spinner
+    width: 32px
+    height: 32px
+    left: calc(50% - 16px)
+    top: 50px
+
+.package-selector__container
+  position: relative
+.package-selector__info-message.package-selector__columns
+  position: absolute
+  bottom: 0
+  justify-content: flex-start
+  margin-bottom: 1%
+  overflow-y: hidden
+  height: 260px
+  font-size: 14px
+  line-height: 24px
+  transition: height 0.5s
+  &.is-collapsed
+    +mobile
+      height: 130% !important
+  .package-selector__column
+    max-width: unset
+    padding: 0
+    margin: 0
+    &.is-3
+      padding-right: 14px
+    &.is-6
+      padding-right: 12px
+  .package-selector__column-inner
+    position: relative
+    background-color: $green
+    height: 100%
+    p
+      color: white
+      margin-top: 30px
+      text-align: left
+      line-height: 24px
+  .icon
+    position: absolute
+    fill: white
+    width: 24px
+    height: 24px
+  .info-icon
+    top: 16px
+    left: 18px
+  .close-icon
+    cursor: pointer
+    top: 14px
+    right: 14px
+    &:hover
+      opacity: 0.5
+
+.package-selector--mobile-fullscreen
+  .package-selector__info-message.package-selector__columns
+    +mobile
+      position: fixed
+      bottom: 0
+      top: 0
+      height: 100%
+      font-size: 2vh
+      p
+        line-height: 3vh
+        margin-top: 20px
+    .package-selector__column
+      +mobile
+        height: 20%
+        padding: 0 !important
+        position: absolute
+        bottom: 0
+        transition: height 0.5s

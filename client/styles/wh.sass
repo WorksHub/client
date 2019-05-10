@@ -1,0 +1,313 @@
+@import "../vendor/bulma/sass/utilities/initial-variables"
+//@import url('https://fonts.googleapis.com/css?family=Montserrat:400,400i,500,600,800')
+// maybe we dont need 800 if we are not rendering logo in text
+// 2. Set your own initial variables
+
+$button-hover: #ff9f95
+$circle-logo-backround: #f5f4f8
+$circle-logo-border: $green
+$dark-gray: #98BAC8
+$dark-red: #c4000f
+$dark-salmon: #bf5d52
+$disabled-gray: #e8e8e8
+$green: #80b5bc
+$grey-blue: #97bac9
+$grey-darker: #434E55
+$grey: #dedede
+$greyish: #adadad
+$hero-grey: #f5f8fa
+$hover-red: #ffb1a8
+$light-blue-grey: #c4d4dd
+$light-blue: #d4f4f2
+$light-gray: #e6edf2
+$light-orange: #ffae71
+$light-peach: #f9e3d4
+$light-red: #ffdedb
+$lighter-gray: #e5e8ea
+$lighter-red2: #feecea
+$lighter-red: #ffe9e7
+$main-black: #4a4a4a
+$metal-blue: #7eb5bd
+$more-gray: #d8d8d8
+$pale-gray: #f4f5f8
+$pale-red: #ffd4cf
+$pinkish-grey: #bcbcbc
+$red: #ff7c6e
+$hover-orange: #ff9f90
+$sand: #f7f3f0
+$skeleton-background-color: #ddd
+$snow: #fffaf9
+$steel-gray: #6E7F89
+$wh-black: #171717
+$white-two: #dbdbdb
+$pale-blue: #f2f7f8
+$sea-blue: #136d79
+
+
+$steel-gray-with-alpha: rgba(37, 65, 84, 0.6)
+
+$hover-colors: $light-red, $light-orange, $red, $metal-blue, $light-peach, $grey-blue, $light-blue-grey, $steel-gray
+
+$font-regular: 400
+$font-medium: 500
+$font-semi-bold: 600
+$font-extra-bold: 800
+
+$control-radius: 3px
+$radius: 10px
+
+$left-menu-width: 210px
+$body-line-height: 30px
+$body-size: 12px
+$gap: 24px
+$tablet	: 960px + (2 * $gap)
+$desktop: 960px + (2 * $gap)
+$navbar-breakpoint: $tablet
+
+$body-background-color: $light-gray
+$family-primary: 'Montserrat', sans-serif
+$family-secondary: 'Inconsolata', sans-serif
+
+$dropdown-content-background-color: $red
+$dropdown-item-color: $white
+
+$link: $grey-darker
+$link-hover: $grey-darker
+$link-hover-border: $grey-darker
+
+$navbar-height: 76px
+$navbar-padding-vertical: 0px
+$navbar-mobile-height: 46px
+$navbar-item-img-max-height: 40px
+$navbar-item-color: $steel-gray
+$navbar-item-hover-color: $steel-gray
+$navbar-dropdown-item-hover-color: $steel-gray
+$navbar-mobile-logo-height: 26px
+
+$file-cta-hover-color: white
+$file-cta-background-color: $red
+
+@mixin skeleton($w:"", $h:"")
+  background-color: $skeleton-background-color
+  border-radius: 5px
+  @if $w != ""
+    width: $w
+  @if $h != ""
+    height: $h
+
+@import "../vendor/bulma/sass/utilities/_all"
+@import "../vendor/bulma/sass/base/_all"
+@import "../vendor/bulma/sass/grid/columns"
+@import "../vendor/bulma/sass/elements/form"
+@import "../vendor/bulma/sass/elements/icon"
+@import "../vendor/bulma/sass/elements/table"
+@import "../vendor/bulma/sass/components/dropdown"
+@import "../vendor/bulma/sass/components/message"
+@import "../vendor/bulma/sass/components/navbar"
+@import "../vendor/bulma/sass/components/pagination"
+
+@keyframes show-mobile-search
+  from
+    width: 0
+  to
+    width: 120px
+
+.icon__container
+  display: inline-block
+  position: relative
+  cursor: pointer
+  &:hover .icon__tooltip
+    opacity: 1
+    bottom: calc(100% + 5px)
+
+.icon
+  shape-rendering: geometricPrecision
+
+.icon__tooltip
+  background-color: $greyish
+  border-radius: 3px
+  bottom: calc(100% + 15px)
+  color: #fff
+  display: inline-block
+  left: 50%
+  margin-left: -50%
+  opacity: 0
+  text-align: center
+  transition: all .3s ease
+  padding: 5px
+  position: absolute
+  width: 100px
+  &:before
+    border-top: solid $greyish 5px
+    border-bottom: solid transparent 5px
+    border-left: solid transparent 5px
+    border-right: solid transparent 5px
+    content: ""
+    height: 0
+    margin-left: -9px
+    position: absolute
+    top: 100%
+    width: 0
+
+.heavy-logo
+  font-weight: $font-extra-bold
+  margin-right: 2px
+
+.wh-error
+  +mobile
+    display: none
+
+.load-wrap
+  position: relative
+  .loader-container
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background-color: white
+    z-index: 50
+    display: flex
+    align-items: center
+    justify-content: center
+
+#app
+  background-color: $pale-gray
+  height: 100%
+  overflow-x: hidden
+  overflow-y: auto
+
+  .main-panel
+    height: 100%
+    display: grid
+    grid-template-columns: $left-menu-width 1fr
+    grid-template-rows: $navbar-height 1fr
+    +mobile
+      grid-template-rows: 46px 1fr
+      grid-template-columns: 100%
+
+    .navbar
+      grid-column: 1 / 3
+
+    .page-container
+      overflow-y: auto
+      overflow-x: hidden
+      -webkit-overflow-scrolling: touch
+
+    .page-container--no-menu
+      grid-column: 1 / 3
+
+=popup
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)
+  position: fixed
+  background: white
+  z-index: 1000
+  color: $wh-black
+  line-height: 27px
+
+.consent-popup
+  +popup
+  padding: 15px 15px 0 25px
+  .button
+    position: absolute
+    bottom: 20px
+    left: 30px
+  .consent-error
+    position: absolute
+    bottom: 30px
+    left: 95px
+  +desktop
+    top: calc(100vh / 2 - 165px)
+    left: calc(100vw / 2 - 305px)
+    width: 610px
+    height: 330px
+  +mobile
+    top: $navbar-mobile-height
+    left: 0
+    width: 100%
+    height: calc(100% - 46px)
+    .consent-error
+      bottom: 15px
+      padding-right: 10px
+
+.tracking-popup
+  +popup
+  padding: 15px 15px 15px 25px
+  bottom: 0
+  border: 10px solid $light-blue-grey
+  .button
+    margin-top: 15px
+  +desktop
+    left: calc(100vw / 2 - 305px)
+    width: 610px
+  +mobile
+    width: 100%
+    line-height: 22px
+    border: 0
+    padding: 10px 17px
+
+.tracking-popup--collapsed
+  display: flex
+  justify-content: space-between
+  align-items: center
+  .button
+    margin: 0
+    width: 120px
+
+@import "fonts"
+@import "animation"
+@import "navbar"
+@import "overlay"
+@import "loaders"
+@import "buttons"
+@import "dropdown"
+@import "bubbles"
+@import "menu"
+@import "forms"
+@import "formsx"
+@import "cards"
+@import "dashboard"
+@import "register"
+@import "profile"
+@import "login"
+@import "employers"
+@import "company"
+@import "links"
+@import "chatbot"
+@import "contribute"
+@import "layout"
+@import "blog"
+@import "job"
+@import "policy"
+@import "banners"
+@import "homepage"
+@import "responsive"
+@import "candidates"
+@import "error"
+@import "search"
+@import "modifiers"
+@import "pods"
+@import "tabs"
+@import "payment"
+@import "selector"
+@import "notifications"
+@import "packages"
+@import "issues"
+@import "www"
+@import "footer"
+@import "sitemap"
+@import "pricing"
+@import "pagination"
+@import "verticals"
+@import "how_it_works"
+@import "faq"
+@import "get_started"
+
+html, body
+  height: 100%
+  width: 100%
+  overflow: visible
+  position: fixed
+
+@import "../vendor/rc-slider/rc-slider"
+@import "../vendor/quill/quill.snow-custom"

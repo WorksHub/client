@@ -1,0 +1,23 @@
+.pagination
+  margin-top: 25px
+
+.pagination-link
+  font-size: 11px
+  margin-left: 6px
+  margin-right: 6px
+  width: 30px
+  height: 30px
+  border-radius: 2px
+  border: solid 1px $white-two
+  background-color: $white
+  color: #c5c6c5
+  font-weight: $font-semi-bold
+  &:hover
+    background-color: $disabled-gray
+    border: solid 1px $white-two
+    color: #c5c6c5
+    transition: background-color $transition-time, color $transition-time
+  &.is-current
+    border: solid 1px $steel-gray
+    background-color: $steel-gray
+    color: $white

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 222 223" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(-343 -2775)">
+            <g transform="translate(40 2566)">
+                <g transform="translate(304 210)">
+                    <ellipse cx="110" cy="110.5" rx="110" ry="110.5" fill="#F9E3D4" stroke="#6E7F89"/>
+                    <path d="m25.173 110.26c0.0046347-56.268 42.211-103.46 97.827-109.39-4.5028-0.5691-9.0361-0.86001-13.574-0.8711-40.459-0.035105-77.629 22.412-96.625 58.353-18.996 35.94-16.712 79.497 5.9377 113.23 22.65 33.729 61.962 52.117 102.19 47.799-54.697-6.8814-95.746-53.658-95.757-109.12z" fill="#000" fill-rule="nonzero" opacity=".08"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

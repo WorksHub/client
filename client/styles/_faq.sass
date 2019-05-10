@@ -1,0 +1,81 @@
+.faq
+  display: flex;
+  +mobile
+    flex-direction: column
+
+.faq__column
+  +desktop
+    width: calc(50% - 10px)
+  display: inline-block
+  &:nth-of-type(odd)
+    margin-right: 10px
+  &:nth-of-type(even)
+    margin-left: 10px
+
+.faq__intro
+  padding: 0px 0 40px 0
+  +mobile
+    padding: 0px 0 8px 0
+  h2
+    font-family: $family-secondary
+    font-weight: $font-regular
+    font-size: 16px
+    line-height: 22px
+    letter-spacing: 1px
+    margin-bottom: 22px
+    color: $grey-darker
+    +mobile
+      font-size: 14px
+      margin-bottom: 18px
+  .button
+    border-radius: 4px
+    height: 40px
+    text-transform: lowercase
+    font-size: 14px
+    padding: 0 16px
+  .pricing__subtitle
+    font-size: 16px
+    line-height: 32px
+    margin-bottom: 32px
+
+.faq__question
+  padding: 30px 24px 24px 24px
+  background-color: $pale-gray
+
+.faq__question__title
+  font-family: $family-primary
+  color: $steel-gray
+  font-size: 18px
+  font-weight: bold
+  line-height: 22px
+  margin-bottom: 12px
+  +mobile
+    display: flex
+    justify-content: space-between
+    .icon
+      margin-top: -6px
+      margin-right: -10px
+      margin-left: 10px
+      fill: $steel-gray
+      min-width: 32px
+      min-height: 32px
+      transition: transform 0.2s
+      transform: rotate(0deg)
+      &.collapsed
+        transform: rotate(180deg)
+
+.faq__question__answer
+  font-family: $family-secondary
+  font-size: 16px
+  font-weight: normal
+  line-height: 26px
+  overflow-y: hidden
+  transition: max-height 0.4s
+  max-height: 630px
+  +mobile
+    &.collapsed
+      max-height: 0px
+
+.faq__intro,
+.faq__question
+  margin-bottom: 20px

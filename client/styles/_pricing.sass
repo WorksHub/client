@@ -1,0 +1,148 @@
+.main-wrapper--pricing
+  padding-top: 50px
+  background-color: white
+
+.pricing
+  .package-selector__column-inner
+    background-color: $pale-gray
+
+.pricing__title
+  color: $steel-gray
+  font-size: 44px
+  font-weight: bold
+  line-height: 58px
+  letter-spacing: 0
+.pricing__subtitle
+  font-family: $family-secondary
+  font-size: 16px
+  font-weight: normal
+  line-height: 22px
+  letter-spacing: 0.9px
+  margin-bottom: 12px
+
+.pricing-content
+  max-width: 834px
+  margin: 0 auto;
+  padding-bottom: 18px
+  +mobile
+    padding: 0px 18px 18px 18px
+.pricing-content:not(:first-of-type)
+  .pricing__title
+    color: $red
+    +desktop
+      width: 50%
+    font-size: 36px
+    line-height: 48px
+.pricing-content:last-of-type
+  padding-bottom: 100px
+
+.pricing__billing-period-selector-wrapper
+  h1
+    +desktop
+      margin-right: 10px
+  display: flex
+  justify-content: space-between
+  +mobile
+    flex-direction: column
+
+.pricing__billing-period-selector
+  min-width: 180px
+  padding-top: 12px
+  font-family: $family-secondary
+  font-size: 16px
+  line-height: 26px
+  +mobile
+    margin-bottom: 30px
+  .radios
+    display: flex
+    flex-direction: column
+  .radio
+    border-color: $pale-red
+    white-space: nowrap
+    margin: 6px 0 !important
+  .radio__checked
+    position: absolute
+    background-color: $red
+    width: 12px
+    height: 12px
+    top: 3px
+    left: 3px
+    border-radius: 6px
+  .radio__label
+    margin-left: 36px
+    margin-top: -1px
+    small
+      margin-left: 4px
+      font-size: 11px
+
+  .radio--checked
+    border-color: $red
+
+.pricing__faqs
+  display: flex;
+  +mobile
+    flex-direction: column
+
+.pricing__faqs__column
+  +desktop
+    width: calc(50% - 10px)
+  display: inline-block
+  &:nth-of-type(odd)
+    margin-right: 10px
+  &:nth-of-type(even)
+    margin-left: 10px
+
+.pricing__faqs__intro
+  padding: 0px 0 40px 0
+  .button
+    border-radius: 4px
+    height: 40px
+    text-transform: lowercase
+    font-size: 14px
+    padding: 0 16px
+  .pricing__subtitle
+    font-size: 16px
+    line-height: 32px
+    margin-bottom: 32px
+
+.pricing__faqs__question
+  padding: 30px 24px 24px 24px
+  background-color: $pale-gray
+
+.pricing__faqs__question__title
+  font-family: $family-primary
+  color: $steel-gray
+  font-size: 18px
+  font-weight: bold
+  line-height: 22px
+  margin-bottom: 12px
+  +mobile
+    display: flex
+    justify-content: space-between
+    .icon
+      margin-top: -6px
+      margin-right: -10px
+      margin-left: 10px
+      fill: $steel-gray
+      min-width: 32px
+      min-height: 32px
+      transition: transform 0.2s
+      transform: rotate(0deg)
+      &.collapsed
+        transform: rotate(180deg)
+
+.pricing__faqs__question__answer
+  font-family: $family-secondary
+  font-size: 16px
+  font-weight: normal
+  line-height: 26px
+  overflow-y: hidden
+  transition: max-height 0.4s
+  max-height: 630px
+  +mobile
+    &.collapsed
+      max-height: 0px
+
+.pricing__faqs__intro,
+.pricing__faqs__question
+  margin-bottom: 20px

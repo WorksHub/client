@@ -1,0 +1,282 @@
+$min-card-width: 247px
+$max-job-card-width: (742px - 12px) / 2 /* two cards in a standard content section inc. 12px margin */
+$card-border: 8px
+$tag-height: 14px
+$tag-padding: 8px
+$tag-spacing: 6px
+$card-job-padding: 15px
+
+.tags
+  li
+    font-size: 11px
+    line-height: $tag-height
+    padding: $tag-padding
+    font-weight: $font-semi-bold
+    display: inline-block
+    background-color: $lighter-red
+    color: $red
+    margin-right: $tag-spacing
+    margin-bottom: $tag-spacing
+    border-radius: 2px
+    text-transform: uppercase
+    &:last-child
+      margin-right: 0
+  li.tag-separator
+    background: none
+    color: $greyish
+    padding-left: 6px
+    padding-right: 6px
+
+.tags--inline
+  display: inline-block
+
+.tags__job
+  margin-top: 19px
+  li
+    cursor: pointer
+
+.card
+  width: 100%
+  min-width: $min-card-width
+  display: inline-block
+  text-align: left
+  background: white
+  position: relative
+
+.card__label
+  padding: 6px
+  border-radius: 2px
+  text-transform: uppercase
+  border: 1px solid $steel-gray
+  height: 30px
+  line-height: 30px
+  align-items: center
+  display: inline-flex
+  align-self: flex-start
+  font-size: 11px
+  font-weight: $font-semi-bold
+
+.card__label--job
+  position: absolute
+  bottom: $card-job-padding
+  right: $card-job-padding
+
+.button--edit-blog
+  margin: 6px 0
+
+.card__label--blog
+  margin: 6px 0
+  &:last-child
+    margin-left: 6px
+
+.card__label--unpublished
+  background-color: $light-orange
+  border: none
+  color: white
+
+.card--blog
+  height: 395px
+  overflow: hidden // make .hero respect border-radius
+  font-size: 10px
+  line-height: 1.8
+  .hero
+    height: 150px
+    overflow: hidden
+    img
+      height: 100%
+      width: 100%
+      object-fit: cover
+  .blog-info
+    display: flex
+    flex-direction: column
+    padding: 18px
+    .title
+      font-size: 14px
+      line-height: 21px
+      font-weight: $font-semi-bold
+    .datetime
+      color: $greyish
+    .tags
+      position: absolute
+      top: 310px
+
+.card--job
+  padding: $card-job-padding
+  height: 436px
+  border: $card-border solid white
+  max-width: $max-job-card-width
+  //This is hover off transition
+  transition : border 400ms ease-in-out
+  .info
+    height: 162px
+  .logo
+    img
+      height: 48px
+    font-size: 30px
+  .basic-info
+    margin-top: 18px
+    font-size: 12px
+    line-height: 18px
+    .job-title
+      font-weight: $font-semi-bold
+  .salary
+    margin-top: 6px
+  .tagline
+    margin: 11px 0 0 0
+    font-size: 12px
+    line-height: 18px
+    height: 60px
+  .apply
+    width: 100%
+    display: flex
+    justify-content: flex-start
+    flex-direction: column
+    position: absolute
+    bottom: $card-job-padding
+    button, a
+      margin-right: 6px
+      min-width: 90px
+    .buttons
+      display: flex
+      justify-content: flex-start
+  .applied-state
+    font-size: 12px
+    font-weight: $font-medium
+    color: $red
+    text-transform: uppercase
+
+  .match
+    position: absolute
+    left: $card-job-padding
+    bottom: 45px
+    text-transform: uppercase
+    font-size: 11px
+    font-weight: 600
+    letter-spacing: 0.5px
+    color: $red
+
+    .match-circle
+      display: inline-block
+      margin-right: 5px
+      vertical-align: sub
+
+    svg
+      height: 24px
+      width: 24px
+
+    .circle-value
+      position: absolute
+      path
+        fill: $red
+    .background
+      background-color: $lighter-red
+      width: 18px
+      height: 18px
+      border-radius: 9px
+
+    .foreground
+      background-color: $red
+      width: 18px
+      height: 18px
+      border-radius: 9px
+
+.card__perks
+  white-space: nowrap
+  overflow: hidden
+  .icon
+    display: inline-block
+  & > .icon:not(:first-child)
+    margin-left: 10px
+
+.card--blog, .card--job
+  .tags
+    height: 2 * ($tag-height + 2 * $tag-padding) + $tag-spacing
+    overflow-y: hidden
+
+.job-card--public
+  height: 330px !important
+  .info
+    height: 70px
+  .basic-info
+    margin-top: 0 !important
+
+.blog-card--skeleton
+  pointer-events: none
+  .hero
+    background-color: $skeleton-background-color
+  .title
+    @include skeleton(200px, 21px)
+  .tags li
+    height: 30px
+    width: 100px
+    background-color: $skeleton-background-color
+
+.job-card--skeleton
+  pointer-events: none
+  .logo
+    height: 48px
+    width: 48px
+    @include skeleton
+  .basic-info
+    &>div
+      margin-top: 2px
+      height: 20px
+      @include skeleton
+  .job-title
+    width: 200px
+  .company-name
+    width: 100px
+  .location
+    width: 180px
+  .card__perks
+    display: none
+  .salary
+    width: 80px
+  .tags__job
+    li
+      @include skeleton
+  .button
+    @include skeleton
+    font-size: 0
+
+.codi-column
+  position: relative
+  & > div
+    min-width: 247px
+  p:not(:last-child)
+    margin-bottom: 12px
+
+@mixin cursor-list
+  @for $i from 0 through 8
+    .i-cur-#{$i}
+      cursor: url(/cursors/cursor-#{$i}.svg), auto
+
+@include cursor-list
+
+@mixin card-hover-list
+  @for $i from 1 through length($hover-colors)
+    .card-border-color-#{$i - 1}
+      &:hover
+        border: $card-border solid nth($hover-colors, $i)
+        transition: border 400ms ease-in-out
+        .button
+          background: nth($hover-colors, $i)
+          transition: background 400ms ease-in-out
+        .button--inverted
+          background: inherit
+          color: nth($hover-colors, $i)
+          border-color: nth($hover-colors, $i)
+          transition: color 400ms ease-in-out, border-color 400ms ease-in-out
+
+@include card-hover-list
+
+@mixin random-colour-border-list
+  @for $i from 1 through length($hover-colors)
+    .border-color-#{$i - 1}
+      border: $card-border solid nth($hover-colors, $i)
+      transition : border 400ms ease-in-out
+
+@include random-colour-border-list
+
+.red-fill
+  fill: $red

@@ -1,0 +1,56 @@
+$bubble-border: 0px
+$animation-duration: 0.2s
+// Whenever you change these, please change settings
+// in bubbles.cljs to match.
+$bubble-radius-base: 52
+$bubble-radius-like: 64
+
+@mixin bubble-diameter($radius)
+  $diameter: 2 * ($radius - $bubble-border)
+  margin-left: $bubble-border - $radius
+  margin-top: $bubble-border - $radius
+  width: $diameter
+  height: $diameter
+
+@keyframes increase-like
+  from
+    @include bubble-diameter($bubble-radius-base + 0px)
+  to
+    @include bubble-diameter($bubble-radius-like + 0px)
+
+@keyframes increase-unlike
+  from
+    @include bubble-diameter($bubble-radius-like + 0px)
+  to
+    @include bubble-diameter($bubble-radius-base + 0px)
+
+.bubble-container
+  position: relative
+  flex-grow: 1
+
+.bubble
+  position: absolute
+  border-radius: 50%
+  background: $red
+  font-size: 12px
+  font-weight: $font-semi-bold
+  text-transform: uppercase
+  text-align: center
+  color: white
+  //border: $bubble-border solid black
+  box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.2)
+  padding: 0
+  display: flex
+  justify-content: center
+  align-items: center
+  z-index: 1
+  @include bubble-diameter($bubble-radius-base + 0px)
+
+  &.like
+    animation: $animation-duration increase-like
+    @include bubble-diameter($bubble-radius-like + 0px)
+    background-color: $metal-blue
+    border: 6px solid $steel-gray
+
+  &.base
+    animation: $animation-duration increase-unlike

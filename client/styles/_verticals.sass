@@ -1,0 +1,36 @@
+.verticals-pod
+  hr
+    background-color: $pale-gray
+    margin-top: 10px
+
+.verticals-pod__verticals
+  letter-spacing: 3px
+  font-weight: $font-semi-bold
+  .icon
+    width: 28px
+    height: 28px
+    flex: 0 0 28px
+  .logo-title
+    vertical-align: text-bottom
+    margin-left: 15px
+
+.verticals-pod__vertical--disabled
+  opacity: 0.25
+
+.verticals-pod__verticals--off
+  .verticals-pod__vertical-toggle
+    opacity: 0.25
+    +desktop
+      &:hover
+        opacity: 0.5
+
+.verticals-pod__verticals--on
+  .verticals-pod__vertical-toggle
+    +desktop
+      &:hover
+        opacity: 0.6
+
+.verticals-pod__vertical-toggle
+  cursor: pointer
+  display: flex
+  margin: 5px 0

@@ -1,0 +1,755 @@
+@mixin broken-image-placeholder
+  img
+    font-size: 0
+  img:before
+    content: " "
+    display: block
+    position: absolute
+    top: 0
+    left: 0
+    height: 100%
+    width: 100%
+    background-color: white
+    border: 1px solid black
+
+.job-edit
+  margin: auto
+  max-width: 815px
+  min-width: 250px
+  +mobile
+    margin-bottom: 60px
+  &> h1
+    font-size: 18px
+    font-weight: $font-semi-bold
+  .wh-formx
+    h2
+      font-size: 18px
+  .button
+    +mobile
+      width: 100%
+
+.job-edit__side-pods
+  margin-top: 40px
+  position: relative
+  +mobile
+    margin-top: 0
+    margin-bottom: 10px
+.job-edit__side-pods--container
+  &>div:last-of-type
+    margin-top: 30px
+
+.job-edit__remuneration__additional-options
+  div
+    display: block
+    margin: 18px 0px
+
+.job-edit__remuneration__salary
+  .column
+    padding-bottom: 0
+  .columns
+    margin-bottom: 0
+  .radios
+    margin-top: 4px
+
+.job-edit__upgrade-pod
+  padding: 18px !important
+  .icon
+    width: 32px
+    height: 32px
+    margin-right: 10px
+
+.job-edit__upgrade-pod--text
+  line-height: 18px
+
+.job-edit__remuneration__salary__label, .job-edit__remuneration__currency__prompt
+  display: flex
+  flex-direction: column
+  justify-content: center
+  color: $steel-gray
+
+.job-edit__remuneration__salary__slider
+  .rc-slider
+    margin-top: 14px
+
+.job-edit__remuneration__salary__time-period
+  .field__error
+    display: none
+
+$description-height: 400px
+.job-edit__public-description,.job-edit__private-description
+  height: $description-height
+  .ql-container
+    height: calc(#{$description-height} - 80px)
+
+.job-edit__location__latlon
+  margin-bottom: 0 !important
+  .field__error
+     display: none
+
+.job-edit__location__latlon__help
+  line-height: 18px
+.job-edit__location__latlon__help__text, .job-edit__location__latlon__help__link
+  margin-bottom: 10px
+
+.job-edit__location__condensed-address
+  background-color: white
+  padding: 16px
+  font-size: 14px
+  line-height: 18px
+  color: $steel-gray
+  span
+    display: block
+
+.job-edit__location__condensed-address__edit
+  position: absolute
+  top: 0
+  right: 0
+  padding: 8px
+  cursor: pointer
+
+.job-edit__details__role-type-sponsor-offer
+  .column
+    padding-top: 0
+.job-edit__details__sponsorship-offered
+  margin-top: 33px
+
+.job-edit__integrations
+  margin-top: 22px !important
+
+.job-edit__settings-pod
+  &>h1
+    margin-bottom: 34px !important
+  &>div > div
+    margin: 20px 0
+    display: block
+  +mobile
+    .wh-formx
+      padding-top: 18px
+
+.job-edit__footer
+  flex-direction: row-reverse
+  +mobile
+    flex-direction: column
+  .button
+    +desktop
+      margin-left: 10px
+    +mobile
+      margin-top: 10px
+
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
+.job
+  section
+    background-color: white
+    padding: 3.5%
+    margin-bottom: 12px
+    &:last-of-type
+      margin-bottom: 0
+  .section-container
+    margin-bottom: 12px
+  p
+    margin-bottom: 18px
+  h1,h2,h3
+    color: $steel-gray
+    margin-bottom: 18px
+  a
+    h1,h2,h3
+      &:hover
+        color: $red
+  h1
+    overflow-y: hidden
+    font-weight: $font-semi-bold
+    +desktop
+      font-size: 24px
+      line-height: 30px
+      max-height: 58px
+    +mobile
+      font-size: 18px
+      font-weight: $font-semi-bold
+      line-height: 22px
+      max-height: 42px
+  h2
+    font-size: 18px
+    font-weight: $font-medium
+    line-height: 22px
+  h3
+    font-size: 12px
+    font-weight: $font-regular
+    line-height: 18px
+
+.job__main
+  +mobile
+    width: 100%
+  +desktop
+    width: 67%
+    margin-right: 12px
+    min-width: 505px
+
+.job__side
+  section
+    padding: 7%
+  +mobile
+    width: 100%
+  +desktop
+    width: 33%
+    min-width: 246px
+    max-width: 350px
+
+.job__admin-buttons
+  .button
+    margin-right: 18px
+    +mobile
+      &:not(:last-child)
+        margin-bottom: 18px
+
+.job__company-header
+  h1,h2,h3
+    margin-bottom: 6px
+  h2
+    font-weight: $font-regular
+    +mobile
+      font-size: 12px
+      line-height: 18px
+
+.job__company-header__logo
+  position: relative
+  @include broken-image-placeholder
+  +desktop
+    img
+      width: 80px
+      height: 80px
+    margin-right: 18px
+  +mobile
+    img
+      width: 52px
+      height: 52px
+    margin-right: 10px
+  .logo--skeleton
+    @include skeleton(80px, 80px)
+
+.job__company-header__info
+  h1:empty
+    @include skeleton(250px, 30px)
+  h2:empty
+    @include skeleton(150px, 22px)
+  h3:empty
+    @include skeleton(200px, 18px)
+  h3
+    margin-bottom: 0
+  flex: 1
+
+.job__company-header__like
+  fill: $white
+  &:hover
+    fill: $hover-red
+  cursor: pointer
+  +desktop
+    height: 48px
+    width: 48px
+    svg
+      width: 48px
+      height: 48px
+  +mobile
+    width: 24px
+    height: 24px
+    svg
+      width: 24px
+      height: 24px
+
+.job__like--liked
+  fill: $red
+  &:hover
+    fill: $hover-red
+
+.job__tagline
+  h2
+    font-size: 14px
+    line-height: 18px
+    margin-bottom: 10px
+    &:empty
+      @include skeleton(200px, 24px)
+  div
+    color: $steel-gray
+    font-size: 18px
+    font-style: italic
+    line-height: normal
+    &:empty
+      @include skeleton(100%, 22px)
+
+.job__company-action,
+.job__admin-action,
+.job__candidate-action
+  font-size: 14px
+  line-height: 20px
+  .button, .button--skeleton
+    width: 100%
+    margin-right: 0
+    margin-bottom: 12px
+    +mobile
+      margin-bottom: 12px !important
+    &:last-child
+      margin-bottom: 0 !important
+  .button--skeleton
+    min-height: 30px
+
+.job__information
+  h2
+    margin-bottom: 18px
+    margin-top: 0
+    &:empty
+      @include skeleton(50%, 22px)
+
+.job__content
+  position: relative
+  max-height: 360px
+  overflow-y: hidden
+  font-size: 14px
+  line-height: 24px
+  margin-bottom: 16px
+  li.ql-indent-1
+    margin-left: 15px
+    list-style-type: circle
+  h2, .h2
+    font-size: 14px
+    line-height: 21px
+    margin-bottom: 12px
+  h3, .h3
+    font-size: 12px
+    line-height: 21px
+    margin-bottom: 12px
+  p, ul, ol, pre, table, blockquote
+    margin-top: 0
+    margin-bottom: 21px
+  ul ul, ol ol, ul ol, ol ul
+    margin-top: 0
+    margin-bottom: 0
+    list-style: circle
+    margin-left: 2em
+  ul
+    margin-left: 30px
+  ol
+    margin-left: 26px
+  ul
+    list-style: disc
+  ol li
+    padding-left: 4px
+  strong
+    color: $steel-gray
+
+.job__content--expanded
+  max-height: unset
+  margin-bottom: 0
+
+.job__show-more-button
+  color: $red
+  text-transform: uppercase
+  text-align: center
+  font-size: 11px
+  font-weight: $font-semi-bold
+  letter-spacing: 0.5px
+  position: absolute
+  bottom: 0
+  background: linear-gradient(rgba(255,255,255,0.001), white, white)
+  height: 50px
+  &>div
+    position: absolute
+    bottom: 0
+    cursor: pointer
+  svg
+    width: 10px
+    height: 10px
+    margin-right: 6px
+
+.job__location
+  .is-flex
+    +desktop
+      align-items: flex-end
+      div:first-of-type
+        margin-right: 18px
+    +mobile
+      align-items: flex-start
+      flex-direction: column
+  .job__map
+    margin-bottom: 0
+
+.job__location__address
+  max-width: 200px
+  +mobile
+    margin-top: 18px
+  h3
+    font-size: 14px
+    font-weight: $font-medium
+    margin-bottom: 0
+  span
+    display: block
+
+.job__highlight
+  position: relative
+  &:not(:last-of-type)
+    margin-bottom: 24px
+  h2
+    margin-right: 28px
+    font-size: 14px
+    line-height: 18px
+    margin-bottom: 12px
+    &:empty
+      @include skeleton(75%, 22px)
+
+.job__salary
+  color: $steel-gray
+  font-size: 18px
+  font-style: italic
+  &:empty
+      @include skeleton(50%, 30px)
+
+.job__highlight_icon
+  position: absolute
+  top: 0
+  right: 0
+  svg
+    height: 28px
+    width: 28px
+  &:empty
+    @include skeleton(28px, 28px)
+
+.job__benefits, .did-you-know
+  list-style-type: none !important
+  li
+    font-size: 14px
+    line-height: 20px
+    margin-bottom: 2px
+    background-size: 10px 10px
+    padding-left: 18px
+    background-repeat: no-repeat
+    background-position: 0 4px
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNjAgNTcuMjYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLjA3IC4wMykiPjxwYXRoIGQ9Im01OS40MiAyMS4zMy0xOS44MS0yLjlhLjY0LjY0IDAgMCAxIC0uNDUtLjMzbC04LjU2LTE3Ljc5YS42LjYgMCAwIDAgLTEuMDcgMGwtOC44NCAxNy43OWEuNTkuNTkgMCAwIDEgLS40NS4zM2wtMTkuOCAyLjlhLjYuNiAwIDAgMCAtLjMzIDFsMTQuMjUgMTRhIC41OS41OSAwIDAgMSAgLjE3LjUzbC0zLjQzIDE5LjY3YS42LjYgMCAwIDAgIC44Ny42M2wxNy42OC05LjI0YS41OS41OSAwIDAgMSAgLjU1IDBsMTcuNjkgOS4yNGEuNTkuNTkgMCAwIDAgIC44Ni0uNjNsLTMuNDMtMTkuNjZhLjU5LjU5IDAgMCAxICAuMTctLjUzbDE0LjI2LTE0YSAuNi42IDAgMCAwIC0uMzMtMS4wMXoiIGZpbGw9IiNlYTViNTAiLz48cGF0aCBkPSJtNTMuOSAyMy41MS0xNi4xLTIuMzZhLjQ2LjQ2IDAgMCAxIC0uMzYtLjI3bC03LTE0LjQ2YS40OC40OCAwIDAgMCAtLjg3IDBsLTcuMTUgMTQuNDdhLjQ4LjQ4IDAgMCAxIC0uMzcuMjZsLTE2LjA1IDIuMzZhLjQ5LjQ5IDAgMCAwIC0uMjcuODNsMTEuNTQgMTEuMzhhLjQ1LjQ1IDAgMCAxICAuMTQuNDJsLTIuNzkgMTZhIC40OC40OCAwIDAgMCAgLjcuNTFsMTQuMzgtNy41MmEuNTEuNTEgMCAwIDEgIC40NSAwbDE0LjM4IDcuNTFhLjQ4LjQ4IDAgMCAwICAuNy0uNTFsLTIuNzktMTZhIC40OC40OCAwIDAgMSAgLjE0LS40MmwxMS41OS0xMS4zN2EuNDkuNDkgMCAwIDAgLS4yNy0uODN6IiBmaWxsPSIjZjZhYzczIi8+PHBhdGggZD0ibTQ4LjA4IDI1LTEyLjE5LTEuODRhLjM3LjM3IDAgMCAxIC0uMjgtLjJsLTUuMjctMTAuOTZhLjM3LjM3IDAgMCAwIC0uNjYgMGwtNS40NCAxMWEgLjM1LjM1IDAgMCAxIC0uMjcuMmwtMTIuMiAxLjhhLjM2LjM2IDAgMCAwIC0uMi42Mmw4Ljc4IDguNjJhLjM3LjM3IDAgMCAxICAuMS4zMmwtMi4xMSAxMi4xYS4zNy4zNyAwIDAgMCAgLjUzLjM5bDEwLjg5LTUuNjhhLjM0LjM0IDAgMCAxICAuMzQgMGwxMC45IDUuNjNhLjM3LjM3IDAgMCAwICAuNTMtLjM5bC0yLjEzLTEyLjFhLjM3LjM3IDAgMCAxICAuMS0uMzJsOC43OC04LjYyYS4zNi4zNiAwIDAgMCAtLjItLjU3eiIgZmlsbD0iI2ZkY2M2MCIvPjwvZz48L3N2Zz4=')
+
+.job__contract-type
+  div
+    font-size: 14px
+    line-height: 20px
+    &:empty
+      @include skeleton(40%, 20px)
+
+.job__apply-on-behalf
+  h2
+    display: none
+  .candidate
+    display: flex
+    .name, .email
+      flex: 1 0
+      overflow: hidden
+      white-space: nowrap
+      text-overflow: ellipsis
+      em
+        font-style: normal
+        font-weight: $font-semi-bold
+    .name
+      flex-basis: 30%
+    .email
+      flex-basis: 70%
+  .button
+    float: none
+    margin-bottom: 0px !important
+  .input
+    font-size: 12px
+  .form-error
+    margin-top: 5px
+
+.apply-on-behalf__edit-icon
+  width: 18px
+
+.job__apply-on-behalf-note
+  line-height: 18px
+  color: $steel-gray
+  div.clickable
+    margin-left: 9px
+    margin-bottom: 5px
+    height: 40px
+    width: 100%
+
+.job__apply-on-behalf-confirmation
+  line-height: 18px
+  font-weight: 500
+  color: $steel-gray
+  display: block
+  margin-top: 5px
+
+.job__map
+  width: 30vw
+  height: 30vw
+  +mobile
+    width: 100%
+    height: 300px
+
+.job__job-highlights
+  +mobile
+    margin-bottom: 12px !important
+
+.match-circle-container
+  text-transform: uppercase
+  font-size: 11px
+  font-weight: $font-semi-bold
+  letter-spacing: 0.5px
+  line-height: 18px
+  height: 18px
+  color: $red
+  display: flex
+  position: relative
+  .match-circle
+    display: inline-block
+    margin-right: 5px
+    vertical-align: sub
+  svg
+    height: 24px
+    width: 24px
+  .circle-value
+    position: absolute
+    path
+      fill: $red
+  .background
+    background-color: $lighter-red
+    width: 18px
+    height: 18px
+    border-radius: 9px
+  .foreground
+    background-color: $red
+    width: 18px
+    height: 18px
+    border-radius: 9px
+
+.job__candidate-action
+  .match-circle-container
+    min-width: 100px
+    +desktop
+      margin-bottom: 16px
+    +mobile
+      margin-left: 40px
+
+.job__candidate-action__score
+  display: flex
+  margin-bottom: 18px
+  color: $steel-gray
+  +desktop
+    flex-direction: column-reverse
+  +mobile
+    justify-content: space-between
+    align-items: center
+
+.job__candidate-action__score--empty
+  +desktop
+    margin-bottom: unset
+  +mobile
+    justify-content: flex-start
+    .match-circle-container
+      margin-left: unset
+
+.job__lower-cta
+  line-height: 18px
+  justify-content: space-between
+  align-items: center
+  span
+    font-size: 14px
+    line-height: 20px
+    margin-right: 10px
+  .is-flex
+    align-items: center
+  .icon
+    margin-right: 18px
+    min-width: 32px
+    height: 32px
+  .button
+    min-width: 145px
+    &:first-of-type
+      margin-right: 5px
+  div:nth-of-type(2)
+    min-width: 305px
+
+.job__lower-cta--skeleton
+  .button--skeleton
+    min-height: 30px
+  .icon
+    fill: $skeleton-background-color
+
+.job__technology,
+.job__benefits
+  margin-right: 20px
+
+.job__other-roles
+  margin-top: 24px
+  h2
+    font-size: 16px
+    font-weight: $font-semi-bold
+  .column
+    max-width: 762px
+
+.job__apply-sticky
+  position: absolute
+  top: $navbar-mobile-height
+  height: 54px
+  width: 100%
+  background-color: white
+  border-bottom: 1px solid $grey
+  transition: top 0.4s
+  padding: 12px
+  align-items: center
+  justify-content: space-between
+  -webkit-transform: translate3d(0,0,0)
+  .button
+    height: 30px
+
+.job__apply-sticky__title
+  flex: 1
+  font-size: 14px
+  margin-left: 10px
+  height: 24px
+  margin-bottom: 5px
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+.job__apply-sticky--hidden
+  top: -10px
+
+.job__apply-sticky__logo
+  margin-left: 6px
+  margin-top: 1px
+  width: 24px
+  height: 24px
+  position: relative
+  @include broken-image-placeholder
+  .icon
+    width: 24px
+    height: 24px
+
+.job__icon
+  position: absolute
+  width: 24px
+  height: 24px
+  fill: $grey
+  cursor: pointer
+
+  &.like
+  top: 15px
+  right: 15px
+  &.blacklist
+    top: 15px
+    right: 53px
+    cursor: pointer
+  &.match
+    top: 12px
+    right: 82px
+    width: 72px
+  &:hover
+    fill: $hover-red
+  &.like.selected
+    fill: $red
+
+.job__icon--pointer
+  cursor: pointer
+
+.job__icon--small
+  width: 18px
+  height: 18px
+  fill: $red
+  margin-right: 5px
+  vertical-align: middle
+
+.html-content--skeleton
+  &>div>div
+    background-color: $skeleton-background-color
+    color: $skeleton-background-color
+    border-radius: 5px
+    margin: 0 1px
+    pointer-events: none
+    display: inline-block
+    height: 18px
+
+.job__stats
+  padding:0 !important
+  h2
+    font-size: 14px
+    line-height: 18px
+    +desktop
+      padding: 7%
+      padding-bottom: 0
+    +mobile
+      padding: 3.5%
+      padding-bottom: 0
+    margin-bottom: 12px
+  .stats__item
+    grid-template-columns: 50px 130px 1fr
+
+@mixin job-issue-separator
+  padding-bottom: 18px
+  border-bottom: 1px solid $greyish
+  margin-bottom: 18px
+
+.job__company-issues
+  +mobile
+    margin-top: 12px
+  .logo
+    width: 40px
+    height: 40px
+    margin-bottom: 9px
+  .cta
+    font-size: 14px
+    font-weight: $font-medium
+    line-height: 18px
+    color: $steel-gray
+    @include job-issue-separator
+  .issue
+    @include job-issue-separator
+    .title
+      display: block
+      font-size: 12px
+      font-weight: $font-medium
+      line-height: 1.33
+      margin-bottom: 12px
+      &:hover
+        color: $red
+        text-decoration: underline
+    .level
+      .icon
+        margin-right: 12px
+        vertical-align: middle
+      fill: $greyish
+      color: $greyish
+      font-size: 12px
+      line-height: 1.5
+      margin-bottom: 12px
+    .tags
+      margin-bottom: -6px
+  .button
+    width: 100%
+
+.job__admin-publish-prompt
+  position: relative
+  .buttons
+    .button, a
+      height: 40px
+      width: 100%
+      display: block
+      span
+        display: block
+      span + span
+        margin-top: 4px
+      span:first-child
+        font-size: 14px
+    .button + .button,
+    .button + a
+      margin-top: 10px
+
+.job__admin-publish-prompt__loader
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  background-color: rgba(255,255,255,0.7)
+  &::after
+    @include spinner
+    width: 48px
+    height: 48px
+    margin-left: calc(50% - 24px)
+    margin-top: calc(50% - 48px)

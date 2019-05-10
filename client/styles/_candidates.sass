@@ -1,0 +1,105 @@
+.candidates-header
+  background-color: white
+  padding: 10px
+  margin-bottom: 10px !important
+
+.facet-selectors
+  margin-top: 10px
+  margin-left: -3px
+
+  .multiple-buttons
+    float: left
+    margin-right: 20px
+
+.candidate-pod
+  background-color: white
+  display: flex
+  margin-bottom: 10px
+  padding: 15px
+
+.candidate-pod__image-section
+  height: 160px
+  width: 50px
+
+.candidate-pod__image-section__logo
+  width: 40px
+  height: 40px
+
+.candidate-pod__name
+  font-size: 24px
+
+=basic-btn-position
+  position: absolute
+  bottom: 5px
+
+=candidate-pod-section-min-height
+  min-height: 175px
+
+.candidate-pod__data-section
+  flex: auto
+  position: relative
+  margin-left: 5px
+
+.candidate-pod__first-section
+  +candidate-pod-section-min-height
+  position: relative
+
+.candidate-pod__other-urls
+  position: absolute
+  top: 5px
+  right: 5px
+
+.candidate-pod__other-urls__icon
+  width: 25px
+  height: 25px
+  fill: $red
+  margin-left: 7px
+
+.candidate-pod__cv-links
+  a
+    margin-right: 5px
+
+.candidate-pod__tag-section
+  +candidate-pod-section-min-height
+  position: relative
+  ul
+    max-height: 105px
+    overflow: hidden
+
+.candidate-pod__details__approve-btn
+  +basic-btn-position
+
+.candidate-pod__details__reject-btn
+  +basic-btn-position
+  left: 130px
+
+.candidate-pod__details__updated
+  +basic-btn-position
+  span
+    font-weight: $font-semi-bold
+
+.candidate-pod__tag-section__delete-btn
+  +basic-btn-position
+  right: 5px
+
+.candidate-pod__loader
+  height: 70vh
+  background-color: white
+  display: flex
+
+.create-candidate__upload-cta, .create-candidate__add-link, .create-candidate__uploaded-file
+  display: inline-block
+  font-size: 12px
+  line-height: 18px
+  font-weight: $font-medium
+  color: $steel-gray
+  .icon
+    display: inline-block
+    vertical-align: middle
+    width: 18px
+    height: 18px
+    margin-right: 9px
+    fill: $steel-gray
+
+.create-candidate__uploaded-file .icon
+  fill: $red

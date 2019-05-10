@@ -1,0 +1,156 @@
+$field-height: 44px
+$field-padding: 13px
+
+@mixin form-field
+  border: solid 2px $lighter-red
+  border-radius: 0
+  box-shadow: none
+  font-size: 14px
+  background: white
+  &:focus, &:focus-within
+    border-color: $red
+    .input__suggestions
+      border-color: $red
+
+.wh-form__layout
+  max-width: 700px
+  margin: 0 auto
+
+.wh-form
+  fieldset
+    border: none
+    margin-top: 30px
+    &:first-child
+      margin-top: 0
+  .field
+    margin-bottom: 0.75rem
+  .help
+    font-size: 12px
+    line-height: 18px
+  .field__error
+    display: inline
+    color: $dark-red
+  & > .field:first-child
+    margin-top: -18px
+  .field--errored
+    .input, .textarea
+      background-color: $lighter-red
+  .field:focus-within
+    &.field--errored
+      .input, .textarea
+        background: none
+    .field__error
+      display: none
+  .select
+    select
+      @include form-field
+      height: $field-height
+      width: 100%
+      padding-left: $field-padding
+    height: $field-height
+    width: 100%
+    line-height: $field-height
+  .text-field-control
+    @include form-field
+  .input, .textarea
+    padding: $field-padding
+    border-radius: 0
+    box-shadow: none
+    font-size: 14px
+    outline: none
+    border: none
+  .input
+    height: $field-height
+  .textarea
+    line-height: 24px
+  .label
+    font-size: 16px
+    line-height: 18px
+    color: $steel-gray
+    font-weight: $font-semi-bold
+    margin-bottom: 10px
+    margin-top: 30px
+  .help--markdown
+    min-height: 24px
+    font-size: 12px
+  .input__suggestions
+    margin: 0 $field-padding $field-padding $field-padding
+    padding-top: 9px
+    border-top: 2px solid $lighter-red
+    font-size: 12px
+  .label__markdown-menu
+    display: flex
+    justify-content: stretch
+  .label__markdown-left
+    flex: 1
+  .label__markdown-right
+    text-align: right
+    font-weight: $font-regular
+    a
+      font-weight: $font-semi-bold
+  .multiple-buttons .button
+    margin: 4px
+  .help--medium
+    font-size: 1em
+  .buttons
+    margin-top: 8px
+    +mobile
+      display: none
+  .help--medium
+    font-size: 1em
+  button
+    border-radius: 0
+
+.field--loading
+  .text-field-control
+    &:after
+      @include spinner
+      right: 15px
+      top: 15px
+
+.wh-form--left
+  margin: 0px
+
+.wh-form--compact
+  max-width: 400px
+
+.main-container
+  width: 100%
+
+.wh-container
+  background: white
+
+@mixin checkbox-and-radio
+  width: 20px
+  height: 20px
+  display: inline-block
+  vertical-align: middle
+  margin-right: 5px
+  cursor: pointer
+
+.checkbox
+  input[type=checkbox]
+    visibility: hidden
+    &:checked + label
+      background-repeat: no-repeat
+      background-position: 2px 3px
+      background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiM3ZWI1YmQiLz48L3N2Zz4=")
+  label
+    @include checkbox-and-radio
+    border: 2px solid $metal-blue
+
+.radios
+  display: inline-block
+  input[type=radio]
+    visibility: hidden
+    &:checked + label
+      background-color: $metal-blue
+  label
+    @include checkbox-and-radio
+    border: none
+    border-radius: 10px
+    background-color: $grey
+    transition: background-color 0.3s linear
+
+.checkbox--disabled
+  opacity: 0.4

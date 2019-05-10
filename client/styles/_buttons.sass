@@ -1,0 +1,162 @@
+$button-font-size: 11px
+
+.button
+  background: $red
+  // Center button content even if it's a link
+  display: inline-flex
+  justify-content: center
+  align-items: center
+  // Transition for hover off
+  transition : background 400ms ease-in-out
+  padding: 6px
+  border: none
+  border-radius: 2px
+  height: 30px
+  text-transform: uppercase
+  text-align: center
+  font-size: $button-font-size
+  font-weight: $font-semi-bold
+  letter-spacing: 0.5px
+  line-height: normal
+  color: white
+  // needed for button--loading to work always
+  position: relative
+  &:hover
+    background: $button-hover !important
+    color: white !important
+    cursor: pointer
+  &:focus
+    outline: none
+  &[disabled]
+    cursor: default
+    opacity: 0.3
+  img
+    margin-left: 20px
+    vertical-align: top
+
+.button--large
+  height: 50px
+  width: 270px
+
+.button--medium
+  height: 35px
+  width: 150px
+
+.button--small
+  height: 35px
+  width: 108px
+
+.button__icon
+  fill: white
+  vertical-align: middle
+  margin-right: 20px
+
+.button__icon--light
+  fill: $red
+
+.button--light
+  background: $light-red
+  color: $red
+  &:hover
+    background: $light-red !important
+    color: $red !important
+
+.button--inverted
+ background: white
+ color: $red
+ border: solid 1px $red
+ &:hover
+   background: $light-red !important
+   color: $red !important
+
+.button--green
+  background: $metal-blue
+  color: white
+  &:hover
+    background: $metal-blue !important
+    color: white !important
+
+.button--grey
+  background: $greyish
+  color: white
+  &:hover
+    background: $greyish !important
+    color: white !important
+
+.button--loading
+  color: transparent !important
+  pointer-events: none
+  position: relative
+  text-indent: -9999px; /* cheap trick to get the text to disappear */
+  &:after
+    @include spinner
+    left: calc(50% - (1em / 2))
+    top: calc(50% - (1em / 2))
+  img
+    display: none
+
+.button--loading-white
+  &:after
+    border-color: $white
+
+.conversation-multi-button
+  display: block
+  border: 1px solide $steel-gray
+  background: $light-gray
+  color: $steel-gray
+  font-weight: $font-medium
+  font-size: $button-font-size
+  line-height: 1
+  border-radius: $radius
+  padding: 12px 10px
+  margin: 7px
+  margin-left: auto
+
+  &:hover
+    background: white !important
+    color: $steel-gray
+    cursor: pointer
+
+.conversation-multi-button--selected
+  background: $steel-gray
+  color: white
+  &:hover
+    background: $dark-gray !important
+
+.recommendations-btn
+  margin-top: -18px
+  margin-bottom: 14px
+
+.button--skeleton
+  background-color: $skeleton-background-color
+  border-radius: 5px
+
+.button--public
+  border-radius: 4px
+
+.button--black
+  background-color: #171717
+  &:hover
+    background-color: #171717 !important
+
+.button--disabled
+  background-color: white
+  color: $greyish
+  border: solid 1px $greyish
+
+.button--github
+  text-align: left
+  transition: none
+  min-width: 210px
+  height: 40px
+  padding: 0 !important
+  font-size: 10px !important
+  span
+    padding-top: 1px
+  div
+    margin-left: 2px
+    height: 40px
+    width: 70px
+    background-repeat: no-repeat
+    background-position: -25px 0px
+    background-image: url("/images/company/github.svg")
