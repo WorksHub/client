@@ -24,7 +24,7 @@ If you have any questions or comments, please tell us on GitHub in the issue com
 In order to contribute to this open source repository, ensure the following:
 
 1. Fork this repository
-2. Add this repository as `upstream` with `git remote add upstream git@github.com:WorksHub/client-app.git`
+2. Add this repository as `upstream` with `git remote add upstream git@github.com:WorksHub/client.git`
 2. In your fork, ensure that your local master branch is **always** up to date with this repository master branch.
 This comes for free when you fork the repository. If not, give 
 
