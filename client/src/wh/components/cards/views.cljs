@@ -184,7 +184,8 @@
   [{:keys [tagline tags id applied published score company-id] :as job}
    & {:keys [on-close public]
       :or   {on-close nil public false}}]
-  (let [skeleton? (and job (empty? (dissoc job :id)))]
+  (let [skeleton? (and job (empty? (dissoc job :id)))
+        score (or (:user-score job) score)]
     (when job
       (if (<sub [:job-card/show-closed? published])
         [closed-job job public]

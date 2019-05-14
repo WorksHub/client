@@ -6,7 +6,7 @@
   [:id :title :companyName :tagline
    [:location [:city :state :country :countryCode]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-   :logo :tags :published
+   :logo :tags :published :userScore
    :roleType :sponsorshipOffered :remote :companyId])
 
 ;; and the same for precompiled queries:
@@ -15,7 +15,7 @@
   [:id :title :companyName :tagline
    [:location [:city :state :country :countryCode]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-   :logo :tags :published
+   :logo :tags :published :userScore
    :roleType :sponsorshipOffered :remote :companyId])
 
 (defquery recommended-jobs-for-job
