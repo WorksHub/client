@@ -45,7 +45,7 @@
    {:component-did-update
     #(let [scroll (<sub [::subs/scroll])]
        (r/next-tick
-        (fn [] (set! (.-scrollTop (js/document.querySelector ".page-container")) scroll))))
+        (fn [] (pages/force-scroll-to-x! scroll))))
 
     :reagent-render
     (fn []

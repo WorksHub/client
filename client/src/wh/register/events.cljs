@@ -24,7 +24,8 @@
 (defmethod on-page-load :register [db]
   (into [[:register/update-data-from-user]]
         (case (get-in db [::db/page-params :step])
-          :skills [[::ip-location-and-riddles]]
+          :skills [[::ip-location-and-riddles]
+                   [:wh.pages.core/enable-no-scroll]]
           :name [[::fetch-name]]
           :verify [(when-not (str/blank? (get-in db [::user/sub-db ::user/id]))
                      [::upsert-user])]

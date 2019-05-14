@@ -14,6 +14,7 @@
     [wh.components.footer :as footer]
     [wh.components.get-started.views :refer [get-started-banner]]
     [wh.components.icons :refer [icon url-icons]]
+    [wh.pages.util :as putil]
     [wh.routes :as routes]
     [wh.slug :as slug]
     [wh.subs :as subs-common :refer [<sub]]
@@ -103,17 +104,19 @@
            [:div.column [job-card job :public (<sub [::subs/show-public-only?])]]))])))
 
 (defn page []
-  (let [last-y (reagent/atom 0)]
+  (let [last-y (reagent/atom 0)
+        _      (putil/attach-on-scroll-event
+                (fn [_]
+                  (let [y (.-scrollY js/window)]
+                    (dispatch [::events/show-share-links (< y @last-y)])
+                    (reset! last-y y))))]
     (fn []
       (case (<sub [:graphql/error-key :blog {:id (<sub [:wh.subs/page-param :id])}])
         :blog-not-found [:div.main [not-found]]
         :unknown-error [:div.main [loading-error]]
         (let [skeleton? (= :executing (<sub [:graphql/state :blog {:id (<sub [:wh.subs/page-param :id])}]))]
           [:div {:class (reframe-helpers/merge-classes "blog"
-                                                       (when skeleton? "blog--skeleton"))
-                 :on-scroll #(let [y (-> % .-target .-scrollTop)]
-                               (dispatch [::events/show-share-links (< y @last-y)])
-                               (reset! last-y y))}
+                                                       (when skeleton? "blog--skeleton"))}
            [:div.blog__hero-container
             (if skeleton?
               [:div.blog__hero]
@@ -170,4 +173,6 @@
      [share-buttons]
      [upvotes]]))
 
-(swap! wh.views/extra-overlays conj [social-icons])
+(defonce add-social-icons
+  (do
+    (swap! wh.views/extra-overlays conj [social-icons])))

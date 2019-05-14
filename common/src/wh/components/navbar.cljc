@@ -50,7 +50,8 @@
 
 (defn logged-out-menu
   [{:keys [vertical  env query-params]}]
-  (let [link-opts (interop/set-is-open-on-click logged-out-menu-id false)
+  (let [link-opts (interop/multiple-on-click (interop/set-is-open-on-click logged-out-menu-id false)
+                                             (interop/disable-no-scroll-on-click))
         primary-opts {:id logged-out-menu-id
                       :class "navbar-menu is-hidden-desktop"}]
     (if (= "www" vertical)
@@ -129,7 +130,9 @@
     [:button.search-button {:id "navbar__search-btn"
                             :aria-label "Search button"} [icon "search"]]]
    [:div.navbar-item.is-hidden-desktop
-    (interop/set-is-open-on-click mobile-search-id true)
+    (interop/multiple-on-click (interop/set-is-open-on-click mobile-search-id true)
+                               (interop/set-is-open-on-click menu/logged-in-menu-id false)
+                               (interop/set-no-scroll-on-click mobile-search-id true))
     [:button.search-button
      {:id "navbar__search-btn"
       :aria-label "Search button"} [icon "search"]]]])
@@ -139,15 +142,18 @@
   [:div.mobile-search.is-hidden-desktop
    {:id mobile-search-id}
    [:div.mobile-search__close
-    (interop/set-is-open-on-click mobile-search-id false)
+    (interop/multiple-on-click (interop/set-is-open-on-click mobile-search-id false)
+                               (interop/disable-no-scroll-on-click))
     [icon "close"]]
    [:form.mobile-search-form
     (merge {:method :get
             :action (routes/path :jobsboard)}
-           #?(:clj  {:onSubmit (interop/clj-set-class-str mobile-search-id "is-open" false)}
+           #?(:clj  {:onSubmit (:onClick (interop/multiple-on-click (interop/set-is-open-on-click mobile-search-id false)
+                                                                    (interop/disable-no-scroll-on-click)))}
               :cljs {:on-submit (fn [e]
                                   (.preventDefault e)
                                   (js/setClass mobile-search-id "is-open" false)
+                                  (js/disableNoScroll)
                                   (submit-search "navbar__mobile-search-input"))}))
     [:button.search-button
      [icon "search"]]
@@ -161,8 +167,10 @@
 
 (defn navbar-end
   [{:keys [logged-in? query-params vertical show-navbar-menu?]}]
-  (let [menu-roll-down [:div.navbar-item.is-hidden-desktop.navbar-item--menu
-                        (interop/toggle-is-open-on-click (if logged-in? menu/logged-in-menu-id logged-out-menu-id))
+  (let [el-id (if logged-in? menu/logged-in-menu-id logged-out-menu-id)
+        menu-roll-down [:div.navbar-item.is-hidden-desktop.navbar-item--menu
+                        (interop/multiple-on-click (interop/toggle-is-open-on-click el-id)
+                                                   (interop/toggle-no-scroll-on-click el-id))
                         [:span "MENU"]]]
     (if logged-in?
       [:div.navbar-search-end-wrapper
@@ -176,13 +184,15 @@
         (merge
           {:href (routes/path :login :params {:step (if (= "www" vertical) :email :root)})}
           (interop/multiple-on-click (interop/set-is-open-on-click logged-out-menu-id false)
-                                     (interop/set-is-open-on-click candidates-overlay-menu-id false)))
+                                     (interop/set-is-open-on-click candidates-overlay-menu-id false)
+                                     (interop/disable-no-scroll-on-click)))
         "Login"]
        [:a.navbar-item.is-hidden-mobile.navbar-item--register
         (merge
           {:href (routes/path :get-started)}
           (interop/multiple-on-click (interop/set-is-open-on-click logged-out-menu-id false)
-                                     (interop/set-is-open-on-click candidates-overlay-menu-id false)))
+                                     (interop/set-is-open-on-click candidates-overlay-menu-id false)
+                                     (interop/disable-no-scroll-on-click)))
         [:button.button
          "Get Started"]]
        (when show-navbar-menu? menu-roll-down)])))

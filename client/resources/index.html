@@ -75,7 +75,7 @@
      function toggleClass(id, cls){
          var d = document.getElementById(id);
          d.classList.toggle(cls);
-     };
+     }
      function setClass(id, cls, on){
          var d = document.getElementById(id);
          if(on) {
@@ -84,7 +84,32 @@
          else {
              d.classList.remove("is-open");
          }
-     };
+     }
+     function preventDefault(e){
+         e.preventDefault();
+     }
+     function toggleNoScroll(id){
+         var el = document.getElementById(id);
+         if(!document.body.classList.contains("no-scroll")) {
+             document.body.classList.add("no-scroll");
+             bodyScrollLock.disableBodyScroll(el);
+         } else {
+             document.body.classList.remove("no-scroll");
+             bodyScrollLock.enableBodyScroll(el);
+         }
+     }
+     function setNoScroll(id, on){
+         var el = document.getElementById(id);
+         if(on) {
+             bodyScrollLock.disableBodyScroll(el);
+         } else {
+             bodyScrollLock.enableBodyScroll(el);
+         }
+     }
+     function disableNoScroll(){
+         document.body.classList.remove("no-scroll");
+         bodyScrollLock.clearAllBodyScrollLocks();
+     }
     </script>
     <script id="load-symbols-file-fn">
      function loadSymbols(filename) {
@@ -93,6 +118,7 @@
          r.onreadystatechange = function() {
              if (r.readyState == 4 && r.status == 200) {
                  var container = document.createElement("div");
+                 container.classList.add("svg-container")
                  container.innerHTML = r.responseText;
                  document.body.append(container);
              }
@@ -104,6 +130,7 @@
     <script id="data-init" type="application/edn"></script>
 
     <script id="segment"></script>
+    <script id="body-scroll-lock"></script>
 
     <script id="google-maps" type="text/javascript"></script>
 

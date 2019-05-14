@@ -285,16 +285,17 @@
 
 (defn page
   ([]
-    #?(:cljs
-       (r/create-class
-         {:component-did-mount
-          (fn [this]
-            (putil/attach-on-scroll-event
-              (fn [el]
-                (dispatch [::events/set-show-cta-sticky? (> (.-scrollTop el) 300)]))))
-          :reagent-render
-          (fn []
-            (page (<sub [:user/logged-in?])))})))
+   #?(:cljs
+      (r/create-class
+       {:component-did-mount
+        (fn [this]
+          (putil/attach-on-scroll-event
+           (fn [el-or-window]
+             (dispatch [::events/set-show-cta-sticky? (> (or (.-scrollTop el-or-window)
+                                                             (.-scrollY el-or-window)) 300)]))))
+        :reagent-render
+        (fn []
+          (page (<sub [:user/logged-in?])))})))
   ([logged-in?]
    (let [hiw-pod (cond
                    #?(:cljs (<sub [:user/company?])

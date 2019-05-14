@@ -20,7 +20,8 @@
 
 (defn menu-item [current-page target icon-name & description]
   (let [[target target-link] (if (coll? target) target [target target])
-        link-opts (interop/set-is-open-on-click logged-in-menu-id false)]
+        link-opts (interop/multiple-on-click (interop/set-is-open-on-click logged-in-menu-id false)
+                                             (interop/disable-no-scroll-on-click))]
     [:li (merge {:key icon-name}
                 (when (or (= target current-page)
                           (and (probably-homepage-match? target current-page)))
@@ -33,12 +34,12 @@
        (link
         (into [:span (icon icon-name)] description)
         target-link
-        :on-click (first (vals (interop/set-is-open-on-click logged-in-menu-id false))))
+        :on-click (first (vals link-opts)))
        (and target (coll? target-link))
        (apply link
               (into [:span (icon icon-name)] description)
               target
-              :on-click (first (vals (interop/set-is-open-on-click logged-in-menu-id false)))
+              :on-click (first (vals link-opts))
               target-link)
        :else
        [:a.disabled (into [:span (icon icon-name)] description)])]))

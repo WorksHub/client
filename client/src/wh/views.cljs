@@ -60,12 +60,12 @@
 
 (defn overlays []
   (into
-    [:div.overlays
-     (when (<sub [::subs/display-tracking-consent-popup?])
-       [tracking-popup])
-     (when-not (<sub [:user/logged-in?])
-       [auth-popup])]
-    @extra-overlays))
+   [:div.overlays
+    (when (<sub [::subs/display-tracking-consent-popup?])
+      [tracking-popup])
+    (when-not (<sub [:user/logged-in?])
+      [auth-popup])]
+   @extra-overlays))
 
 (defn main-panel []
   (let [page (<sub [:wh.pages.core/page])
@@ -105,3 +105,7 @@
         (when (<sub [::subs/show-footer?])
           [footer/footer (<sub [::subs/vertical])])]
        [overlays]])))
+
+(defonce remove-all-bsl-locks-when-app-loads
+  (do
+    (js/disableNoScroll)))

@@ -12,9 +12,20 @@
            java.io.ByteArrayInputStream.
            jsoup/parser))))
 
+;; If you came here looking for 'on-scroll' functionlity,
+;; be aware that although we're hooking the `onscroll` event of `js/window`
+;; it's `scrollTop` field of `documentElement` that has the correct scroll offset
+
 (defn attach-on-scroll-event
   [f]
   #?(:cljs
-     (when-let [el (aget (.getElementsByClassName js/document "page-container") 0)]
-       (set! (.-onscroll el)
-             (fn [_] (f el))))))
+     (do
+       ;; desktop
+       (when-let [el (.getElementById js/document "app")]
+         (.addEventListener el "scroll"
+                            (fn [_]
+                              (f el))))
+       ;; mobile
+       (.addEventListener js/window "scroll"
+                          (fn [_]
+                            (f js/window))))))

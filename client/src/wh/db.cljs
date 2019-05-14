@@ -117,8 +117,6 @@
 (defn blockchain? [vertical]
   (= vertical "blockchain"))
 
-(def page-container-id "page-container")
-
 ;; note: different for prod and dev builds!
 (def default-interceptors interceptors/default-interceptors)
 

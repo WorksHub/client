@@ -18,6 +18,7 @@
     [wh.events :as common-events]
     [wh.jobs.job.events :as events]
     [wh.jobs.job.subs :as subs]
+    [wh.pages.util :as putil]
     [wh.routes :as routes]
     [wh.subs :as subs-common :refer [<sub]]
     [wh.user.subs :as user-subs]))
@@ -437,9 +438,9 @@
   (r/create-class
    {:component-did-mount
     (fn [this]
-      (when-let [el (aget (.getElementsByClassName js/document "page-container") 0)]
-        (set! (.-onscroll el)
-              (fn [_] (dispatch [::events/set-show-apply-sticky? (> (.-scrollTop el) 210)])))))
+      (putil/attach-on-scroll-event
+       (fn [_]
+         (dispatch [::events/set-show-apply-sticky? (> (.-scrollY js/window) 210)]))))
     :reagent-render
     (fn []
       (let [admin? (<sub [:user/admin?])

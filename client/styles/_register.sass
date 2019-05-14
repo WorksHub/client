@@ -36,7 +36,10 @@ $line-height: 1.5
     opacity: 1
 
 .register-container
-  height: 100%
+  +desktop
+    height: 100vh
+  +mobile
+    height: calc(100vh - #{$navbar-mobile-height})
 
 .full-height
   height: 100%
@@ -225,9 +228,14 @@ $line-height: 1.5
     flex: 1
 
 .bubble-panel__bottom
+  position: absolute
+  bottom: 13px
   display: flex
   justify-content: center
+  +desktop
+    width: 50%
   +mobile
+    width: 100%
     flex-direction: column
     .conversation-button
       margin: 3px 18px 3px auto

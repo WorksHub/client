@@ -14,9 +14,19 @@
 (def default-route {:handler :not-found})
 (def default-page-size 24)
 
+;; If you came here looking for 'scroll-to-top' functionlity,
+;; be aware that although we're setting `scrollTop` of `documentElement`,
+;; it's the `onscroll` event of `js/window` that is triggered when a scroll happens
+
+(defn force-scroll-to-x!
+  [x]
+  (set! (.-scrollTop (.getElementById js/document "app")) x)
+  (set! (.-scrollTop (.-documentElement js/document)) x)
+  (set! (.-scrollTop (.-body js/document)) x))
+
 (defn force-scroll-to-top!
   []
-  (set! (.-scrollTop (js/document.querySelector ".page-container")) 0))
+  (force-scroll-to-x! 0))
 
 (defmulti on-page-load
   "Returns a vector of events to dispatch when a page is shown."
@@ -81,22 +91,23 @@
                                        [handler :params params :query-params query-params]))}
                     ;; otherwise
                     (let [new-db (cond-> db
-                                   true (assoc ::db/page handler
-                                               ::db/page-params (merge params route-params {})
-                                               ::db/query-params (or query-params {})
-                                               ::db/scroll (if history-state (aget history-state "scroll-position") 0))
-                                   (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
-                                   (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
+                                         true (assoc ::db/page handler
+                                                     ::db/page-params (merge params route-params {})
+                                                     ::db/query-params (or query-params {})
+                                                     ::db/scroll (if history-state (aget history-state "scroll-position") 0))
+                                         (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
+                                         (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
                       (cond-> {:db                 new-db
                                :analytics/pageview [(str/capitalize  (name handler)) (merge query-params route-params)]
-                               :dispatch-n [[:error/close-global]]}
-                        ;; We only fire on-page-load events when we didn't receive a back-button
-                        ;; navigation (i.e. history-state is nil). See pushy/core.cljs.
-                        (nil? history-state) (update :dispatch-n (fn [dispatch-events]
-                                                                   (concat dispatch-events
-                                                                           (cond-> (on-page-load new-db)
-                                                                                   (::db/initial-load? db) (conj [:wh.events/set-initial-load false])))))
-                        (contains? #{:job :blog} handler) (assoc :analytics/track [(str (str/capitalize  (name handler)) " Viewed") route-params true])))))))
+                               :dispatch-n [[:error/close-global]
+                                            [::disable-no-scroll]]}
+                              ;; We only fire on-page-load events when we didn't receive a back-button
+                              ;; navigation (i.e. history-state is nil). See pushy/core.cljs.
+                              (nil? history-state) (update :dispatch-n (fn [dispatch-events]
+                                                                         (concat dispatch-events
+                                                                                 (cond-> (on-page-load new-db)
+                                                                                         (::db/initial-load? db) (conj [:wh.events/set-initial-load false])))))
+                              (contains? #{:job :blog} handler) (assoc :analytics/track [(str (str/capitalize  (name handler)) " Viewed") route-params true])))))))
 
 ;; Internal event meant to be triggered by :navigate only.
 
@@ -146,6 +157,20 @@
   db/default-interceptors
   (fn [_ [route]]
     {:load-module-and-set-page route}))
+
+(reg-event-db
+  ::disable-no-scroll
+  db/default-interceptors
+  (fn [db _]
+    (js/disableNoScroll)
+    db))
+
+(reg-event-db
+  ::enable-no-scroll
+  db/default-interceptors
+  (fn [db _]
+    (js/setNoScroll "app" true)
+    db))
 
 (defn processable-url? [uri]
   (and (not (contains? routes/server-side-rendered-paths (.getPath uri))) ;; we tell pushy to leave alone server side rendered pages
