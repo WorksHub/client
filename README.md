@@ -24,7 +24,15 @@ Anyone can log in as any of these users (there’s no need to check emails in de
 
 ## Getting started
 
-It is very easy to start hacking on WorksHub frontend. You only need [Leiningen](https://leiningen.org/). Just run
+It is very easy to start hacking on WorksHub frontend. You only need [NPM](https://www.npmjs.com/get-npm) and [Leiningen](https://leiningen.org/).
+
+The first time you prepare to run the app, you need to run
+
+```
+npm install
+```
+
+From then on, any time you want to run the app itself, run
 
 ```
 lein figwheel
