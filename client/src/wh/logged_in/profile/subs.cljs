@@ -207,7 +207,7 @@
 
 (reg-sub
   ::visa-statuses
-  (constantly ["EU Citizenship" "EU Visa" "US Citizenship" "US Greencard" "US H1B" "Other"]))
+  (constantly (sort data/visa-options)))
 
 (reg-sub
   ::visa-status
@@ -250,22 +250,6 @@
   :<- [::profile]
   (fn [profile _]
     (get-in profile [::profile/salary :time-period])))
-
-(reg-sub
-  ::visa-status-string
-  :<- [::profile]
-  (fn [profile _]
-    (visa-status-string (::profile/visa-status profile) (::profile/visa-status-other profile))))
-
-(defn map-longest
-  "Like map, but when acting on multiple colls works until the longest, rather than shortest,
-  is exhausted."
-  [f & colls]
-  (lazy-seq
-   (when (not-every? empty? colls)
-     (let [firsts (map first colls)]
-       (cons (apply f firsts)
-             (apply map-longest f (map rest colls)))))))
 
 (reg-sub
   ::preferred-location-labels

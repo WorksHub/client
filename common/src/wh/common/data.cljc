@@ -8,6 +8,8 @@
 (def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD"])
 (def time-periods ["Yearly" "Daily"])
 
+(def visa-options #{"US Citizenship" "US Greencard" "US H1B" "EU Citizenship" "EU Visa" "Other"})
+
 (def currency-symbols
   {"GBP" "£"
    "USD" "$"

@@ -6,12 +6,6 @@
     [wh.common.data :as data]
     [wh.util :as util]))
 
-(def visa-statuses ["EU Citizenship" "EU Visa" "US Citizenship" "US Greencard" "US H1B" "Other"])
-
-(defn has-visa-info? [db]
-  (or (get-in db [::sub-db ::visa-status-other])
-      (seq (get-in db [::sub-db ::visa-status]))))
-
 (defn has-cv? [db]
   (or (get-in db [::sub-db ::cv :link])
       (not (str/blank? (get-in db [::sub-db ::cv :file :url])))))
@@ -51,7 +45,7 @@
 (s/def ::approved (s/nilable boolean?))
 (s/def ::name string?)
 (s/def ::email string?)
-(s/def ::visa-status (s/coll-of (set visa-statuses)))
+(s/def ::visa-status (s/coll-of data/visa-options))
 (s/def ::visa-status-other (s/nilable string?))
 (s/def ::currency (s/nilable (set data/currencies)))
 (s/def ::min (s/nilable nat-int?))
@@ -108,11 +102,11 @@
   presentation."
   [user]
   (as-> user user
-    (cases/->kebab-case user)
-    (update user :visa-status #(if (str/blank? %) #{} (set (str/split % #", "))))
-    (update user :current-location #(when % (util/namespace-map "location" %)))
-    (update user :preferred-locations (partial mapv #(util/namespace-map "location" %)))
-    (update user :role-types set)))
+        (cases/->kebab-case user)
+        (update user :current-location #(when % (util/namespace-map "location" %)))
+        (update user :preferred-locations (partial mapv #(util/namespace-map "location" %)))
+        (update user :visa-status set)
+        (update user :role-types set)))
 
 (defn translate-user [user]
   (->> user

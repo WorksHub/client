@@ -83,7 +83,7 @@
 (reg-event-fx
   ::fetch-initial-data-success
   db/default-interceptors
-  (fn [{db :db} [{{me :me, blogs :blogs} :data}]]
+  (fn [{db :db} [{{me :me blogs :blogs} :data}]]
     (let [user (user/translate-user me)]
       {:db       (merge-with merge
                              {::dashboard/sub-db dashboard/default-db}
@@ -228,7 +228,6 @@
       (select-keys [::profile/id ::profile/preferred-locations ::profile/email ::profile/job-seeking-status
                     ::profile/company-perks ::profile/visa-status ::profile/visa-status-other ::profile/role-types
                     ::profile/salary ::profile/remote ::profile/current-location])
-      (update ::profile/visa-status #(str/join ", " %))
       (update ::profile/preferred-locations (partial filterv map?))
       (util/transform-keys)))
 

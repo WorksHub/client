@@ -23,7 +23,7 @@
            (::user/applied-jobs user)))
 
 (reg-sub ::all-visa-statuses
-         (constantly user/visa-statuses))
+         (constantly data/visa-options))
 
 (reg-sub ::all-currencies
          (constantly data/currencies))
