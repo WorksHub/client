@@ -16,11 +16,18 @@
    :vertical "functional"
    :google-maps-key "AIzaSyD7Ko7E0XrtzUzf0CxLv3xQcAxlbwqmu1E"})
 
+(defn- load-public-js
+  []
+  (slurp (io/resource "public.js")))
+
 (html/deftemplate wh-index-template "index.html"
                   [{:keys [app-db] :as ctx}]
                   [:script#data-init] (html/content (pr-str app-db))
                   [:script#google-maps] (html/content (format "window.googleMapsURL = 'https://maps.googleapis.com/maps/api/js?key=%s&libraries=places';"
                                                               (:google-maps-key config)))
+                  [:script#body-scroll-lock] (html/content (slurp (io/resource "body-scroll-lock/bodyScrollLock.js")))
+                  [:script#public] (html/content (load-public-js))
+                  [:script#public] (html/transform-content (html/replace-vars {:prefix ""}))
                   [:script#load-symbols-file-fn] (html/transform-content (html/replace-vars {:prefix ""}))
                   [:div#app-js] (html/content {:tag :script, :attrs {:type "text/javascript", :src "/js/wh.js"}})
                   [:style#main-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href "/wh.css"}}))
