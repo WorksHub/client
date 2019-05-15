@@ -62,20 +62,17 @@
                 :on-success [::fetch-initial-data-success]}
      :dispatch [::pages/set-loader]}))
 
-(defn url->predefined-avatar [url]
-  (when url
-    (when-let [[_ i] (re-matches #"^/images/avatar-([0-9]+).svg$" url)]
-      (js/parseInt i))))
+
 
 (defn init-avatar [profile]
-  (let [predefined-avatar (url->predefined-avatar (::profile/image-url profile))]
+  (let [predefined-avatar (common-user/url->predefined-avatar (::profile/image-url profile))]
     (merge profile
            {::profile/predefined-avatar  (or predefined-avatar 1)
             ::profile/custom-avatar-mode (and (::profile/image-url profile)
                                               (not predefined-avatar))})))
 
 (defn profile-data [user blogs]
-  (let [predefined-avatar (url->predefined-avatar (:image-url user))]
+  (let [predefined-avatar (common-user/url->predefined-avatar (:image-url user))]
     {::profile/predefined-avatar  (or predefined-avatar 1)
      ::profile/custom-avatar-mode (not predefined-avatar)
      ::profile/contributions      (mapv cases/->kebab-case blogs)}))
