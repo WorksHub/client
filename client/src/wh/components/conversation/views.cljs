@@ -19,7 +19,7 @@
      [icon "codi"]
      (into [:div.conversation-element.codi
             (when-let [on-close (:on-close options)]
-              [icon "close" :class :close
+              [icon "close" :class "close"
                :on-click #(dispatch on-close)])]
            parts)]))
 

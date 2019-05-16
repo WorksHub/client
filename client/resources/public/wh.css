@@ -4823,8 +4823,13 @@ a.navbar-item,
   position: absolute;
   left: 210px;
   right: 0;
-  top: 0;
-  height: 76px; }
+  top: 0; }
+  @media screen and (min-width: 1008px) {
+    .navbar-search-end-wrapper {
+      height: 76px; } }
+  @media screen and (max-width: 1007px) {
+    .navbar-search-end-wrapper {
+      height: 46px; } }
 
 .navbar-search-end {
   margin: 0 auto;
@@ -6823,8 +6828,8 @@ a.navbar-item,
   float: right;
   cursor: pointer;
   fill: #adadad;
-  width: 18px !important;
-  height: 18px !important; }
+  width: 36px !important;
+  height: 36px !important; }
 
 .consent-checkbox {
   margin-left: auto;

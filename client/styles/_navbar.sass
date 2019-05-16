@@ -369,7 +369,10 @@ $engineers-menu-offset: 434px
   left: $left-menu-width
   right: 0
   top: 0
-  height: $navbar-height
+  +desktop
+    height: $navbar-height
+  +mobile
+    height: $navbar-mobile-height
 
 .navbar-search-end
   margin: 0 auto
