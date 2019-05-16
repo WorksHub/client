@@ -2,15 +2,9 @@
 
 So you’ve looked at our code and want to contribute. That’s great!
 
-## Contributor Agreement
-
-First, you need to sign the WorksHub Contributor Agreement. _TODO: insert instructions how to do it_
-
-Note that we don’t require the Agreement for our other open-source libraries. It’s needed to contribute to this frontend code only.
-
 ## Registering on the WorksHub platform
 
-If you don’t have a WorksHub account yet, [create one now](https://functional.works-hub.com/get-started). This is, strictly speaking, an optional step, but we highly recommend it. You’ll need an account to get paid for contributing.
+If you don’t have a WorksHub account yet, [create one now](https://functional.works-hub.com/get-started). This is, strictly speaking, an optional step, but we highly recommend it. You’ll need an account to get paid for contributing to paid open source issues.
 
 ## Finding something to work on
 
