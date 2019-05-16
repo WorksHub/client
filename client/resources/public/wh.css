@@ -12245,6 +12245,7 @@ h3 {
 
 .issue__title, .issue__edit__title {
   margin-left: 18px;
+  margin-bottom: 0;
   font-size: 18px;
   line-height: 1.44;
   font-weight: 500;

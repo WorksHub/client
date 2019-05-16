@@ -85,7 +85,7 @@
         (wrap-img img (<sub [::subs/company-logo])
                   {:alt (str (<sub [::subs/company-name]) " logo")
                    :w   64 :h 64 :class "issue__logo"}))
-      [:span.issue__title {:class (when skeleton? "skeleton")} (<sub [::subs/title])]]
+      [:h1.issue__title {:class (when skeleton? "skeleton")} (<sub [::subs/title])]]
      [infobox]
      [:div.issue__header-buttons.columns
       (when-not skeleton?
