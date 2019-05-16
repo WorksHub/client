@@ -401,7 +401,7 @@
       [private-section-view (<sub [::subs/private-data])]])
    [:button.button
     {:on-click #(dispatch [:user/logout])}
-    "Sign Out"]])
+    "Logout"]])
 
 (defn view-page []
   [:div.main-container
