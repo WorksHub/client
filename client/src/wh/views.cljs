@@ -17,6 +17,36 @@
     [wh.pages.router :refer [current-page]]
     [wh.subs :as subs :refer [<sub]]))
 
+(defn tracking-popup []
+  (let [expanded (r/atom false)]
+    (fn []
+      [:div
+       [:div.tracking-popup.is-hidden-mobile
+        [:p "We use cookies and other tracking technologies to improve your browsing experience on our site, analyze site traffic,
+    and understand where our audience is coming from. To find out more, please read our "
+         [:a.a--underlined {:href   "/privacy-policy"
+                            :target "_blank"
+                            :rel    "noopener"}
+          "privacy policy."]]
+        [:p "By choosing 'I Accept', you consent to our use of cookies and other tracking technologies."]
+        [:button.button {:on-click #(dispatch [::events/agree-to-tracking])} "I Accept"]]
+       [:div.tracking-popup.is-hidden-desktop
+        (if @expanded
+          [:div
+           [:p "We use cookies and other tracking technologies to improve your browsing experience on our site, analyze site traffic,
+    and understand where our audience is coming from. To find out more, please read our "
+            [:a.a--underlined {:href   "/privacy-policy"
+                               :target "_blank"
+                               :rel    "noopener"}
+             "privacy policy."]]
+           [:p
+            "By choosing 'I Accept', you consent to our use of cookies and other tracking technologies. "
+            [:a.a--underlined {:on-click #(reset! expanded false)} "Less"]]
+           [:button.button {:on-click #(dispatch [::events/agree-to-tracking])} "I Accept"]]
+          [:div.tracking-popup--collapsed
+           [:p "We use cookies and other tracking technologies... " [:a.a--underlined {:on-click #(reset! expanded true)} "More"]]
+           [:button.button {:on-click #(dispatch [::events/agree-to-tracking])} "I Accept"]])]])))
+
 (defn version-mismatch []
   [:div.version-mismatch
    [icon "codi"]
@@ -28,10 +58,11 @@
 ;; (currently used by user, logged-in and blogs modules)
 (def extra-overlays (r/atom []))
 
-;; DO NOT add anything to this function; things are being moved out and into SSR-land
 (defn overlays []
   (into
    [:div.overlays
+    (when (<sub [::subs/display-tracking-consent-popup?])
+      [tracking-popup])
     (when-not (<sub [:user/logged-in?])
       [auth-popup])]
    @extra-overlays))

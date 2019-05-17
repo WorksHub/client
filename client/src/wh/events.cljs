@@ -42,9 +42,32 @@
     (assoc db ::db/version-mismatch true)))
 
 (reg-event-fx
+  ::agree-to-tracking-success
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:db             (assoc db ::db/tracking-consent? true)
+     :analytics/load nil}))
+
+(reg-event-fx
+  ::agree-to-tracking-failure
+  (fn [_ _]
+    (js/console.error "Failed to set cookie to store tracking agreement." )))
+
+(reg-event-fx
+  ::agree-to-tracking
+  db/default-interceptors
+  (fn [_ _]
+    {:cookie/set {:name       (:tracking-consent url/wh-cookie-names)
+                  :value      "true"
+                  :max-age    31536000                     ;;1 year
+                  :on-success [::agree-to-tracking-success]
+                  :on-failure [::agree-to-tracking-failure]}
+     :analytics/init-tracking nil}))
+
+(reg-event-fx
   :init
-  (conj db/default-interceptors (inject-cofx :cookie/get [:wh_tracking_consent]))
-  (fn [{{consent :wh_tracking_consent} :cookie/get, db :db} _]
+  (conj db/default-interceptors (inject-cofx :cookie/get [:wh_tracking_consent :wh_aid]))
+  (fn [{{consent :wh_tracking_consent a-id :wh_aid} :cookie/get, db :db} _]
     (when (empty? db)
       (let [tracking-consent? (= "true" consent)
             server-side-db (-> (.getElementById js/document "data-init")
@@ -52,14 +75,16 @@
                                r/read-string)
             query-params (pages/parse-query-params)
             db (merge
-                 (db/default-db server-side-db)
-                 {::db/query-params      query-params
-                  ::db/initial-utm-tags  (select-keys query-params ["utm_source" "utm_medium" "utm_campaign" "utm_term" "utm_content"])
-                  ::db/initial-referrer  (aget js/document "referrer")
-                  ::db/tracking-consent? tracking-consent?})]
+                (db/default-db server-side-db)
+                {::db/query-params      query-params
+                 ::db/initial-utm-tags  (select-keys query-params ["utm_source" "utm_medium" "utm_campaign" "utm_term" "utm_content"])
+                 ::db/initial-referrer  (aget js/document "referrer")
+                 ::db/tracking-consent? tracking-consent?})]
         (cond-> {:db         db
                  :dispatch-n [[:user/init]
-                              [:wh.pages.router/initialize-page-mapping]]})))))
+                              [:wh.pages.router/initialize-page-mapping]]}
+                (and tracking-consent? (not a-id)) (assoc :analytics/init-tracking nil)
+                tracking-consent? (assoc :analytics/load nil))))))
 
 (reg-event-db
   ::set-initial-load
