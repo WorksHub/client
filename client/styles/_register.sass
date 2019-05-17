@@ -79,6 +79,15 @@ $line-height: 1.5
     &:nth-child(#{$i}) .conversation-element, &:nth-child(#{$i}) .multiple-buttons, &:nth-child(#{$i}) .conversation-button
       animation-delay: 0.2s + ($i - 1) * 0.8s
 
+.conversation-button--error
+  font-size: 8pt
+  color: $dark-salmon
+  display: block
+  margin-left: auto
+  margin-right: 18px
+  position: relative
+  text-align: right
+
 .codi-container
   display: flex
   &:last-of-type

@@ -4,11 +4,15 @@
     [clojure.string :as str]
     [wh.common.cases :as cases]
     [wh.common.data :as data]
+    [wh.common.user :as user]
     [wh.util :as util]))
 
 (defn has-cv? [db]
   (or (get-in db [::sub-db ::cv :link])
       (not (str/blank? (get-in db [::sub-db ::cv :file :url])))))
+
+(defn has-full-name? [db]
+  (user/full-name? (get-in db [::sub-db ::name])))
 
 (defn admin-type? [type]
   (= type "admin"))

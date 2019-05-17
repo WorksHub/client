@@ -107,6 +107,7 @@
 
 (defmethod on-page-load :profile [db]
   [[::fetch-initial-data]
+   [::pages/clear-errors]
    (when (seq (settings-from-query-params db))
      [::save-settings-from-url])])
 
@@ -254,9 +255,8 @@
   Quick-and-dirty but will do for now."
   [profile]
   (cond
-    (str/blank? (::profile/name profile)) "Please fill in your name."
-    (str/blank? (::profile/email profile)) "Please provide your email."
-    :else nil))
+    (not (common-user/full-name? (::profile/name profile))) "Please fill in your name (at least two words)"
+    (str/blank? (::profile/email profile)) "Please provide your email."))
 
 (reg-event-fx
   ::save-header
@@ -372,7 +372,8 @@
   ::save-success
   db/default-interceptors
   (fn [{db :db} res]
-    {:navigate (cond (> (count res) 1)
+    {:dispatch [::pages/clear-errors]
+     :navigate (cond (> (count res) 1)
                      (first res)
                      (contains? #{:candidate :candidate-edit-header :candidate-edit-cv :candidate-edit-private} (:wh.db/page db))
                      [:candidate :params (:wh.db/page-params db)]

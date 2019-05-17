@@ -12,16 +12,22 @@
     (::apply/job db)))
 
 (reg-sub
-  ::step
+  ::step-taken?
   :<- [::sub-db]
-  (fn [db _]
-    (::apply/step db)))
+  (fn [db [_ step]]
+    (contains? (::apply/steps-taken db) step)))
 
 (reg-sub
-  ::loading?
+  ::current-step?
+  :<- [::sub-db]
+  (fn [db [_ step]]
+    (= step (::apply/current-step db))))
+
+(reg-sub
+  ::updating?
   :<- [::sub-db]
   (fn [db _]
-    (::apply/loading? db)))
+    (::apply/updating? db)))
 
 (reg-sub
   ::submit-success?
@@ -53,3 +59,9 @@
   :<- [::sub-db]
   (fn [db _]
     (::apply/cv-upload-failed? db)))
+
+(reg-sub
+  ::update-name-failed?
+  :<- [::sub-db]
+  (fn [db _]
+    (::apply/name-update-failed? db)))

@@ -26,6 +26,9 @@
 (def-query-from-template update-user-mutation--approval update-user-mutation
   {:fields [[:approval [:status]]]})
 
+(def-query-from-template update-user-mutation--name update-user-mutation
+  {:fields [:name]})
+
 (def set-application-state-mutation
   {:venia/operation {:operation/type :mutation
                      :operation/name "set_application_state"}

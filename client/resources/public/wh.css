@@ -4291,10 +4291,6 @@ a.navbar-item,
   font-weight: 800;
   margin-right: 2px; }
 
-@media screen and (max-width: 1007px) {
-  .wh-error {
-    display: none; } }
-
 .load-wrap {
   position: relative; }
   .load-wrap .loader-container {
@@ -6659,6 +6655,15 @@ a.navbar-item,
 .animatable:nth-child(10) .conversation-element, .animatable:nth-child(10) .multiple-buttons, .animatable:nth-child(10) .conversation-button {
   animation-delay: 7.4s; }
 
+.conversation-button--error {
+  font-size: 8pt;
+  color: #bf5d52;
+  display: block;
+  margin-left: auto;
+  margin-right: 18px;
+  position: relative;
+  text-align: right; }
+
 .codi-container {
   display: flex; }
   .codi-container:last-of-type .icon {
@@ -7085,6 +7090,11 @@ a.navbar-item,
   .profile-section__applications__buttons .button {
     width: 120px;
     margin: 6px; }
+
+.avatar-picker {
+  margin: 18px; }
+  .avatar-picker .avatar {
+    margin-left: 18px; }
 
 .login-buttons {
   margin-top: 15vh;
@@ -8839,9 +8849,23 @@ a.navbar-item,
 .display-inline {
   display: inline-block; }
 
+.update-name {
+  width: 64px; }
+
+.cv-upload .file-cta {
+  width: 128px; }
+
 .cv-upload .file-label:hover .file-cta {
   color: white !important;
   background: #6E7F89 !important; }
+
+.add-full-name {
+  margin-top: 10px; }
+  .add-full-name .conversation-element {
+    padding: 5px; }
+  .add-full-name input {
+    font-size: 13px !important;
+    font-weight: 500 !important; }
 
 .contribute__main .field {
   margin-bottom: 0px; }

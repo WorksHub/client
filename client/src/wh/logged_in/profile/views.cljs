@@ -106,8 +106,6 @@
   (if (<sub [::subs/avatar-uploading?])
     [:p "Uploading your avatar, please wait..."]
     [:div.file.avatar-picker
-     [:div.avatar [:img {:src (<sub [::subs/image-url])
-                         :alt "Uploaded avatar"}]]
      [:label.file-label
       [:input.file-input {:type "file"
                           :name "avatar"
@@ -117,7 +115,9 @@
                                       :on-success [::events/avatar-upload-success]
                                       :on-failure [::events/avatar-upload-failure])}]
       [:span.file-cta.button
-       [:span.file-label "Choose a file..."]]]]))
+       [:span.file-label "Choose a file..."]]]
+     [:div.avatar [:img {:src (<sub [::subs/image-url])
+                         :alt "Uploaded avatar"}]]]))
 
 (defn avatar-field []
   (let [custom? (<sub [::subs/custom-avatar-mode])]
@@ -169,7 +169,9 @@
   [:form.wh-formx.header-edit
    [:h1 "Edit your basic info"]
    [avatar-field]
-   [text-field (<sub [::subs/name]) {:label "Your name" :on-change [::events/edit-name]}]
+   [text-field (<sub [::subs/name])
+    {:label "Your name"
+     :on-change [::events/edit-name]}]
    [multi-edit
     (<sub [::subs/rated-skills])
     {:label [:div "Skills" [:br] [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]

@@ -28,3 +28,7 @@
   ;; We ensure the image is a PNG so the email clients can properly display it
   (when-not (str/blank? image-url)
     (str/replace image-url #"svg" "png")))
+
+(defn full-name? [name]
+  (not (or (str/blank? name)
+           (str/blank? (second (re-find #"(.*) (.*)$" (str/trim (str/replace name #"\s+" " "))))))))
