@@ -231,30 +231,6 @@ $file-cta-background-color: $red
       bottom: 15px
       padding-right: 10px
 
-.tracking-popup
-  +popup
-  padding: 15px 15px 15px 25px
-  bottom: 0
-  border: 10px solid $light-blue-grey
-  .button
-    margin-top: 15px
-  +desktop
-    left: calc(100vw / 2 - 305px)
-    width: 610px
-  +mobile
-    width: 100%
-    line-height: 22px
-    border: 0
-    padding: 10px 17px
-
-.tracking-popup--collapsed
-  display: flex
-  justify-content: space-between
-  align-items: center
-  .button
-    margin: 0
-    width: 120px
-
 .svg-container
   display: none
 
@@ -306,6 +282,7 @@ $file-cta-background-color: $red
 @import "how_it_works"
 @import "faq"
 @import "get_started"
+@import "tracking"
 
 html, body
   +desktop
