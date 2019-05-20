@@ -82,11 +82,11 @@
          :billing-period billing-period
          :mobile-fullscreen? true
          :contact-button (demo-button vertical)}]]
-      [www/animated-hr "/images/homepage/rocket.svg" "www-homepage__animated-hr__rocket"]
+      [www/animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
       [:div.pricing-content
        [:h2.pricing__subtitle "FAQS"]
        [:h1.pricing__title "What else would you like to know?"]
        [faq/faq-component data/pricing-questions]]
-      [www/animated-hr "/images/homepage/globe.svg" "www-homepage__animated-hr__globe"]
+      [www/animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe"]
       [:div.pricing-content.has-text-centered
        [www/testimonials]]])))

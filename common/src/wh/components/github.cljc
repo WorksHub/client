@@ -8,17 +8,18 @@
      "organization membership"]
     " status set to public."]
    [:div.company-edit__integrations
-    [:button.button.company-edit__integration
+    [:button.button.button--black.button--github
      {:id       "company-edit__integration--github"
       :on-click #?(:cljs #(do (.preventDefault %)
                               (load-and-dispatch [:login [:github/call nil :company]]))
                    :clj nil)}
-     [:img {:src "/images/company/github.svg"}]]]])
+     [:div]]]])
 
-(defn integrate-github-button [class]
+(defn integrate-github-button
+  [{:keys [class label track-context user-type]
+    :or {label "Integrate with"}}]
   [:button.button.button--black.button--public.button--github
    {:class class
-    :on-click #?(:cljs #(do (.preventDefault %)
-                            (load-and-dispatch [:login [:github/call nil :company]]))
+    :on-click #?(:cljs #(load-and-dispatch [:login [:github/call track-context user-type]])
                  :clj nil)}
-   [:span "Integrate with"] [:div]])
+   [:span label] [:div]])

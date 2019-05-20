@@ -9,6 +9,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.www-homepage :as www]
     [wh.homepage.subs :as subs]
+    [wh.landing.views :as landing]
     [wh.subs :refer [<sub] :as subs-common]))
 
 (defn top-section []
@@ -48,8 +49,14 @@
     [blogs-section blogs blog-card contribute-button (<sub [::subs-common/vertical-label])]))
 
 (defn page []
-  (if (= "www" (<sub [:wh.subs/vertical]))
+  (cond
+    (= "www" (<sub [:wh.subs/vertical]))
     (www/homepage (<sub [:wh.subs/page-params]))
+
+    (<sub [:wh.subs/query-param "newlanding"])
+    (landing/page)
+
+    true
     [:div
      [top-section]
      [:div.dashboard

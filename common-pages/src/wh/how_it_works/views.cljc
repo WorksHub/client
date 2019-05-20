@@ -15,7 +15,7 @@
   (let [btn [:button.button.button--public "Get Started"]]
     (cond
       (or github? (<sub [::subs/show-github-buttons?]))
-      [github/integrate-github-button class]
+      [github/integrate-github-button {:class class, :user-type :company}]
       (<sub [::subs/show-candidate-buttons?])
       (link btn
             :issues
@@ -89,7 +89,7 @@
             "Use Open Source to hire or get hired")]
      [:p "Through open-source projects we help companies build communities of software engineers and hire better talent."]
      (if github?
-       [github/integrate-github-button]
+       [github/integrate-github-button {:user-type :company}]
        [slider selected-site])]]])
 
 (defn step-line

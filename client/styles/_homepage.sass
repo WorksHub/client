@@ -1,3 +1,5 @@
+// this is the old homepage stuff, can be removed once we merge new homepages
+
 .homepage-header
   margin: 0 !important
   background: $hero-grey
@@ -117,3 +119,453 @@
     color: $steel-gray
     font-size: 14px
     padding-left: 10px
+
+$homepage-max-width: 1084px
+
+// new homepage
+
+.homepage
+  .button
+    border-radius: 4px
+    font-size: 12px
+    height: 40px
+    padding: 6px 12px
+
+.homepage__top-content,
+.homepage__middle-content,
+.homepage__bottom-content
+  background: white
+
+.homepage__top-content__container,
+.homepage__middle-content__container,
+.homepage__bottom-content__container
+  padding: 25px 52px
+  +mobile
+    padding: 18px
+  margin: 0 auto
+  max-width: $homepage-max-width
+
+.homepage__middle-content
+  padding-bottom: 62px
+
+.homepage__middle-content__container
+  padding: 0px 60px
+  +mobile
+    padding: 0px 18px
+  text-align: center
+  &:first-of-type
+    padding-top: 62px
+    padding-bottom: 0px
+  &:last-of-type
+    padding-bottom: 62px
+
+.homepage__bottom-content__container
+  padding: 0px 10px
+
+.homepage__header
+  display: flex
+  +mobile
+    flex-direction: column-reverse
+
+.homepage__header__img
+  flex: 1 0 auto
+  +mobile
+    margin-top: -140px;
+.homepage__header__img-inner
+  max-width: 510px
+  +mobile
+    float: right
+    margin-right: -180px
+    min-width: 480px
+
+.homepage__header__copy
+  flex: 1 1 auto
+  max-width: 578px
+  margin-bottom: 76px
+  +desktop
+    margin-left: -48px
+  h1
+    color: $steel-gray
+    font-weight: bold
+    font-size: 44px
+    line-height: 58px
+    +mobile
+      font-size: 28px
+      line-height: 40px
+  p
+    font-family: $family-secondary
+    font-size: 16px
+    margin-bottom: 24px
+    line-height: 32px
+    +mobile
+      line-height: 26px
+
+.homepage__companies-section
+  background-color: $pale-gray
+  .companies-section
+    background-color: $pale-gray
+    .column
+      img
+        max-height: 30px !important
+    .column:nth-of-type(2)
+      img
+        max-height: 40px !important /* Specifically for Troops logo */
+
+.homepage__companies-section__container
+  margin: 0 auto
+  max-width: $homepage-max-width
+
+.homepage__middle-content
+  h3
+    font-size: 36px
+    line-height: 48px
+    color: $red
+    font-weight: bold
+    +mobile
+      font-size: 24px
+      line-height: 30px
+  h2
+    font-family: $family-secondary
+    font-weight: $font-regular
+    font-size: 16px
+    line-height: 22px
+    letter-spacing: 1px
+    +mobile
+      font-size: 14px
+
+.homepage__middle-content__container
+  h2:first-of-type
+    margin-bottom: 30px
+    +mobile
+      margin-bottom: 12px
+  h3:first-of-type
+    max-width: 675px
+    margin: 0 auto 40px auto;
+
+.homepage__features
+  +desktop
+    margin-bottom: 40px !important
+
+.homepage__feature-column
+  display: flex
+  font-family: $family-secondary
+  font-weight: $font-regular
+  font-size: 16px
+  line-height: 26px
+  +desktop
+    flex-direction: column
+
+.homepage__feature-column__img-container
+  display: flex
+  align-items: center
+  +desktop
+    height: 140px
+  +mobile
+    min-width: 25%
+    max-width: 25px
+    margin-right: 12px
+    justify-content: center
+  margin-bottom: 16px
+  img
+    width: 75%
+    margin: 0 auto
+    +mobile
+      width: 85%
+
+.homepage__feature-column__description-container
+  margin: auto 0;
+  text-align: left;
+  +desktop
+    padding: 0 12px;
+
+.homepage__feature-ctas
+  display: flex
+  justify-content: center
+  +mobile
+    flex-direction: column
+  .button
+    width: 280px
+    margin: 10px
+    +mobile
+      margin: 8px 0px
+
+.homepage__walkthrough
+  +desktop
+    padding: 0 64px
+  text-align: left
+  span, strong
+    font-size: 16px
+    line-height: 32px
+    font-family: $family-secondary
+    +mobile
+      line-height: 26px
+  h3
+    max-width: unset !important
+
+.homepage__step
+  display: flex
+  +mobile
+    flex-direction: column-reverse
+.homepage__step:nth-of-type(even)
+  +desktop
+    flex-direction: row-reverse
+.homepage__step:not(:last-of-type)
+  +desktop
+    margin-bottom: 90px
+
+.homepage__step__description
+  +desktop
+    padding-left: 100px
+    display: flex
+    flex-direction: column
+  span
+    +desktop
+      max-width: 320px
+    margin-bottom: 20px
+  button
+    +mobile
+      display: block
+      margin: 18px 0
+
+.homepage__step__img
+  +desktop
+    margin-top: -24px
+  +mobile
+    margin: 0 auto
+    width: 200px
+.homepage__step__img--offset
+  +desktop
+    margin-top: -120px
+
+.homepage__animated-hr
+  width: 100px
+  height: 125px
+  margin: 60px 0 90px 0
+  width: 100%
+  position: relative
+  +mobile
+    margin: 10px 0
+
+.homepage__animated-hr__bg
+  position: relative
+  img
+    position: absolute
+
+.homepage__animated-hr__img
+  position: absolute
+  z-index: 2
+
+.homepage__animated-hr__rocket
+  left: 20px
+  top: 40px
+  img
+    width: 200px
+
+
+.homepage__animated-hr__globe
+  left: calc(50% - 75px)
+  +mobile
+    left: calc(50% - 60px)
+  top: 0px
+  img
+    width: 150px
+    +mobile
+      width: 120px
+
+.homepage__middle-content
+  .homepage__animated-hr:last-child
+    margin-bottom: 0
+
+.homepage__testimonials,
+.homepage__looking-to-hire
+  h3
+    font-size: 24px
+    line-height: 34px
+    +mobile
+      font-size: 21px
+      line-height: 28px
+    font-weight: bold
+    color: $steel-gray
+    margin-bottom: 24px !important
+    font-family: $family-primary
+
+.homepage__testimonials,
+  +mobile
+    margin-top: 28px
+
+.homepage__testimonials__carousel
+  margin-top: 66px
+  position: relative
+  height: 294px
+  +mobile
+    height: 385px
+
+.homepage__testimonial_wrapper
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+
+.homepage__testimonial
+  max-width: 490px
+  margin: 0 auto
+  opacity: 0
+  transition: opacity 0.5s
+
+.homepage__testimonial--active
+  opacity: 1
+
+.homepage__testimonial__quote,
+.homepage__looking-to-hire
+  font-size: 16px
+  line-height: 26px
+  font-family: $family-secondary
+  margin-bottom: 24px
+
+.homepage__testimonial__quote
+  min-height: 130px
+
+.homepage__testimonial__source
+  font-size: 16px
+  line-height: 26px
+  font-weight: bold
+  color: $steel-gray
+  margin-bottom: 18px
+
+.homepage__testimonial__logo
+  margin-bottom: 28px
+  height: 38px
+  img
+    max-width: 120px
+    max-height: 40px
+
+.homepage__testimonial-pips-wrapper
+  position: absolute
+  bottom: 0
+  width: 100%
+
+.homepage__testimonial-pips
+  display: flex
+  justify-content: center
+
+.homepage__testimonial-pip
+  .icon
+    fill: $light-red
+    width: 15px
+    height: 15px
+
+.homepage__testimonial-pip--active
+  .icon
+    fill: $red
+
+.homepage__testimonial-pip--clickable
+  cursor: pointer
+
+.homepage__testimonial-pip + .homepage__testimonial-pip
+  margin-left: 14px
+
+.homepage__bottom-content
+  text-align: center
+
+.homepage__looking-to-hire
+  padding-bottom: 64px
+  margin-bottom: 0
+  &>p
+    max-width: 490px
+    margin: 0 auto
+    margin-bottom: 18px
+
+.homepage__looking-to-hire__header
+  padding: 0 7px
+  margin-bottom: 14px
+
+.homepage__looking-to-hire__types
+  margin-bottom: 18px
+
+.homepage__looking-to-hire__type
+  position: relative
+  background-color: $pale-gray
+  max-width: 350px
+  width: 100%
+  margin: 0 10px 20px 10px
+  height: 178px
+  +mobile
+    margin: 0 0 8px 0px
+    border: 6px solid white
+    height: 196px
+  display: inline-block
+  padding: 18px
+  color: $steel-gray
+  text-align: left
+  font-size: 14px
+  line-height: 20px
+  +desktop
+    max-width: 320px
+  &>div
+    margin-bottom: 12px
+
+.homepage__looking-to-hire__type__link
+  font-family: $family-primary
+  font-size: 12px
+
+.homepage__looking-to-hire__type__title
+  font-family: $family-primary
+  font-weight: bold
+
+.homepage__looking-to-hire__type__description
+  height: 78px
+
+.homepage__looking-to-hire__type__logo
+  position: absolute
+  top: 11px
+  right: 8px
+  .icon
+    width: 35px
+    height: 35px
+
+.homepage__animated-hr__bg__cloud0
+  width: 136px; height: 68px; left: -32px; top: 25px;
+.homepage__animated-hr__bg__cloud1
+  width: 136px; height: 68px; left: 171px; top: 14px;
+.homepage__animated-hr__bg__cloud2
+  width: 34px; height: 17px; left: 409px; top: 4px;
+.homepage__animated-hr__bg__cloud3
+  width: 136px; height: 68px; left: 505px; top: 12px;
+.homepage__animated-hr__bg__cloud4
+  width: 68px; height: 34px; left: 731px; top: 39px;
+.homepage__animated-hr__bg__cloud5
+  width: 68px; height: 34px; left: 959px; top: 7px;
+.homepage__animated-hr__bg__cloud6
+  width: 34px; height: 17px; left: 1112px; top: 34px;
+.homepage__animated-hr__bg__cloud7
+  width: 136px; height: 58px; left: 1298px; top: 28px;
+.homepage__animated-hr__bg__cloud8
+  width: 68px; height: 34px; left: 1420px; top: 8px;
+.homepage__animated-hr__bg__cloud9
+  width: 34px; height: 17px; left: 1616px; top: 58px;
+.homepage__animated-hr__bg__cloud10
+  width: 136px; height: 68px; left: 1788px; top: 34px;
+.homepage__animated-hr__bg__cloud11
+  width: 68px; height: 34px; left: 2020px; top: 3px;
+.homepage__animated-hr__bg__cloud12
+  width: 68px; height: 34px; left: 2216px; top: 77px;
+.homepage__animated-hr__bg__cloud13
+  width: 136px; height: 68px; left: 2407px; top: 50px;
+.homepage__animated-hr__bg__cloud14
+  width: 136px; height: 68px; left: 2521px; top: 5px;
+.homepage__animated-hr__bg__cloud15
+  width: 136px; height: 68px; left: 2738px; top: 43px;
+.homepage__animated-hr__bg__cloud16
+  width: 136px; height: 68px; left: 2885px; top: 1px;
+.homepage__animated-hr__bg__cloud17
+  width: 136px; height: 68px; left: 3049px; top: 38px;
+.homepage__animated-hr__bg__cloud18
+  width: 68px; height: 34px; left: 3253px; top: 11px;
+.homepage__animated-hr__bg__cloud19
+  width: 136px; height: 68px; left: 3484px; top: 31px;
+.homepage__animated-hr__bg__cloud20
+  width: 136px; height: 68px; left: 3556px; top: 10px;
+.homepage__animated-hr__bg__cloud21
+  width: 68px; height: 34px; left: 3789px; top: 71px;
+.homepage__animated-hr__bg__cloud22
+  width: 136px; height: 68px; left: 3982px; top: 41px;
