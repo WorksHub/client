@@ -71,7 +71,9 @@
      [codi-message "Good news \uD83D\uDC4F, your application was successful!"]
      [codi-message "Your dedicated Talent Manager will be in touch to discuss next steps."]
      [codi-message "In the meantime check some other great jobs we have "
-      [link "recommended" :recommended :class "a--underlined" :on-click #(dispatch [::events/track-recommendations-redirect])]
+      [link "recommended" :recommended :class "a--underlined" :on-click #(do
+                                                                           (dispatch [::events/close-chatbot])
+                                                                           (dispatch [::events/track-recommendations-redirect]))]
       " for you."]]
     [:div
      [error-message (<sub [::subs/error-message])]
