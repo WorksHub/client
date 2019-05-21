@@ -46,3 +46,10 @@
   :user/owner?
   (fn [db [_ id]]
     (= (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) id)))
+
+;; MISC
+
+(reg-sub
+  :wh/vertical
+  (fn [db _]
+    (:wh.db/vertical db)))

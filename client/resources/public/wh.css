@@ -13934,10 +13934,107 @@ h3 {
       .issues__stats__ball--yellow p {
         font-size: 14px; } }
 
+.landing-page .homepage__middle-content__container:last-of-type {
+  padding-bottom: 28px; }
+
+.landing-page .homepage__middle-content {
+  padding-bottom: 12px; }
+
+.landing-page .homepage__feature-ctas {
+  margin-top: 24px; }
+  .landing-page .homepage__feature-ctas .button {
+    font-family: "Montserrat", sans-serif; }
+    @media screen and (max-width: 1007px) {
+      .landing-page .homepage__feature-ctas .button {
+        margin: 10px auto; } }
+    @media screen and (min-width: 1008px) {
+      .landing-page .homepage__feature-ctas .button {
+        margin: 0 10px; } }
+
 .landing__header__buttons .button {
   width: 240px;
   margin-right: 9px;
   margin-bottom: 12px; }
+
+.homepage__benefits-list {
+  display: grid;
+  margin-bottom: 24px; }
+  .homepage__benefits-list .how-it-works__benefit__inner {
+    justify-content: flex-start;
+    text-align: left; }
+  .homepage__benefits-list img {
+    max-width: 30vw; }
+    @media screen and (min-width: 1008px) {
+      .homepage__benefits-list img {
+        height: 200px;
+        margin-bottom: 30px; } }
+  .homepage__benefits-list p {
+    margin-top: 18px;
+    letter-spacing: 0; }
+  .homepage__benefits-list h4 {
+    letter-spacing: 0;
+    margin-top: 12px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    line-height: 24px;
+    color: #ff7c6e;
+    font-weight: 600; }
+
+.homepage__looking-to-hire--candidate {
+  background-color: #f4f5f8; }
+  @media screen and (min-width: 1008px) {
+    .homepage__looking-to-hire--candidate {
+      padding-top: 72px; } }
+  @media screen and (max-width: 1007px) {
+    .homepage__looking-to-hire--candidate {
+      padding-top: 36px; } }
+  .homepage__looking-to-hire--candidate .homepage__looking-to-hire {
+    display: flex;
+    text-align: left; }
+    @media screen and (max-width: 1007px) {
+      .homepage__looking-to-hire--candidate .homepage__looking-to-hire {
+        flex-direction: column-reverse; } }
+  @media screen and (min-width: 1008px) {
+    .homepage__looking-to-hire--candidate img {
+      width: 313px;
+      margin-right: 86px;
+      margin-left: 66px; } }
+  .homepage__looking-to-hire--candidate h3 {
+    font-size: 24px; }
+  .homepage__looking-to-hire--candidate .homepage__feature-ctas {
+    margin-top: 24px;
+    justify-content: flex-start; }
+    .homepage__looking-to-hire--candidate .homepage__feature-ctas .button {
+      font-family: "Montserrat", sans-serif; }
+      @media screen and (min-width: 1008px) {
+        .homepage__looking-to-hire--candidate .homepage__feature-ctas .button {
+          margin: 0; } }
+      @media screen and (max-width: 1007px) {
+        .homepage__looking-to-hire--candidate .homepage__feature-ctas .button {
+          margin: 0 auto; } }
+
+@media screen and (max-width: 1007px) {
+  .homepage__how-we-are-different {
+    padding: 0 !important; } }
+
+@media screen and (min-width: 1008px) {
+  .homepage__how-we-are-different .how-it-works__benefit {
+    max-width: 285px; } }
+
+@media screen and (max-width: 1007px) {
+  .homepage__how-we-are-different .how-it-works__benefit .how-it-works__benefit__inner {
+    display: block; } }
+
+@media screen and (max-width: 1007px) {
+  .homepage__how-we-are-different .how-it-works__benefit .how-it-works__benefit__header {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center; } }
+
+.homepage__how-we-are-different .how-it-works__benefit p {
+  padding: 0;
+  margin-bottom: 6px; }
 
 .footer {
   background-color: #6E7F89;

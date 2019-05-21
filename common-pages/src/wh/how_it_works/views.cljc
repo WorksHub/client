@@ -134,11 +134,22 @@
    [step-line 4]])
 
 (defn benefit
-  [img-src description]
+  [{:keys [img title txt]}]
   [:div.how-it-works__benefit
    [:div.how-it-works__benefit__inner
-    [:img {:src img-src}]
-    [:p description]]])
+    [:div.how-it-works__benefit__header
+     [:img {:src img}]
+     (when title
+       [:h4 title])]
+    [:p txt]]])
+
+(defn benefits-list
+  [items {:keys [class]}]
+  [:div {:class (util/merge-classes "how-it-works__benefits-list" class)}
+   (doall
+    (for [item items]
+      ^{:key (:img item)}
+      [benefit item]))])
 
 (defn benefits
   [selected-site github?]
@@ -146,11 +157,7 @@
    [:div.how-it-works__benefits__inner
     [:h2 "THE BENEFITS"]
     [:h3 "What's in it for you?"]
-    [:div.how-it-works__benefits-list
-     (doall
-      (for [{:keys [img txt]} (get data/how-it-works-benefits selected-site)]
-        ^{:key img}
-        [benefit img txt]))]
+    (benefits-list (get data/how-it-works-benefits selected-site) {})
     [:div.how-it-works__benefits__buttons
      [link
       [:button.button.button--inverted.button--public

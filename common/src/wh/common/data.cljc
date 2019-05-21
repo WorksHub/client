@@ -519,35 +519,42 @@
   {"functional" {:title        "Functional Programmers"
                  :logo         "functional"
                  :description  "Developers working with Scala, Haskell, Clojure, OCaml, Elixir, Elm, Typescript, Purescript."
+                 :discover     "Discover the best functional programming opportunities"
                  :href         "/hire-functional-programmers"
                  :description2 "Whether you're looking to hire front-end or backend functional engineers, we've got you covered"}
    "javascript" {:title        "Javascript Developers"
                  :logo         "javascript"
+                 :discover     "Discover the best JavaScript opportunities"
                  :description  "Working across a range of frameworks and libraries incuding React.js, Node.js, Angular and many more."
                  :href         "/hire-javascript-developers"
                  :description2 "Whether you’re looking to hire front-end developers, full-stack or even back-end, we’ve got you covered"}
    "blockchain" {:title        "Blockchain Developers"
                  :logo         "blockchain"
+                 :discover     "Discover the best Blockchain opportunities"
                  :description  "Get access to the top developers that work with Solidity, Ethereum and experts in Cryptography and Distributed Ledger Technology."
                  :href         "/hire-blockchain-developers"
                  :description2 "Whether you’re looking to hire front-end developers, full-stack or backend, we’ve got you covered"}
    "golang"     {:title        "Golang Developers"
                  :logo         "golang"
+                 :discover     "Discover the best Golang opportunities"
                  :description  "Software engineers that build infrastructure, scalable and resilient systems, IoT, with a solid grasp of concurrency."
                  :href         "/hire-golang-developers"
                  :description2 "Whether you’re looking to hire developers, programmers or software engineers to work with Golang, we've got you covered"}
    "ai"         {:title        "Data Scientists"
                  :logo         "ai"
+                 :discover     "Discover the best opportunities in Data Science"
                  :description  "Experts in Data Science, Machine Learning, Data Engineering, Artificial Intelligence as well as Scala, Spark, Python and R."
                  :href         "/hire-data-scientists"
                  :description2 "Whether you’re looking to hire data scientists, machine learning experts, or data engineers to work with Spark, Python and R, we've got you covered"}
    "java"       {:title        "Java developers"
                  :logo         "java"
+                 :discover     "Discover the best Java opportunities"
                  :description  "Developers working with Java, Akka, Kafka, Spring and more."
                  :href         "/hire-java-developers"
                  :description2 "Whether you're looking to hire full stack or backend Java developers, we've got you covered"}
    "python"     {:title        "Python Developers"
                  :logo         "python"
+                 :discover     "Discover the best Python opportunities"
                  :description  "Developers working with Python, Django, Flask, Ansible, Numpy and more."
                  :href         "/hire-python-developers"
                  :description2 "Whether you're looking to hire full stack or backend Python developers, Data Scientists or Engineers, we've got you covered"}})

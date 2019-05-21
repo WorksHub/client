@@ -1,5 +1,89 @@
+.landing-page
+  .homepage__middle-content__container:last-of-type
+    padding-bottom: 28px
+  .homepage__middle-content
+    padding-bottom: 12px
+  .homepage__feature-ctas
+    margin-top: 24px
+    .button
+      +mobile
+        margin: 10px auto
+      +desktop
+        margin: 0 10px
+      font-family: $family-primary
+
 .landing__header__buttons
   .button
     width: 240px
     margin-right: 9px
     margin-bottom: 12px
+
+.homepage__benefits-list
+  display: grid
+  margin-bottom: 24px
+  .how-it-works__benefit__inner
+    justify-content: flex-start
+    text-align: left
+  img
+    max-width: 30vw
+    +desktop
+      height: 200px
+      margin-bottom: 30px
+  p
+    margin-top: 18px
+    letter-spacing: 0
+  h4
+    letter-spacing: 0
+    margin-top: 12px
+    font-family: $family-primary
+    font-size: 18px
+    line-height: 24px
+    color: $red
+    font-weight: 600
+
+.homepage__looking-to-hire--candidate
+  background-color: $pale-gray
+  +desktop
+    padding-top: 72px
+  +mobile
+    padding-top: 36px
+  .homepage__looking-to-hire
+    display: flex
+    text-align: left
+    +mobile
+      flex-direction: column-reverse
+  img
+    +desktop
+      width: 313px
+      margin-right: 86px
+      margin-left: 66px
+  h3
+    font-size: 24px
+  .homepage__feature-ctas
+    margin-top: 24px
+    justify-content: flex-start
+    .button
+      font-family: $family-primary
+      +desktop
+        margin: 0
+      +mobile
+        margin: 0 auto
+
+.homepage__how-we-are-different
+  +mobile
+    padding: 0 !important
+  .how-it-works__benefit
+    +desktop
+      max-width: 285px
+    .how-it-works__benefit__inner
+      +mobile
+        display: block
+    .how-it-works__benefit__header
+      +mobile
+        display: flex
+        flex-direction: row-reverse
+        justify-content: space-between
+        align-items: center
+    p
+      padding: 0
+      margin-bottom: 6px
