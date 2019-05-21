@@ -2,7 +2,7 @@
   (:require
     [cljs.spec.alpha :as s]))
 
-(def steps #{:name :cv-upload :thanks})
+(def steps #{:name :cv-upload :thanks :current-location})
 
 (s/def ::steps-taken (s/coll-of steps))
 (s/def ::current-step steps)

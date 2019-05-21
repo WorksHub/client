@@ -43,6 +43,29 @@
        (when @validation-error?
          [:div.conversation-button--error "Please enter at least two words"])])))
 
+
+(defn current-location-step []
+  (fn []
+    [:div.add-current-location
+     (if (<sub [::subs/update-current-location-failed?])
+       [error-message "There was an error updating your current location, please try again"]
+       [codi-message "What is your current location?"])
+     [:div.animatable
+      [:div.conversation-element.user.current-location-input
+       [text-field (<sub [::subs/current-location-label])
+        {:suggestions          (<sub [::subs/current-location-suggestions])
+         :on-change            [::events/edit-current-location]
+         :on-select-suggestion [::events/select-current-location-suggestion]
+         :placeholder          "Type to search..."}]]]
+     [:div.animatable
+      [:button.conversation-button.update-current-location
+       (when (<sub [::subs/current-step? :current-location])
+         {:class    (when (<sub [::subs/updating?]) "button--loading")
+          :id       "application-bot_update-current-location"
+          :on-click #(dispatch [::events/update-current-location])})
+       "Next"
+       ]]]))
+
 (defn cv-upload-step []
   (let [current-step? (<sub [::subs/current-step? :cv-upload])]
     [:div.cv-upload
@@ -85,9 +108,11 @@
   [:div.multiple-conversations
    [:div
     [codi-message "Oh, snap! \uD83E\uDD14 We need a few more details about you"]]
-   (when (and (<sub [::subs/step-taken? :name]))
+   (when (<sub [::subs/step-taken? :name])
      [add-full-name-step])
-   (when (and (<sub [::subs/step-taken? :cv-upload]))
+   (when (<sub [::subs/step-taken? :current-location])
+     [current-location-step])
+   (when (<sub [::subs/step-taken? :cv-upload])
      [cv-upload-step])])
 
 

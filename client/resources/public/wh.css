@@ -8868,6 +8868,24 @@ a.navbar-item,
     font-size: 13px !important;
     font-weight: 500 !important; }
 
+.add-current-location {
+  margin-top: 10px; }
+  .add-current-location .conversation-element {
+    padding: 5px; }
+  .add-current-location .search-icon {
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    width: 18px;
+    height: 18px; }
+  .add-current-location input {
+    box-shadow: none !important;
+    font-size: 13px !important;
+    padding-left: 30px !important;
+    font-weight: 500 !important; }
+  .add-current-location .is-invisible {
+    display: none; }
+
 .contribute__main .field {
   margin-bottom: 0px; }
 

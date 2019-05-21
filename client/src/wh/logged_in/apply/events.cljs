@@ -2,6 +2,7 @@
   (:require
     [re-frame.core :refer [reg-event-db reg-event-fx dispatch path]]
     [wh.common.graphql-queries :as graphql]
+    [wh.logged-in.profile.location-events :as location-events]
     [wh.db :as db]
     [wh.logged-in.apply.db :as apply]
     [wh.user.db :as user]
@@ -32,10 +33,24 @@
   db/default-interceptors
   (fn [{db :db} [_]]
     (cond
-      (user/has-full-name? db) {:dispatch [::check-cv]}
+      (user/has-full-name? db) {:dispatch [::check-current-location]}
       :else {:db (-> db
                      (assoc-in [::apply/sub-db ::apply/current-step] :name)
                      (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :name))})))
+
+
+(reg-event-fx
+  ::check-current-location
+  db/default-interceptors
+  (fn [{db :db} [_]]
+    (cond
+      (user/has-current-location? db) {:dispatch [::check-cv]}
+      :else {:db (-> db
+                     (assoc-in [::apply/sub-db ::apply/current-step] :current-location)
+                     (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :current-location))})))
+
+
+
 
 (reg-event-fx
   :apply/start-apply-for-job
@@ -120,6 +135,61 @@
                                           :name name}}
                :on-success [::update-name-success]
                :on-failure [::update-name-failure]}}))
+
+
+(reg-event-fx
+  ::update-current-location-success
+  db/default-interceptors
+  (fn [{db :db} [resp]]
+    {:db       (-> db
+                   (assoc-in [::user/sub-db ::user/current-location] (get-in resp [:data :update_user :currentLocation]))
+                   (assoc-in [::apply/sub-db ::apply/updating?] false))
+     :dispatch [::check-current-location]}))
+
+(reg-event-db
+  ::update-current-location-failure
+  apply-interceptors
+  (fn [db _]
+    (assoc db
+      ::apply/updating? false
+      ::apply/current-location-update-failed? true)))
+
+(reg-event-fx
+  ::update-current-location
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [current-location (get-in db [::apply/sub-db ::apply/current-location])]
+      {:db      (assoc-in db [::apply/sub-db ::apply/updating?] true)
+       :graphql {:query      graphql/update-user-mutation--current-location
+                 :variables  {:update_user (util/transform-keys {:id               (get-in db [::user/sub-db ::user/id])
+                                                                 :current-location current-location})}
+                 :on-success [::update-current-location-success]
+                 :on-failure [::update-current-location-failure]}})))
+
+(reg-event-fx
+  ::current-location-search-success
+  apply-interceptors
+  (fn [{db :db} [result]]
+    {:db (assoc db ::apply/current-location-suggestions result)}))
+
+(reg-event-fx
+  ::edit-current-location
+  apply-interceptors
+  (fn [{:keys [db]} [loc]]
+    {:db       (assoc db ::apply/current-location-text loc)
+     :dispatch [::location-events/search {:query      loc
+                                          :on-success [::current-location-search-success]
+                                          :on-failure []}]}))
+
+(reg-event-db
+  ::select-current-location-suggestion
+  apply-interceptors
+  (fn [db [item]]
+    (assoc db
+      ::apply/current-location item
+      ::apply/current-location-text nil
+      ::apply/current-location-suggestions nil)))
+
 
 (reg-event-fx
   ::handle-apply

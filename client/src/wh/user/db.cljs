@@ -14,6 +14,9 @@
 (defn has-full-name? [db]
   (user/full-name? (get-in db [::sub-db ::name])))
 
+(defn has-current-location? [db]
+  (get-in db [::sub-db ::current-location]))
+
 (defn admin-type? [type]
   (= type "admin"))
 

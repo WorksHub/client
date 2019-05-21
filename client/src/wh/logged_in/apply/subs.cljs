@@ -65,3 +65,33 @@
   :<- [::sub-db]
   (fn [db _]
     (::apply/name-update-failed? db)))
+
+(reg-sub
+  ::update-current-location-failed?
+  :<- [::sub-db]
+  (fn [db _]
+    (::apply/current-location-update-failed? db)))
+
+(defn location-label [loc]
+  (when loc
+    (str (:location/city loc) ", " (:location/country loc))))
+
+;;
+
+(reg-sub
+  ::current-location-label
+  :<- [::sub-db]
+  (fn [db _]
+    (or (::apply/current-location-text db)
+        (location-label (::apply/current-location db)))))
+
+(defn location->suggestion
+  [x]
+  {:label (location-label x)
+   :id    x})
+
+(reg-sub
+  ::current-location-suggestions
+  :<- [::sub-db]
+  (fn [db [_ i]]
+    (mapv location->suggestion (::apply/current-location-suggestions db))))
