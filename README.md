@@ -59,7 +59,7 @@ Perhaps:
 
 ### How does versioning work? Or building Maven artifacts?
 
-We don’t put version numbers on the client code. The way we’re building it for the real WorksHub instance is we have a master repo (containing server code and a master `project.clj`) which includes this repo as a Git submodule.
+We don’t put version numbers on the client code. The way we’re building it for the real WorksHub instance is we have a master repo (containing server code and a master `project.clj`) which is automatically kept in sync with this repo. This is also why we don’t directly merge the PRs made against this repo: instead, the corresponding commits are made against the master repo and synced back to this one.
 
 ### Any tests?
 
