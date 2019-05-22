@@ -111,7 +111,7 @@
    ;; three
    [:div.columns.homepage__step
     [:div.column.homepage__step__description
-     [:span "Have " [:strong "Open Source Issues"] " that need attention? Connect your company GitHub account and add issues to to start building your talent pool and get more qualified applications."]
+     [:span "Have " [:strong "Open Source Issues"] " that need attention? Connect your company GitHub account and add issues to start building your talent pool and get more qualified applications."]
      (link [:button.button.button--inverted
             {:id "www-landing__walkthrough__opensource"}
             "View Open Source Issues"] :issues :company-id "workshub-f0774")]
