@@ -60,6 +60,11 @@
                                     :wh.payment/trial-until
                                     :wh.payment/coupon]))
 
+(s/def :wh/payment-details (s/keys :req-un [:wh.payment/card]
+                                   :opt-un [:wh.payment/billing-period
+                                            :wh.payment/expires
+                                            :wh.payment/coupon]))
+
 (s/def :wh.payment/with-billing-period
   (s/merge :wh/payment (s/keys :req-un [:wh.payment/billing-period])))
 

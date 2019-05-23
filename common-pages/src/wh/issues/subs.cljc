@@ -2,7 +2,10 @@
   (:require
     #?(:clj [clj-time.coerce :as tc]
        :cljs [cljs-time.coerce :as tc])
+    #?(:clj [clj-time.format :as tf]
+       :cljs [cljs-time.format :as tf])
     [re-frame.core :refer [reg-sub]]
+    [wh.common.issue :as common-issue]
     [wh.components.pagination :as pagination]
     [wh.issues.db :as issues]))
 
@@ -21,13 +24,10 @@
   :<- [::sub-db]
   :<- [::sorting-by]
   (fn [[db sorting-by] _]
-    (let [sort-fn (get {:title      :title
-                        :repository (comp #(str (:owner %) "/" (:name %)) :repo)
-                        :created-at (comp (partial * -1) tc/to-long :created-at)}
+    (let [sort-fn (get common-issue/issue-sorting-fns
                        sorting-by
                        :created-at)]
       (sort-by sort-fn (vals (::issues/issues db))))))
-
 
 (reg-sub
   ::issues-count

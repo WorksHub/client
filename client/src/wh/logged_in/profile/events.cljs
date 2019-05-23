@@ -282,7 +282,9 @@
   db/default-interceptors
   (fn [{db :db} _]
     {:graphql  {:query      graphql/update-user-mutation--approval
-                :variables  {:update_user (graphql-private-update db)}
+                :variables  {:update_user (-> db
+                                              (graphql-private-update)
+                                              (util/dissoc-if-empty :salary))}
                 :on-success [::save-success]
                 :on-failure [::save-failure]}
      :dispatch [::pages/set-loader]}))

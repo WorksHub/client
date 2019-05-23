@@ -12,6 +12,10 @@
         :cljs cljs.spec.gen.alpha) :as gen]
     [spec-tools.core :as st]))
 
+(def leona-custom-scalar
+  {:parse     #(tf/parse (tf/formatters :date-time) %)
+   :serialize #(tf/unparse (tf/formatters :date-time) (tc/from-date %))})
+
 (defn conform-date-time
   [s]
   (cond
@@ -24,8 +28,10 @@
         ::s/invalid))
     :else ::s/invalid))
 
+;; custom scalar provided in wh.graphql
 (s/def :wh/date (st/spec
                  (s/with-gen
                    (s/conformer conform-date-time identity)
                    #(gen/return #?(:clj (java.util.Date.)
-                                   :cljs (js/Date.)))) {:type 'String})) ;; TODO get custom scalars in Leona!
+                                   :cljs (js/Date.))))
+                 {:type '(custom :date)})) ;; required by leona

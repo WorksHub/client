@@ -1,21 +1,21 @@
 (ns wh.common.issue
   (:require
+    #?(:clj [clj-time.coerce :as tc]
+       :cljs [cljs-time.coerce :as tc])
     #?(:clj [clj-time.format :as tf]
        :cljs [cljs-time.format :as tf])
     [clojure.string :as str]
     [wh.common.cases :as cases]
     [wh.util :as util]))
 
-(defn parse-date-time
-  [s]
-  (tf/parse (tf/formatter "E MMM dd HH:mm:ss ZZZ yyyy")
-            #?(:clj (str/replace s #"BST" "Etc/GMT+1") ;; joda time does not recognise BST, fml
-               :cljs s)))
+(def issue-sorting-fns
+  {:title      :title
+   :repository (comp #(str (:owner %) "/" (:name %)) :repo)
+   :created-at (comp (partial * -1) tc/to-long (partial tf/parse (tf/formatters :date-time)) :created-at)})
 
 (defn gql-issue->issue
   [issue]
   (-> issue
       (cases/->kebab-case)
       (util/update-in* [:level] keyword)
-      (util/update-in* [:status] keyword)
-      (util/update-in* [:created-at] parse-date-time)))
+      (util/update-in* [:status] keyword)))

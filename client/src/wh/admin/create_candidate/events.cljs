@@ -257,25 +257,26 @@
 (defn db->graphql-user
   [{:keys [::sub-db/email ::sub-db/name ::sub-db/notify ::sub-db/tech-tags ::sub-db/company-tags ::sub-db/github-url ::sub-db/other-links ::sub-db/cv-url ::sub-db/cv-filename ::sub-db/current-company ::sub-db/current-company-search]
     :as db}]
-  (util/transform-keys
-   {:email    email
-    :name     name
-    :notify   notify
-    :reset-session false
-    :skills   (mapv #(hash-map :name (:tag %)) tech-tags)
-    :preferred-locations [(db->location db)]
-    :company-perks (mapv #(hash-map :name (:tag %)) company-tags)
-    :cv {:file {:url cv-url, :name cv-filename}}
-    :other-urls (->> (into [(when-not (str/blank? github-url)
-                              {:title "GitHub", :url github-url})]
-                           (map #(hash-map :url %) other-links))
-                     (remove (comp str/blank? :url))
-                     (map #(update % :url url/sanitize-url)))
-    :current-company-id current-company
-    :current-company-name current-company-search
-    :consented (-> (t/now) (tc/to-string))
-    :subscribed false
-    }))
+  (merge (util/transform-keys
+          {:email    email
+           :name     name
+           :notify   notify
+           :reset-session false
+           :skills   (mapv #(hash-map :name (:tag %)) tech-tags)
+           :preferred-locations [(db->location db)]
+           :company-perks (mapv #(hash-map :name (:tag %)) company-tags)
+           :other-urls (->> (into [(when-not (str/blank? github-url)
+                                     {:title "GitHub", :url github-url})]
+                                  (map #(hash-map :url %) other-links))
+                            (remove (comp str/blank? :url))
+                            (map #(update % :url url/sanitize-url)))
+           :current-company-id current-company
+           :current-company-name current-company-search
+           :consented (-> (t/now) (tc/to-string))
+           :subscribed false
+           })
+         (when (and cv-url cv-filename)
+           {:cv {:file {:url cv-url, :name cv-filename}}})))
 
 (reg-event-fx
   ::save

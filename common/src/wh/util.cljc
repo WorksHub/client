@@ -200,3 +200,10 @@
   (or (get headers "cf-connecting-ip")                      ;This header is added by Cloudflare and has original IP in prod
       (get headers "x-forwarded-for")                       ;This is filled by both Heroku and Cloudflare in prod (has 2 IPs in prod), in staging it will have original IP
       remote-addr))                                         ;This will have original IP when run out of Heroku and Cloudflare
+
+(defn dissoc-if-empty
+  "Checks (empty? (get m k)); if true, k is dissoc'd from m"
+  [m k]
+  (if (empty? (get m k))
+    (dissoc m k)
+    m))

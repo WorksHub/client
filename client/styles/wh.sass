@@ -305,13 +305,17 @@ $file-cta-background-color: $red
 
 html, body
   +desktop
-    height: 100%
     width: 100%
     overflow: visible
     position: fixed
 html
+  +desktop
+    height: 100%
   +mobile
     overflow: initial
+body
+  +desktop
+    height: calc(100% - #{$navbar-height})
 
 .no-scroll
   overflow: hidden

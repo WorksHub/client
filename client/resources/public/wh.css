@@ -15328,14 +15328,21 @@ h3 {
 
 @media screen and (min-width: 1008px) {
   html, body {
-    height: 100%;
     width: 100%;
     overflow: visible;
     position: fixed; } }
 
+@media screen and (min-width: 1008px) {
+  html {
+    height: 100%; } }
+
 @media screen and (max-width: 1007px) {
   html {
     overflow: initial; } }
+
+@media screen and (min-width: 1008px) {
+  body {
+    height: calc(100% - 76px); } }
 
 .no-scroll {
   overflow: hidden; }
