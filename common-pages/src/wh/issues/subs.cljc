@@ -171,8 +171,6 @@
   ::can-manage-issues?
   :<- [::sub-db]
   :<- [:wh.user.subs/company] ;; TODO we shouldn't include subs from another place
-  :<- [:wh.user.subs/workshub?]
-  (fn [[{:keys [::issues/company-id]} my-company workshub?] _]
+  (fn [[{:keys [::issues/company-id]} my-company] _]
     (and company-id
-         workshub?
          (= (:id my-company) company-id))))

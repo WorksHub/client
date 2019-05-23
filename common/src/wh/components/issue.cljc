@@ -57,7 +57,7 @@
        [:div.header.is-hidden-mobile
         [:span (str (:owner repo) " / " (:name repo))]
         edit-icon]
-       [:div.title [link title :issue :id id :class "a--hover-red"]]]]
+       [:div.title (when-not skeleton? [link title :issue :id id :class "a--hover-red"])]]]
      [:div.issue-details
       [:ul.details
        [:li {:class (util/merge-classes "issue-status" (str "issue-status--" derived-status))} [icon "issue-status"] [:span (when-not skeleton? (str/capitalize derived-status))]]
