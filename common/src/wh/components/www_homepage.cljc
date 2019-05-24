@@ -1,5 +1,6 @@
 (ns wh.components.www-homepage
   (:require
+    [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [companies-section link]]
     [wh.components.icons :refer [icon]]
     [wh.util :as util]
@@ -148,56 +149,28 @@
     [:img {:src img-src
            :alt ""}]]])
 
-(defn testimonial-pips
-  [n active-n on-click]
-  [:div.homepage__testimonial-pips-wrapper
-   [:div.homepage__testimonial-pips
-    (for [i (range n)]
-      ^{:key i}
-      [:div
-       (merge {:class (util/merge-classes "homepage__testimonial-pip"
-                                          (when on-click "homepage__testimonial-pip--clickable")
-                                          (when (= i active-n) "homepage__testimonial-pip--active"))}
-              (when on-click
-                {:on-click #(on-click i)}))
-       (icon "circle")])]])
-
 (defn testimonial
-  [{:keys [quote source logo]} active?]
+  [{:keys [quote source logo]}]
   [:div.homepage__testimonial_wrapper
    {:key source}
    [:div
-    {:class (util/merge-classes "homepage__testimonial"
-                                (when active? "homepage__testimonial--active"))}
+    {:class "homepage__testimonial"}
     [:div.homepage__testimonial__quote "\"" quote "\""]
     [:div.homepage__testimonial__source source]
     [:div.homepage__testimonial__logo
      [:img {:src logo
             :alt ""}]]]])
 
-(defn inner-testimonials
-  [n on-click]
+(defn testimonials
+  []
   [:div.homepage__testimonials
    [:h3 "Join our satisfied worldwide clients"]
    (link [:button.button
           {:id "www-landing__testimonials"}
           "Sign up for your trial today"] :get-started)
-   [:div.homepage__testimonials__carousel
-    (for [idx (range (count testimonials-data))]
-      (testimonial (nth testimonials-data idx) (= n idx) ))
-    (testimonial-pips (count testimonials-data) n on-click)]])
-
-(defn testimonials
-  []
-  #?(:clj
-     (inner-testimonials 0 nil)
-     :cljs
-     (let [active-testimonial (r/atom 0)
-           rotate (.setInterval js/window #(swap! active-testimonial inc) 5000)]
-       (fn []
-         (inner-testimonials (mod @active-testimonial (count testimonials-data))
-                             #(do (.clearInterval js/window rotate)
-                                  (reset! active-testimonial %)))))))
+   [carousel
+    (for [item testimonials-data]
+      [testimonial item])]])
 
 (defn looking-to-hire
   [title hide-boxes?]

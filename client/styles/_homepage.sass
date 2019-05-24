@@ -395,12 +395,12 @@ $homepage-max-width: 1084px
   +mobile
     margin-top: 28px
 
-.homepage__testimonials__carousel
-  margin-top: 66px
-  position: relative
-  height: 294px
-  +mobile
-    height: 385px
+  .carousel
+    margin-top: 66px
+    position: relative
+    height: 294px
+    +mobile
+      height: 385px
 
 .homepage__testimonial_wrapper
   position: absolute
@@ -411,11 +411,6 @@ $homepage-max-width: 1084px
 .homepage__testimonial
   max-width: 490px
   margin: 0 auto
-  opacity: 0
-  transition: opacity 0.5s
-
-.homepage__testimonial--active
-  opacity: 1
 
 .homepage__testimonial__quote,
 .homepage__looking-to-hire,
@@ -441,31 +436,6 @@ $homepage-max-width: 1084px
   img
     max-width: 120px
     max-height: 40px
-
-.homepage__testimonial-pips-wrapper
-  position: absolute
-  bottom: 0
-  width: 100%
-
-.homepage__testimonial-pips
-  display: flex
-  justify-content: center
-
-.homepage__testimonial-pip
-  .icon
-    fill: $light-red
-    width: 15px
-    height: 15px
-
-.homepage__testimonial-pip--active
-  .icon
-    fill: $red
-
-.homepage__testimonial-pip--clickable
-  cursor: pointer
-
-.homepage__testimonial-pip + .homepage__testimonial-pip
-  margin-left: 14px
 
 .homepage__bottom-content
   text-align: center

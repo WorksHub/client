@@ -10836,12 +10836,12 @@ h3 {
   .homepage__testimonials {
     margin-top: 28px; } }
 
-.homepage__testimonials__carousel {
+.homepage__testimonials .carousel {
   margin-top: 66px;
   position: relative;
   height: 294px; }
   @media screen and (max-width: 1007px) {
-    .homepage__testimonials__carousel {
+    .homepage__testimonials .carousel {
       height: 385px; } }
 
 .homepage__testimonial_wrapper {
@@ -10852,12 +10852,7 @@ h3 {
 
 .homepage__testimonial {
   max-width: 490px;
-  margin: 0 auto;
-  opacity: 0;
-  transition: opacity 0.5s; }
-
-.homepage__testimonial--active {
-  opacity: 1; }
+  margin: 0 auto; }
 
 .homepage__testimonial__quote,
 .homepage__looking-to-hire,
@@ -10883,29 +10878,6 @@ h3 {
   .homepage__testimonial__logo img {
     max-width: 120px;
     max-height: 40px; }
-
-.homepage__testimonial-pips-wrapper {
-  position: absolute;
-  bottom: 0;
-  width: 100%; }
-
-.homepage__testimonial-pips {
-  display: flex;
-  justify-content: center; }
-
-.homepage__testimonial-pip .icon {
-  fill: #ffdedb;
-  width: 15px;
-  height: 15px; }
-
-.homepage__testimonial-pip--active .icon {
-  fill: #ff7c6e; }
-
-.homepage__testimonial-pip--clickable {
-  cursor: pointer; }
-
-.homepage__testimonial-pip + .homepage__testimonial-pip {
-  margin-left: 14px; }
 
 .homepage__bottom-content {
   text-align: center; }
