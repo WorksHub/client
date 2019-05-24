@@ -17,6 +17,9 @@
 (defn has-current-location? [db]
   (get-in db [::sub-db ::current-location]))
 
+(defn has-visa? [db]
+  (get-in db [::sub-db ::visa-status]))
+
 (defn admin-type? [type]
   (= type "admin"))
 
@@ -112,7 +115,7 @@
         (cases/->kebab-case user)
         (update user :current-location #(when % (util/namespace-map "location" %)))
         (update user :preferred-locations (partial mapv #(util/namespace-map "location" %)))
-        (update user :visa-status set)
+        (util/update-in* user [:visa-status] set)
         (update user :role-types set)))
 
 (defn translate-user [user]

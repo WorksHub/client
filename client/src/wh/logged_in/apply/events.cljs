@@ -22,34 +22,32 @@
   ::check-cv
   db/default-interceptors
   (fn [{db :db} [_]]
-    (cond
-      (user/has-cv? db) {:dispatch [::apply]}
-      :else {:db (-> db
-                     (assoc-in [::apply/sub-db ::apply/current-step] :cv-upload)
-                     (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :cv-upload))})))
+    (if (user/has-cv? db)
+      {:dispatch [::apply]}
+      {:db (-> db
+               (assoc-in [::apply/sub-db ::apply/current-step] :cv-upload)
+               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :cv-upload))})))
 
 (reg-event-fx
   ::check-name
   db/default-interceptors
   (fn [{db :db} [_]]
-    (cond
-      (user/has-full-name? db) {:dispatch [::check-current-location]}
-      :else {:db (-> db
-                     (assoc-in [::apply/sub-db ::apply/current-step] :name)
-                     (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :name))})))
+    (if (user/has-full-name? db)
+      {:dispatch [::check-current-location]}
+      {:db (-> db
+               (assoc-in [::apply/sub-db ::apply/current-step] :name)
+               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :name))})))
 
 
 (reg-event-fx
   ::check-current-location
   db/default-interceptors
   (fn [{db :db} [_]]
-    (cond
-      (user/has-current-location? db) {:dispatch [::check-cv]}
-      :else {:db (-> db
-                     (assoc-in [::apply/sub-db ::apply/current-step] :current-location)
-                     (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :current-location))})))
-
-
+    (if (user/has-current-location? db)
+      {:dispatch [::check-cv]}
+      {:db (-> db
+               (assoc-in [::apply/sub-db ::apply/current-step] :current-location)
+               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :current-location))})))
 
 
 (reg-event-fx
@@ -136,6 +134,42 @@
                :on-success [::update-name-success]
                :on-failure [::update-name-failure]}}))
 
+(reg-event-fx
+  ::update-visa-success
+  db/default-interceptors
+  (fn [{db :db} [resp]]
+    {:db       (-> db
+                   (assoc-in [::user/sub-db ::user/visa-status] (get-in resp [:data :update_user :visaStatus]))
+                   (assoc-in [::user/sub-db ::user/visa-status-other] (get-in resp [:data :update_user :visaStatusOther]))
+                   (assoc-in [::apply/sub-db ::apply/updating?] false))
+     :dispatch [::check-visa]}))
+
+(reg-event-db
+  ::update-visa-failure
+  apply-interceptors
+  (fn [db _]
+    (assoc db
+      ::apply/updating? false
+      ::apply/visa-update-failed? true)))
+
+
+(reg-event-fx
+  ::update-visa
+  db/default-interceptors
+  (fn [{db :db} [visa-status visa-other]]
+    {:db      (assoc-in db [::apply/sub-db ::apply/updating?] true)
+     :graphql {:query      graphql/update-user-mutation--visa-status
+               :variables  {:update_user (cond-> {:id         (get-in db [::user/sub-db ::user/id])
+                                                  :visaStatus visa-status}
+                                                 (contains? visa-status "Other") (merge {:visaStatusOther visa-other}))}
+               :on-success [::update-visa-success]
+               :on-failure [::update-visa-failure]}}))
+
+(reg-event-fx
+  ::check-visa
+  db/default-interceptors
+  (fn [{db :db} [_]]
+    {:db (assoc-in db [::apply/sub-db ::apply/current-step] (if (user/has-visa? db) :thanks :visa))}))
 
 (reg-event-fx
   ::update-current-location-success
@@ -197,10 +231,10 @@
   (fn [{db :db} [success? resp]]
     (cond-> {:db (assoc db ::apply/submit-success? success?
                            ::apply/updating? false
-                           ::apply/current-step :thanks
                            ::apply/error (when-not success?
                                            (util/gql-errors->error-key resp)))}
-            success? (assoc :dispatch [:wh.jobs.job.events/set-applied]
+            success? (assoc :dispatch-n [[::check-visa]
+                                         [:wh.jobs.job.events/set-applied]]
                             :analytics/track ["Job Applied" (::apply/job db)]))))
 
 (defquery apply-mutation

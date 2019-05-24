@@ -29,6 +29,9 @@
 (def-query-from-template update-user-mutation--name update-user-mutation
   {:fields [:name]})
 
+(def-query-from-template update-user-mutation--visa-status update-user-mutation
+  {:fields [:visaStatus :visaStatusOther]})
+
 (def-query-from-template update-user-mutation--current-location update-user-mutation
   {:fields [[:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]})
 

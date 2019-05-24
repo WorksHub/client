@@ -40,6 +40,13 @@
   font-weight: $font-semi-bold
   color: $dark-salmon
 
+.conversation-element--label
+  font-size: 8pt
+  display: block
+  margin-left: auto
+  margin-right: 18px
+  position: relative
+  text-align: right
 
 .display-inline
   display: inline-block
@@ -56,10 +63,8 @@
         color: white !important
         background: $steel-gray !important
 
-.add-full-name
+.add-full-name, .add-visa
   margin-top: 10px
-  .conversation-element
-    padding: 5px
   input
     font-size: 13px !important
     font-weight: $font-medium !important
@@ -80,4 +85,11 @@
     padding-left: 30px !important
     font-weight: $font-medium !important
   .is-invisible
-    display: none;
+    display: none
+
+.visa-options
+  margin-top: 10px
+  margin-left: 40px
+  .visa-option
+    display: inline;
+    margin: 5px

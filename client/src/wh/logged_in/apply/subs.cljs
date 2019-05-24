@@ -18,10 +18,10 @@
     (contains? (::apply/steps-taken db) step)))
 
 (reg-sub
-  ::current-step?
+  ::current-step
   :<- [::sub-db]
-  (fn [db [_ step]]
-    (= step (::apply/current-step db))))
+  (fn [db _]
+    (::apply/current-step db)))
 
 (reg-sub
   ::updating?
@@ -65,6 +65,12 @@
   :<- [::sub-db]
   (fn [db _]
     (::apply/name-update-failed? db)))
+
+(reg-sub
+  ::update-visa-failed?
+  :<- [::sub-db]
+  (fn [db _]
+    (::apply/visa-update-failed? db)))
 
 (reg-sub
   ::update-current-location-failed?

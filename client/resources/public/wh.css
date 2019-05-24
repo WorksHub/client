@@ -8816,6 +8816,14 @@ a.navbar-item,
   font-weight: 600;
   color: #bf5d52; }
 
+.conversation-element--label {
+  font-size: 8pt;
+  display: block;
+  margin-left: auto;
+  margin-right: 18px;
+  position: relative;
+  text-align: right; }
+
 .display-inline {
   display: inline-block; }
 
@@ -8829,11 +8837,9 @@ a.navbar-item,
   color: white !important;
   background: #6E7F89 !important; }
 
-.add-full-name {
+.add-full-name, .add-visa {
   margin-top: 10px; }
-  .add-full-name .conversation-element {
-    padding: 5px; }
-  .add-full-name input {
+  .add-full-name input, .add-visa input {
     font-size: 13px !important;
     font-weight: 500 !important; }
 
@@ -8854,6 +8860,13 @@ a.navbar-item,
     font-weight: 500 !important; }
   .add-current-location .is-invisible {
     display: none; }
+
+.visa-options {
+  margin-top: 10px;
+  margin-left: 40px; }
+  .visa-options .visa-option {
+    display: inline;
+    margin: 5px; }
 
 .contribute__main .field {
   margin-bottom: 0px; }

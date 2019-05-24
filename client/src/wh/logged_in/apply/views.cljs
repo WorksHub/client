@@ -13,10 +13,12 @@
     [wh.logged-in.profile.events :as profile-events]
     [wh.subs :refer [<sub]]
     [wh.user.subs :as user-subs]
-    [wh.views]))
+    [wh.views]
+    [wh.common.data :as data]
+    [wh.util :as util]))
 
 (defn add-full-name-step []
-  (let [name (r/atom (<sub [::user-subs/name]))
+  (let [full-name (r/atom (<sub [::user-subs/name]))
         validation-error? (r/atom false)]
     (fn []
       [:div.add-full-name
@@ -27,17 +29,17 @@
         [:div.conversation-element.user
          [:input {:type       :text
                   :auto-focus true
-                  :value      @name
-                  :on-change  #(do (reset! name (-> % .-target .-value))
+                  :value      @full-name
+                  :on-change  #(do (reset! full-name (-> % .-target .-value))
                                    (reset! validation-error? false))
                   :aria-label "Name input"}]]]
        [:div.animatable
         [:button.conversation-button.update-name
-         (when (<sub [::subs/current-step? :name])
+         (when (= :name (<sub [::subs/current-step]))
            {:class    (when (<sub [::subs/updating?]) "button--loading")
             :id       "application-bot_update-name"
-            :on-click #(if (user/full-name? @name)
-                         (dispatch [::events/update-name @name])
+            :on-click #(if (user/full-name? @full-name)
+                         (dispatch [::events/update-name @full-name])
                          (reset! validation-error? true))})
          "Next"]]
        (when @validation-error?
@@ -59,7 +61,7 @@
          :placeholder          "Type to search..."}]]]
      [:div.animatable
       [:button.conversation-button.update-current-location
-       (when (<sub [::subs/current-step? :current-location])
+       (when (= :current-location (<sub [::subs/current-step]))
          {:class    (when (<sub [::subs/updating?]) "button--loading")
           :id       "application-bot_update-current-location"
           :on-click #(dispatch [::events/update-current-location])})
@@ -67,7 +69,7 @@
        ]]]))
 
 (defn cv-upload-step []
-  (let [current-step? (<sub [::subs/current-step? :cv-upload])]
+  (let [current-step? (= :cv-upload (<sub [::subs/current-step]))]
     [:div.cv-upload
      (if (<sub [::subs/cv-upload-failed?])
        [error-message "There was an error uploading your resume, please try again."]
@@ -91,7 +93,7 @@
 (defn thanks-step []
   (if (<sub [::subs/submit-success?])
     [:div
-     [codi-message "Good news \uD83D\uDC4F, your application was successful!"]
+     [codi-message "Everything looks good with your application! \uD83C\uDF89"]
      [codi-message "Your dedicated Talent Manager will be in touch to discuss next steps."]
      [codi-message "In the meantime check some other great jobs we have "
       [link "recommended" :recommended :class "a--underlined" :on-click #(do
@@ -115,6 +117,42 @@
    (when (<sub [::subs/step-taken? :cv-upload])
      [cv-upload-step])])
 
+(defn visa-step []
+  (let [selected-options (r/atom #{})
+        other (r/atom nil)]
+    (fn []
+      [:div.add-visa
+       (if (<sub [::subs/update-visa-failed?])
+         [error-message "There was an error updating your visa, please try again."]
+         [:div
+          [codi-message "Thanks for applying! \uD83D\uDC4F "]
+          [codi-message "In order to correctly process your application, could you add your visa information?"]])
+       [:div.animatable.visa-options
+        [:div.multiple-buttons
+         (doall
+           (for [option (sort data/visa-options)
+                 :let [selected? (contains? @selected-options option)]]
+             [:button.button.visa-option
+              {:key      option
+               :class    (when-not selected?
+                           "button--light")
+               :on-click #(swap! selected-options (if selected? disj conj) option)}
+              option]))]]
+       (when (contains? @selected-options "Other")
+         [:div
+          [:span.conversation-element--label "Please specify:"]
+          [:div.conversation-element.user
+           [:input {:type       :text
+                    :auto-focus true
+                    :value      @other
+                    :on-change  #(do (reset! other (-> % .-target .-value)))
+                    :aria-label "Name input"}]]])
+       [:div.animatable
+        [:button.conversation-button.update-visa
+         {:class    (when (<sub [::subs/updating?]) "button--loading")
+          :id       "application-bot_update-visa"
+          :on-click #(dispatch [::events/update-visa @selected-options @other])}
+         "Next"]]])))
 
 (defn chatbot []
   [:div.chatbot
@@ -122,12 +160,14 @@
     :class "close is-pulled-right"
     :id "application-bot_close-bot"
     :on-click #(dispatch [::events/close-chatbot])]
-   (if (<sub [::subs/current-step? :thanks])
-     [thanks-step]
+   (case (<sub [::subs/current-step])
+     :thanks [thanks-step]
+     :visa [visa-step]
      [pre-application])])
 
 (defn overlay-apply []
-  (when (<sub [::subs/display-chatbot?])
+  (when (and (<sub [::subs/display-chatbot?])
+             (<sub [::subs/current-step]))
     [chatbot]))
 
 (swap! wh.views/extra-overlays conj [overlay-apply])
