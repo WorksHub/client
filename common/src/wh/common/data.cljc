@@ -406,7 +406,8 @@
         "Daily" 850
         10)))
 
-(def packages #{:unselected :free :essential :launch_pad :take_off})
+;; removed essential on 24/05/2019
+(def packages #{:unselected :free #_:essential :launch_pad :take_off})
 (def billing-periods #{:one :six :twelve})
 
 (def all-package-perks

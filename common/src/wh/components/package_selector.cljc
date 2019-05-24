@@ -1,10 +1,10 @@
 (ns wh.components.package-selector
   (:require #?(:cljs [reagent.core :as r])
             [wh.common.cost :as cost]
-            [wh.util :as util]
             [wh.common.data :as data :refer [all-package-perks billing-data]]
             [wh.components.icons :refer [icon]]
-            [wh.components.selector :refer [selector]]))
+            [wh.components.selector :refer [selector]]
+            [wh.util :as util]))
 
 (defn info-message-display
   [{:keys [info-message collapsed? restrict-packages mobile-fullscreen? mobile-selected-idx]}]
@@ -82,7 +82,7 @@
                restrict-packages             #{}
                package-data                  data/package-data}}]
     (let [billing-period    (or billing-period @selected-billing-period)
-          packages          (clojure.set/difference (set (keys package-data)) (set exclude-packages))
+          packages          (filter data/packages (clojure.set/difference (set (keys package-data)) (set exclude-packages)))
           selected-packages (into {} (map-indexed (fn [i [k v]] (vector k [v i]))
                                                   (sort-by (comp :order second) (select-keys package-data packages))))]
       [:div
