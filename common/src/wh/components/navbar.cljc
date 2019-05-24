@@ -100,7 +100,8 @@
     (candidates-menu-content env nil
                              "navbar-overlay__content"
                              "navbar-overlay--candidates__vertical-link")
-    [:img {:src "/images/homepage/triangle.svg"}]]])
+    [:img {:src "/images/homepage/triangle.svg"
+           :alt ""}]]])
 
 #?(:cljs
    (defn submit-search

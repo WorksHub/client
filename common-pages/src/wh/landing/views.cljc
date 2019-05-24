@@ -37,7 +37,8 @@
     [:div.homepage__header
      [:div.homepage__header__img
       [:div.homepage__header__img-inner
-       [:img {:src "/images/homepage/header.svg"}]]]
+       [:img {:src "/images/homepage/header.svg"
+              :alt ""}]]]
      [:div.homepage__header__copy
       [:h1 discover]
       [:p "We match your skills to great jobs using languages you love."]
@@ -54,7 +55,8 @@
     [:div.homepage__bottom-content.homepage__looking-to-hire--candidate
      [:div.homepage__bottom-content__container
       [:div.homepage__looking-to-hire
-       [:img {:src "/images/homepage/feature02.svg"}]
+       [:img {:src "/images/homepage/feature02.svg"
+              :alt ""}]
        [:div.homepage__looking-to-hire__header
         [:h3 "Looking to hire " title "?"]
         [:p "Whether you’re looking to hire software developers or engineers, from front-end to full-stack to back-end, we’ve got you covered"]

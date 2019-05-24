@@ -66,7 +66,8 @@
   [:div.homepage__header
    [:div.homepage__header__img
     [:div.homepage__header__img-inner
-     [:img {:src "/images/homepage/header.svg"}]]]
+     [:img {:src "/images/homepage/header.svg"
+            :alt ""}]]]
    [:div.homepage__header__copy
     [:h1 "Hire " market " based on their interests and experience"]
     [:p "Through open-source contributions we generate objective ratings to help you hire the right engineers, faster."]
@@ -81,7 +82,8 @@
      ^{:key id}
      [:div.column.homepage__feature-column
       [:div.homepage__feature-column__img-container
-       [:img {:src img}]]
+       [:img {:src img
+              :alt ""}]]
       [:div.homepage__feature-column__description-container
        [:span description]]])])
 
@@ -98,7 +100,8 @@
             {:id "www-landing__walkthrough__jobsboard"}
             "View jobsboard"] :jobsboard)]
     [:div.column.homepage__step__img.homepage__step__img--offset
-     [:img {:src "/images/homepage/walkthrough01.svg"}]]]
+     [:img {:src "/images/homepage/walkthrough01.svg"
+            :alt ""}]]]
    ;; two
    [:div.columns.homepage__step
     [:div.column.homepage__step__description
@@ -107,7 +110,8 @@
             {:id "www-landing__walkthrough__features"}
             "View all our features"] :pricing)]
     [:div.column.homepage__step__img
-     [:img {:src "/images/homepage/walkthrough02.svg"}]]]
+     [:img {:src "/images/homepage/walkthrough02.svg"
+            :alt ""}]]]
    ;; three
    [:div.columns.homepage__step
     [:div.column.homepage__step__description
@@ -116,7 +120,8 @@
             {:id "www-landing__walkthrough__opensource"}
             "View Open Source Issues"] :issues :company-id "workshub-f0774")]
     [:div.column.homepage__step__img
-     [:img {:src "/images/homepage/walkthrough03.svg"}]]]
+     [:img {:src "/images/homepage/walkthrough03.svg"
+            :alt ""}]]]
    ;; four
    [:div.columns.homepage__step
     [:div.column.homepage__step__description
@@ -125,7 +130,8 @@
             {:id "www-landing__walkthrough__experts"}
             "Get Started"] :get-started)]
     [:div.column.homepage__step__img
-     [:img {:src "/images/homepage/walkthrough04.svg"}]]]])
+     [:img {:src "/images/homepage/walkthrough04.svg"
+            :alt ""}]]]])
 
 (defn animated-hr
   [img-src class]
@@ -134,11 +140,13 @@
     (for [idx (range num-clouds)]
       [:img {:key (str "cloud" idx)
              :src "/images/homepage/cloud.svg"
-             :class (str "homepage__animated-hr__bg__cloud" idx)}])]
+             :class (str "homepage__animated-hr__bg__cloud" idx)
+             :alt ""}])]
    [:div
     {:class (util/merge-classes "homepage__animated-hr__img"
                                 (when (txt/not-blank class) class))}
-    [:img {:src img-src}]]])
+    [:img {:src img-src
+           :alt ""}]]])
 
 (defn testimonial-pips
   [n active-n on-click]
@@ -164,7 +172,8 @@
     [:div.homepage__testimonial__quote "\"" quote "\""]
     [:div.homepage__testimonial__source source]
     [:div.homepage__testimonial__logo
-     [:img {:src logo}]]]])
+     [:img {:src logo
+            :alt ""}]]]])
 
 (defn inner-testimonials
   [n on-click]

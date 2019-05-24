@@ -153,7 +153,8 @@
        (if skeleton?
          [:div.issue__author__github-avatar--skeleton]
          [:img.issue__author__github-avatar
-          (when login {:src (str "https://avatars.githubusercontent.com/" login)})])
+          (when login {:src (str "https://avatars.githubusercontent.com/" login)
+                       :alt (str login "'s avatar")})])
        [:div
         (when name
           [:p.issue__author__name name])

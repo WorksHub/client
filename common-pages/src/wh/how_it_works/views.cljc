@@ -37,7 +37,8 @@
              "how-it-works__type-slider__option" "how-it-works__type-slider__option--company"
              (when-not (= :company selected-site)
                "how-it-works__type-slider__option--disabled"))}
-    [:img {:src "/images/get_started/company.svg"}]
+    [:img {:src "/images/get_started/company.svg"
+           :alt ""}]
     (if on-slide
       [:button
        {:class (util/merge-classes
@@ -58,7 +59,8 @@
              "how-it-works__type-slider__option" "how-it-works__type-slider__option--candidate"
              (when-not (= :candidate selected-site)
                "how-it-works__type-slider__option--disabled"))}
-    [:img {:src "/images/get_started/candidate.svg"}]
+    [:img {:src "/images/get_started/candidate.svg"
+           :alt ""}]
     (if on-slide
       [:button
        {:class (util/merge-classes
@@ -82,7 +84,8 @@
    [:div.how-it-works__header__inner
     [:div.how-it-works__header__img
      [:div.how-it-works__header__img-inner
-      [:img {:src "/images/hiw/header.svg"}]]]
+      [:img {:src "/images/hiw/header.svg"
+             :alt ""}]]]
     [:div.how-it-works__header__copy
      [:h1 (if github?
             "Use Open Source Issues to find your next hire"
@@ -105,7 +108,8 @@
   [img-src description n]
   [:div.how-it-works__explanation-step
    [:div.how-it-works__explanation-step__inner
-    [:img {:src img-src}]
+    [:img {:src img-src
+           :alt ""}]
     [:div.how-it-works__explanation-step__description
      [:div.how-it-works__step-line__circle.is-hidden-desktop n]
      [:p description]]]])
@@ -138,7 +142,8 @@
   [:div.how-it-works__benefit
    [:div.how-it-works__benefit__inner
     [:div.how-it-works__benefit__header
-     [:img {:src img}]
+     [:img {:src img
+            :alt ""}]
      (when title
        [:h4 title])]
     [:p txt]]])
@@ -242,7 +247,8 @@
            [:span.is-hidden-mobile "I am a company"]
            [:span.is-hidden-desktop "company"]] :how-it-works]]
    [:div.how-it-works-pod__img
-    [:img {:src "/images/hiw/header.svg"}]]])
+    [:img {:src "/images/hiw/header.svg"
+           :alt ""}]]])
 
 (defn pod--basic
   []
@@ -251,7 +257,8 @@
     [:h2 "Use Open Source Issues to hire or get hired"]
     [link [:button.button "How it works"] :how-it-works]]
    [:div.how-it-works-pod__img
-    [:img {:src "/images/hiw/header.svg"}]]])
+    [:img {:src "/images/hiw/header.svg"
+           :alt ""}]]])
 
 (defn pod-carousel-pips
   [n active-n on-click]
@@ -285,7 +292,8 @@
         :on-click #(on-click (dec active-n))}
        [icon "chevron_left"]]
       [:div.how-it-works-pod__selection-img
-       [:img {:src img}]]
+       [:img {:src img
+              :alt ""}]]
       [:div
        {:class (util/merge-classes
                 "how-it-works-pod__chevron"
@@ -338,7 +346,8 @@
           ^{:key txt}
           [:li [icon "cutout-tick"] txt])]]
       [:div.how-it-works-pod--benefits-img
-       [:img {:src (img-selector selected-site)}]]]]))
+       [:img {:src (img-selector selected-site)
+              :alt ""}]]]]))
 
 (defn pod--benefits
   [user-type]

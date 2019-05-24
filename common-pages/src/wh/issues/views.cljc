@@ -154,7 +154,8 @@
    [:div.issues__header--public__inner
     [:div.issues__header--public__img
      [:div.issues__header--public__img-inner
-      [:img {:src "/images/hiw/header.svg"}]]]
+      [:img {:src "/images/hiw/header.svg"
+             :alt "Hero graphic"}]]]
     [:div.issues__header--public__copy
      [:h1 "Use Open Source to hire or get hired"]
      [:p "Through open-source projects we help companies build communities of software engineers and hire better talent."]

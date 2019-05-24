@@ -131,7 +131,8 @@
     [:div.footer__info
      [:div.footer__info__logo
       [:div.footer__info__logo__codi
-       [:img {:src "/images/codi-white.svg"}]]
+       [:img {:src "/images/codi-white.svg"
+              :alt ""}]]
       [:div.footer__info__logo__title
        "WorksHub"]]
      [:div.footer__info__contact
@@ -145,7 +146,8 @@
                                                            :rel    "noopener"}
                                                        "108 E 16th Street, New York, NY 10003"]]]]]
     [:div.footer__graphic
-     [:img {:src "/images/homepage/footer.svg"}]]]
+     [:img {:src "/images/homepage/footer.svg"
+            :alt ""}]]]
    [:div.footer__sitemap
     (if (= "www" vertical)
       (footer-sitemap-www)
