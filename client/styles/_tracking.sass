@@ -1,0 +1,34 @@
+.tracking-popups
+  display: none
+  &.is-open
+   display: block
+.tracking-popup
+  +popup
+  padding: 15px 15px 15px 25px
+  bottom: 0
+  border: 10px solid $light-blue-grey
+  .button
+    margin-top: 15px
+  +desktop
+    left: calc(100vw / 2 - 305px)
+    width: 610px
+  +mobile
+    width: 100%
+    line-height: 22px
+    border: 0
+    padding: 10px 17px
+
+.tracking-popup--collapsed
+  display: none
+  &.is-open
+    display: flex
+  justify-content: space-between
+  align-items: center
+  .button
+    margin: 0
+    width: 120px
+
+.tracking-popup--expanded
+  display: none
+  &.is-open
+    display: block

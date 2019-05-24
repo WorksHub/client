@@ -11,16 +11,6 @@
   (:require-macros
     [cljs.core :refer [exists?]]))
 
-(reg-event-fx
-  ::tracking-success
-  (fn [_ [_ response]]
-    nil))
-
-(reg-event-fx
-  ::tracking-failure
-  (fn [_ [_ response]]
-    (js/console.error "Analytics failure:" response)))
-
 (defn rename-utm-tags [[k v]]
   (let [tag-name (second (str/split k #"_"))]
     [(if (= "campaign" tag-name) "name" tag-name) v]))
@@ -30,53 +20,28 @@
          {:sourcing {:campaign (into {} (map rename-utm-tags (:wh.db/initial-utm-tags @app-db)))
                      :referrer (:wh.db/initial-referrer @app-db)}}))
 
-(defn server-tracking [body]
-  (http-fx/http-effect {:method          :post
-                        :uri             (routes/path :analytics)
-                        :params          (-> body attach-source-info util/remove-nils)
-                        :format          (ajax-json/json-request-format)
-                        :response-format (ajax-json/json-response-format {:keywords? true})
-                        :timeout         10000
-                        :on-success      [::tracking-success]
-                        :on-failure      [::tracking-failure]}))
+(reg-fx
+ :analytics/reset
+ (fn []
+   (js/resetAnalytics)))
 
 (reg-fx
-  :analytics/init-tracking
-  (fn []
-    (server-tracking {:type :init})))
+ :analytics/alias
+ (fn [{:keys [id]}]
+   (js/submitAnalyticsAlias id)))
 
 (reg-fx
-  :analytics/load
-  (fn []
-    (when (exists? js/analytics)
-      (js/analytics.load))))
+ :analytics/identify
+ (fn [{:keys [id] :as identify-user}]
+   (js/submitAnalyticsIdentify id (clj->js identify-user) (clj->js {:integrations {"Sentry" false}}))))
 
 (reg-fx
-  :analytics/reset
-  (fn []
-    (when (exists? js/analytics)
-      (js/analytics.reset))))
-
-(reg-fx
-  :analytics/alias
-  (fn [{:keys [id]}]
-    (when (exists? js/analytics)
-      (js/analytics.alias id))))
-
-(reg-fx
-  :analytics/identify
-  (fn [{:keys [id] :as identify-user}]
-    (when (exists? js/analytics)
-      (js/analytics.identify id (clj->js identify-user) (clj->js {:integrations {"Sentry" false}})))))
-
-(reg-fx
-  :analytics/pageview
-  (fn [[event-name data]]
-    (server-tracking {:type    :page
-                      :payload {:page-name  event-name
-                                :properties data}})
-    (when (exists? js/analytics)
-      (js/analytics.page))))
+ :analytics/pageview
+ (fn [[event-name data]]
+   (js/sendServerAnalytics (clj->js {:type    :page
+                                     :payload (clj->js {:page-name  event-name
+                                                        :properties data})}))
+   (js/submitAnalyticsPage)))
 
 (defn add-noninteractive [data non-interactive?]
   (if non-interactive?
@@ -84,16 +49,15 @@
     data))
 
 (reg-fx
-  :analytics/track
-  (fn [[event-name data non-interactive?]]
-    (let [properties (-> data
-                         cases/->snake-case
-                         (add-noninteractive non-interactive?))]
-      (server-tracking {:type    :track
-                        :payload {:event-name event-name
-                                  :properties properties}})
-      (when (exists? js/analytics)
-        (js/analytics.track event-name (clj->js properties))))))
+ :analytics/track
+ (fn [[event-name data non-interactive?]]
+   (let [properties (-> data
+                        cases/->snake-case
+                        (add-noninteractive non-interactive?))]
+     (js/sendServerAnalytics (clj->js {:type    :track
+                                       :payload (clj->js {:event-name event-name
+                                                          :properties properties})}))
+     (js/submitAnalyticsTrack event-name (clj->js properties)))))
 
 (reg-fx
   :reddit/conversion-pixel
