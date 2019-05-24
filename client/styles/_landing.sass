@@ -59,6 +59,8 @@
       margin-left: 66px
   h3
     font-size: 24px
+
+.homepage__looking-to-hire--candidate, .homepage__learn
   .homepage__feature-ctas
     margin-top: 24px
     justify-content: flex-start
@@ -87,3 +89,26 @@
     p
       padding: 0
       margin-bottom: 6px
+
+$learn-carousel-height: 465px
+
+.homepage__learn
+  +mobile
+    display: flex
+    flex-direction: column-reverse
+    p
+      text-align: left
+  +desktop
+    text-align: left
+  min-height: $learn-carousel-height
+
+.homepage__blog-carousel-container
+  .carousel
+    height: $learn-carousel-height
+
+  .carousel-item
+    margin: 0 auto
+    width: 247px
+
+  .card--blog
+    box-shadow: 5px 6px 10px 4px rgba(67, 78, 85, 0.2)

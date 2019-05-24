@@ -3,10 +3,13 @@
 (ns wh.landing.views
   (:require
     [wh.common.data :as data]
+    [wh.components.cards :refer [blog-card]]
+    [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [companies-section link]]
     [wh.components.github :refer [integrate-github-button]]
     [wh.components.www-homepage :refer [animated-hr]]
     [wh.how-it-works.views :as hiw]
+    [wh.landing.subs :as subs]
     #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]))
@@ -87,9 +90,18 @@
       (link [:button.button.button--inverted "How It Works"] :how-it-works)
       (link [:button.button "View All Open Source Issues"] :issues)]]
     [animated-hr nil nil]
-    [:div.homepage__middle-content__container
-     [:h2 "LEARN AND CONTRIBUTE"]
-     [:h3 "Articles that matter to you"]]
+    [:div.homepage__middle-content__container.homepage__learn.columns
+     [:div.column.homepage__blog-carousel-container
+      (let [blogs (<sub [::subs/blogs])]
+        [carousel (for [blog blogs] [blog-card blog])])
+      [:div.homepage__feature-ctas.is-hidden-desktop
+       (link [:button.button "View All Articles"] :learn)]]
+     [:div.column
+      [:h2 "LEARN AND CONTRIBUTE"]
+      [:h3 "Articles that matter to you"]
+      [:p "We tap into the brains of the world’s most talented Functional programmers to bring you fresh thinking and unique perspectives."]
+      [:div.homepage__feature-ctas.is-hidden-mobile
+       (link [:button.button "View All Articles"] :learn)]]]
     [animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe"]
     [:div.homepage__middle-content__container
      [:h2 "AND FINALLY…"]

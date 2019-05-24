@@ -10661,6 +10661,9 @@ h3 {
 .homepage__middle-content__container h3:first-of-type {
   max-width: 675px;
   margin: 0 auto 40px auto; }
+  @media screen and (max-width: 1007px) {
+    .homepage__middle-content__container h3:first-of-type {
+      margin-bottom: 24px; } }
 
 @media screen and (min-width: 1008px) {
   .homepage__features {
@@ -10857,7 +10860,8 @@ h3 {
   opacity: 1; }
 
 .homepage__testimonial__quote,
-.homepage__looking-to-hire {
+.homepage__looking-to-hire,
+.homepage__learn p {
   font-size: 16px;
   line-height: 26px;
   font-family: "Inconsolata", sans-serif;
@@ -13970,17 +13974,18 @@ h3 {
       margin-left: 66px; } }
   .homepage__looking-to-hire--candidate h3 {
     font-size: 24px; }
-  .homepage__looking-to-hire--candidate .homepage__feature-ctas {
-    margin-top: 24px;
-    justify-content: flex-start; }
-    .homepage__looking-to-hire--candidate .homepage__feature-ctas .button {
-      font-family: "Montserrat", sans-serif; }
-      @media screen and (min-width: 1008px) {
-        .homepage__looking-to-hire--candidate .homepage__feature-ctas .button {
-          margin: 0; } }
-      @media screen and (max-width: 1007px) {
-        .homepage__looking-to-hire--candidate .homepage__feature-ctas .button {
-          margin: 0 auto; } }
+
+.homepage__looking-to-hire--candidate .homepage__feature-ctas, .homepage__learn .homepage__feature-ctas {
+  margin-top: 24px;
+  justify-content: flex-start; }
+  .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button {
+    font-family: "Montserrat", sans-serif; }
+    @media screen and (min-width: 1008px) {
+      .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button {
+        margin: 0; } }
+    @media screen and (max-width: 1007px) {
+      .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button {
+        margin: 0 auto; } }
 
 @media screen and (max-width: 1007px) {
   .homepage__how-we-are-different {
@@ -14004,6 +14009,28 @@ h3 {
 .homepage__how-we-are-different .how-it-works__benefit p {
   padding: 0;
   margin-bottom: 6px; }
+
+.homepage__learn {
+  min-height: 465px; }
+  @media screen and (max-width: 1007px) {
+    .homepage__learn {
+      display: flex;
+      flex-direction: column-reverse; }
+      .homepage__learn p {
+        text-align: left; } }
+  @media screen and (min-width: 1008px) {
+    .homepage__learn {
+      text-align: left; } }
+
+.homepage__blog-carousel-container .carousel {
+  height: 465px; }
+
+.homepage__blog-carousel-container .carousel-item {
+  margin: 0 auto;
+  width: 247px; }
+
+.homepage__blog-carousel-container .card--blog {
+  box-shadow: 5px 6px 10px 4px rgba(67, 78, 85, 0.2); }
 
 .footer {
   background-color: #6E7F89;
@@ -15294,6 +15321,49 @@ h3 {
 
 .get-started__choice + .get-started__choice {
   margin-left: 24px; }
+
+.carousel {
+  position: relative; }
+
+.carousel__pips-wrapper {
+  position: absolute;
+  bottom: 0;
+  width: 100%; }
+
+.carousel__pips {
+  display: flex;
+  justify-content: center; }
+
+.carousel-pip .icon {
+  fill: #ffdedb;
+  width: 15px;
+  height: 15px; }
+
+.carousel-pip + .carousel-pip {
+  margin-left: 14px; }
+
+.carousel-pip--active .icon {
+  fill: #ff7c6e; }
+
+.carousel-pip--clickable {
+  cursor: pointer; }
+
+.carousel-items {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0; }
+
+.carousel-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  transition: opacity 0.5s; }
+
+.carousel-item--active {
+  opacity: 1; }
 
 .tracking-popups {
   display: none; }

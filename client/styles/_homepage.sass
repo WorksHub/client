@@ -240,7 +240,9 @@ $homepage-max-width: 1084px
       margin-bottom: 12px
   h3:first-of-type
     max-width: 675px
-    margin: 0 auto 40px auto;
+    margin: 0 auto 40px auto
+    +mobile
+      margin-bottom: 24px
 
 .homepage__features
   +desktop
@@ -416,7 +418,8 @@ $homepage-max-width: 1084px
   opacity: 1
 
 .homepage__testimonial__quote,
-.homepage__looking-to-hire
+.homepage__looking-to-hire,
+.homepage__learn p
   font-size: 16px
   line-height: 26px
   font-family: $family-secondary

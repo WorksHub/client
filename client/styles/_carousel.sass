@@ -1,0 +1,44 @@
+.carousel
+  position: relative
+
+.carousel__pips-wrapper
+  position: absolute
+  bottom: 0
+  width: 100%
+
+.carousel__pips
+  display: flex
+  justify-content: center
+
+.carousel-pip
+  .icon
+    fill: $light-red
+    width: 15px
+    height: 15px
+
+.carousel-pip + .carousel-pip
+  margin-left: 14px
+
+.carousel-pip--active
+  .icon
+    fill: $red
+
+.carousel-pip--clickable
+  cursor: pointer
+
+.carousel-items
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+
+.carousel-item
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  opacity: 0
+  transition: opacity 0.5s
+
+.carousel-item--active
+  opacity: 1
