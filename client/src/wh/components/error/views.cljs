@@ -36,16 +36,6 @@
                           [:ul (for [msg message]
                                  [:li {:key msg} msg])])]]))
 
-(defn not-found []
-  [:div.container
-   [:h1 "404 - Page not Found"]
-   [:div
-    [:h2 "Play a game \uD83D\uDC7E instead?"]
-    [:button.button {:on-click (fn [e]
-                                 (js/alert "Seriously? No. Stop procrastinating and go find a job!")
-                                 (dispatch [:wh.events/nav :homepage]))}
-     "Play"]]])
-
 (defn loading-error []
   [:div.container
    [:h1 "Error"]

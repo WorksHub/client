@@ -10,7 +10,7 @@
     [wh.db :as db]
     [wh.homepage.views :as home]
     [wh.how-it-works.views :as how-it-works]
-    [wh.not-found.views :as not-found]
+    [wh.components.not-found :as not-found]
     [wh.pages.core :as pages]
     [wh.subs :as subs :refer [<sub run-sub]]))
 
@@ -24,7 +24,7 @@
   {:homepage {:redirect-fn homepage-redirect}
    :homepage-not-logged-in home/page
    :how-it-works how-it-works/page
-   :not-found not-found/page})
+   :not-found not-found/not-found-page})
 
 (reg-event-db
   ::initialize-page-mapping

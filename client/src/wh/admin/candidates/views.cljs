@@ -9,7 +9,7 @@
     [wh.components.icons :refer [icon url-icons]]
     [wh.components.loader.views :refer [loader]]
     [wh.components.pagination :as pagination]
-    [wh.not-found.views :as not-found]
+    [wh.components.not-found :as not-found]
     [wh.routes :refer [path]]
     [wh.subs :refer [<sub]]))
 
@@ -124,4 +124,4 @@
   (if (<sub [:user/admin?])
     [main]
     [:div.dashboard
-     [not-found/page]]))
+     [not-found/not-found-page]]))

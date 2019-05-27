@@ -10,7 +10,8 @@
     [wh.common.re-frame-helpers :as reframe-helpers]
     [wh.components.cards.views :refer [job-card]]
     [wh.components.common :refer [link]]
-    [wh.components.error.views :refer [loading-error not-found]]
+    [wh.components.not-found :as not-found]
+    [wh.components.error.views :refer [loading-error]]
     [wh.components.footer :as footer]
     [wh.components.get-started.views :refer [get-started-banner]]
     [wh.components.icons :refer [icon url-icons]]
@@ -112,7 +113,7 @@
                     (reset! last-y y))))]
     (fn []
       (case (<sub [:graphql/error-key :blog {:id (<sub [:wh.subs/page-param :id])}])
-        :blog-not-found [:div.main [not-found]]
+        :blog-not-found [:div.main [not-found/not-found]]
         :unknown-error [:div.main [loading-error]]
         (let [skeleton? (= :executing (<sub [:graphql/state :blog {:id (<sub [:wh.subs/page-param :id])}]))]
           [:div {:class (reframe-helpers/merge-classes "blog"
