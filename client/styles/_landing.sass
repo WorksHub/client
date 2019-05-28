@@ -102,6 +102,9 @@ $learn-carousel-height: 465px
     text-align: left
   min-height: $learn-carousel-height
 
+@mixin homepage-shadow
+  box-shadow: 5px 6px 10px 4px rgba(67, 78, 85, 0.2) !important
+
 .homepage__blog-carousel-container
   .carousel
     height: $learn-carousel-height
@@ -111,4 +114,33 @@ $learn-carousel-height: 465px
     width: 247px
 
   .card--blog
-    box-shadow: 5px 6px 10px 4px rgba(67, 78, 85, 0.2)
+    @include homepage-shadow
+
+.homepage__jobs
+  overflow-x: auto
+  padding-bottom: 6px
+
+.homepage__jobs-container
+  .carousel
+    height: 450px
+  .homepage__feature-ctas
+    margin-top: -6px
+
+  .card
+    border: none
+    padding: 18px
+    width: 247px
+    height: 394px
+    .apply
+      margin-right: 15px
+    .buttons
+      display: flex
+      justify-content: space-between
+    .tagline
+      height: 72px
+    .button
+      font-size: $button-font-size
+      width: 99px
+      height: 30px
+      border-radius: 2px
+    @include homepage-shadow

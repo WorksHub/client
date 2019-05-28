@@ -14015,7 +14015,36 @@ h3 {
   width: 247px; }
 
 .homepage__blog-carousel-container .card--blog {
-  box-shadow: 5px 6px 10px 4px rgba(67, 78, 85, 0.2); }
+  box-shadow: 5px 6px 10px 4px rgba(67, 78, 85, 0.2) !important; }
+
+.homepage__jobs {
+  overflow-x: auto;
+  padding-bottom: 6px; }
+
+.homepage__jobs-container .carousel {
+  height: 450px; }
+
+.homepage__jobs-container .homepage__feature-ctas {
+  margin-top: -6px; }
+
+.homepage__jobs-container .card {
+  border: none;
+  padding: 18px;
+  width: 247px;
+  height: 394px;
+  box-shadow: 5px 6px 10px 4px rgba(67, 78, 85, 0.2) !important; }
+  .homepage__jobs-container .card .apply {
+    margin-right: 15px; }
+  .homepage__jobs-container .card .buttons {
+    display: flex;
+    justify-content: space-between; }
+  .homepage__jobs-container .card .tagline {
+    height: 72px; }
+  .homepage__jobs-container .card .button {
+    font-size: 11px;
+    width: 99px;
+    height: 30px;
+    border-radius: 2px; }
 
 .footer {
   background-color: #6E7F89;

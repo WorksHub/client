@@ -14,7 +14,7 @@
   ::jobs
   :<- [::sub-db]
   (fn [sub-db _]
-    (::sub-db/jobs sub-db)))
+    (take 2 (::sub-db/jobs sub-db))))
 
 (reg-sub
   ::blogs

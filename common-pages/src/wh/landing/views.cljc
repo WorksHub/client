@@ -5,14 +5,15 @@
     [wh.common.data :as data]
     [wh.components.cards :refer [blog-card]]
     [wh.components.carousel :refer [carousel]]
-    [wh.components.common :refer [companies-section link]]
+    [wh.components.common :refer [companies-section link wrap-img img]]
     [wh.components.github :refer [integrate-github-button]]
     [wh.components.www-homepage :refer [animated-hr]]
     [wh.how-it-works.views :as hiw]
     [wh.landing.subs :as subs]
     #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     [wh.re-frame.events :refer [dispatch]]
-    [wh.re-frame.subs :refer [<sub]]))
+    [wh.re-frame.subs :refer [<sub]]
+    [wh.util :as util]))
 
 (def issues-benefits
   [{:img "/images/hiw/candidate/benefits/benefit1.svg"
@@ -34,6 +35,38 @@
    {:img "/images/hiw/company/benefits/benefit1.svg"
     :title "We’re the future of tech work"
     :txt "With our Open Source issues, you can get paid, learn new languages and get noticed by employers. We’re leveraging the power of open source to help you further your career."}])
+
+(defn job-card
+  [{:keys [company-name tagline title logo display-salary display-location role-type tags id] :as job}]
+  (let [skeleton? (and job (empty? (dissoc job :id)))]
+    [:div {:class (util/merge-classes "card"
+                                      "card--job"
+                                      (str "i-cur-" (rand-int 9))
+                                      (when skeleton? "job-card--skeleton"))}
+     [:span
+      [:div.info
+       [:div.logo
+        (if skeleton?
+          [:div]
+          [link (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}) :job :id id])]
+       [:div.basic-info
+        [:div.job-title [link title :job :id id]]
+        [:div.company-name [link company-name :job :id id]]
+        [:div.location [link display-location :job :id id]]
+        (when-not (= role-type "Full time")
+          [:div.role-type role-type])]
+       [:div.salary display-salary]]]
+     (into [:ul.tags.tags__job]
+           (map (fn [tag] [:li [link tag :jobsboard :query-params {"tags" tag}]])
+                (if skeleton?
+                  (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " ")))
+                       (range 6))
+                  tags)))
+     [:div.tagline tagline]
+     [:div.buttons
+      [link [:button.button.button--inverted "More Info"] :job :id id]
+      [:button.button #?(:cljs {:on-click #(dispatch [:apply/try-apply job :homepage-jobcard-apply])})
+       "Apply"]]]))
 
 (defn header []
   (let [{:keys [discover]} (get data/in-demand-hiring-data (<sub [:wh/vertical]))]
@@ -75,12 +108,20 @@
      [:div.homepage__companies-section__container
       (companies-section "Join engineers from:")]]]
    [:div.homepage__middle-content
-    [:div.homepage__middle-content__container
-     [:h2 "BROWSE ROLES AT THE TOP TECH COMPANIES"]
-     [:h3 "See who’s hiring"]
-     [:div.homepage__feature-ctas
-      (link [:button.button
-             "View All Jobs"] :jobs-board)]]
+    (let [jobs (<sub [::subs/jobs])]
+      [:div.homepage__middle-content__container.homepage__jobs-container
+       [:h2 "BROWSE ROLES AT THE TOP TECH COMPANIES"]
+       [:h3 "See who’s hiring"]
+       [:div.homepage__jobs.columns.is-hidden-mobile
+        (for [job jobs]
+          ^{:key (:id job)}
+          [:div.column [job-card job]])]
+       [:div.is-hidden-desktop
+        (let [blogs (<sub [::subs/blogs])]
+          [carousel (for [job jobs] [job-card job])])]
+       [:div.homepage__feature-ctas
+        (link [:button.button
+               "View All Jobs"] :jobsboard)]])
     [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
     [:div.homepage__middle-content__container
      [:h2 "COLLABORATE AND IMPROVE YOUR SKILLSET"]

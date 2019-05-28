@@ -25,7 +25,7 @@
    (into
     [:div#featured-jobs.columns.is-mobile]
     (conj
-     (for [job jobs]
+     (for [job (take 2 jobs)]
        [:div.column (job/homepage-job-card job job-apply-buttons icon)])
      [:div.column (when job-chat-card
                     [job-chat-card])]))])

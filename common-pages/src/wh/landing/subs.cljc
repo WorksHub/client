@@ -8,6 +8,12 @@
     (:wh.homepage.db/sub-db db)))
 
 (reg-sub
+  ::jobs
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (:wh.homepage.db/jobs sub-db)))
+
+(reg-sub
   ::blogs
   :<- [::sub-db]
   (fn [sub-db _]
