@@ -53,16 +53,5 @@
     (= "www" (<sub [:wh.subs/vertical]))
     (www/homepage (<sub [:wh.subs/page-params]))
 
-    (<sub [:wh.subs/query-param "newlanding"])
-    (landing/page)
-
     true
-    [:div
-     [top-section]
-     [:div.dashboard
-      [:div.main
-       [jobs]
-       [search-jobs]
-       [blogs]]]
-     [:div.banner-section
-      [get-started-banner [:homepage-banner]]]]))
+    (landing/page)))
