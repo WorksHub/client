@@ -18,7 +18,7 @@
 (s/def :wh.repo/viewer-can-administer boolean?)
 (s/def :wh.repo/name string?)
 (s/def :wh.repo/owner string?)
-(s/def :wh.repo/description string?)
+(s/def :wh.repo/description (s/nilable string?))
 (s/def :wh.repo/primary-language (s/nilable string?))
 (s/def :wh.repo/stargazers nat-int?)
 (s/def :wh.repo/hook-id int?)
@@ -32,9 +32,9 @@
                                           :wh.repo/viewer-can-administer
                                           :wh.repo/name
                                           :wh.repo/owner
-                                          :wh.repo/description
                                           :wh.repo/stargazers]
                                  :opt-un [:wh.repo/id
+                                          :wh.repo/description
                                           :wh.repo/community
                                           :wh.repo/primary-language
                                           :wh.repo/hook-id

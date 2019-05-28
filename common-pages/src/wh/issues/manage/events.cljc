@@ -25,7 +25,7 @@
   manage-issues-interceptors
   (fn [_ [retry-fn _error]]
     {:dispatch [:error/set-global "Something went wrong while we tried to fetch your data 😢"
-                [retry-fn]]}))
+                retry-fn]}))
 
 
 (reg-event-db
@@ -68,7 +68,7 @@
                                              (select-keys (::manage/pending db))
                                              (vals)))}
                :on-success [::update-issues-success]
-               :on-failure [::failure ::update-issues-success]}}))
+               :on-failure [::failure [::save-changes]]}}))
 
 (reg-event-db
   ::query-issues-success
@@ -89,11 +89,12 @@
    (reg-event-fx
      ::query-issues
      db/default-interceptors
-     (fn [{db :db} [company-id repo]]
-       {:graphql {:query      graphql-issues/fetch-company-issues--logged-in
+     (fn [{:keys [db]} [company-id repo]]
+       {:db      db
+        :graphql {:query      graphql-issues/fetch-company-issues--logged-in
                   :variables  {:id company-id}
                   :on-success [::query-issues-success repo]
-                  :on-failure [::failure ::query-issues-success]}})))
+                  :on-failure [::failure [::query-issues company-id repo]]}})))
 
 (reg-event-fx
   ::fetch-repo-success
@@ -113,7 +114,7 @@
                   :variables  {:name  name
                                :owner owner}
                   :on-success [::fetch-repo-success repo]
-                  :on-failure [::failure [::fetch-repo-success]]}})))
+                  :on-failure [::failure [::fetch-repo-issues repo]]}})))
 
 (reg-event-fx
   ::fetch-orgs-success
@@ -132,7 +133,7 @@
        {:db      (assoc-in db [::manage/sub-db ::manage/syncing-repos?] true)
         :graphql {:query      graphql-company/sync-orgs-and-repos
                   :on-success [::fetch-orgs-success]
-                  :on-failure [::failure [::fetch-orgs-success]]}})))
+                  :on-failure [::failure [::fetch-orgs-and-repos]]}})))
 
 #?(:cljs
    (defmethod on-page-load :manage-issues [_db]
