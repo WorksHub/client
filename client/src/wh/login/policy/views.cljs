@@ -40,7 +40,6 @@
          [:li "Heap Analytics"]
          [:li "Heroku"]
          [:li "Hubspot"]
-         [:li "Intercom"]
          [:li "MLab"]
          [:li "Neverbounce"]
          [:li "Segment"]
@@ -104,7 +103,6 @@
           [:p "Google Analytics"]
           [:p "Heap"]
           [:p "HubSpot"]
-          [:p "Intercom"]
           [:p "Pingdom"]
           [:p "Segment"]]
          [:td "Please click on the relevant opt-out link below:"
@@ -121,9 +119,6 @@
            [:li "Hubspot does not provide an opt-out link for its cookies. For more information about Hubspot cookies, please see " [:a {:href "https://knowledge.hubspot.com/articles/kcs_article/reports/what-cookies-does-hubspot-set-in-a-visitor-s-browser"
                                                                                                                                          :target "_blank"
                                                                                                                                          :rel "noopener"} "this page"]]
-           [:li "Intercom does not provide an opt-out link for its cookies. For more information about Intercom cookies, please see " [:a {:href "https://www.intercom.com/terms-and-policies#cookie-policy"
-                                                                                                                                           :target "_blank"
-                                                                                                                                           :rel "noopener"} "this page"]]
            [:li "Pingdom does not provide an opt-out link for its cookies. For more information about Pingdom cookies, please see " [:a {:href "https://www.pingdom.com/legal/cookie-policy"
                                                                                                                                            :target "_blank"
                                                                                                                                            :rel "noopener"} "this page"]]

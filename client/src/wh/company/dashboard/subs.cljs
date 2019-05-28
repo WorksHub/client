@@ -164,10 +164,7 @@
         :otherwise
         [:span
          (<< "The number of applications has gone down by ~(subs change 1) this ~(name granularity). You can ")
-         [:a.a--underlined {:href "mailto:hello@works-hub.com"
-                            :on-click #(when js/Intercom
-                                         (js/Intercom "show")
-                                         (.preventDefault %))} "check with us"]
+         [:a.a--underlined {:href "mailto:hello@works-hub.com"} "check with us"]
          " what we can do to reverse the trend."]))))
 
 (reg-sub
