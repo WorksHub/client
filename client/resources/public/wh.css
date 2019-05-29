@@ -4572,8 +4572,7 @@ a.navbar-item,
       .navbar .navbar-item {
         font-size: 12px; } }
   .navbar .navbar-item--register {
-    margin-right: 4px;
-    margin-left: 32px; }
+    margin-right: 4px; }
     .navbar .navbar-item--register .button {
       width: 135px;
       height: 40px; }
