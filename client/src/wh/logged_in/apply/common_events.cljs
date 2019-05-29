@@ -11,4 +11,5 @@
   (fn [{db :db} [job event-type]]
     (if (db/logged-in? db)
       {:load-and-dispatch [:logged-in [:apply/start-apply-for-job job]]}
-      {:dispatch [:auth/show-popup {:type event-type, :job job}]})))
+      {:show-auth-popup {:context  (name event-type)
+                         :redirect [:job :params {:id (:id job)} :query-params {:apply "true"}]}})))

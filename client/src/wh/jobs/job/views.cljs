@@ -16,6 +16,7 @@
     [wh.components.overlay.views :refer [popup-wrapper]]
     [wh.components.stats.views :refer [stats-item]]
     [wh.events :as common-events]
+    [wh.interop :as interop]
     [wh.jobs.job.events :as events]
     [wh.jobs.job.subs :as subs]
     [wh.pages.util :as putil]
@@ -90,14 +91,21 @@
      (not (<sub [:user/logged-in?]))
      [:div
       [:button.button.button--medium
-       {:id (str "job-view__logged-out-apply-button" (when id (str "__" id)))
-        :on-click #(dispatch [:auth/show-popup {:type :jobpage-apply :job (<sub [::subs/apply-job])}])}
+       (merge {:id (str "job-view__logged-out-apply-button" (when id (str "__" id)))}
+              (interop/on-click-fn
+               (interop/show-auth-popup :jobpage-apply
+                                        [:job
+                                         :params {:id (:id (<sub [::subs/apply-job]))}
+                                         :query-params {:apply "true"}])))
        (if (some? (<sub [:wh.user/applied-jobs]))
          "1-Click Apply"
          "Easy Apply")]
       [:button.button.button--medium.button--inverted
-       {:id (str "job-view__see-more-button" (when id (str "__" id)))
-        :on-click #(dispatch [:auth/show-popup {:type :jobpage-see-more :job (<sub [::subs/apply-job])}])}
+       (merge {:id (str "job-view__see-more-button" (when id (str "__" id)))}
+              (interop/on-click-fn
+               (interop/show-auth-popup :jobpage-apply
+                                        [:job
+                                         :params {:id (:id (<sub [::subs/apply-job]))}])))
        "See More"]]
 
      :else
@@ -318,9 +326,12 @@
   [event]
   [:div.is-full-width.job__show-more-button
    [:div.is-full-width
-    {:on-click (if (<sub [:user/logged-in?])
-                 #(dispatch [event])
-                 #(dispatch [:auth/show-popup {:type :jobpage-see-more :job (<sub [::subs/apply-job])}]))}
+    (if (<sub [:user/logged-in?])
+      {:on-click #(dispatch [event])}
+      (interop/on-click-fn
+       (interop/show-auth-popup :jobpage-see-more
+                                [:job
+                                 :params {:id (:id (<sub [::subs/apply-job]))}])))
     [icon "plus"] "Show More"]])
 
 (defn content

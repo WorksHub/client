@@ -113,13 +113,6 @@
                   [:wh.login.events/show-magic-form]]}))
 
 (reg-event-fx
-  ::go-to-github
-  db/default-interceptors
-  (fn [{db :db}]
-    {:dispatch-n [(redirect db)
-                  [:github/call {:type :candidate-page}]]}))
-
-(reg-event-fx
   ::set-application-state
   db/default-interceptors
   (fn [{db :db} [job-id-or-ids state]]

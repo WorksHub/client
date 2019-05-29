@@ -2,6 +2,7 @@
   (:require
     [wh.common.fx.algolia]
     [wh.common.fx.analytics]
+    [wh.common.fx.auth]
     [wh.common.fx.confirm]
     [wh.common.fx.debounce]
     [wh.common.fx.google-maps]

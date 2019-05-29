@@ -4853,6 +4853,9 @@ a.navbar-item,
   opacity: 0;
   transition: opacity 0.2s ease-in;
   pointer-events: none; }
+  .overlay.is-open {
+    opacity: 1;
+    pointer-events: auto; }
 
 .overlay--visible {
   opacity: 1;
@@ -4896,7 +4899,7 @@ a.navbar-item,
   .overlay__buttons .button {
     margin: 5px 0; }
 
-.overlay__close {
+.overlay__close .icon {
   position: absolute;
   fill: #6E7F89;
   top: 16px;
@@ -15425,6 +15428,11 @@ h3 {
 .tracking-popup--expanded {
   display: none; }
   .tracking-popup--expanded.is-open {
+    display: block; }
+
+.auth-popup__content {
+  display: none; }
+  .auth-popup__content.is-visible {
     display: block; }
 
 @media screen and (min-width: 1008px) {

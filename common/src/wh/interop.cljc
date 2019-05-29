@@ -11,6 +11,43 @@
                     (apply str))]
     (str fn-name "(" params ")")))
 
+(defn do
+  [& fns]
+  #?(:clj
+     (let [fstrs (str (str/join ";" fns) ";")]
+       (str "(function() {"fstrs"})();"))
+     :cljs
+     (fn [_] (run! (fn [f] (f)) fns))))
+
+(defn set-is-open
+  [id on?]
+  #?(:clj (->jsfn "setClass" id "is-open" on?)
+     :cljs (fn [_] (js/setClass id "is-open" on?))))
+
+(defn analytics-track
+  [evt prps]
+  #?(:clj (->jsfn "submitAnalyticsTrack" evt prps)
+     :cljs (fn [_] (js/submitAnalyticsTrack evt prps))))
+
+(defn show-auth-popup
+  [context & [redirect]]
+  (let [c (when context (name context))
+        r (when redirect (pr-str redirect))]
+    #?(:clj (->jsfn "showAuthPopUp" c r)
+       :cljs (fn [_] (js/showAuthPopUp c r)))))
+
+(defn hide-auth-popup
+  []
+  #?(:clj (->jsfn "hideAuthPopUp")
+     :cljs (fn [_] (js/hideAuthPopUp))))
+
+;;
+
+(defn on-click-fn
+  [jsf]
+  #?(:clj {:onClick jsf}
+     :cljs {:on-click jsf}))
+
 (defn toggle-is-open-on-click
   [id]
   #?(:clj {:onClick (->jsfn "toggleClass" id "is-open")}
@@ -18,8 +55,7 @@
 
 (defn set-is-open-on-click
   [id on?]
-  #?(:clj {:onClick (->jsfn "setClass" id "is-open" on?)}
-     :cljs {:on-click (fn [_] (js/setClass id "is-open" on?))}))
+  (on-click-fn (set-is-open id on?)))
 
 (defn disable-no-scroll-on-click
   []

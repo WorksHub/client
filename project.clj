@@ -6,7 +6,8 @@
                  "common/src"
                  "common-pages/src"]
   :resource-paths ["target/resources"
-                   "client/resources"]
+                   "client/resources"
+                   "client/src-js"]
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.18"]
             [lein-sass "0.4.0"]

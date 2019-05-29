@@ -103,9 +103,10 @@
                   ["payment/" {"package"  (with-params :payment-setup :step :select-package)
                                "confirm"  (with-params :payment-setup :step :pay-confirm)
                                "complete" (with-params :payment-setup :step :pay-success)}]
-                  ["login" {""       (with-params :login :step :root)
-                            "/"      (with-params :login :step :root)
-                            "/email" (with-params :login :step :email)}]
+                  ["login" {""        (with-params :login :step :root)
+                            "/"       (with-params :login :step :root)
+                            "/email"  (with-params :login :step :email)
+                            "/github" (with-params :login :step :github)}]
                   ["get-started" :get-started]
                   ["magic-link/" {[:token] :magic-link}]
                   ["invalid-magic-link" :invalid-magic-link]

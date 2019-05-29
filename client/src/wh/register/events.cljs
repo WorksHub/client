@@ -1,6 +1,7 @@
 (ns wh.register.events
   (:require
     [cljs-time.coerce :as time-coerce]
+    [cljs.reader :as r]
     [clojure.set :as set]
     [clojure.spec.alpha :as s]
     [clojure.string :as str]
@@ -22,14 +23,18 @@
 ;; wh.user.db will be initialized, and we need to fill our fields
 ;; with values from there.
 (defmethod on-page-load :register [db]
-  (into [[:register/update-data-from-user]]
-        (case (get-in db [::db/page-params :step])
-          :skills [[::ip-location-and-riddles]
-                   [:wh.pages.core/enable-no-scroll]]
-          :name [[::fetch-name]]
-          :verify [(when-not (str/blank? (get-in db [::user/sub-db ::user/id]))
-                     [::upsert-user])]
-          [])))
+  (concat [[:register/update-data-from-user]]
+          ;; if there's an auth redirect we pop and set it
+          (when-let [cached-redirect (js/popAuthRedirect)]
+            [(vec (concat [:login/set-redirect] (r/read-string cached-redirect)))])
+          ;;
+          (case (get-in db [::db/page-params :step])
+            :skills [[::ip-location-and-riddles]
+                     [:wh.pages.core/enable-no-scroll]]
+            :name [[::fetch-name]]
+            :verify [(when-not (str/blank? (get-in db [::user/sub-db ::user/id]))
+                       [::upsert-user])]
+            [])))
 
 (reg-event-db
   ::initialize-db

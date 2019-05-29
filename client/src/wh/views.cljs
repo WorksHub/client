@@ -4,7 +4,6 @@
     [clojure.walk :as walk]
     [re-frame.core :refer [dispatch dispatch-sync]]
     [reagent.core :as r]
-    [wh.components.auth-popup.views :refer [auth-popup]]
     [wh.components.common :refer [link]]
     [wh.components.error.subs :as error-subs]
     [wh.components.error.views :refer [global-status-box]]
@@ -31,9 +30,7 @@
 ;; DO NOT add anything to this function; things are being moved out and into SSR-land
 (defn overlays []
   (into
-   [:div.overlays
-    (when-not (<sub [:user/logged-in?])
-      [auth-popup])]
+   [:div.overlays]
    @extra-overlays))
 
 (defn main-panel []

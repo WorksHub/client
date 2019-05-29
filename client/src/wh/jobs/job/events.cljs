@@ -561,7 +561,7 @@
          [::fetch-company-issues]))
      (when (user/company? db)
        [::fetch-job-analytics requested-id (user/company-id db)])
-     (when (= (get-in db [::db/query-params "apply"]) "true")
-       [:apply/try-apply {:id requested-id}])
+     (when (get-in db [::db/query-params "apply"])
+       [:apply/try-apply {:id requested-id} :jobpage-apply])
      [::fetch-recommended-jobs requested-id]
      [:google/load-maps]]))

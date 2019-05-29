@@ -1,5 +1,6 @@
 (ns wh.login.events
   (:require
+    [cljs.reader :as r]
     [clojure.string :as str]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.db :as db]
@@ -89,11 +90,21 @@
   (fn [{db :db} [track-context user-type]]
     (let [user-type (or user-type :candidate)] ; it's called with nil second arg from most candidate contexts :see_no_evil:
       (cond->
-          {:dispatch-n [[::pages/set-loader]
-                        [::go-github user-type]]}
+        {:dispatch-n [[::pages/set-loader]
+                      [::go-github user-type]]}
         (= user-type :candidate)
         (assoc :persist-state (cond-> db
-                                track-context (assoc :register/track-context track-context)
-                                true (assoc ::db/loading? true
-                                            :google/maps-loaded? false) ; reload google maps when we return here
-                                true (dissoc ::db/page-mapping)))))))
+                                      track-context (assoc :register/track-context track-context)
+                                      true (assoc ::db/loading? true
+                                                  :google/maps-loaded? false) ; reload google maps when we return here
+                                      true (dissoc ::db/page-mapping)))))))
+
+(defmethod on-page-load :login
+  [db]
+  (list
+   [:wh.events/scroll-to-top]
+   ;; if there's an auth redirect we pop and set it
+   (when-let [cached-redirect (js/popAuthRedirect)]
+     (vec (concat [:login/set-redirect] (r/read-string cached-redirect))))
+   (when (= :github (get-in db [::db/page-params :step]))
+     [:github/call :login-page nil])))

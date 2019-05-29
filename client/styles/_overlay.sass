@@ -37,6 +37,9 @@
   opacity: 0
   transition: opacity 0.2s ease-in
   pointer-events: none
+  &.is-open
+    opacity: 1
+    pointer-events: auto
 
 .overlay--visible
   opacity: 1
@@ -80,13 +83,14 @@
     margin: 5px 0
 
 .overlay__close
-  position: absolute
-  fill: $steel-gray
-  top: 16px
-  right: 16px
-  cursor: pointer
-  width: 32px
-  height: 32px
+  .icon
+    position: absolute
+    fill: $steel-gray
+    top: 16px
+    right: 16px
+    cursor: pointer
+    width: 32px
+    height: 32px
 
 .popup
   @include center(440px, 360px)

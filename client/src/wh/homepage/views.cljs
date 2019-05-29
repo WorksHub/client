@@ -9,6 +9,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.www-homepage :as www]
     [wh.homepage.subs :as subs]
+    [wh.interop :as interop]
     [wh.landing.views :as landing]
     [wh.subs :refer [<sub] :as subs-common]))
 
@@ -16,12 +17,20 @@
   (let [vertical-display-label (<sub [::subs-common/vertical-label])]
     [top-section-template vertical-display-label (partial get-started-buttons [:homepage-hero])]))
 
-(defn job-apply-buttons [job]
+(defn job-apply-buttons
+  [job]
   [:div.apply
    [:div.buttons
-    [:button.button {:on-click #(dispatch [:auth/show-popup {:type :homepage-jobcard-more-info :job job}])}
+    [:button.button
+     (interop/on-click-fn
+      (interop/show-auth-popup
+       :homepage-jobcard-more-info
+       [:job :params {:id (:id job)}]))
      "More Info"]
-    [:button.button {:on-click #(dispatch [:apply/try-apply job :homepage-jobcard-apply])}
+    [:button.button
+     {:on-click
+      #(dispatch
+        [:apply/try-apply job :homepage-jobcard-apply])}
      "Easy Apply"]]])
 
 (defn job-chat-card []

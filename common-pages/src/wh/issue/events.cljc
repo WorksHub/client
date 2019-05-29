@@ -10,6 +10,7 @@
     [wh.graphql.issues :as queries]
     [wh.issue.db :as issue]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
+    [wh.routes :as routes]
     [wh.util :as util]))
 
 (def issue-interceptors (into db/default-interceptors
@@ -90,7 +91,9 @@
      (fn [{db :db} _]
        (if (db/logged-in? db)
          {:dispatch [::show-start-work-popup true]}
-         {:dispatch [:auth/show-popup {:type :issue, :id (get-in db [::issue/sub-db ::issue/issue :id])}]}))))
+         {:show-auth-popup {:context :issue
+                            :redirect [:issue
+                                       :params {:id (get-in db [::issue/sub-db ::issue/issue :id])}]}}))))
 
 #?(:cljs
    (reg-event-fx

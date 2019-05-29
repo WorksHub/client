@@ -6,7 +6,6 @@
     [re-frame.db :refer [app-db]]
     [wh.common.fx]
     [wh.common.url :as url]
-    [wh.components.auth-popup.events]
     [wh.components.error.events]
     [wh.db :as db]
     [wh.logged-in.apply.common-events]
@@ -122,10 +121,11 @@
     {:navigate args}))
 
 (reg-event-fx
- ::contribute
- db/default-interceptors
- (fn [{db :db} _]
-   {:dispatch-n [[:auth/show-popup {:type :homepage-contribute}]]}))
+  ::contribute
+  db/default-interceptors
+  (fn [_ _]
+    {:show-auth-popup {:context :homepage-contribute
+                       :redirect [:contribute]}}))
 
 (reg-event-fx
   :register/get-started
@@ -133,8 +133,8 @@
   (fn [{db :db} [track-data]]
     (merge {:navigate [:register :params {:step :email}]}
            {:dispatch-n (cond-> []
-                          (contains? db :wh.register.db/sub-db) (conj [:wh.register.events/initialize-db true])
-                          track-data (conj [:register/track-start track-data]))})))
+                                (contains? db :wh.register.db/sub-db) (conj [:wh.register.events/initialize-db true])
+                                track-data (conj [:register/track-start track-data]))})))
 
 ;; Defined here rather than in wh.register.events because we need to trigger this before loading register module.
 (reg-event-fx

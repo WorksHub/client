@@ -6,7 +6,8 @@
     [wh.db :as db]
     [wh.graphql :refer [reg-query] :as graphql]
     [wh.graphql.jobs]
-    [wh.pages.core :refer [on-page-load]])
+    [wh.pages.core :refer [on-page-load]]
+    [wh.routes :as routes])
   (:require-macros
     [wh.graphql-macros :refer [defquery]]))
 
@@ -87,7 +88,8 @@
                    :on-success [::upvote-success]
                    :on-failure [::upvote-failure]}
          :analytics/track ["Blog Boosted" (select-keys blog [:id :reading-time :title :tags :author :formatted-creation-date])]}
-        {:dispatch [:auth/show-popup {:type :upvote, :blog {:id id}}]}))))
+        {:show-auth-popup {:context :upvote
+                           :redirect [:blog :params {:id id}]}}))))
 
 (reg-event-db
   ::upvote-success
