@@ -9,6 +9,7 @@
     [wh.components.github :refer [integrate-github-button]]
     [wh.components.www-homepage :refer [animated-hr]]
     [wh.how-it-works.views :as hiw]
+    [wh.interop :as interop]
     [wh.landing.subs :as subs]
     #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     [wh.re-frame.events :refer [dispatch]]
@@ -65,7 +66,12 @@
      [:div.tagline tagline]
      [:div.buttons
       [link [:button.button.button--inverted "More Info"] :job :id id]
-      [:button.button #?(:cljs {:on-click #(dispatch [:apply/try-apply job :homepage-jobcard-apply])})
+      [:button.button
+       (interop/on-click-fn
+        (interop/show-auth-popup :homepage-jobcard-apply
+                                 [:job
+                                  :params {:id id}
+                                  :query-params {:apply "true"}]))
        "Apply"]]]))
 
 (defn header []

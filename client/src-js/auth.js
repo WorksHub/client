@@ -9,7 +9,7 @@ wh_auth.contexts.set("upvote",                 "upvote");
 wh_auth.contexts.set("issue",                  "issue");
 
 function showAuthPopUp(context, redirect) {
-    wh_auth.redirect = redirect;
+    localStorage.setItem('wh_auth.redirect', redirect);
     var newContext = wh_auth.contexts.get(context);
     var arr = new Set(Array.from(wh_auth.contexts.values()));
     for (var item of arr) {
@@ -26,7 +26,7 @@ function hideAuthPopUp() {
 }
 
 function popAuthRedirect() {
-    var r = wh_auth.redirect;
-    wh_auth.redirect = null;
+    var r = localStorage.getItem('wh_auth.redirect');
+    localStorage.removeItem('wh_auth.redirect');
     return r;
 }

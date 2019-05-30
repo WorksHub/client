@@ -1,5 +1,7 @@
 (ns wh.components.github
-  #?(:cljs (:require [wh.pages.core :refer [load-and-dispatch]])))
+  (:require
+    #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
+    [wh.routes :as routes]))
 
 (defn connect-github-button []
   [:div
@@ -18,8 +20,7 @@
 (defn integrate-github-button
   [{:keys [class label track-context user-type]
     :or {label "Integrate with"}}]
-  [:button.button.button--black.button--public.button--github
+  [:a.button.button--black.button--public.button--github
    {:class class
-    :on-click #?(:cljs #(load-and-dispatch [:login [:github/call track-context user-type]])
-                 :clj nil)}
+    :href (routes/path :login :params {:step :github})}
    [:span label] [:div]])

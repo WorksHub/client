@@ -16,6 +16,7 @@
             [wh.components.icons :refer [icon]]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
+            [wh.routes :as routes]
             [wh.subs :refer [<sub]]
             [wh.user.subs :as user-subs]))
 
@@ -401,8 +402,9 @@
       [header-view :owner (<sub [::subs/header-data])]
       [cv-section-view (<sub [::subs/cv-data])]
       [private-section-view (<sub [::subs/private-data])]])
-   [:button.button
-    {:on-click #(dispatch [:user/logout])}
+   [:a.button
+    {:data-pushy-ignore "true"
+     :href (routes/path :logout)}
     "Logout"]])
 
 (defn view-page []

@@ -6,7 +6,7 @@
   e.g. myFunction(1, 2, \"foo\", \"bar\")"
   [fn-name & args]
   (let [params (->> args
-                    (map (fn [arg] (if (string? arg) (str "\"" arg "\"" ) arg)))
+                    (map (fn [arg] (if (string? arg) (str "\"" (str/replace arg "\"" "\\\"") "\"" ) arg)))
                     (str/join ",")
                     (apply str))]
     (str fn-name "(" params ")")))
