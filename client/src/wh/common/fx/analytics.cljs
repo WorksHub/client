@@ -11,15 +11,6 @@
   (:require-macros
     [cljs.core :refer [exists?]]))
 
-(defn rename-utm-tags [[k v]]
-  (let [tag-name (second (str/split k #"_"))]
-    [(if (= "campaign" tag-name) "name" tag-name) v]))
-
-(defn attach-source-info [body]
-  (merge body
-         {:sourcing {:campaign (into {} (map rename-utm-tags (:wh.db/initial-utm-tags @app-db)))
-                     :referrer (:wh.db/initial-referrer @app-db)}}))
-
 (reg-fx
  :analytics/reset
  (fn []

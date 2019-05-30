@@ -2,6 +2,7 @@ function init() {
     /* tracking */
     var consent = getCookie("wh_tracking_consent");
     var aid = getCookie("wh_aid");
+    storeReferralData();
     if(!consent) {
         showTrackingPopup();
     } else {

@@ -86,8 +86,6 @@
 (s/def ::errors (s/coll-of string?))
 (s/def ::initial-load? boolean?)
 (s/def ::server-side-rendered? boolean?)
-(s/def ::initial-utm-tags (s/map-of string? string?))
-(s/def ::initial-referrer string?)
 
 ;; FIXME: It doesn't contain all sub-dbs yet; we need to verify whether
 ;; adding all the rest doesn't break anything (and fix the specs if so).

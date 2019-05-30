@@ -53,8 +53,6 @@
             db (merge
                  (db/default-db server-side-db)
                  {::db/query-params      query-params
-                  ::db/initial-utm-tags  (select-keys query-params ["utm_source" "utm_medium" "utm_campaign" "utm_term" "utm_content"])
-                  ::db/initial-referrer  (aget js/document "referrer")
                   ::db/tracking-consent? tracking-consent?})]
         (cond-> {:db         db
                  :dispatch-n [[:user/init]

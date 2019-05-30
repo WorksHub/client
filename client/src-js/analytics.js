@@ -1,3 +1,9 @@
+wh_analytics = {};
+wh_analytics.utms = null;
+wh_analytics.referrer = null;
+
+/*--------------------------------------------------------------------------*/
+
 function setCookie(name,value,days) {
     var expires = "";
     if (days) {
@@ -16,6 +22,44 @@ function getCookie(name) {
 
 /*--------------------------------------------------------------------------*/
 
+function extractUtmFields(qps) {
+    const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+    const renameFields = new Map().set("utm_campaign", "name");
+    const filteredQps = Array.from(qps.keys())
+          .filter(key => utmFields.includes(key))
+          .reduce((obj, key) => {
+              var v = qps.get(key);
+              if(v != "undefined" && v != "") {
+                  if(renameFields.has(key)) {
+                      obj.set(renameFields.get(key), v);
+                  } else {
+                      obj.set(key, v);
+                  }
+              }
+              return obj;
+          }, new Map());
+    return filteredQps;
+}
+
+function storeReferralData() {
+    // get existing
+    const existingQps = localStorage.getItem("wh_analytics_utms");
+    const existingUtms = extractUtmFields(getQueryParams(existingQps));
+    const existingRef  = localStorage.getItem("wh_analytics_referrer");
+    // get current
+    const currentQps  = window.location.search.substring(1);
+    const currentUtms = extractUtmFields(getQueryParams(currentQps));
+    const currentRef  = document.referrer;
+    // combined
+    wh_analytics.utms     = new Map([...existingUtms, ...currentUtms])
+    wh_analytics.referrer = (currentRef == "" ? existingRef : currentRef);
+    // store
+    localStorage.setItem("wh_analytics_utms", mapAsQueryString(wh_analytics.utms));
+    localStorage.setItem("wh_analytics_referrer", (wh_analytics.referrer == null ? "" : wh_analytics.referrer));
+}
+
+/*--------------------------------------------------------------------------*/
+
 function hideTrackingPopup() {
     setClass("tracking-popups", "is-open", false);
 }
@@ -26,7 +70,22 @@ function showTrackingPopup() {
 
 /*--------------------------------------------------------------------------*/
 
+function addSourcing(obj) {
+    var sourcing = {};
+    if(wh_analytics.referrer != null && wh_analytics.referrer != "") {
+        sourcing.referrer= wh_analytics.referrer;
+    }
+    if(wh_analytics.utms.size > 0) {
+        sourcing.campaign = Object.assign({}, ...[...wh_analytics.utms.entries()].map(([k, v]) => ({[k]: v})))
+    }
+    if(Object.keys(sourcing).length > 0) {
+        obj.sourcing = sourcing;
+    }
+    return obj;
+}
+
 function sendServerAnalytics(body) {
+    const bodyWithSourcing = addSourcing(body);
     var r = new XMLHttpRequest();
     r.timeout = 10000;
     r.open("POST", "/api/analytics");
