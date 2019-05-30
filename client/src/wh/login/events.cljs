@@ -107,4 +107,4 @@
    (when-let [cached-redirect (js/popAuthRedirect)]
      (vec (concat [:login/set-redirect] (r/read-string cached-redirect))))
    (when (= :github (get-in db [::db/page-params :step]))
-     [:github/call :login-page nil])))
+     [:github/call {:type :login-page} nil])))
