@@ -4754,7 +4754,7 @@ a.navbar-item,
       margin-top: 0px; }
     .navbar .navbar-overlay--candidates img {
       position: absolute;
-      left: calc(434px - 13px);
+      left: calc(654px - 13px);
       top: -24px;
       z-index: 2; }
   .navbar .navbar-overlay__content {
@@ -4763,7 +4763,7 @@ a.navbar-item,
     width: 260px;
     height: 392px;
     top: -12px;
-    left: calc(434px - 129px);
+    left: calc(654px - 129px);
     font-size: 14px;
     color: #6E7F89;
     box-shadow: 0 2px 4px 0 #adadad; }
@@ -10734,6 +10734,7 @@ h3 {
     .homepage__feature-ctas {
       flex-direction: column; } }
   .homepage__feature-ctas .button {
+    max-width: 100%;
     width: 280px;
     margin: 10px; }
     @media screen and (max-width: 1007px) {
@@ -13960,6 +13961,9 @@ h3 {
     @media screen and (max-width: 1007px) {
       .homepage__looking-to-hire--candidate .homepage__looking-to-hire {
         flex-direction: column-reverse; } }
+  @media screen and (max-width: 1007px) {
+    .homepage__looking-to-hire--candidate img {
+      padding: 0 7px; } }
   @media screen and (min-width: 1008px) {
     .homepage__looking-to-hire--candidate img {
       width: 313px;
@@ -14031,9 +14035,6 @@ h3 {
 
 .homepage__jobs-container .carousel {
   height: 450px; }
-
-.homepage__jobs-container .homepage__feature-ctas {
-  margin-top: -6px; }
 
 .homepage__jobs-container .card {
   border: none;
@@ -15382,10 +15383,13 @@ h3 {
   left: 0;
   right: 0;
   opacity: 0;
-  transition: opacity 0.5s; }
+  visibility: hidden;
+  transition: visibility 0s linear 0.5s, opacity 0.5s; }
 
 .carousel-item--active {
-  opacity: 1; }
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s linear 0s, opacity 0.5s; }
 
 .tracking-popups {
   display: none; }
