@@ -173,7 +173,7 @@
     db))
 
 (defn processable-url? [uri]
-  (and (not (contains? routes/server-side-rendered-paths (.getPath uri))) ;; we tell pushy to leave alone server side rendered pages
+  (and (not (contains? routes/server-side-only-paths (.getPath uri))) ;; we tell pushy to leave alone server side rendered pages
        ;; the following is the default implementation for 'processable-url?' from Pushy, we want to preserve that behavior
        (not (clojure.string/blank? uri)) ;; Blank URLs are not processable.
        (or (and (not (.hasScheme uri)) (not (.hasDomain uri))) ;; By default only process relative URLs + URLs matching window's origin
