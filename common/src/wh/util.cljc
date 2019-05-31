@@ -17,12 +17,30 @@
                                     (or (nil? v) (and (string? v) (str/blank? v))))))
         m))
 
+(defn remove-where
+  "Removes the map entry if the value satisfies predicate.
+  Also walks into nested maps"
+  [m pred?]
+  (postwalk
+    (fn [x] (if (map? x)
+              (into {} (remove (fn [[k v]]
+                                 (pred? v))) x)
+              x)) m))
+
 (defn remove-nils
   "Removes the map entry if the value for the key is nil. Also walks into nested maps"
   [m]
-  (postwalk (fn [x] (if (map? x)
-                      (into {} (remove (fn [[k v]] (nil? v))) x)
-                      x)) m))
+  (remove-where m nil?))
+
+(defn remove-nil-blank-or-empty
+  "Removes the map entry if the value is nil, blank string or empty collection.
+  Also walks into nested maps"
+  [m]
+  (remove-where
+    m
+    #(or (nil? %)
+         (and (string? %) (str/blank? %))
+         (and (coll? %) (empty? %)))))
 
 (s/fdef remove-nils
         :args (s/cat :m map?)

@@ -239,7 +239,7 @@
    :venia/variables [{:variable/name "create_user"
                       :variable/type :CreateUserInput!}]
    :venia/queries   [[:create_user {:create_user :$create_user}
-                      [:id]]]})
+                      [:id :email]]]})
 
 (defn db->location
   [{:keys [::sub-db/email ::sub-db/name
@@ -299,9 +299,11 @@
 
 (reg-event-fx
   ::save-success
-  create-candidate-interceptors
-  (fn [{db :db} [resp]]
-    {:navigate [:candidate :params {:id (get-in resp [:data :create_user :id])}]}))
+  db/default-interceptors
+  (fn [{db :db} [{{candidate :create_user} :data}]]
+    (let [admins-email (get-in db [:wh.user.db/sub-db :wh.user.db/email])]
+      {:navigate        [:candidate :params {:id (:id candidate)}]
+       :analytics/track ["Account Created" {:source admins-email :email (:email candidate)}]})))
 
 (reg-event-db
   ::save-failure

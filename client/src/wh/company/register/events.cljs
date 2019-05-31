@@ -184,23 +184,26 @@
   db/default-interceptors
   (fn [{db :db} [data]]
     (let [company-id  (get-in data [:data :create_company_and_user :company :id])
+          email (get-in data [:data :create_company_and_user :user :email])
           register-db (::register/sub-db db)
-          logo        (::register/company-logo register-db)]
-      {:db              (-> db
-                            (assoc ::register/sub-db (-> register-db
-                                                         (dissoc ::register/loading?
-                                                                 ::register/checked-form)
-                                                         (assoc ::register/company-id company-id
-                                                                ::register/logo-uploading? (boolean logo))))
-                            (update ::user/sub-db #(-> (get-in data [:data :create_company_and_user :user])
-                                                       user/translate-user
-                                                       (update ::user/welcome-msgs set)
-                                                       (assoc ::user/company-id (get-in data [:data :create_company_and_user :company :id])))))
+          logo        (::register/company-logo register-db)
+          db (-> db
+                 (assoc ::register/sub-db (-> register-db
+                                              (dissoc ::register/loading?
+                                                      ::register/checked-form)
+                                              (assoc ::register/company-id company-id
+                                                     ::register/logo-uploading? (boolean logo))))
+                 (update ::user/sub-db #(-> (get-in data [:data :create_company_and_user :user])
+                                            user/translate-user
+                                            (update ::user/welcome-msgs set)
+                                            (assoc ::user/company-id (get-in data [:data :create_company_and_user :company :id])))))]
+      {:db              db
        :navigate        [:register-company
                          :params {:step :job-details}]
-       :dispatch-n      (concat [[:user/init]]
+       :dispatch-n      (concat []
                                 (when logo [[:wh.company.events/fetch-clearbit-logo logo
                                              ::logo-upload-success ::logo-upload-failure]]))
+       :analytics/account-created [{:source :email :email email} db]
        :analytics/track ["Company Created" {:id      company-id
                                             :name    (::register/company-name register-db)
                                             :user    {:id (get-in data [:data :create_company_and_user :user :id])}}]})))

@@ -20,14 +20,13 @@
                    :skills :skills
                    :verify :verify
                    :email)]
-    (cond->
-        {:db db
-         :dispatch-n base-dispatch
-         :navigate [:register :params {:step new-step}]}
-      new (assoc :analytics/alias {:id (:id user)}))))
+    {:db db
+     :dispatch-n base-dispatch
+     :navigate [:register :params {:step new-step}]}))
 
 (defn complete-login [db base-dispatch]
   {:db         db
+   :analytics/identify db
    :dispatch-n (into base-dispatch (login/redirect-post-login-or-registration db))})
 
 (defn- initialize-associated-jobs
@@ -45,8 +44,7 @@
                                                     initialize-associated-jobs
                                                     util/remove-nils
                                                     user/translate-user)))
-          base-dispatch (cond-> [[:user/init]
-                                 [::pages/unset-loader]]
+          base-dispatch (cond-> [[::pages/unset-loader]]
                           new (conj [:register/track-account-created {:source :github :email email}])
                           (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
       (if new

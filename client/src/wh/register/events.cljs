@@ -512,7 +512,7 @@
                    :on-failure [::upsert-user-error verify-riddle?]}}))))
 
 (defn upsert-dispatch-events [new-user? approval blockchain? db email]
-  (cond-> [[:user/init]]
+  (cond-> []
     (or (not new-user?) (= (:status approval) "approved") blockchain?) (conj [:register/advance])
     new-user? (conj [:register/track-account-created {:source :email :email email}])))
 
@@ -528,9 +528,8 @@
           db (cond-> db
                (not= (:status approval) "approved") (assoc-in [::register/sub-db ::register/approval-fail?] true))
           blockchain? (db/blockchain? (::db/vertical db))]
-      (cond-> {:db         db
-               :dispatch-n (upsert-dispatch-events new-user? approval blockchain? db email)}
-              new-user? (assoc :analytics/alias {:id id})))))
+      {:db         db
+       :dispatch-n (upsert-dispatch-events new-user? approval blockchain? db email)})))
 
 (reg-event-db
   ::upsert-user-error

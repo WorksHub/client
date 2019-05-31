@@ -30,36 +30,6 @@
                        :on-success      [::logged-out]
                        :on-failure      [::logged-out]}}))
 
-(defn user-db->identify
-  [{:keys [::user/email ::user/name ::user/visa-status ::user/visa-status-other
-           ::user/skills ::user/id ::user/approval
-           ::user/salary]}]
-  (cond-> {:id                id
-           :email             email
-           :name              name
-           :skills            (mapv :name skills)
-           :visa-status       visa-status
-           :visa-status-other visa-status-other
-           :approval          approval
-           :min-salary        (:min salary)
-           :currency          (:currency salary)}))
-
-(reg-event-fx
-  :user/init
-  db/default-interceptors
-  (fn [{db :db} []]
-    (let [{:keys [id] :as identify-user} (-> (::user/sub-db db)
-                            user-db->identify
-                            (assoc :board (::db/vertical db))
-                            (util/dissoc-selected-keys-if-blank #{:skills :visa-status
-                                                                  :visa-status-other
-                                                                  :min-salary :currency
-                                                                  :approval
-                                                                  :id
-                                                                  :email :name}))]
-      (when id
-        {:analytics/identify identify-user}))))
-
 (reg-event-db
   ::save-consent-success
   db/default-interceptors

@@ -55,8 +55,8 @@
                  {::db/query-params      query-params
                   ::db/tracking-consent? tracking-consent?})]
         (cond-> {:db         db
-                 :dispatch-n [[:user/init]
-                              [:wh.pages.router/initialize-page-mapping]]})))))
+                 :analytics/identify db
+                 :dispatch-n [[:wh.pages.router/initialize-page-mapping]]})))))
 
 (reg-event-db
   ::set-initial-load
@@ -144,9 +144,8 @@
 (reg-event-fx
   :register/track-account-created
   db/default-interceptors
-  (fn [_ [data]]
-    {:analytics/track ["Account Created" data]
-     :reddit/conversion-pixel nil}))
+  (fn [{db :db} [data]]
+    {:analytics/account-created [data db]}))
 
 (reg-event-fx
   :wh.events/scroll-to-top
@@ -160,32 +159,4 @@
   (fn [db [& path]]
     (assoc-in db [:wh.login.db/sub-db :wh.login.db/redirect] path)))
 
-(defn user-db->identify
-  [{:keys [:wh.user.db/email :wh.user.db/name :wh.user.db/visa-status :wh.user.db/visa-status-other
-           :wh.user.db/skills :wh.user.db/id :wh.user.db/approval
-           :wh.user.db/salary]}]
-  (cond-> {:id                id
-           :email             email
-           :name              name
-           :skills            (mapv :name skills)
-           :visa-status       visa-status
-           :visa-status-other visa-status-other
-           :approval          approval
-           :min-salary        (:min salary)
-           :currency          (:currency salary)}))
 
-(reg-event-fx
-  :user/init
-  db/default-interceptors
-  (fn [{db :db} []]
-    (let [{:keys [id] :as identify-user} (-> (:wh.user.db/sub-db db)
-                                             user-db->identify
-                                             (assoc :board (::db/vertical db))
-                                             (util/dissoc-selected-keys-if-blank #{:skills :visa-status
-                                                                                   :visa-status-other
-                                                                                   :min-salary :currency
-                                                                                   :approval
-                                                                                   :id
-                                                                                   :email :name}))]
-      (when id
-        {:analytics/identify identify-user}))))

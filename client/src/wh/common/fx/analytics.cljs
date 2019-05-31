@@ -1,12 +1,10 @@
 (ns wh.common.fx.analytics
   (:require
-    [ajax.json :as ajax-json]
     [clojure.string :as str]
     [re-frame.core :refer [reg-fx reg-event-fx]]
     [re-frame.db :refer [app-db]]
     [wh.common.cases :as cases]
-    [wh.common.fx.http :as http-fx]
-    [wh.routes :as routes]
+    [wh.common.user :as user]
     [wh.util :as util])
   (:require-macros
     [cljs.core :refer [exists?]]))
@@ -16,15 +14,21 @@
  (fn []
    (js/resetAnalytics)))
 
-(reg-fx
- :analytics/alias
- (fn [{:keys [id]}]
-   (js/submitAnalyticsAlias id)))
+(defn alias [db]
+  (js/sendServerAnalytics (clj->js {:type :alias}))
+  (js/submitAnalyticsAlias (get-in db [:wh.user.db/sub-db :wh.user.db/id])))
 
-(reg-fx
- :analytics/identify
- (fn [{:keys [id] :as identify-user}]
-   (js/submitAnalyticsIdentify id (clj->js identify-user) (clj->js {:integrations {"Sentry" false}}))))
+(defn identify [db]
+  (let [{:keys [id] :as user} (-> (:wh.user.db/sub-db db)
+                                  util/strip-ns-from-map-keys)]
+    (when id
+      (js/submitAnalyticsIdentify
+        id
+        (clj->js (-> user
+                     user/user->segment-traits))
+        (clj->js {:integrations {"Sentry" false}})))))
+
+(reg-fx :analytics/identify identify)
 
 (reg-fx
  :analytics/pageview
@@ -39,19 +43,27 @@
     (assoc data :nonInteraction 1)
     data))
 
-(reg-fx
- :analytics/track
- (fn [[event-name data non-interactive?]]
-   (let [properties (-> data
-                        cases/->snake-case
-                        (add-noninteractive non-interactive?))]
-     (js/sendServerAnalytics (clj->js {:type    :track
-                                       :payload (clj->js {:event-name event-name
-                                                          :properties properties})}))
-     (js/submitAnalyticsTrack event-name (clj->js properties)))))
+(defn track [[event-name data non-interactive?]]
+  (let [properties (-> data
+                       cases/->snake-case
+                       (add-noninteractive non-interactive?))]
+    (js/sendServerAnalytics (clj->js {:type    :track
+                                      :payload (clj->js {:event-name event-name
+                                                         :properties properties})}))
+    (js/submitAnalyticsTrack event-name (clj->js properties))))
+
+(reg-fx :analytics/track track)
+
+(defn track-reddit []
+  (-> (js/Image.)
+      (aset "src" "https://alb.reddit.com/snoo.gif?q=CAAHAAABAAoACQAAAAbiHMscAA==&s=Mdk07HNJof2V4iYvOG7Xjze3WPvvGToIlqHu8uuIhLY=")))
 
 (reg-fx
-  :reddit/conversion-pixel
-  (fn []
-    (-> (js/Image.)
-        (aset "src" "https://alb.reddit.com/snoo.gif?q=CAAHAAABAAoACQAAAAbiHMscAA==&s=Mdk07HNJof2V4iYvOG7Xjze3WPvvGToIlqHu8uuIhLY="))))
+  :analytics/account-created
+  (fn [[data db]]
+    ;; The order is important, see link below
+    ;; https://segment.com/docs/destinations/mixpanel/#aliasing-server-side
+    (alias db)
+    (identify db)
+    (track ["Account Created" data])
+    (track-reddit)))
