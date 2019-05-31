@@ -12,27 +12,29 @@
     [wh.db :as db]
     [wh.graphql.company :refer [fetch-tags]]
     [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.util :as util]))
+    [wh.util :as util])
+  (:require-macros [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
-(def create-candidate-interceptors (into db/default-interceptors
-                                         [(path ::sub-db/sub-db)]))
+(def create-candidate-interceptors (into db/default-interceptors [(path ::sub-db/sub-db)]))
 
-(def companies-query-page-size 10)
-
-(defn companies-query
-  [search]
-  {:venia/queries [[:companies
-                    {:search_term search
-                     :page_number 1
-                     :page_size companies-query-page-size}
-                    [[:pagination [:total :count :pageNumber]]
-                     [:companies [:id :name [:integrations [:greenhouse [:enabled]]]]]]]]})
+(defquery fetch-companies
+  {:venia/operation {:operation/type :query
+                     :operation/name "companies"}
+   :venia/variables [{:variable/name "search_term"
+                      :variable/type :String!}]
+   :venia/queries   [[:companies
+                      {:search_term :$search_term
+                       :page_number 1
+                       :page_size   10}
+                      [[:pagination [:total :count :pageNumber]]
+                       [:companies [:id :name [:integrations [[:greenhouse [:enabled]]]]]]]]]})
 
 (reg-event-fx
   ::fetch-companies
   create-candidate-interceptors
-  (fn [{db :db} [search]]
-    {:graphql {:query      (companies-query search)
+  (fn [_ [search]]
+    {:graphql {:query      fetch-companies
+               :variables  {:search_term search}
                :on-success [::fetch-companies-success]
                :on-failure [::fetch-companies-failure]}}))
 

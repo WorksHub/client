@@ -18,13 +18,14 @@
     (str/includes? domain website)))
 
 (defn uri->domain [uri]
-  #?(:cljs
-     (.getDomain (uri/parse uri)))
-  #?(:clj
-     (try
-       (.getHost (java.net.URI. uri))
-       (catch Exception e
-         (error "Failed to parse URI:" uri)))))
+  (let [uri (str/trim uri)]
+    #?(:cljs
+       (.getDomain (uri/parse uri)))
+    #?(:clj
+       (try
+         (.getHost (java.net.URI. uri))
+         (catch Exception e
+           (error "Failed to parse URI:" uri))))))
 
 (defn detect-page-type [url]
   (when url
