@@ -6818,7 +6818,7 @@ a.navbar-item,
       width: 100%;
       flex-direction: column; }
       .bubble-panel__bottom .conversation-button {
-        margin: 3px 18px 3px auto; } }
+        margin: 3px auto 3px 18px; } }
 
 .close {
   float: right;

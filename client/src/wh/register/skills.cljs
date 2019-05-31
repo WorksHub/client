@@ -36,8 +36,8 @@
    (when-not (<sub [::subs/connected-to-github?])
      [github-button])
    [:div.bubble-panel__bottom
+    [button "I'm all done" [:register/advance]
+     :disabled (<sub [::subs/cannot-proceed-from-skills?])]
     [button "Something's missing…"
      [::events/show-add-skill]
-     :disabled (<sub [::subs/add-skill-visible?])]
-    [button "I'm all done" [:register/advance]
-     :disabled (<sub [::subs/cannot-proceed-from-skills?])]]])
+     :disabled (<sub [::subs/add-skill-visible?])]]])
