@@ -27,7 +27,7 @@
     :txt "Get Fast-tracked for full time jobs at companies you’ve already worked for"}])
 
 (def how-we-are-different-items
-  [{:img "/images/homepage/different1.png"
+  [{:img "/images/homepage/different1.svg"
     :title "We know our stuff"
     :txt "Unlike other companies, we know the difference between Java and Javascript and won’t ask for 6 years experience in a language that came out last year."}
    {:img "/images/hiw/company/benefits/benefit4.svg"
