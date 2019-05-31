@@ -79,6 +79,16 @@ $engineers-menu-offset: 654px
     form
       height: 44px
       width: 100%
+      &:focus-within
+        border: 2px solid $steel-gray
+        .search
+          font-weight: $font-regular
+          padding-left: 14px
+        .search-button
+          padding-right: 10px
+        .clear-search
+          padding-top: 4px
+          padding-right: 10px
     .navbar-item
       padding: 0
       +mobile
@@ -98,8 +108,6 @@ $engineers-menu-offset: 654px
       &::placeholder
         color: $red
         font-weight: $font-medium
-      &:focus
-        font-weight: $font-regular
     .clear-search
       font-size: 10px
       font-weight: $font-medium
@@ -121,8 +129,14 @@ $engineers-menu-offset: 654px
       +mobile
         background-color: unset
       .icon
-        width: 100%
-        height: 100%
+        +desktop
+          max-width: 26px
+          max-height: 26px
+          min-width: 26px
+          min-height: 26px
+        +mobile
+          width: 100%
+          height: 100%
         &:hover
           cursor: pointer
 

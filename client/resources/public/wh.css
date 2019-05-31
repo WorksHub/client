@@ -4510,6 +4510,16 @@ a.navbar-item,
     .navbar .navbar__search form {
       height: 44px;
       width: 100%; }
+      .navbar .navbar__search form:focus-within {
+        border: 2px solid #6E7F89; }
+        .navbar .navbar__search form:focus-within .search {
+          font-weight: 400;
+          padding-left: 14px; }
+        .navbar .navbar__search form:focus-within .search-button {
+          padding-right: 10px; }
+        .navbar .navbar__search form:focus-within .clear-search {
+          padding-top: 4px;
+          padding-right: 10px; }
     .navbar .navbar__search .navbar-item {
       padding: 0; }
       @media screen and (max-width: 1007px) {
@@ -4530,8 +4540,6 @@ a.navbar-item,
       .navbar .navbar__search .search::placeholder {
         color: #ff7c6e;
         font-weight: 500; }
-      .navbar .navbar__search .search:focus {
-        font-weight: 400; }
     .navbar .navbar__search .clear-search {
       font-size: 10px;
       font-weight: 500;
@@ -4554,11 +4562,18 @@ a.navbar-item,
       @media screen and (max-width: 1007px) {
         .navbar .navbar__search .search-button {
           background-color: unset; } }
-      .navbar .navbar__search .search-button .icon {
-        width: 100%;
-        height: 100%; }
-        .navbar .navbar__search .search-button .icon:hover {
-          cursor: pointer; }
+      @media screen and (min-width: 1008px) {
+        .navbar .navbar__search .search-button .icon {
+          max-width: 26px;
+          max-height: 26px;
+          min-width: 26px;
+          min-height: 26px; } }
+      @media screen and (max-width: 1007px) {
+        .navbar .navbar__search .search-button .icon {
+          width: 100%;
+          height: 100%; } }
+      .navbar .navbar__search .search-button .icon:hover {
+        cursor: pointer; }
   .navbar .navbar-items {
     display: flex;
     align-items: center; }
