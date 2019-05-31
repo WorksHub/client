@@ -192,10 +192,3 @@
   :<- [::published?]
   (fn [[admin? creator email published?] _]
     (cards-subs/show-blog-unpublished? admin? creator email published?)))
-
-(reg-sub
-  ::show-get-started-banner?
-  :<- [:wh.subs/vertical]
-  :<- [:user/logged-in?]
-  (fn [[vertical logged-in?] _]
-    (and (not (= vertical "www")) (not logged-in?))))

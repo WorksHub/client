@@ -64,20 +64,6 @@
            :alt alt
            :sizes "(min-width: 1008px) 360px, calc(100vw - 36px)"}]))
 
-(defn get-started-banner-template [get-started-element]
-  [:div.container.get-started
-   [:div
-    {:class (str "columns login-banner card-border-color-" (rand-int 9) " i-cur-" (rand-int 9) " border-color-" (rand-int 9))}
-    [:div.column.is-half
-     [:h1 "Want to see more?"]
-     [:h3 "Sign up and access your personalized dashboard, recommended reading, full job descriptions, and meet “Codi” our AI recruiter"]
-     (when get-started-element
-       (get-started-element))]
-    [:div.column.is-half
-     (wrap-img img
-               "https://functionalworks-backend--prod.s3.amazonaws.com/logos/4930df024406b66517092b7428c56cc3"
-               {:alt "Dashboard screenshot" :w 644 :h 332})]]])
-
 (defn companies-section
   [text & logos]
   [:div.companies-section

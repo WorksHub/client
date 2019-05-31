@@ -9114,12 +9114,6 @@ h3 {
     .blog {
       perspective: 1px;
       perspective-origin: 0 0; } }
-  .blog .get-started {
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    max-width: calc(1366px - 210px);
-    transform: translateZ(0px); }
   .blog .tags {
     margin-bottom: 12px; }
 
@@ -10453,43 +10447,6 @@ h3 {
   .login-banner__form .field.has-addons input {
     border-radius: 2px 0 0 2px !important; }
 
-.homepage-header {
-  margin: 0 !important;
-  background: #f5f8fa;
-  padding: 20px; }
-
-.homepage-header__mobile-hero {
-  min-height: 315px; }
-
-.h1--home-page {
-  color: #6E7F89; }
-  .h1--home-page .red {
-    color: #ff7c6e; }
-
-.h3--home-page {
-  font-weight: 400;
-  letter-spacing: -0.02em; }
-
-@media screen and (min-width: 1008px) {
-  .header-copy {
-    margin-top: 100px; } }
-
-@media screen and (min-width: 1008px) {
-  .pod-section {
-    margin: 20px 40px; } }
-
-.register-cta-buttons {
-  display: flex; }
-  .register-cta-buttons .button {
-    fill: white; }
-    .register-cta-buttons .button:first-child {
-      width: auto;
-      padding: 0 12px; }
-      .register-cta-buttons .button:first-child .icon {
-        margin-right: 9px; }
-    .register-cta-buttons .button:not(:last-child) {
-      margin-right: 12px; }
-
 .companies-section {
   color: #6E7F89;
   font-family: "Inconsolata", sans-serif;
@@ -10515,59 +10472,6 @@ h3 {
             text-align: center;
             min-width: 140px;
             padding-left: 20px; } }
-
-@media screen and (min-width: 1008px) {
-  .contribute-wrapper {
-    padding-right: 100px; } }
-
-.contribute-wrapper button {
-  margin-top: 20px; }
-
-.contribute-image {
-  max-height: 300px; }
-
-.card--homepage {
-  background: #f4f5f8;
-  border-color: #f4f5f8 !important; }
-
-.banner-section .columns {
-  margin: 0 !important; }
-
-.home-page-job-search {
-  text-align: center; }
-  .home-page-job-search form {
-    display: flex;
-    margin: auto; }
-  .home-page-job-search .search-button {
-    margin-left: -40px;
-    margin-top: 10px;
-    background: none;
-    border: none;
-    outline: none;
-    color: #adadad;
-    width: 30px;
-    height: 30px;
-    padding: 0; }
-    .home-page-job-search .search-button .icon {
-      width: 100%;
-      height: 100%; }
-    .home-page-job-search .search-button:hover {
-      cursor: pointer; }
-  .home-page-job-search input {
-    width: 450px;
-    margin: auto;
-    height: 50px;
-    border: 2px solid #ff7c6e;
-    font-size: 14px;
-    padding-left: 10px; }
-    @media screen and (max-width: 1007px) {
-      .home-page-job-search input {
-        width: 280px;
-        padding-left: 5px; } }
-  .home-page-job-search input::placeholder {
-    color: #6E7F89;
-    font-size: 14px;
-    padding-left: 10px; }
 
 .homepage .button {
   border-radius: 4px;

@@ -1,5 +1,6 @@
 (ns wh.login.events
   (:require
+    [ajax.formats :refer [text-request-format raw-response-format]]
     [cljs.reader :as r]
     [clojure.string :as str]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
@@ -42,7 +43,7 @@
   (fn [{db :db} _]
     (let [email (str/trim (get-in db [::login/sub-db ::login/magic-email]))]
       (if (= (:wh.settings/environment db) :dev)
-        {:navigate [:homepage :query-params {"login-as" email}]}
+        {:dispatch [::login-as email]}
         {:dispatch [::pages/set-loader]
          :graphql {:query magic-link-mutation
                    :variables {:email (str/trim email)
@@ -98,6 +99,29 @@
                                       true (assoc ::db/loading? true
                                                   :google/maps-loaded? false) ; reload google maps when we return here
                                       true (dissoc ::db/page-mapping)))))))
+
+(reg-event-fx
+  ::login-as-success
+  db/default-interceptors
+  (fn [{db :db} [response]]
+    (let [user-db (r/read-string response)]
+      {:db (update db :wh.user.db/sub-db merge user-db)
+       :dispatch [::pages/load-module-and-set-page {:handler :homepage}]})))
+
+(reg-event-fx
+  ::login-as
+  db/default-interceptors
+  (fn [{db :db} [email]]
+    {:dispatch   [::pages/set-loader]
+     :http-xhrio {:method           :post
+                  :headers          {"Accept" "application/edn"}
+                  :uri              (str (::db/api-server db)
+                                         (routes/path :login-as :query-params {"email" email}))
+                  :format           (text-request-format)
+                  :response-format  (raw-response-format)
+                  :with-credentials true
+                  :timeout          10000
+                  :on-success       [::login-as-success]}}))
 
 (defmethod on-page-load :login
   [db]

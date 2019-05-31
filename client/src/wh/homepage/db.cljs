@@ -1,1 +1,0 @@
-(ns wh.homepage.db)

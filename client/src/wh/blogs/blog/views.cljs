@@ -10,11 +10,10 @@
     [wh.common.re-frame-helpers :as reframe-helpers]
     [wh.components.cards.views :refer [job-card]]
     [wh.components.common :refer [link]]
-    [wh.components.not-found :as not-found]
     [wh.components.error.views :refer [loading-error]]
     [wh.components.footer :as footer]
-    [wh.components.get-started.views :refer [get-started-banner]]
     [wh.components.icons :refer [icon url-icons]]
+    [wh.components.not-found :as not-found]
     [wh.pages.util :as putil]
     [wh.routes :as routes]
     [wh.slug :as slug]
@@ -164,8 +163,6 @@
                        :target "_blank" :rel "noopener"}
                    (<sub [::subs/original-source-domain])]]])])
            [recommended-jobs]
-           (when (<sub [::subs/show-get-started-banner?])
-             [get-started-banner [:blog-banner {:blog {:id (<sub [::subs/id])}}]])
            [footer/footer (<sub [::subs-common/vertical]) "footer--blog"]])))))
 
 (defn social-icons []

@@ -27,7 +27,6 @@
     :twitter               "@functionalworks"
     :linkedin              "https://www.linkedin.com/company/3504222/"
     :default-technologies  ["Clojure" "Haskell" "Scala" "Erlang" "F#" "OCaml"]
-    :homepage-jobs         ["senior-haskell-engineer-london-united-kingdom-98704" "618"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/functional-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/functional-works-15-minute-demo"
     :footer-job-links      ["Scala" "Clojure" "Haskell" "OCaml" "Elixir" "Elm" "Erlang"]
@@ -49,7 +48,6 @@
     :twitter               "@blockchainworks"
     :linkedin              "https://www.linkedin.com/company/blockchainworks/"
     :default-technologies  ["Ethereum" "Java" "Go" "C++" "Compliance" "Product" "Haskell"]
-    :homepage-jobs         ["UK-Head-of-Compliance-London-Sep-2017-489d3" "Quantitative-Developer-United-States-South-Korea-Jan-2018-e4e79"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/blockchain-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/blockchain-works-15-minute-demo"
     :footer-job-links      ["Blockchain" "Solidity" "Blockchain product" "Quant"]
@@ -68,7 +66,6 @@
     :twitter               "@javascriptworks"
     :linkedin              "https://www.linkedin.com/company/javascriptworks/"
     :default-technologies  ["JavaScript" "React" "Angular" "Vue" "Node" "CSS"]
-    :homepage-jobs         ["senior-javascript-engineer-shoreditch-london-592cb" "mid-senior-ux-engineer-in-new-york-united-states-965ca"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/javascript-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/javascript-works-15-minute-demo"
     :footer-job-links      ["React" "Angular" "NodeJS" "Typescript"]
@@ -88,7 +85,6 @@
     :twitter               "@AIWorksBot"
     :linkedin              "https://www.linkedin.com/company/aiworks/"
     :default-technologies  ["Data Science" "Data Engineering" "Machine Learning" "Python" "Spark" "Scala" "Java" "R"]
-    :homepage-jobs         ["Software-Engineer-Machine-Learning-San-Francisco-United-States-May-2017-0b45c" "Senior-Engineering-Manager-AI-Software-Engineering-London-United-Kingdom-Aug-2017-9ad13"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/ai-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/ai-works-15-minute-demo"
     :footer-job-links      ["Data Science" "Data Engineering" "Machine learning" "Artificial Intelligence"]
@@ -108,7 +104,6 @@
     :twitter               "@golangworks"
     :linkedin              "https://www.linkedin.com/company/18608798/"
     :default-technologies  ["Go" "Java" "Spark" "Python" "SQL" "Distributed Systems"]
-    :homepage-jobs         ["Engineering-Manager-New-York-United-States-Jan-2018-2c7c4" "Senior-Backend-Engineer-Exchange-London-United-Kingdom-Sep-2017-4cc65"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/golang-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/golang-works-15-minute-demo"
     :footer-job-links      ["Go"]
@@ -125,7 +120,6 @@
     :twitter               "@Java_workshub"
     :linkedin              "https://www.linkedin.com/company/javaworks"
     :default-technologies  ["Java" "Play" "Kafka" "Akka" "Spring"]
-    :homepage-jobs         ["senior-software-engineer-in-stockholm-sweden-b56a8" "604"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/java-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/java-works-15-minute-demo"
     :footer-job-links      ["Java" "Play" "Kafka" "Akka"]
@@ -144,7 +138,6 @@
     :twitter               "@python_works"
     :linkedin              "https://www.linkedin.com/company/3504222/"
     :default-technologies  ["Python" "Django" "Ansible" "Numpy" "SciPy" "Scikit-Learn" "Pandas"]
-    :homepage-jobs         ["Software-Engineer-London-United-Kingdom-Jun-2017-4613b" "Senior-Site-Reliability-Engineer-New-York-City-United-States-May-2017-633ac"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/python-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/python-works-15-minute-demo"
     :footer-job-links      ["Python" "Django" "Ansible"]
