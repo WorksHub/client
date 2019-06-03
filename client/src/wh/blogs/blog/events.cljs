@@ -16,7 +16,7 @@
 
 (defquery blog-query
   {:venia/operation {:operation/type :query
-                      :operation/name "blog"}
+                     :operation/name "blog"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries [[:blog {:id :$id}
@@ -24,7 +24,8 @@
                      :tags :htmlBody :readingTime :author
                      :originalSource :formattedCreationDate :upvoteCount
                      [:authorInfo [:name :summary :imageUrl
-                                   [:otherUrls [:url :title]]]]]]]})
+                                   [:otherUrls [:url :title]]]]
+                     [:company [:logo :name :id]]]]]})
 
 (reg-query :blog blog-query)
 
