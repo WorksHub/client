@@ -113,6 +113,7 @@
   (or (some-> error-resp
               :errors
               first
+              :extensions
               :key
               keyword)
       :unknown-error))
