@@ -109,7 +109,6 @@
 (reg-sub
   :graphql/error-key
   (fn [db [_ query-id variables]]
-    (-> (errors db query-id variables)
-        first
-        :key
-        keyword)))
+    (let [first-error (first (errors db query-id variables))]
+      (or (-> first-error :key keyword)
+          (-> first-error :message keyword)))))
