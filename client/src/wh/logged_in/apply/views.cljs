@@ -90,6 +90,15 @@
                                    "button--loading")}
         "Upload resume"]]]]))
 
+(defn rejection-step []
+  [:div
+   [codi-message (<sub [::subs/rejection-message])]
+   [codi-message "Why don't you check some other great jobs we have "
+    [link "recommended" :recommended :class "a--underlined" :on-click #(do
+                                                                         (dispatch [::events/close-chatbot])
+                                                                         (dispatch [::events/track-recommendations-redirect]))]
+    " for you."]])
+
 (defn thanks-step []
   (if (<sub [::subs/submit-success?])
     [:div
@@ -162,6 +171,7 @@
     :on-click #(dispatch [::events/close-chatbot])]
    (case (<sub [::subs/current-step])
      :thanks [thanks-step]
+     :rejection [rejection-step]
      :visa [visa-step]
      [pre-application])])
 

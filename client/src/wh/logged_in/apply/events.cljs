@@ -6,7 +6,9 @@
     [wh.db :as db]
     [wh.logged-in.apply.db :as apply]
     [wh.user.db :as user]
-    [wh.util :as util])
+    [wh.util :as util]
+    [camel-snake-kebab.core :as csk]
+    [wh.common.cases :as cases])
   (:require-macros [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
 (def apply-interceptors (into db/default-interceptors
@@ -169,7 +171,9 @@
   ::check-visa
   db/default-interceptors
   (fn [{db :db} [_]]
-    {:db (assoc-in db [::apply/sub-db ::apply/current-step] (if (user/has-visa? db) :thanks :visa))}))
+    (if (user/has-visa? db)
+      {:dispatch [::check-application]}
+      {:db (assoc-in db [::apply/sub-db ::apply/current-step] :visa)})))
 
 (reg-event-fx
   ::update-current-location-success
@@ -244,6 +248,41 @@
                       :variable/type :String!}]
    :venia/queries   [[:apply {:id :$id}]]})
 
+(defquery check-application-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "check_application"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :String!}]
+   :venia/queries   [[:check_application {:id :$id} [:check_status :reason]]]})
+
+(reg-event-fx
+  ::check-application
+  apply-interceptors
+  (fn [{db :db} _]
+    {:graphql {:query      check-application-query
+               :variables  {:id (get-in db [::apply/job :id])}
+               :on-success [::check-application-success]
+               :on-failure []}
+     :db      (assoc db ::apply/updating? true)}))
+
+(defn gql-check-application->check-application [data]
+  (-> data
+      cases/->kebab-case
+      (update :check-status keyword)
+      (update :reason keyword)))
+
+(reg-event-db
+  ::check-application-success
+  apply-interceptors
+  (fn [db [{:keys [data]}]]
+    (let [result (gql-check-application->check-application (:check_application data))]
+      (if (= :rejected (:check-status result))
+        (cond-> (assoc db ::apply/current-step :rejection)
+                (:reason result) (assoc-in [::apply/rejection :reason] (:reason result)))
+        (-> db
+            (assoc ::apply/updating? true)
+            (assoc ::apply/current-step :thanks))))))
+
 (reg-event-fx
   ::apply
   apply-interceptors
@@ -253,3 +292,5 @@
                :on-success [::handle-apply true]
                :on-failure [::handle-apply false]}
      :db      (assoc db ::apply/updating? true)}))
+
+

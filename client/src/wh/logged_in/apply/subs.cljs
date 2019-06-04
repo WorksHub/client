@@ -48,11 +48,22 @@
    :incomplete-profile         "Looks like you have an incomplete profile. We need your name, email, current location and either an uploaded CV or a link to one."
    :unknown-error              "There was an error submitting your application, please try again or contact us if problems persist."})
 
+(def rejection-mapping
+  {:no-visa "Unfortunately it looks like you do not meet the visa requirements for the job \uD83D\uDE14"
+   :unknown-reason "Unfortunately your application does not meet the requirement for the job \uD83D\uDE14"})
+
 (reg-sub
   ::error-message
   :<- [::error]
   (fn [error _]
     (or (error-mapping error) (:unknown-error error-mapping))))
+
+(reg-sub
+  ::rejection-message
+  :<- [::sub-db]
+  (fn [db _]
+    (let [rejection (::apply/rejection db)]
+      (or (rejection-mapping (:reason rejection)) (:unknown-reason rejection-mapping)))))
 
 (reg-sub
   ::cv-upload-failed?
@@ -101,3 +112,4 @@
   :<- [::sub-db]
   (fn [db [_ i]]
     (mapv location->suggestion (::apply/current-location-suggestions db))))
+
