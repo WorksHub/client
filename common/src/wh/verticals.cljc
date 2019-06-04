@@ -25,7 +25,7 @@
     :description           "Browse functional programming jobs, salaries, blogs and learning resources! Scala jobs, Clojure jobs, Haskell jobs and more."
     :blog-description      "A curated blog on functional programming. Read news, posts and opinions from the community - we have FP covered."
     :twitter               "@functionalworks"
-    :linkedin              "https://www.linkedin.com/company/3504222/"
+    :linkedin              "https://www.linkedin.com/company/functional-works/"
     :default-technologies  ["Clojure" "Haskell" "Scala" "Erlang" "F#" "OCaml"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/functional-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/functional-works-15-minute-demo"
@@ -102,7 +102,7 @@
     :description           "Browse Golang jobs, salaries, blogs and learning resources!"
     :blog-description      "A curated blog on Golang. Read news, posts and opinions from the community - we have Golang covered."
     :twitter               "@golangworks"
-    :linkedin              "https://www.linkedin.com/company/18608798/"
+    :linkedin              "https://www.linkedin.com/company/golang-works/"
     :default-technologies  ["Go" "Java" "Spark" "Python" "SQL" "Distributed Systems"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/golang-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/golang-works-15-minute-demo"
@@ -136,7 +136,7 @@
     :description           "Browse Python programming jobs, salaries, blogs and learning resources! Python jobs, Flask jobs, Ansible jobs and more."
     :blog-description      "A curated blog on the Python programming language. Read news, posts and opinions from the community - we have Python covered."
     :twitter               "@python_works"
-    :linkedin              "https://www.linkedin.com/company/3504222/"
+    :linkedin              "https://www.linkedin.com/showcase/python-works/"
     :default-technologies  ["Python" "Django" "Ansible" "Numpy" "SciPy" "Scikit-Learn" "Pandas"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/python-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/python-works-15-minute-demo"
