@@ -42,12 +42,14 @@
 
 (s/def :wh.payment.coupon/description ::p/non-empty-string)
 (s/def :wh.payment.coupon/code ::p/non-empty-string)
+(s/def :wh.payment.coupon/duration #{:once :forever})
 (s/def :wh.payment.coupon/discount-amount pos-int?)
 (s/def :wh.payment.coupon/discount-percentage ::p/percentage)
 
 (s/def :wh.payment/coupon
   (s/keys :req-un [:wh.payment.coupon/description
-                   :wh.payment.coupon/code]
+                   :wh.payment.coupon/code
+                   :wh.payment.coupon/duration]
           :opt-un [:wh.payment.coupon/discount-amount
                    :wh.payment.coupon/discount-percentage]))
 

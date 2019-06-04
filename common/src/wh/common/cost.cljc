@@ -24,11 +24,24 @@
      (let [d (double->dollars i)]
        (subs d 0 (- (count d) 3)))))) ;; remove decimals
 
+(defn- apply-coupon
+  [amount {:keys [discount-amount discount-percentage]}]
+  (cond (and discount-amount (pos? discount-amount))
+        (- amount discount-amount)
+        (and discount-percentage (pos? discount-percentage))
+        (- amount (* amount (/ discount-percentage 100)))
+        :else amount))
+
 (defn calculate-monthly-cost
-  [cost discount {:keys [discount-amount discount-percentage]}]
+  [cost discount coupon]
   (let [monthly (- cost (* cost (or discount 0)))]
-    (cond (and discount-amount (pos? discount-amount))
-          (- monthly discount-amount)
-          (and discount-percentage (pos? discount-percentage))
-          (- monthly (* monthly (/ discount-percentage 100)) )
-          :else monthly)))
+    (if (= (:duration coupon) :forever)
+      (apply-coupon monthly coupon)
+      monthly)))
+
+(defn calculate-initial-payment
+  [num-months monthly coupon]
+  (cond->
+      {:before-coupon (* num-months monthly)}
+    (= (:duration coupon) :once)
+    (assoc :after-coupon (apply-coupon (* num-months monthly) coupon))))

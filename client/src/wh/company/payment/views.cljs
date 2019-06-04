@@ -325,11 +325,14 @@
         date (t/plus (t/now) (t/months number))
         date-str (tf/unparse (tf/formatter "d MMM Y") date)
         coupon (<sub [::subs/current-coupon])
-        monthly-cost (cost/calculate-monthly-cost cost discount coupon)]
+        monthly-cost (cost/calculate-monthly-cost cost discount coupon)
+        {:keys [before-coupon after-coupon]} (cost/calculate-initial-payment number monthly-cost coupon)]
     [:div
      [:p.li [icon "cutout-tick"] "the cost is " (int->dollars monthly-cost) " per month"]
      [:p.li [icon "cutout-tick"] "you will be " (or description "billed monthly")]
-     [:p.li [icon "cutout-tick"] "the first payment will be taken immediately (" (int->dollars (* number monthly-cost)) ")"]
+     (if after-coupon
+       [:p.li [icon "cutout-tick"] "the first payment will be taken immediately (" (int->dollars after-coupon) " = " (int->dollars before-coupon) " − " (int->dollars (- before-coupon after-coupon)) " promotion)"]
+       [:p.li [icon "cutout-tick"] "the first payment will be taken immediately (" (int->dollars before-coupon) ")"])
      [:p.li [icon "cutout-tick"] "the next payment will be taken " date-str]
      (when coupon
        [:p.li.coupon [icon "cutout-tick"] "promotion applied: " (str/lower-case (:description coupon)) ""])]))

@@ -11919,6 +11919,7 @@ h3 {
     justify-contents: flex-start;
     align-items: center; }
     .payment-setup__pay-confirm-container .li > .icon {
+      flex-shrink: 0;
       margin-right: 10px; }
   .payment-setup__pay-confirm-container .li.coupon {
     color: #80b5bc; }

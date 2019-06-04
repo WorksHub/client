@@ -239,7 +239,7 @@
       {:db (-> db
                (assoc ::payment/coupon-loading? true)
                (dissoc ::payment/coupon-error))
-       :graphql {:query {:venia/queries [[:coupon {:code coupon} [:description :code :discount_amount :discount_percentage]]]}
+       :graphql {:query {:venia/queries [[:coupon {:code coupon} [:description :code :duration :discount_amount :discount_percentage]]]}
                  :on-success [::check-coupon-success]
                  :on-failure [::check-coupon-failure]}})))
 
@@ -251,7 +251,8 @@
            ::payment/coupon-loading? false
            ::payment/current-coupon (-> resp
                                         (get-in [:data :coupon])
-                                        (cases/->kebab-case)))))
+                                        (cases/->kebab-case)
+                                        (update :duration keyword)))))
 
 (reg-event-db
   ::check-coupon-failure
