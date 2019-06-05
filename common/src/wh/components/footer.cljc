@@ -104,7 +104,7 @@
          (str label " jobs")])]
      [:div.footer__sitemap__list
       [:div "Locations"]
-      (for [label data/preset-job-locations]
+      (for [label data/preset-job-cities]
         [:a {:key  (str label "-jobs")
              :href (routes/path :pre-set-search :params {:preset-search (str (slug/slug label) "-jobs")})}
          (str label " jobs")])]
