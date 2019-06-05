@@ -9,6 +9,7 @@
     [wh.common.graphql-queries :as graphql]
     [wh.common.specs.primitives :as primitives]
     [wh.db :as db]
+    [wh.events :as wh-events]
     [wh.login.db :as login]
     [wh.pages.core :refer [on-page-load]]
     [wh.register.db :as register]
@@ -23,7 +24,8 @@
 ;; wh.user.db will be initialized, and we need to fill our fields
 ;; with values from there.
 (defmethod on-page-load :register [db]
-  (concat [[:register/update-data-from-user]]
+  (concat [[::wh-events/show-chat? false]
+           [:register/update-data-from-user]]
           ;; if there's an auth redirect we pop and set it
           (when-let [cached-redirect (js/popAuthRedirect)]
             [(vec (concat [:login/set-redirect] (r/read-string cached-redirect)))])

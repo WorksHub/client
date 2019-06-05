@@ -100,7 +100,8 @@
                       (cond-> {:db                 new-db
                                :analytics/pageview [(str/capitalize  (name handler)) (merge query-params route-params)]
                                :dispatch-n [[:error/close-global]
-                                            [::disable-no-scroll]]}
+                                            [::disable-no-scroll]
+                                            [:wh.events/show-chat? true]]}
                               ;; We only fire on-page-load events when we didn't receive a back-button
                               ;; navigation (i.e. history-state is nil). See pushy/core.cljs.
                               (nil? history-state) (update :dispatch-n (fn [dispatch-events]

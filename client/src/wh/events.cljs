@@ -159,4 +159,11 @@
   (fn [db [& path]]
     (assoc-in db [:wh.login.db/sub-db :wh.login.db/redirect] path)))
 
-
+(reg-event-fx
+  ::show-chat?
+  db/default-interceptors
+  (fn [_ [show?]]
+    (when-let [el (js/document.getElementById "hubspot-messages-iframe-container")]
+      (if show?
+        (.remove (.-classList el) "hide")
+        (.add    (.-classList el) "hide")))))

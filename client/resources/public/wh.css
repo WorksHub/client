@@ -4366,6 +4366,9 @@ a.navbar-item,
 .svg-container {
   display: none; }
 
+#hubspot-messages-iframe-container.hide {
+  display: none !important; }
+
 /* montserrat-regular - latin */
 @font-face {
   font-family: 'Montserrat';
@@ -6818,7 +6821,7 @@ a.navbar-item,
       width: 100%;
       flex-direction: column; }
       .bubble-panel__bottom .conversation-button {
-        margin: 3px auto 3px 18px; } }
+        margin: 3px 18px 3px auto; } }
 
 .close {
   float: right;
