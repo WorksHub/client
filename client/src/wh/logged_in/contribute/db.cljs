@@ -23,7 +23,10 @@
 (s/def ::published       boolean?)
 
 (s/def ::blog (s/keys :req [::title ::author ::feature ::body ::tags]
-                      :opt [::original-source]))
+                      :opt [::original-source ::company-id]))
+
+(s/def ::company-id   (s/nilable ::primitives/non-empty-string))
+(s/def ::company-name ::primitives/non-empty-string)
 
 
 (s/def ::save-status #{:success :failure :tried})
@@ -42,7 +45,7 @@
 (s/def ::sub-db (s/keys :opt [::title ::author ::feature ::body ::tags ::save-status ::published
                               ::save-status ::image-article-upload-status ::hero-upload-status
                               ::body-editing? ::body-rows ::available-tags
-                              ::tag-search ::original-source]))
+                              ::tag-search ::original-source ::company-id ::company-name]))
 
 (def form-order
   [::feature ::author ::title ::body ::tags ::original-source])
@@ -61,5 +64,8 @@
           ::hide-codi? false
           ::verticals #{(::db/vertical db)}
           ::primary-vertical (::db/vertical db)}
-         (when (user/candidate? db)
-           {::author (user/user-name db)})))
+         (when (or (user/candidate? db)
+                   (user/company? db))
+           {::author (user/user-name db)})
+         (when (user/company? db)
+           {::company-id (user/company-id db)})))

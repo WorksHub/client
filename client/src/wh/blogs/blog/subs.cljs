@@ -127,6 +127,12 @@
               :image-url #(or % (common-user/random-avatar-url))))))
 
 (reg-sub
+  ::company-name
+  :<- [::blog]
+  (fn [blog _]
+    (:name (:company blog))))
+
+(reg-sub
   ::recommendations-heading
   :<- [::recommended-jobs]
   :<- [::tags]
@@ -138,6 +144,13 @@
          (set/intersection (set (map str/lower-case tags)))
          (map str/capitalize)
          (str/join ", "))))
+
+(reg-sub
+  ::recommendations-from-company?
+  :<- [::company-name]
+  :<- [::recommended-jobs]
+  (fn [[company-name recommended-jobs] _]
+    (every? (comp (partial = company-name) :company-name) recommended-jobs)))
 
 (reg-sub
   ::show-public-only?

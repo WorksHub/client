@@ -118,6 +118,16 @@
            :on-select-suggestion [::events/select-author-suggestion]
            :error                (<sub [::subs/author-validation-error])
            :force-error?         (<sub [::subs/validation-error?])}])
+       (when admin?
+         [text-field (<sub [::subs/company-name])
+          {:id                   (contribute/form-field-id ::contribute/company-name)
+           :label                "Company"
+           :class                (merge-classes "company" (when (<sub [::subs/company-searching?]) "field--loading"))
+           :on-change            [::events/set-company]
+           :suggestions          (<sub [::subs/company-suggestions])
+           :on-select-suggestion [::events/select-company-suggestion]
+           :error                (<sub [::subs/company-validation-error])
+           :force-error?         (<sub [::subs/validation-error?])}])
        [text-field (<sub [::subs/title])
         {:id           (contribute/form-field-id ::contribute/title)
          :label        "* Title"
@@ -159,7 +169,7 @@
        [submit-button true]]]
      [:div.column.is-offset-1.is-4.contribute__side
       (cond
-        (<sub [:user/admin?])
+        (<sub [::subs/show-vertical-selector?])
         [:div.vertical-selector
          [vertical-views/verticals-pod
           {:toggleable? true

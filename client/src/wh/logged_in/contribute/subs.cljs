@@ -68,6 +68,18 @@
     (::contribute/author-searching? db)))
 
 (reg-sub
+  ::company-name
+  :<- [::contribute]
+  (fn [db _]
+    (::contribute/company-name db)))
+
+(reg-sub
+  ::company-searching?
+  :<- [::contribute]
+  (fn [db _]
+    (::contribute/company-searching? db)))
+
+(reg-sub
   ::original-source
   :<- [::contribute]
   (fn [db _]
@@ -186,6 +198,13 @@
       "Select a valid author from the list.")))
 
 (reg-sub
+  ::company-validation-error
+  :<- [::contribute]
+  (fn [db]
+    (when (contribute/has-error? ::contribute/company-id db)
+      "Select a valid company from the list.")))
+
+(reg-sub
   ::hero-validation-error?
   :<- [::contribute]
   (fn [db]
@@ -236,6 +255,16 @@
             (::contribute/author-suggestions db)))))
 
 (reg-sub
+  ::company-suggestions
+  :<- [:user/admin?]
+  :<- [::contribute]
+  (fn [[admin? db] _]
+    (when admin?
+      (mapv (fn [{:keys [name id]}]
+              {:label name :id id})
+            (::contribute/company-suggestions db)))))
+
+(reg-sub
   ::edit-page-authorized?
   :<- [:user/admin?]
   :<- [:user/email]
@@ -259,3 +288,10 @@
   :<- [::contribute]
   (fn [db]
     (::contribute/hide-codi? db)))
+
+(reg-sub
+  ::show-vertical-selector?
+  :<- [:user/admin?]
+  :<- [:user/company?]
+  (fn [[admin? company?]]
+    (or admin? company?)))

@@ -94,14 +94,16 @@
   (when-let [jobs (<sub [::subs/recommended-jobs])]
     (when (seq jobs)
       [:section.recommended-jobs
-       (let [title (<sub [::subs/recommendations-heading])]
-         [:h2 (if (str/blank? title)
-                "Check out these recommended jobs"
-                (str "Check out these jobs using " title))])
+       (let [title        (<sub [::subs/recommendations-heading])
+             company-name (<sub [::subs/company-name])]
+         [:h2 (cond (and (<sub [::subs/recommendations-from-company?])
+                         (not (str/blank? company-name))) (str "Check out these jobs from " company-name)
+                    (not (str/blank? title))              (str "Check out these jobs using " title)
+                    :else                                 "Check out these recommended jobs")])
        (into
-         [:div.columns.is-mobile]
-         (for [job jobs]
-           [:div.column [job-card job :public (<sub [::subs/show-public-only?])]]))])))
+        [:div.columns.is-mobile]
+        (for [job jobs]
+          [:div.column [job-card job :public (<sub [::subs/show-public-only?])]]))])))
 
 (defn page []
   (let [last-y (reagent/atom 0)

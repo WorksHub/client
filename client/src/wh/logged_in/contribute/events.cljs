@@ -8,6 +8,7 @@
     [wh.common.cases :as cases]
     [wh.common.upload :as upload]
     [wh.db :as db]
+    [wh.graphql]
     [wh.logged-in.contribute.db :as contribute]
     [wh.pages.core :refer [on-page-load] :as pages]
     [wh.user.db :as user]
@@ -46,6 +47,23 @@
                (assoc-in [::contribute/sub-db ::contribute/author-id] nil))}
       (when (user/admin? db)
         {:dispatch [::search-authors author]}))))
+
+(defn set-company-name
+  [db n]
+  (if (str/blank? n)
+    (update db ::contribute/sub-db dissoc ::contribute/company-name)
+    (assoc-in  db [::contribute/sub-db ::contribute/company-name] n)))
+
+(reg-event-fx
+  ::set-company
+  db/default-interceptors
+  (fn [{db :db} [company-name]]
+    (merge
+      {:db (-> db
+               (assoc-in [::contribute/sub-db ::contribute/company-id] nil)
+               (set-company-name company-name))}
+      (when (user/admin? db)
+        {:dispatch [::search-companies company-name]}))))
 
 (reg-event-db
   ::set-original-source
@@ -131,11 +149,14 @@
   (fn [db _]
     (assoc db ::contribute/image-article-upload-status :failure)))
 
-(def blog-fields [:id :title :feature :author :authorId :published :tags :body :creator :originalSource :verticals :primaryVertical])
+(def base-blog-fields [:id :title :feature :author :authorId
+                       :published :tags :body :creator :originalSource :verticals :primaryVertical])
+(def save-blog-fields (conj base-blog-fields :companyId))
+(def query-blog-fields (conj base-blog-fields [:company [:name :id]]))
 
 (defn blog-query [id]
   {:venia/queries [[:blog {:id id}
-                    blog-fields]]})
+                    query-blog-fields]]})
 
 (reg-event-fx
   ::fetch-blog
@@ -150,7 +171,10 @@
   (let [r (-> (util/namespace-map "wh.logged-in.contribute.db"
                                   (cases/->kebab-case blog))
               (update ::contribute/tags (comp set (partial map (fn [t] {:tag t :selected true}))))
-              (update ::contribute/verticals (fnil set [])))
+              (update ::contribute/verticals (fnil set []))
+              (assoc  ::contribute/company-id (get-in blog [:company :id]))
+              (assoc  ::contribute/company-name (get-in blog [:company :name]))
+              (dissoc ::contribute/company))
         orig-source? (::contribute/original-source r)] ;; remove OS if it's nil; it's optional
     (if-not orig-source?
       (dissoc r ::contribute/original-source)
@@ -239,7 +263,7 @@
                      (update ::contribute/tags (partial map :tag))
                      (assoc ::contribute/primary-vertical (::db/vertical db))
                      (->> (ce/transform-keys c/->camelCaseString))
-                     (select-keys (map name blog-fields))
+                     (select-keys (map name save-blog-fields))
                      (dissoc (when id "creator"))
                      (util/remove-nils))]
         {:graphql {:query      (if id update-blog-mutation create-blog-mutation)
@@ -295,6 +319,46 @@
       (let [attempt (if-not retry-attempt 1 (inc retry-attempt))]
         {:dispatch [::search-authors query attempt]}))))
 
+(def companies-query-page-size 10)
+
+(defquery companies-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "companies"}
+   :venia/variables [{:variable/name "search_term" :variable/type :String}
+                     {:variable/name "page_number" :variable/type :Int}
+                     {:variable/name "page_size" :variable/type :Int}]
+   :venia/queries   [[:companies {:search_term :$search_term
+                                  :page_number :$page_number
+                                  :page_size   :$page_size}
+                      [[:pagination [:total :count :pageNumber]]
+                       [:companies [:id :name]]]]]})
+
+(reg-event-fx
+  ::search-companies
+  contribute-interceptors
+  (fn [{db :db} [company-name]]
+    {:db (assoc db ::contribute/company-searching? true)
+     :graphql {:query      companies-query
+               :variables  {:search_term company-name
+                            :page_number 1
+                            :page_size companies-query-page-size}
+               :on-success [::fetch-companies-success]
+               :on-failure [::fetch-companies-failure]}}))
+
+(reg-event-db
+  ::fetch-companies-success
+  contribute-interceptors
+  (fn [db [{{{companies :companies} :companies} :data}]]
+    (assoc db
+           ::contribute/company-suggestions companies
+           ::contribute/company-searching? false)))
+
+(reg-event-db
+  ::fetch-companies-failure
+  contribute-interceptors
+  (fn [db _]
+    (assoc db ::contribute/company-searching? false)))
+
 (reg-event-db
   ::select-author-suggestion
   contribute-interceptors
@@ -303,6 +367,15 @@
            ::contribute/author-id id
            ::contribute/author (:name (first (filter #(= (:objectID %) id) (::contribute/author-suggestions db))))
            ::contribute/author-suggestions nil)))
+
+(reg-event-db
+  ::select-company-suggestion
+  contribute-interceptors
+  (fn [db [id]]
+    (assoc db
+           ::contribute/company-id id
+           ::contribute/company-name (:name (first (filter #(= (:id %) id) (::contribute/company-suggestions db))))
+           ::contribute/company-suggestions nil)))
 
 (reg-event-db
   ::edit-tag-search
