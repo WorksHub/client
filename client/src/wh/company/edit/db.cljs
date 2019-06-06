@@ -43,6 +43,9 @@
 (s/def ::showing-cancel-plan-dialog? boolean?)
 (s/def ::cancel-plan-loading? boolean?)
 (s/def ::disable-loading? boolean?)
+(s/def ::profile-enabled-loading? boolean?)
+
+(s/def ::profile-enabled-error (s/nilable string?))
 
 (def fields
   {::name             {:initial "", :validate ::p/non-empty-string :event? false}
@@ -51,6 +54,7 @@
    ::manager          {:initial "", :validate ::manager}
    ::vertical         {:initial verticals/default-vertical, :validate ::vertical}
    ::auto-approve     {:initial false, :validate boolean?}
+   ::profile-enabled  {:initial false, :validate boolean?}
    ;;
    ::new-user-name    {:initial "", :validate ::p/non-empty-string}
    ::new-user-email   {:initial "", :validate ::p/email}})
@@ -101,7 +105,9 @@
      ::paid-offline-until-error       nil
      ::showing-cancel-plan-dialog?    false
      ::cancel-plan-loading?           false
-     ::disable-loading?               false}
+     ::disable-loading?               false
+     ::profile-enabled-loading?       false
+     ::profile-enabled-error          nil}
     db))
 
 (def field-names (keys fields))

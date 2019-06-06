@@ -15,7 +15,7 @@
     [wh.company.events]
     [wh.company.payment.db :as payment]
     [wh.db :as db]
-    [wh.graphql.company :refer [create-company-mutation update-company-mutation update-company-mutation-with-fields add-new-company-user-mutation delete-user-mutation company-query-with-payment-details all-company-jobs-query update-job-mutation]]
+    [wh.graphql.company :refer [create-company-mutation update-company-mutation update-company-mutation-with-fields add-new-company-user-mutation delete-user-mutation company-query-with-payment-details all-company-jobs-query update-job-mutation publish-company-profile-mutation]]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
     [wh.util :as util]))
@@ -144,12 +144,14 @@
                     :logo             (::edit/logo db)
                     :vertical         (::edit/vertical db)
                     :auto-approve     (::edit/auto-approve db)
+                    :profile-enabled  (::edit/profile-enabled db)
                     :description-html (::edit/description-html db)
                     :manager          (get-manager-email (::edit/manager db))
                     :package          (name (or (::edit/package db) ""))}
                    (::edit/original-company db))
                   (set/rename-keys {:description-html :descriptionHtml
-                                    :auto-approve     :autoApprove}))]
+                                    :auto-approve     :autoApprove
+                                    :profile-enabled  :profileEnabled}))]
     (if (and c id)
       (assoc c :id id)
       (dissoc c :package))))
@@ -574,6 +576,34 @@
   company-interceptors
   (fn [{db :db} _]
     {:navigate [:payment-setup :params {:step :select-package} :query-params {:action :integrations}]}))
+
+(reg-event-fx
+  ::toggle-profile
+  company-interceptors
+  (fn [{db :db} _]
+    (let [new-value (not (::edit/profile-enabled db))]
+      {:db (assoc db ::edit/profile-enabled-loading? true)
+       :graphql {:query publish-company-profile-mutation
+                 :variables {:id (::edit/id db)
+                             :profile_enabled new-value}
+                 :on-success [::toggle-profile-success]
+                 :on-failure [::toggle-profile-failure]}})))
+
+(reg-event-db
+  ::toggle-profile-success
+  company-interceptors
+  (fn [db [resp]]
+    (assoc db
+           ::edit/profile-enabled-loading? false
+           ::edit/profile-enabled (get-in resp [:data :publish_profile :profile_enabled]))))
+
+(reg-event-db
+  ::toggle-profile-failure
+  company-interceptors
+  (fn [db [resp]]
+    (assoc db
+           ::edit/profile-enabled-loading? false
+           ::edit/profile-enabled-error (some-> resp :errors first :key))))
 
 (defmethod on-page-load :create-company [db]
   [[::initialize-db]])

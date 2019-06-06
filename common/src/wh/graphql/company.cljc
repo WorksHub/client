@@ -40,7 +40,7 @@
 (def default-company-fields
   [:id :name :manager :descriptionHtml
    :logo :package :vertical :autoApprove
-   :paidOfflineUntil :disabled
+   :paidOfflineUntil :disabled :profileEnabled
    [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]]]
    [:users [:name :email :id]]
    [:integrations [:email [:greenhouse [:enabled]] [:slack [:enabled]]]]])
@@ -141,3 +141,10 @@
         [:repositories
          [:name :owner :description :primary_language :stargazers]]]]]]]})
 
+(defquery publish-company-profile-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "publish_profile"}
+   :venia/variables [{:variable/name "id" :variable/type :String!}
+                     {:variable/name "profile_enabled" :variable/type :Boolean!}]
+   :venia/queries [[:publish_profile {:id :$id :profile_enabled :$profile_enabled }
+                    [:success :profile_enabled]]]})

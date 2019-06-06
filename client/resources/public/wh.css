@@ -8742,6 +8742,10 @@ a.navbar-item,
     margin-right: 5px;
     fill: #c4000f; }
 
+.company-edit__checkbox {
+  display: block;
+  margin-bottom: 12px; }
+
 .create-offer__post-create-info {
   margin-top: 18px; }
   .create-offer__post-create-info > div {

@@ -162,6 +162,7 @@
                                           :label [:span "Vertical"]
                                           :options verticals/future-job-verticals)])
     (when admin? [labelled-checkbox nil (field ::edit/auto-approve
+                                               :class "company-edit__checkbox"
                                                :label [:span "Automatically approve candidates?"])])
 
     [:div.is-flex.company-edit__field-footer
@@ -174,6 +175,17 @@
         (when-not saving? (if edit? "Save" "Create"))])
      (when-let [error (<sub [::subs/error])]
        (f/error-component error { :id "company-edit-error-desktop"}))]]])
+
+(defn company-profile
+  [admin?]
+  [:div
+   [:h2 "Public company profile"]
+   [:p "The profile for " (<sub [::subs/name]) " is " [:strong (if (<sub [::subs/profile-enabled]) "enabled" "disabled")] "!"]
+   [:div.is-flex.company-edit__field-footer
+    [:button.button.button--inverted.button--small
+     {:class (when (<sub [::subs/profile-enabled-loading?]) "button--loading")
+      :on-click #(dispatch [::events/toggle-profile])}
+     (str (if (<sub [::subs/profile-enabled]) "disable" "enable"))]]])
 
 (defn users
   [admin?]
@@ -508,6 +520,11 @@
          (cond
            (= page-selection :company-details)
            [:div
+            (when (and admin? edit? (or (= (<sub [:user/email]) "acron1@gmail.com")          ;; TODO temporary
+                                        (= (<sub [:user/email]) "laco@functionalworks.com")))
+              [:div.columns.is-variable.is-2
+               [:div.column.is-7
+                [company-profile admin?]]])
             (when edit?
               [:div.columns.is-variable.is-2
                [:div.column.is-7
