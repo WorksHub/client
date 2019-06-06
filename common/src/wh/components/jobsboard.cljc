@@ -1,7 +1,9 @@
 (ns wh.components.jobsboard
   (:require
     [wh.components.job :as job]
-    [wh.components.pagination :as pagination]))
+    [wh.components.icons :refer [icon]]
+    [wh.components.pagination :as pagination]
+    [wh.interop :as interop]))
 
 (defn header [{:keys [title subtitle description]}]
   [:div.jobs-board__header
@@ -9,7 +11,12 @@
     [:h1 title]
     [:h2 subtitle]
     [:h3 description]
-    [:a.jobs-board__header__filter-toggle.a--capitalized-red.a--hover-red ""]]])
+    [:a.jobs-board__header__filter-toggle.a--capitalized-red.a--hover-red
+     (interop/on-click-fn
+       (interop/show-auth-popup :search-jobs [:jobsboard]))
+     [:div
+      [icon "plus" :class "search__toggle"]
+      [:span "Show filters"]]]]])
 
 (defn jobs-board [{:keys [user jobs current-page route total-pages query-params]}]
   [:section

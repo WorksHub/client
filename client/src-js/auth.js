@@ -4,6 +4,7 @@ wh_auth.contexts = new Map();
 wh_auth.contexts.set("homepage-jobcard-apply", "apply");
 wh_auth.contexts.set("jobcard-apply",          "apply");
 wh_auth.contexts.set("jobpage-apply",          "apply");
+wh_auth.contexts.set("search-jobs",            "search-jobs")
 wh_auth.contexts.set("jobpage-see-more",       "see-more");
 wh_auth.contexts.set("upvote",                 "upvote");
 wh_auth.contexts.set("issue",                  "issue");

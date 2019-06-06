@@ -35,6 +35,12 @@
    {:id (build-sub-id "issue")}
    [:h1 "Login or register to start working on this issue!"]])
 
+(defn overlay-content-search-jobs
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "search-jobs")}
+   [:h1 "Login or register to search for your ideal job!"]])
+
 (defn popup [platform-name]
   [:div
    {:id auth-popup-id
@@ -48,6 +54,7 @@
      [overlay-content-apply]
      [overlay-content-see-more]
      [overlay-content-blog]
+     [overlay-content-search-jobs]
      [overlay-content-issue]]
     [:div
      [:p "Engineers who find a new job through " platform-name  " average a 15% increase in salary \uD83D\uDE80 "]]
