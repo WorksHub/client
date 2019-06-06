@@ -29,7 +29,7 @@
     :default-technologies  ["Clojure" "Haskell" "Scala" "Erlang" "F#" "OCaml"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/functional-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/functional-works-15-minute-demo"
-    :footer-job-links      ["Scala" "Clojure" "Haskell" "OCaml" "Elixir" "Elm" "Erlang"]
+    :footer-job-links      ["Scala" "Clojure" "Haskell" "OCaml" "Elixir" "Elm" "Erlang" "ReasonML"]
     :footer-article-links  ["Scala" "Clojure" "Haskell" "F#" "Elixir" "Erlang"]
     :jobsboard-header      {:title       "Functional Programming Jobs"
                             :subtitle    "Browse jobs for software engineers and developers"
@@ -106,7 +106,7 @@
     :default-technologies  ["Go" "Java" "Spark" "Python" "SQL" "Distributed Systems"]
     :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/golang-works-take-off"
     :demo-link             "https://app.hubspot.com/meetings/workshub/golang-works-15-minute-demo"
-    :footer-job-links      ["Go"]
+    :footer-job-links      ["Go" "Golang"]
     :footer-article-links  ["Golang"]
     :jobsboard-header      {:title       "Golang Jobs"
                             :subtitle    "Browse jobs for software engineers and developers"
