@@ -56,7 +56,7 @@
 (reg-event-fx
   ::fetch-jobs
   db/default-interceptors
-  (fn [{db :db} [page-number]]
+  (fn [{db :db} _]
     (let [all-jobs? (and (str/blank? (::db/search-term db))
                          (empty? (::db/query-params db)))
           cities (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities]) ;; for pre-set-search
@@ -65,16 +65,19 @@
                              (seq cities) (update-in [:location :cities] (fnil concat []) cities)
                              remote? (assoc :remote true)
                              :always (merge (search/query-params->filters (::db/query-params db))))
+          page-from-params (int (get-in db [::db/query-params "page"]))
+          page (if (zero? page-from-params)
+                 (inc page-from-params)
+                 page-from-params)
           filters (cases/->camel-case db-filters)]
-      {:db      (assoc-in db [::jobsboard/sub-db ::jobsboard/current-page-number] page-number)
+      {:db      (assoc-in db [::jobsboard/sub-db ::jobsboard/current-page-number] page)
        :graphql {:query      jobs-query
                  :variables  {:search_term   (or (get-in db [::db/query-params "search"]) "")
                               :preset_search (get-in db [::db/page-params :preset-search])
-                              :page          (or (get-in db [::db/query-params "page"])
-                                                 page-number)
+                              :page          page
                               :filters       filters
                               :vertical      (:wh.db/vertical db)}
-                 :on-success [::fetch-jobs-success all-jobs? page-number]}})))
+                 :on-success [::fetch-jobs-success all-jobs? page]}})))
 
 (reg-event-fx
   ::fetch-jobs-success
@@ -292,7 +295,7 @@
                  (::db/initial-load? db))
           []
           [[:wh.search/in-progress true]])
-        [::fetch-jobs 1] ;; TODO put this back in the if statement when filters are finished
+        [::fetch-jobs] ;; TODO put this back in the if statement when filters are finished
         [:wh.search/initialize-widgets]
         [:wh.events/scroll-to-top]))
 
@@ -301,7 +304,7 @@
                  (::db/initial-load? db))
           []
           [[:wh.search/in-progress true]])
-        [::fetch-jobs 1] ;; TODO put this back in the if statement when filters are finished
+        [::fetch-jobs] ;; TODO put this back in the if statement when filters are finished
         [:wh.events/scroll-to-top]))
 
 (defn- update-min-max
