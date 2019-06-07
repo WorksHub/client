@@ -13,6 +13,28 @@
 (def no-menu-pages #{:register :register-company :payment-setup :get-started})
 (def no-footer-pages (set (concat no-menu-pages #{:blog :job})))
 
+;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
+;; The matching is actually left unchanged from the original implementation
+;; and we only deal with the unmatching. In Bidi's original behavior, when
+;; multiple Alternates are provided, unmatching happens only on the first
+;; alternative. We change this behavior to try and see if any of the supplied
+;; alternatives has exactly the params that we supply. If we found some, we use
+;; the first. If none are found, we revert to the original behavior.
+(extend-protocol bidi/Pattern
+  #?(:clj clojure.lang.APersistentSet
+     :cljs cljs.core.PersistentHashSet)
+  (match-pattern [this s]
+    (some #(bidi/match-pattern % s)
+          ;; We try to match on the longest string first, so that the
+          ;; empty string will be matched last, after all other cases
+          (sort-by count > this)))
+  (unmatch-pattern [this {:keys [params] :as s}]
+    (if-let [match (first (filter (fn [pattern] (= (set (keys params))
+                                                   (set (filter keyword? pattern))))
+                                  this))]
+      (bidi/unmatch-pattern match s)
+      (bidi/unmatch-pattern (first this) s))))
+
 ;; Bidi route processing works by returning a map that contains
 ;; :handler and :params.  In WorksHub app, handlers are keywords that
 ;; denote the page to navigate to, and :params are arbitrary
@@ -80,7 +102,9 @@
                                               "complete" (with-params :register-company :step :complete)}}]
                   ["liked" :liked]
                   ["recommended" :recommended]
-                  ["jobs-board/" {[:preset-search] :pre-set-search}]
+                  [#{[:tag "-jobs-in-" :location]
+                     [:tag "-jobs"]
+                     ["jobs-in-" :location]} :pre-set-search]
                   ["jobs/" {""            :jobsboard
                             "new"         :create-job
                             [:id]         :job

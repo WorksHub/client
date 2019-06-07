@@ -100,14 +100,18 @@
       [:div "Jobs"]
       (for [label (verticals/config vertical :footer-job-links)]
         [:a {:key  (str label "-jobs")
-             :href (routes/path :pre-set-search :params {:preset-search (str (slug/slug label) "-jobs")})}
+             :href (routes/path :pre-set-search :params {:tag (str (slug/slug label))})}
          (str label " jobs")])]
      [:div.footer__sitemap__list
       [:div "Locations"]
-      (for [label data/preset-job-cities]
-        [:a {:key  (str label "-jobs")
-             :href (routes/path :pre-set-search :params {:preset-search (str (slug/slug label) "-jobs")})}
-         (str label " jobs")])]
+      (for [city data/preset-job-cities
+            :let [label (str "Jobs in " city)]]
+        [:a {:key label
+             :href (routes/path :pre-set-search :params {:location (str (slug/slug city))})}
+         label])
+      [:a {:key "remote-jobs"
+           :href (routes/path :pre-set-search :params {:tag "remote"})}
+       "Remote Jobs"]]
      [:div.footer__sitemap__list
       [:div "Articles"]
       (for [tag (verticals/config vertical :footer-article-links)]

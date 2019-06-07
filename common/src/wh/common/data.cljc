@@ -571,7 +571,7 @@
    {:title "developers in Berlin"
     :href "/hire-developers-in-berlin"}])
 
-(def preset-job-cities ["New York" "London" "San Francisco" "Berlin" "Barcelona" "Remote"])
+(def preset-job-cities ["New York" "London" "San Francisco" "Berlin" "Barcelona"])
 (def preset-job-country-codes ["DE" "GB" "US"])
 
 (defn find-hiring-target
