@@ -134,7 +134,7 @@
                            ["reset-fixtures" :reset-fixtures]
                            ["admin/" {[:command] :admin-command}]]]]])
 
-(def server-side-only-pages #{:sitemap :oauth-greenhouse :oauth-slack})
+(def server-side-only-pages #{:sitemap :oauth-greenhouse :oauth-slack :privacy-policy :not-found})
 (def pages-without-app-js-when-not-logged-in #{:homepage :jobsboard :pre-set-search})
 (def server-side-only-paths (set (map #(bidi/path-for routes %) server-side-only-pages)))
 

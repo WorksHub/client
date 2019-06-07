@@ -9,14 +9,12 @@
     [wh.login.github-callback.events]
     [wh.login.github-callback.views :as github-callback]
     [wh.login.invalid-magic-link.views :as invalid-magic-link]
-    [wh.login.policy.views :as policy]
     [wh.login.views :as login]))
 
 (def page-mapping
   {:github-callback github-callback/page
    :invalid-magic-link invalid-magic-link/page
    :login login/page
-   :privacy-policy policy/page
    :get-started get-started/page})
 
 (reg-event-db

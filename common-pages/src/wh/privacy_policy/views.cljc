@@ -1,8 +1,6 @@
-(ns wh.login.policy.views
-  (:require
-    [wh.subs :refer [<sub]]))
+(ns wh.privacy-policy.views)
 
-(defn page []
+(defn page [_]
   [:div.main.privacy
    [:h1 "Privacy policy"]
    [:div.container
@@ -13,8 +11,8 @@
        [:li "The Functional Works Privacy Policy (\"Policy\") sets out what, why and how personal data are collected and used by Functional Works [and its affiliates] ([collectively] “Functional Works”, \"we\". \"us\", \"our\") when you visit our online job matching website (\"Website\").  By continuing to use this Website, you consent to your information being processed in accordance with this Policy.    All Data Subjects provide consent of which we keep record.  Data Subjects have ability to withdraw consent.\n"]
        [:li "If you have questions or need to contact us about this Privacy Policy, please email us at "
         [:span [:a {:href "mailto:hello@functionalworks.com"} "hello@functionalworks.com"]]
-        " or our Data Controller, Bogdan Manea at "
-        [:span [:a {:href "mailto:bogdan@functionalworks.com"} "bogdan@functionalworks.com"]]]]]
+        " or our Data Controller, Josh Kaplan at "
+        [:span [:a {:href "mailto:josh.kaplan@functionalworks.com"} "josh.kaplan@functionalworks.com"]]]]]
 
      [:li
       [:span.heading "What personal information we collect and how we use it"]
@@ -120,16 +118,16 @@
                                                                                                                                          :target "_blank"
                                                                                                                                          :rel "noopener"} "this page"]]
            [:li "Pingdom does not provide an opt-out link for its cookies. For more information about Pingdom cookies, please see " [:a {:href "https://www.pingdom.com/legal/cookie-policy"
-                                                                                                                                           :target "_blank"
-                                                                                                                                           :rel "noopener"} "this page"]]
+                                                                                                                                         :target "_blank"
+                                                                                                                                         :rel "noopener"} "this page"]]
            [:li "Segment does not provide an opt-out link for its cookies. For more information about Segment cookies, please see " [:a {:href "https://segment.com/docs/legal/privacy/"
-                                                                                                                                           :target "_blank"
-                                                                                                                                           :rel "noopener"} "this page"]]]]]]]]
+                                                                                                                                         :target "_blank"
+                                                                                                                                         :rel "noopener"} "this page"]]]]]]]]
 
      [:li
       [:span.heading "Changes to the Policy"]
       [:ol
-       [:li "This Policy was last updated on 23 April, 2018. A notice will be posted on our Websites' home pages for [30 days] whenever this Policy is changed in a material way. By continuing to use our Website you confirm your continuing acceptance of this Policy."]]]
+       [:li "This Policy was last updated on 5 June, 2019. A notice will be posted on our Websites' home pages for [30 days] whenever this Policy is changed in a material way. By continuing to use our Website you confirm your continuing acceptance of this Policy."]]]
 
      [:li
       [:span.heading "Questions about this Policy"]
