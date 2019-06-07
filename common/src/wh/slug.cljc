@@ -13,3 +13,12 @@
 
 (defn slug+encode [s]
   (bidi/url-encode (slug s)))
+
+(defn tag-label->slug [s]
+  (-> s
+      (str/lower-case)
+      (str/trim)
+      (str/replace #"#" "sharp")  ;; C#
+      (str/replace #"\+" "plus")  ;; C++
+      (str/replace #"^\." "dot")  ;; .NET
+      (str/replace #"[^a-zA-Z0-9]+" "-")))

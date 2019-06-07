@@ -21,7 +21,17 @@
   (let [expl (s/explain-data spec val)]
     (map :path (::s/problems expl))))
 
+(defn alphanumeric?
+  [s]
+  (not (re-find #"[^a-zA-Z0-9]" s)))
+
+(defn alphanumeric-slug?
+  [s]
+  (not (re-find #"[^a-zA-Z0-9\-]" s)))
+
 (s/def ::non-empty-string (s/and string? (complement str/blank?)))
+(s/def ::non-empty-alphanumeric-string (s/and ::non-empty-string alphanumeric?))
+(s/def ::non-empty-slug (s/and ::non-empty-string alphanumeric-slug?))
 
 (s/def :http.path/params (s/nilable (s/map-of keyword? string?)))
 (s/def :http/query-params (s/nilable (s/map-of (s/or :keyword keyword?
