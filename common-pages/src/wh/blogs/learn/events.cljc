@@ -5,9 +5,9 @@
     [wh.blogs.learn.db :as learn]
     [wh.common.cases :as cases]
     [wh.db :as db]
-    [wh.graphql :refer [reg-query]]
-    [wh.pages.core :refer [on-page-load] :as pages])
-  (:require-macros
+    [wh.graphql-cache :refer [reg-query]]
+    #?(:cljs [wh.pages.core :refer [on-page-load] :as pages]))
+  (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
 (def learn-interceptors (into db/default-interceptors
@@ -27,17 +27,22 @@
 
 (reg-query :blogs blogs-query)
 
+(defn initial-query [db]
+  [:blogs (learn/params db)])
+
 (reg-event-fx
   ::load-blogs
   db/default-interceptors
   (fn [{db :db} _]
     {:scroll-to-top true
-     :dispatch [:graphql/query :blogs (learn/params db)]}))
+     :dispatch (into [:graphql/query] (initial-query db))}))
 
-(defmethod on-page-load :learn [db]
-  [[::pages/unset-loader]
-   [::load-blogs]])
+#?(:cljs
+   (defmethod on-page-load :learn [db]
+     [[:wh.pages.core/unset-loader]
+      [::load-blogs]]))
 
-(defmethod on-page-load :learn-by-tag [db]
-  [[::pages/unset-loader]
-   [::load-blogs]])
+#?(:cljs
+   (defmethod on-page-load :learn-by-tag [db]
+     [[:wh.pages.core/unset-loader]
+      [::load-blogs]]))

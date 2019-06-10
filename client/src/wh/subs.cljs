@@ -4,8 +4,7 @@
     [re-frame.registrar :as rf-registrar]
     [wh.common.subs] ;; required for inclusion
     [wh.db :as db]
-    [wh.routes :as routes]
-    [wh.verticals :as verticals])
+    [wh.routes :as routes])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 ;;; Functions useful in subscriptions
@@ -31,6 +30,7 @@
   ([options label]
    (constantly (into [{:id nil, :label label}] options))))
 
+;; TODO: remove the following three subscriptions and replace with ones defined in wh.common.subs
 (reg-sub ::vertical
          (fn [db _]
            (::db/vertical db)))
@@ -57,12 +57,6 @@
          :<- [::vertical]
          (fn [vertical]
            (db/blockchain? vertical)))
-
-(reg-sub
-  ::vertical-label
-  :<- [::vertical]
-  (fn [vertical]
-    (verticals/config vertical :label-name)))
 
 (reg-sub ::loading?
          (fn [db _]

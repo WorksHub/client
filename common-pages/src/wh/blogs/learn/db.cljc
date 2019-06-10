@@ -1,6 +1,7 @@
 (ns wh.blogs.learn.db
   (:require
-    [bidi.bidi :as bidi]))
+    [bidi.bidi :as bidi]
+    [wh.util :as util]))
 
 (def page-size 24)
 
@@ -8,7 +9,7 @@
   (bidi/url-decode (get-in db [:wh.db/page-params :tag])))
 
 (defn current-page [db]
-  (int (or (get-in db [:wh.db/query-params "page"]) 1)))
+  (or (util/parse-int (get-in db [:wh.db/query-params "page"])) 1))
 
 (defn params [db]
   {:page_number (current-page db)

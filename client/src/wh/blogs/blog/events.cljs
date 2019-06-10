@@ -4,7 +4,7 @@
     [wh.blogs.blog.db :as blog]
     [wh.common.job]
     [wh.db :as db]
-    [wh.graphql :refer [reg-query] :as graphql]
+    [wh.graphql-cache :refer [reg-query] :as graphql]
     [wh.graphql.jobs]
     [wh.pages.core :refer [on-page-load]]
     [wh.routes :as routes])

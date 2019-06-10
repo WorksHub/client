@@ -5,8 +5,7 @@
     [re-frame.core :refer [reg-sub]]
     [wh.blogs.learn.db :as learn]
     [wh.components.pagination :as pagination]
-    [wh.graphql :as graphql]
-    [wh.subs :as subs-common :refer [<sub]]))
+    [wh.graphql-cache :as graphql]))
 
 (reg-sub
   ::current-tag
@@ -19,18 +18,18 @@
   (fn [db _]
     (let [result (graphql/result db :blogs (learn/params db))
           count (or (get-in result [:blogs :total-count]) learn/page-size)]
-      (js/Math.ceil (/ count learn/page-size)))))
+      #?(:clj (int (Math/ceil (/ count learn/page-size)))
+         :cljs (js/Math.ceil (/ count learn/page-size))))))
 
 (reg-sub
   ::current-page
-  :<- [:wh.subs/query-param "page"]
-  (fn [page _]
-    (int (or page 1))))
+  (fn [db _]
+    (learn/current-page db)))
 
 (reg-sub
   ::header
   :<- [::current-tag]
-  (fn [current-tag]
+  (fn [current-tag _]
     (if current-tag
       (str "Learn " current-tag)
       "Learn")))
@@ -38,14 +37,14 @@
 (reg-sub
   ::sub-header
   :<- [::current-tag]
-  :<- [::subs-common/vertical-label]
-  (fn [[current-tag vertical-label]]
+  :<- [:wh/vertical-label]
+  (fn [[current-tag vertical-label] _]
     (str "The latest news, resources and thoughts from the world of " (or current-tag
                                                                           vertical-label))))
 
 (reg-sub
   ::show-contribute?
-  :<- [:wh.subs/vertical]
+  :<- [:wh/vertical]
   :<- [:user/admin?]
   (fn [[vertical admin?] _]
     (or admin? (not= "www" vertical))))

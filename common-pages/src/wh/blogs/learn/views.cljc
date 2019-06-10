@@ -5,7 +5,7 @@
     [wh.blogs.learn.subs :as subs]
     [wh.components.cards :refer [blog-card]]
     [wh.components.pagination :refer [pagination]]
-    [wh.subs :refer [<sub]]))
+    [wh.re-frame.subs :refer [<sub]]))
 
 (defn learn-header
   []
@@ -26,7 +26,7 @@
    [:div.main
     (learn-header)]
    (let [parts (partition-all 3 (<sub [::subs/all-blogs]))
-         tag (<sub [:wh.subs/page-param :tag])]
+         tag (<sub [:wh/page-param :tag])]
      (if (seq parts)
        (conj (vec (for [part parts]
                     (into [:div.columns]
@@ -37,6 +37,6 @@
               (<sub [::subs/current-page])
               (<sub [::subs/pagination])
               (if tag :learn-by-tag :learn)
-              (<sub [:wh.subs/query-params])
+              (<sub [:wh/query-params])
               (when tag {:tag tag})])
        [[:p "No learning resources found."]]))))

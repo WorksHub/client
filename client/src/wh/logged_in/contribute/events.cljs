@@ -8,7 +8,7 @@
     [wh.common.cases :as cases]
     [wh.common.upload :as upload]
     [wh.db :as db]
-    [wh.graphql]
+    [wh.graphql-cache]
     [wh.logged-in.contribute.db :as contribute]
     [wh.pages.core :refer [on-page-load] :as pages]
     [wh.user.db :as user]

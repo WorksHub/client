@@ -1,6 +1,7 @@
 (ns wh.common.subs
   (:require
-    [re-frame.core :refer [reg-sub]]))
+    [re-frame.core :refer [reg-sub]]
+    [wh.verticals :as verticals]))
 
 ;; This file should be where all 'core' subs are eventually migrated so that
 ;; they can be used in both client and server
@@ -53,3 +54,31 @@
   :wh/vertical
   (fn [db _]
     (:wh.db/vertical db)))
+
+(reg-sub
+  :wh/vertical-label
+  :<- [:wh/vertical]
+  (fn [vertical _]
+    (verticals/config vertical :label-name)))
+
+(reg-sub
+  :wh/page-params
+  (fn [db _]
+    (:wh.db/page-params db)))
+
+(reg-sub
+  :wh/page-param
+  :<- [:wh/page-params]
+  (fn [params [_ param]]
+    (get params param)))
+
+(reg-sub
+  :wh/query-params
+  (fn [db _]
+    (:wh.db/query-params db)))
+
+(reg-sub
+  :wh/query-param
+  :<- [:wh/query-params]
+  (fn [params [_ param]]
+    (get params param)))

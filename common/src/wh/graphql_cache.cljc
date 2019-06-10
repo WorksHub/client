@@ -1,9 +1,12 @@
-(ns wh.graphql
+(ns wh.graphql-cache
   (:require
+    #?(:clj [com.walmartlabs.lacinia.util :as lac-util])
     [re-frame.core :refer [reg-event-db reg-event-fx reg-sub]]
     [re-frame.registrar :refer [get-handler register-handler]]
     [wh.common.cases :as cases]
-    [wh.db :as db]))
+    [wh.db :as db]
+    #?(:clj [wh.graphql :as graphql])
+    [wh.util :as util]))
 
 (defn reg-query
   [id query]
@@ -29,7 +32,8 @@
     (or (:force options)
         (not= state :success)
         (not (number? timestamp))
-        (>= (- (js/Date.now) timestamp) cache-validity-ms))))
+        (>= (- (util/now) timestamp)
+            cache-validity-ms))))
 
 (reg-event-fx
   :graphql/query
@@ -64,22 +68,43 @@
   (fn [db [query-id]]
     (update db ::cache invalidate-all-for-id query-id)))
 
+(defn store-result
+  "Store the query's successful result in app-db."
+  [db query-id variables {:keys [data errors]}]
+  (let [state (if errors :failure :success)]
+    (update-in db [::cache [query-id variables]] merge
+               {:state     (if errors :failure :success)
+                :result    (when (= state :success)
+                             (cases/->kebab-case data))
+                :errors    (when (= state :failure)
+                             (cases/->kebab-case errors))}
+               (when (= state :success)
+                 {:timestamp (util/now)}))))
+
 (reg-event-fx
   ::success
   db/default-interceptors
-  (fn [{db :db} [query-id variables {:keys [on-success]} {:keys [data]}]]
-    (let [result (cases/->kebab-case data)]
-      (cond->
-          {:db (update-in db [::cache [query-id variables]] merge {:state :success, :result result, :errors nil, :timestamp (js/Date.now)})}
-        on-success (assoc :dispatch on-success)))))
+  (fn [{db :db} [query-id variables {:keys [on-success]} response]]
+    (cond->
+        {:db (store-result db query-id variables response)}
+      on-success (assoc :dispatch on-success))))
 
-;; TODO: do we want to always assoc a nil result here?
 (reg-event-db
   ::failure
   db/default-interceptors
-  (fn [db [query-id variables options {:keys [errors]}]]
-    (let [errors (cases/->kebab-case errors)]
-      (update-in db [::cache [query-id variables]] merge {:state :failure, :result nil, :errors errors}))))
+  (fn [db [query-id variables options response]]
+    (store-result db query-id variables response)))
+
+(defn pre-execute [db query-id variables ctx]
+  #?(:clj
+     (let [query (get-handler :graphql-query query-id true)
+           result (try
+                    (graphql/execute-query query variables ctx)
+                    (catch Exception e
+                      {:errors [(graphql/error-map e query variables)]}))]
+       (store-result db query-id variables result))
+     :cljs
+     (throw (js/Error. "pre-execute is not supported in ClojureScript."))))
 
 (reg-sub
   :graphql/state

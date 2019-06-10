@@ -6,6 +6,21 @@
    [clojure.walk :refer [postwalk]])
   (:refer-clojure :exclude [random-uuid]))
 
+(defn now []
+  #?(:clj (System/currentTimeMillis)
+     :cljs (js/Date.now)))
+
+(defn parse-int
+  "Parse a string as integer, returning nil if it wasn't possible."
+  [s]
+  #?(:clj (try
+            (Integer/parseInt s)
+            (catch Exception _ nil))
+     :cljs (when (and (string? s) (re-find #"^[-+]?\d+$" s))
+             (let [res (js/parseInt s)]
+               (when-not (js/isNaN res)
+                 res)))))
+
 #?(:clj (defn random-uuid []
           (str (java.util.UUID/randomUUID)))
    :cljs (def random-uuid cljs.core/random-uuid))
