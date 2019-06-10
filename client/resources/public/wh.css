@@ -15361,6 +15361,24 @@ h3 {
   .tracking-popup--expanded.is-open {
     display: block; }
 
+.company-profile__header {
+  height: 164px;
+  background: white;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 60px auto;
+  grid-template-rows: auto; }
+
+.company-profile__logo img {
+  width: 60px;
+  height: 60px; }
+
+.company-profile__name {
+  font-size: 24px;
+  margin-left: 18px;
+  line-height: 60px;
+  font-weight: 600; }
+
 .auth-popup__content {
   display: none; }
   .auth-popup__content.is-visible {

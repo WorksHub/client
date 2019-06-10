@@ -3,6 +3,7 @@
     [cljs.loader :as loader]
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
     [reagent.core :as reagent]
+    [wh.company.profile.views :as company-profile]
     [wh.db :as db]
     [wh.logged-in.apply.db :as apply-db]
     [wh.logged-in.apply.events :as apply-events]
@@ -22,6 +23,7 @@
   {:homepage-dashboard dashboard/page
    :liked (partial personalised-jobs/page :liked)
    :recommended (partial personalised-jobs/page :recommended)
+   :company {:page company-profile/page :can-access? user/admin?} ; TODO: remove :can-access? when we're ready to publish these pages
    :contribute {:page contribute/page :can-access? db/logged-in?}
    :contribute-edit {:page contribute/page :can-access? db/logged-in?}
    :candidate-edit-header {:page profile/header-edit-page :can-access? user/admin?}
