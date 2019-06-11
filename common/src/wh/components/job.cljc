@@ -5,6 +5,7 @@
     [wh.interop :as interop]
     [wh.re-frame.events :refer [dispatch]]
     [wh.routes :as routes]
+    [wh.slug :as slug]
     [wh.util :as util]))
 
 (defn job-card
@@ -45,7 +46,7 @@
            sponsorship-offered (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
          [:div.salary display-salary]]]]]
      (into [:ul.tags.tags__job]
-           (map (fn [tag] [:li [:a {:href (routes/path :jobsboard :query-params {:tags tag})} tag]])
+           (map (fn [tag] [:li [:a {:href (routes/path :pre-set-search :params {:tag (slug/slug tag)})} tag]])
                 job-tags))
      [:div.tagline tagline]
      [:div.apply
