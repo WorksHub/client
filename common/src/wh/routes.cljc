@@ -148,6 +148,7 @@
                   ["api/" [["graphql" :graphql]
                            ["graphql-schema" :graphql-schema]
                            ["gh-webhook" :gh-webhook]
+                           ["webhook/" {"mailchimp" :mailchimp-webhook}]
                            ["analytics" :analytics]
                            ["login-as" :login-as]
                            ["logout" :logout]
