@@ -60,3 +60,23 @@ h3
   display: flex
   justify-content: center
   align-items: center
+
+.split-content__main
+  +mobile
+    width: 100%
+  +desktop
+    width: 67%
+    margin-right: 12px
+    min-width: 505px
+
+.split-content__side
+  section
+    padding: 7%
+  +mobile
+    width: 100%
+    .how-it-works-pod
+      margin-bottom: 18px
+  +desktop
+    width: 33%
+    min-width: 246px
+    max-width: 350px

@@ -3,6 +3,7 @@
     [clojure.string :as str]
     [goog.string :as gstring]
     [re-frame.core :refer [dispatch]]
+    [reagent.core :as r]
     [wh.common.cost :as cost]
     [wh.common.data :as data :refer [package-data billing-data]]
     [wh.common.text :refer [pluralize]]
@@ -21,10 +22,12 @@
     [wh.components.icons :refer [icon]]
     [wh.components.overlay.views :refer [popup-wrapper]]
     [wh.components.selector :refer [selector]]
+    [wh.components.videos :as videos]
     [wh.db :as db]
     [wh.routes :as routes]
     [wh.subs :refer [<sub error-sub-key]]
     [wh.user.subs :as user-subs]
+    [wh.util :as util]
     [wh.verticals :as verticals]))
 
 (defn field [k & {:as args}]
@@ -183,9 +186,15 @@
    [:p "The profile for " (<sub [::subs/name]) " is " [:strong (if (<sub [::subs/profile-enabled]) "enabled" "disabled")] "!"]
    [:div.is-flex.company-edit__field-footer
     [:button.button.button--inverted.button--small
-     {:class (when (<sub [::subs/profile-enabled-loading?]) "button--loading")
+     {:class    (when (<sub [::subs/profile-enabled-loading?]) "button--loading")
       :on-click #(dispatch [::events/toggle-profile])}
-     (str (if (<sub [::subs/profile-enabled]) "disable" "enable"))]]])
+     (str (if (<sub [::subs/profile-enabled]) "disable" "enable"))]]
+   [videos/videos {:videos        (<sub [::subs/videos])
+                   :can-add-edit? true
+                   :error         (<sub [::subs/video-error])
+                   :delete-event  [::events/delete-video]
+                   :add-event     [::events/add-video]
+                   :update-event  [::events/update-video]}]])
 
 (defn users
   [admin?]
@@ -521,6 +530,7 @@
            (= page-selection :company-details)
            [:div
             (when (and admin? edit? (or (= (<sub [:user/email]) "acron1@gmail.com")          ;; TODO temporary
+                                        (= (<sub [:user/email]) "antony@functionalworks.com")
                                         (= (<sub [:user/email]) "laco@functionalworks.com")))
               [:div.columns.is-variable.is-2
                [:div.column.is-7

@@ -9110,6 +9110,31 @@ h3 {
   justify-content: center;
   align-items: center; }
 
+@media screen and (max-width: 1007px) {
+  .split-content__main {
+    width: 100%; } }
+
+@media screen and (min-width: 1008px) {
+  .split-content__main {
+    width: 67%;
+    margin-right: 12px;
+    min-width: 505px; } }
+
+.split-content__side section {
+  padding: 7%; }
+
+@media screen and (max-width: 1007px) {
+  .split-content__side {
+    width: 100%; }
+    .split-content__side .how-it-works-pod {
+      margin-bottom: 18px; } }
+
+@media screen and (min-width: 1008px) {
+  .split-content__side {
+    width: 33%;
+    min-width: 246px;
+    max-width: 350px; } }
+
 .blog {
   box-sizing: border-box;
   background-color: #f4f5f8;
@@ -15361,6 +15386,11 @@ h3 {
   .tracking-popup--expanded.is-open {
     display: block; }
 
+.company-profile__main > section {
+  margin: 18px 0px 0px 0px; }
+  .company-profile__main > section h2.header {
+    margin: 8px 0px 18px 0px; }
+
 .company-profile__header {
   height: 164px;
   background: white;
@@ -15383,6 +15413,140 @@ h3 {
   display: none; }
   .auth-popup__content.is-visible {
     display: block; }
+
+.video {
+  display: inline-block;
+  position: relative;
+  width: 246px;
+  margin-bottom: 20px;
+  border-right: 12px solid transparent; }
+  @media screen and (min-width: 1008px) {
+    .video:nth-of-type(odd) {
+      margin-right: 12px; } }
+  @media screen and (max-width: 1007px) {
+    .video {
+      margin-right: 12px; } }
+
+.video_upper {
+  height: 163px;
+  width: 246px;
+  overflow: hidden; }
+
+.video_img {
+  transform: scale(1.2);
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer; }
+  .video_img .icon {
+    fill: white;
+    width: 48px;
+    height: 48px; }
+
+.video_lower {
+  height: 115px;
+  width: 246px;
+  background-color: white; }
+
+.video_lower--editable {
+  height: calc(115px + 28px); }
+
+.video_description {
+  height: 100%;
+  padding: 0px;
+  position: relative; }
+  .video_description textarea {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+    border: 0;
+    width: 100%;
+    height: calc(115px - 14px);
+    resize: none;
+    outline: none;
+    padding: 12px;
+    overflow: hidden; }
+    .video_description textarea::placeholder {
+      font-size: 14px;
+      font-style: italic; }
+
+.video_icons {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  display: flex;
+  justify-content: center; }
+  .video_icons .icon {
+    fill: #ADADAD;
+    cursor: pointer;
+    width: 20px;
+    height: 20px; }
+  .video_icons .icon + .icon {
+    margin-left: 8px; }
+
+.video_description_loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; }
+  .video_description_loading > div {
+    animation: spinAround 500ms infinite linear;
+    border: 2px solid #ff7c6e;
+    border-radius: 290486px;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    content: "";
+    display: block;
+    height: 1em;
+    width: 1em;
+    position: absolute !important;
+    width: 48px;
+    height: 48px; }
+
+.videos {
+  display: block; }
+  .videos .error {
+    display: block;
+    line-height: 1em;
+    color: #c4000f; }
+
+#video-player-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 5000;
+  justify-content: center;
+  align-items: center; }
+  #video-player-container.is-open {
+    display: flex; }
+  #video-player-container .close {
+    position: absolute;
+    right: 12px;
+    top: 12px; }
+
+.video-wrapper-inner {
+  position: relative;
+  padding-top: 25px;
+  padding-bottom: 56.25%;
+  /* 16:9 aspect ratio */
+  height: 0; }
+  .video-wrapper-inner iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; }
+
+.video-wrapper-outer {
+  width: 50%;
+  min-width: 320px; }
 
 @media screen and (min-width: 1008px) {
   html, body {

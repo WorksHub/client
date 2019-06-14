@@ -41,6 +41,7 @@
   [:id :name :manager :descriptionHtml
    :logo :package :vertical :autoApprove
    :paidOfflineUntil :disabled :profileEnabled
+   [:videos [:youtubeId :thumbnail :description]]
    [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]]]
    [:users [:name :email :id]]
    [:integrations [:email [:greenhouse [:enabled]] [:slack [:enabled]]]]])

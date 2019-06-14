@@ -1,0 +1,121 @@
+$video-width: 246px
+$video-upper-height: 163px
+$video-lower-height: 115px
+
+.video
+  display: inline-block
+  position: relative
+  width: $video-width
+  +desktop
+    &:nth-of-type(odd)
+      margin-right: 12px
+  +mobile
+    margin-right: 12px
+  margin-bottom: 20px
+  border-right: 12px solid transparent
+.video_upper
+  height: $video-upper-height
+  width: $video-width
+  overflow: hidden
+.video_img
+  transform: scale(1.2)
+  height: 100%
+  background-size: cover
+  background-position: center
+  display: flex
+  justify-content: center
+  align-items: center
+  cursor: pointer
+  .icon
+    fill: white
+    width: 48px
+    height: 48px
+.video_lower
+  height: $video-lower-height
+  width: $video-width
+  background-color: white
+.video_lower--editable
+  height: calc(#{$video-lower-height} + 28px)
+.video_description
+  height: 100%
+  padding: 0px
+  position: relative
+  textarea
+    font-size: 14px
+    line-height: 18px
+    font-weight: $font-medium
+    border: 0
+    width: 100%
+    height: calc(#{$video-lower-height} - 14px)
+    resize: none
+    outline: none
+    padding: 12px
+    overflow: hidden
+    &::placeholder
+      font-size: 14px
+      font-style: italic
+
+.video_icons
+  position: absolute
+  bottom: 6px
+  right: 6px
+  display: flex
+  justify-content: center
+  .icon
+    fill: #ADADAD
+    cursor: pointer
+    width: 20px
+    height: 20px
+  .icon + .icon
+    margin-left: 8px
+
+.video_description_loading
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 100%
+  & > div
+    @include spinner
+    width: 48px
+    height: 48px
+
+.videos
+  display: block
+  .error
+    display: block
+    line-height: 1em
+    color: $dark-red
+
+#video-player-container
+  display: none
+  &.is-open
+    display: flex
+  position: fixed
+  top: 0
+  bottom: 0
+  right: 0
+  left: 0
+  background-color: rgba(0,0,0,0.8)
+  z-index: 5000
+  justify-content: center
+  align-items: center
+  .close
+    position: absolute
+    right: 12px
+    top: 12px
+
+.video-wrapper-inner
+  position: relative
+  padding-top: 25px
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0
+  iframe
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+
+.video-wrapper-outer
+  width: 50%
+  min-width: 320px

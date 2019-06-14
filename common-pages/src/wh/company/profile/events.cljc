@@ -11,7 +11,8 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries [[:company {:id :$id}
-                    [:id :name :logo]]]})
+                    [:id :name :logo
+                     [:videos [:youtubeId :thumbnail :description]]]]]})
 
 (reg-query :company fetch-company-query)
 

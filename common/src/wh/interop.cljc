@@ -41,6 +41,11 @@
   #?(:clj (->jsfn "hideAuthPopUp")
      :cljs (fn [_] (js/hideAuthPopUp))))
 
+(defn open-video-player
+  [youtube-id]
+  #?(:clj (->jsfn "openVideoPlayer" youtube-id)
+     :cljs (fn [_] (js/openVideoPlayer youtube-id))))
+
 ;;
 
 (defn on-click-fn

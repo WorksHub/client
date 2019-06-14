@@ -46,6 +46,7 @@
 (s/def ::profile-enabled-loading? boolean?)
 
 (s/def ::profile-enabled-error (s/nilable string?))
+(s/def ::video-error (s/nilable keyword?))
 
 (def fields
   {::name             {:initial "", :validate ::p/non-empty-string :event? false}
@@ -55,6 +56,8 @@
    ::vertical         {:initial verticals/default-vertical, :validate ::vertical}
    ::auto-approve     {:initial false, :validate boolean?}
    ::profile-enabled  {:initial false, :validate boolean?}
+   ;; TODO MOVE THIS TO COMPANY PROFILE
+   ::videos {:initial false, :validate boolean?}
    ;;
    ::new-user-name    {:initial "", :validate ::p/non-empty-string}
    ::new-user-email   {:initial "", :validate ::p/email}})
@@ -107,7 +110,8 @@
      ::cancel-plan-loading?           false
      ::disable-loading?               false
      ::profile-enabled-loading?       false
-     ::profile-enabled-error          nil}
+     ::profile-enabled-error          nil
+     ::video-error                    nil}
     db))
 
 (def field-names (keys fields))

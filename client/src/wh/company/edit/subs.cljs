@@ -345,3 +345,20 @@
   :<- [::sub-db]
   (fn [db _]
     (::edit/offer db)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; THIS WILL MOVE TO COMPANY PROFILE
+
+(reg-sub
+  ::videos
+  :<- [::sub-db]
+  (fn [db _]
+    (::edit/videos db)))
+
+(reg-sub
+  ::video-error
+  :<- [::sub-db]
+  (fn [db _]
+    (::edit/video-error db)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
