@@ -26,7 +26,7 @@
                       :opt [::original-source ::company-id]))
 
 (s/def ::company-id   (s/nilable ::primitives/non-empty-string))
-(s/def ::company-name ::primitives/non-empty-string)
+(s/def ::company-name (s/nilable ::primitives/non-empty-string))
 
 
 (s/def ::save-status #{:success :failure :tried})
