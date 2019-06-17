@@ -15396,6 +15396,11 @@ h3 {
   .company-profile__main > section h2.header {
     margin: 8px 0px 18px 0px; }
 
+.company-profile__side {
+  margin-top: 18px;
+  background-color: white;
+  height: 1400px; }
+
 .company-profile__header {
   height: 164px;
   background: white;
@@ -15413,6 +15418,68 @@ h3 {
   margin-left: 18px;
   line-height: 60px;
   font-weight: 600; }
+
+.company-profile__photos__add {
+  position: relative; }
+
+.company-profile__photos__add--loading {
+  animation: spinAround 500ms infinite linear;
+  border: 2px solid #ff7c6e;
+  border-radius: 290486px;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  content: "";
+  display: block;
+  height: 1em;
+  width: 1em;
+  position: absolute !important;
+  width: 32px;
+  height: 32px; }
+
+.company-profile__photos__img {
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 16px;
+  position: relative; }
+  .company-profile__photos__img:hover .company-profile__photos__delete {
+    display: unset; }
+  .company-profile__photos__img img {
+    height: inherit; }
+
+.company-profile__photos__img--solo {
+  width: 471px !important; }
+
+.company-profile__photos__delete {
+  position: absolute;
+  bottom: 0px;
+  right: 6px;
+  display: none; }
+  .company-profile__photos__delete .icon {
+    fill: #adadad;
+    cursor: pointer;
+    width: 18px;
+    height: 18px; }
+
+.company-profile__photos__gallery {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  height: 222px;
+  overflow: hidden; }
+  .company-profile__photos__gallery > .company-profile__photos__img {
+    display: inline-block;
+    width: 321px;
+    height: 222px; }
+  .company-profile__photos__gallery .company-profile__photos__splitter {
+    display: inline-block;
+    margin-left: 16px; }
+    .company-profile__photos__gallery .company-profile__photos__splitter .company-profile__photos__splitter__inner {
+      display: flex;
+      flex-direction: column; }
+      .company-profile__photos__gallery .company-profile__photos__splitter .company-profile__photos__splitter__inner > .company-profile__photos__img {
+        width: 134px;
+        height: 103px; }
 
 .auth-popup__content {
   display: none; }
@@ -15485,7 +15552,7 @@ h3 {
   display: flex;
   justify-content: center; }
   .video_icons .icon {
-    fill: #ADADAD;
+    fill: #adadad;
     cursor: pointer;
     width: 20px;
     height: 20px; }

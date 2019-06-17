@@ -1,11 +1,12 @@
 (ns wh.graphql-cache
   (:require
     #?(:clj [com.walmartlabs.lacinia.util :as lac-util])
+    #?(:clj [taoensso.timbre :refer [errorf]])
+    #?(:clj [wh.graphql :as graphql])
     [re-frame.core :refer [reg-event-db reg-event-fx reg-sub]]
     [re-frame.registrar :refer [get-handler register-handler]]
     [wh.common.cases :as cases]
     [wh.db :as db]
-    #?(:clj [wh.graphql :as graphql])
     [wh.util :as util]))
 
 (defn reg-query
@@ -81,13 +82,20 @@
                (when (= state :success)
                  {:timestamp (util/now)}))))
 
+(reg-event-db
+  :graphql/update-entry
+  db/default-interceptors
+  (fn [db [query-id variables method data]]
+    (case method
+      :merge     (update-in db [::cache [query-id variables] :result] #(merge-with merge % (cases/->kebab-case data)))
+      :overwrite (assoc-in  db [::cache [query-id variables] :result] (cases/->kebab-case data)))))
+
 (reg-event-fx
   ::success
   db/default-interceptors
   (fn [{db :db} [query-id variables {:keys [on-success]} response]]
-    (cond->
-        {:db (store-result db query-id variables response)}
-      on-success (assoc :dispatch on-success))))
+    (cond-> {:db (store-result db query-id variables response)}
+            on-success (assoc :dispatch on-success))))
 
 (reg-event-db
   ::failure
@@ -101,7 +109,11 @@
            result (try
                     (graphql/execute-query query variables ctx)
                     (catch Exception e
+                      (errorf "An exception was thrown whilst pre-executing %s (%s) - %s %s"
+                              query variables (graphql/error-map e query variables) (.getMessage e))
                       {:errors [(graphql/error-map e query variables)]}))]
+       (when (:errors result)
+         (errorf "An error occurred whilst pre-executing %s (%s) - %s" query variables (pr-str (:errors result))))
        (store-result db query-id variables result))
      :cljs
      (throw (js/Error. "pre-execute is not supported in ClojureScript."))))

@@ -41,7 +41,7 @@
                                           custom-headers)
                   :response-format (ajax-json/json-response-format {:keywords? true})
                   :with-credentials true
-                  :timeout         10000
+                  :timeout         20000
                   :on-success      (conj on-success filename)
                   :on-failure      on-failure}}))
 

@@ -31,6 +31,24 @@
     (:logo company)))
 
 (reg-sub
+  ::id
+  :<- [::company]
+  (fn [company _]
+    (:id company)))
+
+(reg-sub
+  ::images
+  :<- [::company]
+  (fn [company _]
+    (:images company)))
+
+(reg-sub
+  ::photo-uploading?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/photo-uploading? sub-db)))
+
+(reg-sub
   ::videos
   :<- [::company]
   (fn [company _]
