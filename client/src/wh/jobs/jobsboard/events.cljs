@@ -43,8 +43,7 @@
                        :hitsPerPage
                        :page
                        [:facets [:attr :value :count]]
-                       [:searchParams [:query
-                                       :label
+                       [:searchParams [:label
                                        [:filters [:remote :roleType :sponsorshipOffered :published :tags :manager
                                                   [:location [:cities :countryCodes :regions]]
                                                   [:remuneration [:min :max :currency :timePeriod]]]]]]
@@ -59,10 +58,15 @@
   (fn [{db :db} _]
     (let [all-jobs? (and (str/blank? (::db/search-term db))
                          (empty? (::db/query-params db)))
-          cities (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities]) ;; for pre-set-search
-          remote? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote]) ;; for pre-set-search
+          cities (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities]) ;; for preset-search
+          countries (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/countries]) ;; for preset-search
+          remote? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote]) ;; for preset-search
+          tags (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/tags]) ;; for preset search
+          preset-search (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/preset-search])
           db-filters (cond-> {}
+                             (seq tags) (assoc :tags tags)
                              (seq cities) (update-in [:location :cities] (fnil concat []) cities)
+                             (seq countries) (update-in [:location :country-codes] (fnil concat []) countries)
                              remote? (assoc :remote true)
                              :always (merge (search/query-params->filters (::db/query-params db))))
           page-from-params (int (get-in db [::db/query-params "page"]))
@@ -73,7 +77,7 @@
       {:db      (assoc-in db [::jobsboard/sub-db ::jobsboard/current-page-number] page)
        :graphql {:query      jobs-query
                  :variables  {:search_term   (or (get-in db [::db/query-params "search"]) "")
-                              :preset_search (get-in db [::db/page-params :preset-search])
+                              :preset_search preset-search
                               :page          page
                               :filters       filters
                               :vertical      (:wh.db/vertical db)}
