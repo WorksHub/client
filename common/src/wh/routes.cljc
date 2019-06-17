@@ -116,9 +116,9 @@
                                "edit"         :profile-edit-company-user}]
                   ["notifications/" {"settings" :notifications-settings}]
                   ["improve-recommendations" :improve-recommendations]
+                  [[[#".+" :tag] "-articles"] :learn-by-tag]
                   ["learn/" {""                         :learn
                              "create"                   :contribute
-                             [[#".+" :tag] "-articles"] :learn-by-tag ;; necessary as they are user generated strings and thus need to be encoded
                              [:id]                      :blog
                              [:id "/edit"]              :contribute-edit}]
                   ["privacy-policy" :privacy-policy]
