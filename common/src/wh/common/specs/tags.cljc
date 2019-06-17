@@ -13,8 +13,7 @@
 (s/def :wh.tag/id    #?(:clj  sc/string-uuid
                         :cljs string?))
 
-;; We can't define this yet because `:wh/tag` is already endemic (wh.spec.common)
-#_(s/def :wh/tag (s/keys :req-un [:wh.tag/label
-                                  :wh.tag/id
-                                  :wh.tag/slug
-                                  :wh.tag/type]))
+(s/def :wh/tag (s/keys :req-un [:wh.tag/label
+                                :wh.tag/id
+                                :wh.tag/slug
+                                :wh.tag/type]))
