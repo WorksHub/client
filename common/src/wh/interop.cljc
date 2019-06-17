@@ -19,6 +19,10 @@
      :cljs
      (fn [_] (run! (fn [f] (f)) fns))))
 
+(defn set-class-on-scroll
+  [id cls scroll-amount]
+  (str "attachOnScrollEvent(function(e){" (->jsfn "setClassAtScrollPosition" 'e id cls scroll-amount) "})"))
+
 (defn set-is-open
   [id on?]
   #?(:clj (->jsfn "setClass" id "is-open" on?)

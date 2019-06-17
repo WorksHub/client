@@ -86,11 +86,14 @@
   .icon
     position: absolute
     fill: $steel-gray
-    top: 16px
     right: 16px
     cursor: pointer
     width: 32px
     height: 32px
+    +mobile
+     top: 80px
+    +desktop
+      top: 16px
 
 .popup
   @include center(440px, 360px)

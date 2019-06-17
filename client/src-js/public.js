@@ -93,3 +93,22 @@ function enableCarousel($carousel) {
         node.addEventListener('click', event => pipClicked(i));
     });
 }
+
+/*--------------------------------------------------------------------------*/
+
+function setClassAtScrollPosition(e, id, cls, scrollPosition){
+    setClass(id, cls, (e.scrollTop > scrollPosition || e.scrollY > scrollPosition));
+}
+
+/* This function is used to attach another function f (which takes exactly one argument, i.e. the thing is attached to)
+* which is called whenever there is a scroll. This mirrors wh.pages.util/attach-on-scroll-event and is meant to be used to
+* replicate its behavior in SSR pages which do not have app-js. Note that it is not necessary to remove the ScrollListener
+* because whatever action you do from a SSR page without app-js you do a full page navigation, so there are no handlers attached anymore. */
+function attachOnScrollEvent(f) {
+    var el = document.getElementById("app");
+    el.addEventListener('scroll', function(){
+        f(el);
+    }); // desktop
+    window.addEventListener('scroll', function(){ f(window)}); // mobile
+}
+

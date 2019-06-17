@@ -4920,11 +4920,16 @@ a.navbar-item,
 .overlay__close .icon {
   position: absolute;
   fill: #6E7F89;
-  top: 16px;
   right: 16px;
   cursor: pointer;
   width: 32px;
   height: 32px; }
+  @media screen and (max-width: 1007px) {
+    .overlay__close .icon {
+      top: 80px; } }
+  @media screen and (min-width: 1008px) {
+    .overlay__close .icon {
+      top: 16px; } }
 
 .popup {
   position: absolute;
@@ -10249,7 +10254,7 @@ h3 {
 
 .job__apply-sticky {
   position: fixed;
-  top: 46px;
+  top: -10px;
   height: 54px;
   width: 100%;
   background-color: white;
@@ -10272,8 +10277,8 @@ h3 {
   overflow: hidden;
   text-overflow: ellipsis; }
 
-.job__apply-sticky--hidden {
-  top: -10px; }
+.job__apply-sticky--shown {
+  top: 46px; }
 
 .job__apply-sticky__logo {
   margin-left: 6px;

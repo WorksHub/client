@@ -13,6 +13,7 @@
     [wh.components.forms.views :refer [text-field error-component]]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue-card level->str level->icon]]
+    [wh.components.job :refer [highlight html]]
     [wh.components.overlay.views :refer [popup-wrapper]]
     [wh.components.stats.views :refer [stats-item]]
     [wh.events :as common-events]
@@ -55,11 +56,7 @@
                                 (.setZoom @gmap zoom)
                                 (.setTitle @marker title)))})))
 
-(defn html [html-content]
-  (if html-content
-    [:div.html-content {:dangerouslySetInnerHTML {:__html html-content}}]
-    [:div.html-content.html-content--skeleton
-     (reduce (fn [a s] (conj a [:div {:style {:width (str (+ 80 (rand-int 20)) "%")}} ])) [:div] (range (+ 4 (rand-int 6))))]))
+
 
 (defn apply-button
   ([]
@@ -249,14 +246,6 @@
           [match-circle score true]]))
      [apply-button {:id "candidate-action-box"}]]))
 
-(defn highlight
-  [title icon-name body]
-  [:div.job__highlight
-   [:div.job__highlight__content
-    [:h2 title]
-    body]
-   [:div.job__highlight_icon
-    (when title [icon icon-name])]])
 
 (defn job-highlights
   []
