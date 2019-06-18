@@ -19,9 +19,11 @@
   ([text handler & {:as options}]
    (link {:text text :handler handler :options options})))
 
+(def aws-bucket-regex #"functionalworks-backend--(prod|qa)\.s3\.amazonaws\.com")
+
 (defn wrap-img [img-component src {:keys [alt class w h] :as params}]
   (if (and (string? src)
-           (re-find #"functionalworks-backend--(prod|qa)\.s3\.amazonaws\.com" src))
+           (re-find aws-bucket-regex src))
     (img-component src params)
     [:img (merge {:src src
                   :alt alt
@@ -44,8 +46,11 @@
          :or {fit "crop" crop "entropy" auto "format"}}]
    (let [img-hash (some-> src (str/split #"/") last)
          params {:fit fit :crop crop :auto auto}
-         env #?(:cljs @(subscribe [:wh.subs/env])
-                :clj (keyword (config/get :environment)))]
+         conf-env #?(:cljs @(subscribe [:wh.subs/env])
+                     :clj (keyword (config/get :environment)))
+         env (if (= :prod conf-env)
+               conf-env
+               (or (some-> (re-find aws-bucket-regex src) second keyword) conf-env))]
      (str "https://"
           (if ( = env :prod) "workshub" "workshub-dev")
           ".imgix.net/" img-hash "?" (routes/serialize-query-params params)))))
