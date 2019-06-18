@@ -1,8 +1,9 @@
 (ns wh.common.job
-  (:require [clojure.string :as str]
-            [wh.common.cases :as cases]
-            [wh.common.data :as data]
-            #?(:cljs [goog.i18n.NumberFormat :as nf])))
+  (:require
+    [clojure.string :as str]
+    [wh.common.cases :as cases]
+    [wh.common.data :as data]
+    #?(:cljs [goog.i18n.NumberFormat :as nf])))
 
 (defn format-job-location
   [{:keys [city state country country-code]} remote]
@@ -47,10 +48,27 @@
         (str per-day equity-str))))
 
 (defn format-job-remuneration
+  "Formats remuneration of a job to produce results like '£50K - 65K' or '$150K - 200K + Equity'"
   [{:keys [competitive] :as remuneration}]
   (if competitive
     "Competitive"
     (format-salary remuneration)))
+
+
+(defn format-job-remuneration-short
+  "Formats remuneration of a job to produce results like '£50K/y' or '$300/day'"
+  [{:keys [currency time-period max competitive]}]
+  (if competitive
+    "Competitive"
+    (str (data/currency-symbols currency)
+         (if (< max 1000)
+           max
+           (str (Math/round (double (/ max 1000))) "K"))
+         "/"
+         (case time-period
+           "Yearly" "y"
+           "Monthly" "mo"
+           "Daily" "day"))))
 
 
 (defn translate-job [job]
