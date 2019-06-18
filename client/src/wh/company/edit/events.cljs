@@ -156,7 +156,7 @@
                                     :profile-enabled  :profileEnabled}))]
     (if (and c id)
       (assoc c :id id)
-      (dissoc c :package))))
+      (dissoc c :package :profileEnabled))))
 
 (defn subdb->graphql-company-user [db]
   {:name (str/trim (::edit/new-user-name db))
