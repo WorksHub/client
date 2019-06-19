@@ -722,3 +722,9 @@
      :answer "Around 80% of the world’s companies run on some open source software. The future of our platform is to use this code as a way to test, engage and build engineering teams. In the meantime, if you want to provide value to your experience (beyond resume buzz words) or learn a new tech using production code then our issues are made for you.  We ask all company maintainers to write a repo README that makes it as easy as possible for new developers to set up and contribute."}
     {:title "How do I get paid for my work?"
      :answer "Only issues that indicate a value will result in you being paid for your work. The repo maintainer is solely responsible for the approval of your work and the pay out will be issued following approval. The company responsible for the issue retains the access to money and upon completion will transfer the money through Paypal or their payment provider of choice. In the future we hope to implement a solution in which the money is held in escrow with payments being released when work is merged."}]})
+
+(def size-strings
+  {"micro"  "1-9"
+   "small"  "10-49"
+   "medium" "50-249"
+   "large"  "250+"})
