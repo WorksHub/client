@@ -1,7 +1,7 @@
 (ns wh.components.job
   (:require
     [wh.common.job :as jobc]
-    [wh.components.common :refer [wrap-img img]]
+    [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
     [wh.interop :as interop]
     [wh.pages.util :refer [html->hiccup]]
@@ -184,34 +184,40 @@
     [icon "codi"]]
    [:div.job__apply-sticky__title title]
    [:button.button
-    (merge {:id       "job-apply-sticky__apply-button"}
-      (interop/on-click-fn
-        (interop/show-auth-popup :jobpage-apply
-                                 [:job
-                                  :params {:id id}])))
+    (merge {:id "job-apply-sticky__apply-button"}
+           (interop/on-click-fn
+             (interop/show-auth-popup :jobpage-apply
+                                      [:job
+                                       :params {:id id}])))
     "Easy Apply"]])
 
 (defn page [{:keys [vertical app-db]}]
   (let [job (:wh.jobs.job.db/sub-db app-db)
         tagline (:wh.jobs.job.db/tagline job)
-        recommended-jobs (:wh.jobs.job.db/recommended-jobs job)]
+        recommended-jobs (:wh.jobs.job.db/recommended-jobs job)
+        error (:wh.jobs.job.db/error job)]
     [:div
      [:div.main-container
-      [:div.main.job
-       [:div.is-flex
-        [:div.job__main
-         [company-header job]
-         [:div.is-hidden-desktop
-          [candidate-action job]
-          [job-highlights job]]
-         [:section.job__tagline
-          [:h2 (when tagline "To sum it up...")]
-          [:div tagline]]
-         [information job]
-         [lower-cta vertical job]]
-        [:div.job__side.is-hidden-mobile
-         [candidate-action job]
-         [job-highlights job]]]
-       [other-roles recommended-jobs]]
+      (if (= :no-matching-job error)
+        [:div.main
+         [:h2 "Sorry! That job is either no longer live or never existed."]
+         [:h3 "If you think this might be a mistake, double check the link, otherwise browse the available jobs on our "
+          [link "Job board." :jobsboard :class "a--underlined"]]]
+        [:div.main.job
+         [:div.is-flex
+          [:div.job__main
+           [company-header job]
+           [:div.is-hidden-desktop
+            [candidate-action job]
+            [job-highlights job]]
+           [:section.job__tagline
+            [:h2 (when tagline "To sum it up...")]
+            [:div tagline]]
+           [information job]
+           [lower-cta vertical job]]
+          [:div.job__side.is-hidden-mobile
+           [candidate-action job]
+           [job-highlights job]]]
+         [other-roles recommended-jobs]])
       [apply-sticky job]
       [:script (interop/set-class-on-scroll "job__apply-sticky" "job__apply-sticky--shown" 300)]]]))
