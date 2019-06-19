@@ -57,7 +57,7 @@
                                                :rel    "noopener"} hs-url]
                             "No profile yet")]
    (when-not (= type "company")
-     [view-field "Applied jobs:" (itemize-jobs applied)])
+     [view-field "Applied jobs:" (itemize-jobs (map :job applied))])
    (when-not (= type "company")
      [view-field "Liked jobs:" (itemize-jobs likes)])])
 
@@ -71,15 +71,15 @@
   []
   [:section.profile-section.profile-section__applications
    [:h2 "Applications at " (:name (<sub [:wh.user.subs/company]))]
-   (for [{:keys [id title applied-at state note]} (<sub [::subs/application-data])]
-     ^{:key id}
+   (for [{:keys [job timestamp state note]} (<sub [::subs/application-data])]
+     ^{:key (:id job)}
      [:div.profile-section__applications__job
       [:div.columns
        {:class (str "profile-section__applications__job--state-" state)}
        [:div.column
         [:div.profile-section__applications__job-link
-         [link title :job :id id]]
-        [:div.profile-section__applications__applied-on "Applied on " (first (str/split applied-at #"T"))]]
+         [link (:title job) :job :id (:id job)]]
+        [:div.profile-section__applications__applied-on "Applied on " (first (str/split timestamp #"T"))]]
        [:div.column.is-narrow.profile-section__applications__actions
         [:div.profile-section__applications__state (state->str state)]]]
       (when note
@@ -126,14 +126,14 @@
           :on-hire (if multiple?
                      (set-application-state! (->> applications
                                                   (remove #(not= "get_in_touch" (:state %)))
-                                                  (map :id)) :hire)
-                     (set-application-state! (-> applications (first) :id) :hire))
+                                                  (map (comp :id :job))) :hire)
+                     (set-application-state! (-> applications (first) :job :id) :hire))
           :on-get-in-touch (if multiple?
-                             (set-application-state! (map :id applications) :get_in_touch)
-                             (set-application-state! (-> applications (first) :id) :get_in_touch))
+                             (set-application-state! (map (comp :id :job) applications) :get_in_touch)
+                             (set-application-state! (-> applications (first) :job :id) :get_in_touch))
           :on-pass (if multiple?
-                     (set-application-state! (map :id applications) :pass)
-                     (set-application-state! (-> applications (first) :id) :pass))
+                     (set-application-state! (map (comp :id :job) applications) :pass)
+                     (set-application-state! (-> applications (first) :job :id) :pass))
           :could-hire? (contains? states "get_in_touch")])])))
 
 (defn page []

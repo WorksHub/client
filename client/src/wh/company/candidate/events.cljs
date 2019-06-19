@@ -33,7 +33,6 @@
                         :email
                         :id
                         :imageUrl
-                        [:likes [:id :title [:company [:name]]]]
                         :name :summary
                         :visaStatus :visaStatusOther
                         [:blogs [:id :title :upvoteCount]]
@@ -45,14 +44,15 @@
                        (if admin?
                          [[:companyPerks [:name]]
                           [:approval [:status :source :time]]
-                          [:applied [:id :title [:company [:name]]]]
+                          [:likes [:id :title [:company [:name]]]]
+                          [:applied [[:job [:id :title [:company [:name]]]]]]
                           :jobSeekingStatus :roleTypes
                           :hubspotProfileUrl
                           :type
                           [:company [:id :name]]
                           [:salary [:currency :min :timePeriod]]]
                          ;;
-                         [[:applied [:id :title :appliedAt :state :note]]]))]
+                         [[:applied [:timestamp :state :note [:job [:id :title]]]]]))]
     {:venia/queries [[:user {:id id} fields]]}))
 
 (reg-event-fx
@@ -126,8 +126,8 @@
 
 (defn update-state-fn
   [job-id-or-ids state]
-  (partial mapv #(if (or (= job-id-or-ids (:id %))
-                         (contains? (set job-id-or-ids) (:id %)))
+  (partial mapv #(if (or (= job-id-or-ids (-> % :job :id))
+                         (contains? (set job-id-or-ids) (-> % :job :id)))
                    (assoc % :state state)
                    %)))
 

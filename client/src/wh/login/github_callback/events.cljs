@@ -33,7 +33,7 @@
   [{:keys [likes applied] :as user}]
   (-> user
       (assoc :liked-jobs (set (map :id likes))
-             :applied-jobs (set (map :id applied)))
+             :applied-jobs (set (map :jobId applied)))
       (dissoc :likes :applied)))
 
 (reg-event-fx
@@ -88,7 +88,7 @@
                              [:file [:type :name :url]]]]
                        [:salary [:min :currency]]
                        [:likes [:id]]
-                       [:applied [:id]]
+                       [:applied [:jobId]]
                        [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]]})
 
 (defquery connect-github-mutation
