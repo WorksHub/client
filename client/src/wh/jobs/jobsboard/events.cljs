@@ -44,6 +44,7 @@
                        :page
                        [:facets [:attr :value :count]]
                        [:searchParams [:label
+                                       :query
                                        [:filters [:remote :roleType :sponsorshipOffered :published :tags :manager
                                                   [:location [:cities :countryCodes :regions]]
                                                   [:remuneration [:min :max :currency :timePeriod]]]]]]
