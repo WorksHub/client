@@ -3,7 +3,9 @@
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.company.profile.db :as profile]
     [wh.graphql-cache :as gql-cache]
-    [wh.re-frame.subs :refer [<sub reaction]]))
+    [wh.re-frame.subs :refer [<sub]])
+  (#?(:clj :require :cljs :require-macros)
+    [wh.re-frame.subs :refer [reaction]]))
 
 (reg-sub
   ::sub-db
