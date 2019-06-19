@@ -57,11 +57,12 @@
 (reg-sub
   ::company-suggestions
   :<- [::sub-db]
-  (fn [db _]
-    (when-let [name (::create-job/company-name db)]
+  :<- [::company__name]
+  (fn [[db company-name] _]
+    (when company-name
       (let [id (::create-job/company-id db)
             companies (::create-job/companies db)]
-        (when (and (nil? id) (seq name))
+        (when (and (nil? id) (seq company-name))
           (->> companies
                (mapv #(rename-keys % {:name :label}))
                (sort-by :label)))))))
@@ -75,7 +76,7 @@
   ::page-title
   :<- [::edit?]
   :<- [::title]
-  :<- [::company-name]
+  :<- [::company__name]
   (fn [[edit? title company-name] _]
     (if edit?
       (<< "Editing job: ~{title} @ ~{company-name}")

@@ -21,7 +21,7 @@
 
 (def fields
   {::title               {:order 0 :initial "", :validate ::p/non-empty-string}
-   ::company-name        {:order 1 :initial ""}
+   ::company__name       {:order 1 :initial ""}
    ::company-id          {:order 2 :initial nil, :validate ::company-id}
    ::tagline             {:order 3 :initial "", :validate ::p/non-empty-string :event? false}
    ::role-type           {:order 4 :initial "Full time"}

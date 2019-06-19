@@ -49,8 +49,9 @@
 
 (reg-sub
   ::logo
-  (fn [db _]
-    (get-in db [::job/sub-db ::job/logo])))
+  :<- [::sub-db]
+  (fn [{:keys [::job/company]} _]
+    (:logo company)))
 
 (reg-sub
   ::title
@@ -69,8 +70,9 @@
 
 (reg-sub
   ::company-name
-  (fn [db _]
-    (get-in db [::job/sub-db ::job/company-name])))
+  :<- [::sub-db]
+  (fn [{:keys [::job/company]} _]
+    (:name company)))
 
 (reg-sub
   ::company-id
@@ -84,8 +86,9 @@
 
 (reg-sub
   ::company-description
-  (fn [db _]
-    (get-in db [::job/sub-db ::job/company-description-html])))
+  :<- [::sub-db]
+  (fn [{:keys [::job/company]} _]
+    (:description-html company)))
 
 (reg-sub
   ::issues
@@ -102,7 +105,8 @@
 (reg-sub
   ::google-map-url
   :<- [::sub-db]
-  (fn [{:keys [::job/location ::job/company-name]} _]
+  :<- [::company-name]
+  (fn [[{:keys [::job/location]} company-name] _]
     (->> (select-keys location [:street :city :postcode :state :country])
          vals
          (str/join ", ")
@@ -239,7 +243,8 @@
 (reg-sub
   ::apply-job
   :<- [::sub-db]
-  (fn [{:keys [::job/id ::job/company-name ::job/location]} _]
+  :<- [::company-name]
+  (fn [[{:keys [::job/id ::job/location]} company-name] _]
     {:id id :company-name company-name :location location}))
 
 (reg-sub

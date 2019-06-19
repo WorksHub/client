@@ -63,13 +63,8 @@
                              [:invoices [:date :url :amount]]])))
 
 (defn job-query
-  ([id fields]
-   {:venia/queries [[:job {:id id} fields]]})
-  ([id]
-   (job-query id [:id :title :companyName :companyId :tagline :descriptionHtml :logo :tags :benefits :roleType :manager
-                  [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
-                  [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-                  :locationDescription :companyDescriptionHtml :remote :sponsorshipOffered :applied :published])))
+  [id fields]
+  {:venia/queries [[:job {:id id} fields]]})
 
 (def create-job-mutation
   {:venia/operation {:operation/type :mutation

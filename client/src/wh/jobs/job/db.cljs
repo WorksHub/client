@@ -13,10 +13,14 @@
 (s/def ::error (s/nilable #{:no-matching-job :unknown-error :unauthorised}))
 
 (s/def ::title string?)
-(s/def ::company-name (s/nilable string?))
 (s/def ::public-description-html string?)
 (s/def ::private-description-html string?)
-(s/def ::company-description-html (s/nilable string?))
+(s/def ::description-html (s/nilable string?))
+(s/def ::name (s/nilable string?))
+(s/def ::logo (s/nilable string?))
+(s/def ::company (s/keys :opt-un [::logo
+                                  ::name
+                                  ::description-html]))
 (s/def ::location-description (s/nilable string?))
 (s/def ::display-location string?)
 (s/def ::tags (s/coll-of (s/nilable string?)))
@@ -24,7 +28,7 @@
 (s/def ::applied (s/nilable boolean?))
 (s/def ::manager (s/nilable string?))
 
-(s/def ::logo (s/nilable string?))
+
 (s/def ::sponsorship-offered boolean?)
 (s/def ::remote boolean?)
 (s/def ::id string?)
@@ -85,14 +89,12 @@
 (s/def ::recommended-jobs (s/coll-of (s/map-of keyword? any?)))
 (s/def ::preset-id ::id)
 
-(s/def ::sub-db (s/keys :opt [::company-name
+(s/def ::sub-db (s/keys :opt [::company
                               ::public-description-html
                               ::private-description-html
-                              ::company-description-html
                               ::location-description
                               ::manager
                               ::title
-                              ::logo
                               ::tags
                               ::benefits
                               ::remote

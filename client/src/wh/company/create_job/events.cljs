@@ -52,7 +52,7 @@
       (select-keys sub-db (create-job/relevant-fields db))
       (util/unflatten-map sub-db)
       (check-descriptions sub-db db)
-      (dissoc sub-db ::create-job/company-name)
+      (dissoc sub-db ::create-job/company)
       (update sub-db ::create-job/tags (partial map :tag))
       (update sub-db ::create-job/benefits (partial map :tag))
       (update sub-db ::create-job/remuneration util/remove-nils)
@@ -98,15 +98,15 @@
     (let [company (company-by-id db id)]
       (-> db
           (assoc ::create-job/company-id id)
-          (assoc ::create-job/company-name (:name company))
+          (assoc ::create-job/company__name (:name company))
           (assoc ::create-job/company__integrations (:integrations company))))))
 
 (reg-event-fx
-  ::edit-company-name
+  ::edit-company__name
   create-job-interceptors
   (fn [{db :db} [new-value]]
     {:db (assoc db
-                ::create-job/company-name new-value
+                ::create-job/company__name new-value
                 ::create-job/company-id nil)
      :dispatch [::fetch-companies new-value]}))
 
@@ -220,7 +220,7 @@
                         (reduce-kv (fn [a k v] (conj a [(keyword k) (mapv (comp keyword second) v)])) []))]
     (concat (map keyword top-fields) nst-fields)))
 
-(defn job-query [id db]
+(defn job-query [id]
   {:venia/queries [[:job {:id id} (concat job-fields [[:company [[:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]]]]]])]]})
 
 (reg-event-fx
@@ -228,7 +228,7 @@
   db/default-interceptors
   (fn [{db :db} [id]]
     {:dispatch [::pages/set-loader]
-     :graphql  {:query      (job-query id db)
+     :graphql  {:query      (job-query id)
                 :on-success [::load-job-success]
                 :on-failure [::load-job-failure [::load-job id]]}}))
 

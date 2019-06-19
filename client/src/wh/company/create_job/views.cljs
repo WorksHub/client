@@ -58,7 +58,7 @@
 (defn company-links []
   [:span "or "
    (if-let [company-id (<sub [::subs/company-id])]
-     [link (str "Edit " (<sub [::subs/company-name])) :admin-edit-company :id company-id :class "a--underlined"]
+     [link (str "Edit " (<sub [::subs/company__name])) :admin-edit-company :id company-id :class "a--underlined"]
      [link "Create a new company" :create-company :class "a--underlined"])])
 
 (defn remuneration
@@ -226,9 +226,9 @@
    [:h2 "Role details"]
    [text-field nil (field ::create-job/title :label "* Role title")]
    (when admin?
-     ;; we have to do some work to make this validate as 'company-id' but display as 'company-name'
+     ;; we have to do some work to make this validate as 'company-id' but display as 'company__name'
      (let [{:keys [message show-error?]} (<sub [(error-sub-key ::create-job/company-id)])]
-       [text-field nil (field ::create-job/company-name
+       [text-field nil (field ::create-job/company__name
                               :id    (db/key->id ::create-job/company-id)
                               :class "is-marginless"
                               :placeholder "Type and select from list"

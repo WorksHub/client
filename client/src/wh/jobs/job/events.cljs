@@ -17,7 +17,7 @@
     [wh.util :as util])
   (:require-macros
     [clojure.core.strint :refer [<<]]
-    [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
+    [wh.graphql-macros :refer [defquery]]))
 
 (def job-interceptors (into db/default-interceptors
                             [(path ::job/sub-db)]))
@@ -30,34 +30,11 @@
    :venia/queries   [[:update_job {:update_job :$update_job}
                       [:id :published]]]})
 
-(deffragment jobFields :Job
-  [:id :title :companyName :companyId :tagline :descriptionHtml :logo :tags :benefits :roleType :manager
-   ;; [:company [[:issues [:id :title [:labels [:name]]]]]] ; commented out until company is leonaized
-   [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
-   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-   :locationDescription :companyDescriptionHtml :remote :sponsorshipOffered :applied :published])
-
-(def-query-template job-query
-  {:venia/operation {:operation/type :query
-                     :operation/name "job"}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID!}]
-   :venia/queries [[:job {:id :$id} $fields]]})
-
-(def-query-from-template job-query--default job-query
-  {:fields :fragment/jobFields})
-
-(def-query-from-template job-query--company job-query
-  {:fields [[:fragment/jobFields] :matchingUsers]})
-
-(def-query-from-template job-query--candidate job-query
-  {:fields [[:fragment/jobFields] :userScore]})
-
 (defn job-query [db]
   (cond
-    (user/company? db) job-query--company
-    (user/candidate? db) job-query--candidate
-    :otherwise job-query--default))
+    (user/company? db) graphql-jobs/job-query--company
+    (user/candidate? db) graphql-jobs/job-query--candidate
+    :otherwise graphql-jobs/job-query--default))
 
 (defquery company-query
   {:venia/operation {:operation/name "jobCompany"
@@ -525,8 +502,11 @@
   :wh.job/preset-job-data
   job-interceptors
   (fn [db [{:keys [id] :as job}]]
-    (let [preset-fields (select-keys job [:company-name :title :location :logo :tagline :tags
-                                          :benefits :remote :remuneration :role-type])]
+    (let [preset-fields (-> job
+                            (select-keys [:title :location :tagline :tags :benefits :remote
+                                          :remuneration :role-type])
+                            (assoc :company {:name (:company-name job)
+                                             :logo (:logo job)}))]
       (merge (if (= id (::job/preset-id db))
                db
                job/default-db)
