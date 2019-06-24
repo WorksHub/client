@@ -74,7 +74,7 @@
 ;; use the :navigate fx defined below.
 (reg-event-fx ::set-page
               db/default-interceptors
-              (fn [{db :db} [{:keys [handler params route-params query-params] :as m} history-state]]
+              (fn [{db :db} [{:keys [handler params uri route-params query-params] :as m} history-state]]
                 (let [handler (resolve-handler db handler)]
                   (case (redirect-when-not-permitted db handler)
                     :not-found
@@ -94,6 +94,7 @@
                                          true (assoc ::db/page handler
                                                      ::db/page-params (merge params route-params {})
                                                      ::db/query-params (or query-params {})
+                                                     ::db/uri uri
                                                      ::db/scroll (if history-state (aget history-state "scroll-position") 0))
                                          (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
                                          (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
@@ -124,7 +125,8 @@
   (assoc
    (or (bidi/match-route routes/routes url)
        default-route)
-   :query-params (parse-query-params url)))
+   :query-params (parse-query-params url)
+   :uri url))
 
 (defn load-and-dispatch [[module event]]
   (let [skip-loader? (or (= (first event) :github/call) ; this is to avoid loader flickering when logging in via GitHub

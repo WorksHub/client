@@ -56,20 +56,24 @@
 (reg-event-fx
   ::fetch-jobs
   db/default-interceptors
-  (fn [{db :db} _]
+  (fn [{db :db} [initial-load?]]
     (let [all-jobs? (and (str/blank? (::db/search-term db))
                          (empty? (::db/query-params db)))
           cities (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities]) ;; for preset-search
           countries (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/countries]) ;; for preset-search
           remote? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote]) ;; for preset-search
           tags (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/tags]) ;; for preset search
-          preset-search (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/preset-search])
-          db-filters (cond-> {}
-                             (seq tags) (assoc :tags tags)
-                             (seq cities) (update-in [:location :cities] (fnil concat []) cities)
-                             (seq countries) (update-in [:location :country-codes] (fnil concat []) countries)
-                             remote? (assoc :remote true)
-                             :always (merge (search/query-params->filters (::db/query-params db))))
+          preset-search? (= :pre-set-search (::db/page db))
+          preset-search (if initial-load? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/preset-search])
+                                          (str/replace (::db/uri db) #"/" ""))
+          db-filters (merge (if (and initial-load? preset-search?)
+                              (cond-> {}
+                                      (seq tags) (assoc :tags tags)
+                                      (seq cities) (update-in [:location :cities] (fnil concat []) cities)
+                                      (seq countries) (update-in [:location :country-codes] (fnil concat []) countries)
+                                      remote? (assoc :remote true))
+                              {})
+                            (search/query-params->filters (::db/query-params db)))
           page-from-params (int (get-in db [::db/query-params "page"]))
           page (if (zero? page-from-params)
                  (inc page-from-params)
@@ -78,7 +82,7 @@
       {:db      (assoc-in db [::jobsboard/sub-db ::jobsboard/current-page-number] page)
        :graphql {:query      jobs-query
                  :variables  {:search_term   (or (get-in db [::db/query-params "search"]) "")
-                              :preset_search preset-search
+                              :preset_search (when preset-search? preset-search)
                               :page          page
                               :filters       filters
                               :vertical      (:wh.db/vertical db)}
@@ -120,8 +124,8 @@
                                     :available-countries  (facets "location.country-code")
                                     :remote-count         (->> (facets "remote") (filter #(= (:value %) "true")) first :count)
                                     :sponsorship-count    (->> (facets "sponsorship-offered") (filter #(= (:value %) "true")) first :count)}
-                            (user-db/admin? db) (assoc :wh.search/mine-count (->> (facets "manager") (filter #(= (:value %) user-email)) first :count)
-                                                       :wh.search/published-count (facets "published"))
+                        (user-db/admin? db) (assoc :wh.search/mine-count (->> (facets "manager") (filter #(= (:value %) user-email)) first :count)
+                                                   :wh.search/published-count (facets "published"))
                         city-info (assoc :wh.search/city-info
                                          (mapv (fn [loc]
                                                  (as-> loc loc
@@ -131,13 +135,13 @@
                                          :wh.search/salary-ranges
                                          (mapv cases/->kebab-case remuneration-ranges)))
           jobsboard-db #:wh.jobs.jobsboard.db{:jobs                     (if (= page-number 1)
-                                                                     (mapv job/translate-job (:jobs jobs-search))
-                                                                     (concat (::jobsboard/jobs sub-db) (mapv job/translate-job (:jobs jobs-search))))
-                                         :promoted-jobs            (mapv job/translate-job (:promoted jobs-search))
-                                         :number-of-search-results (:numberOfHits jobs-search)
-                                         :current-page             (:page jobs-search)
-                                         :total-pages              (:numberOfPages jobs-search)
-                                         :search-term-for-results  (:query search-params)}]
+                                                                          (mapv job/translate-job (:jobs jobs-search))
+                                                                          (concat (::jobsboard/jobs sub-db) (mapv job/translate-job (:jobs jobs-search))))
+                                              :promoted-jobs            (mapv job/translate-job (:promoted jobs-search))
+                                              :number-of-search-results (:numberOfHits jobs-search)
+                                              :current-page             (:page jobs-search)
+                                              :total-pages              (:numberOfPages jobs-search)
+                                              :search-term-for-results  (:query search-params)}]
       {:db         (-> db
                        (update ::jobsboard/sub-db (fn [current-jobsboard]
                                                     (-> current-jobsboard
@@ -300,7 +304,7 @@
                  (::db/initial-load? db))
           []
           [[:wh.search/in-progress true]])
-        [::fetch-jobs] ;; TODO put this back in the if statement when filters are finished
+        [::fetch-jobs (::db/initial-load? db)] ;; TODO put this back in the if statement when filters are finished
         [:wh.search/initialize-widgets]
         [:wh.events/scroll-to-top]))
 
@@ -309,7 +313,7 @@
                  (::db/initial-load? db))
           []
           [[:wh.search/in-progress true]])
-        [::fetch-jobs] ;; TODO put this back in the if statement when filters are finished
+        [::fetch-jobs (::db/initial-load? db)] ;; TODO put this back in the if statement when filters are finished
         [:wh.events/scroll-to-top]))
 
 (defn- update-min-max

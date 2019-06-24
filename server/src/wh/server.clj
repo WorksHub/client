@@ -46,6 +46,7 @@
    :wh.db/vertical vertical
    :wh.db/query-params (:query-params request)
    :wh.db/page-params {}
+   :wh.db/uri (:uri request)
    :wh.db/initial-load? true
    :wh.db/default-technologies (get-in vertical-config [vertical :default-technologies])})
 
