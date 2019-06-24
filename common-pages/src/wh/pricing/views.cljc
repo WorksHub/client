@@ -1,4 +1,4 @@
-(ns wh.components.pricing
+(ns wh.pricing.views
   (:require
     #?(:cljs [re-frame.core :refer [dispatch-sync]])
     #?(:cljs [reagent.core :as r])
@@ -9,6 +9,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.package-selector :refer [package-selector]]
     [wh.components.www-homepage :as www]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
     [wh.util :as util]
     [wh.verticals :as verticals]))
@@ -55,38 +56,34 @@
         [:div.radio__checked])
       [:div.radio__label label]])])
 
-(defn page
-  ([]
-   #?(:cljs
-      (page (<sub [:wh.subs/vertical])
-            (get (<sub [:wh.subs/query-params]) "billing-period"))))
-  ([vertical billing-period]
-   (let [billing-period (keyword (or billing-period "six"))]
-     [:div.pricing
-      [:div.pricing-content
-       [:h2.pricing__subtitle "STRAIGHTFORWARD PRICING"]
-       [:div.pricing__billing-period-selector-wrapper
-        [:h1.pricing__title "Select a plan for your hiring needs"]
-        [:div.pricing__billing-period-selector
-         [fake-radio-buttons
-          billing-period
-          (map (fn [[k v]] {:id k
-                            :label [:span (:title v)
-                                    (when-let [discount (:discount v)]
-                                      [:small (str "(" (* 100 discount) "% off)")])]
-                            :href (routes/path :pricing :query-params {:billing-period (name k)})})
-               data/billing-data)]]]
-       [package-selector
-        {:signup-button signup-button
-         :show-billing-period-selector? false
-         :billing-period billing-period
-         :mobile-fullscreen? true
-         :contact-button (demo-button vertical)}]]
-      [www/animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
-      [:div.pricing-content
-       [:h2.pricing__subtitle "FAQS"]
-       [:h1.pricing__title "What else would you like to know?"]
-       [faq/faq-component data/pricing-questions]]
-      [www/animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe"]
-      [:div.pricing-content.has-text-centered
-       [www/testimonials]]])))
+(defn page []
+  (let [vertical (<sub [:wh/vertical])
+        billing-period (keyword (or (<sub [:wh/query-param "billing-period"]) "six"))]
+    [:div.pricing
+     [:div.pricing-content
+      [:h2.pricing__subtitle "STRAIGHTFORWARD PRICING"]
+      [:div.pricing__billing-period-selector-wrapper
+       [:h1.pricing__title "Select a plan for your hiring needs"]
+       [:div.pricing__billing-period-selector
+        [fake-radio-buttons
+         billing-period
+         (map (fn [[k v]] {:id k
+                           :label [:span (:title v)
+                                   (when-let [discount (:discount v)]
+                                     [:small (str "(" (* 100 discount) "% off)")])]
+                           :href (routes/path :pricing :query-params {:billing-period (name k)})})
+              data/billing-data)]]]
+      [package-selector
+       {:signup-button signup-button
+        :show-billing-period-selector? false
+        :billing-period billing-period
+        :mobile-fullscreen? true
+        :contact-button (demo-button vertical)}]]
+     [www/animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
+     [:div.pricing-content
+      [:h2.pricing__subtitle "FAQS"]
+      [:h1.pricing__title "What else would you like to know?"]
+      [faq/faq-component data/pricing-questions]]
+     [www/animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe"]
+     [:div.pricing-content.has-text-centered
+      [www/testimonials]]]))

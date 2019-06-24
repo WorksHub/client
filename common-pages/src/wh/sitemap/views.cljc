@@ -1,5 +1,7 @@
-(ns wh.components.sitemap
+(ns wh.sitemap.views
   (:require
+    [wh.sitemap.subs :as subs]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.verticals :as verticals]))
 
 (defn sitemap-page [vertical links]
@@ -50,3 +52,10 @@
         [:div.sitemap__container
          (for [{:keys [title url]} (:sitemap-links l)]
            [:span.sitemap__link [:a {:href url} title]])]])]]])
+
+(defn page []
+  (let [vertical (<sub [:wh/vertical])
+        sitemap  (<sub [:wh/sitemap])]
+    (if (= "www" vertical)
+      (www-sitemap-page sitemap)
+      (sitemap-page vertical (sitemap vertical)))))

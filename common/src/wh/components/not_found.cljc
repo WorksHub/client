@@ -12,8 +12,7 @@
                            :cljs {:on-click #(js/alert msg)}))
        "Play"])]])
 
-(defn not-found-page [_]
+(defn not-found-page []
   [:div.dashboard
    [:div.main.main--center-content
     [not-found]]])
-

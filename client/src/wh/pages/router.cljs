@@ -7,10 +7,10 @@
   (:require
     [re-frame.core :refer [dispatch-sync reg-event-db reg-sub]]
     [reagent.core :as r]
-    [wh.db :as db]
-    [wh.homepage.views :as home]
-    [wh.how-it-works.views :as how-it-works]
     [wh.components.not-found :as not-found]
+    [wh.db :as db]
+    [wh.how-it-works.views :as how-it-works]
+    [wh.landing.views :as home]
     [wh.pages.core :as pages]
     [wh.subs :as subs :refer [<sub run-sub]]))
 

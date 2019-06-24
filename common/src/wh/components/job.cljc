@@ -6,6 +6,7 @@
     [wh.interop :as interop]
     [wh.pages.util :refer [html->hiccup]]
     [wh.re-frame.events :refer [dispatch]]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
     [wh.slug :as slug]
     [wh.util :as util]
@@ -191,8 +192,10 @@
                                        :params {:id id}])))
     "Easy Apply"]])
 
-(defn page [{:keys [vertical app-db]}]
-  (let [job (:wh.jobs.job.db/sub-db app-db)
+(defn page []
+  (let [app-db @re-frame.db/app-db ; TODO: make it subscription-based
+        vertical (<sub [:wh/vertical])
+        job (:wh.jobs.job.db/sub-db app-db)
         tagline (:wh.jobs.job.db/tagline job)
         recommended-jobs (:wh.jobs.job.db/recommended-jobs job)
         error (:wh.jobs.job.db/error job)]

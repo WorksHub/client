@@ -1,6 +1,6 @@
 (ns wh.privacy-policy.views)
 
-(defn page [_]
+(defn page []
   [:div.main.privacy
    [:h1 "Privacy policy"]
    [:div.container

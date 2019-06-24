@@ -7,7 +7,7 @@
     [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [companies-section link wrap-img img]]
     [wh.components.github :refer [integrate-github-button]]
-    [wh.components.www-homepage :refer [animated-hr]]
+    [wh.components.www-homepage :as www :refer [animated-hr]]
     [wh.how-it-works.views :as hiw]
     [wh.interop :as interop]
     [wh.landing.subs :as subs]
@@ -105,7 +105,7 @@
         [:div.homepage__feature-ctas
          [:a.button.button--inverted {:href (str "https://www.works-hub.com" href)} "Start hiring"]]]]]]))
 
-(defn page []
+(defn candidate-page []
   [:div.homepage.landing-page
    [:div.homepage__top-content
     [:div.homepage__top-content__container
@@ -162,3 +162,11 @@
              {:id "www-landing__hero"}
              "Get Started"] :get-started)]]]
    [bottom]])
+
+(defn page []
+  (cond
+    (= "www" (<sub [:wh/vertical]))
+    (www/homepage (<sub [:wh/page-params]))
+
+    true
+    (candidate-page)))

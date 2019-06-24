@@ -2,8 +2,8 @@
   (:require
     [cljs.loader :as loader]
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
-    [wh.components.pricing :as pricing]
-    [wh.db :as db]))
+    [wh.db :as db]
+    [wh.pricing.views :as pricing]))
 
 (def page-mapping
   {:pricing pricing/page})

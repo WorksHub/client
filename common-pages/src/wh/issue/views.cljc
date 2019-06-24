@@ -284,51 +284,48 @@
                 :rel    "noopener"}
                login])])]]])))
 
-(defn page
-  ([]
-   #?(:cljs
-      (r/create-class
-       {:component-did-mount
-        (fn [this]
-          (putil/attach-on-scroll-event
-           (fn [el-or-window]
-             (dispatch [::events/set-show-cta-sticky? (> (or (.-scrollTop el-or-window)
-                                                             (.-scrollY el-or-window)) 300)]))))
-        :reagent-render
-        (fn []
-          (page (<sub [:user/logged-in?])))})))
-  ([logged-in?]
-   (let [hiw-pod (cond
-                   #?(:cljs (<sub [:user/company?])
-                      :clj  false)
-                   [how-it-works/pod--company]
-                   #?(:cljs (<sub [:user/logged-in?])
-                      :clj  false)
-                   [how-it-works/pod--candidate]
-                   :else
-                   [how-it-works/pod--basic])]
-     [:div.main-container
-      [:div.main.issue
-       [:div.is-flex
-        [:div.issue__main
-         [header {:show-like-or-edit? logged-in?}] ;; TODO implement likes
-         [:div.is-hidden-desktop
-          [author]]
-         [description]
-         (when (<sub [::subs/show-contributors?])
-           [contributors])
-         [:div.is-hidden-desktop
-          hiw-pod
-          [activity]]
-         [other-issues]
-         (when logged-in?
-           [company-jobs])]
-        [:div.issue__side.is-hidden-mobile
-         [author]
+(defn render-page
+  []
+  (let [logged-in? (<sub [:user/logged-in?])
+        hiw-pod (cond
+                  (<sub [:user/company?]) [how-it-works/pod--company]
+                  logged-in?              [how-it-works/pod--candidate]
+                  :else                   [how-it-works/pod--basic])]
+    [:div.main-container
+     [:div.main.issue
+      [:div.is-flex
+       [:div.issue__main
+        [header {:show-like-or-edit? logged-in?}] ;; TODO implement likes
+        [:div.is-hidden-desktop
+         [author]]
+        [description]
+        (when (<sub [::subs/show-contributors?])
+          [contributors])
+        [:div.is-hidden-desktop
          hiw-pod
-         [activity]]]]
-      (when (<sub [::subs/start-work-popup-shown?])
-        [start-work])
-      #?(:cljs
-         [edit-issue/edit-issue])
-      [start-work-sticky logged-in?]])))
+         [activity]]
+        [other-issues]
+        (when logged-in?
+          [company-jobs])]
+       [:div.issue__side.is-hidden-mobile
+        [author]
+        hiw-pod
+        [activity]]]]
+     (when (<sub [::subs/start-work-popup-shown?])
+       [start-work])
+     #?(:cljs
+        [edit-issue/edit-issue])
+     [start-work-sticky logged-in?]]))
+
+(defn page
+  []
+  #?(:clj (render-page)
+     :cljs
+     (r/create-class
+      {:component-did-mount
+       (fn [this]
+         (putil/attach-on-scroll-event
+          (fn [el-or-window]
+            (dispatch [::events/set-show-cta-sticky? (> (or (.-scrollTop el-or-window)
+                                                            (.-scrollY el-or-window)) 300)]))))
+       :reagent-render render-page})))
