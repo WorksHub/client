@@ -5,6 +5,7 @@
     [wh.blogs.learn.subs :as subs]
     [wh.components.cards :refer [blog-card]]
     [wh.components.pagination :refer [pagination]]
+    [wh.interop :as interop]
     [wh.re-frame.subs :refer [<sub]]))
 
 (defn learn-header
@@ -17,9 +18,12 @@
       [:div.has-bottom-margin
        (when (<sub [::subs/show-contribute?])
          [:button#learn_contribute.button.learn--contribute-button
-          {:on-click #(dispatch (if logged-in?
-                                  [:wh.events/nav :contribute]
-                                  [:wh.events/contribute]))} "Contribute"])]]]))
+          #?(:clj (when-not logged-in?
+                    (interop/on-click-fn
+                      (interop/show-auth-popup :contribute [:contribute])))
+             :cljs {:on-click #(dispatch (if logged-in?
+                                           [:wh.events/nav :contribute]
+                                           [:wh.events/contribute]))}) "Contribute"])]]]))
 
 (defn page []
   (into

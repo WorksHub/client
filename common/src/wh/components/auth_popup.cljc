@@ -41,6 +41,12 @@
    {:id (build-sub-id "search-jobs")}
    [:h1 "Login or register to search for your ideal job!"]])
 
+(defn overlay-content-contribute
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "contribute")}
+   [:h1 "Login or register to start contributing with an article!"]])
+
 (defn popup [platform-name]
   [:div
    {:id auth-popup-id
@@ -52,6 +58,7 @@
      [icon "close"]]
     [:div
      [overlay-content-apply]
+     [overlay-content-contribute]
      [overlay-content-see-more]
      [overlay-content-blog]
      [overlay-content-search-jobs]
