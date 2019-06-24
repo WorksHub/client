@@ -13,7 +13,7 @@
     [wh.verticals :as verticals]))
 
 (defn job-card
-  [{:keys [company-name tagline title logo display-salary remuneration remote sponsorship-offered display-location role-type tags id] :as job}
+  [{:keys [company-name tagline title logo display-salary remuneration remote sponsorship-offered display-location role-type tags slug id] :as job}
    {:keys [public? liked? user-has-applied?]
     :or   {public?           true
            liked?            false
@@ -34,7 +34,7 @@
         [icon "like"
          :class (util/merge-classes "job__icon" "like" (when liked? "selected"))
          :on-click #(dispatch [:wh.events/toggle-job-like job])])
-      [:a {:href (routes/path :job :params {:id id})}
+      [:a {:href (routes/path :job :params {:slug slug})}
        [:div.info
         [:div.logo
          (if (or skeleton? (not logo))
@@ -56,12 +56,12 @@
      [:div.tagline tagline]
      [:div.apply
       [:div.buttons
-       [:a.button {:href (routes/path :job :params {:id id})}
+       [:a.button {:href (routes/path :job :params {:slug slug})}
         "More Info"]
        [:button.button (if public?
                          (interop/on-click-fn
-                           (interop/show-auth-popup :jobcard-apply [:job :params {:id id} :query-params {:apply true}]))
-                         {:href (routes/path :job :params {:id id} :query-params {:apply true})})
+                           (interop/show-auth-popup :jobcard-apply [:job :params {:id id} :query-params {:apply true}])) ;; TODO upate with slug
+                         {:href (routes/path :job :params {:slug slug} :query-params {:apply true})})
         (if user-has-applied?
           "1-Click Apply"
           "Easy Apply")]]]]))

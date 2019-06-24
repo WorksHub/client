@@ -19,7 +19,7 @@
                      [:offer [:recurringFee :placementPercentage :acceptedAt]]
                      [:pendingOffer [:recurringFee :placementPercentage]]])
 
-(def job-fields [:id :title :tagline :tags :verticals :valid])
+(def job-fields [:id :slug :title :tagline :tags :verticals :valid])
 
 (def update-company-mutation+
   (update-in update-company-mutation [:venia/queries 0] assoc 2 company-fields))

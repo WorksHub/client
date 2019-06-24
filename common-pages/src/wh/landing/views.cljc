@@ -38,7 +38,7 @@
     :txt "With our Open Source issues, you can get paid, learn new languages and get noticed by employers. We’re leveraging the power of open source to help you further your career."}])
 
 (defn job-card
-  [{:keys [company-name tagline title logo display-salary display-location role-type tags id] :as job}]
+  [{:keys [company-name tagline title logo display-salary display-location role-type tags id slug] :as job}]
   (let [skeleton? (and job (empty? (dissoc job :id)))]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
@@ -49,11 +49,11 @@
        [:div.logo
         (if skeleton?
           [:div]
-          [link (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}) :job :id id])]
+          [link (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}) :job :slug slug])]
        [:div.basic-info
-        [:div.job-title [link title :job :id id]]
-        [:div.company-name [link company-name :job :id id]]
-        [:div.location [link display-location :job :id id]]
+        [:div.job-title [link title :job :slug slug]]
+        [:div.company-name [link company-name :job :slug slug]]
+        [:div.location [link display-location :job :slug slug]]
         (when-not (= role-type "Full time")
           [:div.role-type role-type])]
        [:div.salary display-salary]]]
@@ -65,12 +65,12 @@
                   tags)))
      [:div.tagline tagline]
      [:div.buttons
-      [link [:button.button.button--inverted "More Info"] :job :id id]
+      [link [:button.button.button--inverted "More Info"] :job :slug slug]
       [:button.button
        (interop/on-click-fn
         (interop/show-auth-popup :homepage-jobcard-apply
                                  [:job
-                                  :params {:id id}
+                                  :params {:slug slug}
                                   :query-params {:apply "true"}]))
        "Apply"]]]))
 

@@ -41,14 +41,14 @@
   [{:keys [job title-link]}]
   (let [skeleton?                                                 (not job)
         logo                                                      (<sub [::subs/logo])
-        {:keys [id title stats display-location first-published]} job]
+        {:keys [id slug title stats display-location first-published]} job]
     [:div.company-application__job
      {:class (when skeleton? "skeleton")}
      (cond
        skeleton? [:div.company-application__job-logo]
        logo      [:img.company-application__job-logo {:src logo}])
      [:div.company-application__job-title (or title-link [link title :job
-                                                          :id id
+                                                          :slug slug
                                                           :class "a--hover-red"
                                                           :on-click #(dispatch-sync [:wh.job/preset-job-data job])])]
      [:div.company-application__job-location display-location]
@@ -117,7 +117,8 @@
     [:div.card.company-application
      {:class (when skeleton? "skeleton")}
      [:div.company-application__name
-      [link (:name app) :candidate :id user-id :class "a--hover-red"]]
+      (when-not skeleton?
+        [link (:name app) :candidate :id user-id :class "a--hover-red"])]
      [:div.company-application__applied-on-section
       [:div.company-application__applied-on (when-not skeleton? "Applied on ") timestamp]
       (when (or cv skeleton?)

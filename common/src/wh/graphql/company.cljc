@@ -72,7 +72,7 @@
    :venia/variables [{:variable/name "create_job"
                       :variable/type :CreateJobInput!}]
    :venia/queries   [[:create_job {:create_job :$create_job}
-                      [:id]]]})
+                      [:id :slug]]]})
 
 (def update-job-mutation
   {:venia/operation {:operation/type :mutation
@@ -80,7 +80,7 @@
    :venia/variables [{:variable/name "update_job"
                       :variable/type :UpdateJobInput!}]
    :venia/queries   [[:update_job {:update_job :$update_job}
-                      [:id :published]]]})
+                      [:id :slug :published]]]})
 
 (defn fetch-tags [success]
   {:query      {:venia/operation {:operation/type :query
@@ -114,7 +114,7 @@
                    {:manager manager})
                  (when vertical
                    {:vertical vertical}))
-    (or fields [:id :title :firstPublished :tags :published
+    (or fields [:id :slug :title :firstPublished :tags :published
                 [:location [:city :state :country :countryCode]]
                 [:stats [:applications :views :likes]]])]))
 

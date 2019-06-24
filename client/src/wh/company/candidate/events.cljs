@@ -44,15 +44,15 @@
                        (if admin?
                          [[:companyPerks [:name]]
                           [:approval [:status :source :time]]
-                          [:likes [:id :title [:company [:name]]]]
-                          [:applied [[:job [:id :title [:company [:name]]]]]]
+                          [:likes [:id :slug :title [:company [:name]]]]
+                          [:applied [[:job [:id :slug :title [:company [:name]]]]]]
                           :jobSeekingStatus :roleTypes
                           :hubspotProfileUrl
                           :type
                           [:company [:id :name]]
                           [:salary [:currency :min :timePeriod]]]
                          ;;
-                         [[:applied [:timestamp :state :note [:job [:id :title]]]]]))]
+                         [[:applied [:timestamp :state :note [:job [:id :slug :title]]]]]))]
     {:venia/queries [[:user {:id id} fields]]}))
 
 (reg-event-fx

@@ -537,6 +537,7 @@
   :pay-success
   [_]
   (let [role       (<sub [::subs/job-title])
+        job-slug   (<sub [::subs/job-slug])
         job-id     (<sub [::subs/job-id])
         action (<sub [::subs/action])
         company    (<sub [::subs/company-name])
@@ -562,7 +563,7 @@
         [:div.column
          (if (= :publish action)
            [link [:button.button.is-full-width
-                  "View your role"] :job :id job-id]
+                  "View your role"] :job :slug job-slug]
            [link [:button.button.is-full-width
                   "View applications"] :company-applications :query-params {:job-id job-id}])]
         action

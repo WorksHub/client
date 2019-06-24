@@ -28,7 +28,7 @@
    :venia/variables [{:variable/name "update_job"
                       :variable/type :UpdateJobInput!}]
    :venia/queries   [[:update_job {:update_job :$update_job}
-                      [:id :published]]]})
+                      [:id :slug :published]]]})
 
 (defn job-query [db]
   (cond
@@ -85,12 +85,12 @@
                      :operation/type :query}
    :venia/variables [{:variable/name "company_id"
                       :variable/type :ID}
-                     {:variable/name "job_id"
-                      :variable/type :ID}
+                     {:variable/name "job_slug"
+                      :variable/type :String}
                      {:variable/name "end_date"
                       :variable/type :String}]
    :venia/queries [[:job_analytics {:company_id :$company_id
-                                    :job_id :$job_id
+                                    :job_slug :$job_slug
                                     :end_date :$end_date
                                     :granularity 0
                                     :num_periods 0}
@@ -100,12 +100,12 @@
                      [:likes [:date :count]]]]]})
 
 (reg-event-fx
-  ::fetch-job-analytics
+  ::fetch-job-analytics ;; TODO change this to slug?
   db/default-interceptors
-  (fn [{db :db} [job-id company-id]]
+  (fn [{db :db} [job-slug company-id]]
     {:graphql {:query job-analytics-query
                :variables {:company_id company-id
-                           :job_id job-id
+                           :job_slug job-slug
                            :end_date (tf/unparse (tf/formatters :date) (t/now))}
                :on-success [::fetch-job-analytics-success]
                :on-failure [::fetch-job-analytics-failure]}}))
@@ -130,7 +130,7 @@
         {:db (update db ::job/sub-db
                      merge job
                      {::job/error nil
-                      ::job/preset-id (::job/id job)})};; the current job is now the preset one
+                      ::job/preset-slug (::job/slug job)})};; the current job is now the preset one
         (when (user/admin? db)
           {:dispatch [::fetch-company-issues]})
         (if (or (user/admin? db)
@@ -168,12 +168,12 @@
 (reg-event-fx
   ::fetch-job
   db/default-interceptors
-  (fn [{db :db} [id]]
+  (fn [{db :db} [slug]]
     {:scroll-to-top true
-     :graphql {:query (job-query db)
-               :variables {:id id}
-               :on-success [::fetch-job-success]
-               :on-failure [::fetch-failure]}}))
+     :graphql       {:query      (job-query db)
+                     :variables  {:slug slug}
+                     :on-success [::fetch-job-success]
+                     :on-failure [::fetch-failure]}}))
 
 (reg-event-db
   ::reset-error
@@ -267,7 +267,7 @@
   []
   {:dispatch [::show-admin-publish-prompt? true]})
 
-(defn proccess-publish-role-intention
+(defn process-publish-role-intention
   [{:keys [db job-id permissions publish-events on-publish pending-offer]}]
   (cond
     (or (contains? permissions :can_publish)
@@ -288,7 +288,7 @@
     (let [perms (job/company-permissions db)
           job-id (or job-id (get-in db [::job/sub-db ::job/id]))
           pending-offer (get-in db [::job/sub-db ::job/company :pending-offer])]
-      (proccess-publish-role-intention
+      (process-publish-role-intention
        {:db db
         :job-id job-id
         :permissions perms
@@ -496,21 +496,22 @@
   (fn [{db :db} [show?]]
     {:db (assoc db ::job/show-apply-sticky? show?)}))
 
+
 ;; We do this so that as we're fetching the job there are
 ;; some fields we already have and therefore can "prefill"
 (reg-event-db
   :wh.job/preset-job-data
   job-interceptors
-  (fn [db [{:keys [id] :as job}]]
+  (fn [db [{:keys [slug] :as job}]]
     (let [preset-fields (-> job
                             (select-keys [:title :location :tagline :tags :benefits :remote
                                           :remuneration :role-type])
                             (assoc :company {:name (:company-name job)
                                              :logo (:logo job)}))]
-      (merge (if (= id (::job/preset-id db))
+      (merge (if (= slug (::job/preset-slug db))
                db
                job/default-db)
-             {::job/preset-id id}
+             {::job/preset-slug slug}
              (util/namespace-map "wh.jobs.job.db" preset-fields)))))
 
 (reg-event-db
@@ -527,21 +528,21 @@
       {})))
 
 (defmethod on-page-load :job [db]
-  (let [requested-id (get-in db [::db/page-params :id])
-        id-in-db (get-in db [::job/sub-db ::job/id])
-        preset-id (get-in db [::job/sub-db ::job/preset-id])]
+  (let [requested-slug (get-in db [::db/page-params :slug])
+        slug-in-db (get-in db [::job/sub-db ::job/slug])
+        preset-slug (get-in db [::job/sub-db ::job/preset-slug])]
     ;; If you are changing below logic make sure that wh.response.handler.job is also updated
     [[::load-company-module-if-needed]
-     (when (or (and preset-id (not= requested-id preset-id))
-               (and (not preset-id) (not (::db/initial-load? db))))
+     (when (or (and preset-slug (not= requested-slug preset-slug))
+               (and (not preset-slug) (not (::db/initial-load? db))))
        [::initialize-db])
-     (if (not= requested-id id-in-db)
-       [::fetch-job requested-id]
+     (if (not= requested-slug slug-in-db)
+       [::fetch-job requested-slug]
        (when (user/admin? db)
          [::fetch-company-issues]))
      (when (user/company? db)
-       [::fetch-job-analytics requested-id (user/company-id db)])
+       [::fetch-job-analytics requested-slug (user/company-id db)])
      (when (get-in db [::db/query-params "apply"])
-       [:apply/try-apply {:id requested-id} :jobpage-apply])
-     [::fetch-recommended-jobs requested-id]
+       [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
+     [::fetch-recommended-jobs requested-slug]
      [:google/load-maps]]))

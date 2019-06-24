@@ -235,7 +235,7 @@
         (doall
           (for [i (range (<sub [::subs/num-related-jobs-to-show]))]
             ^{:key i}
-            [job-card {:id (str "skeleton-job-" (inc i))} {:public? false}]))))]])
+            [job-card {:id (str "skeleton-job-" (inc i)) :slug "#"} {:public? false}]))))]])
 
 (defn other-issues
   []

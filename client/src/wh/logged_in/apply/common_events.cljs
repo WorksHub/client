@@ -12,4 +12,4 @@
     (if (db/logged-in? db)
       {:load-and-dispatch [:logged-in [:apply/start-apply-for-job job]]}
       {:show-auth-popup {:context  (name event-type)
-                         :redirect [:job :params {:id (:id job)} :query-params {:apply "true"}]}})))
+                         :redirect [:job :params {:slug (:slug job)} :query-params {:apply "true"}]}})))

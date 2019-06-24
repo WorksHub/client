@@ -159,11 +159,11 @@
   ::create-job-success
   db/default-interceptors
   (fn [{db :db} [{data :data}]]
-    (let [job-id (-> data vals first :id)]
+    (let [slug (-> data vals first :slug)]
       {:db       (-> db
-                     (assoc-in [::job/sub-db ::job/id] "")  ;; force reload
+                     (assoc-in [::job/sub-db ::job/slug] "")  ;; force reload
                      (assoc-in [::create-job/sub-db ::create-job/saving?] false))
-       :navigate [:job :params {:id job-id}]})))
+       :navigate [:job :params {:slug slug}]})))
 
 (reg-event-db
   ::create-job-error

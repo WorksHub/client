@@ -10,7 +10,7 @@
     [wh.common.job :as common-job]
     [wh.company.dashboard.db :as sub-db]
     [wh.db :as db]
-    [wh.jobs.job.events :refer [publish-job navigate-to-payment-setup proccess-publish-role-intention]]
+    [wh.jobs.job.events :refer [publish-job navigate-to-payment-setup process-publish-role-intention]]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
     [wh.util :as util]))
@@ -33,7 +33,7 @@
                            :company_id id
                            :page_size 100
                            :page_number 1}
-                    [:id :title :tags :published :firstPublished :creationDate :verticals
+                    [:id :slug :title :tags :published :firstPublished :creationDate :verticals
                      [:location [:city :state :country :countryCode]]
                      [:stats [:applications :views :likes]]
                      :matchingUsers]]
@@ -47,7 +47,7 @@
                      [:views [:date :count]]
                      [:likes [:date :count]]]]
                    [:activity {:company_id id}
-                    [:type :jobId :jobTitle :userId :userName :count :timestamp]]]})
+                    [:type :jobId :jobTitle :jobSlug :userId :userName :count :timestamp]]]})
 
 (defmethod on-page-load :company-dashboard [db]
   [[::initialize-db]
@@ -193,7 +193,7 @@
   (fn [{db :db} [job-id]]
     (let [perms (get-in db [::sub-db/sub-db ::sub-db/permissions])
           pending-offer (get-in db [::sub-db/sub-db ::sub-db/pending-offer])]
-      (proccess-publish-role-intention
+      (process-publish-role-intention
        {:db db
         :job-id job-id
         :permissions perms

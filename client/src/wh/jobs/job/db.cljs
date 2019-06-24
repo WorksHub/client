@@ -32,6 +32,7 @@
 (s/def ::sponsorship-offered boolean?)
 (s/def ::remote boolean?)
 (s/def ::id string?)
+(s/def ::slug string?)
 (s/def ::published (s/nilable boolean?))
 (s/def ::street (s/nilable string?))
 (s/def ::post-code (s/nilable string?))
@@ -87,7 +88,7 @@
 (s/def ::show-admin-publish-prompt? boolean?)
 (s/def ::admin-publish-prompt-loading? boolean?)
 (s/def ::recommended-jobs (s/coll-of (s/map-of keyword? any?)))
-(s/def ::preset-id ::id)
+(s/def ::preset-slug ::slug)
 
 (s/def ::sub-db (s/keys :opt [::company
                               ::public-description-html
@@ -115,7 +116,7 @@
                               ::show-admin-publish-prompt?
                               ::admin-publish-prompt-loading?
                               ::recommended-jobs
-                              ::preset-id]))
+                              ::preset-slug]))
 
 (def default-db {::error nil
                  ::publishing? false

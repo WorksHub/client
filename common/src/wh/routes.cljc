@@ -107,7 +107,7 @@
                      ["jobs-in-" :location]} :pre-set-search]
                   ["jobs/" {""            :jobsboard
                             "new"         :create-job
-                            [:id]         :job
+                            [:slug]       :job
                             [:id "/edit"] :edit-job}]
                   ["profile/" {""             :profile
                                "edit/header"  :profile-edit-header

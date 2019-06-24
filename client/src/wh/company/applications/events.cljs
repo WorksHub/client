@@ -32,7 +32,7 @@
   {:venia/queries [[:latest_applied_jobs {:company_id company-id
                                           :page_size sub-db/latest-applied-jobs-page-size
                                           :page_number page-number}
-                    [[:jobs [:id :title :firstPublished :tags
+                    [[:jobs [:id :slug :title :firstPublished :tags
                              [:location [:city :state :country :countryCode]]
                              [:stats [:applications :views :likes]]]]
                      [:pagination [:total]]]]]})
@@ -69,7 +69,7 @@
                                        :manager     manager-email
                                        :page_size   sub-db/jobs-page-size
                                        :page_number 1}
-                                [:id :title :companyId :companyName]]
+                                [:id :slug :title :companyId :companyName]]
                                [:admin_companies [:id :name]]]))}))
 
 (defn application-state-frequencies-query
@@ -150,7 +150,7 @@
   ::fetch-company-jobs
   db/default-interceptors
   (fn [{db :db} [company-id]]
-    {:graphql {:query {:venia/queries [(all-company-jobs-query-fragment company-id sub-db/jobs-page-size 1 [:id :title])]}
+    {:graphql {:query {:venia/queries [(all-company-jobs-query-fragment company-id sub-db/jobs-page-size 1 [:id :slug :title])]}
                :on-success [::fetch-company-jobs-success]
                :on-failure [::fetch-company-jobs-failure company-id]}}))
 

@@ -127,10 +127,10 @@
      (if (<sub [:user/logged-in?])
        [:div.issues__hiring-pod__jobs
         (doall
-          (for [{:keys [id title location remote]} (<sub [::subs/jobs])]
+          (for [{:keys [id slug title location remote]} (<sub [::subs/jobs])]
             ^{:key id}
             [:div.issues__hiring-pod__job
-             [link [:strong title] :job :id id]
+             [link [:strong title] :job :slug slug]
              [:span (format-job-location location remote)]]))
         [link [:button.button "View Jobs At This Company"] :jobsboard :query-params {:search company-name}]]
        [:div.issues__hiring-pod__sign-up

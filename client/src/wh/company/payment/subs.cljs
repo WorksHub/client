@@ -140,6 +140,12 @@
     (get-in sub-db [::payment/job :id])))
 
 (reg-sub
+  ::job-slug
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (get-in sub-db [::payment/job :slug])))
+
+(reg-sub
   ::action
   (fn [db _]
     (some-> (get-in db [:wh.db/query-params "action"]) keyword)))

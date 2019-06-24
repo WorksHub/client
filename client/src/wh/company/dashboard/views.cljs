@@ -152,7 +152,8 @@
    [icon icon-name]
    [:div.company-job__stat-number count]])
 
-(defn job-card [{:keys [id title display-location published first-published tags stats partial-view-data matching-users verticals] :as job}]
+
+(defn job-card [{:keys [id slug title display-location published first-published tags stats partial-view-data matching-users verticals] :as job}]
   (let [company-name (<sub [::subs/name])
         logo (<sub [::subs/logo])
         preset-job (assoc job
@@ -171,16 +172,16 @@
         [job-stat "applications" (:applications stats)]]]]
      [:div.company-job__basic-info
       [:div.company-job__title [link title :job
-                                :id id
+                                :slug slug
                                 :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]]
       [:div.company-job__company
        [link company-name :job
-        :id id
+        :slug slug
         :class "company-job__company-name"
         :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]
        [:span.company-job__thats-you " – that's you	🙌"]]
       [:div.company-job__address [link display-location :job
-                                  :id id
+                                  :slug slug
                                   :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]]]
      (if published
        [:div.company-job__posted "Posted on " first-published]
@@ -252,27 +253,27 @@
    "Need help promoting your role? Contact us! "
    (mailto-link "Just ask Codi")])
 
-(defmethod activity-item-content "application" [{:keys [job-id job-title user-id user-name timestamp]}]
+(defmethod activity-item-content "application" [{:keys [job-slug job-title user-id user-name timestamp]}]
   [:span
    (if (<sub [::subs/can-see-applications?])
      [link user-name :candidate :id user-id :class "a--underlined"]
      [:strong user-name])
    " applied for your "
-   [link job-title :job :id job-id :class "a--underlined"]
+   [link job-title :job :slug job-slug :class "a--underlined"]
    " role "
    (date->str timestamp)])
 
-(defmethod activity-item-content "like" [{:keys [job-id job-title timestamp]}]
+(defmethod activity-item-content "like" [{:keys [job-slug job-title timestamp]}]
   [:span
    "New like on your "
-   [link job-title :job :id job-id :class "a--underlined"]
+   [link job-title :job :slug job-slug :class "a--underlined"]
    " role "
    (date->str timestamp)])
 
-(defmethod activity-item-content "views" [{:keys [job-id job-title count timestamp]}]
+(defmethod activity-item-content "views" [{:keys [job-slug job-title count timestamp]}]
   [:span
    "Your "
-   [link job-title :job :id job-id :class "a--underlined"]
+   [link job-title :job :slug job-slug :class "a--underlined"]
    " role has "
    count
    " "
@@ -280,13 +281,13 @@
    " "
    (date->str timestamp)])
 
-(defmethod activity-item-content "match" [{:keys [job-id job-title count user-name timestamp]}]
+(defmethod activity-item-content "match" [{:keys [job-slug job-title count user-name timestamp]}]
   [:span
    "New "
    user-name
    " with +75% match rate for "
    (if (= count 1)
-     [:span "your " [link job-title :job :id job-id :class "a--underlined"] " role "]
+     [:span "your " [link job-title :job :slug job-slug :class "a--underlined"] " role "]
      [:span count " of your roles "])
    "has registered on the platform "
    (date->str timestamp)

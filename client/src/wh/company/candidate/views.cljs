@@ -13,8 +13,8 @@
 
 (defn itemize-jobs [jobs]
   (if (seq jobs)
-    (itemize (for [{:keys [id title company]} jobs]
-               [link (str title " – " (:name company)) :job :id id :class "a--underlined"]))
+    (itemize (for [{:keys [id slug title company]} jobs]
+               [link (str title " – " (:name company)) :job :slug slug :class "a--underlined"]))
     "None"))
 
 (defn approval->str [{:keys [source time status]}]
@@ -78,7 +78,7 @@
        {:class (str "profile-section__applications__job--state-" state)}
        [:div.column
         [:div.profile-section__applications__job-link
-         [link (:title job) :job :id (:id job)]]
+         [link (:title job) :job :slug (:slug job)]]
         [:div.profile-section__applications__applied-on "Applied on " (first (str/split timestamp #"T"))]]
        [:div.column.is-narrow.profile-section__applications__actions
         [:div.profile-section__applications__state (state->str state)]]]

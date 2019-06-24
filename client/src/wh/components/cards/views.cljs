@@ -105,7 +105,7 @@
       "Closed"]]]])
 
 (defn job-card-header
-  [{:keys [id liked logo remote sponsorship-offered company-name title role-type display-location display-salary] :as job} on-close public]
+  [{:keys [id slug liked logo remote sponsorship-offered company-name title role-type display-location display-salary] :as job} on-close public]
   (let [skeleton? (and job (empty? (dissoc job :id)))]
     [:span
      (when-not (or public skeleton? (<sub [:user/company?]))
@@ -135,7 +135,7 @@
           (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
           sponsorship-offered (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
         [:div.salary display-salary]]]
-      :job :id (or id "")
+      :job :slug (or slug "")
       :on-click #(dispatch-sync [:wh.job/preset-job-data job])]]))
 
 (defn job-card-tags
@@ -150,7 +150,7 @@
                  tags)))))
 
 (defn job-card-buttons
-  [{:keys [id applied company-id state] :as job}]
+  [{:keys [id slug applied company-id state] :as job}]
   [:div.apply
    (when state
      [:div.state
@@ -158,7 +158,7 @@
    [:div.buttons
     [:a.button
      {:id       (str "job-card__more-info-button_job-" id)
-      :href     (routes/path :job :params {:id id})}
+      :href     (routes/path :job :params {:slug slug})}
      "More Info"]
     (let [user-loaded? (cljs.loader/loaded? :user)]
       (cond

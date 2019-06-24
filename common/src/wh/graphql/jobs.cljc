@@ -3,7 +3,7 @@
     [wh.graphql-macros :refer [defquery deffragment def-query-template def-query-from-template]]))
 
 (def job-card-fields
-  [:id :title :companyName :tagline
+  [:id :slug :title :companyName :tagline
    [:location [:city :state :country :countryCode]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
    :logo :tags :published :userScore
@@ -12,7 +12,7 @@
 ;; and the same for precompiled queries:
 
 (deffragment jobCardFields :JobCard
-  [:id :title :companyName :tagline
+  [:id :slug :title :companyName :tagline
    [:location [:city :state :country :countryCode]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
    :logo :tags :published :userScore
@@ -41,7 +41,7 @@
   (every? nil? (map :company-name jobs)))
 
 (deffragment jobFields :Job
-  [:id :title :companyId :tagline :descriptionHtml  :tags :benefits :roleType :manager
+  [:id :slug :title :companyId :tagline :descriptionHtml  :tags :benefits :roleType :manager
    ;; [:company [[:issues [:id :title [:labels [:name]]]]]] ; commented out until company is leonaized
    [:company [:logo :name :descriptionHtml]]
    [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
@@ -52,8 +52,12 @@
                     {:venia/operation {:operation/type :query
                                        :operation/name "job"}
                      :venia/variables [{:variable/name "id"
-                                        :variable/type :ID!}]
-                     :venia/queries [[:job {:id :$id} $fields]]})
+                                        :variable/type :ID}
+                                       {:variable/name "slug"
+                                        :variable/type :String}]
+                     :venia/queries [[:job {:id :$id
+                                            :slug :$slug}
+                                      $fields]]})
 
 (def-query-from-template job-query--default job-query
                          {:fields :fragment/jobFields})
