@@ -100,39 +100,44 @@
    (when (= :take_off package)
      [:i " Any hiring fees will be invoiced separately in line with pre-agreed terms."])])
 
+(defn coupon-field
+  [enabled? apply-event]
+  (let [loading? (<sub [::subs/coupon-loading?])]
+    [:div.payment__coupon-form__field
+     [:form.wh-formx.wh-formx__layout
+      {:on-submit #(.preventDefault %)}
+      [text-field nil {:id "coupon-form-input"
+                       :on-change [::events/set-coupon-code]
+                       :value (<sub [::subs/coupon-code])
+                       :error (<sub [::subs/coupon-error])
+                       :on-focus #(dispatch [::events/reset-coupon-error])
+                       :read-only (or (not enabled?) loading?)}]
+      [:button.button.button--inverted
+       {:id "coupon-form-apply-button"
+        :class (when loading? "button--loading")
+        :disabled (not enabled?)
+        :on-click #(when (and enabled? (not loading?))
+                     (dispatch apply-event)
+                     (.preventDefault %))}
+       "Apply"]]]))
+
 (defn coupon-form
   []
   (let [expanded? (r/atom false)
         code (r/atom "")]
     (fn []
-      (let [loading? (<sub [::subs/coupon-loading?])
-            enabled? (<sub [::subs/stripe-card-form-enabled?])]
-        [:div.payment__coupon-form
-         {:class (when @expanded? "payment__coupon-form--expanded")}
-         [:div.is-flex
-          {:id "coupon-form-expand"
-           :on-click #(swap! expanded? not)}
-          [:span.is-not-selectable "Do you have a promotional code?"]
-          [:div.payment__coupon-form__roll-down
-           {:class (when @expanded? "payment__coupon-form__roll-down--expanded")}
-           [icon "roll-down"]]]
-         [:div
-          [:form.wh-formx.wh-formx__layout
-           {:on-submit #(.preventDefault %)}
-           [text-field nil {:id "coupon-form-input"
-                            :on-change [::events/set-coupon-code]
-                            :value (<sub [::subs/coupon-code])
-                            :error (<sub [::subs/coupon-error])
-                            :on-focus #(dispatch [::events/reset-coupon-error])
-                            :read-only (or (not enabled?) loading?)}]
-           [:button.button.button--inverted
-            {:id "coupon-form-apply-button"
-             :class (when loading? "button--loading")
-             :disabled (not enabled?)
-             :on-click #(when (and enabled? (not loading?))
-                          (dispatch [::events/apply-coupon])
-                          (.preventDefault %))}
-            "Apply"]]]]))))
+      [:div.payment__coupon-form
+       {:class (when @expanded? "payment__coupon-form--expanded")}
+       [:div.is-flex
+        {:id "coupon-form-expand"
+         :on-click #(swap! expanded? not)}
+        [:span.is-not-selectable "Do you have a promotional code?"]
+        [:div.payment__coupon-form__roll-down
+         {:class (when @expanded? "payment__coupon-form__roll-down--expanded")}
+         [icon "roll-down"]]]
+       [coupon-field
+        (<sub [::subs/stripe-card-form-enabled?])
+        [::events/apply-coupon]]])))
 
 (defn card-form
   [opts]
@@ -539,7 +544,7 @@
   (let [role       (<sub [::subs/job-title])
         job-slug   (<sub [::subs/job-slug])
         job-id     (<sub [::subs/job-id])
-        action (<sub [::subs/action])
+        action     (<sub [::subs/action])
         company    (<sub [::subs/company-name])
         verts      (<sub [::subs/verticals])
         package    (<sub [::subs/package])

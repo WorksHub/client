@@ -16,6 +16,7 @@
     [wh.company.edit.db :as edit]
     [wh.company.events]
     [wh.company.payment.db :as payment]
+    [wh.company.payment.events :as payment-events]
     [wh.db :as db]
     [wh.graphql.company :refer [create-company-mutation update-company-mutation update-company-mutation-with-fields add-new-company-user-mutation delete-user-mutation company-query-with-payment-details all-company-jobs-query update-job-mutation publish-company-profile-mutation]]
     [wh.pages.core :as pages :refer [on-page-load]]
@@ -246,6 +247,7 @@
                          (update ::edit/manager get-manager-name)
                          (update-in [::edit/integrations :email] set)
                          (util/update-in* [::edit/payment :billing-period] keyword)
+                         (util/update-in* [::edit/payment :coupon :duration] keyword)
                          (util/update-in* [::edit/invoices] #(map process-invoice %))
                          (assoc  ::edit/original-company company
                                  ::edit/loading? false)))))})))
@@ -606,6 +608,53 @@
     (assoc db
            ::edit/profile-enabled-loading? false
            ::edit/profile-enabled-error (some-> resp :errors first :key))))
+
+(reg-event-fx
+  ::apply-coupon
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [coupon-code (get-in db [::payment/sub-db ::payment/coupon-code])]
+      {:db (-> db
+               (assoc-in [::payment/sub-db ::payment/coupon-loading?] true)
+               (assoc-in [::edit/sub-db ::edit/coupon-apply-success?] false)
+               (update ::payment/sub-db dissoc ::payment/coupon-error))
+       :graphql {:query payment-events/coupon-check-query
+                 :variables {:code coupon-code}
+                 :on-success [::check-coupon-success]
+                 :on-failure [::check-coupon-failure {:code coupon-code :message "Code not valid!"} ]}})))
+
+(reg-event-fx
+  ::check-coupon-success
+  company-interceptors
+  (fn [{db :db} [resp]]
+    (let [coupon (-> resp
+                     (get-in [:data :coupon])
+                     (cases/->kebab-case)
+                     (update :duration keyword))]
+      {:graphql {:query (update-company-mutation-with-fields [[:payment [[:coupon [:discountAmount :discountPercentage :description :duration]]]]])
+                 :variables {:update_company
+                             {:id (::edit/id db)
+                              :couponCode (:code coupon)}}
+                 :on-success [::apply-coupon-success coupon] ;; TODO don't send coupon to success, use the one from response...
+                 :on-failure [::check-coupon-failure nil]}})))
+
+(reg-event-fx
+  ::check-coupon-failure
+  db/default-interceptors
+  (fn [{db :db} [coupon resp]]
+    {:db (-> db
+             (assoc-in [::payment/sub-db ::payment/coupon-loading?] false)
+             (assoc-in [::payment/sub-db ::payment/coupon-error] (or (:message coupon)
+                                                                     "Failed to apply coupon!")))}))
+
+(reg-event-db
+  ::apply-coupon-success
+  db/default-interceptors
+  (fn [db [coupon resp]]
+    (-> db
+        (assoc-in [::payment/sub-db ::payment/coupon-loading?] false)
+        (assoc-in [::edit/sub-db ::edit/payment :coupon] coupon)
+        (assoc-in [::edit/sub-db ::edit/coupon-apply-success?] true))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; THIS WILL MOVE TO COMPANY PROFILE

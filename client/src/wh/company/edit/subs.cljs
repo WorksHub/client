@@ -346,6 +346,12 @@
   (fn [db _]
     (::edit/offer db)))
 
+(reg-sub
+  ::coupon-apply-success?
+  :<- [::sub-db]
+  (fn [db _]
+    (::edit/coupon-apply-success? db)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; THIS WILL MOVE TO COMPANY PROFILE
 

@@ -384,7 +384,19 @@
          :query-params {:billing billing-period
                         :package package
                         :existing-billing billing-period
-                        :breakdown false}]]]]]))
+                        :breakdown false}]]]
+      [:div.company-edit__payment-details__coupons
+       [:h2 "Discounts"]
+       [:div
+        [:p "Details of any existing discounts will be listed here. You can also apply new discount by entering your code and pressing Apply."]
+        [:p.company-edit__payment-details__coupons__description
+         (if-let [coupon (<sub [::subs/coupon])]
+           [:span "Currently applied: " [:span (str (:description coupon) ", " (name (:duration coupon)))]]
+           [:i "You don't currently have an active discount."])]
+        (when (<sub [::subs/coupon-apply-success?])
+          [:p.company-edit__payment-details__coupons__new-coupon
+           [:i "Success! A new coupon has been applied to your subscription."]])
+        [payment/coupon-field true [::events/apply-coupon]]]]]]))
 
 (defn cancel-payment
   []
@@ -545,7 +557,7 @@
                [:div.column.is-7
                 [integrations]]])]
 
-           (= page-selection :payment-details)
+           (and (= page-selection :payment-details) payment?)
            [:div
             (when edit?
               [:div.columns.is-variable.is-2

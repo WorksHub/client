@@ -8643,11 +8643,28 @@ a.navbar-item,
 .company-edit__payment-details__billing-and-pricing {
   margin-bottom: 24px; }
 
+.company-edit__payment-details__billing-and-pricing a,
+.company-edit__payment-details__no-payment-details a,
+.company-edit__payment-details__cancel-plan a,
+.company-edit__payment-details__coupons a {
+  display: block;
+  height: 35px; }
+
 .company-edit__payment-details__billing-and-pricing p,
 .company-edit__payment-details__no-payment-details p,
-.company-edit__payment-details__cancel-plan p {
+.company-edit__payment-details__cancel-plan p,
+.company-edit__payment-details__coupons p {
   line-height: 18px;
   margin-bottom: 18px; }
+
+.company-edit__payment-details__coupons .field {
+  flex: 1; }
+
+.company-edit__payment-details__coupons__description {
+  font-size: 13px; }
+
+.company-edit__payment-details__coupons__new-coupon {
+  color: #136d79; }
 
 @-webkit-keyframes drop-into-place {
   0% {
@@ -12050,6 +12067,10 @@ h3 {
       font-weight: 600;
       margin-top: 8px;
       line-height: 0px; }
+    .payment-setup__pay-confirm__select-billing-period .column .radio {
+      border: 0 !important; }
+      .payment-setup__pay-confirm__select-billing-period .column .radio label {
+        margin: 0 !important; }
 
 .payment-setup__upgrading-calculator {
   margin-top: 25px; }
@@ -14246,6 +14267,8 @@ h3 {
   .pricing__billing-period-selector .radios {
     display: flex;
     flex-direction: column; }
+    .pricing__billing-period-selector .radios label {
+      margin: unset !important; }
   .pricing__billing-period-selector .radio {
     border-color: #ffd4cf;
     white-space: nowrap;

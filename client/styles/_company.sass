@@ -1358,10 +1358,24 @@ $description-height: 300px
   margin-bottom: 24px
 .company-edit__payment-details__billing-and-pricing,
 .company-edit__payment-details__no-payment-details,
-.company-edit__payment-details__cancel-plan
+.company-edit__payment-details__cancel-plan,
+.company-edit__payment-details__coupons
+  a
+    display: block
+    height: 35px
   p
     line-height: 18px
     margin-bottom: 18px
+
+.company-edit__payment-details__coupons
+  .field
+    flex: 1
+
+.company-edit__payment-details__coupons__description
+  font-size: 13px
+
+.company-edit__payment-details__coupons__new-coupon
+  color: $sea-blue
 
 @include keyframes(drop-into-place)
   0%   { margin-top: -50px; }

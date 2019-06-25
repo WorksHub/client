@@ -112,6 +112,7 @@
      ::profile-enabled-loading?       false
      ::profile-enabled-error          nil
      ::video-error                    nil}
-    db))
+    db
+    {::coupon-apply-success?          false}))
 
 (def field-names (keys fields))

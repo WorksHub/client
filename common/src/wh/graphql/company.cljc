@@ -57,7 +57,7 @@
   (company-query id (concat default-company-fields
                             [:connectedGithub
                              [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]
-                                        [:coupon [:discountAmount :discountPercentage]]]]
+                                        [:coupon [:discountAmount :discountPercentage :description :duration]]]]
                              [:offer [:recurringFee :placementPercentage :acceptedAt]]
                              [:pendingOffer [:recurringFee :placementPercentage]]
                              [:invoices [:date :url :amount]]])))

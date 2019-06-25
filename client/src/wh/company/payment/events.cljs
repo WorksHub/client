@@ -8,7 +8,9 @@
     [wh.graphql.company :refer [company-query job-query update-company-mutation update-job-mutation]]
     [wh.jobs.job.db :as job]
     [wh.pages.core :as pages :refer [on-page-load force-scroll-to-top!]]
-    [wh.user.db :as user]))
+    [wh.user.db :as user])
+  (:require-macros
+    [wh.graphql-macros :refer [defquery]]))
 
 (def payment-interceptors (into db/default-interceptors
                                 [(path ::payment/sub-db)]))
@@ -231,6 +233,13 @@
   (fn [db [coupon]]
     (assoc db ::payment/coupon-code coupon)))
 
+(defquery coupon-check-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "coupon"}
+   :venia/variables [{:variable/name "code" :variable/type :String!}]
+   :venia/queries   [[:coupon {:code :$code}
+                      [:description :code :duration :discount_amount :discount_percentage]]]})
+
 (reg-event-fx
   ::apply-coupon
   payment-interceptors
@@ -239,7 +248,8 @@
       {:db (-> db
                (assoc ::payment/coupon-loading? true)
                (dissoc ::payment/coupon-error))
-       :graphql {:query {:venia/queries [[:coupon {:code coupon} [:description :code :duration :discount_amount :discount_percentage]]]}
+       :graphql {:query coupon-check-query
+                 :variables {:code coupon}
                  :on-success [::check-coupon-success]
                  :on-failure [::check-coupon-failure]}})))
 
