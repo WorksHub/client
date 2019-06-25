@@ -60,7 +60,7 @@
         "More Info"]
        [:button.button (if public?
                          (interop/on-click-fn
-                           (interop/show-auth-popup :jobcard-apply [:job :params {:id id} :query-params {:apply true}])) ;; TODO upate with slug
+                           (interop/show-auth-popup :jobcard-apply [:job :params {:slug slug} :query-params {:apply true}])) ;; TODO upate with slug
                          {:href (routes/path :job :params {:slug slug} :query-params {:apply true})})
         (if user-has-applied?
           "1-Click Apply"
@@ -142,14 +142,14 @@
 
 
 
-(defn apply-button [element-id {:wh.jobs.job.db/keys [id] :as _job}]
+(defn apply-button [element-id {:wh.jobs.job.db/keys [id slug] :as _job}]
   [:div
    [:button.button.button--medium
     (merge {:id (str "job-view__logged-out-apply-button" (when element-id (str "__" element-id)))}
            (interop/on-click-fn
              (interop/show-auth-popup :jobpage-apply
                                       [:job
-                                       :params {:id id}
+                                       :params {:slug slug}
                                        :query-params {:apply "true"}])))
     "Easy Apply"]
    [:button.button.button--medium.button--inverted
@@ -157,7 +157,7 @@
            (interop/on-click-fn
              (interop/show-auth-popup :jobpage-apply
                                       [:job
-                                       :params {:id id}])))
+                                       :params {:slug slug}])))
     "See More"]])
 
 (defn candidate-action [job]
@@ -179,7 +179,7 @@
              ^{:key (:id job)}
              [:div.column [job-card job {:public? true}]]))]])
 
-(defn apply-sticky [{:wh.jobs.job.db/keys [title id] :as _job}]
+(defn apply-sticky [{:wh.jobs.job.db/keys [title slug] :as _job}]
   [:div.job__apply-sticky.is-hidden-desktop.is-flex {:id "job__apply-sticky"}
    [:div.job__apply-sticky__logo
     [icon "codi"]]
@@ -189,7 +189,7 @@
            (interop/on-click-fn
              (interop/show-auth-popup :jobpage-apply
                                       [:job
-                                       :params {:id id}])))
+                                       :params {:slug slug}])))
     "Easy Apply"]])
 
 (defn page []

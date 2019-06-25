@@ -92,7 +92,7 @@
               (interop/on-click-fn
                (interop/show-auth-popup :jobpage-apply
                                         [:job
-                                         :params {:id (:id (<sub [::subs/apply-job]))}
+                                         :params {:slug (:slug (<sub [::subs/apply-job]))}
                                          :query-params {:apply "true"}])))
        (if (some? (<sub [:wh.user/applied-jobs]))
          "1-Click Apply"
@@ -102,7 +102,7 @@
               (interop/on-click-fn
                (interop/show-auth-popup :jobpage-apply
                                         [:job
-                                         :params {:id (:id (<sub [::subs/apply-job]))}])))
+                                         :params {:slug (:slug (<sub [::subs/apply-job]))}])))
        "See More"]]
 
      :else
