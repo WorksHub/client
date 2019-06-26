@@ -25,7 +25,11 @@
     min-width: 246px
     max-width: 350px
   .card
-    padding: 7%
+    +desktop
+      padding: 7%
+    +mobile
+      padding: 18px
+
 
 .issues__list__head
   margin-bottom: 6px
@@ -235,11 +239,19 @@
   font-size: 1rem !important
 
 .github-info__link
+  display: flex
+  align-items: center
   +desktop
     height: 15px
   a
     line-height: 15px
     vertical-align: top
+  .icon
+    margin-left: 12px
+
+.github-info__manage
+  +desktop
+    margin-top: 18px
 
 /* These were modelled on _job.sass. FIXME: factor out common patterns to a mixin? */
 

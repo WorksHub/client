@@ -3,6 +3,9 @@
     font-size: 12px
     height: 40px
     padding: 6px 12px
+    +desktop
+      max-width: 267px
+    width: 100%
   p
     font-family: $family-secondary
     font-weight: $font-regular
@@ -30,9 +33,6 @@
       font-size: 14px
   h3 + p
     margin-top: 40px
-  p + a
-    display: block
-    margin-top: 32px
 
 .how-it-works__header
   background-color: white
@@ -140,9 +140,7 @@
       padding-top: 20px
       padding-bottom: 60px
   .button
-    width: 150px
     +mobile
-      width: 100%
       margin-bottom: 12px
 
 .how-it-works__explanation__copy
@@ -315,7 +313,6 @@
   margin: 0 auto
   max-width: 1084px
   .button
-    width: 150px
     &.button--github
       margin-top: 24px
     +mobile
@@ -447,6 +444,9 @@
     margin-top: 30px
     +mobile
       margin-top: 12px
+    .button
+      +desktop
+        width: auto
     h2
       +desktop
         margin-bottom: 36px

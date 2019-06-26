@@ -12528,9 +12528,15 @@ h3 {
     min-width: 246px;
     max-width: 350px; } }
 
-.issues__side .card,
-.issue__side .card {
-  padding: 7%; }
+@media screen and (min-width: 1008px) {
+  .issues__side .card,
+  .issue__side .card {
+    padding: 7%; } }
+
+@media screen and (max-width: 1007px) {
+  .issues__side .card,
+  .issue__side .card {
+    padding: 18px; } }
 
 .issues__list__head {
   margin-bottom: 6px; }
@@ -12758,13 +12764,21 @@ h3 {
   color: #adadad !important;
   font-size: 1rem !important; }
 
-@media screen and (min-width: 1008px) {
-  .github-info__link {
-    height: 15px; } }
+.github-info__link {
+  display: flex;
+  align-items: center; }
+  @media screen and (min-width: 1008px) {
+    .github-info__link {
+      height: 15px; } }
+  .github-info__link a {
+    line-height: 15px;
+    vertical-align: top; }
+  .github-info__link .icon {
+    margin-left: 12px; }
 
-.github-info__link a {
-  line-height: 15px;
-  vertical-align: top; }
+@media screen and (min-width: 1008px) {
+  .github-info__manage {
+    margin-top: 18px; } }
 
 /* These were modelled on _job.sass. FIXME: factor out common patterns to a mixin? */
 .issue__main section {
@@ -14424,7 +14438,11 @@ h3 {
 .how-it-works .button {
   font-size: 12px;
   height: 40px;
-  padding: 6px 12px; }
+  padding: 6px 12px;
+  width: 100%; }
+  @media screen and (min-width: 1008px) {
+    .how-it-works .button {
+      max-width: 267px; } }
 
 .how-it-works p {
   font-family: "Inconsolata", sans-serif;
@@ -14459,10 +14477,6 @@ h3 {
 
 .how-it-works h3 + p {
   margin-top: 40px; }
-
-.how-it-works p + a {
-  display: block;
-  margin-top: 32px; }
 
 .how-it-works__header {
   background-color: white;
@@ -14577,12 +14591,9 @@ h3 {
       left: calc(50% - 75px);
       padding-top: 20px;
       padding-bottom: 60px; } }
-  .how-it-works__explanation__inner .button {
-    width: 150px; }
-    @media screen and (max-width: 1007px) {
-      .how-it-works__explanation__inner .button {
-        width: 100%;
-        margin-bottom: 12px; } }
+  @media screen and (max-width: 1007px) {
+    .how-it-works__explanation__inner .button {
+      margin-bottom: 12px; } }
 
 @media screen and (min-width: 1008px) {
   .how-it-works__explanation__copy {
@@ -14778,14 +14789,12 @@ h3 {
   padding: 0 40px;
   margin: 0 auto;
   max-width: 1084px; }
-  .how-it-works__stats__inner .button {
-    width: 150px; }
-    .how-it-works__stats__inner .button.button--github {
-      margin-top: 24px; }
-    @media screen and (max-width: 1007px) {
-      .how-it-works__stats__inner .button {
-        margin-top: 24px;
-        width: 100%; } }
+  .how-it-works__stats__inner .button.button--github {
+    margin-top: 24px; }
+  @media screen and (max-width: 1007px) {
+    .how-it-works__stats__inner .button {
+      margin-top: 24px;
+      width: 100%; } }
   @media screen and (max-width: 1007px) {
     .how-it-works__stats__inner {
       padding: 0 18px;
@@ -14927,6 +14936,9 @@ h3 {
   @media screen and (max-width: 1007px) {
     .how-it-works__faq__inner .faq__intro {
       margin-top: 12px; } }
+  @media screen and (min-width: 1008px) {
+    .how-it-works__faq__inner .faq__intro .button {
+      width: auto; } }
   .how-it-works__faq__inner .faq__intro h2 {
     line-height: 26px; }
     @media screen and (min-width: 1008px) {

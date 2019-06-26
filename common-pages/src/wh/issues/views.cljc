@@ -58,7 +58,7 @@
         [:div.github-info__link {:key org}
          [:a.github-info__link__org.a--underlined {:href (str "https://www.github.com/" org)} org]
          [icon "github"]])]
-     #?(:cljs [:div
+     #?(:cljs [:div.github-info__manage
                (if (<sub [:user/company-connected-github?]) ;; TODO same as below
                  [link "Manage Issues" :manage-issues
                   :class "manage-issues button level-item"]
