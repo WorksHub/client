@@ -476,54 +476,59 @@
         (fn [this]
           (reset! mobile-view-width (.-offsetWidth (aget (.getElementsByClassName (r/dom-node this) "payment-setup__pay-confirm__select-billing-period") 0))))]
     (r/create-class
-     {:component-did-mount
-      (fn [this]
-        (reset-mobile-view-width! this))
-      :component-did-update
-      (fn [this]
-        (reset-mobile-view-width! this))
-      :reagent-render
-      (fn []
-        (let [{:keys [cost per]}      (<sub [::subs/current-package-data])
-              enabled?                (<sub [::subs/stripe-card-form-enabled?])
-              billing-period          (or (<sub [::subs/billing-period])
-                                          (<sub [::subs/company-billing-period]))
-              existing-billing-period (<sub [::subs/existing-billing-period])
-              coupon                  (<sub [::subs/company-coupon])
-              mobile-view-idx         (idx-of-billing-period billing-period)
-              margin-left             (* mobile-view-idx @mobile-view-width)]
+      {:component-did-mount
+       (fn [this]
+         (reset-mobile-view-width! this))
+       :component-did-update
+       (fn [this]
+         (reset-mobile-view-width! this))
+       :reagent-render
+       (fn []
+         (let [{:keys [cost per]}      (<sub [::subs/current-package-data])
+               enabled?                (<sub [::subs/stripe-card-form-enabled?])
+               billing-period          (or (<sub [::subs/billing-period])
+                                           (<sub [::subs/company-billing-period]))
+               existing-billing-period (<sub [::subs/existing-billing-period])
+               coupon                  (<sub [::subs/company-coupon])
+               mobile-view-idx         (idx-of-billing-period billing-period)
+               margin-left             (* mobile-view-idx @mobile-view-width)]
 
-          [:div
-           [:div.payment-setup__pay-confirm-container.payment-setup__pay-confirm__select-billing-period.columns.is-mobile
-            (for [[idx [k {:keys [title discount]}]] (map-indexed vector data/billing-data)]
-              (let [checked? (= k billing-period)]
-                [:div.column
-                 {:key      k
-                  :class    (rf-helpers/merge-classes
-                             (when checked? "checked")
-                             (when-not enabled? "disabled")
-                             (when (= k existing-billing-period) "existing"))
-                  :style    (when (zero? idx) {:margin-left (* -1 margin-left)})
-                  :on-click #(when enabled? (dispatch [::events/set-billing-period k]))}
-                 [:div.wh-formx.radios
-                  [:input {:id        k
-                           :type      :radio
-                           :checked   checked?
-                           :on-change #()}]
-                  [:div.radio
-                   [:label {:for k}]]]
-                 [:span "Pay " (str/lower-case (str/replace title #" " "-"))]
-                 [:span (int->dollars (cost/calculate-monthly-cost cost discount coupon)) " per " per ]
-                 [:span (when discount (str "save " (* 100 discount) "%"))]]))]
-           [:div.package-selector__slide-buttons.payment-setup__slide-buttons.is-hidden-desktop
-            [:div {:class    (when-not (pos? mobile-view-idx) "hidden")
-                   :on-click #(dispatch [::events/set-billing-period
-                                         (billing-period-by-idx (dec mobile-view-idx))])}
-             [icon "circle"] [icon "arrow-left"]]
-            [:div {:class    (when (>= (inc mobile-view-idx) (count data/billing-data)) "hidden")
-                   :on-click #(dispatch [::events/set-billing-period
-                                         (billing-period-by-idx (inc mobile-view-idx))])}
-             [icon "circle"] [icon "arrow-right"]]]]))})))
+           [:div
+            [:div.payment-setup__pay-confirm-container.payment-setup__pay-confirm__select-billing-period.columns.is-mobile
+             (for [[idx [k {:keys [title discount]}]] (map-indexed vector data/billing-data)]
+               (let [checked? (= k billing-period)]
+                 [:div.column
+                  {:key      k
+                   :class    (rf-helpers/merge-classes
+                               (when checked? "checked")
+                               (when-not enabled? "disabled")
+                               (when (= k existing-billing-period) "existing"))
+                   :style    (when (zero? idx) {:margin-left (* -1 margin-left)})
+                   :on-click #(when enabled? (dispatch [::events/set-billing-period k]))}
+                  [:div.wh-formx.radios
+                   [:input {:id        k
+                            :type      :radio
+                            :checked   checked?
+                            :on-change #()}]
+                   [:div.radio
+                    [:label {:for k}]]]
+                  [:span "Pay " (str/lower-case (str/replace title #" " "-"))]
+                  [:span (int->dollars (cost/calculate-monthly-cost cost discount coupon)) " per " per ]
+                  [:span (when discount (str "save " (* 100 discount) "%"))]]))]
+            [:div.package-selector__slide-buttons.payment-setup__slide-buttons.is-hidden-desktop
+             [:div.package-selector__slide-buttons-inner
+              [:div
+               {:class    (when-not (pos? mobile-view-idx) "hidden")
+                :on-click #(dispatch [::events/set-billing-period
+                                      (billing-period-by-idx (dec mobile-view-idx))])}
+               [icon "circle"]
+               [icon "arrow-left"]]
+              [:div
+               {:class    (when (>= (inc mobile-view-idx) (count data/billing-data)) "hidden")
+                :on-click #(dispatch [::events/set-billing-period
+                                      (billing-period-by-idx (inc mobile-view-idx))])}
+               [icon "circle"]
+               [icon "arrow-right"]]]]]))})))
 
 (defmethod payment-setup-step-content
   :pay-confirm

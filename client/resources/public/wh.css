@@ -12129,8 +12129,10 @@ h3 {
   left: 0;
   right: 0;
   top: 0; }
-  .payment-setup__slide-buttons > div {
+  .payment-setup__slide-buttons .package-selector__slide-buttons-inner {
     top: 50px !important; }
+    .payment-setup__slide-buttons .package-selector__slide-buttons-inner > div {
+      top: 0px; }
 
 .payment-setup__upgrading-calculator ~ h1 {
   color: red; }
@@ -12379,7 +12381,7 @@ h3 {
 
 .package-selector__slide-buttons-inner {
   position: relative; }
-  .package-selector__slide-buttons-inner .hidden {
+  .package-selector__slide-buttons-inner .hidden, .package-selector__slide-buttons-inner.hidden {
     display: none; }
   .package-selector__slide-buttons-inner svg:first-child {
     fill: #ff7c6e;
