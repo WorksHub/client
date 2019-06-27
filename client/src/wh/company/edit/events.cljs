@@ -654,7 +654,8 @@
     (-> db
         (assoc-in [::payment/sub-db ::payment/coupon-loading?] false)
         (assoc-in [::edit/sub-db ::edit/payment :coupon] coupon)
-        (assoc-in [::edit/sub-db ::edit/coupon-apply-success?] true))))
+        (assoc-in [::edit/sub-db ::edit/coupon-apply-success?] true)
+        (util/update-in* [::payment/sub-db ::payment/company] dissoc :id)))) ;; this causes payment screen to re-fetch company
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; THIS WILL MOVE TO COMPANY PROFILE

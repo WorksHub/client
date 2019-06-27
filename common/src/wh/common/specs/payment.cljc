@@ -75,7 +75,8 @@
 (s/def :wh.payment.invoice/amount int?)
 (s/def :wh.payment/invoice (s/keys :req-un [:wh.payment.invoice/date
                                             :wh.payment.invoice/url
-                                            :wh.payment.invoice/amount]))
+                                            :wh.payment.invoice/amount]
+                                   :opt-un [:wh.payment/coupon]))
 (s/def :wh.payment/invoices (s/coll-of :wh.payment/invoice))
 
 (s/def :wh.payment.invoice-estimate/description ::p/non-empty-string)

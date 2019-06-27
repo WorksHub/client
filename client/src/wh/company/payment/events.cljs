@@ -8,7 +8,8 @@
     [wh.graphql.company :refer [company-query job-query update-company-mutation update-job-mutation]]
     [wh.jobs.job.db :as job]
     [wh.pages.core :as pages :refer [on-page-load force-scroll-to-top!]]
-    [wh.user.db :as user])
+    [wh.user.db :as user]
+    [wh.util :as util])
   (:require-macros
     [wh.graphql-macros :refer [defquery]]))
 
@@ -16,8 +17,9 @@
                                 [(path ::payment/sub-db)]))
 
 (def company-fields [:id :name :package :permissions :disabled
+                     [:nextInvoice [:amount [:coupon [:discountAmount :discountPercentage :duration :description]]]]
                      [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]
-                                [:coupon [:discountAmount :discountPercentage]]]]
+                                [:coupon [:discountAmount :discountPercentage :duration :description]]]]
                      [:offer [:recurringFee :placementPercentage :acceptedAt]]
                      [:pendingOffer [:recurringFee :placementPercentage]]])
 
@@ -52,6 +54,8 @@
                          assoc ::payment/company (-> (get-in resp [:data :company])
                                                      (cases/->kebab-case)
                                                      (update :package keyword)
+                                                     (util/update-in* [:payment :coupon :duration] keyword)
+                                                     (util/update-in* [:next-invoice :coupon :duration] keyword)
                                                      (update :permissions #(set (map keyword %)))))]
       (merge {:db new-db}
              (when (and (= :pay-confirm (subs/payment-step db)) (subs/upgrading? new-db))

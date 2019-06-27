@@ -90,6 +90,12 @@
   (fn [sub-db _]
     (get-in sub-db [::payment/company :offer])))
 
+(reg-sub
+  ::next-invoice
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (get-in sub-db [::payment/company :next-invoice])))
+
 (defn company-package
   [db]
   (get-in db [::payment/sub-db ::payment/company :package]))

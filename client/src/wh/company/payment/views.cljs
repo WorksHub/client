@@ -281,16 +281,23 @@
         package (<sub [::subs/package])
         {:keys [cost]} (<sub [::subs/current-package-data])
         {:keys [discount number description] :as bp} (get data/billing-data billing-period)
-        latent-cost (* number (cost/calculate-monthly-cost cost discount (or (<sub [::subs/current-coupon])
-                                                                             (<sub [::subs/company-coupon]))))
+        next-invoice (<sub [::subs/next-invoice])
+        coupon (or (<sub [::subs/current-coupon])
+                   (:coupon next-invoice)
+                   #_(<sub [::subs/company-coupon])) ;; TODO shall we remove this field entirely? Do we even want company coupons here???
+        latent-cost (* number (cost/calculate-monthly-cost cost discount coupon))
         estimate (<sub [::subs/estimate])
         pro-rated-estimates (filter :proration estimate)
         next-charge (some #(when-not (:proration %) %) estimate)
+        first-charge (if (and next-invoice coupon)
+                       ;; TODO explain this
+                       (* number (cost/calculate-monthly-cost cost discount (assoc coupon :duration :forever)))
+                       latent-cost)
         breakdown? (<sub [::subs/breakdown?])]
     [:div.payment-setup__upgrading-calculator
      {:class (rf-helpers/merge-classes
-              (when breakdown? "payment-setup__upgrading-calculator--breakdown")
-              (when-not estimate "payment-setup__upgrading-calculator--loading"))}
+               (when breakdown? "payment-setup__upgrading-calculator--breakdown")
+               (when-not estimate "payment-setup__upgrading-calculator--loading"))}
      (if estimate
        [:div
         (when (and (= :take_off package)
@@ -314,13 +321,21 @@
                                                 (filter :proration)
                                                 (map :amount)
                                                 (reduce +))) {:cents? true}))]])
+        (when coupon
+          [:div.is-flex
+           [:i "An active discount will be applied (" (name (:duration coupon)) "): " (:description coupon)]])
         [:div.is-flex
-         [:i "The next charge of " (int->dollars latent-cost) " will be on "
+         [:i "The next charge will be " (int->dollars first-charge) ", on "
           (if next-charge
             (some-> (get-in next-charge [:period :start]) (period->time))
             (fallback-period-time billing-period))
-          " and recur every "
-          number " " (pluralize number "month" )]]]
+          ". A subsequent charge will "
+          (when (not= latent-cost first-charge)
+            (str "be " (int->dollars latent-cost) " and ")) "recur "
+          (if (= 1 number)
+            "each month"
+            (str "every " number " " (pluralize number "month" )))
+          "."]]]
        [:div.is-loading-spinner])]))
 
 (defn initial-payment-details

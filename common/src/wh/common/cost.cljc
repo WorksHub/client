@@ -42,6 +42,12 @@
 (defn calculate-initial-payment
   [num-months monthly coupon]
   (cond->
-      {:before-coupon (* num-months monthly)}
+    {:before-coupon (* num-months monthly)}
     (= (:duration coupon) :once)
     (assoc :after-coupon (apply-coupon (* num-months monthly) coupon))))
+
+(defn calculate-next-charge-from-invoice
+  [{:keys [amount]} number cost discount coupon]
+  (let [cost-minus-next (* (dec number) (calculate-monthly-cost cost discount coupon))
+        cost-next (calculate-monthly-cost (/ amount 100) discount coupon)]
+    (+ cost-next cost-minus-next)))
