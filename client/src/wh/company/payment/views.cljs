@@ -467,8 +467,8 @@
     [:div
      [:h1 "You have selected the trial package so won’t be charged anything right now!"]
      [:p "Benefits include"]
-     [:p.li [icon "cutout-tick"] "one job published"]
-     [:p.li [icon "cutout-tick"] "this can go live across as many of our hubs as you like"]
+     [:p.li [icon "cutout-tick"] "unlimited published jobs"]
+     [:p.li [icon "cutout-tick"] "these can go live across as many of our hubs as you like"]
      [:p.li [icon "cutout-tick"] "access to job analytics"]
      [:button.button.is-full-width
       {:on-click #(dispatch [::events/confirm-free])

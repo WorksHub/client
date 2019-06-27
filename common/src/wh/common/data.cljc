@@ -429,7 +429,7 @@
           :per nil
           :trial (str free-trial-days "-day trial")
           :button "Start Trial"
-          :live-jobs "One"
+          :live-jobs "Unlimited"
           :img {:src "/images/employers/free.svg"
                 :alt "Free icon"}
           :perks #{"Unlimited hubs"
