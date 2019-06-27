@@ -20,7 +20,7 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries [[:company {:id :$id}
-                    [:id :name :logo
+                    [:id :name :logo :profileEnabled
                      [:videos [:youtubeId :thumbnail :description]]
                      [:images [:url :width :height]]]]]})
 

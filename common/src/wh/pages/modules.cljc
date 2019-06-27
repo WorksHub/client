@@ -13,7 +13,7 @@
    :candidate-edit-private :company
    :candidates :admin
    :companies :admin
-   :company :admin
+   :company :company-profile
    :company-applications :company
    :company-dashboard :company
    :company-issues :issues

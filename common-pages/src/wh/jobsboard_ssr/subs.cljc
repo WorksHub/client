@@ -47,12 +47,6 @@
     (or (:wh.jobs.jobsboard.db/number-of-search-results sub-db) 0)))
 
 (reg-sub
-  ::search-result-count
-  :<- [::sub-db]
-  (fn [sub-db _]
-    (or (:wh.jobs.jobsboard.db/number-of-search-results sub-db) 0)))
-
-(reg-sub
   ::search-label
   (fn [db _]
     (:wh.db/search-label db)))

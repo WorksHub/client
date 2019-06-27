@@ -21,6 +21,12 @@
        (:company result)))))
 
 (reg-sub
+  ::profile-enabled?
+  :<- [::company]
+  (fn [company _]
+    (:profile-enabled company)))
+
+(reg-sub
   ::name
   :<- [::company]
   (fn [company _]

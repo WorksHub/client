@@ -7,6 +7,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.videos :as videos]
     [wh.re-frame.events :refer [dispatch]]
+    [wh.components.not-found :as not-found]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
 
@@ -81,13 +82,17 @@
                                    :on-failure [::events/photo-upload-failure])}])]))]))
 
 (defn page []
-  (let [company-id (<sub [::subs/id])
+  (let [enabled? (<sub [::subs/profile-enabled?])
+        company-id (<sub [::subs/id])
         admin-or-owner? (or (<sub [:user/admin?])
                             (<sub [:user/owner? company-id]))]
-    [:div.main.company-profile
-     [header]
-     [:div.is-flex
-      [:div.company-profile__main.split-content__main
-       [videos]
-       [photos admin-or-owner?]]
-      [:div.company-profile__side.split-content__side]]]))
+    (if enabled?
+      [:div.main.company-profile
+       [header]
+       [:div.is-flex
+        [:div.company-profile__main.split-content__main
+         [videos]
+         [photos admin-or-owner?]]
+        [:div.company-profile__side.split-content__side]]]
+      [:div.main.main--center-content
+       [not-found/not-found]])))

@@ -189,6 +189,9 @@
      {:class    (when (<sub [::subs/profile-enabled-loading?]) "button--loading")
       :on-click #(dispatch [::events/toggle-profile])}
      (str (if (<sub [::subs/profile-enabled]) "disable" "enable"))]]
+   (when (<sub [::subs/profile-enabled])
+     [link "Visit the company profile" :company :id (<sub [::subs/id])
+      :class "a--underlined"])
    [videos/videos {:videos        (<sub [::subs/videos])
                    :can-add-edit? true
                    :error         (<sub [::subs/video-error])
