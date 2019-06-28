@@ -29,8 +29,7 @@
                       :variable/type :String!}
                      {:variable/name "redirect"
                       :variable/type :String}]
-   :venia/queries [[:create_magic_link {:email :$email :redirect :$redirect}
-                    [:created]]]})
+   :venia/queries [[:create_magic_link {:email :$email :redirect :$redirect}]]})
 
 (reg-event-db
   ::set-magic-email

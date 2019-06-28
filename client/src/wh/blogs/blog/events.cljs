@@ -48,8 +48,7 @@
                      :operation/name "upvote_blog"}
    :venia/variables [{:variable/name "id"
                       :variable/type :String!}]
-   :venia/queries   [[:upvote_blog {:id :$id}
-                      [:upvoted]]]})
+   :venia/queries   [[:upvote_blog {:id :$id}]]})
 
 (reg-event-db
   ::initialize-db
@@ -97,7 +96,7 @@
   db/default-interceptors
   (fn [db [result]]
     (let [id (get-in db [:wh.db/page-params :id])]
-      (if (get-in result [:data :upvote_blog :upvoted])
+      (if (get-in result [:data :upvote_blog])
         (update-in db [::blog/sub-db ::blog/upvotes id] inc)
         db))))
 

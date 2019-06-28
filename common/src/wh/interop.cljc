@@ -1,12 +1,23 @@
 (ns wh.interop
   (:require [clojure.string :as str]))
 
+(defn unparse-arg
+  [arg]
+  (cond (string? arg)
+        (str "\"" (str/replace arg "\"" "\\\"") "\"" )
+        (sequential? arg)
+        (str "[" (str/join "," (map unparse-arg arg)) "]")
+        (map? arg)
+        (str "{" (str/join "," (map (fn [[k v]] (str (name k) ":" (unparse-arg v))) arg)) "}")
+        :else
+        arg))
+
 (defn ->jsfn
   "Takes a fn name and n arguments, and returns a string which is a JS fn call format.
   e.g. myFunction(1, 2, \"foo\", \"bar\")"
   [fn-name & args]
   (let [params (->> args
-                    (map (fn [arg] (if (string? arg) (str "\"" (str/replace arg "\"" "\\\"") "\"" ) arg)))
+                    (map unparse-arg)
                     (str/join ",")
                     (apply str))]
     (str fn-name "(" params ")")))
@@ -49,6 +60,11 @@
   [youtube-id]
   #?(:clj (->jsfn "openVideoPlayer" youtube-id)
      :cljs (fn [_] (js/openVideoPlayer youtube-id))))
+
+(defn open-photo-gallery
+  [index images]
+  #?(:clj (->jsfn "openPhotoGallery" index images)
+     :cljs (fn [_] (js/openPhotoGallery index (clj->js (mapv clj->js images))))))
 
 ;;
 

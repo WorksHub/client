@@ -60,6 +60,19 @@ function loadSymbols(filename) {
     r.send();
 };
 
+function loadJavaScript(filename) {
+    var r = new XMLHttpRequest();
+    r.open("GET", "${prefix}/" + filename);
+    r.onreadystatechange = function() {
+        if (r.readyState == 4 && r.status == 200) {
+            var container = document.createElement("script");
+            container.innerHTML = r.responseText;
+            document.body.append(container);
+        }
+    };
+    r.send();
+};
+
 /*--------------------------------------------------------------------------*/
 
 function enableCarousel($carousel) {
@@ -111,4 +124,3 @@ function attachOnScrollEvent(f) {
     }); // desktop
     window.addEventListener('scroll', function(){ f(window)}); // mobile
 }
-

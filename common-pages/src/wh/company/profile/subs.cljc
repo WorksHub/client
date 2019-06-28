@@ -48,7 +48,7 @@
   ::images
   :<- [::company]
   (fn [company _]
-    (:images company)))
+    (map-indexed (fn [idx img] (assoc img :index idx)) (:images company))))
 
 (reg-sub
   ::photo-uploading?

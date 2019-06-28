@@ -21,8 +21,7 @@
                       :variable/type :ID!}
                      {:variable/name "status"
                       :variable/type :String!}]
-   :venia/queries [[:update_user_approval_status {:id :$id :status :$status}
-                    [:id]]]})
+   :venia/queries [[:update_user_approval_status {:id :$id :status :$status}]]})
 
 (defn candidate-id [db]
   (get-in db [::db/page-params :id]))

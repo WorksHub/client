@@ -51,7 +51,7 @@
                      :operation/name "add_welcome_msg"}
    :venia/variables [{:variable/name "welcome_msg"
                       :variable/type :String!}]
-   :venia/queries [[:add_welcome_msg {:welcome_msg :$welcome_msg} [:id]]]})
+   :venia/queries [[:add_welcome_msg {:welcome_msg :$welcome_msg}]]})
 
 (reg-event-fx
   ::add-welcome-msg

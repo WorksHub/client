@@ -104,7 +104,7 @@
                                                :wh.issue.compensation/currency]))
 
 ;; TODO remove this when spec is cljc
-#?(:clj (s/def :wh.issue/contributor :wh.spec.user/user))
+#?(:clj (s/def :wh.issue/contributor :wh/user))
 #?(:clj (s/def :wh.issue/contributors (s/coll-of :wh.issue/contributor)))
 
 (s/def :wh.issue/level #{:beginner :intermediate :advanced})

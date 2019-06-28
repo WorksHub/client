@@ -7,9 +7,10 @@
     [wh.db :as db]
     [wh.graphql-cache :as cache :refer [reg-query]]
     [wh.graphql.company :refer [update-company-mutation-with-fields]]
-    [wh.re-frame.events :refer [reg-event-db reg-event-fx]])
+    [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
+    [clojure.set :as set])
   (#?(:clj :require :cljs :require-macros)
-   [wh.graphql-macros :refer [defquery]]))
+    [wh.graphql-macros :refer [defquery]]))
 
 (def profile-interceptors (into db/default-interceptors
                                 [(path ::profile/sub-db)]))
@@ -36,7 +37,17 @@
 
 #?(:cljs
    (defmethod on-page-load :company [db]
-     [(into [:graphql/query] (initial-query db))]))
+     [(into [:graphql/query] (initial-query db))
+      [::load-photoswipe]]))
+
+#?(:cljs
+   (reg-event-fx
+     ::load-photoswipe
+     db/default-interceptors
+     (fn [_ _]
+       (when-not (exists? js/PhotoSwipe)
+         (js/loadJavaScript "pswp/photoswipe.min.js")
+         (js/loadJavaScript "pswp/photoswipe-ui-default.min.js")))))
 
 #?(:cljs
    (reg-event-fx
