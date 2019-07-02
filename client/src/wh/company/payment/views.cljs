@@ -391,11 +391,11 @@
            [initial-payment-details package billing-period])
          [:hr
           {:class (when upgrading? "fixed")}]
-         (if (and upgrading? has-details? (not @new-card-when-upgrading?))
+         (if (and has-details? (not @new-card-when-upgrading?))
            [:div.payment-setup__payment-details__card.payment-setup__payment-details__card--upgrading
             [:div
              [:p "Your card ending " (<sub [::subs/company-card-digits]) " will be used"]
-             [:p "If you would like to use a different card, " [:a {:on-click #(reset! new-card-when-upgrading? true)} "click here."]]
+             [:p "If you would like to use a different card or apply a discount code, " [:a {:on-click #(reset! new-card-when-upgrading? true)} "click here."]]
              (card-terms package)
              [:div.button-container
               [:button.button.is-full-width

@@ -352,6 +352,13 @@
   (fn [db _]
     (::edit/coupon-apply-success? db)))
 
+(reg-sub
+  ::has-subscription?
+  :<- [::package-kw]
+  (fn [package _]
+    (and (not= package :unselected)
+         (not= package :free))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; THIS WILL MOVE TO COMPANY PROFILE
 

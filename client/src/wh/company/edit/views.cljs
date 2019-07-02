@@ -147,10 +147,10 @@
       [logo-field (field ::edit/logo
                          :loading? (<sub [::subs/logo-uploading?])
                          :on-select-file (upload/handler
-                                          :launch [:wh.company.events/logo-upload]
-                                          :on-upload-start [::events/logo-upload-start]
-                                          :on-success [::events/logo-upload-success]
-                                          :on-failure [::events/logo-upload-failure]))]]
+                                           :launch [:wh.company.events/logo-upload]
+                                           :on-upload-start [::events/logo-upload-start]
+                                           :on-success [::events/logo-upload-success]
+                                           :on-failure [::events/logo-upload-failure]))]]
      [:div.column
       [text-field nil (field ::edit/name
                              :label [:span "* Company name"]
@@ -388,18 +388,19 @@
                         :package package
                         :existing-billing billing-period
                         :breakdown false}]]]
-      [:div.company-edit__payment-details__coupons
-       [:h2 "Discounts"]
-       [:div
-        [:p "Details of any existing discounts will be listed here. You can also apply new discount by entering your code and pressing Apply."]
-        [:p.company-edit__payment-details__coupons__description
-         (if-let [coupon (<sub [::subs/coupon])]
-           [:span "Currently applied: " [:span (str (:description coupon) ", " (name (:duration coupon)))]]
-           [:i "You don't currently have an active discount."])]
-        (when (<sub [::subs/coupon-apply-success?])
-          [:p.company-edit__payment-details__coupons__new-coupon
-           [:i "Success! A new coupon has been applied to your subscription."]])
-        [payment/coupon-field true [::events/apply-coupon]]]]]]))
+      (when (<sub [::subs/has-subscription?])
+        [:div.company-edit__payment-details__coupons
+         [:h2 "Discounts"]
+         [:div
+          [:p "Details of any existing discounts will be listed here. You can also apply new discount by entering your code and pressing Apply."]
+          [:p.company-edit__payment-details__coupons__description
+           (if-let [coupon (<sub [::subs/coupon])]
+             [:span "Currently applied: " [:span (str (:description coupon) ", " (name (:duration coupon)))]]
+             [:i "You don't currently have an active discount."])]
+          (when (<sub [::subs/coupon-apply-success?])
+            [:p.company-edit__payment-details__coupons__new-coupon
+             [:i "Success! A new coupon has been applied to your subscription."]])
+          [payment/coupon-field true [::events/apply-coupon]]]])]]))
 
 (defn cancel-payment
   []
