@@ -408,7 +408,6 @@
 
 ;; removed essential on 24/05/2019
 (def packages #{:unselected :free #_:essential :launch_pad :take_off})
-(def billing-periods #{:one :six :twelve})
 
 (def all-package-perks
   ["Unlimited hubs"
@@ -478,10 +477,18 @@
               :order 4
               :description "For ambitious hiring plans, access a dedicated Talent Manager to speed up your results and act as your recruiting partner."}})
 
+;; added three on 25/06/2019
+(def billing-periods #{:one :three :six #_:twelve})
+(def default-billing-period :three)
+
 (def billing-data
   {:one    {:title "Monthly"
             :number 1
             :description nil}
+   :three    {:title "Quarterly"
+              :number 3
+              :description "billed every three months"
+              :discount 0.05}
    :six    {:title "Six Monthly"
             :number 6
             :description "billed every six months"
@@ -589,7 +596,7 @@
    {:title "How much does Take-Off cost?"
     :answer "Depending on your company size and headcount goals, our Take-Off package is built to be flexible for you. Whether you're hiring two or two hundred, combining a subscription plan with a success fee will help give you access to our direct sourcing team to ensure you hit your hiring goals. Your account manager who you can find in your settings page will discuss the best option with you and create a custom pricing plan."}
    {:title "Are there discounts?"
-    :answer "Yes! If you pay for a year or six months in advance you save 10% or 15% compared to paying per month. You can see what that does to your monthly cost by changing the payment toggle on the top right of this page."}
+    :answer "Yes! If you pay for six or three months in advance you save 10% or 5% compared to paying per month. You can see what that does to your monthly cost by changing the payment toggle on the top right of this page."}
    {:title "How do you vet your candidates?"
     :answer "In order to provide you with a high-quality pipeline, all candidates are approved before being given access to the WorksHub platform. To do this we use a combination of human and artificial curation to review all candidate profiles, both for experience, technical knowledge and their interest in finding a new job. We look at the type of roles the candidate is looking for, the location, skills, salary expectations and match that to the open positions across our platform. Because we focus on creating engaged and active candidates across our hubs, you can expect to see highly relevant candidates applying to your jobs."}
    {:title "GitHub integration, what does that do?"

@@ -91,7 +91,9 @@
        (when show-billing-period-selector?
          [:div.package-selector__billing-period-selector
           [selector billing-period
-           (reduce-kv (fn [a k v] (assoc a k (:title v))) {} billing-data)
+           (reduce-kv (fn [a k v] (if (contains? data/billing-periods k)
+                                    (assoc a k (:title v))
+                                    a)) {} billing-data)
            (partial reset! selected-billing-period)]])
        [:div.package-selector__container
         [:div
@@ -137,7 +139,7 @@
 
 (defn package-selector
   [opts]
-  #?(:clj (let [selected-billing-period (atom :six)
+  #?(:clj (let [selected-billing-period (atom data/default-billing-period)
                 mobile-selected-idx     (atom 0)
                 mobile-view-width       (atom nil)
                 info-message-collapsed? (atom false)]
@@ -145,7 +147,7 @@
                                       mobile-selected-idx
                                       mobile-view-width
                                       info-message-collapsed?) opts))
-     :cljs (let [selected-billing-period (r/atom :six)
+     :cljs (let [selected-billing-period (r/atom data/default-billing-period)
                  mobile-selected-idx     (r/atom 0)
                  mobile-view-width       (atom nil)
                  info-message-collapsed? (r/atom false)

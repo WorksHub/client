@@ -344,12 +344,12 @@
 
 (defmulti billing-paragraph identity)
 (defmethod billing-paragraph :default [_]
-  "You are currently being billed on a monthly basis but you could save more by switching to annual billing \uD83D\uDCB0")
+  "You are currently being billed on a monthly basis but you could save more by switching to six-monthly billing \uD83D\uDCB0")
 (defmethod billing-paragraph :one [_]
-  "You are currently being billed on a monthly basis but you could save more by switching to annual billing \uD83D\uDCB0")
+  "You are currently being billed on a monthly basis but you could save more by switching to six-monthly billing \uD83D\uDCB0")
+(defmethod billing-paragraph :three [_]
+  "You are currently being billed on a quarterly basis but you could save more by switching to six-monthly billing \uD83D\uDCB0")
 (defmethod billing-paragraph :six [_]
-  "You are currently being billed on a six-monthly basis but you could save more by switching to annual billing \uD83D\uDCB0")
-(defmethod billing-paragraph :twelve [_]
   "You're on the most cost-effective billing plan!")
 
 (defn payment-details

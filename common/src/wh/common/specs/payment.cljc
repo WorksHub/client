@@ -4,6 +4,7 @@
         :cljs cljs.spec.alpha) :as s]
     [#?(:clj clojure.spec.gen.alpha
         :cljs cljs.spec.gen.alpha) :as gen]
+    [wh.common.data :as data]
     [wh.common.specs.date]
     [wh.common.specs.primitives :as p]))
 
@@ -13,8 +14,6 @@
        (= 4 (count s))
        (every? #?(:clj #(<= (int \0) (int %) (int \9))
                   :cljs #(<= (.charCodeAt \0 0) (.charCodeAt % 0) (.charCodeAt \9 0))) s)))
-
-(def plan-periods #{:one :six :twelve}) ;; months
 
 (s/def :wh.payment.card/last-4-digits (s/with-gen
                                         four-digits?
@@ -33,7 +32,7 @@
 (s/def :wh.payment/customer-id ::p/non-empty-string)
 (s/def :wh.payment/subscription-id ::p/non-empty-string)
 (s/def :wh.payment/plan-id ::p/non-empty-string)
-(s/def :wh.payment/billing-period plan-periods)
+(s/def :wh.payment/billing-period data/billing-periods)
 (s/def :wh.payment/expires :wh/date)
 (s/def :wh.payment/trial-until pos-int?)
 

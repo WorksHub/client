@@ -59,7 +59,7 @@
   ::billing-period
   :<- [::company]
   (fn [company _]
-    (get-in company [:payment :billing-period] :six)))
+    (get-in company [:payment :billing-period] data/default-billing-period)))
 
 (reg-sub
   ::existing-offer

@@ -58,7 +58,7 @@
 
 (defn page []
   (let [vertical (<sub [:wh/vertical])
-        billing-period (keyword (or (<sub [:wh/query-param "billing-period"]) "six"))]
+        billing-period (keyword (or (<sub [:wh/query-param "billing-period"]) (name data/default-billing-period)))]
     [:div.pricing
      [:div.pricing-content
       [:h2.pricing__subtitle "STRAIGHTFORWARD PRICING"]
@@ -67,12 +67,13 @@
        [:div.pricing__billing-period-selector
         [fake-radio-buttons
          billing-period
-         (map (fn [[k v]] {:id k
-                           :label [:span (:title v)
-                                   (when-let [discount (:discount v)]
-                                     [:small (str "(" (* 100 discount) "% off)")])]
-                           :href (routes/path :pricing :query-params {:billing-period (name k)})})
-              data/billing-data)]]]
+         (->> data/billing-data
+              (filter (fn [[k v]] (contains? data/billing-periods k)))
+              (map (fn [[k v]] {:id k
+                                :label [:span (:title v)
+                                        (when-let [discount (:discount v)]
+                                          [:small (str "(" (* 100 discount) "% off)")])]
+                                :href (routes/path :pricing :query-params {:billing-period (name k)})})))]]]
       [package-selector
        {:signup-button signup-button
         :show-billing-period-selector? false

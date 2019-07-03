@@ -510,7 +510,9 @@
 
            [:div
             [:div.payment-setup__pay-confirm-container.payment-setup__pay-confirm__select-billing-period.columns.is-mobile
-             (for [[idx [k {:keys [title discount]}]] (map-indexed vector data/billing-data)]
+             (for [[idx [k {:keys [title discount]}]] (->> data/billing-data
+                                                           (filter (fn [[k v]] (contains? data/billing-periods k)))
+                                                           (map-indexed vector))]
                (let [checked? (= k billing-period)]
                  [:div.column
                   {:key      k

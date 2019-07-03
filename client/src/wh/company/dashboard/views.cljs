@@ -4,6 +4,7 @@
     [cljs-time.format :as tf]
     [clojure.set :refer [rename-keys]]
     [re-frame.core :refer [dispatch dispatch-sync]]
+    [wh.common.data :as data]
     [wh.common.text :refer [pluralize]]
     [wh.company.dashboard.events :as events]
     [wh.company.dashboard.subs :as subs]
@@ -98,7 +99,8 @@
           " Click the button to see the offer and accelerate your hiring process!"]
          [link [:button.button.your-company__payment-setup__button "View Take-Off offer"]
           :payment-setup :step :pay-confirm :query-params {:package :take_off
-                                                           :billing (or (<sub [::subs/billing-period]):six)}]]
+                                                           :billing (or (<sub [::subs/billing-period])
+                                                                        data/default-billing-period)}]]
         ;;
         (not= :unselected package)
         [:div.your-company__package
