@@ -48,6 +48,10 @@
 (defn has-permission? [db permission]
   (contains? (get-in db [::sub-db ::company :permissions]) permission))
 
+(defn owner?
+  [db id]
+  (= (get-in db [::sub-db ::company-id]) id))
+
 (defn user-name [db]
   (get-in db [::sub-db ::name]))
 

@@ -2,13 +2,17 @@
   (:require
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.pages.core :refer [on-page-load] :as pages])
+    #?(:cljs [wh.user.db :as user])
     [re-frame.core :refer [path]]
     [wh.company.profile.db :as profile]
     [wh.db :as db]
     [wh.graphql-cache :as cache :refer [reg-query]]
-    [wh.graphql.company :refer [update-company-mutation-with-fields]]
+    [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields]]
+    [wh.graphql.tag :as tag-gql]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
-    [clojure.set :as set])
+    [clojure.set :as set]
+    [wh.common.cases :as cases]
+    [wh.util :as util])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
@@ -21,24 +25,49 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries [[:company {:id :$id}
-                    [:id :name :logo :profileEnabled
+                    [:id :name :logo :profileEnabled :descriptionHtml
+                     [:tags [:id :type :label :slug]]
                      [:videos [:youtubeId :thumbnail :description]]
                      [:images [:url :width :height]]]]]})
 
 (reg-query :company fetch-company-query)
 
+(defquery fetch-tags
+  {:venia/operation {:operation/type :query
+                     :operation/name "list_tags"}
+   :venia/variables [{:variable/name "type"
+                      :variable/type :tag_type}]
+   :venia/queries [[:list_tags {:type :$type}
+                    [[:tags [:id :label :type :slug]]]]]})
+
+(reg-query :tags fetch-tags)
+
 (defn initial-query [db]
   [:company {:id (get-in db [:wh.db/page-params :id])}])
 
+(defn tag-query [type-filter]
+  (if type-filter
+    [:tags {:type type-filter}]
+    [:tags {}]))
+
+(defn company-id
+  [db]
+  (get-in db [:wh.db/page-params :id]))
+
 (defn cached-company
   [db]
-  (:company
-   (cache/result db :company {:id (get-in db [:wh.db/page-params :id])})))
+  (->> (cache/result db :company {:id (company-id db)})
+       :company
+       (profile/->company)))
 
 #?(:cljs
-   (defmethod on-page-load :company [db]
-     [(into [:graphql/query] (initial-query db))
-      [::load-photoswipe]]))
+   (defmethod on-page-load :company
+     [db]
+     (list (into [:graphql/query] (initial-query db))
+           [::load-photoswipe]
+           (when (or (user/admin? db)
+                     (user/owner? db (company-id db)))
+             [::fetch-all-tags])))) ;; TODO for now we get all tags and filter client-side
 
 #?(:cljs
    (reg-event-fx
@@ -106,3 +135,105 @@
                              {:id (:id company)
                               :images (:images updated-company)}}
                  :on-failure [:error/set-global "There was an error deleting the photo"]}})))
+
+(defn company-changes->cache
+  [db changes]
+  (cond-> changes
+          (:tag-ids changes)
+          (-> (assoc :tags (->> (cache/result db :tags {})
+                                :list-tags
+                                :tags
+                                (filter #(contains? (set (:tag-ids changes)) (:id %)))
+                                (map profile/->tag)))
+              (dissoc :tag-ids))))
+
+(reg-event-fx
+  ::update-company
+  db/default-interceptors
+  (fn [{db :db} [changes]]
+    (let [company (cached-company db)]
+      {:db (assoc-in db [::profile/sub-db ::profile/updating?] true)
+       :dispatch [:graphql/update-entry :company {:id (:id company)}
+                  :merge {:company (company-changes->cache db changes)}]
+       :graphql {:query (update-company-mutation-with-fields [:id
+                                                              [:tags [:id :label :slug :type]]])
+                 :variables {:update_company
+                             (merge {:id (:id company)}
+                                    (cases/->camel-case changes))}
+                 :on-success [::update-company-success]
+                 :on-failure [::update-company-failure changes company]}})))
+
+(reg-event-fx
+  ::update-company-failure
+  profile-interceptors
+  (fn [{db :db} [changes old-company]]
+    {:db (assoc db ::profile/updating? false)
+     :dispatch-n [[:graphql/update-entry :company {:id (:id old-company)} :overwrite {:company old-company}]
+                  [:error/set-global "There was an error updating the company"
+                   [::update-company changes]]]}))
+
+(reg-event-fx
+  ::update-company-success
+  profile-interceptors
+  (fn [{db :db} [resp]]
+    (let [company (get-in resp [:data :update_company])]
+      {:dispatch [:graphql/update-entry :company {:id (:id company)}
+                  :merge {:company company}]
+       :db (assoc db ::profile/updating? false)})))
+
+(reg-event-db
+  ::set-tag-search
+  profile-interceptors
+  (fn [db [tag-search]]
+    (assoc db ::profile/tag-search tag-search)))
+
+(reg-event-fx
+  ::fetch-all-tags
+  (fn [{db :db} _]
+    {:dispatch (into [:graphql/query] (tag-query nil))}))
+
+(reg-event-db
+  ::reset-selected-tag-ids
+  db/default-interceptors
+  (fn [db [tag-type]]
+    (assoc-in db [::profile/sub-db ::profile/selected-tag-ids]
+              (->> (cached-company db)
+                   :tags
+                   (filter (comp (partial = tag-type) :type))
+                   (map :id)
+                   (set)))))
+
+(reg-event-db
+  ::toggle-selected-tag-id
+  db/default-interceptors
+  (fn [db [id]]
+    (update-in db [::profile/sub-db ::profile/selected-tag-ids] util/toggle id)))
+
+(reg-event-fx
+  ::create-new-tag
+  profile-interceptors
+  (fn [{db :db} [label type]]
+    {:db (assoc db ::profile/creating-tag? true)
+     :graphql {:query tag-gql/create-tag-mutation
+               :variables {:label label :type type}
+               :on-success [::create-new-tag-success]
+               :on-failure [::create-new-tag-failure]}}))
+
+(reg-event-fx
+  ::create-new-tag-success
+  db/default-interceptors
+  (fn [{db :db} [resp]]
+    (let [new-tag (get-in resp [:data :create_tag])
+          all-tags (cache/result db :tags {})]
+      {:db (-> db
+               (assoc-in  [::profile/sub-db ::profile/creating-tag?] false)
+               (assoc-in  [::profile/sub-db ::profile/tag-search] nil)
+               (update-in [::profile/sub-db ::profile/selected-tag-ids] (fnil conj #{}) (:id new-tag)))
+       :dispatch [:graphql/update-entry :tags {}
+                  :overwrite (update-in all-tags [:list-tags :tags] conj new-tag)]})))
+
+(reg-event-fx
+  ::create-new-tag-failure
+  profile-interceptors
+  (fn [{db :db} [resp]]
+    {:db (assoc db ::profile/creating-tag? false)}))

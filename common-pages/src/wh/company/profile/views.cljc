@@ -1,16 +1,21 @@
 (ns wh.company.profile.views
   (:require
     #?(:cljs [wh.common.upload :as upload])
+    #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
+    #?(:cljs [wh.components.forms.views :refer [tags-field]])
+    [clojure.string :as str]
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
     [wh.components.common :refer [wrap-img img]]
     [wh.components.icons :refer [icon]]
-    [wh.components.videos :as videos]
-    [wh.re-frame.events :refer [dispatch]]
     [wh.components.not-found :as not-found]
+    [wh.components.videos :as videos]
+    [wh.interop :as interop]
+    [wh.pages.util :as putil]
+    [wh.re-frame :as r]
+    [wh.re-frame.events :refer [dispatch dispatch-sync]]
     [wh.re-frame.subs :refer [<sub]]
-    [wh.util :as util]
-    [wh.interop :as interop]))
+    [wh.util :as util]))
 
 (defn header []
   [:div.company-profile__header
@@ -22,7 +27,7 @@
   []
   (let [videos (<sub [::subs/videos])]
     [:section.company-profile__videos
-     [:h2.header (str "Videos (" (count videos) ")")]
+     [:h2.title (str "Videos (" (count videos) ")")]
      [:ul.company-profile__videos__list
       [videos/videos {:videos        videos
                       :can-add-edit? false
@@ -87,7 +92,7 @@
                               (partition-all 2)
                               (map-indexed (fn [i si] {:index i :simages si})))]
     [:section.company-profile__photos
-     [:h2.header (str "Photos (" (count images) ")")]
+     [:h2.title (str "Photos (" (count images) ")")]
      (if solo?
        [:div.company-profile__photos__gallery
         (photo first-image open-fn
@@ -121,6 +126,116 @@
                                    :on-failure [::events/photo-upload-failure])}])]))
      (pswp-element)]))
 
+(defn editable
+  [_args _read-body _write-body]
+  (let [editing? (r/atom false)]
+    (fn [{:keys [editable? prompt-before-cancel? on-editing on-cancel on-save]} read-body write-body]
+      [:div.editable
+       (if @editing?
+         write-body
+         read-body)
+       #?(:cljs
+          (when editable?
+            (cond @editing?
+                  [:div.editable--save-cancel-buttons
+                   [:button.button.button--tiny.button--inverted
+                    {:on-click #(when-let [ok? (if prompt-before-cancel?
+                                                 (js/confirm "You have made changes to the company profile. If you cancel, these changes will be lost. Are you sure you want to cancel?")
+                                                 true)]
+                                  (when on-cancel
+                                    (on-cancel))
+                                  (r/next-tick (fn [] (reset! editing? false))))}
+                    "Cancel"]
+                   [:button.button.button--tiny
+                    {:on-click #(do (when on-save
+                                      (on-save))
+                                    (r/next-tick (fn [] (reset! editing? false))))}
+                    "Save"]]
+                  (<sub [::subs/updating?])
+                  [:div.editable--loading]
+                  :else
+                  [:div.editable--edit-button
+                   [icon "edit"
+                    :on-click #(do (reset! editing? true)
+                                   (when on-editing
+                                     (on-editing)))]])))])))
+
+(defn about-us
+  [_admin-or-owner?]
+  (let [new-desc         (r/atom nil)
+        tags-collapsed?  (r/atom true)
+        existing-tag-ids (r/atom #{})
+        editing?         (r/atom false)
+        tag-type         :company]
+    (fn [admin-or-owner?]
+      (let [description      (<sub [::subs/description])
+            selected-tag-ids (<sub [::subs/selected-tag-ids])]
+        [:section
+         {:class (util/merge-classes
+                   "company-profile__section--headed"
+                   (when @editing? "company-profile__section--editing")
+                   "company-profile__about-us")}
+         [:h2.title "About us"]
+         [editable {:editable?             admin-or-owner?
+                    :prompt-before-cancel? (boolean (or @new-desc (not= selected-tag-ids @existing-tag-ids)))
+                    :on-editing            #(do
+                                              (reset! editing? true)
+                                              (reset! existing-tag-ids (<sub [::subs/current-tag-ids tag-type]))
+                                              (dispatch [::events/reset-selected-tag-ids tag-type]))
+                    :on-cancel             #(do (reset! editing? false)
+                                                (reset! new-desc nil))
+                    :on-save
+                    #(do
+                       (reset! editing? false)
+                       (when-let [changes
+                                  (not-empty
+                                    (merge {}
+                                           (when @new-desc
+                                             {:description-html @new-desc})
+                                           (when (not= selected-tag-ids @existing-tag-ids)
+                                             {:tag-ids selected-tag-ids})))]
+                         (dispatch-sync [::events/update-company changes])))}
+          [:div
+           [:h2.subtitle "Who are we?"]
+           [:div.company-profile__about-us__description
+            [putil/html description]]
+           (when-let [tags (not-empty (<sub [::subs/tags tag-type]))]
+             [:div.company-profile__about-us__company-tags
+              (into [:ul.tags.tags--inline]
+                    (map (fn [tag]
+                           [:li {:key (:id tag)}
+                            (:label tag)])
+                         (<sub [::subs/tags tag-type])))])]
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          [:div
+           [:h2.subtitle "Who are we?"]
+           #?(:cljs
+              [rich-text-field {:value       (or @new-desc description "")
+                                :placeholder "Please enter a description..."
+                                :on-change   #(if (= % description)
+                                                (reset! new-desc nil)
+                                                (reset! new-desc %))}])
+           #?(:cljs
+              (let [matching-tags (<sub [::subs/matching-tags {:include-ids selected-tag-ids :size 20 :type tag-type}])
+                    tag-search    (<sub [::subs/tag-search])]
+                [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
+                 [tags-field
+                  tag-search
+                  {:tags               (map #(if (contains? selected-tag-ids (:key %))
+                                               (assoc % :selected true)
+                                               %) matching-tags)
+                   :collapsed?         @tags-collapsed?
+                   :on-change          [::events/set-tag-search]
+                   :label              "Enter 3-5 tags that make your company stand out from your competitors"
+                   :placeholder        "e.g. flexible hours, remote working, startup"
+                   :on-toggle-collapse #(swap! tags-collapsed? not)
+                   :on-add-tag         #(dispatch [::events/create-new-tag % tag-type])
+                   :on-tag-click
+                   #(when-let [id (some (fn [tx] (when (= (:tag tx) %) (:key tx))) matching-tags)]
+                      (dispatch [::events/toggle-selected-tag-id id]))}]
+                 (when (<sub [::subs/creating-tag?])
+                   [:div.company-profile__tag-loader [:div]])]))]]]))))
+
 (defn page []
   (let [enabled? (<sub [::subs/profile-enabled?])
         company-id (<sub [::subs/id])
@@ -129,8 +244,9 @@
     (if enabled?
       [:div.main.company-profile
        [header]
-       [:div.is-flex
+       [:div.split-content
         [:div.company-profile__main.split-content__main
+         [about-us admin-or-owner?]
          [videos]
          [photos admin-or-owner?]]
         [:div.company-profile__side.split-content__side]]]

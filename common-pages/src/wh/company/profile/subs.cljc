@@ -3,7 +3,8 @@
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.company.profile.db :as profile]
     [wh.graphql-cache :as gql-cache]
-    [wh.re-frame.subs :refer [<sub]])
+    [wh.re-frame.subs :refer [<sub]]
+    [clojure.string :as str])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
 
@@ -16,9 +17,15 @@
   ::company
   (fn [_ _]
     (reaction
-     (let [id     (<sub [:wh/page-param :id])
-           result (<sub [:graphql/result :company {:id id}])]
-       (:company result)))))
+      (let [id     (<sub [:wh/page-param :id])
+            result (<sub [:graphql/result :company {:id id}])]
+        (profile/->company (:company result))))))
+
+(reg-sub-raw
+  ::all-tags
+  (fn [_ _]
+    (reaction
+      (map profile/->tag (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])))))
 
 (reg-sub
   ::profile-enabled?
@@ -45,6 +52,20 @@
     (:id company)))
 
 (reg-sub
+  ::description
+  :<- [::company]
+  (fn [company _]
+    (:description-html company)))
+
+(reg-sub
+  ::tags
+  :<- [::company]
+  (fn [company [_ type]]
+    (if type
+      (filter (fn [tag] (= type (:type tag))) (:tags company))
+      (:tags company))))
+
+(reg-sub
   ::images
   :<- [::company]
   (fn [company _]
@@ -67,3 +88,54 @@
   :<- [::sub-db]
   (fn [sub-db _]
     (::profile/video-error sub-db)))
+
+(reg-sub
+  ::updating?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/updating? sub-db)))
+
+(reg-sub
+  ::tag-search
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (or (::profile/tag-search sub-db) "")))
+
+(defn tag->form-tag
+  [{:keys [id label]}]
+  {:tag label
+   :key id
+   :selected false})
+
+(reg-sub-raw
+  ::current-tag-ids
+  (fn [_ [_ type]]
+    (reaction
+      (set (map :id (<sub [::tags type]))))))
+
+(reg-sub
+  ::matching-tags
+  :<- [::all-tags]
+  :<- [::tag-search]
+  (fn [[tags tag-search] [_ {:keys [include-ids size type]}]]
+    (let [tag-search (str/lower-case tag-search)
+          matching-but-not-included (filter (fn [tag] (and (or (str/blank? tag-search)
+                                                               (str/includes? (str/lower-case (:label tag)) tag-search))
+                                                           (= type (:type tag))
+                                                           (not (contains? include-ids (:id tag))))) tags)
+          included-tags (filter (fn [tag] (contains? include-ids (:id tag))) tags)]
+      (->> (concat included-tags matching-but-not-included)
+           (map tag->form-tag)
+           (take (+ (or size 20) (count include-ids)))))))
+
+(reg-sub
+  ::creating-tag?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/creating-tag? sub-db)))
+
+(reg-sub
+  ::selected-tag-ids
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/selected-tag-ids sub-db)))

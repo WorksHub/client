@@ -10,6 +10,13 @@
    (def dispatch re-frame/dispatch))
 
 #?(:clj
+   (defn dispatch-sync
+     "no-op"
+     [_])
+   :cljs
+   (def dispatch-sync re-frame/dispatch-sync))
+
+#?(:clj
    (defn reg-event-db
      "no-op"
      [& _])

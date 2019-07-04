@@ -14,7 +14,7 @@
                    :depends-on [:common]}
  :company-profile {:entries    #{wh.company.profile.core}
                    :output-to  "target/resources/public/js/company-profile.js"
-                   :depends-on [:common]}
+                   :depends-on [:common :venia]}
  :jobs            {:entries    #{wh.jobs.core}
                    :output-to  "target/resources/public/js/jobs.js"
                    :depends-on [:common :user]}

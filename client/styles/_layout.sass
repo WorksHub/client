@@ -61,12 +61,17 @@ h3
   justify-content: center
   align-items: center
 
+.split-content
+  display: flex
+  +mobile
+    flex-direction: column
+
 .split-content__main
   +mobile
     width: 100%
   +desktop
     width: 67%
-    margin-right: 12px
+    margin-right: 20px
     min-width: 505px
 
 .split-content__side

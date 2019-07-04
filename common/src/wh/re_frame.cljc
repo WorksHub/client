@@ -11,3 +11,9 @@
 (def atom
   #?(:cljs r/atom
      :clj clojure.core/atom))
+
+#?(:clj
+   (defn next-tick
+     [f] (f))
+   :cljs
+   (def next-tick r/next-tick))

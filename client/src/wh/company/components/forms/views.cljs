@@ -21,26 +21,29 @@
         ;; no error shown when you immediately focus another element after quill
         (reset! focused false))
       (field-container
-       (merge options
-              {:error (text-field-error value options dirty focused)
-               :label label})
-       [quill {:id qid
-               :theme "snow"
-               :bounds ".main"
-               :modules (clj->js {:toolbar [[{:header  [2, 3, false]}]
-                                            ["bold"] ["italic"] ["underline"] ["link"]
-                                            [{:list "ordered"}] [{:list "bullet"}]
-                                            ["image"] ["video"] ["code"]
-                                            ["clean"]]})
-               :value value
-               :placeholder placeholder
-               :on-change-selection #(if (nil? %) ;; nil == on-blur
-                                       (do (reset! focused false)
-                                           (when on-blur (on-blur %)))
-                                       (do (reset! dirty true)
-                                           (reset! focused true)
-                                           (when on-focus (on-focus %))))
-               :on-change #(do
-                             (when dirty
-                               (reset! dirty true))
-                             (dispatch-sync (conj on-change %)))}]))))
+        (merge options
+               {:error (text-field-error value options dirty focused)
+                :label label})
+        [quill {:id qid
+                :theme "snow"
+                :bounds ".main"
+                :modules (clj->js {:toolbar [[{:header  [2, 3, false]}]
+                                             ["bold"] ["italic"] ["underline"] ["link"]
+                                             [{:list "ordered"}] [{:list "bullet"}]
+                                             ["image"] ["video"] ["code"]
+                                             ["clean"]]})
+                :value value
+                :placeholder placeholder
+                :on-change-selection #(if (nil? %) ;; nil == on-blur
+                                        (do (reset! focused false)
+                                            (when on-blur (on-blur %)))
+                                        (do (reset! dirty true)
+                                            (reset! focused true)
+                                            (when on-focus (on-focus %))))
+                :on-change #(do
+                              (when dirty
+                                (reset! dirty true))
+                              (cond (vector? on-change)
+                                    (dispatch-sync (conj on-change %))
+                                    (fn? on-change)
+                                    (on-change %)))}]))))

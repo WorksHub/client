@@ -13,7 +13,7 @@
     [wh.components.forms.views :refer [text-field error-component]]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue-card level->str level->icon]]
-    [wh.components.job :refer [highlight html]]
+    [wh.components.job :refer [highlight]]
     [wh.components.overlay.views :refer [popup-wrapper]]
     [wh.components.stats.views :refer [stats-item]]
     [wh.events :as common-events]
@@ -355,13 +355,13 @@
       [:h2 (when description "Role overview")]
       [content ::subs/job-description-expanded?
        ::events/expand-job-description
-       [html description]]])
+       [putil/html description]]])
    (when-let [company-description (<sub [::subs/company-description])]
      [:div.job__company-description
       [:h2 "About the company"]
       [content ::subs/company-description-expanded?
        ::events/expand-company-description
-       [html (<sub [::subs/company-description])]]])
+       [putil/html (<sub [::subs/company-description])]]])
    (let [description  (<sub [::subs/location-description])
          position     (<sub [::subs/location-position])
          address      (<sub [::subs/location-address-parts])
@@ -374,7 +374,7 @@
          ::events/expand-location-description
          [:div
           (when description?
-            [html description])
+            [putil/html description])
           (when address?
             [:div.is-flex
              (when (and (<sub [:google/maps-loaded?]) position (<sub [::subs/show-address?]))

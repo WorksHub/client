@@ -120,12 +120,6 @@
                 (for [item benefits]
                   [:li {:key item} item]))]]])]))
 
-(defn html [html-content]
-  (if html-content
-    [:div.html-content {:dangerouslySetInnerHTML {:__html html-content}}]
-    [:div.html-content.html-content--skeleton
-     (reduce (fn [a s] (conj a [:div {:style {:width (str (+ 80 (rand-int 20)) "%")}}])) [:div] (range (+ 4 (rand-int 6))))]))
-
 (defn information [{:wh.jobs.job.db/keys [description-html location-description] :as _job}]
   #?(:clj
      [:section.job__information

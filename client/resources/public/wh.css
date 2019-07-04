@@ -5854,7 +5854,7 @@ a.navbar-item,
 
 .wh-formx .tag-add {
   position: absolute;
-  top: 18px;
+  top: 0px;
   right: 0;
   height: 45px;
   padding: 10px;
@@ -5864,6 +5864,9 @@ a.navbar-item,
   .wh-formx .tag-add .icon {
     height: 14px;
     width: 14px; }
+
+.wh-formx .tag-add--with-label {
+  top: 18px; }
 
 .wh-formx .logo {
   color: #6E7F89;
@@ -9132,6 +9135,12 @@ h3 {
   justify-content: center;
   align-items: center; }
 
+.split-content {
+  display: flex; }
+  @media screen and (max-width: 1007px) {
+    .split-content {
+      flex-direction: column; } }
+
 @media screen and (max-width: 1007px) {
   .split-content__main {
     width: 100%; } }
@@ -9139,7 +9148,7 @@ h3 {
 @media screen and (min-width: 1008px) {
   .split-content__main {
     width: 67%;
-    margin-right: 12px;
+    margin-right: 20px;
     min-width: 505px; } }
 
 .split-content__side section {
@@ -15429,9 +15438,26 @@ h3 {
     display: block; }
 
 .company-profile__main > section {
-  margin: 18px 0px 0px 0px; }
-  .company-profile__main > section h2.header {
-    margin: 8px 0px 18px 0px; }
+  margin: 20px 0px 0px 0px;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transition: box-shadow 0.3s ease-in-out; }
+  .company-profile__main > section .title {
+    color: #6E7F89;
+    margin: 0px 0px 18px 0px; }
+  .company-profile__main > section.company-profile__section--headed {
+    background-color: white;
+    padding: 18px; }
+    .company-profile__main > section.company-profile__section--headed .title {
+      color: #ff7c6e;
+      border-left: 6px solid #ff7c6e;
+      padding-left: 12px;
+      font-weight: 600;
+      margin-left: -18px;
+      letter-spacing: normal; }
+    .company-profile__main > section.company-profile__section--headed .subtitle {
+      font-weight: 500; }
+  .company-profile__main > section.company-profile__section--editing {
+    box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important; }
 
 .company-profile__side {
   margin-top: 18px;
@@ -15517,6 +15543,75 @@ h3 {
       .company-profile__photos__gallery .company-profile__photos__splitter .company-profile__photos__splitter__inner > .company-profile__photos__img {
         width: 134px;
         height: 103px; }
+
+.company-profile__about-us .quill {
+  max-width: unset; }
+
+.company-profile__about-us__description {
+  font-style: italic;
+  font-size: 18px;
+  color: #6E7F89; }
+
+.company-profile__about-us__company-tags {
+  margin-top: 24px; }
+
+.company-profile__editing-tags {
+  position: relative; }
+
+.company-profile__tag-loader {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7); }
+  .company-profile__tag-loader > div {
+    animation: spinAround 500ms infinite linear;
+    border: 2px solid #ff7c6e;
+    border-radius: 290486px;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    content: "";
+    display: block;
+    height: 1em;
+    width: 1em;
+    position: absolute !important;
+    width: 32px;
+    height: 32px;
+    top: 25%;
+    left: calc(50% - 16px); }
+
+.editable {
+  position: relative; }
+
+.editable--edit-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer; }
+
+.editable--save-cancel-buttons {
+  display: flex;
+  justify-content: flex-end; }
+  .editable--save-cancel-buttons .button {
+    padding: 0px 16px; }
+  .editable--save-cancel-buttons .button + .button {
+    margin-left: 6px; }
+
+.editable--loading {
+  animation: spinAround 500ms infinite linear;
+  border: 2px solid #ff7c6e;
+  border-radius: 290486px;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  content: "";
+  display: block;
+  height: 1em;
+  width: 1em;
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 20px; }
 
 .auth-popup__content {
   display: none; }

@@ -317,7 +317,7 @@
     (fn [text {:keys [collapsed? error label placeholder tags dirty? read-only empty-label id
                       on-change on-tag-click on-toggle-collapse on-blur on-focus on-add-tag] :as opts}]
       (when (and (not (nil? dirty?))
-              (boolean? dirty?))
+                 (boolean? dirty?))
         (reset! dirty dirty?))
       (let [has-tags? (pos? (count tags))
             error (and @dirty (not @focused) error)
@@ -329,9 +329,9 @@
             on-toggle-collapse (or on-toggle-collapse #(swap! -collapsed? not))]
         [:div
          {:class (merge-classes
-                  "tags-container"
-                  (when collapsed? "tags-container--collapsed")
-                  (when (string? error) "tags-container--errored"))}
+                   "tags-container"
+                   (when collapsed? "tags-container--collapsed")
+                   (when (string? error) "tags-container--errored"))}
          [text-field
           text
           (merge
@@ -354,7 +354,8 @@
                :error error}))]
          (when (and on-add-tag (not (str/blank? text)))
            [:div.tag-add
-            {:on-click #(on-add-tag text)}
+            {:on-click #(on-add-tag text)
+             :class (when label "tag-add--with-label")}
             [icon "plus"]])
          [:div.tags-selection
           (when has-tags?
