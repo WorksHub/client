@@ -46,7 +46,7 @@
                    [:candidate_applications [:jobId :state]]
                    {:query/data [:jobs {:filter_type "recommended" :entity_type "user" :page_size 3} (conj jobs/job-card-fields :score)]
                     :query/alias :jobs}
-                   {:query/data [:jobs {:filter_type "applied" :page_size 24} jobs/job-card-fields]
+                   {:query/data [:jobs {:filter_type "applied" :page_size 24} (remove #(= % :userScore) jobs/job-card-fields )]
                     :query/alias :appliedJobs}]})
 
 (reg-event-fx
