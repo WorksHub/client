@@ -5,7 +5,7 @@
 
 (defn icon [name & {:keys [tooltip] :as opts}]
   (let [svg [:svg (-> (dissoc opts :title :tooltip)
-                      (assoc :class (util/merge-classes (:class opts) "icon")))
+                      (assoc :class (util/merge-classes (:class opts) "icon" (str "icon--" name))))
              [:use {#?(:clj :xlink:href) #?(:cljs :xlink-href) (str "#" name)}]]]
     (if tooltip
       [:div.icon__container

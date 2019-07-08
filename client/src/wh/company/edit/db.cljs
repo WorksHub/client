@@ -46,7 +46,6 @@
 (s/def ::profile-enabled-loading? boolean?)
 
 (s/def ::profile-enabled-error (s/nilable string?))
-(s/def ::video-error (s/nilable keyword?))
 
 (def fields
   {::name             {:initial "", :validate ::p/non-empty-string :event? false}
@@ -110,8 +109,7 @@
      ::cancel-plan-loading?           false
      ::disable-loading?               false
      ::profile-enabled-loading?       false
-     ::profile-enabled-error          nil
-     ::video-error                    nil}
+     ::profile-enabled-error          nil}
     db
     {::coupon-apply-success?          false}))
 

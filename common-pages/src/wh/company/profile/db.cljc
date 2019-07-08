@@ -5,6 +5,7 @@
 (s/def ::photo-uploading? boolean?)
 (s/def ::updating? boolean?)
 (s/def ::creating-tag? boolean?)
+(s/def ::video-error (s/nilable keyword?))
 
 (s/def ::tag-search (s/map-of :wh.tag/type string?))
 (s/def ::selected-tag-ids (s/map-of :wh.tag/type (s/coll-of :wh.tag/id)))

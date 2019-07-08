@@ -19,6 +19,44 @@
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
 
+(defn edit-button
+  [editing-atom on-editing]
+  [:div.editable--edit-button
+   [icon "edit"
+    :on-click #(do (reset! editing-atom true)
+                   (when on-editing
+                     (on-editing)))]])
+
+(defn editable
+  [_args _read-body _write-body]
+  (let [editing? (r/atom false)]
+    (fn [{:keys [editable? prompt-before-cancel? on-editing on-cancel on-save]} read-body write-body]
+      [:div.editable
+       (if @editing?
+         (or write-body read-body)
+         read-body)
+       #?(:cljs
+          (when editable?
+            (cond @editing?
+                  [:div.editable--save-cancel-buttons
+                   [:button.button.button--tiny.button--inverted
+                    {:on-click #(when-let [ok? (if prompt-before-cancel?
+                                                 (js/confirm "You have made changes to the company profile. If you cancel, these changes will be lost. Are you sure you want to cancel?")
+                                                 true)]
+                                  (when on-cancel
+                                    (on-cancel))
+                                  (r/next-tick (fn [] (reset! editing? false))))}
+                    "Cancel"]
+                   [:button.button.button--tiny
+                    {:on-click #(do (when on-save
+                                      (on-save))
+                                    (r/next-tick (fn [] (reset! editing? false))))}
+                    "Save"]]
+                  (<sub [::subs/updating?])
+                  [:div.editable--loading]
+                  :else
+                  [edit-button editing? on-editing])))])))
+
 (defn header []
   [:div.company-profile__header
    [:div.company-profile__logo
@@ -26,17 +64,25 @@
    [:div.company-profile__name (<sub [::subs/name])]])
 
 (defn videos
-  []
-  (let [videos (<sub [::subs/videos])]
-    [:section.company-profile__videos
-     [:h2.title (str "Videos (" (count videos) ")")]
-     [:ul.company-profile__videos__list
-      [videos/videos {:videos        videos
-                      :can-add-edit? false
-                      :error         (<sub [::subs/video-error])
-                      :delete-event  [::events/delete-video]
-                      :add-event     [::events/add-video]
-                      :update-event  [::events/update-video]}]]]))
+  [_admin-or-owner?]
+  (let [editing? (r/atom false)]
+    (fn [admin-or-owner?]
+      (let [videos (<sub [::subs/videos])]
+        [:section.company-profile__video
+         [:h2.title (str "Videos (" (count videos) ")")]
+         [:ul.company-profile__videos__list
+          [videos/videos {:videos        videos
+                          :can-add-edit? (and admin-or-owner? @editing?)
+                          :error         (<sub [::subs/video-error])
+                          :delete-event  [::events/delete-video]
+                          :add-event     [::events/add-video]
+                          :update-event  [::events/update-video]}]]
+         (when admin-or-owner?
+           (if (not @editing?)
+             [edit-button editing? nil]
+             [:div.editable--edit-button
+              [icon "close"
+               :on-click #(reset! editing? false)]]))]))))
 
 (defn pswp-element
   []
@@ -128,39 +174,6 @@
                                    :on-failure [::events/photo-upload-failure])}])]))
      (pswp-element)]))
 
-(defn editable
-  [_args _read-body _write-body]
-  (let [editing? (r/atom false)]
-    (fn [{:keys [editable? prompt-before-cancel? on-editing on-cancel on-save]} read-body write-body]
-      [:div.editable
-       (if @editing?
-         write-body
-         read-body)
-       #?(:cljs
-          (when editable?
-            (cond @editing?
-                  [:div.editable--save-cancel-buttons
-                   [:button.button.button--tiny.button--inverted
-                    {:on-click #(when-let [ok? (if prompt-before-cancel?
-                                                 (js/confirm "You have made changes to the company profile. If you cancel, these changes will be lost. Are you sure you want to cancel?")
-                                                 true)]
-                                  (when on-cancel
-                                    (on-cancel))
-                                  (r/next-tick (fn [] (reset! editing? false))))}
-                    "Cancel"]
-                   [:button.button.button--tiny
-                    {:on-click #(do (when on-save
-                                      (on-save))
-                                    (r/next-tick (fn [] (reset! editing? false))))}
-                    "Save"]]
-                  (<sub [::subs/updating?])
-                  [:div.editable--loading]
-                  :else
-                  [:div.editable--edit-button
-                   [icon "edit"
-                    :on-click #(do (reset! editing? true)
-                                   (when on-editing
-                                     (on-editing)))]])))])))
 (defn profile-tag-field
   [_tag-type _selected-tag-ids _args]
   (let [tags-collapsed?  (r/atom true)]
@@ -346,7 +359,7 @@
         [:div.company-profile__main.split-content__main
          [about-us admin-or-owner?]
          [technology admin-or-owner?]
-         [videos]
+         [videos admin-or-owner?]
          [photos admin-or-owner?]]
         [:div.company-profile__side.split-content__side]]]
       [:div.main.main--center-content

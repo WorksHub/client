@@ -22,7 +22,6 @@
     [wh.components.icons :refer [icon]]
     [wh.components.overlay.views :refer [popup-wrapper]]
     [wh.components.selector :refer [selector]]
-    [wh.components.videos :as videos]
     [wh.db :as db]
     [wh.routes :as routes]
     [wh.subs :refer [<sub error-sub-key]]
@@ -191,13 +190,7 @@
      (str (if (<sub [::subs/profile-enabled]) "disable" "enable"))]]
    (when (<sub [::subs/profile-enabled])
      [link "Visit the company profile" :company :id (<sub [::subs/id])
-      :class "a--underlined"])
-   [videos/videos {:videos        (<sub [::subs/videos])
-                   :can-add-edit? true
-                   :error         (<sub [::subs/video-error])
-                   :delete-event  [::events/delete-video]
-                   :add-event     [::events/add-video]
-                   :update-event  [::events/update-video]}]])
+      :class "a--underlined"])])
 
 (defn users
   [admin?]

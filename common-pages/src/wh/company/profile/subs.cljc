@@ -165,3 +165,9 @@
   :<- [::company]
   (fn [company [_ sub-key]]
     (get-in company [:dev-setup sub-key])))
+
+(reg-sub
+  ::video-error
+  :<- [::sub-db]
+  (fn [db _]
+    (::profile/video-error db)))

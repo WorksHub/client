@@ -1,5 +1,6 @@
 (ns wh.components.videos
   (:require
+    #?(:cljs [wh.components.forms.views :refer [text-field]])
     [clojure.string :as str]
     [wh.components.icons :refer [icon]]
     [wh.components.video-player :as vp]
@@ -95,17 +96,22 @@
          (doall (for [v videos]
                   ^{:key (:youtube-id v)}
                   [video v (select-keys args [:update-event :delete-event :can-add-edit?])])))
-       (when can-add-edit?
-         ;; TODO re-do this
-         [:div.videos__add-video
-          [:form.wh-formx.wh-formx__layout
-           {:on-submit #(do
-                          (when-not (str/blank? @current-video-url)
-                            (dispatch (conj add-event @current-video-url)))
-                          (reset! current-video-url nil)
-                          (.preventDefault %))}
-           [:input {:type "text"
-                    :value @current-video-url
-                    :on-change #(reset! current-video-url (.. % -target -value))}]
-           (when error
-             [:span.error error])]])])))
+       #?(:cljs
+          (when can-add-edit?
+            ;; TODO re-do this
+            [:div.videos__add-video
+             [:form.wh-formx.wh-formx__layout
+              {:on-submit #(do
+                             (when-not (str/blank? @current-video-url)
+                               (dispatch (conj add-event @current-video-url)))
+                             (reset! current-video-url nil)
+                             (.preventDefault %))}
+              [:div.is-flex
+               [text-field nil
+                {:type "text"
+                 :value @current-video-url
+                 :placeholder "Add a YouTub URL here"
+                 :on-change #(reset! current-video-url %)}]
+               [:button.button.button--inverted.button--small {} "Add"]]
+              (when error
+                [:span.error error])]]))])))

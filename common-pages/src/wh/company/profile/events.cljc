@@ -3,6 +3,8 @@
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.pages.core :refer [on-page-load] :as pages])
     #?(:cljs [wh.user.db :as user])
+    #?(:cljs [goog.Uri :as uri])
+    #?(:cljs [ajax.json :as ajax-json])
     [re-frame.core :refer [path]]
     [wh.company.profile.db :as profile]
     [wh.db :as db]
@@ -12,7 +14,8 @@
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
     [clojure.set :as set]
     [wh.common.cases :as cases]
-    [wh.util :as util])
+    [wh.util :as util]
+    [clojure.string :as str])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
@@ -136,6 +139,128 @@
                              {:id (:id company)
                               :images (:images updated-company)}}
                  :on-failure [:error/set-global "There was an error deleting the photo"]}})))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#?(:cljs
+   (defn yt-url->yt-id
+     "Caters for YT urls of different flavors:
+    - \"https://www.youtube.com/watch?v=Pe0jFDPHkzo\"
+    - \"https://youtu.be/Pe0jFDPHkzo\"
+    - \"https://www.youtube.com/v/Pe0jFDPHkzo\""
+     [yt-url]
+     (let [uri (uri/parse yt-url)]
+       (when (or (str/ends-with? (.getDomain uri) "youtube.com")
+                 (str/ends-with? (.getDomain uri) "youtu.be"))
+         (or (.getParameterValue uri "v")
+             (subs (.getPath uri) (inc (.lastIndexOf (.getPath uri) "/"))))))))
+
+(defn remove-video
+  [videos youtube-id]
+  (filter #(not= youtube-id (:youtube-id %)) videos))
+
+#?(:cljs
+   (reg-event-fx
+     ::fetch-video-title
+     profile-interceptors
+     (fn [{db :db} [youtube-id]]
+       {:http-xhrio
+        {:method           :get
+         :uri              (str "https://noembed.com/embed?url=https://www.youtube.com/watch?v=" youtube-id)
+         :response-format  (ajax-json/json-response-format {:keywords? true})
+         :timeout          10000
+         :on-success       [::fetch-video-title-success youtube-id]
+         :on-failure       [::fetch-video-title-failure youtube-id]}})))
+
+(reg-event-fx
+  ::fetch-video-title-success
+  db/default-interceptors
+  (fn [{db :db} [yt-id resp]]
+    (let [company (cached-company db)]
+      {:dispatch [::update-video (some (fn [v] (when (= yt-id (:youtube-id v))
+                                                 (-> v
+                                                     (assoc :description (:title resp))
+                                                     (dissoc :loading?)))) (:videos company))]})))
+
+(reg-event-fx
+  ::fetch-video-title-failure
+  db/default-interceptors
+  (fn [{db :db} [yt-id _resp]]
+    (let [company (cached-company db)
+          updated-videos (map (fn [v] (if (= yt-id (:youtube-id v))
+                                        (dissoc v :loading?)
+                                        v)) (:videos company))]
+      {:dispatch-n [[:graphql/update-entry :company {:id (:id company)}
+                     :merge {:company {:videos updated-videos}}]
+                    [:error/set-global "This video title could not be fetched"]]})))
+
+#?(:cljs
+   (reg-event-fx
+     ::add-video
+     db/default-interceptors
+     (fn [{db :db} [yt-url]]
+       (if-let [yt-id (yt-url->yt-id yt-url)]
+         (let [company (cached-company db)
+               existing-videos (:videos company)]
+           (if (some #(= yt-id (:youtube-id %)) existing-videos)
+             {:db db} ;; id already exists so do nothing
+             (let [thumbnail (str "https://img.youtube.com/vi/" yt-id "/hqdefault.jpg")
+                   videos (conj existing-videos {:youtube-id yt-id
+                                                 :thumbnail thumbnail})
+                   local-videos (conj existing-videos {:youtube-id yt-id
+                                                       :thumbnail thumbnail
+                                                       :loading? true})]
+               {:graphql {:query (update-company-mutation-with-fields [[:videos [:youtubeId :thumbnail :description]]])
+                          :variables {:update_company
+                                      {:id (:id company)
+                                       :videos (cases/->camel-case videos)}}
+                          :on-failure [::add-video-failure yt-id]}
+                :dispatch-n [[:graphql/update-entry :company {:id (:id company)}
+                              :merge {:company {:videos local-videos}}]
+                             [::fetch-video-title yt-id]]})))
+         {:db (assoc db ::profile/video-error :invalid-url)}))))
+
+(reg-event-fx
+  ::add-video-failure
+  db/default-interceptors
+  (fn [{db :db} [yt-id _resp]]
+    (let [company (cached-company db)
+          videos(remove-video (:videos company) yt-id)]
+      {:dispatch-n [[:graphql/update-entry :company {:id (:id company)}
+                     :merge {:company {:videos videos}}]
+                    [:error/set-global "This video could not be added"]]})))
+
+(reg-event-fx
+  ::update-video
+  db/default-interceptors
+  (fn [{db :db} [{:keys [youtube-id thumbnail description] :as video}]]
+    (let [company (cached-company db)
+          videos (map (fn [v] (if (= (:youtube-id v) youtube-id)
+                                video
+                                v)) (:videos company))]
+      {:dispatch [:graphql/update-entry :company {:id (:id company)}
+                  :merge {:company {:videos videos}}]
+       :graphql {:query (update-company-mutation-with-fields [[:videos [:youtubeId :thumbnail :description]]])
+                 :variables {:update_company
+                             {:id (:id company)
+                              :videos (cases/->camel-case videos)}}
+                 :on-failure [:error/set-global "There was an error updating your video"]}})))
+
+(reg-event-fx
+  ::delete-video
+  db/default-interceptors
+  (fn [{db :db} [youtube-id]]
+    (let [company (cached-company db)
+          videos (remove-video (:videos company) youtube-id)]
+      {:dispatch [:graphql/update-entry :company {:id (:id company)}
+                  :merge {:company {:videos videos}}]
+       :graphql {:query (update-company-mutation-with-fields [[:videos [:youtubeId :thumbnail :description]]])
+                 :variables {:update_company
+                             {:id (:id company)
+                              :videos (cases/->camel-case videos)}}
+                 :on-failure [:error/set-global "There was an error deleting your video"]}})))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn company-changes->cache
   [db changes]
