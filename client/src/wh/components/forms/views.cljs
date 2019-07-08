@@ -83,11 +83,12 @@
    (merge (when-not (= type :textarea) {:type type})
           {:value value :placeholder placeholder}
           (when on-change
-            {:on-change #(do
+            {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) %)]
                            (when dirty
                              (reset! dirty true))
-                           (dispatch-sync (conj on-change
-                                                ((if (= type :number) target-numeric-value target-value) %))))})
+                           (if (fn? on-change)
+                             (on-change new-value)
+                             (dispatch-sync (conj on-change new-value))))})
           (when on-scroll
             {:on-scroll #(dispatch on-scroll)})
           (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press])

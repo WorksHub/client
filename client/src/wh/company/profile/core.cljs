@@ -23,4 +23,9 @@
 
 (db/redefine-app-db-spec!)
 
+;; load extra symbols
+(let [symbol-filename "symbols/company_profile.svg"]
+  (when-not (.getElementById js/document (str "load-icons-" symbol-filename))
+    (js/loadSymbols symbol-filename)))
+
 (loader/set-loaded! :company-profile)

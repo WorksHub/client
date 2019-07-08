@@ -66,6 +66,14 @@
       (:tags company))))
 
 (reg-sub
+  ::tags--inverted
+  :<- [::company]
+  (fn [company [_ type]]
+    (if type
+      (filter (fn [tag] (not= type (:type tag))) (:tags company))
+      (:tags company))))
+
+(reg-sub
   ::images
   :<- [::company]
   (fn [company _]
@@ -98,8 +106,14 @@
 (reg-sub
   ::tag-search
   :<- [::sub-db]
+  (fn [sub-db [_ tag-type]]
+    (or (get-in sub-db [::profile/tag-search tag-type]) "")))
+
+(reg-sub
+  ::tag-search--map
+  :<- [::sub-db]
   (fn [sub-db _]
-    (or (::profile/tag-search sub-db) "")))
+    (::profile/tag-search sub-db)))
 
 (defn tag->form-tag
   [{:keys [id label]}]
@@ -113,12 +127,18 @@
     (reaction
       (set (map :id (<sub [::tags type]))))))
 
+(reg-sub-raw
+  ::current-tag-ids--inverted
+  (fn [_ [_ type]]
+    (reaction
+      (set (map :id (<sub [::tags--inverted type]))))))
+
 (reg-sub
   ::matching-tags
   :<- [::all-tags]
-  :<- [::tag-search]
+  :<- [::tag-search--map]
   (fn [[tags tag-search] [_ {:keys [include-ids size type]}]]
-    (let [tag-search (str/lower-case tag-search)
+    (let [tag-search (str/lower-case (or (get tag-search type) ""))
           matching-but-not-included (filter (fn [tag] (and (or (str/blank? tag-search)
                                                                (str/includes? (str/lower-case (:label tag)) tag-search))
                                                            (= type (:type tag))
@@ -137,5 +157,11 @@
 (reg-sub
   ::selected-tag-ids
   :<- [::sub-db]
-  (fn [sub-db _]
-    (::profile/selected-tag-ids sub-db)))
+  (fn [sub-db [_ tag-type]]
+    (set (get-in sub-db [::profile/selected-tag-ids tag-type]))))
+
+(reg-sub
+  ::development-setup
+  :<- [::company]
+  (fn [company [_ sub-key]]
+    (get-in company [:dev-setup sub-key])))

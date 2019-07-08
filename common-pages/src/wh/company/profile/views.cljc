@@ -2,8 +2,10 @@
   (:require
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
-    #?(:cljs [wh.components.forms.views :refer [tags-field]])
+    #?(:cljs [wh.components.forms.views :refer [tags-field text-field]])
     [clojure.string :as str]
+    [wh.common.data.company-profile :as data]
+    [wh.common.text :as text]
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
     [wh.components.common :refer [wrap-img img]]
@@ -159,17 +161,49 @@
                     :on-click #(do (reset! editing? true)
                                    (when on-editing
                                      (on-editing)))]])))])))
+(defn profile-tag-field
+  [_tag-type _selected-tag-ids _args]
+  (let [tags-collapsed?  (r/atom true)]
+    (fn [tag-type selected-tag-ids {:keys [label placeholder]}]
+      #?(:cljs
+         (let [matching-tags (<sub [::subs/matching-tags {:include-ids selected-tag-ids :size 20 :type tag-type}])
+               tag-search    (<sub [::subs/tag-search tag-type])]
+           [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
+            {:on-submit #(.preventDefault %)}
+            [tags-field
+             tag-search
+             {:tags               (map #(if (contains? selected-tag-ids (:key %))
+                                          (assoc % :selected true)
+                                          %) matching-tags)
+              :collapsed?         @tags-collapsed?
+              :on-change          [::events/set-tag-search tag-type]
+              :label              label
+              :placeholder        placeholder
+              :on-toggle-collapse #(swap! tags-collapsed? not)
+              :on-add-tag         #(dispatch [::events/create-new-tag % tag-type])
+              :on-tag-click
+              #(when-let [id (some (fn [tx] (when (= (:tag tx) %) (:key tx))) matching-tags)]
+                 (dispatch [::events/toggle-selected-tag-id tag-type id]))}]
+            (when (<sub [::subs/creating-tag?])
+              [:div.company-profile__tag-loader [:div]])])))))
+
+(defn tag-list
+  [tag-type]
+  (into [:ul.tags.tags--inline]
+        (map (fn [tag]
+               [:li {:key (:id tag)}
+                (:label tag)])
+             (<sub [::subs/tags tag-type]))))
 
 (defn about-us
   [_admin-or-owner?]
   (let [new-desc         (r/atom nil)
-        tags-collapsed?  (r/atom true)
         existing-tag-ids (r/atom #{})
         editing?         (r/atom false)
         tag-type         :company]
     (fn [admin-or-owner?]
       (let [description      (<sub [::subs/description])
-            selected-tag-ids (<sub [::subs/selected-tag-ids])]
+            selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
         [:section
          {:class (util/merge-classes
                    "company-profile__section--headed"
@@ -193,7 +227,7 @@
                                            (when @new-desc
                                              {:description-html @new-desc})
                                            (when (not= selected-tag-ids @existing-tag-ids)
-                                             {:tag-ids selected-tag-ids})))]
+                                             {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
                          (dispatch-sync [::events/update-company changes])))}
           [:div
            [:h2.subtitle "Who are we?"]
@@ -201,11 +235,7 @@
             [putil/html description]]
            (when-let [tags (not-empty (<sub [::subs/tags tag-type]))]
              [:div.company-profile__about-us__company-tags
-              (into [:ul.tags.tags--inline]
-                    (map (fn [tag]
-                           [:li {:key (:id tag)}
-                            (:label tag)])
-                         (<sub [::subs/tags tag-type])))])]
+              [tag-list tag-type]])]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
            [:h2.subtitle "Who are we?"]
@@ -215,26 +245,94 @@
                                 :on-change   #(if (= % description)
                                                 (reset! new-desc nil)
                                                 (reset! new-desc %))}])
+           [profile-tag-field tag-type selected-tag-ids
+            {:label              "Enter 3-5 tags that make your company stand out from your competitors"
+             :placeholder        "e.g. flexible hours, remote working, startup"}]]]]))))
+
+(defn development-setup
+  [k editing-atom]
+  (let [data (get data/dev-setup-data k)
+        current-text (<sub [::subs/development-setup k])]
+    (when (or editing-atom
+              (text/not-blank current-text)
+              (and editing-atom (text/not-blank (get @editing-atom k))))
+      [:div
+       {:class (util/merge-classes
+                 "company-profile__development-setup"
+                 (str "company-profile__development-setup--" k)
+                 (when editing-atom "company-profile__development-setup--editing"))}
+       (when-not editing-atom
+         [:div.company-profile__development-setup__icon
+          [icon (:icon data)]])
+       [:div.company-profile__development-setup__info
+        [:h3 (:title data)]
+        (if editing-atom
+          [:div.company-profile__development-setup__info__text-field
            #?(:cljs
-              (let [matching-tags (<sub [::subs/matching-tags {:include-ids selected-tag-ids :size 20 :type tag-type}])
-                    tag-search    (<sub [::subs/tag-search])]
-                [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
-                 [tags-field
-                  tag-search
-                  {:tags               (map #(if (contains? selected-tag-ids (:key %))
-                                               (assoc % :selected true)
-                                               %) matching-tags)
-                   :collapsed?         @tags-collapsed?
-                   :on-change          [::events/set-tag-search]
-                   :label              "Enter 3-5 tags that make your company stand out from your competitors"
-                   :placeholder        "e.g. flexible hours, remote working, startup"
-                   :on-toggle-collapse #(swap! tags-collapsed? not)
-                   :on-add-tag         #(dispatch [::events/create-new-tag % tag-type])
-                   :on-tag-click
-                   #(when-let [id (some (fn [tx] (when (= (:tag tx) %) (:key tx))) matching-tags)]
-                      (dispatch [::events/toggle-selected-tag-id id]))}]
-                 (when (<sub [::subs/creating-tag?])
-                   [:div.company-profile__tag-loader [:div]])]))]]]))))
+              [text-field (or (get @editing-atom k)
+                              current-text
+                              "")
+               {:type :textarea
+                :placeholder (:placeholder data)
+                :on-change (fn [v] (swap! editing-atom assoc k v))}])]
+          [:p current-text])]])))
+
+(defn technology
+  [_admin-or-owner?]
+  (let [tags-collapsed?  (r/atom true)
+        existing-tag-ids (r/atom #{})
+        editing?         (r/atom false)
+        new-dev-setup    (r/atom {})
+        tag-type         :tech]
+    (fn [admin-or-owner?]
+      (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
+        [:section
+         {:class (util/merge-classes
+                   "company-profile__section--headed"
+                   (when @editing? "company-profile__section--editing")
+                   "company-profile__technology")}
+         [:h2.title "Technology"]
+         [editable {:editable?             admin-or-owner?
+                    :prompt-before-cancel? false
+                    :on-editing            #(do
+                                              (reset! editing? true)
+                                              (reset! existing-tag-ids (<sub [::subs/current-tag-ids tag-type]))
+                                              (dispatch [::events/reset-selected-tag-ids tag-type]))
+                    :on-cancel             #(do (reset! editing? false))
+                    :on-save
+                    #(do
+                       (reset! editing? false)
+                       (when-let [changes
+                                  (not-empty
+                                    (merge {}
+                                           (when (not= selected-tag-ids @existing-tag-ids)
+                                             {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})
+                                           (when (not-empty @new-dev-setup)
+                                             {:dev-setup (merge (:dev-setup (<sub [::subs/company]))  @new-dev-setup)})))]
+                         (dispatch-sync [::events/update-company changes])))}
+          [:div
+           [:h2.subtitle "Tech stack"]
+           (when-let [tags (not-empty (<sub [::subs/tags tag-type]))]
+             [:div.company-profile__technology__tech-tags
+              [tag-list tag-type]])
+
+           [:h2.subtitle "Development setup"]
+           (doall
+             (for [k (keys data/dev-setup-data)]
+               ^{:key k}
+               [development-setup k nil]))]
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          [:div
+           [:h2.subtitle "Tech stack"]
+           [profile-tag-field tag-type selected-tag-ids
+            {:label              "Enter 3-5 tags that describe your company's technology"
+             :placeholder        "e.g. haskell, scala, clojure, javascript etc"}]
+           [:h2.subtitle "Development setup"]
+           [:form.wh-formx.wh-formx__layout.company-profile__editing-dev-setup
+            (doall
+              (for [k (keys data/dev-setup-data)]
+                ^{:key k}
+                [development-setup k new-dev-setup]))]]]]))))
 
 (defn page []
   (let [enabled? (<sub [::subs/profile-enabled?])
@@ -247,6 +345,7 @@
        [:div.split-content
         [:div.company-profile__main.split-content__main
          [about-us admin-or-owner?]
+         [technology admin-or-owner?]
          [videos]
          [photos admin-or-owner?]]
         [:div.company-profile__side.split-content__side]]]

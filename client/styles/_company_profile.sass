@@ -18,6 +18,8 @@
         letter-spacing: normal
       .subtitle
         font-weight: $font-medium
+      .subtitle:not(first-of-type)
+        margin-top: 18px
     &.company-profile__section--editing
       box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important
 
@@ -96,7 +98,7 @@
         width: 134px
         height: 103px
 
-.company-profile__about-us
+.company-profile__main
   .quill
     max-width: unset
 .company-profile__about-us__description
@@ -146,3 +148,33 @@
   right: 0
   width: 20px
   height: 20px
+
+.company-profile__development-setup
+  display: flex
+  p
+    line-height: 24px
+    font-size: 14px
+    color: $grey-darker
+  h3
+    margin-top: 12px
+  & + &
+    margin-top: 18px
+
+.company-profile__development-setup--editing
+  h3
+    margin-top: 0
+
+.company-profile__development-setup__info
+  width: 100%
+
+.company-profile__development-setup__info__text-field
+  .textarea
+    font-size: 12px
+    resize: none
+
+.company-profile__development-setup__icon
+  width: 80px
+  flex-shrink: 0
+  .icon
+    width: 45px
+    height: 45px

@@ -15456,6 +15456,8 @@ h3 {
       letter-spacing: normal; }
     .company-profile__main > section.company-profile__section--headed .subtitle {
       font-weight: 500; }
+    .company-profile__main > section.company-profile__section--headed .subtitle:not(first-of-type) {
+      margin-top: 18px; }
   .company-profile__main > section.company-profile__section--editing {
     box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important; }
 
@@ -15544,7 +15546,7 @@ h3 {
         width: 134px;
         height: 103px; }
 
-.company-profile__about-us .quill {
+.company-profile__main .quill {
   max-width: unset; }
 
 .company-profile__about-us__description {
@@ -15612,6 +15614,34 @@ h3 {
   right: 0;
   width: 20px;
   height: 20px; }
+
+.company-profile__development-setup {
+  display: flex; }
+  .company-profile__development-setup p {
+    line-height: 24px;
+    font-size: 14px;
+    color: #434E55; }
+  .company-profile__development-setup h3 {
+    margin-top: 12px; }
+  .company-profile__development-setup + .company-profile__development-setup {
+    margin-top: 18px; }
+
+.company-profile__development-setup--editing h3 {
+  margin-top: 0; }
+
+.company-profile__development-setup__info {
+  width: 100%; }
+
+.company-profile__development-setup__info__text-field .textarea {
+  font-size: 12px;
+  resize: none; }
+
+.company-profile__development-setup__icon {
+  width: 80px;
+  flex-shrink: 0; }
+  .company-profile__development-setup__icon .icon {
+    width: 45px;
+    height: 45px; }
 
 .auth-popup__content {
   display: none; }

@@ -26,6 +26,7 @@
                       :variable/type :ID!}]
    :venia/queries [[:company {:id :$id}
                     [:id :name :logo :profileEnabled :descriptionHtml
+                     [:devSetup [:hardware :software :sourcecontrol :ci :infrastructure]]
                      [:tags [:id :type :label :slug]]
                      [:videos [:youtubeId :thumbnail :description]]
                      [:images [:url :width :height]]]]]})
@@ -184,8 +185,8 @@
 (reg-event-db
   ::set-tag-search
   profile-interceptors
-  (fn [db [tag-search]]
-    (assoc db ::profile/tag-search tag-search)))
+  (fn [db [tag-type tag-search]]
+    (assoc-in db [::profile/tag-search tag-type] tag-search)))
 
 (reg-event-fx
   ::fetch-all-tags
@@ -196,7 +197,7 @@
   ::reset-selected-tag-ids
   db/default-interceptors
   (fn [db [tag-type]]
-    (assoc-in db [::profile/sub-db ::profile/selected-tag-ids]
+    (assoc-in db [::profile/sub-db ::profile/selected-tag-ids tag-type]
               (->> (cached-company db)
                    :tags
                    (filter (comp (partial = tag-type) :type))
@@ -206,34 +207,36 @@
 (reg-event-db
   ::toggle-selected-tag-id
   db/default-interceptors
-  (fn [db [id]]
-    (update-in db [::profile/sub-db ::profile/selected-tag-ids] util/toggle id)))
+  (fn [db [tag-type id]]
+    (update-in db [::profile/sub-db ::profile/selected-tag-ids tag-type] (fnil util/toggle #{}) id)))
 
 (reg-event-fx
   ::create-new-tag
   profile-interceptors
-  (fn [{db :db} [label type]]
+  (fn [{db :db} [label tag-type]]
     {:db (assoc db ::profile/creating-tag? true)
      :graphql {:query tag-gql/create-tag-mutation
-               :variables {:label label :type type}
-               :on-success [::create-new-tag-success]
+               :variables {:label label :type tag-type}
+               :on-success [::create-new-tag-success tag-type]
                :on-failure [::create-new-tag-failure]}}))
 
 (reg-event-fx
   ::create-new-tag-success
   db/default-interceptors
-  (fn [{db :db} [resp]]
+  (fn [{db :db} [tag-type resp]]
     (let [new-tag (get-in resp [:data :create_tag])
           all-tags (cache/result db :tags {})]
-      {:db (-> db
-               (assoc-in  [::profile/sub-db ::profile/creating-tag?] false)
-               (assoc-in  [::profile/sub-db ::profile/tag-search] nil)
-               (update-in [::profile/sub-db ::profile/selected-tag-ids] (fnil conj #{}) (:id new-tag)))
-       :dispatch [:graphql/update-entry :tags {}
-                  :overwrite (update-in all-tags [:list-tags :tags] conj new-tag)]})))
+      (merge {:db (-> db
+                      (assoc-in  [::profile/sub-db ::profile/creating-tag?] false)
+                      (assoc-in  [::profile/sub-db ::profile/tag-search tag-type] nil)
+                      (update-in [::profile/sub-db ::profile/selected-tag-ids tag-type] (fnil conj #{}) (:id new-tag)))}
+             (when (not (some #(= (:id new-tag) (:id %)) (get-in all-tags [:list-tags :tags]))) ;; check the tag isn't an existing tag
+               {:dispatch [:graphql/update-entry :tags {}
+                           :overwrite (update-in all-tags [:list-tags :tags] conj new-tag)]})))))
 
 (reg-event-fx
   ::create-new-tag-failure
   profile-interceptors
   (fn [{db :db} [resp]]
-    {:db (assoc db ::profile/creating-tag? false)}))
+    {:db (assoc db ::profile/creating-tag? false)
+     :dispatch [:error/set-global "There was an error adding the tag"]}))
