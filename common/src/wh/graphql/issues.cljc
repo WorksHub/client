@@ -48,13 +48,13 @@
 
 (defquery update-issue-mutation
   {:venia/operation {:operation/type :mutation
-                     :operation/name "updateIssue"}
+                     :operation/name "issue"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}
                      {:variable/name "level"
                       :variable/type :level}
                      {:variable/name "status"
-                      :variable/type :status}
+                      :variable/type :issue_status}
                      {:variable/name "compensation"
                       :variable/type :compensation_input}]
    :venia/queries   [[:issue {:id           :$id
