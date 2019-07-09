@@ -17,7 +17,7 @@
   ::total-pages
   (fn [db _]
     (let [result (graphql/result db :blogs (learn/params db))
-          count (or (get-in result [:blogs :total-count]) learn/page-size)]
+          count (or (get-in result [:blogs :pagination :total]) learn/page-size)]
       #?(:clj (int (Math/ceil (/ count learn/page-size)))
          :cljs (js/Math.ceil (/ count learn/page-size))))))
 
@@ -55,7 +55,7 @@
     (let [params (learn/params db)]
       (if (= (graphql/state db :blogs params) :executing)
         (repeat learn/page-size {})
-        (get-in (graphql/result db :blogs params) [:blogs :results])))))
+        (get-in (graphql/result db :blogs params) [:blogs :blogs])))))
 
 (reg-sub
   ::pagination

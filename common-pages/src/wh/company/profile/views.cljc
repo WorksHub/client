@@ -8,6 +8,7 @@
     [wh.common.text :as text]
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
+    [wh.components.cards :refer [blog-card]]
     [wh.components.common :refer [wrap-img img]]
     [wh.components.icons :refer [icon]]
     [wh.components.not-found :as not-found]
@@ -83,6 +84,17 @@
              [:div.editable--edit-button
               [icon "close"
                :on-click #(reset! editing? false)]]))]))))
+
+(defn blogs
+  []
+  (when-let [blogs (<sub [::subs/blogs])]
+    [:section.company-profile__blogs
+     [:h2.title (str "Tech Blogs")]
+     [:ul
+      (into [:div.columns]
+            (for [blog blogs]
+              [:div.column.is-half
+               [blog-card blog]]))]]))
 
 (defn pswp-element
   []
@@ -360,6 +372,7 @@
          [about-us admin-or-owner?]
          [technology admin-or-owner?]
          [videos admin-or-owner?]
+         [blogs]
          [photos admin-or-owner?]]
         [:div.company-profile__side.split-content__side]]]
       [:div.main.main--center-content

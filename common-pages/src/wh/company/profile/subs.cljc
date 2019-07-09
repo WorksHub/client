@@ -92,6 +92,12 @@
     (:videos company)))
 
 (reg-sub
+  ::blogs
+  :<- [::company]
+  (fn [company _]
+    (-> company :blogs :blogs)))
+
+(reg-sub
   ::video-error
   :<- [::sub-db]
   (fn [sub-db _]

@@ -22,8 +22,9 @@
                       :variable/type :String}
                      {:variable/name "vertical"
                       :variable/type :vertical}]
-   :venia/queries [[:blogs {:tag :$tag :page_size 24 :page_number :$page_number :vertical :$vertical}
-                    [:totalCount [:results [:id :title :feature :tags :author :formattedCreationDate :readingTime :creator :upvoteCount :published]]]]]})
+   :venia/queries   [[:blogs {:tag :$tag :page_size 24 :page_number :$page_number :vertical :$vertical}
+                      [[:pagination [:total]]
+                       [:blogs [:id :title :feature :tags :author :formattedCreationDate :readingTime :creator :upvoteCount :published]]]]]})
 
 (reg-query :blogs blogs-query)
 

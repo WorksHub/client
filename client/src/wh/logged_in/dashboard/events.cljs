@@ -41,7 +41,7 @@
   {:venia/queries [[:blogs {:filter_type "recommended"
                             :page_size 3
                             :page_number 1}
-                    [[:results [:id :title :feature :tags :author :formattedCreationDate :score :readingTime :published :upvoteCount]]]]
+                    [[:blogs [:id :title :feature :tags :author :formattedCreationDate :score :readingTime :published :upvoteCount]]]]
                    [:me [:welcomeMsgs]]
                    [:candidate_applications [:jobId :state]]
                    {:query/data [:jobs {:filter_type "recommended" :entity_type "user" :page_size 3} (conj jobs/job-card-fields :score)]
@@ -70,7 +70,7 @@
   (fn [{db :db} [{{:keys [blogs jobs appliedJobs me candidate_applications]} :data}]]
     {:db       (-> db
                    (update ::dashboard/sub-db merge
-                           {::dashboard/blogs (mapv cases/->kebab-case (:results blogs))
+                           {::dashboard/blogs (mapv cases/->kebab-case (:blogs blogs))
                             ::dashboard/jobs (mapv job/translate-job jobs)
                             ::dashboard/applied-jobs (add-application-state (mapv job/translate-job appliedJobs)
                                                                             (mapv cases/->kebab-case candidate_applications))})

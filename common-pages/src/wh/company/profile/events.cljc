@@ -31,6 +31,11 @@
                     [:id :name :logo :profileEnabled :descriptionHtml
                      [:devSetup [:hardware :software :sourcecontrol :ci :infrastructure]]
                      [:tags [:id :type :label :slug]]
+                     [:blogs {:pageSize 2}
+                      [[:blogs
+                        [:id :title :feature :author :formattedCreationDate :readingTime
+                         :upvoteCount :tags :creator :published]]
+                       [:pagination [:total]]]]
                      [:videos [:youtubeId :thumbnail :description]]
                      [:images [:url :width :height]]]]]})
 

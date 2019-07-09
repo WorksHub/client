@@ -53,7 +53,7 @@
                          [:salary [:currency :min :timePeriod]]
                          [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
                          [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]
-                   [:blogs {:filter_type "mine"} [[:results [:id :title :published :upvoteCount]]]]]})
+                   [:blogs {:filter_type "mine"} [[:blogs [:id :title :published :upvoteCount]]]]]})
 
 (reg-event-fx
   ::fetch-initial-data
@@ -86,7 +86,7 @@
                              {::dashboard/sub-db dashboard/default-db}
                              db
                              {::user/sub-db    user
-                              ::profile/sub-db (merge (profile-data user (:results blogs))
+                              ::profile/sub-db (merge (profile-data user (:blogs blogs))
                                                       (profile/->sub-db user))})
        :dispatch [::pages/unset-loader]})))
 
