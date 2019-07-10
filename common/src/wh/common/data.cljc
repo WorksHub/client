@@ -627,8 +627,7 @@
       :class   "explore"
       :items   [[:learn                      "resources"  "Learn"]
                 [:jobsboard                  "jobs-board" "Job Board"]
-                [:issues                     "pr"         "Open Source Issues"]
-                [nil                         "trends"     "Trends" [:span.slender " (coming soon)"]]]}]
+                [:issues                     "pr"         "Open Source Issues"]]}]
     "admin"
     [{:section "Admin"
       :class   "admin"
