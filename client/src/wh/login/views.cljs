@@ -46,7 +46,7 @@
       [:button.button.button--medium
        {:on-click #(dispatch [::events/send-magic-email])
         :disabled (<sub [::subs/invalid-magic-email?])}
-       "Send"]]]))
+       "Send Login Link"]]]))
 
 (defn login-buttons
   [{:keys [on-github on-magic]
@@ -60,7 +60,7 @@
    [:div.container
     [link [:button.button.button--large.button--light
            [icon "magic-link" :class "button__icon button__icon--light"]
-           "Send Magic Link"] :login :step :email]]
+           "Login with email"] :login :step :email]]
    [:div.container
     [link "Create Account" :register :step :email :class "a--underlined"]]
    [:img.sparkle {:src "/images/sparkle.svg"
