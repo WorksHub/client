@@ -1,0 +1,146 @@
+.tags-container
+    position: relative
+    .field
+      .field__error
+        display: none
+    .field
+      margin: 0
+      input
+        border-bottom: 0
+    &:hover, &:focus-within
+      .tags-selection
+        @include hover-focus-state
+        @include splitter-hr(14px)
+        padding: 1px 0 0 0
+      input
+        @include hover-focus-state
+.tags-selection
+  color: $steel-gray
+  border: 1px solid $steel-gray
+  border-top: 0
+  background-color: white
+  position: relative
+  padding: 1px
+  @include splitter-hr(15px)
+.tags-roll
+  width: 28px
+  height: 28px
+  fill: $steel-gray
+  float: right
+  cursor: pointer
+  transition: transform 0.3s ease
+  transform: rotate(180deg)
+  margin-top: 10px
+.tags
+  padding: 10px 0px 5px 10px
+  overflow: hidden
+  li
+    cursor: pointer
+    opacity: 0.4
+    transition: opacity 200ms linear
+    &.tag--selected
+      opacity: 1
+      padding-right: 28px
+.tags--selected
+  padding-bottom: 0
+.tags--unselected
+  padding-top: 0
+  display: block
+.tags-container--collapsed
+  .tags-roll
+    transform: none
+  .tags
+    transform: none
+  .tags--unselected
+    display: none
+  .tags--no-selected
+    max-height: 46px
+.tags-loading, .tags-empty
+  text-indent: 15px
+  line-height: 51px
+.tags-container--errored
+  color: $dark-red
+  .tags-selection
+    color: $dark-red
+    border-color: $dark-red
+  hr
+    background-color: $dark-red
+.tag
+  position: relative
+  .icon
+    position: absolute
+    top: 8px
+    right: 4px
+    fill: $red
+    width: 14px
+    height: 14px
+.tag-add
+  position: absolute
+  top: 0px
+  right: 0
+  height: 45px
+  padding: 10px
+  cursor: pointer
+  &:hover
+    opacity: 0.7
+  .icon
+    height: 14px
+    width: 14px
+.tag-add--with-label
+  top: 18px
+
+.edit-tags
+  section
+    margin-bottom: 0px
+  .text-field-control
+     width: 100%
+     background: unset
+  form
+    .field
+      min-width: 200px
+
+.edit-tags__list
+  background-color: white
+  li + li
+    border-top: 1px solid rgba(0,0,0,0.1)
+
+.edit-tags__tag-row
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  & > div
+    display: flex
+    align-items: center
+  ul
+    width: 40%
+  li
+    opacity: 1
+
+.edit-tags__tag-row__info
+  display: flex
+  .field
+    margin: 0
+  .field__error
+    display: none
+  strong
+    margin-right: 8px
+  div + div
+    margin-left: 16px
+
+.edit-tags__tag-row__info__icons
+  display: flex
+  align-items: center
+  .icon
+    cursor: pointer
+    fill: $greyish
+
+.edit-tags__tag-row__actions
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  flex: 1
+  width: 100px
+  .icon
+    fill: $greyish
+    margin-right: 6px
+    cursor: pointer

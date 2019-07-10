@@ -9,14 +9,16 @@
             [wh.admin.create-candidate.views :as create-candidate]
             [wh.admin.create-offer.events :as create-offer-events]
             [wh.admin.create-offer.views :as create-offer]
+            [wh.admin.tags.views :as tags]
             [wh.db :as db]
             [wh.user.db :as user]))
 
 (def page-mapping
-  {:candidates {:page candidates/page, :can-access? user/admin?}
-   :create-candidate {:page create-candidate/page, :can-access? user/admin?}
-   :companies {:page companies/page, :can-access? user/admin?}
-   :create-company-offer {:page create-offer/page, :can-access? user/admin?}})
+  {:candidates           {:page candidates/page, :can-access? user/admin?}
+   :create-candidate     {:page create-candidate/page, :can-access? user/admin?}
+   :companies            {:page companies/page, :can-access? user/admin?}
+   :create-company-offer {:page create-offer/page, :can-access? user/admin?}
+   :tags-edit            {:page tags/page, :can-access? user/admin?}})
 
 (reg-event-db
   ::initialize-page-mapping

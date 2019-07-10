@@ -140,6 +140,7 @@
                   ["sitemap.xml" :sitemapxml]
                   ["rss.xml" :rss]
                   ["data" :data-page]
+                  ["tags" {"/edit" :tags-edit}]
                   ["oauth/" {"greenhouse" :oauth-greenhouse
                              "greenhouse-callback" :oauth-greenhouse-callback
                              "slack" :oauth-slack

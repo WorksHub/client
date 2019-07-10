@@ -24,3 +24,8 @@
                                        :wh.tag/slug
                                        :wh.tag.db/type]))
 (s/def :wh/tags (s/coll-of :wh/tag))
+
+(s/def :wh/update-tag (s/keys :req-un [:wh.tag/id]
+                              :opt-un [:wh.tag/label
+                                       :wh.tag/slug
+                                       :wh.tag/type]))

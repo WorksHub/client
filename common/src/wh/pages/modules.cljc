@@ -55,7 +55,8 @@
    :terms-of-service :company
    :register :register
    :liked :logged-in
-   :recommended :logged-in})
+   :recommended :logged-in
+   :tags-edit :admin})
 
 (defn module-for
   [handler user-type]

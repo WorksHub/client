@@ -63,6 +63,7 @@
                 :recommended
                 :register
                 :register-company
+                :tags-edit
                 :terms-of-service})
 
 ;; A mapping of routes to page components. The values can
