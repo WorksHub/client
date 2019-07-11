@@ -215,15 +215,17 @@
   (let [options (sanitize-select-options options)]
     [:div.select
      (into
-      [:select
-       (merge {:value (str (util/index-of (mapv :id options) value))}
-              (when on-change
-                {:on-change #(dispatch-sync
-                              (conj on-change (:id (nth options (js/parseInt (target-value %))))))})
-              (when disabled {:disabled true}))]
-      (map-indexed (fn [i {:keys [label]}]
-                     [:option {:value (str i)} label])
-                   options))]))
+       [:select
+        (merge {:value (str (util/index-of (mapv :id options) value))}
+               (when on-change
+                 {:on-change #(let [id (:id (nth options (js/parseInt (target-value %))))]
+                                (if (fn? on-change)
+                                  (on-change id)
+                                  (dispatch-sync (conj on-change id))))})
+               (when disabled {:disabled true}))]
+       (map-indexed (fn [i {:keys [label]}]
+                      [:option {:value (str i)} label])
+                    options))]))
 
 (defn select-field
   "A dropdown form field.
@@ -243,17 +245,24 @@
   (let [options (sanitize-select-options options)
         name- (or name- (name (gensym)))]
     (into
-     [:div.radios]
-     (for [[i {:keys [id label]}] (map-indexed vector options)
-           :let [el-id (str name- i)]]
-       [:span.radio-item
-        [:input {:id el-id
-                   :type :radio
-                   :checked (= value id)
-                   :on-change #(when on-change
-                                 (dispatch (conj on-change id)))}]
-        [:label {:for el-id}]
-        label]))))
+      [:div.radios]
+      (for [[i {:keys [id label]}] (map-indexed vector options)
+            :let [el-id (str name- i)]]
+        [:span.radio-item
+         [:input {:id el-id
+                  :type :radio
+                  :checked (= value id)
+                  :on-change #(when on-change
+                                (if (fn? on-change)
+                                  (on-change id)
+                                  (dispatch (conj on-change id))))}]
+         [:label {:for el-id}]
+         label]))))
+
+(defn radio-field
+  "A selection of radio controls + label"
+  [value args]
+  (field-container args (radio-buttons value args)))
 
 (defn multiple-buttons
   "An input widget allowing to pick zero or more of the given options.

@@ -1,5 +1,5 @@
 (ns wh.common.fx.google-maps
-  (:require [re-frame.core :refer [reg-fx dispatch]]))
+  (:require [re-frame.core :refer [reg-fx reg-event-fx reg-event-db dispatch]]))
 
 (defn autocomplete-service []
   (js/google.maps.places.AutocompleteService.))
@@ -72,3 +72,13 @@
       (js/document.body.appendChild script))))
 
 (reg-fx :google/load-maps load-maps)
+
+(reg-event-fx
+  :google/load-maps
+  (fn [{db :db} _]
+    {:google/load-maps #(dispatch [:google/maps-loaded])}))
+
+(reg-event-db
+  :google/maps-loaded
+  (fn [db _]
+    (assoc db :google/maps-loaded? true)))

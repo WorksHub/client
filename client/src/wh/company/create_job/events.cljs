@@ -8,7 +8,7 @@
     [wh.common.cases :as cases]
     [wh.common.data :as data :refer [get-manager-email get-manager-name]]
     [wh.common.fx.google-maps :as google-maps]
-    [wh.company.common :as common]
+    [wh.common.location :as location]
     [wh.company.create-job.db :as create-job]
     [wh.db :as db]
     [wh.graphql.company :refer [company-query create-job-mutation update-job-mutation update-company-mutation fetch-tags]]
@@ -302,7 +302,7 @@
   create-job-interceptors
   (fn [{db :db} [google-response]]
     (let [{:keys [street city country country-code state post-code latitude longitude]}
-          (common/google-place->location google-response)]
+          (location/google-place->location google-response)]
       {:db (assoc db
                   ::create-job/location__street street
                   ::create-job/location__city city

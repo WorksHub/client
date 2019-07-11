@@ -2,9 +2,11 @@
   (:require
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
-    #?(:cljs [wh.components.forms.views :refer [tags-field text-field]])
+    #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field]])
+    #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     [clojure.string :as str]
     [wh.common.data.company-profile :as data]
+    [wh.common.specs.company :as company-spec]
     [wh.common.text :as text]
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
@@ -22,41 +24,61 @@
 
 (defn edit-button
   [editing-atom on-editing]
-  [:div.editable--edit-button
-   [icon "edit"
-    :on-click #(do (reset! editing-atom true)
-                   (when on-editing
-                     (on-editing)))]])
+  #?(:cljs
+     [:div.editable--edit-button
+      [icon "edit"
+       :on-click #(do (reset! editing-atom true)
+                      (when on-editing
+                        (on-editing)))]]))
 
 (defn editable
   [_args _read-body _write-body]
   (let [editing? (r/atom false)]
-    (fn [{:keys [editable? prompt-before-cancel? on-editing on-cancel on-save]} read-body write-body]
-      [:div.editable
-       (if @editing?
-         (or write-body read-body)
-         read-body)
-       #?(:cljs
-          (when editable?
-            (cond @editing?
-                  [:div.editable--save-cancel-buttons
-                   [:button.button.button--tiny.button--inverted
-                    {:on-click #(when-let [ok? (if prompt-before-cancel?
-                                                 (js/confirm "You have made changes to the company profile. If you cancel, these changes will be lost. Are you sure you want to cancel?")
-                                                 true)]
-                                  (when on-cancel
-                                    (on-cancel))
-                                  (r/next-tick (fn [] (reset! editing? false))))}
-                    "Cancel"]
-                   [:button.button.button--tiny
-                    {:on-click #(do (when on-save
-                                      (on-save))
-                                    (r/next-tick (fn [] (reset! editing? false))))}
-                    "Save"]]
-                  (<sub [::subs/updating?])
-                  [:div.editable--loading]
-                  :else
-                  [edit-button editing? on-editing])))])))
+    (fn [{:keys [editable? prompt-before-cancel? on-editing on-cancel on-save modal?]
+          :or   {modal?                false
+                 prompt-before-cancel? false}}
+         read-body write-body]
+      (let [read-body' [:div.editable read-body
+                        (if (<sub [::subs/updating?])
+                          [:div.editable--loading]
+                          [edit-button editing? on-editing])]
+            write-body'
+            (if write-body [:div.editable write-body
+                            #?(:cljs
+                               (when (and editable? @editing?)
+                                 [:div.editable--save-cancel-buttons
+                                  [:button.button.button--tiny.button--inverted
+                                   {:on-click #(when-let [ok? (if prompt-before-cancel?
+                                                                (js/confirm "You have made changes to the company profile. If you cancel, these changes will be lost. Are you sure you want to cancel?")
+                                                                true)]
+                                                 (when on-cancel
+                                                   (on-cancel))
+                                                 (r/next-tick (fn [] (reset! editing? false))))}
+                                   "Cancel"]
+                                  [:button.button.button--tiny
+                                   {:on-click #(do (when on-save
+                                                     (on-save))
+                                                   (r/next-tick (fn [] (reset! editing? false))))}
+                                   "Save"]]))]
+                read-body')]
+        [:div
+         (when (or (not @editing?) modal?)
+           read-body')
+         (when (and editable? @editing?)
+           #?(:cljs
+              (if modal?
+                [popup-wrapper {:id       :edit-company-info
+                                :codi?    false}
+                 write-body']
+                write-body')))]))))
+
+(defn edit-close-button
+  [editing-atom]
+    (if (not @editing-atom)
+      [edit-button editing-atom nil]
+      [:div.editable--edit-button
+       [icon "close"
+        :on-click #(reset! editing-atom false)]]))
 
 (defn header []
   [:div.company-profile__header
@@ -79,11 +101,7 @@
                           :add-event     [::events/add-video]
                           :update-event  [::events/update-video]}]]
          (when admin-or-owner?
-           (if (not @editing?)
-             [edit-button editing? nil]
-             [:div.editable--edit-button
-              [icon "close"
-               :on-click #(reset! editing? false)]]))]))))
+           [edit-close-button editing?])]))))
 
 (defn blogs
   []
@@ -214,7 +232,7 @@
 
 (defn tag-list
   [tag-type]
-  (into [:ul.tags.tags--inline]
+  (into [:ul.tags.tags--inline.tags--profile]
         (map (fn [tag]
                [:li {:key (:id tag)}
                 (:label tag)])
@@ -318,12 +336,13 @@
                    "company-profile__technology")}
          [:h2.title "Technology"]
          [editable {:editable?             admin-or-owner?
-                    :prompt-before-cancel? false
+                    :prompt-before-cancel? (or (not-empty @new-dev-setup)
+                                               (not= selected-tag-ids @existing-tag-ids))
                     :on-editing            #(do
                                               (reset! editing? true)
                                               (reset! existing-tag-ids (<sub [::subs/current-tag-ids tag-type]))
                                               (dispatch [::events/reset-selected-tag-ids tag-type]))
-                    :on-cancel             #(do (reset! editing? false))
+                    :on-cancel             #(reset! editing? false)
                     :on-save
                     #(do
                        (reset! editing? false)
@@ -333,7 +352,7 @@
                                            (when (not= selected-tag-ids @existing-tag-ids)
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})
                                            (when (not-empty @new-dev-setup)
-                                             {:dev-setup (merge (:dev-setup (<sub [::subs/company]))  @new-dev-setup)})))]
+                                             {:dev-setup (merge (:dev-setup (<sub [::subs/company])) @new-dev-setup)})))]
                          (dispatch-sync [::events/update-company changes])))}
           [:div
            [:h2.subtitle "Tech stack"]
@@ -359,6 +378,99 @@
                 ^{:key k}
                 [development-setup k new-dev-setup]))]]]]))))
 
+(defn company-info
+  [_admin-or-owner? & [_cls]]
+  (let [editing?         (r/atom false)
+        new-industry-tag (r/atom nil)
+        new-funding-tag  (r/atom nil)
+        new-size         (r/atom nil)
+        new-founded-year (r/atom nil)]
+    (fn [admin-or-owner? & [cls]]
+       [:section
+        {:class (util/merge-classes "company-profile__company-info"
+                                    (when cls (name cls)))}
+        [editable {:editable?             admin-or-owner?
+                   :modal?                true
+                   :prompt-before-cancel? (or @new-industry-tag @new-size @new-founded-year)
+                   :on-editing            #(reset! editing? true)
+                   :on-cancel             #(do
+                                             (dispatch [::events/reset-location-search])
+                                             (reset! editing? false))
+                   :on-save
+                   #(do
+                      (reset! editing? false)
+                      (when-let [changes
+                                 (not-empty
+                                   (merge {}
+                                          (when (or @new-industry-tag @new-funding-tag (<sub [::subs/pending-location]))
+                                            (let [current-tags
+                                                  (cond->> (<sub [::subs/tags nil])
+                                                           @new-industry-tag (remove (comp (partial = :industry) :type))
+                                                           @new-funding-tag  (remove (comp (partial = :funding) :type)))]
+                                            {:tag-ids (cond-> (set (map :id current-tags))
+                                                              @new-industry-tag (conj @new-industry-tag)
+                                                              @new-funding-tag  (conj @new-funding-tag))}))
+                                          (when @new-size
+                                            {:size @new-size})
+                                          (when (and @new-founded-year (text/not-blank @new-founded-year))
+                                            {:founded-year @new-founded-year})
+                                          (when-let [location (<sub [::subs/pending-location--raw])]
+                                            {:locations [location]})))] ;; TODO we only do one locatio for now
+                        (dispatch-sync [::events/update-company changes])
+                        (dispatch [::events/reset-location-search])))}
+         [:ul.company-profile__company-info__list
+          (when-let [industry (:label (<sub [::subs/industry]))]
+           [:li [icon "industry"] "Industry: " industry])
+          (when-let [size (some-> (<sub [::subs/size]) company-spec/size->range)]
+           [:li [icon "people"] "People: " size])
+          (when-let [founded-year (<sub [::subs/founded-year])]
+           [:li [icon "founded"] "Founded: " founded-year])
+          (when-let [funding (:label (<sub [::subs/funding]))]
+           [:li [icon "funding"] "Funding: " funding])
+          (when-let [location (some-> (<sub [::subs/location]) )]
+           [:li [icon "location"] "Location: " location])]
+         [:form.wh-formx.wh-formx__layout
+          #?(:cljs
+             [:div
+              [select-field (or @new-industry-tag (:id (<sub [::subs/industry])))
+               {:options   (into [{:id nil, :label "--"}] ;; add unselected
+                                 (sort-by :label (<sub [::subs/all-tags-of-type :industry])))
+                :label     "Select an industry that best describes your company"
+                :on-change #(reset! new-industry-tag %)}]
+              [:div.company-profile__company-info__industry-check
+               [:i "Don't see your industry? " [:a {:href "mailto:hello@functionalworks.com" :target "_blank"} "Get in touch"]]]
+              [radio-field (or @new-size (<sub [::subs/size]))
+               {:options   (map #(hash-map :id % :label (company-spec/size->range %)) (reverse company-spec/sizes))
+                :label     "How many people work for your company?"
+                :on-change #(reset! new-size %)}]
+              [text-field (or @new-founded-year (<sub [::subs/founded-year]) "")
+               {:type      :number
+                :label     "When was your company founded?"
+                :on-blur #(when (str/blank? @new-founded-year)
+                            (reset! new-founded-year nil))
+                :on-change (fn [v] (if v
+                                     (reset! new-founded-year v)
+                                     (reset! new-founded-year "")))}]
+              [select-field (or @new-funding-tag (:id (<sub [::subs/funding])))
+               {:options   (into [{:id nil, :label "--"}] ;; add unselected
+                                 (sort-by :label (<sub [::subs/all-tags-of-type :funding])))
+                :label     "What is your company's primary source of funding?"
+                :on-change #(reset! new-funding-tag %)}]
+              [text-field (or (<sub [::subs/location-search]))
+                 {:type :text
+                  :label "What's your company's HQ or primary location?"
+                  :on-change [::events/update-location-suggestions]
+                  :suggestions (<sub [::subs/location-suggestions])
+                  :on-select-suggestion [::events/select-location]}]
+              (if-let [pending-location (<sub [::subs/pending-location])]
+                [:div.company-profile__company-info__location.company-profile__company-info__location--pending
+                 [:i "New location"]
+                 [:p pending-location]]
+                (when-let [location (<sub [::subs/location])]
+                  [:div.company-profile__company-info__location
+                   [:i "Current location"]
+                   [:p location]]))])]]])))
+
 (defn page []
   (let [enabled? (<sub [::subs/profile-enabled?])
         company-id (<sub [::subs/id])
@@ -370,10 +482,12 @@
        [:div.split-content
         [:div.company-profile__main.split-content__main
          [about-us admin-or-owner?]
+         [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
          [technology admin-or-owner?]
          [videos admin-or-owner?]
          [blogs]
          [photos admin-or-owner?]]
-        [:div.company-profile__side.split-content__side]]]
+        [:div.company-profile__side.split-content__side.is-hidden-mobile
+         [company-info admin-or-owner?]]]]
       [:div.main.main--center-content
        [not-found/not-found]])))

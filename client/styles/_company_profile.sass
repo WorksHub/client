@@ -1,14 +1,10 @@
-.company-profile__main
+.company-profile__main,
+.company-profile__side
   & > section
     margin: 20px 0px 0px 0px
     box-shadow: 0 0 0 rgba(0,0,0,0.0)
     transition: box-shadow 0.3s ease-in-out
     position: relative
-    .icon--close
-      fill: #adadad
-      cursor: pointer
-      width: 24px
-      height: 24px
     .title
       color: $steel-gray
       margin: 0px 0px 18px 0px
@@ -31,8 +27,11 @@
 
 .company-profile__side
   margin-top: 18px
-  background-color: white
-  height: 1400px
+  min-height: 400px
+  & > section
+    margin: 0px
+    background-color: white
+    padding: 18px
 
 .company-profile__header
   height: 164px
@@ -186,3 +185,51 @@
   .icon
     width: 45px
     height: 45px
+
+.company-profile__company-info
+  .is-full-panel-overlay
+    position: fixed !important
+    overflow-y: auto
+    .popup
+      margin-bottom: 24px
+    .radio-item
+      letter-spacing: 1px
+      label
+        margin: 0 6px 0 0
+    .radio-item + .radio-item
+      margin-left: 18px
+
+.company-profile__company-info__list
+  li
+    line-height: 1
+    display: flex
+    align-items: center
+    color: $greyish
+    height: 18px
+    .icon
+      flex-shrink: 0
+      margin-right: 12px
+  li + li
+    margin-top: 18px
+
+.company-profile__company-info__industry-check
+  text-align: left !important
+  a
+    color: $red
+  margin-top: -32px
+  +mobile
+    margin-top: -24px
+
+.company-profile__company-info__location
+  padding: 6px
+  text-align: left
+  background-color: $lighter-gray
+  color: $steel-gray
+  margin-top: -12px
+  margin-bottom: 12px
+  p
+    font-size: 14px
+    margin: 0
+.company-profile__company-info__location--pending
+  i
+    color: $red

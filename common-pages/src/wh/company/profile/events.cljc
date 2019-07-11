@@ -5,6 +5,8 @@
     #?(:cljs [wh.user.db :as user])
     #?(:cljs [goog.Uri :as uri])
     #?(:cljs [ajax.json :as ajax-json])
+    #?(:cljs [wh.common.fx.google-maps :as google-maps])
+    #?(:cljs [wh.common.location :as location])
     [re-frame.core :refer [path]]
     [wh.company.profile.db :as profile]
     [wh.db :as db]
@@ -28,7 +30,8 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries [[:company {:id :$id}
-                    [:id :name :logo :profileEnabled :descriptionHtml
+                    [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear
+                     [:locations [:city :country :countryCode :region :subRegion :state]]
                      [:devSetup [:hardware :software :sourcecontrol :ci :infrastructure]]
                      [:tags [:id :type :label :slug]]
                      [:blogs {:pageSize 2}
@@ -74,6 +77,7 @@
      [db]
      (list (into [:graphql/query] (initial-query db))
            [::load-photoswipe]
+           [:google/load-maps]
            (when (or (user/admin? db)
                      (user/owner? db (company-id db)))
              [::fetch-all-tags])))) ;; TODO for now we get all tags and filter client-side
@@ -370,3 +374,50 @@
   (fn [{db :db} [resp]]
     {:db (assoc db ::profile/creating-tag? false)
      :dispatch [:error/set-global "There was an error adding the tag"]}))
+
+(reg-event-fx
+  ::update-location-suggestions
+  profile-interceptors
+  (fn [{db :db} [search]]
+    (if (str/blank? search)
+      {:db (dissoc db ::profile/location-search ::profile/location-suggestions)}
+      {:db (assoc db ::profile/location-search search)
+       :google/place-predictions {:input      search
+                                  :on-success [::set-location-suggestions]
+                                  :on-failure [:error/set-global "Failed to fetch address suggestions"]}})))
+
+(reg-event-db
+  ::set-location-suggestions
+  profile-interceptors
+  (fn [db [suggestions]]
+    (assoc db ::profile/location-suggestions (or suggestions []))))
+
+(reg-event-fx
+  ::select-location
+  profile-interceptors
+  (fn [{db :db} [location]]
+    (if-let [details (some #(when (= location (:description %)) %) (::profile/location-suggestions db))]
+      {:google/place-details {:place-id   (:place_id details)
+                              :on-success [::fetch-place-details-success]
+                              :on-failure [:error/set-global "Failed to find address"]}
+       :db (-> db
+               (assoc ::profile/location-search (:description details))
+               (dissoc ::profile/location-suggestions))}
+      {:db (dissoc db ::profile/location-search ::profile/location-suggestions)})))
+
+#?(:cljs
+   (reg-event-db
+     ::fetch-place-details-success
+     profile-interceptors
+     (fn [db [google-response]]
+       (let [location (location/google-place->location google-response)]
+         (assoc db ::profile/pending-location location)))))
+
+(reg-event-db
+  ::reset-location-search
+  profile-interceptors
+  (fn [db _]
+    (dissoc db
+            ::profile/pending-location
+            ::profile/location-suggestions
+            ::profile/location-search)))

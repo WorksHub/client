@@ -2,6 +2,7 @@
   (:require
     [re-frame.core :refer [path reg-event-db reg-event-fx]]
     [wh.common.fx.google-maps :as google-maps]
+    [wh.common.location :as location]
     [wh.company.common :as company]
     [wh.company.events]
     [wh.company.register.db :as register]
@@ -136,7 +137,7 @@
   ::fetch-place-details-success
   register-interceptors
   (fn [db [google-response]]
-    (assoc db ::register/location-details (company/google-place->location google-response))))
+    (assoc db ::register/location-details (location/google-place->location google-response))))
 
 (reg-event-db
   ::set-location-suggestions

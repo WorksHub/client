@@ -14,38 +14,3 @@
    :response-format (ajax-json/json-response-format {:keywords? true})
    :timeout         10000
    :on-success      [success]})
-
-(defn extract-address-components [components]
-  (->> (for [component components type (:types component)]
-         [[(c/->kebab-case-keyword type) (:long_name component)]
-          (when (= type "country")
-            [:country-code (:short_name component)])
-          (when (= type "administrative_area_level_1")
-            [:state-code (:short_name component)])])
-       (apply concat)
-       (remove nil?)
-       (into {})))
-
-(defn match-city [new-city]
-  (when new-city
-    (->> data/cities
-         (filter (fn [city] (str/includes? new-city city)))
-         first)))
-
-(defn google-place->location
-  [{:keys [place_id address_components geometry]}]
-  (let [{:keys [route locality postal-town postal-code street-number
-                country country-code state-code]}
-        (extract-address-components address_components)
-        {:keys [latitude longitude] :as geolocation}
-        (google-maps/unlatlng (:location geometry))]
-    {:street (str/trim (str street-number " " route))
-     :city (or (match-city locality) (match-city postal-town) locality postal-town)
-     :country (get data/country-code->country country-code country)
-     :country-code country-code
-     :state (if (= country-code "US")
-              state-code
-              "")
-     :post-code postal-code
-     :latitude latitude
-     :longitude longitude}))

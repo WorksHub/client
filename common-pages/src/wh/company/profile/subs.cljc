@@ -4,7 +4,8 @@
     [wh.company.profile.db :as profile]
     [wh.graphql-cache :as gql-cache]
     [wh.re-frame.subs :refer [<sub]]
-    [clojure.string :as str])
+    [clojure.string :as str]
+    [wh.common.location :as location])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
 
@@ -24,8 +25,17 @@
 (reg-sub-raw
   ::all-tags
   (fn [_ _]
-    (reaction
-      (map profile/->tag (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])))))
+    (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
+         (map profile/->tag)
+         (reaction))))
+
+(reg-sub-raw
+  ::all-tags-of-type
+  (fn [_ [_ tag-type]]
+    (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
+         (filter #(= (str/lower-case (name tag-type)) (str/lower-case (name (:type %)))))
+         (map profile/->tag)
+         (reaction))))
 
 (reg-sub
   ::profile-enabled?
@@ -74,6 +84,18 @@
       (:tags company))))
 
 (reg-sub
+  ::industry
+  :<- [::tags :industry]
+  (fn [industry-tags _]
+    (first industry-tags)))
+
+(reg-sub
+  ::funding
+  :<- [::tags :funding]
+  (fn [funding-tags _]
+    (first funding-tags)))
+
+(reg-sub
   ::images
   :<- [::company]
   (fn [company _]
@@ -102,6 +124,36 @@
   :<- [::sub-db]
   (fn [sub-db _]
     (::profile/video-error sub-db)))
+
+(reg-sub
+  ::size
+  :<- [::company]
+  (fn [company _]
+    (:size company)))
+
+(reg-sub
+  ::founded-year
+  :<- [::company]
+  (fn [company _]
+    (:founded-year company)))
+
+(reg-sub
+  ::location
+  :<- [::company]
+  (fn [company _]
+    (some-> company :locations first location/format-location)))
+
+(reg-sub
+  ::pending-location--raw
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/pending-location sub-db)))
+
+(reg-sub
+  ::pending-location
+  :<- [::pending-location--raw]
+  (fn [pending-location _]
+    (some-> pending-location location/format-location)))
 
 (reg-sub
   ::updating?
@@ -173,7 +225,23 @@
     (get-in company [:dev-setup sub-key])))
 
 (reg-sub
-  ::video-error
+  ::location-search
   :<- [::sub-db]
   (fn [db _]
-    (::profile/video-error db)))
+    (::profile/location-search db)))
+
+(reg-sub
+  ::location-suggestions
+  :<- [::sub-db]
+  (fn [db _]
+    (let [search-term-lower (some-> (::profile/location-search db) (str/lower-case))]
+      (when-not (str/blank? search-term-lower)
+        (let [results (->> (::profile/location-suggestions db)
+                           (map :description)
+                           (map #(hash-map :id % :label %))
+                           (take 5)
+                           (vec))]
+          (if (and (= 1 (count results))
+                   (= search-term-lower (some-> results (first) (:label) (str/lower-case))))
+            nil
+            results))))))

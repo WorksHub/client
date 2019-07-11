@@ -1,19 +1,19 @@
 .tags-container
-    position: relative
-    .field
-      .field__error
-        display: none
-    .field
-      margin: 0
-      input
-        border-bottom: 0
-    &:hover, &:focus-within
-      .tags-selection
-        @include hover-focus-state
-        @include splitter-hr(14px)
-        padding: 1px 0 0 0
-      input
-        @include hover-focus-state
+  position: relative
+  .field
+    .field__error
+      display: none
+  .field
+    margin: 0
+    input
+      border-bottom: 0
+  &:hover, &:focus-within
+    .tags-selection
+      @include hover-focus-state
+      @include splitter-hr(14px)
+      padding: 1px 0 0 0
+    input
+      @include hover-focus-state
 .tags-selection
   color: $steel-gray
   border: 1px solid $steel-gray
@@ -22,6 +22,21 @@
   position: relative
   padding: 1px
   @include splitter-hr(15px)
+  .tags
+    padding: 10px 0px 5px 10px
+    overflow: hidden
+    li
+      cursor: pointer
+      opacity: 0.4
+      transition: opacity 200ms linear
+      &.tag--selected
+        opacity: 1
+        padding-right: 28px
+  .tags--selected
+    padding-bottom: 0
+  .tags--unselected
+    padding-top: 0
+    display: block
 .tags-roll
   width: 28px
   height: 28px
@@ -31,21 +46,6 @@
   transition: transform 0.3s ease
   transform: rotate(180deg)
   margin-top: 10px
-.tags
-  padding: 10px 0px 5px 10px
-  overflow: hidden
-  li
-    cursor: pointer
-    opacity: 0.4
-    transition: opacity 200ms linear
-    &.tag--selected
-      opacity: 1
-      padding-right: 28px
-.tags--selected
-  padding-bottom: 0
-.tags--unselected
-  padding-top: 0
-  display: block
 .tags-container--collapsed
   .tags-roll
     transform: none
