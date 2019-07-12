@@ -15355,6 +15355,15 @@ h3 {
     .company-profile__main > section.company-profile__section--headed .subtitle:not(first-of-type),
     .company-profile__side > section.company-profile__section--headed .subtitle:not(first-of-type) {
       margin-top: 18px; }
+    .company-profile__main > section.company-profile__section--headed .ql-container,
+    .company-profile__side > section.company-profile__section--headed .ql-container {
+      min-height: 300px; }
+    .company-profile__main > section.company-profile__section--headed .html-content h2,
+    .company-profile__side > section.company-profile__section--headed .html-content h2 {
+      margin-bottom: 4px; }
+    .company-profile__main > section.company-profile__section--headed .html-content h2:not(:first-of-type),
+    .company-profile__side > section.company-profile__section--headed .html-content h2:not(:first-of-type) {
+      margin-top: 12px; }
 
 .company-profile__section--editing {
   box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important; }

@@ -3,6 +3,12 @@
     #?(:clj [net.cgrand.jsoup :as jsoup])
     [wh.common.text :as txt]))
 
+(defn rand-width
+  []
+  (let [pc (str (+ 80 (rand-int 20)) "%")]
+    #?(:cljs {:width pc}
+       :clj (str "width:" pc))))
+
 #?(:clj
    (defn html->hiccup
      [html-str]
@@ -17,7 +23,7 @@
     #?(:clj (html->hiccup html-content)
        :cljs [:div.html-content {:dangerouslySetInnerHTML {:__html html-content}}])
     [:div.html-content.html-content--skeleton
-     (reduce (fn [a s] (conj a [:div {:style {:width (str (+ 80 (rand-int 20)) "%")}}])) [:div] (range (+ 4 (rand-int 6))))]))
+     (reduce (fn [a _] (conj a [:div {:style (rand-width)}])) [:div] (range (+ 4 (rand-int 6))))]))
 
 ;; If you came here looking for 'on-scroll' functionlity,
 ;; be aware that although we're hooking the `onscroll` event of `js/window`

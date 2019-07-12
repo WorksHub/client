@@ -337,7 +337,6 @@
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
                    "company-profile__about-us")}
-         [:h2.title "About us"]
          [editable {:editable?             admin-or-owner?
                     :prompt-before-cancel? (boolean (or @new-desc (not= selected-tag-ids @existing-tag-ids)))
                     :on-editing            #(do
@@ -358,6 +357,7 @@
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
                          (dispatch-sync [::events/update-company changes])))}
           [:div
+           [:h2.title "About us"]
            [:h2.subtitle "Who are we?"]
            [:div.company-profile__about-us__description
             [putil/html description]]
@@ -366,6 +366,7 @@
               [tag-list tag-type]])]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
+           [:h2.title "About us"]
            [:h2.subtitle "Who are we?"]
            #?(:cljs
               [rich-text-field {:value       (or @new-desc description "")
@@ -420,7 +421,6 @@
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
                    "company-profile__technology")}
-         [:h2.title "Technology"]
          [editable {:editable?             admin-or-owner?
                     :prompt-before-cancel? (or (not-empty @new-dev-setup)
                                                (not= selected-tag-ids @existing-tag-ids))
@@ -441,6 +441,7 @@
                                              {:dev-setup (merge (:dev-setup (<sub [::subs/company])) @new-dev-setup)})))]
                          (dispatch-sync [::events/update-company changes])))}
           [:div
+           [:h2.title "Technology"]
            [:h2.subtitle "Tech stack"]
            (when-let [tags (not-empty (<sub [::subs/tags tag-type]))]
              [:div.company-profile__technology__tech-tags
@@ -453,6 +454,7 @@
                [development-setup k nil]))]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
+           [:h2.title "Technology"]
            [:h2.subtitle "Tech stack"]
            [profile-tag-field tag-type selected-tag-ids
             {:label              "Enter 3-5 tags that describe your company's technology"
@@ -557,6 +559,49 @@
                    [:i "Current location"]
                    [:p location]]))])]]])))
 
+(defn how-we-work
+  [_admin-or-owner?]
+  (let []
+    (let [editing?        (r/atom false)
+          new-how-we-work (r/atom nil)]
+      (fn [admin-or-owner?]
+        (let [hww (<sub [::subs/how-we-work])]
+          (when (or admin-or-owner?
+                   (text/not-blank hww))
+            [:section
+             {:id    "company-profile__how-we-work"
+              :class (util/merge-classes
+                       "company-profile__section--headed"
+                       (when @editing? "company-profile__section--editing")
+                       "company-profile__how-we-work")}
+             [editable {:editable?             admin-or-owner?
+                        :prompt-before-cancel? @new-how-we-work
+                        :on-editing            #(do
+                                                  (reset! editing? true)
+
+                                                  )
+                        :on-cancel #(do (reset! editing? false)
+                                        (reset! new-how-we-work nil))
+                        :on-save
+                        #(do
+                           (reset! editing? false)
+                           (when-let [changes
+                                      (when (text/not-blank @new-how-we-work)
+                                        {:how-we-work @new-how-we-work})]
+                             (dispatch-sync [::events/update-company changes])))}
+              [:div
+               [:h2.title "How we work"]
+               [putil/html hww]]
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+              [:div
+               [:h2.title "How we work"]
+               #?(:cljs
+                  [rich-text-field {:value       (or @new-how-we-work hww "")
+                                    :placeholder "Please enter a description of the company's work style, project management process, product cycle etc..."
+                                    :on-change   #(if (= % hww)
+                                                    (reset! new-how-we-work nil)
+                                                    (reset! new-how-we-work %))}])]]]))))))
+
 (defn page []
   (let [enabled? (<sub [::subs/profile-enabled?])
         company-id (<sub [::subs/id])
@@ -573,7 +618,8 @@
          [blogs]
          [photos admin-or-owner?]
          [technology admin-or-owner?]
-         [issues]]
+         [issues]
+         [how-we-work admin-or-owner?]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile
          [company-info admin-or-owner?]]]]
       [:div.main.main--center-content

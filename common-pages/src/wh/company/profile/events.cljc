@@ -29,7 +29,7 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries [[:company {:id :$id}
-                    [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear
+                    [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear :howWeWork
                      [:locations [:city :country :countryCode :region :subRegion :state]]
                      [:devSetup [:hardware :software :sourcecontrol :ci :infrastructure]]
                      [:tags [:id :type :label :slug]]
