@@ -14,7 +14,6 @@
     [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields]]
     [wh.graphql.tag :as tag-gql]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
-    [clojure.set :as set]
     [wh.common.cases :as cases]
     [wh.util :as util]
     [clojure.string :as str])
@@ -34,15 +33,31 @@
                      [:locations [:city :country :countryCode :region :subRegion :state]]
                      [:devSetup [:hardware :software :sourcecontrol :ci :infrastructure]]
                      [:tags [:id :type :label :slug]]
-                     [:blogs {:pageSize 2}
+                     [:videos [:youtubeId :thumbnail :description]]
+                     [:images [:url :width :height]]]]]})
+
+(defquery fetch-company-blogs-and-issues-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID!}]
+   :venia/queries [[:company {:id :$id}
+                    [[:blogs {:pageSize 2 :pageNumber 1}
                       [[:blogs
                         [:id :title :feature :author :formattedCreationDate :readingTime
                          :upvoteCount :tags :creator :published]]
                        [:pagination [:total]]]]
-                     [:videos [:youtubeId :thumbnail :description]]
-                     [:images [:url :width :height]]]]]})
+                     [:issues {:pageSize 2 :pageNumber 1}
+                      [[:issues
+                        [:id :url :number :body :title :pr_count :level :status :published :created_at
+                         [:compensation [:amount :currency]]
+                         [:contributors [:id]]
+                         [:labels [:name]]
+                         [:repo [:name :owner :primary_language]]]]
+                       [:pagination [:total]]]]]]]})
 
 (reg-query :company fetch-company-query)
+(reg-query :company-issues-and-blogs fetch-company-blogs-and-issues-query)
 
 (defquery fetch-tags
   {:venia/operation {:operation/type :query
@@ -56,6 +71,9 @@
 
 (defn initial-query [db]
   [:company {:id (get-in db [:wh.db/page-params :id])}])
+
+(defn extra-data-query [db]
+  [:company-issues-and-blogs {:id (get-in db [:wh.db/page-params :id])}])
 
 (defn tag-query [type-filter]
   (if type-filter
@@ -78,6 +96,7 @@
      (list (into [:graphql/query] (initial-query db))
            [::load-photoswipe]
            [:google/load-maps]
+           (into [:graphql/query] (extra-data-query db))
            (when (or (user/admin? db)
                      (user/owner? db (company-id db)))
              [::fetch-all-tags])))) ;; TODO for now we get all tags and filter client-side

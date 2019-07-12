@@ -12,8 +12,9 @@
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
     [wh.components.cards :refer [blog-card]]
-    [wh.components.common :refer [wrap-img img]]
+    [wh.components.common :refer [link wrap-img img]]
     [wh.components.icons :refer [icon]]
+    [wh.components.issue :refer [issue-card]]
     [wh.components.not-found :as not-found]
     [wh.components.videos :as videos]
     [wh.interop :as interop]
@@ -181,6 +182,21 @@
             (for [blog blogs]
               [:div.column.is-half
                [blog-card blog]]))]]))
+
+(defn issues
+  []
+  (when-let [issues (<sub [::subs/issues])]
+    [:section.company-profile__issues
+     [:div.is-flex
+      [:h2.title "Open Source Issues from this company"]
+      [link "View all"
+       :issues-for-company-id :company-id (<sub [::subs/id])
+       :class "a--underlined"]]
+     [:div
+      (doall
+        (for [issue issues]
+          ^{:key (:id issue)}
+          [issue-card issue]))]]))
 
 (defn pswp-element
   []
@@ -553,10 +569,11 @@
         [:div.company-profile__main.split-content__main
          [about-us admin-or-owner?]
          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
-         [technology admin-or-owner?]
          [videos admin-or-owner?]
          [blogs]
-         [photos admin-or-owner?]]
+         [photos admin-or-owner?]
+         [technology admin-or-owner?]
+         [issues]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile
          [company-info admin-or-owner?]]]]
       [:div.main.main--center-content

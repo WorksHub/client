@@ -1,11 +1,11 @@
 (ns wh.company.profile.subs
   (:require
-    [re-frame.core :refer [reg-sub reg-sub-raw]]
-    [wh.company.profile.db :as profile]
-    [wh.graphql-cache :as gql-cache]
-    [wh.re-frame.subs :refer [<sub]]
     [clojure.string :as str]
-    [wh.common.location :as location])
+    [re-frame.core :refer [reg-sub reg-sub-raw]]
+    [wh.common.issue :refer [gql-issue->issue]]
+    [wh.common.location :as location]
+    [wh.company.profile.db :as profile]
+    [wh.re-frame.subs :refer [<sub]])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
 
@@ -21,6 +21,14 @@
       (let [id     (<sub [:wh/page-param :id])
             result (<sub [:graphql/result :company {:id id}])]
         (profile/->company (:company result))))))
+
+(reg-sub-raw
+  ::company-extra-data
+  (fn [_ _]
+    (reaction
+      (let [id     (<sub [:wh/page-param :id])
+            result (<sub [:graphql/result :company-issues-and-blogs {:id id}])]
+        (:company result)))))
 
 (reg-sub-raw
   ::all-tags
@@ -139,9 +147,22 @@
 
 (reg-sub
   ::blogs
+  :<- [::company-extra-data]
+  (fn [company-extra-data _]
+    (-> company-extra-data :blogs :blogs)))
+
+(reg-sub
+  ::issues
   :<- [::company]
-  (fn [company _]
-    (-> company :blogs :blogs)))
+  :<- [::company-extra-data]
+  (fn [[company extra-data] _]
+    (->> extra-data
+         :issues
+         :issues
+         (map (fn [issue]
+                (-> issue
+                    (assoc :company (select-keys company [:logo]))
+                    (gql-issue->issue)))))))
 
 (reg-sub
   ::video-error

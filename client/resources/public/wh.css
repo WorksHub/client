@@ -15330,6 +15330,9 @@ h3 {
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
   transition: box-shadow 0.3s ease-in-out;
   position: relative; }
+  .company-profile__main > section .is-flex,
+  .company-profile__side > section .is-flex {
+    justify-content: space-between; }
   .company-profile__main > section .title,
   .company-profile__side > section .title {
     color: #6E7F89;

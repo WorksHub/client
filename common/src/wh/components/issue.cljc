@@ -37,7 +37,7 @@
    "closed" "Issue closed"})
 
 (defn issue-card
-  [{:keys [id title repo pr-count company status compensation contributors level] :as issue}
+  [{:keys [id title repo pr-count company compensation contributors level] :as issue}
    & [{:keys [edit-fn edit-success-fn]}]]
   (let [skeleton? (empty? (dissoc issue :id))
         logo (:logo company)
