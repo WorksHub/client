@@ -11,10 +11,10 @@
     [re-frame.core :refer [path reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
     [wh.common.data :refer [get-manager-email get-manager-name]]
+    [wh.common.logo]
     [wh.common.upload :as upload]
     [wh.company.common :as company]
     [wh.company.edit.db :as edit]
-    [wh.company.events]
     [wh.company.payment.db :as payment]
     [wh.company.payment.events :as payment-events]
     [wh.db :as db]
@@ -102,7 +102,7 @@
                       ::edit/suggestions []
                       ::edit/name (:name suggestion))}
           (when logo
-            {:dispatch [:wh.company.events/fetch-clearbit-logo logo
+            {:dispatch [:wh.common.logo/fetch-clearbit-logo logo
                         ::logo-upload-success ::logo-upload-failure]}))))))
 
 (reg-event-db

@@ -6,6 +6,7 @@
     [reagent.core :as r]
     [wh.common.cost :as cost]
     [wh.common.data :as data :refer [package-data billing-data]]
+    [wh.common.logo]
     [wh.common.text :refer [pluralize]]
     [wh.common.upload :as upload]
     [wh.company.components.forms.views :refer [rich-text-field]]
@@ -146,7 +147,7 @@
       [logo-field (field ::edit/logo
                          :loading? (<sub [::subs/logo-uploading?])
                          :on-select-file (upload/handler
-                                           :launch [:wh.company.events/logo-upload]
+                                           :launch [:wh.common.logo/logo-upload]
                                            :on-upload-start [::events/logo-upload-start]
                                            :on-success [::events/logo-upload-success]
                                            :on-failure [::events/logo-upload-failure]))]]

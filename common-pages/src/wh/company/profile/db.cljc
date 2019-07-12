@@ -16,6 +16,9 @@
 (s/def ::location-suggestions (s/coll-of any?))
 (s/def ::pending-location :wh/location)
 
+(s/def ::logo-uploading? boolean?)
+(s/def ::pending-logo string?)
+
 (defn ->tag
   [m]
   (-> m

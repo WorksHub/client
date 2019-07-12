@@ -1,8 +1,9 @@
 (ns wh.company.profile.views
   (:require
+    #?(:cljs [wh.common.logo])
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
-    #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field]])
+    #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     [clojure.string :as str]
     [wh.common.data.company-profile :as data]
@@ -43,7 +44,7 @@
                           [:div.editable--loading]
                           [edit-button editing? on-editing])]
             write-body'
-            (if write-body [:div.editable write-body
+            (if write-body [:div.editable.editable--editing write-body
                             #?(:cljs
                                (when (and editable? @editing?)
                                  [:div.editable--save-cancel-buttons
@@ -61,7 +62,7 @@
                                                    (r/next-tick (fn [] (reset! editing? false))))}
                                    "Save"]]))]
                 read-body')]
-        [:div
+        [:div.editable-wrapper
          (when (or (not @editing?) modal?)
            read-body')
          (when (and editable? @editing?)
@@ -80,11 +81,78 @@
        [icon "close"
         :on-click #(reset! editing-atom false)]]))
 
-(defn header []
-  [:div.company-profile__header
-   [:div.company-profile__logo
-    [:img {:src (<sub [::subs/logo])}]]
-   [:div.company-profile__name (<sub [::subs/name])]])
+(defn header-link
+  [label id]
+  [:a.company-profile__header__link
+   #?(:clj  {:href (str "#" id)}
+      :cljs {:on-click #(.scrollIntoView (.getElementById js/document id))})
+   label])
+
+(defn header
+  [_admin-or-owner?]
+  (let [editing? (r/atom false)
+        new-company-name (r/atom nil)]
+    (fn [admin-or-owner?]
+      (let [pending-logo (<sub [::subs/pending-logo])]
+      [:section
+       {:class (util/merge-classes
+                 "company-profile__header"
+                 "company-profile__section--headed"
+                 (when @editing? "company-profile__section--editing"))}
+       [editable
+        {:editable?                       admin-or-owner?
+         :prompt-before-cancel? (boolean (or @new-company-name
+                                             pending-logo))
+         :on-editing           #(do (reset! editing? true))
+         :on-cancel            #(do (reset! editing? false)
+                                    (reset! new-company-name false)
+                                    (dispatch [::events/reset-pending-logo]))
+         :on-save
+         #(do
+            (reset! editing? false)
+            (when-let [changes
+                       (not-empty
+                         (merge {}
+                                (when (text/not-blank @new-company-name)
+                                  {:name @new-company-name})
+                                (when pending-logo
+                                  {:logo pending-logo})))]
+              (dispatch-sync [::events/update-company changes]))
+            (dispatch [::events/reset-pending-logo])
+            (reset! new-company-name nil))}
+        [:div.company-profile__header__inner
+         [:div.company-profile__header__inner__top
+          [:div.company-profile__logo
+           (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
+          [:div.company-profile__name (<sub [::subs/name])]]]
+        [:div.company-profile__header__inner
+         #?(:cljs
+            [:form.form.wh-formx
+             [logo-field
+              {:on-change [::events/set-logo]
+               :value (or pending-logo
+                          (<sub [::subs/logo]))
+               :loading? (<sub [::subs/logo-uploading?])
+               :on-select-file (upload/handler
+                                 :launch [:wh.common.logo/logo-upload]
+                                 :on-upload-start [::events/logo-upload-start]
+                                 :on-success [::events/logo-upload-success]
+                                 :on-failure [::events/logo-upload-failure])}]
+             [text-field (or @new-company-name
+                             (<sub [::subs/name])
+                             "")
+              {:type :text
+               :label "Company name"
+               :class "company-profile__header__edit-name"
+               :on-change (fn [v] (reset! new-company-name v))}]])]]
+       [:div.company-profile__header__links
+        (header-link "About"       "company-profile__about-us")
+        (header-link "Technology"  "company-profile__technology")
+        (when (<sub [::subs/jobs])
+            (header-link "Jobs"        "company-profile__jobs"))
+        (header-link "Benefits"    "company-profile__benefits")
+        (when (<sub [::subs/how-we-work])
+        (header-link "How we work" "company-profile__how-we-work"))]]))))
 
 (defn videos
   [_admin-or-owner?]
@@ -248,7 +316,8 @@
       (let [description      (<sub [::subs/description])
             selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
         [:section
-         {:class (util/merge-classes
+         {:id "company-profile__about-us"
+          :class (util/merge-classes
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
                    "company-profile__about-us")}
@@ -330,7 +399,8 @@
     (fn [admin-or-owner?]
       (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
         [:section
-         {:class (util/merge-classes
+         {:id "company-profile__technology"
+          :class (util/merge-classes
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
                    "company-profile__technology")}
@@ -478,7 +548,7 @@
                             (<sub [:user/owner? company-id]))]
     (if enabled?
       [:div.main.company-profile
-       [header]
+       [header admin-or-owner?]
        [:div.split-content
         [:div.company-profile__main.split-content__main
          [about-us admin-or-owner?]

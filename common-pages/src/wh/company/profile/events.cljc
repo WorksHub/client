@@ -421,3 +421,29 @@
             ::profile/pending-location
             ::profile/location-suggestions
             ::profile/location-search)))
+
+(reg-event-db
+  ::logo-upload-start
+  profile-interceptors
+  (fn [db _]
+    (assoc db ::profile/logo-uploading? true)))
+
+(reg-event-fx
+  ::logo-upload-success
+  profile-interceptors
+  (fn [{db :db} [_ {:keys [url]}]]
+    {:db (assoc db
+                ::profile/pending-logo url
+                ::profile/logo-uploading? false)}))
+
+(reg-event-db
+  ::reset-pending-logo
+  profile-interceptors
+  (fn [db _]
+    (dissoc db ::profile/pending-logo)))
+
+(reg-event-db
+  ::logo-upload-failure
+  profile-interceptors
+  (fn [{db :db} _]
+    (assoc db ::profile/logo-uploading? false)))

@@ -1,4 +1,4 @@
-(ns wh.company.events
+(ns wh.common.logo
   (:require
     [ajax.formats :as ajax-formats]
     [ajax.json :as ajax-json]

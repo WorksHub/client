@@ -56,6 +56,12 @@
     (:logo company)))
 
 (reg-sub
+  ::pending-logo
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/pending-logo sub-db)))
+
+(reg-sub
   ::id
   :<- [::company]
   (fn [company _]
@@ -66,6 +72,24 @@
   :<- [::company]
   (fn [company _]
     (:description-html company)))
+
+(reg-sub
+  ::logo
+  :<- [::company]
+  (fn [company _]
+    (:logo company)))
+
+(reg-sub
+  ::logo-uploading?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/logo-uploading? sub-db)))
+
+(reg-sub
+  ::how-we-work
+  :<- [::company]
+  (fn [company _]
+    (:how-we-work company)))
 
 (reg-sub
   ::tags
@@ -245,3 +269,9 @@
                    (= search-term-lower (some-> results (first) (:label) (str/lower-case))))
             nil
             results))))))
+
+(reg-sub
+  ::jobs
+  :<- [::sub-db]
+  (fn [db _]
+    nil))

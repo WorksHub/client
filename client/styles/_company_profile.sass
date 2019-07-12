@@ -22,8 +22,9 @@
         font-weight: $font-medium
       .subtitle:not(first-of-type)
         margin-top: 18px
-    &.company-profile__section--editing
-      box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important
+
+.company-profile__section--editing
+  box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important
 
 .company-profile__side
   margin-top: 18px
@@ -34,12 +35,66 @@
     padding: 18px
 
 .company-profile__header
-  height: 164px
+  height: 148px
   background: $white
   padding: 18px
+  margin: 0 !important
+  box-shadow: 0 0 0 rgba(0,0,0,0.0)
+  transition: box-shadow 0.3s ease-in-out
+  overflow: hidden
+  .editable--save-cancel-buttons
+    align-items: flex-end
+  .field__error
+    display: none
+  .editable--editing
+    margin-bottom: 16px
+    display: flex
+
+.company-profile__header__edit-name
+  width: 60%
+  +mobile
+    width: 100%
+    margin-right: 18px
+
+.company-profile__header__inner
+  width: 100%
+  form
+    display: flex
+    align-items: flex-end
+    div + div
+      margin-left: 18px
+    .field
+      label
+        margin: 0 !important
+
+.company-profile__header__inner__top
   display: grid
   grid-template-columns: 60px auto
-  grid-template-rows: auto
+  grid-template-rows: 78px
+
+.company-profile__header__links
+  border-top: 1px solid $pale-blue
+  display: flex
+  +mobile
+    justify-content: flex-start
+  +desktop
+    justify-content: space-around
+  padding-top: 18px
+  overflow-x: auto
+  overflow-y: hidden
+  white-space: nowrap
+  height: 60px
+
+.company-profile__header__link
+  text-transform: uppercase
+  font-size: 11px
+  font-weight: $font-medium
+  letter-spacing: 0.92px
+  color: $steel-gray
+  line-height: 1
+  +mobile
+    & + &
+      margin-left: 100px
 
 .company-profile__logo
   img
@@ -192,6 +247,7 @@
     overflow-y: auto
     .popup
       margin-bottom: 24px
+      top: calc(50% - (600px / 2));
     .radio-item
       letter-spacing: 1px
       label

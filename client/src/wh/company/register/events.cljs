@@ -3,8 +3,8 @@
     [re-frame.core :refer [path reg-event-db reg-event-fx]]
     [wh.common.fx.google-maps :as google-maps]
     [wh.common.location :as location]
+    [wh.common.logo]
     [wh.company.common :as company]
-    [wh.company.events]
     [wh.company.register.db :as register]
     [wh.company.register.graphql :as graphql]
     [wh.company.register.subs :as register-subs]
@@ -43,9 +43,9 @@
     (if (register/valid-company-form? sub-db)
       {:db      (assoc-in db [::register/sub-db ::register/loading?] true)
        :graphql (graphql/create-company-and-user-mutation
-                 sub-db
-                 ::create-company-and-user-success
-                 ::create-company-and-user-fail)}
+                  sub-db
+                  ::create-company-and-user-success
+                  ::create-company-and-user-fail)}
       (let [checked-db (assoc db ::register/sub-db (toggle-company-field-errors sub-db))
             error (find-first-error-key checked-db register/company-fields-maps)]
         (merge
@@ -62,9 +62,9 @@
     (cond (and valid-form? valid-location?)
           {:db      (assoc-in db [::register/sub-db ::register/loading?] true)
            :graphql (graphql/create-job-mutation
-                     db
-                     ::create-job-success
-                     ::create-job-fail)}
+                      db
+                      ::create-job-success
+                      ::create-job-fail)}
           (not valid-form?)
           (let [checked-db (assoc db ::register/sub-db (toggle-job-field-errors sub-db))
                 error (find-first-error-key checked-db register/job-fields-maps)]
@@ -202,7 +202,7 @@
        :navigate        [:register-company
                          :params {:step :job-details}]
        :dispatch-n      (concat []
-                                (when logo [[:wh.company.events/fetch-clearbit-logo logo
+                                (when logo [[:wh.common.logo/fetch-clearbit-logo logo
                                              ::logo-upload-success ::logo-upload-failure]]))
        :analytics/account-created [{:source :email :email email} db]
        :analytics/track ["Company Created" {:id      company-id
