@@ -94,6 +94,18 @@
     (::profile/logo-uploading? sub-db)))
 
 (reg-sub
+  ::tech-scales
+  :<- [::company]
+  (fn [company _]
+    (:tech-scales company)))
+
+(reg-sub
+  ::tech-scale
+  :<- [::company]
+  (fn [company [_ k]]
+    (get (:tech-scales company) k)))
+
+(reg-sub
   ::how-we-work
   :<- [::company]
   (fn [company _]

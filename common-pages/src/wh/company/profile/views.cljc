@@ -406,32 +406,67 @@
                 :on-change (fn [v] (swap! editing-atom assoc k v))}])]
           [:p current-text])]])))
 
+(def tech-scale-levels 5)
+
+(defn tech-scale
+  [{:keys [key atom label scale-labels force-show? editing?]}]
+  (when-let [score (or (get @atom key)
+                       (<sub [::subs/tech-scale key])
+                       (when force-show? 0))]
+    (let [scaled-score (* tech-scale-levels score)]
+      [:div
+       {:class (util/merge-classes "company-profile__tech-scale"
+                                   (str "company-profile__tech-scale--" (name key)))}
+       [:h3 label]
+       [:div.company-profile__tech-scale__selector
+        [:div.company-profile__tech-scale__pips
+         (for [pip (range tech-scale-levels)]
+           ^{:key pip}
+           [:div
+            {:class (util/merge-classes "company-profile__tech-scale__pip"
+                                        (when (> scaled-score pip)
+                                          "company-profile__tech-scale__pip--highlighted"))}
+            [:div]])]
+        (when editing?
+          [:div.company-profile__tech-scale__input-wrapper
+           [:input {:type      :range
+                    :min       0
+                    :max       tech-scale-levels
+                    :value     scaled-score
+                    :on-change #(swap! atom assoc key (double (/ (.. % -target -value) tech-scale-levels)))}]])
+        [:div.company-profile__tech-scale__scale-labels
+         (for [l scale-labels]
+           ^{:key l}
+           [:div l])]]])))
+
 (defn technology
   [_admin-or-owner?]
   (let [tags-collapsed?  (r/atom true)
         existing-tag-ids (r/atom #{})
-        editing?         (r/atom false)
+        tech-editing?    (r/atom false)
+        scales-editing?  (r/atom false)
         new-dev-setup    (r/atom {})
+        new-tech-scales  (r/atom {})
         tag-type         :tech]
     (fn [admin-or-owner?]
       (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
         [:section
-         {:id "company-profile__technology"
+         {:id    "company-profile__technology"
           :class (util/merge-classes
                    "company-profile__section--headed"
-                   (when @editing? "company-profile__section--editing")
+                   (when (or @tech-editing? @scales-editing?) "company-profile__section--editing")
                    "company-profile__technology")}
          [editable {:editable?             admin-or-owner?
                     :prompt-before-cancel? (or (not-empty @new-dev-setup)
                                                (not= selected-tag-ids @existing-tag-ids))
                     :on-editing            #(do
-                                              (reset! editing? true)
+                                              (reset! tech-editing? true)
                                               (reset! existing-tag-ids (<sub [::subs/current-tag-ids tag-type]))
                                               (dispatch [::events/reset-selected-tag-ids tag-type]))
-                    :on-cancel             #(reset! editing? false)
+                    :on-cancel             #(reset! tech-editing? false)
                     :on-save
                     #(do
-                       (reset! editing? false)
+                       (reset! tech-editing? false)
                        (when-let [changes
                                   (not-empty
                                     (merge {}
@@ -457,14 +492,56 @@
            [:h2.title "Technology"]
            [:h2.subtitle "Tech stack"]
            [profile-tag-field tag-type selected-tag-ids
-            {:label              "Enter 3-5 tags that describe your company's technology"
-             :placeholder        "e.g. haskell, scala, clojure, javascript etc"}]
+            {:label       "Enter 3-5 tags that describe your company's technology"
+             :placeholder "e.g. haskell, scala, clojure, javascript etc"}]
            [:h2.subtitle "Development setup"]
            [:form.wh-formx.wh-formx__layout.company-profile__editing-dev-setup
             (doall
               (for [k (keys data/dev-setup-data)]
                 ^{:key k}
-                [development-setup k new-dev-setup]))]]]]))))
+                [development-setup k new-dev-setup]))]]]
+
+         (let [tech-scales (not-empty (<sub [::subs/tech-scales]))
+               tech-scales-view
+               (when (or admin-or-owner? tech-scales)
+                 [:div
+                  (when @scales-editing?
+                    [:hr])
+                  [:h2.subtitle "Testing and Ops"]
+                  [tech-scale {:key          :testing
+                               :atom         new-tech-scales
+                               :label        "Testing"
+                               :scale-labels ["Manual" "Fully automated"]
+                               :force-show?  admin-or-owner?
+                               :editing?     @scales-editing?}]
+                  [tech-scale {:key          :ops
+                               :atom         new-tech-scales
+                               :label        "Ops"
+                               :scale-labels ["DevOps" "Dedicated Ops team"]
+                               :force-show?  admin-or-owner?
+                               :editing?     @scales-editing?}]
+                  [tech-scale {:key          :time-to-deploy
+                               :atom         new-tech-scales
+                               :label        "Time to deploy"
+                               :scale-labels ["More than 5 hours" "Less than 1 hour"]
+                               :force-show?  admin-or-owner?
+                               :editing?     @scales-editing?}]])]
+
+           [editable {:editable?             admin-or-owner?
+                      :prompt-before-cancel? (boolean (not-empty @new-tech-scales))
+                      :on-editing            #(do (reset! scales-editing? true))
+                      :on-cancel             #(do (reset! scales-editing? false)
+                                                  (reset! new-tech-scales {}))
+                      :on-save
+                      #(do
+                         (reset! scales-editing? false)
+                         (when-let [changes
+                                    (when (not-empty @new-tech-scales)
+                                      {:tech-scales (merge tech-scales @new-tech-scales)})]
+                           (dispatch-sync [::events/update-company changes]))
+                         (reset! new-tech-scales {}))}
+          tech-scales-view
+          tech-scales-view])]))))
 
 (defn company-info
   [_admin-or-owner? & [_cls]]

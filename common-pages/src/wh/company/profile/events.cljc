@@ -30,6 +30,7 @@
                       :variable/type :ID!}]
    :venia/queries [[:company {:id :$id}
                     [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear :howWeWork
+                     [:techScales [:testing :ops :timeToDeploy]]
                      [:locations [:city :country :countryCode :region :subRegion :state]]
                      [:devSetup [:hardware :software :sourcecontrol :ci :infrastructure]]
                      [:tags [:id :type :label :slug]]

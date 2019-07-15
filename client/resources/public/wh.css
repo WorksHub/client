@@ -15660,6 +15660,86 @@ h3 {
 .company-profile__company-info__location--pending i {
   color: #ff7c6e; }
 
+.company-profile__tech-scale {
+  display: flex;
+  margin-bottom: 18px; }
+  .company-profile__tech-scale h3 {
+    width: 100px; }
+
+.company-profile__tech-scale__selector {
+  flex: 1;
+  position: relative; }
+
+.company-profile__tech-scale__pips {
+  flex: 1;
+  display: flex;
+  margin-top: 6px; }
+
+.company-profile__tech-scale__pip {
+  height: 14px;
+  border-right: 1px solid #ff7c6e;
+  flex: 1; }
+  .company-profile__tech-scale__pip > div {
+    width: 100%;
+    height: 10px;
+    background-color: #ffe9e7; }
+  .company-profile__tech-scale__pip:first-of-type {
+    border-left: 1px solid #ff7c6e; }
+
+.company-profile__tech-scale__pip--highlighted > div {
+  background-color: #ff7c6e; }
+
+/*  https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/ */
+.company-profile__tech-scale__input-wrapper {
+  position: absolute;
+  top: 0px;
+  right: -8px;
+  left: -8px; }
+  .company-profile__tech-scale__input-wrapper input {
+    width: 100%;
+    -webkit-appearance: none;
+    background: transparent; }
+    .company-profile__tech-scale__input-wrapper input:focus {
+      outline: none; }
+    .company-profile__tech-scale__input-wrapper input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      margin-top: -14px;
+      border: 2px solid #ff7c6e;
+      height: 18px;
+      width: 18px;
+      border-radius: 14px;
+      background: #ffffff;
+      cursor: pointer; }
+    .company-profile__tech-scale__input-wrapper input::-moz-range-thumb {
+      border: 2px solid #ff7c6e;
+      height: 18px;
+      width: 18px;
+      border-radius: 14px;
+      background: #ffffff;
+      cursor: pointer; }
+    .company-profile__tech-scale__input-wrapper input::-ms-track {
+      width: 100%;
+      cursor: pointer;
+      background: transparent;
+      border-color: transparent;
+      color: transparent; }
+
+.company-profile__tech-scale__scale-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #6E7F89;
+  line-height: 1; }
+  @media screen and (max-width: 1007px) {
+    .company-profile__tech-scale__scale-labels {
+      font-size: 11px; } }
+  .company-profile__tech-scale__scale-labels div:first-child {
+    text-align: start; }
+  .company-profile__tech-scale__scale-labels div:last-child {
+    text-align: end; }
+  .company-profile__tech-scale__scale-labels div {
+    text-align: center;
+    margin-top: 6px; }
+
 .auth-popup__content {
   display: none; }
   .auth-popup__content.is-visible {
