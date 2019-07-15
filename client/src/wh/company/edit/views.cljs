@@ -274,20 +274,31 @@
                  (not (<sub [:user/company-connected-github?])))
         [github/connect-github-button])])
    (when (<sub [::subs/some-integrations-connected?])
-     [:div
-      [:h2 "Connected Integrations"]
-      (when (<sub [::subs/slack-connected?])
-        [:div.company-edit__connected-integration
-         [:img {:alt "Slack" :title "Slack" :src "/images/company/slack-icon.svg"}]])
-      (when (<sub [::subs/greenhouse-connected?])
-        [:div.company-edit__connected-integration
-         [:img {:alt "Greenhouse" :title "Greenhouse" :src "/images/company/greenhouse-icon.svg"}]
-         (when (<sub [:user/admin?])
-           [:span "Company manager will be set as referrer/source for each candidate."])])
-      (when (<sub [:user/company-connected-github?])
-        [:div.company-edit__connected-integration
-         [:img {:alt "GitHub" :title "GitHub" :src "/images/company/github-icon.svg"}]
-         [link "Manage issues" :manage-issues :class "button button--small button--inverted"]])])])
+     (let [deleting (<sub [::subs/deleting-integration?])]
+       [:div
+        [:h2 "Connected Integrations"]
+        (when (<sub [::subs/slack-connected?])
+          [:div.company-edit__connected-integration
+           [:img {:alt "Slack" :title "Slack" :src "/images/company/slack-icon.svg"}]
+           [:button.button.button--small.button--inverted.company-edit__add-user
+            {:on-click #(do (.preventDefault %)
+                            (dispatch [::events/delete-integration :slack]))
+             :class    (str (when deleting "button--inverted button--loading"))}
+            (when-not deleting "Delete Integration")]])
+        (when (<sub [::subs/greenhouse-connected?])
+          [:div.company-edit__connected-integration
+           [:img {:alt "Greenhouse" :title "Greenhouse" :src "/images/company/greenhouse-icon.svg"}]
+           [:button.button.button--small.button--inverted.company-edit__add-user
+            {:on-click #(do (.preventDefault %)
+                            (dispatch [::events/delete-integration :greenhouse]))
+             :class    (str (when deleting "button--inverted button--loading"))}
+            (when-not deleting "Delete Integration")]
+           (when (<sub [:user/admin?])
+             [:span "Company manager will be set as referrer/source for each candidate."])])
+        (when (<sub [:user/company-connected-github?])
+          [:div.company-edit__connected-integration
+           [:img {:alt "GitHub" :title "GitHub" :src "/images/company/github-icon.svg"}]
+           [link "Manage issues" :manage-issues :class "button button--small button--inverted"]])]))])
 
 (defn integration-popup []
   [:div.is-full-panel-overlay

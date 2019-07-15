@@ -37,6 +37,15 @@
                       :variable/type :ID!}]
    :venia/queries [[:delete_user {:id :$id}]]})
 
+(def delete-integration-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "delete_integration"}
+   :venia/variables [{:variable/name "integration"
+                      :variable/type :integration!}
+                     {:variable/name "company_id"
+                      :variable/type :ID!}]
+   :venia/queries [[:delete_integration {:integration :$integration :company_id :$company_id}]]})
+
 (def default-company-fields
   [:id :name :manager :descriptionHtml
    :logo :package :vertical :autoApprove

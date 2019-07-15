@@ -358,3 +358,9 @@
   (fn [package _]
     (and (not= package :unselected)
          (not= package :free))))
+
+(reg-sub
+  ::deleting-integration?
+  :<- [::sub-db]
+  (fn [db _]
+    (::edit/deleting-integration? db)))

@@ -18,7 +18,7 @@
     [wh.company.payment.db :as payment]
     [wh.company.payment.events :as payment-events]
     [wh.db :as db]
-    [wh.graphql.company :refer [create-company-mutation update-company-mutation update-company-mutation-with-fields add-new-company-user-mutation delete-user-mutation company-query-with-payment-details all-company-jobs-query update-job-mutation publish-company-profile-mutation]]
+    [wh.graphql.company :refer [create-company-mutation update-company-mutation update-company-mutation-with-fields add-new-company-user-mutation delete-user-mutation company-query-with-payment-details all-company-jobs-query update-job-mutation publish-company-profile-mutation delete-integration-mutation]]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
     [wh.util :as util]))
@@ -319,6 +319,36 @@
                  :variables {:create_company_user (subdb->graphql-company-user db)}
                  :on-success [::add-company-user-success]
                  :on-failure [::add-company-user-failure]}})))
+
+(reg-event-fx
+  ::delete-integration
+  company-interceptors
+  (fn [{db :db} [integration]]
+    (let []
+      {:db (assoc db ::edit/deleting-integration? true)
+       :graphql {:query delete-integration-mutation
+                 :variables {:company_id (::edit/id db)
+                             :integration (name integration)}
+                 :on-success [::delete-integration-success integration]
+                 :on-failure [::delete-integration-failure integration]}})))
+
+(reg-event-fx
+  ::delete-integration-success
+  company-interceptors
+  (fn [{db :db} [integration]]
+    {:db (-> db
+             (assoc ::edit/deleting-integration? false)
+             (update ::edit/integrations dissoc integration))
+     :dispatch-n [[:wh.events/scroll-to-top]
+                  [:success/set-global "Integration successfully deleted."]]}))
+
+(reg-event-fx
+  ::delete-integration-failure
+  company-interceptors
+  (fn [{db :db} [integration]]
+    {:db (assoc db ::edit/deleting-integration? false)
+     :dispatch-n [[:wh.events/scroll-to-top]
+                  [:error/set-global "An error occurred while deleting the integration." [::delete-integration integration]]]}))
 
 (reg-event-fx
   ::add-company-user-success
