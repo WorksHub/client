@@ -381,7 +381,7 @@
 (defn development-setup
   [k editing-atom]
   (let [data (get data/dev-setup-data k)
-        current-text (<sub [::subs/development-setup k])]
+        current-text "???"]
     (when (or editing-atom
               (text/not-blank current-text)
               (and editing-atom (text/not-blank (get @editing-atom k))))
@@ -457,8 +457,7 @@
                    (when (or @tech-editing? @scales-editing?) "company-profile__section--editing")
                    "company-profile__technology")}
          [editable {:editable?             admin-or-owner?
-                    :prompt-before-cancel? (or (not-empty @new-dev-setup)
-                                               (not= selected-tag-ids @existing-tag-ids))
+                    :prompt-before-cancel? (not= selected-tag-ids @existing-tag-ids)
                     :on-editing            #(do
                                               (reset! tech-editing? true)
                                               (reset! existing-tag-ids (<sub [::subs/current-tag-ids tag-type]))
@@ -471,9 +470,7 @@
                                   (not-empty
                                     (merge {}
                                            (when (not= selected-tag-ids @existing-tag-ids)
-                                             {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})
-                                           (when (not-empty @new-dev-setup)
-                                             {:dev-setup (merge (:dev-setup (<sub [::subs/company])) @new-dev-setup)})))]
+                                             {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
                          (dispatch-sync [::events/update-company changes])))}
           [:div
            [:h2.title "Technology"]

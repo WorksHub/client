@@ -13,9 +13,9 @@
 (defn tag-row
   [_tag]
   (let [temp-label (r/atom nil)]
-    (fn [{:keys [id label slug type] :as tag}]
+    (fn [{:keys [id label slug type subtype] :as tag}]
       [:div.edit-tags__tag-row
-       [:ul.tags [:li label]]
+       [:ul.tags [:li.tag label]]
        [:div.edit-tags__tag-row__info
         [:div.is-flex [:strong "Label"] [text-field (or @temp-label label)
                                          {:on-change #(reset! temp-label %)}]
@@ -28,6 +28,10 @@
         [:div.is-flex [:strong "Type"] [select-field type
                                         {:options (<sub [::subs/tag-types])
                                          :on-change [::events/set-tag-type tag]}]]
+        (when-let [subtypes (<sub [::subs/tag-subtypes type])]
+          [:div.is-flex [:strong "Subtype"] [select-field subtype
+                                             {:options subtypes
+                                              :on-change [::events/set-tag-subtype tag]}]])
         [:div.is-flex [:strong "Slug"] [:input {:type :text
                                                 :read-only true
                                                 :value slug}]]]

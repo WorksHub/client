@@ -1,5 +1,6 @@
 (ns wh.common.data.company-profile)
 
+;; TODO remove?
 (def dev-setup-data
   {:hardware       {:icon  "cp-hardware"
                     :title "Hardware"

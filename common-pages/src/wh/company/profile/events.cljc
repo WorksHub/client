@@ -32,7 +32,6 @@
                     [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear :howWeWork
                      [:techScales [:testing :ops :timeToDeploy]]
                      [:locations [:city :country :countryCode :region :subRegion :state]]
-                     [:devSetup [:hardware :software :sourcecontrol :ci :infrastructure]]
                      [:tags [:id :type :label :slug]]
                      [:videos [:youtubeId :thumbnail :description]]
                      [:images [:url :width :height]]]]]})
@@ -66,7 +65,7 @@
    :venia/variables [{:variable/name "type"
                       :variable/type :tag_type}]
    :venia/queries [[:list_tags {:type :$type}
-                    [[:tags [:id :label :type :slug]]]]]})
+                    [[:tags [:id :label :type :slug :subtype]]]]]})
 
 (reg-query :tags fetch-tags)
 

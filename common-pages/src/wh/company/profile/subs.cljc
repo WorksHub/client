@@ -276,12 +276,6 @@
     (set (get-in sub-db [::profile/selected-tag-ids tag-type]))))
 
 (reg-sub
-  ::development-setup
-  :<- [::company]
-  (fn [company [_ sub-key]]
-    (get-in company [:dev-setup sub-key])))
-
-(reg-sub
   ::location-search
   :<- [::sub-db]
   (fn [db _]

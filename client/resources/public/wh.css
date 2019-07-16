@@ -16025,9 +16025,11 @@ h3 {
     display: flex;
     align-items: center; }
   .edit-tags__tag-row ul {
-    width: 40%; }
+    width: 30%; }
   .edit-tags__tag-row li {
     opacity: 1; }
+  .edit-tags__tag-row .tag {
+    margin: 6px 6px; }
 
 .edit-tags__tag-row__info {
   display: flex; }

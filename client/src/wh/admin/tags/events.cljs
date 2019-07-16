@@ -22,7 +22,7 @@
    :venia/variables [{:variable/name "type"
                       :variable/type :tag_type}]
    :venia/queries [[:list_tags {:type :$type}
-                    [[:tags [:id :label :type :slug]]]]]})
+                    [[:tags [:id :label :type :slug :subtype]]]]]})
 
 (reg-query :tags fetch-tags)
 
@@ -60,7 +60,20 @@
       {:dispatch [:graphql/update-entry :tags {}
                   :overwrite {:list-tags {:tags all-updated-tags}}]
        :graphql {:query update-tag-mutation
-                 :variables (select-keys updated-tag [:id :type])}})))
+                 :variables (select-keys updated-tag [:id :subtype])}})))
+
+(reg-event-fx
+  ::set-tag-subtype
+  (fn [{db :db} [_ old-tag tag-subtype]]
+    (let [updated-tag (assoc old-tag :subtype tag-subtype)
+          all-tags (get-in (cache/result db :tags {}) [:list-tags :tags])
+          all-updated-tags (map (fn [t] (if (= (:id old-tag) (:id t))
+                                          updated-tag
+                                          t)) all-tags)]
+      {:dispatch [:graphql/update-entry :tags {}
+                  :overwrite {:list-tags {:tags all-updated-tags}}]
+       :graphql {:query update-tag-mutation
+                 :variables (select-keys updated-tag [:id :subtype])}})))
 
 (reg-event-fx
   ::set-tag-label

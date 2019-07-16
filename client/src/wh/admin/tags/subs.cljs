@@ -28,6 +28,15 @@
   (fn [_ _]
     (map #(hash-map :id (name %) :label (str/capitalize (name %))) tag-spec/types)))
 
+(reg-sub
+  ::tag-subtypes
+  (fn [_ [_ type]]
+    (when-let [subtypes (case (keyword type)
+                          :tech tag-spec/tech-subtypes
+                          :benefit tag-spec/benefit-subtypes
+                          nil)]
+      (map #(hash-map :id (name %) :label (str/capitalize (name %))) subtypes))))
+
 (reg-sub-raw
   ::all-tags
   (fn [_ _]

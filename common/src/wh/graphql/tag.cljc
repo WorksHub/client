@@ -6,7 +6,8 @@
   {:venia/operation {:operation/type :mutation
                      :operation/name "create_tag"}
    :venia/variables [{:variable/name "label" :variable/type :String!}
-                     {:variable/name "type" :variable/type :tag_type!}]
+                     {:variable/name "type" :variable/type :tag_type!}
+                     {:variable/name "subtype" :variable/type :tag_subtype}]
    :venia/queries   [[:create_tag {:label :$label :type :$type}
                       [:label :id :slug :type]]]})
 
@@ -20,9 +21,12 @@
                      {:variable/name "label"
                       :variable/type :String}
                      {:variable/name "type"
-                      :variable/type :tag_type}]
-   :venia/queries   [[:update_tag {:id    :$id
-                                   :slug  :$slug
-                                   :label :$label
-                                   :type  :$type}
-                      [:id :slug :label :type]]]})
+                      :variable/type :tag_type}
+                     {:variable/name "subtype"
+                      :variable/type :tag_subtype}]
+   :venia/queries   [[:update_tag {:id      :$id
+                                   :slug    :$slug
+                                   :label   :$label
+                                   :type    :$type
+                                   :subtype :$subtype}
+                      [:id :slug :label :type :subtype]]]})
