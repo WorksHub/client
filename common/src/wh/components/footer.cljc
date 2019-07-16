@@ -135,8 +135,7 @@
     [:div.footer__info
      [:div.footer__info__logo
       [:div.footer__info__logo__codi
-       [:img {:src "/images/codi-white.svg"
-              :alt ""}]]
+       [icon "www"]]
       [:div.footer__info__logo__title
        "WorksHub"]]
      [:div.footer__info__contact

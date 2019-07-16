@@ -238,7 +238,7 @@
     [:nav.navbar {:role       "navigation"
                   :aria-label "main navigation"}
      [:div.navbar-item.navbar__logo-container
-      [:svg.icon.navbar__logo [icon (if (= "www" vertical) "codi" vertical)]]
+      [:svg.icon.navbar__logo [icon vertical]]
       (logo-title vertical env)]
      (when content?
        [navbar-content args])

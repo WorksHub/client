@@ -23,8 +23,7 @@
                (when toggleable?
                  {:class "verticals-pod__vertical-toggle"
                   :on-click #(dispatch (conj toggle-event vertical))})
-               [icon (if (= "www" vertical)
-                       "codi" vertical)] (nav-common/logo-title vertical)]))]
+               [icon vertical] (nav-common/logo-title vertical)]))]
     [:hr]
     [:div
      {:class (util/merge-classes
@@ -38,5 +37,4 @@
                                 "verticals-pod__vertical--disabled")}
                       (when toggleable?
                         {:on-click #(dispatch (conj toggle-event vertical))}))
-               [icon (if (= "www" vertical)
-                       "codi" vertical)] (nav-common/logo-title vertical)]))]]])
+               [icon vertical] (nav-common/logo-title vertical)]))]]])
