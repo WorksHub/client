@@ -105,31 +105,39 @@
     border-top: 1px solid rgba(0,0,0,0.1)
 
 .edit-tags__tag-row
+  padding: 8px
   display: flex
-  align-items: center
-  justify-content: flex-start
-  & > div
-    display: flex
-    align-items: center
+  flex-direction: column
   ul
-    width: 30%
+    width: 23%
   li
     opacity: 1
   .tag
     margin: 6px 6px
 
-.edit-tags__tag-row__info
+.edit-tags__tag-row__primary
   display: flex
+  align-items: center
+  justify-content: space-between
+
+.edit-tags__tag-row--editing
+  justify-content: flex-start
+
+.edit-tags__tag-row__editable
+  display: flex
+  flex-direction: column
+  justify-content: flex-start
+  input, select
+    width: 300px
   .field
     margin: 0
   .field__error
     display: none
   strong
-    margin-right: 8px
-  div + div
-    margin-left: 16px
+    width: 100px
 
 .edit-tags__tag-row__info__icons
+  margin-left: 12px
   display: flex
   align-items: center
   .icon

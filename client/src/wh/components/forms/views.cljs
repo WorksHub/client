@@ -30,16 +30,18 @@
   (:require-macros
     [clojure.core.strint :refer [<<]]))
 
-(defn target-value [^js/Event ev]
+(defn target-value [^js/Event ev _]
   (-> ev .-target .-value))
 
 (defn target-checked [^js/Event ev]
   (-> ev .-target .-checked))
 
-(defn target-numeric-value [^js/Event ev]
+(defn target-numeric-value [^js/Event ev {:keys [minv maxv]}]
   (let [value (-> ev .-target .-valueAsNumber)]
     (when-not (js/isNaN value)
-      value)))
+      (cond-> value
+              minv (max minv)
+              minv (min maxv)))))
 
 ;; This one's signature is an exception to what's described above.
 (defn field-container
@@ -83,7 +85,7 @@
    (merge (when-not (= type :textarea) {:type type})
           {:value value :placeholder placeholder}
           (when on-change
-            {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) %)]
+            {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) % options)]
                            (when dirty
                              (reset! dirty true))
                            (if (fn? on-change)
@@ -91,7 +93,8 @@
                              (dispatch-sync (conj on-change new-value))))})
           (when on-scroll
             {:on-scroll #(dispatch on-scroll)})
-          (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press])
+          (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press
+                                :step])
           (when (and rows (= type :textarea))
             {:rows rows}))])
 
@@ -218,7 +221,7 @@
        [:select
         (merge {:value (str (util/index-of (mapv :id options) value))}
                (when on-change
-                 {:on-change #(let [id (:id (nth options (js/parseInt (target-value %))))]
+                 {:on-change #(let [id (:id (nth options (js/parseInt (target-value % nil))))]
                                 (if (fn? on-change)
                                   (on-change id)
                                   (dispatch-sync (conj on-change id))))})

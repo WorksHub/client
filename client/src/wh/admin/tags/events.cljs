@@ -22,7 +22,7 @@
    :venia/variables [{:variable/name "type"
                       :variable/type :tag_type}]
    :venia/queries [[:list_tags {:type :$type}
-                    [[:tags [:id :label :type :slug :subtype]]]]]})
+                    [[:tags [:id :label :type :slug :subtype :weight]]]]]})
 
 (reg-query :tags fetch-tags)
 
@@ -49,41 +49,37 @@
   (fn [_ _]
     (js/alert "Not implemented")))
 
+(defn submit-updated-tag!
+  [db k old-tag updated-tag]
+  (let [all-tags (get-in (cache/result db :tags {}) [:list-tags :tags])
+        all-updated-tags (map (fn [t] (if (= (:id old-tag) (:id t))
+                                        updated-tag
+                                        t)) all-tags)]
+    {:dispatch [:graphql/update-entry :tags {}
+                :overwrite {:list-tags {:tags all-updated-tags}}]
+     :graphql {:query update-tag-mutation
+               :variables (select-keys updated-tag [:id k])}}))
+
 (reg-event-fx
   ::set-tag-type
   (fn [{db :db} [_ old-tag tag-type]]
-    (let [updated-tag (assoc old-tag :type tag-type)
-          all-tags (get-in (cache/result db :tags {}) [:list-tags :tags])
-          all-updated-tags (map (fn [t] (if (= (:id old-tag) (:id t))
-                                          updated-tag
-                                          t)) all-tags)]
-      {:dispatch [:graphql/update-entry :tags {}
-                  :overwrite {:list-tags {:tags all-updated-tags}}]
-       :graphql {:query update-tag-mutation
-                 :variables (select-keys updated-tag [:id :subtype])}})))
+    (let [updated-tag (assoc old-tag :type tag-type)]
+      (submit-updated-tag! db :type old-tag updated-tag))))
 
 (reg-event-fx
   ::set-tag-subtype
   (fn [{db :db} [_ old-tag tag-subtype]]
-    (let [updated-tag (assoc old-tag :subtype tag-subtype)
-          all-tags (get-in (cache/result db :tags {}) [:list-tags :tags])
-          all-updated-tags (map (fn [t] (if (= (:id old-tag) (:id t))
-                                          updated-tag
-                                          t)) all-tags)]
-      {:dispatch [:graphql/update-entry :tags {}
-                  :overwrite {:list-tags {:tags all-updated-tags}}]
-       :graphql {:query update-tag-mutation
-                 :variables (select-keys updated-tag [:id :subtype])}})))
+    (let [updated-tag (assoc old-tag :subtype tag-subtype)]
+      (submit-updated-tag! db :subtype old-tag updated-tag))))
+
+(reg-event-fx
+  ::set-tag-weight
+  (fn [{db :db} [_ old-tag tag-weight]]
+    (let [updated-tag (assoc old-tag :weight tag-weight)]
+      (submit-updated-tag! db :weight old-tag updated-tag))))
 
 (reg-event-fx
   ::set-tag-label
   (fn [{db :db} [_ old-tag label]]
-    (let [updated-tag (assoc old-tag :label label)
-          all-tags (get-in (cache/result db :tags {}) [:list-tags :tags])
-          all-updated-tags (map (fn [t] (if (= (:id old-tag) (:id t))
-                                          updated-tag
-                                          t)) all-tags)]
-      {:dispatch [:graphql/update-entry :tags {}
-                  :overwrite {:list-tags {:tags all-updated-tags}}]
-       :graphql {:query update-tag-mutation
-                 :variables (select-keys updated-tag [:id :label])}})))
+    (let [updated-tag (assoc old-tag :label label)]
+      (submit-updated-tag! db :label old-tag updated-tag))))

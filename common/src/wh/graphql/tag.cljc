@@ -20,6 +20,8 @@
                       :variable/type :String}
                      {:variable/name "label"
                       :variable/type :String}
+                     {:variable/name "weight"
+                      :variable/type :Float}
                      {:variable/name "type"
                       :variable/type :tag_type}
                      {:variable/name "subtype"
@@ -27,6 +29,7 @@
    :venia/queries   [[:update_tag {:id      :$id
                                    :slug    :$slug
                                    :label   :$label
+                                   :weight  :$weight
                                    :type    :$type
                                    :subtype :$subtype}
-                      [:id :slug :label :type :subtype]]]})
+                      [:id :slug :label :type :subtype :weight]]]})
