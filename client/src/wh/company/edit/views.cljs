@@ -190,7 +190,7 @@
       :on-click #(dispatch [::events/toggle-profile])}
      (str (if (<sub [::subs/profile-enabled]) "disable" "enable"))]]
    (when (<sub [::subs/profile-enabled])
-     [link "Visit the company profile" :company :id (<sub [::subs/id])
+     [link "Visit the company profile" :company :slug (<sub [::subs/slug])
       :class "a--underlined"])])
 
 (defn users
@@ -433,6 +433,8 @@
 (defmulti error->message identity)
 (defmethod error->message :default [_]
   "Unfortunately we could not load the page you were looking for. If the issue persists, please contact us.")
+(defmethod error->message :company-with-same-name-already-exists [_]
+  "The company with the same name already exists.")
 (defmethod error->message :failed-to-fetch-company [_]
   "Unfortunately we could not load company information at this time. If the issue persists, please contact us.")
 

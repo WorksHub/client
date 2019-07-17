@@ -18,16 +18,16 @@
   ::company
   (fn [_ _]
     (reaction
-      (let [id     (<sub [:wh/page-param :id])
-            result (<sub [:graphql/result :company {:id id}])]
+      (let [slug     (<sub [:wh/page-param :slug])
+            result (<sub [:graphql/result :company {:slug slug}])]
         (profile/->company (:company result))))))
 
 (reg-sub-raw
   ::company-extra-data
   (fn [_ _]
     (reaction
-      (let [id     (<sub [:wh/page-param :id])
-            result (<sub [:graphql/result :company-issues-and-blogs {:id id}])]
+      (let [slug     (<sub [:wh/page-param :slug])
+            result (<sub [:graphql/result :company-issues-and-blogs {:slug slug}])]
         (:company result)))))
 
 (reg-sub-raw

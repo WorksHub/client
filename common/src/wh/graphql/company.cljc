@@ -47,7 +47,7 @@
    :venia/queries [[:delete_integration {:integration :$integration :company_id :$company_id}]]})
 
 (def default-company-fields
-  [:id :name :manager :descriptionHtml
+  [:id :slug :name :manager :descriptionHtml
    :logo :package :vertical :autoApprove
    :paidOfflineUntil :disabled :profileEnabled
    [:videos [:youtubeId :thumbnail :description]]

@@ -47,6 +47,12 @@
     (::edit/id db)))
 
 (reg-sub
+  ::slug
+  :<- [::sub-db]
+  (fn [db _]
+    (::edit/slug db)))
+
+(reg-sub
   ::suggestions
   :<- [::sub-db]
   (fn [db _]

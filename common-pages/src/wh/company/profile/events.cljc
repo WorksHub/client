@@ -26,9 +26,9 @@
 (defquery fetch-company-query
   {:venia/operation {:operation/type :query
                      :operation/name "company"}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID!}]
-   :venia/queries [[:company {:id :$id}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}]
+   :venia/queries [[:company {:slug :$slug}
                     [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear :howWeWork
                      [:techScales [:testing :ops :timeToDeploy]]
                      [:locations [:city :country :countryCode :region :subRegion :state]]
@@ -39,9 +39,9 @@
 (defquery fetch-company-blogs-and-issues-query
   {:venia/operation {:operation/type :query
                      :operation/name "company"}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID!}]
-   :venia/queries [[:company {:id :$id}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}]
+   :venia/queries [[:company {:slug :$slug}
                     [[:blogs {:pageSize 2 :pageNumber 1}
                       [[:blogs
                         [:id :title :feature :author :formattedCreationDate :readingTime
@@ -70,10 +70,10 @@
 (reg-query :tags fetch-tags)
 
 (defn initial-query [db]
-  [:company {:id (get-in db [:wh.db/page-params :id])}])
+  [:company {:slug (get-in db [:wh.db/page-params :slug])}])
 
 (defn extra-data-query [db]
-  [:company-issues-and-blogs {:id (get-in db [:wh.db/page-params :id])}])
+  [:company-issues-and-blogs {:slug (get-in db [:wh.db/page-params :slug])}])
 
 (defn tag-query [type-filter]
   (if type-filter

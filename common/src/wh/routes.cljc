@@ -92,7 +92,7 @@
                   ["companies/" {""    :companies
                                  "new" :create-company
                                  "applications" :company-applications
-                                 [:id] :company ; reserved for public company page
+                                 [:slug] :company
                                  [:id "/edit"] :admin-edit-company
                                  [:id "/dashboard"] :company-dashboard
                                  [:id "/applications"] :admin-company-applications
