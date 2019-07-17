@@ -8,6 +8,7 @@
     [clojure.string :as str]
     [wh.common.data.company-profile :as data]
     [wh.common.specs.company :as company-spec]
+    [wh.common.specs.tags :as tag-spec]
     [wh.common.text :as text]
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
@@ -289,12 +290,15 @@
      (pswp-element)]))
 
 (defn profile-tag-field
-  [_tag-type _selected-tag-ids _args]
+  [_args]
   (let [tags-collapsed?  (r/atom true)]
-    (fn [tag-type selected-tag-ids {:keys [label placeholder]}]
+    (fn [{:keys [label placeholder tag-type tag-subtype]}]
       #?(:cljs
-         (let [matching-tags (<sub [::subs/matching-tags {:include-ids selected-tag-ids :size 20 :type tag-type}])
-               tag-search    (<sub [::subs/tag-search tag-type])]
+         (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type tag-subtype])
+               matching-tags (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type}
+                                                                (when tag-subtype
+                                                                  {:subtype tag-subtype}))])
+               tag-search    (<sub [::subs/tag-search tag-type tag-subtype])]
            [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
             {:on-submit #(.preventDefault %)}
             [tags-field
@@ -303,14 +307,14 @@
                                           (assoc % :selected true)
                                           %) matching-tags)
               :collapsed?         @tags-collapsed?
-              :on-change          [::events/set-tag-search tag-type]
+              :on-change          [::events/set-tag-search tag-type tag-subtype]
               :label              label
               :placeholder        placeholder
               :on-toggle-collapse #(swap! tags-collapsed? not)
-              :on-add-tag         #(dispatch [::events/create-new-tag % tag-type])
+              :on-add-tag         #(dispatch [::events/create-new-tag % tag-type tag-subtype])
               :on-tag-click
               #(when-let [id (some (fn [tx] (when (= (:tag tx) %) (:key tx))) matching-tags)]
-                 (dispatch [::events/toggle-selected-tag-id tag-type id]))}]
+                 (dispatch [::events/toggle-selected-tag-id tag-type tag-subtype id]))}]
             (when (<sub [::subs/creating-tag?])
               [:div.company-profile__tag-loader [:div]])])))))
 
@@ -332,7 +336,7 @@
       (let [description      (<sub [::subs/description])
             selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
         [:section
-         {:id "company-profile__about-us"
+         {:id    "company-profile__about-us"
           :class (util/merge-classes
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
@@ -374,37 +378,47 @@
                                 :on-change   #(if (= % description)
                                                 (reset! new-desc nil)
                                                 (reset! new-desc %))}])
-           [profile-tag-field tag-type selected-tag-ids
-            {:label              "Enter 3-5 tags that make your company stand out from your competitors"
-             :placeholder        "e.g. flexible hours, remote working, startup"}]]]]))))
+           [profile-tag-field
+            {:label       "Enter 3-5 tags that make your company stand out from your competitors"
+             :placeholder "e.g. flexible hours, remote working, startup"
+             :tag-type    tag-type}]]]]))))
 
 (defn development-setup
-  [k editing-atom]
-  (let [data (get data/dev-setup-data k)
-        current-text "???"]
-    (when (or editing-atom
-              (text/not-blank current-text)
-              (and editing-atom (text/not-blank (get @editing-atom k))))
+  [k]
+  (let  [data      (get data/dev-setup-data k)
+         dsid (str "company-profile__development-setup--" (name k))]
+    (fn [k]
+      (let [tags (<sub [::subs/tags :tech k])]
+        [:div.company-profile__development-setup
+         {:id dsid}
+         [:div.company-profile__development-setup__block__info
+          [:div.company-profile__development-setup__icon
+           [icon (:icon data)]]
+          [:h3 (:title data)]
+          [:span "(" (count tags) ")"]]
+         [:div.company-profile__development-setup__tag-list
+          (into [:ul.tags.tags--inline.tags--profile]
+                (map (fn [tag]
+                       [:li {:key (:id tag)}
+                        (:label tag)])
+                     tags))]
+         [:div.company-profile__development-setup__expander
+          (interop/toggle-is-open-on-click dsid)
+          [icon "roll-down"]]]))))
+
+(defn edit-development-setup
+  [k]
+  (let  [data (get data/dev-setup-data k)]
+    (fn [k]
       [:div
        {:class (util/merge-classes
-                 "company-profile__development-setup"
-                 (str "company-profile__development-setup--" k)
-                 (when editing-atom "company-profile__development-setup--editing"))}
-       (when-not editing-atom
-         [:div.company-profile__development-setup__icon
-          [icon (:icon data)]])
-       [:div.company-profile__development-setup__info
-        [:h3 (:title data)]
-        (if editing-atom
-          [:div.company-profile__development-setup__info__text-field
-           #?(:cljs
-              [text-field (or (get @editing-atom k)
-                              current-text
-                              "")
-               {:type :textarea
-                :placeholder (:placeholder data)
-                :on-change (fn [v] (swap! editing-atom assoc k v))}])]
-          [:p current-text])]])))
+                 "company-profile__edit-development-setup"
+                 (str "company-profile__edit-development-setup--" (name k)))}
+       [:h3 (:title data)]
+       [profile-tag-field
+        {:placeholder (:placeholder data)
+         :tag-type    :tech
+         :tag-subtype k}]])))
 
 (def tech-scale-levels 5)
 
@@ -449,7 +463,7 @@
         new-tech-scales  (r/atom {})
         tag-type         :tech]
     (fn [admin-or-owner?]
-      (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
+      (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids tag-type]))))]
         [:section
          {:id    "company-profile__technology"
           :class (util/merge-classes
@@ -460,8 +474,10 @@
                     :prompt-before-cancel? (not= selected-tag-ids @existing-tag-ids)
                     :on-editing            #(do
                                               (reset! tech-editing? true)
-                                              (reset! existing-tag-ids (<sub [::subs/current-tag-ids tag-type]))
-                                              (dispatch [::events/reset-selected-tag-ids tag-type]))
+                                              (reset! existing-tag-ids #{})
+                                              (run! (fn [subtype]
+                                                      (swap! existing-tag-ids clojure.set/union (<sub [::subs/current-tag-ids tag-type subtype]))
+                                                      (dispatch [::events/reset-selected-tag-ids tag-type subtype])) tag-spec/tech-subtypes))
                     :on-cancel             #(reset! tech-editing? false)
                     :on-save
                     #(do
@@ -475,28 +491,18 @@
           [:div
            [:h2.title "Technology"]
            [:h2.subtitle "Tech stack"]
-           (when-let [tags (not-empty (<sub [::subs/tags tag-type]))]
-             [:div.company-profile__technology__tech-tags
-              [tag-list tag-type]])
-
-           [:h2.subtitle "Development setup"]
            (doall
              (for [k (keys data/dev-setup-data)]
                ^{:key k}
-               [development-setup k nil]))]
+               [development-setup k]))]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
-           [:h2.title "Technology"]
-           [:h2.subtitle "Tech stack"]
-           [profile-tag-field tag-type selected-tag-ids
-            {:label       "Enter 3-5 tags that describe your company's technology"
-             :placeholder "e.g. haskell, scala, clojure, javascript etc"}]
-           [:h2.subtitle "Development setup"]
-           [:form.wh-formx.wh-formx__layout.company-profile__editing-dev-setup
+            [:h2.title "Technology"]
+            [:h2.subtitle "Tech stack"]
             (doall
               (for [k (keys data/dev-setup-data)]
                 ^{:key k}
-                [development-setup k new-dev-setup]))]]]
+                [edit-development-setup k]))]]
 
          (let [tech-scales (not-empty (<sub [::subs/tech-scales]))
                tech-scales-view
@@ -687,11 +693,11 @@
        [:div.split-content
         [:div.company-profile__main.split-content__main
          [about-us admin-or-owner?]
+         [technology admin-or-owner?]
          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
          [videos admin-or-owner?]
          [blogs]
          [photos admin-or-owner?]
-         [technology admin-or-owner?]
          [issues]
          [how-we-work admin-or-owner?]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile

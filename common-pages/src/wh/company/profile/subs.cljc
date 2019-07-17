@@ -114,17 +114,23 @@
 (reg-sub
   ::tags
   :<- [::company]
-  (fn [company [_ type]]
-    (if type
-      (filter (fn [tag] (= type (:type tag))) (:tags company))
+  (fn [company [_ tag-type tag-subtype]]
+    (if tag-type
+      (filter (fn [tag] (and (= tag-type (:type tag))
+                             (if tag-subtype
+                               (= tag-subtype (:subtype tag))
+                               true))) (:tags company))
       (:tags company))))
 
 (reg-sub
   ::tags--inverted
   :<- [::company]
-  (fn [company [_ type]]
-    (if type
-      (filter (fn [tag] (not= type (:type tag))) (:tags company))
+  (fn [company [_ tag-type tag-subtype]]
+    (if tag-type
+      (filter (fn [tag] (and (not= tag-type (:type tag))
+                             (if tag-subtype
+                               (not= tag-subtype (:subtype tag))
+                               true))) (:tags company))
       (:tags company))))
 
 (reg-sub
@@ -221,8 +227,8 @@
 (reg-sub
   ::tag-search
   :<- [::sub-db]
-  (fn [sub-db [_ tag-type]]
-    (or (get-in sub-db [::profile/tag-search tag-type]) "")))
+  (fn [sub-db [_ tag-type tag-subtype]]
+    (or (get-in sub-db [::profile/tag-search tag-type tag-subtype]) "")))
 
 (reg-sub
   ::tag-search--map
@@ -238,9 +244,9 @@
 
 (reg-sub-raw
   ::current-tag-ids
-  (fn [_ [_ type]]
+  (fn [_ [_ tag-type tag-subtype]]
     (reaction
-      (set (map :id (<sub [::tags type]))))))
+      (set (map :id (<sub [::tags tag-type tag-subtype]))))))
 
 (reg-sub-raw
   ::current-tag-ids--inverted
@@ -252,11 +258,12 @@
   ::matching-tags
   :<- [::all-tags]
   :<- [::tag-search--map]
-  (fn [[tags tag-search] [_ {:keys [include-ids size type]}]]
-    (let [tag-search (str/lower-case (or (get tag-search type) ""))
+  (fn [[tags tag-search] [_ {:keys [include-ids size type subtype]}]]
+    (let [tag-search (str/lower-case (or (get-in tag-search [type subtype]) ""))
           matching-but-not-included (filter (fn [tag] (and (or (str/blank? tag-search)
                                                                (str/includes? (str/lower-case (:label tag)) tag-search))
                                                            (= type (:type tag))
+                                                           (= subtype (:subtype tag))
                                                            (not (contains? include-ids (:id tag))))) tags)
           included-tags (filter (fn [tag] (contains? include-ids (:id tag))) tags)]
       (->> (concat included-tags matching-but-not-included)
@@ -272,8 +279,9 @@
 (reg-sub
   ::selected-tag-ids
   :<- [::sub-db]
-  (fn [sub-db [_ tag-type]]
-    (set (get-in sub-db [::profile/selected-tag-ids tag-type]))))
+  (fn [sub-db [_ tag-type tag-subtype]]
+    (set (get-in sub-db (cond-> [::profile/selected-tag-ids tag-type]
+                                tag-subtype (conj tag-subtype))))))
 
 (reg-sub
   ::location-search

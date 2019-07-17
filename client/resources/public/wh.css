@@ -15584,32 +15584,66 @@ h3 {
   height: 20px; }
 
 .company-profile__development-setup {
-  display: flex; }
+  width: 100%;
+  height: 48px;
+  padding: 8px 8px 1px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 1px solid #e8e8e8; }
   .company-profile__development-setup p {
     line-height: 24px;
     font-size: 14px;
     color: #434E55; }
   .company-profile__development-setup h3 {
-    margin-top: 12px; }
-  .company-profile__development-setup + .company-profile__development-setup {
-    margin-top: 18px; }
+    margin: 0; }
+  .company-profile__development-setup:not(:last-of-type) {
+    border-bottom: 0;
+    padding: 8px 8px 2px 8px; }
 
-.company-profile__development-setup--editing h3 {
-  margin-top: 0; }
-
-.company-profile__development-setup__info {
-  width: 100%; }
-
-.company-profile__development-setup__info__text-field .textarea {
-  font-size: 12px;
-  resize: none; }
+.company-profile__development-setup.is-open {
+  height: unset; }
+  .company-profile__development-setup.is-open .company-profile__development-setup__tag-list {
+    height: unset; }
+  .company-profile__development-setup.is-open .icon--roll-down {
+    transform: rotate(180deg); }
 
 .company-profile__development-setup__icon {
-  width: 80px;
+  width: 24px;
+  height: 24px;
+  margin-right: 24px;
   flex-shrink: 0; }
   .company-profile__development-setup__icon .icon {
-    width: 45px;
-    height: 45px; }
+    width: 24px;
+    height: 24px; }
+
+.company-profile__development-setup__block__info {
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center; }
+  .company-profile__development-setup__block__info h3 {
+    font-size: 14px;
+    line-height: 18px;
+    color: #6E7F89; }
+  .company-profile__development-setup__block__info span {
+    font-size: 12px;
+    color: #adadad;
+    margin-left: 8px; }
+
+.company-profile__development-setup__tag-list {
+  width: 100%;
+  display: flex;
+  height: 30px;
+  overflow: hidden; }
+
+.company-profile__development-setup__expander .icon {
+  margin-top: 2px;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  fill: #6E7F89;
+  transition: transform 0.2s;
+  transform: rotate(0deg); }
 
 .company-profile__company-info .is-full-panel-overlay {
   position: fixed !important;

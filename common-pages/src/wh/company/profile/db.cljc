@@ -2,7 +2,8 @@
   (:require
     [#?(:clj clojure.spec.alpha
         :cljs cljs.spec.alpha) :as s]
-    [wh.common.specs.location]))
+    [wh.common.specs.location]
+    [wh.util :as util]))
 
 (s/def ::photo-uploading? boolean?)
 (s/def ::updating? boolean?)
@@ -22,7 +23,8 @@
 (defn ->tag
   [m]
   (-> m
-      (update :type keyword)))
+      (update :type keyword)
+      (util/update-in* [:subtype] keyword)))
 
 (defn ->company
   [m]

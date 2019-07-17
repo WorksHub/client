@@ -8,8 +8,8 @@
    :venia/variables [{:variable/name "label" :variable/type :String!}
                      {:variable/name "type" :variable/type :tag_type!}
                      {:variable/name "subtype" :variable/type :tag_subtype}]
-   :venia/queries   [[:create_tag {:label :$label :type :$type}
-                      [:label :id :slug :type]]]})
+   :venia/queries   [[:create_tag {:label :$label :type :$type :subtype :$subtype}
+                      [:label :id :slug :type :subtype]]]})
 
 (defquery update-tag-mutation
   {:venia/operation {:operation/type :mutation

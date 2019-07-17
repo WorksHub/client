@@ -32,7 +32,7 @@
                     [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear :howWeWork
                      [:techScales [:testing :ops :timeToDeploy]]
                      [:locations [:city :country :countryCode :region :subRegion :state]]
-                     [:tags [:id :type :label :slug]]
+                     [:tags [:id :type :label :slug :subtype]]
                      [:videos [:youtubeId :thumbnail :description]]
                      [:images [:url :width :height]]]]]})
 
@@ -310,7 +310,7 @@
        :dispatch [:graphql/update-entry :company {:id (:id company)}
                   :merge {:company (company-changes->cache db changes)}]
        :graphql {:query (update-company-mutation-with-fields [:id
-                                                              [:tags [:id :label :slug :type]]])
+                                                              [:tags [:id :label :slug :type :subtype]]])
                  :variables {:update_company
                              (merge {:id (:id company)}
                                     (cases/->camel-case changes))}
@@ -338,8 +338,8 @@
 (reg-event-db
   ::set-tag-search
   profile-interceptors
-  (fn [db [tag-type tag-search]]
-    (assoc-in db [::profile/tag-search tag-type] tag-search)))
+  (fn [db [tag-type tag-subtype tag-search]]
+    (assoc-in db [::profile/tag-search tag-type tag-subtype] tag-search)))
 
 (reg-event-fx
   ::fetch-all-tags
@@ -349,40 +349,41 @@
 (reg-event-db
   ::reset-selected-tag-ids
   db/default-interceptors
-  (fn [db [tag-type]]
-    (assoc-in db [::profile/sub-db ::profile/selected-tag-ids tag-type]
+  (fn [db [tag-type tag-subtype]]
+    (assoc-in db [::profile/sub-db ::profile/selected-tag-ids tag-type tag-subtype]
               (->> (cached-company db)
                    :tags
-                   (filter (comp (partial = tag-type) :type))
+                   (filter #(and (= tag-type (:type %))
+                                 (= tag-subtype (:subtype %))))
                    (map :id)
                    (set)))))
 
 (reg-event-db
   ::toggle-selected-tag-id
   db/default-interceptors
-  (fn [db [tag-type id]]
-    (update-in db [::profile/sub-db ::profile/selected-tag-ids tag-type] (fnil util/toggle #{}) id)))
+  (fn [db [tag-type tag-subtype id]]
+    (update-in db [::profile/sub-db ::profile/selected-tag-ids tag-type tag-subtype] (fnil util/toggle #{}) id)))
 
 (reg-event-fx
   ::create-new-tag
   profile-interceptors
-  (fn [{db :db} [label tag-type]]
+  (fn [{db :db} [label tag-type tag-subtype]]
     {:db (assoc db ::profile/creating-tag? true)
      :graphql {:query tag-gql/create-tag-mutation
-               :variables {:label label :type tag-type}
-               :on-success [::create-new-tag-success tag-type]
+               :variables {:label label :type tag-type :subtype tag-subtype}
+               :on-success [::create-new-tag-success tag-type tag-subtype]
                :on-failure [::create-new-tag-failure]}}))
 
 (reg-event-fx
   ::create-new-tag-success
   db/default-interceptors
-  (fn [{db :db} [tag-type resp]]
+  (fn [{db :db} [tag-type tag-subtype resp]]
     (let [new-tag (get-in resp [:data :create_tag])
           all-tags (cache/result db :tags {})]
       (merge {:db (-> db
                       (assoc-in  [::profile/sub-db ::profile/creating-tag?] false)
                       (assoc-in  [::profile/sub-db ::profile/tag-search tag-type] nil)
-                      (update-in [::profile/sub-db ::profile/selected-tag-ids tag-type] (fnil conj #{}) (:id new-tag)))}
+                      (update-in [::profile/sub-db ::profile/selected-tag-ids tag-type tag-subtype] (fnil conj #{}) (:id new-tag)))}
              (when (not (some #(= (:id new-tag) (:id %)) (get-in all-tags [:list-tags :tags]))) ;; check the tag isn't an existing tag
                {:dispatch [:graphql/update-entry :tags {}
                            :overwrite (update-in all-tags [:list-tags :tags] conj new-tag)]})))))
