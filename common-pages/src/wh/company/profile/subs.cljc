@@ -237,9 +237,10 @@
     (::profile/tag-search sub-db)))
 
 (defn tag->form-tag
-  [{:keys [id label]}]
+  [{:keys [id label type]}]
   {:tag label
    :key id
+   :class (str "tag--type-" (name type))
    :selected false})
 
 (reg-sub-raw

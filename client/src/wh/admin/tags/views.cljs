@@ -7,6 +7,7 @@
     [wh.components.forms.views :refer [text-field select-field]]
     [wh.components.icons :refer [icon]]
     [wh.components.not-found :as not-found]
+    [wh.components.tag :as tag]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
@@ -21,7 +22,7 @@
        {:class (when @editing? "edit-tags__tag-row--editing")}
        [:div.edit-tags__tag-row__primary
         [:div.is-flex.is-full-width
-         [:ul.tags [:li.tag label]]
+         [:ul.tags [tag/tag :li tag]]
          [:span (pr-str (dissoc tag :id))]]
         [:a.a--underlined
          {:on-click #(swap! editing? not)}

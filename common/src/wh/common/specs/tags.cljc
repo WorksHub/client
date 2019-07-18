@@ -15,7 +15,7 @@
 ;; `Infrastructure` - aws, heroku, saas solutions
 ;; `Tools` - hardware, IDEs
 (def tech-subtypes #{:software :ops :infrastructure :tools})
-(def benefit-subtypes #{})
+(def benefit-subtypes #{:vacation :culture :health :finance :extra :professional_dev :diversity :parents})
 (def all-subtypes (clojure.set/union tech-subtypes benefit-subtypes))
 
 (s/def :wh.tag/type types)

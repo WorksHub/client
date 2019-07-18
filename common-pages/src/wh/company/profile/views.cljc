@@ -17,6 +17,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue-card]]
     [wh.components.not-found :as not-found]
+    [wh.components.tag :as tag]
     [wh.components.videos :as videos]
     [wh.interop :as interop]
     [wh.pages.util :as putil]
@@ -321,10 +322,7 @@
 (defn tag-list
   [tag-type]
   (into [:ul.tags.tags--inline.tags--profile]
-        (map (fn [tag]
-               [:li {:key (:id tag)}
-                (:label tag)])
-             (<sub [::subs/tags tag-type]))))
+        (map (fn [tag] [tag/tag :li tag]) (<sub [::subs/tags tag-type]))))
 
 (defn about-us
   [_admin-or-owner?]
@@ -383,42 +381,38 @@
              :placeholder "e.g. flexible hours, remote working, startup"
              :tag-type    tag-type}]]]]))))
 
-(defn development-setup
-  [k]
-  (let  [data      (get data/dev-setup-data k)
-         dsid (str "company-profile__development-setup--" (name k))]
-    (fn [k]
-      (let [tags (<sub [::subs/tags :tech k])]
-        [:div.company-profile__development-setup
+(defn tag-display
+  [tag-type k data]
+  (let  [dsid (str "company-profile__tag-display--" (name k))]
+    (fn [tag-type k data]
+      (let [tags (<sub [::subs/tags tag-type k])]
+        [:div.company-profile__tag-display
          {:id dsid}
-         [:div.company-profile__development-setup__block__info
-          [:div.company-profile__development-setup__icon
+         [:div.company-profile__tag-display__block__info
+          [:div.company-profile__tag-display__icon
            [icon (:icon data)]]
           [:h3 (:title data)]
           [:span "(" (count tags) ")"]]
-         [:div.company-profile__development-setup__tag-list
+         [:div.company-profile__tag-display__tag-list
           (into [:ul.tags.tags--inline.tags--profile]
                 (map (fn [tag]
-                       [:li {:key (:id tag)}
-                        (:label tag)])
+                       [tag/tag :li tag])
                      tags))]
-         [:div.company-profile__development-setup__expander
+         [:div.company-profile__tag-display__expander
           (interop/toggle-is-open-on-click dsid)
           [icon "roll-down"]]]))))
 
-(defn edit-development-setup
-  [k]
-  (let  [data (get data/dev-setup-data k)]
-    (fn [k]
-      [:div
-       {:class (util/merge-classes
-                 "company-profile__edit-development-setup"
-                 (str "company-profile__edit-development-setup--" (name k)))}
-       [:h3 (:title data)]
-       [profile-tag-field
-        {:placeholder (:placeholder data)
-         :tag-type    :tech
-         :tag-subtype k}]])))
+(defn edit-tag-display
+  [tag-type k data]
+    [:div
+     {:class (util/merge-classes
+               "company-profile__edit-tag-display"
+               (str "company-profile__edit-tag-display--" (name k)))}
+     [:h3 (:title data)]
+     [profile-tag-field
+      {:placeholder (:placeholder data)
+       :tag-type    tag-type
+       :tag-subtype k}]])
 
 (def tech-scale-levels 5)
 
@@ -455,8 +449,7 @@
 
 (defn technology
   [_admin-or-owner?]
-  (let [tags-collapsed?  (r/atom true)
-        existing-tag-ids (r/atom #{})
+  (let [existing-tag-ids (r/atom #{})
         tech-editing?    (r/atom false)
         scales-editing?  (r/atom false)
         new-dev-setup    (r/atom {})
@@ -477,7 +470,7 @@
                                               (reset! existing-tag-ids #{})
                                               (run! (fn [subtype]
                                                       (swap! existing-tag-ids clojure.set/union (<sub [::subs/current-tag-ids tag-type subtype]))
-                                                      (dispatch [::events/reset-selected-tag-ids tag-type subtype])) tag-spec/tech-subtypes))
+                                                      (dispatch-sync [::events/reset-selected-tag-ids tag-type subtype])) tag-spec/tech-subtypes))
                     :on-cancel             #(reset! tech-editing? false)
                     :on-save
                     #(do
@@ -494,7 +487,7 @@
            (doall
              (for [k (keys data/dev-setup-data)]
                ^{:key k}
-               [development-setup k]))]
+               [tag-display tag-type k (get data/dev-setup-data k)]))]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
             [:h2.title "Technology"]
@@ -502,11 +495,11 @@
             (doall
               (for [k (keys data/dev-setup-data)]
                 ^{:key k}
-                [edit-development-setup k]))]]
+                [edit-tag-display tag-type k (get data/dev-setup-data k)]))]]
 
          (let [tech-scales (not-empty (<sub [::subs/tech-scales]))
                tech-scales-view
-               (when (or admin-or-owner? tech-scales)
+               (when (or admin-or-owner? tech-scales )
                  [:div
                   (when @scales-editing?
                     [:hr])
@@ -682,6 +675,51 @@
                                                     (reset! new-how-we-work nil)
                                                     (reset! new-how-we-work %))}])]]]))))))
 
+(defn benefits
+  [_admin-or-owner?]
+  (let [editing? (r/atom false)
+        existing-tag-ids (r/atom #{})
+        tag-type :benefit]
+    (fn [admin-or-owner?]
+      (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids tag-type]))))]
+        [:section
+         {:id "company-profile__benefits"
+          :class (util/merge-classes
+                   "company-profile__section--headed"
+                   (when @editing? "company-profile__section--editing")
+                   "company-profile__benefits")}
+         [editable {:editable?             admin-or-owner?
+                    :prompt-before-cancel? (not= selected-tag-ids @existing-tag-ids)
+                    :on-editing            #(do
+                                              (reset! editing? true)
+                                              (reset! existing-tag-ids #{})
+                                              (run! (fn [subtype]
+                                                      (swap! existing-tag-ids clojure.set/union (<sub [::subs/current-tag-ids tag-type subtype]))
+                                                      (dispatch-sync [::events/reset-selected-tag-ids tag-type subtype])) tag-spec/benefit-subtypes))
+                    :on-cancel #(reset! editing? false)
+                    :on-save
+                    #(do
+                       (reset! editing? false)
+                       (when-let [changes
+                                  (not-empty
+                                    (merge {}
+                                           (when (not= selected-tag-ids @existing-tag-ids)
+                                             {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
+                         (dispatch-sync [::events/update-company changes])))}
+          [:div
+           [:h2.title "Benefits"]
+           (doall
+             (for [k (keys data/benefits-data)]
+               ^{:key k}
+               [tag-display tag-type k (get data/benefits-data k)]))]
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          [:div
+           [:h2.title "Benefits"]
+           (doall
+             (for [k (keys data/benefits-data)]
+               ^{:key k}
+               [edit-tag-display tag-type k (get data/benefits-data k)]))]]]))))
+
 (defn page []
   (let [enabled? (<sub [::subs/profile-enabled?])
         company-id (<sub [::subs/id])
@@ -693,12 +731,13 @@
        [:div.split-content
         [:div.company-profile__main.split-content__main
          [about-us admin-or-owner?]
-         [technology admin-or-owner?]
          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
+         [technology admin-or-owner?]
          [videos admin-or-owner?]
          [blogs]
          [photos admin-or-owner?]
          [issues]
+         [benefits admin-or-owner?]
          [how-we-work admin-or-owner?]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile
          [company-info admin-or-owner?]]]]

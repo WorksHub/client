@@ -5965,35 +5965,6 @@ a.navbar-item,
   text-decoration: underline; }
 
 /* two cards in a standard content section inc. 12px margin */
-.tags li {
-  font-size: 11px;
-  line-height: 14px;
-  padding: 8px;
-  font-weight: 600;
-  display: inline-block;
-  background-color: #ffe9e7;
-  color: #ff7c6e;
-  margin-right: 6px;
-  margin-bottom: 6px;
-  border-radius: 2px;
-  text-transform: uppercase; }
-  .tags li:last-child {
-    margin-right: 0; }
-
-.tags li.tag-separator {
-  background: none;
-  color: #adadad;
-  padding-left: 6px;
-  padding-right: 6px; }
-
-.tags--inline {
-  display: inline-block; }
-
-.tags__job {
-  margin-top: 19px; }
-  .tags__job li {
-    cursor: pointer; }
-
 .card {
   width: 100%;
   min-width: 247px;
@@ -6140,10 +6111,6 @@ a.navbar-item,
     display: inline-block; }
   .card__perks > .icon:not(:first-child) {
     margin-left: 10px; }
-
-.card--blog .tags, .card--job .tags {
-  height: 66px;
-  overflow-y: hidden; }
 
 .job-card--public {
   height: 330px !important; }
@@ -15583,7 +15550,7 @@ h3 {
   width: 20px;
   height: 20px; }
 
-.company-profile__development-setup {
+.company-profile__tag-display {
   width: 100%;
   height: 48px;
   padding: 8px 8px 1px 8px;
@@ -15591,52 +15558,54 @@ h3 {
   justify-content: space-between;
   align-items: flex-start;
   border: 1px solid #e8e8e8; }
-  .company-profile__development-setup p {
+  .company-profile__tag-display p {
     line-height: 24px;
     font-size: 14px;
     color: #434E55; }
-  .company-profile__development-setup h3 {
+  .company-profile__tag-display h3 {
     margin: 0; }
-  .company-profile__development-setup:not(:last-of-type) {
+  .company-profile__tag-display .icon {
+    fill: #adadad; }
+  .company-profile__tag-display:not(:last-of-type) {
     border-bottom: 0;
     padding: 8px 8px 2px 8px; }
 
-.company-profile__development-setup.is-open {
+.company-profile__tag-display.is-open {
   height: unset; }
-  .company-profile__development-setup.is-open .company-profile__development-setup__tag-list {
+  .company-profile__tag-display.is-open .company-profile__tag-display__tag-list {
     height: unset; }
-  .company-profile__development-setup.is-open .icon--roll-down {
+  .company-profile__tag-display.is-open .icon--roll-down {
     transform: rotate(180deg); }
 
-.company-profile__development-setup__icon {
+.company-profile__tag-display__icon {
   width: 24px;
   height: 24px;
   margin-right: 24px;
   flex-shrink: 0; }
-  .company-profile__development-setup__icon .icon {
+  .company-profile__tag-display__icon .icon {
     width: 24px;
     height: 24px; }
 
-.company-profile__development-setup__block__info {
-  flex: 0 0 200px;
+.company-profile__tag-display__block__info {
+  flex: 0 0 260px;
   display: flex;
   align-items: center; }
-  .company-profile__development-setup__block__info h3 {
+  .company-profile__tag-display__block__info h3 {
     font-size: 14px;
     line-height: 18px;
     color: #6E7F89; }
-  .company-profile__development-setup__block__info span {
+  .company-profile__tag-display__block__info span {
     font-size: 12px;
     color: #adadad;
     margin-left: 8px; }
 
-.company-profile__development-setup__tag-list {
+.company-profile__tag-display__tag-list {
   width: 100%;
   display: flex;
   height: 30px;
   overflow: hidden; }
 
-.company-profile__development-setup__expander .icon {
+.company-profile__tag-display__expander .icon {
   margin-top: 2px;
   cursor: pointer;
   width: 24px;
@@ -15923,6 +15892,40 @@ h3 {
   width: 50%;
   min-width: 320px; }
 
+.card--blog .tags,
+.card--job .tags {
+  height: 66px;
+  overflow-y: hidden; }
+
+.tags li {
+  font-size: 11px;
+  line-height: 14px;
+  padding: 8px;
+  font-weight: 600;
+  display: inline-block;
+  background-color: #ffe9e7;
+  color: #ff7c6e;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  border-radius: 2px;
+  text-transform: uppercase; }
+  .tags li:last-child {
+    margin-right: 0; }
+
+.tags li.tag-separator {
+  background: none;
+  color: #adadad;
+  padding-left: 6px;
+  padding-right: 6px; }
+
+.tags--inline {
+  display: inline-block; }
+
+.tags__job {
+  margin-top: 19px; }
+  .tags__job li {
+    cursor: pointer; }
+
 .tags-container {
   position: relative; }
   .tags-container .field .field__error {
@@ -16035,6 +16038,18 @@ h3 {
 
 .tag-add--with-label {
   top: 18px; }
+
+.tag--type-benefit {
+  background-color: #f2f7f8 !important;
+  color: #80b5bc !important; }
+  .tag--type-benefit .icon {
+    fill: #80b5bc !important; }
+
+.tag--type-company {
+  background-color: #e8e8e8 !important;
+  color: #6E7F89 !important; }
+  .tag--type-company .icon {
+    fill: #6E7F89 !important; }
 
 .edit-tags section {
   margin-bottom: 0px; }
