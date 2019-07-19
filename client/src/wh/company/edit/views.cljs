@@ -552,9 +552,7 @@
          (cond
            (= page-selection :company-details)
            [:div
-            (when (and admin? edit? (or (= (<sub [:user/email]) "acron1@gmail.com")          ;; TODO temporary
-                                        (= (<sub [:user/email]) "antony@functionalworks.com")
-                                        (= (<sub [:user/email]) "laco@functionalworks.com")))
+            (when (and admin? edit?)
               [:div.columns.is-variable.is-2
                [:div.column.is-7
                 [company-profile admin?]]])
