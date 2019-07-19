@@ -80,13 +80,13 @@
     [:tags {:type type-filter}]
     [:tags {}]))
 
-(defn company-id
+(defn company-slug
   [db]
-  (get-in db [:wh.db/page-params :id]))
+  (get-in db [:wh.db/page-params :slug]))
 
 (defn cached-company
   [db]
-  (->> (cache/result db :company {:id (company-id db)})
+  (->> (cache/result db :company {:slug (company-slug db)})
        :company
        (profile/->company)))
 
@@ -98,7 +98,7 @@
            [:google/load-maps]
            (into [:graphql/query] (extra-data-query db))
            (when (or (user/admin? db)
-                     (user/owner? db (company-id db)))
+                     (user/owner? db (:id (cached-company db))))
              [::fetch-all-tags])))) ;; TODO for now we get all tags and filter client-side
 
 #?(:cljs
@@ -141,7 +141,7 @@
   (fn [{db :db} [image]]
     (let [company (cached-company db)]
       {:db (assoc-in db [::profile/sub-db ::profile/photo-uploading?] false)
-       :graphql {:query (update-company-mutation-with-fields [[:images [:url :width :height]] :id])
+       :graphql {:query (update-company-mutation-with-fields [[:images [:url :width :height]] :id :slug])
                  :variables {:update_company
                              {:id (:id company)
                               :images (conj (:images company) (select-keys image [:url :width :height]))}}
@@ -153,7 +153,7 @@
   db/default-interceptors
   (fn [{db :db} [resp]]
     (let [company (:update_company (:data resp))]
-      {:dispatch [:graphql/update-entry :company {:id (:id company)} :merge {:company company}]})))
+      {:dispatch [:graphql/update-entry :company {:slug (:slug company)} :merge {:company company}]})))
 
 (reg-event-fx
   ::delete-photo
@@ -161,8 +161,8 @@
   (fn [{db :db} [image]]
     (let [company (cached-company db)
           updated-company (update company :images #(remove #{image} %))]
-      {:dispatch [:graphql/update-entry :company {:id (:id company)} :overwrite {:company updated-company}]
-       :graphql {:query (update-company-mutation-with-fields [[:images [:url :width :height]] :id])
+      {:dispatch [:graphql/update-entry :company {:slug (:slug company)} :overwrite {:company updated-company}]
+       :graphql {:query (update-company-mutation-with-fields [[:images [:url :width :height]] :id :slug])
                  :variables {:update_company
                              {:id (:id company)
                               :images (:images updated-company)}}
@@ -218,7 +218,7 @@
           updated-videos (map (fn [v] (if (= yt-id (:youtube-id v))
                                         (dissoc v :loading?)
                                         v)) (:videos company))]
-      {:dispatch-n [[:graphql/update-entry :company {:id (:id company)}
+      {:dispatch-n [[:graphql/update-entry :company {:slug (:slug company)}
                      :merge {:company {:videos updated-videos}}]
                     [:error/set-global "This video title could not be fetched"]]})))
 
@@ -243,7 +243,7 @@
                                       {:id (:id company)
                                        :videos (cases/->camel-case videos)}}
                           :on-failure [::add-video-failure yt-id]}
-                :dispatch-n [[:graphql/update-entry :company {:id (:id company)}
+                :dispatch-n [[:graphql/update-entry :company {:slug (:slug company)}
                               :merge {:company {:videos local-videos}}]
                              [::fetch-video-title yt-id]]})))
          {:db (assoc db ::profile/video-error :invalid-url)}))))
@@ -254,7 +254,7 @@
   (fn [{db :db} [yt-id _resp]]
     (let [company (cached-company db)
           videos(remove-video (:videos company) yt-id)]
-      {:dispatch-n [[:graphql/update-entry :company {:id (:id company)}
+      {:dispatch-n [[:graphql/update-entry :company {:slug (:slug company)}
                      :merge {:company {:videos videos}}]
                     [:error/set-global "This video could not be added"]]})))
 
@@ -266,7 +266,7 @@
           videos (map (fn [v] (if (= (:youtube-id v) youtube-id)
                                 video
                                 v)) (:videos company))]
-      {:dispatch [:graphql/update-entry :company {:id (:id company)}
+      {:dispatch [:graphql/update-entry :company {:slug (:slug company)}
                   :merge {:company {:videos videos}}]
        :graphql {:query (update-company-mutation-with-fields [[:videos [:youtubeId :thumbnail :description]]])
                  :variables {:update_company
@@ -280,7 +280,7 @@
   (fn [{db :db} [youtube-id]]
     (let [company (cached-company db)
           videos (remove-video (:videos company) youtube-id)]
-      {:dispatch [:graphql/update-entry :company {:id (:id company)}
+      {:dispatch [:graphql/update-entry :company {:slug (:slug company)}
                   :merge {:company {:videos videos}}]
        :graphql {:query (update-company-mutation-with-fields [[:videos [:youtubeId :thumbnail :description]]])
                  :variables {:update_company
@@ -307,9 +307,9 @@
   (fn [{db :db} [changes]]
     (let [company (cached-company db)]
       {:db (assoc-in db [::profile/sub-db ::profile/updating?] true)
-       :dispatch [:graphql/update-entry :company {:id (:id company)}
+       :dispatch [:graphql/update-entry :company {:slug (:slug company)}
                   :merge {:company (company-changes->cache db changes)}]
-       :graphql {:query (update-company-mutation-with-fields [:id
+       :graphql {:query (update-company-mutation-with-fields [:id :slug
                                                               [:tags [:id :label :slug :type :subtype]]])
                  :variables {:update_company
                              (merge {:id (:id company)}
@@ -322,7 +322,7 @@
   profile-interceptors
   (fn [{db :db} [changes old-company]]
     {:db (assoc db ::profile/updating? false)
-     :dispatch-n [[:graphql/update-entry :company {:id (:id old-company)} :overwrite {:company old-company}]
+     :dispatch-n [[:graphql/update-entry :company {:slug (:slug old-company)} :overwrite {:company old-company}]
                   [:error/set-global "There was an error updating the company"
                    [::update-company changes]]]}))
 
@@ -331,7 +331,7 @@
   profile-interceptors
   (fn [{db :db} [resp]]
     (let [company (get-in resp [:data :update_company])]
-      {:dispatch [:graphql/update-entry :company {:id (:id company)}
+      {:dispatch [:graphql/update-entry :company {:slug (:slug company)}
                   :merge {:company company}]
        :db (assoc db ::profile/updating? false)})))
 

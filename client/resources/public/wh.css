@@ -11069,9 +11069,15 @@ h3 {
 
 .global-status {
   z-index: 10;
-  width: 100%;
+  position: fixed;
   height: 48px;
   color: white; }
+  @media screen and (min-width: 1008px) {
+    .global-status {
+      width: calc(100% - 210px); } }
+  @media screen and (max-width: 1007px) {
+    .global-status {
+      width: 100%; } }
   .global-status svg.tick {
     fill: white;
     height: 12px; }
