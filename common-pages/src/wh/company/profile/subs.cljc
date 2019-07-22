@@ -281,8 +281,7 @@
   ::selected-tag-ids
   :<- [::sub-db]
   (fn [sub-db [_ tag-type tag-subtype]]
-    (set (get-in sub-db (cond-> [::profile/selected-tag-ids tag-type]
-                                tag-subtype (conj tag-subtype))))))
+    (set (get-in sub-db [::profile/selected-tag-ids tag-type tag-subtype]))))
 
 (reg-sub
   ::location-search

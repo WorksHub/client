@@ -30,7 +30,7 @@
    :venia/variables [{:variable/name "slug"
                       :variable/type :String!}]
    :venia/queries [[:company {:slug :$slug}
-                    [:id :name :logo :profileEnabled :descriptionHtml :size :foundedYear :howWeWork
+                    [:id :slug :name :logo :profileEnabled :descriptionHtml :size :foundedYear :howWeWork
                      [:techScales [:testing :ops :timeToDeploy]]
                      [:locations [:city :country :countryCode :region :subRegion :state]]
                      [:tags [:id :type :label :slug :subtype]]

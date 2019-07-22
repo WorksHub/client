@@ -344,7 +344,7 @@
                     :on-editing            #(do
                                               (reset! editing? true)
                                               (reset! existing-tag-ids (<sub [::subs/current-tag-ids tag-type]))
-                                              (dispatch [::events/reset-selected-tag-ids tag-type]))
+                                              (dispatch [::events/reset-selected-tag-ids tag-type nil])) ;; no subtype
                     :on-cancel             #(do (reset! editing? false)
                                                 (reset! new-desc nil))
                     :on-save
@@ -404,15 +404,15 @@
 
 (defn edit-tag-display
   [tag-type k data]
-    [:div
-     {:class (util/merge-classes
-               "company-profile__edit-tag-display"
-               (str "company-profile__edit-tag-display--" (name k)))}
-     [:h3 (:title data)]
-     [profile-tag-field
-      {:placeholder (:placeholder data)
-       :tag-type    tag-type
-       :tag-subtype k}]])
+  [:div
+   {:class (util/merge-classes
+             "company-profile__edit-tag-display"
+             (str "company-profile__edit-tag-display--" (name k)))}
+   [:h3 (:title data)]
+   [profile-tag-field
+    {:placeholder (:placeholder data)
+     :tag-type    tag-type
+     :tag-subtype k}]])
 
 (def tech-scale-levels 5)
 
