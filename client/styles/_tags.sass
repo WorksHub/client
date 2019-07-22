@@ -8,26 +8,26 @@ $tag-spacing: 6px
     height: 2 * ($tag-height + 2 * $tag-padding) + $tag-spacing
     overflow-y: hidden
 
-.tags
-  li
-    font-size: 11px
-    line-height: $tag-height
-    padding: $tag-padding
-    font-weight: $font-semi-bold
-    display: inline-block
-    background-color: $lighter-red
-    color: $red
-    margin-right: $tag-spacing
-    margin-bottom: $tag-spacing
-    border-radius: 2px
-    text-transform: uppercase
-    &:last-child
-      margin-right: 0
-  li.tag-separator
-    background: none
-    color: $greyish
-    padding-left: 6px
-    padding-right: 6px
+.tags li, .tag
+  font-size: 11px
+  line-height: $tag-height
+  padding: $tag-padding
+  font-weight: $font-semi-bold
+  display: inline-block
+  background-color: $lighter-red
+  color: $red
+  border-radius: 2px
+  text-transform: uppercase
+  &:last-child
+    margin-right: 0
+.tags li
+  margin-right: $tag-spacing
+  margin-bottom: $tag-spacing
+.tags li.tag-separator
+  background: none
+  color: $greyish
+  padding-left: 6px
+  padding-right: 6px
 
 .tags--inline
   display: inline-block
@@ -139,6 +139,18 @@ $tag-spacing: 6px
   color: $steel-gray !important
   .icon
     fill: $steel-gray !important
+
+.tag--type-industry
+  background-color: $tag-bg-orange !important
+  color: $light-orange !important
+  .icon
+    fill: $light-orange !important
+
+.tag--type-funding
+  background-color: $tag-bg-blue !important
+  color: $tag-col-blue !important
+  .icon
+    fill: $tag-col-blue !important
 
 .edit-tags
   section

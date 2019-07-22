@@ -15907,7 +15907,7 @@ h3 {
   height: 66px;
   overflow-y: hidden; }
 
-.tags li {
+.tags li, .tag {
   font-size: 11px;
   line-height: 14px;
   padding: 8px;
@@ -15915,12 +15915,14 @@ h3 {
   display: inline-block;
   background-color: #ffe9e7;
   color: #ff7c6e;
-  margin-right: 6px;
-  margin-bottom: 6px;
   border-radius: 2px;
   text-transform: uppercase; }
-  .tags li:last-child {
+  .tags li:last-child, .tag:last-child {
     margin-right: 0; }
+
+.tags li {
+  margin-right: 6px;
+  margin-bottom: 6px; }
 
 .tags li.tag-separator {
   background: none;
@@ -16060,6 +16062,18 @@ h3 {
   color: #6E7F89 !important; }
   .tag--type-company .icon {
     fill: #6E7F89 !important; }
+
+.tag--type-industry {
+  background-color: #fff1e7 !important;
+  color: #ffae71 !important; }
+  .tag--type-industry .icon {
+    fill: #ffae71 !important; }
+
+.tag--type-funding {
+  background-color: #f4f8f9 !important;
+  color: #87a7b4 !important; }
+  .tag--type-funding .icon {
+    fill: #87a7b4 !important; }
 
 .edit-tags section {
   margin-bottom: 0px; }
