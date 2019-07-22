@@ -7,6 +7,7 @@
     [wh.components.forms.views :refer [text-field select-field]]
     [wh.components.icons :refer [icon]]
     [wh.components.not-found :as not-found]
+    [wh.components.pagination :as pagination]
     [wh.components.tag :as tag]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
     [wh.re-frame.subs :refer [<sub]]
@@ -73,35 +74,43 @@
           [icon "delete"
            :on-click #(dispatch [::events/delete-tag id])]]])))
 
+(def page-limit 30)
+
 (defn main []
-  (let [all-tags (<sub [::subs/all-tags])
-        tags (not-empty (<sub [::subs/all-tags--filtered 30]))]
-    [:div.main.edit-tags
-     [:h1 "Edit Tags"]
-     [:section
-      [:form.wh-formx.is-flex
-       [:div.text-field-control
-        [:input.input
-         {:name         "search"
-          :type         "text"
-          :autoComplete "off"
-          :placeholder  "Search tags..."
-          :value        (<sub [::subs/search-term])
-          :on-change    #(dispatch-sync [::events/set-search-term (-> % .-target .-value)])}]]
-       [select-field (<sub [::subs/type-filter])
-        {:options (into [{:id nil :label "All tags"}] (<sub [::subs/tag-types]))
-         :on-change [::events/set-type-filter]}]]]
-     [:span "Showing " (count tags) " of " (count all-tags)]
-     [:section.edit-tags__list
-      (if all-tags
-        (if tags
-          [:ul
-           (doall
-             (for [tag tags]
-               ^{:key (:id tag)}
-               [:li [tag-row tag]]))]
-          [:h2 "No matching tags"])
-        [:h2 "Loading..."])]]))
+  (fn []
+    (let [all-tags (<sub [::subs/all-tags])
+          query-params (<sub [:wh.subs/query-params])
+          current-page (js/parseInt (get query-params "page" "1"))
+          {:keys [tags total]} (<sub [::subs/all-tags--filtered current-page page-limit])]
+      [:div.main.edit-tags
+       [:h1 "Edit Tags"]
+       [:section
+        [:form.wh-formx.is-flex
+         [:div.text-field-control
+          [:input.input
+           {:name         "search"
+            :type         "text"
+            :autoComplete "off"
+            :placeholder  "Search tags..."
+            :value        (<sub [::subs/search-term])
+            :on-change    #(dispatch-sync [::events/set-search-term (-> % .-target .-value)])}]]
+         [select-field (<sub [::subs/type-filter])
+          {:options (into [{:id nil :label "All tags"}] (<sub [::subs/tag-types]))
+           :on-change [::events/set-type-filter]}]]]
+       [:span "Showing " (inc (* (dec current-page) page-limit)) "-" (min (* current-page page-limit)
+                                                                          (count all-tags)) " of " (count all-tags)]
+       [:section.edit-tags__list
+        (if all-tags
+          (if (not-empty tags)
+            [:ul
+             (doall
+               (for [tag tags]
+                 ^{:key (:id tag)}
+                 [:li [tag-row tag]]))]
+            [:h2 "No matching tags"])
+          [:h2 "Loading..."])]
+       (when (and (not-empty tags) (> total page-limit))
+         [pagination/pagination current-page (pagination/generate-pagination current-page (int (js/Math.ceil (/ total page-limit)))) :tags-edit query-params])])))
 
 (defn page []
   (if (<sub [:user/admin?])

@@ -48,11 +48,13 @@
   :<- [::all-tags]
   :<- [::type-filter]
   :<- [::search-term]
-  (fn [[all-tags type-filter search-term] [_ amount]]
-    (cond->> all-tags
-             type-filter
-             (filter (comp #{type-filter} :type))
-             (text/not-blank search-term)
-             (filter #(str/includes? (str/lower-case (:label %)) (str/lower-case search-term)))
-             :always
-             (take amount))))
+  (fn [[all-tags type-filter search-term] [_ page amount]]
+    (let [filtered-tags (cond->> all-tags
+                                 type-filter
+                                 (filter (comp #{type-filter} :type))
+                                 (text/not-blank search-term)
+                                 (filter #(str/includes? (str/lower-case (:label %)) (str/lower-case search-term))))]
+      {:tags (->> filtered-tags
+                  (drop (* (dec page) amount))
+                  (take amount))
+       :total (count filtered-tags)})))
