@@ -162,21 +162,22 @@
   (let [editing? (r/atom false)]
     (fn [admin-or-owner?]
       (let [videos (<sub [::subs/videos])]
-        [:section.company-profile__video
-         [:h2.title (str "Videos (" (count videos) ")")]
-         [:ul.company-profile__videos__list
-          [videos/videos {:videos        videos
-                          :can-add-edit? (and admin-or-owner? @editing?)
-                          :error         (<sub [::subs/video-error])
-                          :delete-event  [::events/delete-video]
-                          :add-event     [::events/add-video]
-                          :update-event  [::events/update-video]}]]
-         (when admin-or-owner?
-           [edit-close-button editing?])]))))
+        (when (or admin-or-owner? (not-empty videos))
+          [:section.company-profile__video
+           [:h2.title (str "Videos")]
+           [:ul.company-profile__videos__list
+            [videos/videos {:videos        videos
+                            :can-add-edit? (and admin-or-owner? @editing?)
+                            :error         (<sub [::subs/video-error])
+                            :delete-event  [::events/delete-video]
+                            :add-event     [::events/add-video]
+                            :update-event  [::events/update-video]}]]
+           (when admin-or-owner?
+             [edit-close-button editing?])])))))
 
 (defn blogs
   []
-  (when-let [blogs (<sub [::subs/blogs])]
+  (when-let [blogs (not-empty (<sub [::subs/blogs]))]
     [:section.company-profile__blogs
      [:h2.title (str "Tech Blogs")]
      [:ul
@@ -255,40 +256,41 @@
                               (take 4)
                               (partition-all 2)
                               (map-indexed (fn [i si] {:index i :simages si})))]
-    [:section.company-profile__photos
-     [:h2.title (str "Photos (" (count images) ")")]
-     (if solo?
-       [:div.company-profile__photos__gallery
-        (photo first-image open-fn
-               {:w 471 :h 222
-                :solo? true :edit? can-add-edit?})]
-       (when first-image
+    (when (or can-add-edit? (not-empty images))
+      [:section.company-profile__photos
+       [:h2.title (str "Photos")]
+       (if solo?
          [:div.company-profile__photos__gallery
           (photo first-image open-fn
-                 {:w 321 :h 222
-                  :edit? can-add-edit?})
-          (doall
-            (for [{:keys [simages index]} secondary-images]
-              ^{:key index}
-              [:div.company-profile__photos__splitter
-               [:div.company-profile__photos__splitter__inner
-                (doall
-                  (for [{:keys [index simage]} (map-indexed (fn [i si] {:index i :simage si}) simages)]
-                    (photo simage open-fn
-                           {:w 134 :h 103
-                            :edit? can-add-edit? :key index})))]]))]))
-     #?(:cljs
-        (when can-add-edit?
-          [:div.company-profile__photos__add
-           (if (<sub [::subs/photo-uploading?])
-             [:div.company-profile__photos__add--loading]
-             [:input {:type "file"
-                      :on-change (upload/handler
-                                   :launch [::events/photo-upload]
-                                   :on-upload-start [::events/photo-upload-start]
-                                   :on-success [::events/photo-upload-success]
-                                   :on-failure [::events/photo-upload-failure])}])]))
-     (pswp-element)]))
+                 {:w 471 :h 222
+                  :solo? true :edit? can-add-edit?})]
+         (when first-image
+           [:div.company-profile__photos__gallery
+            (photo first-image open-fn
+                   {:w 321 :h 222
+                    :edit? can-add-edit?})
+            (doall
+              (for [{:keys [simages index]} secondary-images]
+                ^{:key index}
+                [:div.company-profile__photos__splitter
+                 [:div.company-profile__photos__splitter__inner
+                  (doall
+                    (for [{:keys [index simage]} (map-indexed (fn [i si] {:index i :simage si}) simages)]
+                      (photo simage open-fn
+                             {:w 134 :h 103
+                              :edit? can-add-edit? :key index})))]]))]))
+       #?(:cljs
+          (when can-add-edit?
+            [:div.company-profile__photos__add
+             (if (<sub [::subs/photo-uploading?])
+               [:div.company-profile__photos__add--loading]
+               [:input {:type "file"
+                        :on-change (upload/handler
+                                     :launch [::events/photo-upload]
+                                     :on-upload-start [::events/photo-upload-start]
+                                     :on-success [::events/photo-upload-success]
+                                     :on-failure [::events/photo-upload-failure])}])]))
+       (pswp-element)])))
 
 (defn profile-tag-field
   [_args]
@@ -332,7 +334,7 @@
         tag-type         :company]
     (fn [admin-or-owner?]
       (let [description      (<sub [::subs/description])
-            selected-tag-ids (<sub [::subs/selected-tag-ids tag-type])]
+            selected-tag-ids (<sub [::subs/selected-tag-ids tag-type nil])] ;; no subtype
         [:section
          {:id    "company-profile__about-us"
           :class (util/merge-classes
@@ -386,7 +388,7 @@
   (let  [dsid (str "company-profile__tag-display--" (name k))]
     (fn [tag-type k data]
       (let [tags (<sub [::subs/tags tag-type k])]
-        [:div.company-profile__tag-display
+        [:article.company-profile__tag-display
          {:id dsid}
          [:div.company-profile__tag-display__block__info
           [:div.company-profile__tag-display__icon
@@ -452,11 +454,12 @@
   (let [existing-tag-ids (r/atom #{})
         tech-editing?    (r/atom false)
         scales-editing?  (r/atom false)
-        new-dev-setup    (r/atom {})
+        new-ati          (r/atom nil)
         new-tech-scales  (r/atom {})
         tag-type         :tech]
     (fn [admin-or-owner?]
-      (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids tag-type]))))]
+      (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids--map tag-type]))))
+            ati              (<sub [::subs/additional-tech-info])]
         [:section
          {:id    "company-profile__technology"
           :class (util/merge-classes
@@ -468,10 +471,13 @@
                     :on-editing            #(do
                                               (reset! tech-editing? true)
                                               (reset! existing-tag-ids #{})
+                                              (reset! new-ati nil)
                                               (run! (fn [subtype]
                                                       (swap! existing-tag-ids clojure.set/union (<sub [::subs/current-tag-ids tag-type subtype]))
                                                       (dispatch-sync [::events/reset-selected-tag-ids tag-type subtype])) tag-spec/tech-subtypes))
-                    :on-cancel             #(reset! tech-editing? false)
+                    :on-cancel             #(do
+                                              (reset! new-ati nil)
+                                              (reset! tech-editing? false))
                     :on-save
                     #(do
                        (reset! tech-editing? false)
@@ -479,7 +485,9 @@
                                   (not-empty
                                     (merge {}
                                            (when (not= selected-tag-ids @existing-tag-ids)
-                                             {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
+                                             {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})
+                                           (when (text/not-blank @new-ati)
+                                             {:additional-tech-info @new-ati})))]
                          (dispatch-sync [::events/update-company changes])))}
           [:div
            [:h2.title "Technology"]
@@ -487,7 +495,10 @@
            (doall
              (for [k (keys data/dev-setup-data)]
                ^{:key k}
-               [tag-display tag-type k (get data/dev-setup-data k)]))]
+               [tag-display tag-type k (get data/dev-setup-data k)]))
+           (when ati
+             [:div.company-profile__technology__additional
+              [putil/html ati]])]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
            [:h2.title "Technology"]
@@ -495,7 +506,14 @@
            (doall
              (for [k (keys data/dev-setup-data)]
                ^{:key k}
-               [edit-tag-display tag-type k (get data/dev-setup-data k)]))]]
+               [edit-tag-display tag-type k (get data/dev-setup-data k)]))
+           [:h2.subtitle "Additional Information"]
+           #?(:cljs
+              [rich-text-field {:value       (or @new-ati ati "")
+                                :placeholder "Please enter any additional technical information..."
+                                :on-change   #(if (= % ati)
+                                                (reset! new-ati nil)
+                                                (reset! new-ati %))}])]]
 
          (let [tech-scales (not-empty (<sub [::subs/tech-scales]))
                tech-scales-view
@@ -681,7 +699,7 @@
         existing-tag-ids (r/atom #{})
         tag-type :benefit]
     (fn [admin-or-owner?]
-      (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids tag-type]))))]
+      (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids--map tag-type]))))]
         [:section
          {:id "company-profile__benefits"
           :class (util/merge-classes

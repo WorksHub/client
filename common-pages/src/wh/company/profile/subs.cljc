@@ -58,18 +58,6 @@
     (:name company)))
 
 (reg-sub
-  ::logo
-  :<- [::company]
-  (fn [company _]
-    (:logo company)))
-
-(reg-sub
-  ::pending-logo
-  :<- [::sub-db]
-  (fn [sub-db _]
-    (::profile/pending-logo sub-db)))
-
-(reg-sub
   ::id
   :<- [::company]
   (fn [company _]
@@ -86,6 +74,12 @@
   :<- [::company]
   (fn [company _]
     (:logo company)))
+
+(reg-sub
+  ::pending-logo
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::profile/pending-logo sub-db)))
 
 (reg-sub
   ::logo-uploading?
@@ -110,6 +104,12 @@
   :<- [::company]
   (fn [company _]
     (:how-we-work company)))
+
+(reg-sub
+  ::additional-tech-info
+  :<- [::company]
+  (fn [company _]
+    (:additional-tech-info company)))
 
 (reg-sub
   ::tags
@@ -281,7 +281,13 @@
   ::selected-tag-ids
   :<- [::sub-db]
   (fn [sub-db [_ tag-type tag-subtype]]
-    (set (get-in sub-db [::profile/selected-tag-ids tag-type tag-subtype]))))
+    (set (get-in sub-db (cond-> [::profile/selected-tag-ids tag-type tag-subtype])))))
+
+(reg-sub
+  ::selected-tag-ids--map
+  :<- [::sub-db]
+  (fn [sub-db [_ tag-type]]
+    (set (get-in sub-db (cond-> [::profile/selected-tag-ids tag-type])))))
 
 (reg-sub
   ::location-search
