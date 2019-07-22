@@ -20,6 +20,8 @@
 (s/def ::logo-uploading? boolean?)
 (s/def ::pending-logo string?)
 
+(s/def ::publishing? boolean?)
+
 (defn ->tag
   [m]
   (-> m

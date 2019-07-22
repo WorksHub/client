@@ -36,6 +36,10 @@
     (when-let [id (<sub [::subs/company-id])]
       (into [link link-title :admin-edit-company :id id] args))))
 
+(defn profile-page-link [enabled? slug]
+  [link (if enabled? "View Profile Page" "Create Profile Page")
+   :company :slug slug :class "button button--inverted"])
+
 (defn mailto-link [title]
   [:a.a--underlined
    {:href "mailto:hello@works-hub.com"}
@@ -78,6 +82,8 @@
           :class "button button--inverted your-company__logo"])
        [:div.your-company__name
         [ellipsis (<sub [::subs/name]) {:vcenter? true}]]
+       (when (<sub [:user/admin?])
+         [profile-page-link (<sub [::subs/profile-enabled?]) (<sub [::subs/slug])])
        [company-edit-link "Edit"
         :class "button button--inverted your-company__edit"]]
       (when-let [description-html (<sub [::subs/description-html])]

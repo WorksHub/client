@@ -612,34 +612,6 @@
     {:navigate [:payment-setup :params {:step :select-package} :query-params {:action :integrations}]}))
 
 (reg-event-fx
-  ::toggle-profile
-  company-interceptors
-  (fn [{db :db} _]
-    (let [new-value (not (::edit/profile-enabled db))]
-      {:db (assoc db ::edit/profile-enabled-loading? true)
-       :graphql {:query publish-company-profile-mutation
-                 :variables {:id (::edit/id db)
-                             :profile_enabled new-value}
-                 :on-success [::toggle-profile-success]
-                 :on-failure [::toggle-profile-failure]}})))
-
-(reg-event-db
-  ::toggle-profile-success
-  company-interceptors
-  (fn [db [resp]]
-    (assoc db
-           ::edit/profile-enabled-loading? false
-           ::edit/profile-enabled (get-in resp [:data :publish_profile :profile_enabled]))))
-
-(reg-event-db
-  ::toggle-profile-failure
-  company-interceptors
-  (fn [db [resp]]
-    (assoc db
-           ::edit/profile-enabled-loading? false
-           ::edit/profile-enabled-error (some-> resp :errors first :key))))
-
-(reg-event-fx
   ::apply-coupon
   db/default-interceptors
   (fn [{db :db} _]

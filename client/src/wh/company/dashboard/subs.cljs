@@ -34,6 +34,18 @@
     (::sub-db/name sub-db)))
 
 (reg-sub
+  ::slug
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::sub-db/slug sub-db)))
+
+(reg-sub
+  ::profile-enabled?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::sub-db/profile-enabled sub-db)))
+
+(reg-sub
   ::logo
   :<- [::sub-db]
   (fn [sub-db _]

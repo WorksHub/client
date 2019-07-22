@@ -43,9 +43,6 @@
 (s/def ::showing-cancel-plan-dialog? boolean?)
 (s/def ::cancel-plan-loading? boolean?)
 (s/def ::disable-loading? boolean?)
-(s/def ::profile-enabled-loading? boolean?)
-
-(s/def ::profile-enabled-error (s/nilable string?))
 
 (def fields
   {::name             {:initial "", :validate ::p/non-empty-string :event? false}
@@ -107,9 +104,7 @@
      ::paid-offline-until-error       nil
      ::showing-cancel-plan-dialog?    false
      ::cancel-plan-loading?           false
-     ::disable-loading?               false
-     ::profile-enabled-loading?       false
-     ::profile-enabled-error          nil}
+     ::disable-loading?               false}
     db
     {::coupon-apply-success?          false}))
 

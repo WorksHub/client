@@ -26,20 +26,21 @@
     (tf/parse (tf/formatters :date-time) s)))
 
 (defn dashboard-query [id]
-  {:venia/queries [[:company {:id id} [:id :name :descriptionHtml :logo :package :permissions :disabled
-                                       [:pendingOffer [:recurringFee]]
-                                       [:payment [:billingPeriod]]]]
+  {:venia/queries [[:company {:id id}
+                    [:id :name :descriptionHtml :logo :package :permissions :disabled :slug :profileEnabled
+                     [:pendingOffer [:recurringFee]]
+                     [:payment [:billingPeriod]]]]
                    [:jobs {:filter_type "all"
-                           :company_id id
-                           :page_size 100
+                           :company_id  id
+                           :page_size   100
                            :page_number 1}
                     [:id :slug :title :tags :published :firstPublished :creationDate :verticals
                      [:location [:city :state :country :countryCode]]
                      [:stats [:applications :views :likes]]
                      :matchingUsers]]
                    [:me [:welcomeMsgs]]
-                   [:job_analytics {:company_id id
-                                    :end_date (-> (t/now) date->str)
+                   [:job_analytics {:company_id  id
+                                    :end_date    (-> (t/now) date->str)
                                     :granularity 0
                                     :num_periods 0}
                     [:granularity

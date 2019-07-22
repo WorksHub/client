@@ -311,3 +311,9 @@
   :<- [::sub-db]
   (fn [db _]
     nil))
+
+(reg-sub
+  ::publishing?
+  :<- [::sub-db]
+  (fn [db _]
+    (::profile/publishing? db)))

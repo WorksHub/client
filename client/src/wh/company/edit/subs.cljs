@@ -335,12 +335,6 @@
     (::edit/disable-loading? db)))
 
 (reg-sub
-  ::profile-enabled-loading?
-  :<- [::sub-db]
-  (fn [db _]
-    (::edit/profile-enabled-loading? db)))
-
-(reg-sub
   ::disabled?
   :<- [::sub-db]
   (fn [db _]

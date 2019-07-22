@@ -7321,7 +7321,8 @@ a.navbar-item,
       display: none; } }
 
 .your-company__edit {
-  width: 60px; }
+  width: 60px;
+  margin-left: 10px; }
 
 @media screen and (min-width: 1008px) {
   .stats {
@@ -15348,6 +15349,9 @@ h3 {
     margin: 0px;
     background-color: white;
     padding: 18px; }
+
+.company-profile__toggle {
+  margin-bottom: 18px; }
 
 .company-profile__header {
   height: 148px;

@@ -11,10 +11,11 @@
     [wh.company.profile.db :as profile]
     [wh.db :as db]
     [wh.graphql-cache :as cache :refer [reg-query]]
-    [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields]]
+    [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields publish-company-profile-mutation]]
     [wh.graphql.tag :as tag-gql]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
+    [wh.common.errors :as errors]
     [wh.util :as util]
     [clojure.string :as str])
   (#?(:clj :require :cljs :require-macros)
@@ -467,3 +468,37 @@
   profile-interceptors
   (fn [{db :db} _]
     (assoc db ::profile/logo-uploading? false)))
+
+(reg-event-fx
+  ::publish-profile
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [company (cached-company db)
+          new-value (not (:profile-enabled company))]
+      {:db      (assoc-in db [::profile/sub-db ::profile/publishing?] true)
+       :graphql {:query      publish-company-profile-mutation
+                 :variables  {:id              (:id company)
+                              :profile_enabled new-value}
+                 :on-success [::publish-profile-success (company-slug db)]
+                 :on-failure [::publish-profile-failure]}})))
+
+(reg-event-fx
+  ::publish-profile-failure
+  profile-interceptors
+  (fn [{db :db} [resp]]
+    (let [parsed-error (-> resp
+                           util/gql-errors->error-key
+                           errors/error-map)
+          error-msg (or parsed-error "There was an error publishing/unpublishing the company.")]
+      {:db       (assoc db ::profile/publishing? false)
+       :dispatch [:error/set-global error-msg
+                  [::publish-profile]]})))
+
+(reg-event-fx
+  ::publish-profile-success
+  profile-interceptors
+  (fn [{db :db} [slug resp]]
+    (let [enabled? (get-in resp [:data :publish_profile :profile_enabled])]
+      {:dispatch [:graphql/update-entry :company {:slug slug}
+                  :merge {:company {:profile-enabled enabled?}}]
+       :db (assoc db ::profile/publishing? false)})))

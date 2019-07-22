@@ -720,13 +720,22 @@
                ^{:key k}
                [edit-tag-display tag-type k (get data/benefits-data k)]))]]]))))
 
+(defn publish-toggle [enabled?]
+  [:section.company-profile__toggle
+   [:button.button.button--inverted.button--small
+    {:class    (when (<sub [::subs/publishing?]) "button--loading")
+     :on-click #(dispatch [::events/publish-profile])}
+    (str (if enabled? "Un-Publish" "Publish"))]])
+
 (defn page []
   (let [enabled? (<sub [::subs/profile-enabled?])
         company-id (<sub [::subs/id])
         admin-or-owner? (or (<sub [:user/admin?])
                             (<sub [:user/owner? company-id]))]
-    (if enabled?
+    (if (or enabled? admin-or-owner?)
       [:div.main.company-profile
+       (when admin-or-owner?
+         [publish-toggle enabled?])
        [header admin-or-owner?]
        [:div.split-content
         [:div.company-profile__main.split-content__main
