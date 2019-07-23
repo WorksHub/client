@@ -43,9 +43,10 @@
                  prompt-before-cancel? false}}
          read-body write-body]
       (let [read-body' [:div.editable read-body
-                        (if (<sub [::subs/updating?])
-                          [:div.editable--loading]
-                          [edit-button editing? on-editing])]
+                        (when editable?
+                          (if (<sub [::subs/updating?])
+                            [:div.editable--loading]
+                            [edit-button editing? on-editing]))]
             write-body'
             (if write-body [:div.editable.editable--editing write-body
                             #?(:cljs
