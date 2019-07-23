@@ -235,7 +235,8 @@
 (defn top-bar
   [{:keys [env vertical logged-in? query-params page] :as args}]
   (let [content? (not (contains? routes/no-menu-pages page))]
-    [:nav.navbar {:role       "navigation"
+    [:nav.navbar {:id         "wh-navbar"
+                  :role       "navigation"
                   :aria-label "main navigation"}
      [:div.navbar-item.navbar__logo-container
       [:svg.icon.navbar__logo [icon vertical]]

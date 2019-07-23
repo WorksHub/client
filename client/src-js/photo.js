@@ -7,6 +7,14 @@ function openPhotoGallery(index, images) {
                     w: images[i].width,
                     h: images[i].height});
     }
+
+    // mobile safari bug
+    // we need to force z-index: 0 on the nav
+    setClass("wh-navbar", "navbar--reset-z-index", true);
+
     var gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, items, options);
+    gallery.listen('close', function() {
+        setClass("wh-navbar", "navbar--reset-z-index", false);
+    });
     gallery.init();
 }
