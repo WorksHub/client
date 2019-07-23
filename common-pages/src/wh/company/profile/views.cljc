@@ -263,12 +263,16 @@
                     (.stopPropagation %))}
       [icon "delete"]])])
 
+(defn img->imgix
+  [img]
+  (update img :url base-img))
+
 (defn photos
   [admin-or-owner?]
   (let [editing? (r/atom false)]
     (fn [admin-or-owner?]
       (let [images (<sub [::subs/images])
-            open-fn (fn [index] (interop/open-photo-gallery index images))
+            open-fn (fn [index] (interop/open-photo-gallery index (map img->imgix images)))
             simages (->> images
                          (take 5)
                          (map-indexed (fn [i si] {:index i :simage si})))]
