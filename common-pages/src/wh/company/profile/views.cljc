@@ -785,12 +785,13 @@
          [about-us admin-or-owner?]
          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
          [technology admin-or-owner?]
-         [videos admin-or-owner?]
+         [benefits admin-or-owner?]
+         ;; TODO JOBS
+         [issues admin-or-owner?]
+         [how-we-work admin-or-owner?]
          [blogs admin-or-owner?]
          [photos admin-or-owner?]
-         [issues admin-or-owner?]
-         [benefits admin-or-owner?]
-         [how-we-work admin-or-owner?]]
+         [videos admin-or-owner?]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile
          [company-info admin-or-owner?]]]]
       [:div.main.main--center-content
