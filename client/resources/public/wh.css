@@ -15535,6 +15535,11 @@ h3 {
   top: 0;
   right: 18px;
   cursor: pointer; }
+  .editable--edit-button .icon--close {
+    width: 28px;
+    height: 28px; }
+  .editable--edit-button .icon {
+    fill: #adadad; }
 
 .editable--save-cancel-buttons {
   display: flex;
@@ -15755,6 +15760,12 @@ h3 {
   .company-profile__tech-scale__scale-labels div {
     text-align: center;
     margin-top: 6px; }
+
+.company-profile__cta-button {
+  width: 246px; }
+  @media screen and (max-width: 1007px) {
+    .company-profile__cta-button {
+      width: 100%; } }
 
 .auth-popup__content {
   display: none; }

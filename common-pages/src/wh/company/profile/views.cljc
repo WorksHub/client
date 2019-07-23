@@ -14,6 +14,7 @@
     [wh.company.profile.subs :as subs]
     [wh.components.cards :refer [blog-card]]
     [wh.components.common :refer [link wrap-img img]]
+    [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue-card]]
     [wh.components.not-found :as not-found]
@@ -165,42 +166,56 @@
       (let [videos (<sub [::subs/videos])]
         (when (or admin-or-owner? (not-empty videos))
           [:section.company-profile__video
-           [:h2.title (str "Videos")]
-           [:ul.company-profile__videos__list
-            [videos/videos {:videos        videos
-                            :can-add-edit? (and admin-or-owner? @editing?)
-                            :error         (<sub [::subs/video-error])
-                            :delete-event  [::events/delete-video]
-                            :add-event     [::events/add-video]
-                            :update-event  [::events/update-video]}]]
+           [:h2.title "Videos"]
+           (if (and (empty? videos) (not @editing?))
+             [:button.button.button--medium.button--inverted.company-profile__cta-button
+              {:on-click #(reset! editing? true)}
+              "Link to video content"]
+             [:ul.company-profile__videos__list
+              [videos/videos {:videos        videos
+                              :can-add-edit? (and admin-or-owner? @editing?)
+                              :error         (<sub [::subs/video-error])
+                              :delete-event  [::events/delete-video]
+                              :add-event     [::events/add-video]
+                              :update-event  [::events/update-video]}]])
            (when admin-or-owner?
              [edit-close-button editing?])])))))
 
 (defn blogs
-  []
-  (when-let [blogs (not-empty (<sub [::subs/blogs]))]
-    [:section.company-profile__blogs
-     [:h2.title (str "Tech Blogs")]
-     [:ul
-      (into [:div.columns]
-            (for [blog blogs]
-              [:div.column.is-half
-               [blog-card blog]]))]]))
+  [admin-or-owner?]
+  (let [blogs (<sub [::subs/blogs])]
+    (when (or admin-or-owner? (not-empty blogs))
+      [:section.company-profile__blogs
+       [:h2.title (str "Tech Blogs")]
+       (if (empty? blogs)
+         [link
+          [:button.button.button--medium.button--inverted.company-profile__cta-button
+           "Add a blog post"]
+          :contribute]
+         [:ul
+          (into [:div.columns]
+                (for [blog blogs]
+                  [:div.column.is-half
+                   [blog-card blog]]))])])))
 
 (defn issues
-  []
-  (when-let [issues (<sub [::subs/issues])]
-    [:section.company-profile__issues
-     [:div.is-flex
-      [:h2.title "Open Source Issues from this company"]
-      [link "View all"
-       :issues-for-company-id :company-id (<sub [::subs/id])
-       :class "a--underlined"]]
-     [:div
-      (doall
-        (for [issue issues]
-          ^{:key (:id issue)}
-          [issue-card issue]))]]))
+  [admin-or-owner?]
+  (let [issues (<sub [::subs/issues])]
+    (when (or admin-or-owner? (not-empty issues))
+      [:section.company-profile__issues
+       [:div.is-flex
+        [:h2.title "Open Source Issues from this company"]
+        (when (not-empty issues)
+          [link "View all"
+           :issues-for-company-id :company-id (<sub [::subs/id])
+           :class "a--underlined"])]
+       (if (empty? issues)
+         [github/integrate-github-button {:class "company-profile__cta-button", :user-type :company}]
+         [:div
+          (doall
+            (for [issue issues]
+              ^{:key (:id issue)}
+              [issue-card issue]))])])))
 
 (defn pswp-element
   []
@@ -247,51 +262,60 @@
       [icon "delete"]])])
 
 (defn photos
-  [can-add-edit?]
-  (let [images (<sub [::subs/images])
-        [first-image & [second-image]] images
-        solo? (and first-image (not second-image))
-        open-fn (fn [index] (interop/open-photo-gallery index images))
-        secondary-images (->> images
-                              (rest)
-                              (take 4)
-                              (partition-all 2)
-                              (map-indexed (fn [i si] {:index i :simages si})))]
-    (when (or can-add-edit? (not-empty images))
-      [:section.company-profile__photos
-       [:h2.title (str "Photos")]
-       (if solo?
-         [:div.company-profile__photos__gallery
-          (photo first-image open-fn
-                 {:w 471 :h 222
-                  :solo? true :edit? can-add-edit?})]
-         (when first-image
-           [:div.company-profile__photos__gallery
-            (photo first-image open-fn
-                   {:w 321 :h 222
-                    :edit? can-add-edit?})
-            (doall
-              (for [{:keys [simages index]} secondary-images]
-                ^{:key index}
-                [:div.company-profile__photos__splitter
-                 [:div.company-profile__photos__splitter__inner
+  [admin-or-owner?]
+  (let [editing? (r/atom false)]
+    (fn [admin-or-owner?]
+      (let [images (<sub [::subs/images])
+            [first-image & [second-image]] images
+            solo? (and first-image (not second-image))
+            open-fn (fn [index] (interop/open-photo-gallery index images))
+            secondary-images (->> images
+                                  (rest)
+                                  (take 4)
+                                  (partition-all 2)
+                                  (map-indexed (fn [i si] {:index i :simages si})))]
+        (when (or admin-or-owner? (not-empty images))
+          [:section.company-profile__photos
+           [:h2.title "Photos"]
+           (cond solo?
+                 [:div.company-profile__photos__gallery
+                  (photo first-image open-fn
+                         {:w 471 :h 222
+                          :solo? true :edit? admin-or-owner?})]
+                 first-image
+                 [:div.company-profile__photos__gallery
+                  (photo first-image open-fn
+                         {:w 321 :h 222
+                          :edit? admin-or-owner?})
                   (doall
-                    (for [{:keys [index simage]} (map-indexed (fn [i si] {:index i :simage si}) simages)]
-                      (photo simage open-fn
-                             {:w 134 :h 103
-                              :edit? can-add-edit? :key index})))]]))]))
-       #?(:cljs
-          (when can-add-edit?
-            [:div.company-profile__photos__add
-             (if (<sub [::subs/photo-uploading?])
-               [:div.company-profile__photos__add--loading]
-               [:input {:type "file"
-                        :on-change (upload/handler
-                                     :launch [::events/photo-upload]
-                                     :on-upload-start [::events/photo-upload-start]
-                                     :on-success [::events/photo-upload-success]
-                                     :on-failure [::events/photo-upload-failure])}])]))
-       (pswp-element)])))
+                    (for [{:keys [simages index]} secondary-images]
+                      ^{:key index}
+                      [:div.company-profile__photos__splitter
+                       [:div.company-profile__photos__splitter__inner
+                        (doall
+                          (for [{:keys [index simage]} (map-indexed (fn [i si] {:index i :simage si}) simages)]
+                            (photo simage open-fn
+                                   {:w 134 :h 103
+                                    :edit? admin-or-owner? :key index})))]]))]
+                 (not @editing?)
+                 [:button.button.button--medium.button--inverted.company-profile__cta-button
+                  {:on-click #(reset! editing? true)}
+                  "Upload a photo"])
+           #?(:cljs
+              (when (and admin-or-owner? @editing?)
+                [:div.company-profile__photos__add
+                 (if (<sub [::subs/photo-uploading?])
+                   [:div.company-profile__photos__add--loading]
+                   [:input {:type "file"
+                            :on-change (upload/handler
+                                         :launch [::events/photo-upload]
+                                         :on-upload-start [::events/photo-upload-start]
+                                         :on-success [::events/photo-upload-success]
+                                         :on-failure [::events/photo-upload-failure])}])]))
+           (when admin-or-owner?
+             [edit-close-button editing?])
+           (pswp-element)])))))
+
 
 (defn profile-tag-field
   [_args]
@@ -659,7 +683,7 @@
       (fn [admin-or-owner?]
         (let [hww (<sub [::subs/how-we-work])]
           (when (or admin-or-owner?
-                   (text/not-blank hww))
+                    (text/not-blank hww))
             [:section
              {:id    "company-profile__how-we-work"
               :class (util/merge-classes
@@ -762,9 +786,9 @@
          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
          [technology admin-or-owner?]
          [videos admin-or-owner?]
-         [blogs]
+         [blogs admin-or-owner?]
          [photos admin-or-owner?]
-         [issues]
+         [issues admin-or-owner?]
          [benefits admin-or-owner?]
          [how-we-work admin-or-owner?]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile
