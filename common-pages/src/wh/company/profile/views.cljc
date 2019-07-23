@@ -369,7 +369,7 @@
                                              {:description-html @new-desc})
                                            (when (not= selected-tag-ids @existing-tag-ids)
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
-                         (dispatch-sync [::events/update-company changes])))}
+                         (dispatch-sync [::events/update-company changes "company-profile__about-us"])))}
           [:div
            [:h2.title "About us"]
            [:h2.subtitle "Who are we?"]
@@ -500,7 +500,7 @@
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})
                                            (when (text/not-blank @new-ati)
                                              {:additional-tech-info @new-ati})))]
-                         (dispatch-sync [::events/update-company changes])))}
+                         (dispatch-sync [::events/update-company changes "company-profile__technology"])))}
           [:div
            [:h2.title "Technology"]
            [:h2.subtitle "Tech stack"]
@@ -564,7 +564,7 @@
                          (when-let [changes
                                     (when (not-empty @new-tech-scales)
                                       {:tech-scales (merge tech-scales @new-tech-scales)})]
-                           (dispatch-sync [::events/update-company changes]))
+                           (dispatch-sync [::events/update-company changes "company-profile__technology"]))
                          (reset! new-tech-scales {}))}
             tech-scales-view
             tech-scales-view])]))))
@@ -690,7 +690,7 @@
                            (when-let [changes
                                       (when (text/not-blank @new-how-we-work)
                                         {:how-we-work @new-how-we-work})]
-                             (dispatch-sync [::events/update-company changes])))}
+                             (dispatch-sync [::events/update-company changes "company-profile__how-we-work"])))}
               [:div
                [:h2.title "How we work"]
                [putil/html hww]]
@@ -733,7 +733,7 @@
                                     (merge {}
                                            (when (not= selected-tag-ids @existing-tag-ids)
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
-                         (dispatch-sync [::events/update-company changes])))}
+                         (dispatch-sync [::events/update-company changes "company-profile__benefits"])))}
           [:div
            [:h2.title "Benefits"]
            (doall

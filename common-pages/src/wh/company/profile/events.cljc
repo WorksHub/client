@@ -306,7 +306,7 @@
 (reg-event-fx
   ::update-company
   db/default-interceptors
-  (fn [{db :db} [changes]]
+  (fn [{db :db} [changes scroll-to]]
     (let [company (cached-company db)]
       {:db (assoc-in db [::profile/sub-db ::profile/updating?] true)
        :dispatch [:graphql/update-entry :company {:slug (:slug company)}
@@ -317,7 +317,8 @@
                              (merge {:id (:id company)}
                                     (cases/->camel-case changes))}
                  :on-success [::update-company-success]
-                 :on-failure [::update-company-failure changes company]}})))
+                 :on-failure [::update-company-failure changes company]}
+       :scroll-into-view scroll-to})))
 
 (reg-event-fx
   ::update-company-failure
