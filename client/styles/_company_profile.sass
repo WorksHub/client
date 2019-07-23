@@ -1,3 +1,9 @@
+.company-profile
+  +mobile
+    padding: 0px
+    .split-content
+      padding: 0px 18px 0px 18px
+
 .company-profile__main,
 .company-profile__side
   & > section
@@ -5,6 +11,9 @@
     box-shadow: 0 0 0 rgba(0,0,0,0.0)
     transition: box-shadow 0.3s ease-in-out
     position: relative
+    +mobile
+      &:last-child
+        margin-bottom: 18px
     .is-flex
       justify-content: space-between
     .title
@@ -14,6 +23,7 @@
       background-color: white
       padding: 18px
       .title
+        font-size: 18px
         color: $red
         border-left: 6px solid $red
         padding-left: 12px
@@ -22,6 +32,8 @@
         letter-spacing: normal
       .subtitle
         font-weight: $font-medium
+        +mobile
+          font-size: 18px
       .subtitle:not(first-of-type)
         margin-top: 18px
       .ql-container
@@ -49,11 +61,15 @@
 .company-profile__header
   height: 148px
   background: $white
-  padding: 18px
   margin: 0 !important
   box-shadow: 0 0 0 rgba(0,0,0,0.0)
   transition: box-shadow 0.3s ease-in-out
   overflow: hidden
+  +desktop
+    padding: 18px
+  +mobile
+    .editable-wrapper
+      padding: 18px 18px 0px 18px
   .editable--save-cancel-buttons
     align-items: flex-end
   .field__error
@@ -87,10 +103,9 @@
 .company-profile__header__links
   border-top: 1px solid $pale-blue
   display: flex
+  justify-content: space-between
   +mobile
-    justify-content: flex-start
-  +desktop
-    justify-content: space-around
+    border-top: 6px solid $pale-gray
   padding-top: 18px
   overflow-x: auto
   overflow-y: hidden
@@ -105,8 +120,7 @@
   color: $steel-gray
   line-height: 1
   +mobile
-    & + &
-      margin-left: 100px
+    padding: 0px 18px 0px 18px
 
 .company-profile__logo
   img
@@ -121,6 +135,7 @@
 
 .company-profile__photos__add
   position: relative
+  height: 32px
 
 .company-profile__photos__add--loading
   @include spinner
@@ -130,15 +145,36 @@
 .company-profile__photos__img
   overflow: hidden
   cursor: pointer
-  margin-bottom: 16px
   position: relative
+  background-size: cover
+  &:nth-of-type(1)
+    grid-row: 1 / 3
+    grid-column: 1 / 1
+    +mobile
+      grid-column: 1 / 3
+      grid-row: 1 / 3
+  &:first-child:nth-last-child(1) /* only one */
+    +desktop
+      grid-column: 1 / 4
+    +mobile
+      grid-row: 1 / 3
+  &:first-child:nth-last-child(2) ~ & /* two images; second image */
+    +desktop
+      grid-column: 2 / 4
+      grid-row: 1 / 3
+    +mobile
+      grid-column: 1 / 3
+      grid-row: 3 / 4
+  &:first-child:nth-last-child(3) ~ & /* three images; second and third image */
+    +desktop
+      grid-column: 2 / 4
+    +mobile
+      grid-row: 3 / 4
   &:hover
     .company-profile__photos__delete
       display: unset
   img
-    height: inherit
-.company-profile__photos__img--solo
-  width: 471px !important
+    width: 100%
 .company-profile__photos__delete
   position: absolute
   bottom: 0px
@@ -150,33 +186,32 @@
     width: 18px
     height: 18px
 .company-profile__photos__gallery
-  display: flex
   width: 100%
-  flex-wrap: wrap
-  margin-bottom: 18px
-  height: 222px
-  overflow: hidden
-  & > .company-profile__photos__img
-    display: inline-block
-    width: 321px
-    height: 222px
-  .company-profile__photos__splitter
-    display: inline-block
-    margin-left: 16px
-    .company-profile__photos__splitter__inner
-      display: flex
-      flex-direction: column
-      & > .company-profile__photos__img
-        width: 134px
-        height: 103px
+  display: grid
+  grid-column-gap: 12px
+  grid-row-gap: 12px
+  +desktop
+    grid-template-columns: 49.5% 1fr 1fr
+    grid-template-rows: 50% 50%
+    height: 260px
+    margin-bottom: 36px
+  +mobile
+    grid-template-columns: 1fr 1fr
+    grid-template-rows: 33.3% 33.3% 33.3%
+    height: 420px
+    margin-bottom: 50px
 
 .company-profile__main
   .quill
     max-width: unset
 .company-profile__about-us__description
   font-style: italic
-  font-size: 18px
   color: $steel-gray
+  font-size: 18px
+  line-height: normal
+  +mobile
+    font-size: 14px
+    line-height: 18px
 
 .company-profile__about-us__company-tags
   margin-top: 24px
@@ -230,12 +265,17 @@
 
 .company-profile__tag-display
   width: 100%
-  height: 48px
   padding: 8px 8px 1px 8px
   display: flex
-  justify-content: space-between
   align-items: flex-start
   border: 1px solid $disabled-gray
+  +desktop
+    height: 48px
+    justify-content: space-between
+  +mobile
+    height: 85px
+    flex-direction: column
+    justify-content: flex-start
   p
     line-height: 24px
     font-size: 14px
@@ -247,6 +287,13 @@
   &:not(:last-of-type)
     border-bottom: 0
     padding: 8px 8px 2px 8px
+
+.company-profile__tag-display--empty
+  color: red
+  +mobile
+    height: 48px
+  .company-profile__tag-display__expander
+    display: none
 
 .company-profile__tag-display
   &.is-open
@@ -266,7 +313,8 @@
     height: 24px
 
 .company-profile__tag-display__block__info
-  flex: 0 0 260px
+  +desktop
+    flex: 0 0 260px
   display: flex
   align-items: center
   h3
@@ -283,8 +331,14 @@
   display: flex
   height: 30px
   overflow: hidden
+  +mobile
+    margin-top: 8px
+    padding-left: 48px
 
 .company-profile__tag-display__expander
+  +mobile
+    position: absolute
+    right: 8px
   .icon
     margin-top: 2px
     cursor: pointer
@@ -309,17 +363,27 @@
       margin-left: 18px
 
 .company-profile__company-info__list
+  +mobile
+    display: flex
+    flex-wrap: wrap
+    justify-content: flex-start
+    align-items: flex-start
   li
     line-height: 1
     display: flex
     align-items: center
     color: $greyish
     height: 18px
+    +mobile
+      width: 50%
+      &:nth-of-type(n+3)
+        margin-top: 18px
     .icon
       flex-shrink: 0
       margin-right: 12px
-  li + li
-    margin-top: 18px
+  +desktop
+    li + li
+      margin-top: 18px
 
 .company-profile__company-info__industry-check
   text-align: left !important
@@ -425,3 +489,13 @@
   width: 246px
   +mobile
     width: 100%
+
+.company-profile__hash-anchor
+  display: block
+  pointer-events: none
+  +desktop
+    margin-top: 0px
+    padding-bottom: 0px
+  +mobile
+    margin-top: -$navbar-mobile-height
+    padding-bottom: $navbar-mobile-height

@@ -1,4 +1,4 @@
-$video-width: 246px
+$video-width: 100%
 $video-upper-height: 163px
 $video-lower-height: 115px
 
@@ -6,19 +6,18 @@ $video-lower-height: 115px
   display: inline-block
   position: relative
   width: $video-width
+  flex: 1 0 245px
   +desktop
-    &:nth-of-type(odd)
-      margin-right: 12px
+    &:nth-of-type(even)
+      margin-left: 12px
   +mobile
     margin-right: 12px
   margin-bottom: 20px
-  border-right: 12px solid transparent
 .video_upper
   height: $video-upper-height
   width: $video-width
   overflow: hidden
 .video_img
-  transform: scale(1.2)
   height: 100%
   background-size: cover
   background-position: center
@@ -85,6 +84,10 @@ $video-lower-height: 115px
     display: block
     line-height: 1em
     color: $dark-red
+
+.videos__list
+  display: flex
+  flex-wrap: wrap
 
 #video-player-container
   display: none

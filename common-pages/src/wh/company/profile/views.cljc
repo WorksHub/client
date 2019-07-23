@@ -13,7 +13,7 @@
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
     [wh.components.cards :refer [blog-card]]
-    [wh.components.common :refer [link wrap-img img]]
+    [wh.components.common :refer [link wrap-img img base-img]]
     [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue-card]]
@@ -251,14 +251,16 @@
   [image open-fn {:keys [_w _h _fit solo? edit? key] :as opts
                   :or {key (:url image)}}]
   [:div
-   {:key key
+   (merge {:key key
     :class (util/merge-classes "company-profile__photos__img"
-                               (when solo? "company-profile__photos__img--solo"))}
-   (wrap-img img (:url image)
-             (assoc opts :attrs (interop/on-click-fn (open-fn (:index image)))))
+                               (when solo? "company-profile__photos__img--solo"))
+           :style (videos/background-image (base-img (:url image) opts))}
+    (interop/on-click-fn (open-fn (:index image))))
    (when edit?
      [:div.company-profile__photos__delete
-      {:on-click #(dispatch [::events/delete-photo image])}
+      {:on-click #(do
+                    (dispatch [::events/delete-photo (select-keys image [:url :width :height])])
+                    (.stopPropagation %))}
       [icon "delete"]])])
 
 (defn photos
@@ -266,41 +268,20 @@
   (let [editing? (r/atom false)]
     (fn [admin-or-owner?]
       (let [images (<sub [::subs/images])
-            [first-image & [second-image]] images
-            solo? (and first-image (not second-image))
             open-fn (fn [index] (interop/open-photo-gallery index images))
-            secondary-images (->> images
-                                  (rest)
-                                  (take 4)
-                                  (partition-all 2)
-                                  (map-indexed (fn [i si] {:index i :simages si})))]
+            simages (->> images
+                         (take 5)
+                         (map-indexed (fn [i si] {:index i :simage si})))]
         (when (or admin-or-owner? (not-empty images))
-          [:section.company-profile__photos
+          [:section.compan-profile__photos
            [:h2.title "Photos"]
-           (cond solo?
-                 [:div.company-profile__photos__gallery
-                  (photo first-image open-fn
-                         {:w 471 :h 222
-                          :solo? true :edit? admin-or-owner?})]
-                 first-image
-                 [:div.company-profile__photos__gallery
-                  (photo first-image open-fn
-                         {:w 321 :h 222
-                          :edit? admin-or-owner?})
-                  (doall
-                    (for [{:keys [simages index]} secondary-images]
-                      ^{:key index}
-                      [:div.company-profile__photos__splitter
-                       [:div.company-profile__photos__splitter__inner
-                        (doall
-                          (for [{:keys [index simage]} (map-indexed (fn [i si] {:index i :simage si}) simages)]
-                            (photo simage open-fn
-                                   {:w 134 :h 103
-                                    :edit? admin-or-owner? :key index})))]]))]
-                 (not @editing?)
-                 [:button.button.button--medium.button--inverted.company-profile__cta-button
-                  {:on-click #(reset! editing? true)}
-                  "Upload a photo"])
+            [:div.company-profile__photos__gallery
+            (doall
+              (for [{:keys [index simage]} simages]
+                (let [first? (zero? index)]
+                  (photo simage open-fn
+                         {:w 134 :h 103
+                          :edit? admin-or-owner? :key index}))))]
            #?(:cljs
               (when (and admin-or-owner? @editing?)
                 [:div.company-profile__photos__add
@@ -348,8 +329,9 @@
 
 (defn tag-list
   [tag-type]
-  (into [:ul.tags.tags--inline.tags--profile]
-        (map (fn [tag] [tag/tag :li tag]) (<sub [::subs/tags tag-type]))))
+  (when-let [tags (not-empty (<sub [::subs/tags tag-type]))]
+    (into [:ul.tags.tags--inline.tags--profile]
+          (map (fn [tag] [tag/tag :li tag]) tags))))
 
 (defn about-us
   [_admin-or-owner?]
@@ -361,8 +343,7 @@
       (let [description      (<sub [::subs/description])
             selected-tag-ids (<sub [::subs/selected-tag-ids tag-type nil])] ;; no subtype
         [:section
-         {:id    "company-profile__about-us"
-          :class (util/merge-classes
+         {:class (util/merge-classes
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
                    "company-profile__about-us")}
@@ -413,18 +394,21 @@
   (let  [dsid (str "company-profile__tag-display--" (name k))]
     (fn [tag-type k data]
       (let [tags (<sub [::subs/tags tag-type k])]
-        [:article.company-profile__tag-display
-         {:id dsid}
+        [:article
+         {:id dsid
+          :class (util/merge-classes "company-profile__tag-display"
+                                     (when (empty? tags) "company-profile__tag-display--empty"))}
          [:div.company-profile__tag-display__block__info
           [:div.company-profile__tag-display__icon
            [icon (:icon data)]]
           [:h3 (:title data)]
           [:span "(" (count tags) ")"]]
          [:div.company-profile__tag-display__tag-list
-          (into [:ul.tags.tags--inline.tags--profile]
-                (map (fn [tag]
-                       [tag/tag :li tag])
-                     tags))]
+          (when (not-empty tags)
+            (into [:ul.tags.tags--inline.tags--profile]
+                  (map (fn [tag]
+                         [tag/tag :li tag])
+                       tags)))]
          [:div.company-profile__tag-display__expander
           (interop/toggle-is-open-on-click dsid)
           [icon "roll-down"]]]))))
@@ -486,8 +470,7 @@
       (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids--map tag-type]))))
             ati              (<sub [::subs/additional-tech-info])]
         [:section
-         {:id    "company-profile__technology"
-          :class (util/merge-classes
+         {:class (util/merge-classes
                    "company-profile__section--headed"
                    (when (or @tech-editing? @scales-editing?) "company-profile__section--editing")
                    "company-profile__technology")}
@@ -685,8 +668,7 @@
           (when (or admin-or-owner?
                     (text/not-blank hww))
             [:section
-             {:id    "company-profile__how-we-work"
-              :class (util/merge-classes
+             {:class (util/merge-classes
                        "company-profile__section--headed"
                        (when @editing? "company-profile__section--editing")
                        "company-profile__how-we-work")}
@@ -726,8 +708,7 @@
     (fn [admin-or-owner?]
       (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids--map tag-type]))))]
         [:section
-         {:id "company-profile__benefits"
-          :class (util/merge-classes
+         {:class (util/merge-classes
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
                    "company-profile__benefits")}
@@ -770,6 +751,11 @@
      :on-click #(dispatch [::events/publish-profile])}
     (str (if enabled? "Un-Publish" "Publish"))]])
 
+(defn hash-anchor
+  [id]
+  [:span.company-profile__hash-anchor
+   {:id id}])
+
 (defn page []
   (let [enabled? (<sub [::subs/profile-enabled?])
         company-id (<sub [::subs/id])
@@ -782,12 +768,16 @@
        [header admin-or-owner?]
        [:div.split-content
         [:div.company-profile__main.split-content__main
+         [hash-anchor "company-profile__about-us"]
          [about-us admin-or-owner?]
          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
+         [hash-anchor "company-profile__technology"]
          [technology admin-or-owner?]
+         [hash-anchor "company-profile__benefits"]
          [benefits admin-or-owner?]
          ;; TODO JOBS
          [issues admin-or-owner?]
+         [hash-anchor "company-profile__how-we-work"]
          [how-we-work admin-or-owner?]
          [blogs admin-or-owner?]
          [photos admin-or-owner?]

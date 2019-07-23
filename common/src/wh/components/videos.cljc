@@ -92,10 +92,11 @@
   (let [current-video-url (r/atom nil)]
     (fn [{:keys [videos can-add-edit? add-event update-event error] :as args}]
       [:div.videos
-       (when (sequential? videos)
-         (doall (for [v videos]
-                  ^{:key (:youtube-id v)}
-                  [video v (select-keys args [:update-event :delete-event :can-add-edit?])])))
+       [:div.videos__list
+        (when (sequential? videos)
+          (doall (for [v videos]
+                   ^{:key (:youtube-id v)}
+                   [video v (select-keys args [:update-event :delete-event :can-add-edit?])])))]
        #?(:cljs
           (when can-add-edit?
             ;; TODO re-do this
