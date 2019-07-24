@@ -22,6 +22,7 @@
     [wh.components.not-found :as not-found]
     [wh.components.tag :as tag]
     [wh.components.videos :as videos]
+    [wh.how-it-works.views :as how-it-works]
     [wh.interop :as interop]
     [wh.pages.util :as putil]
     [wh.re-frame :as r]
@@ -808,7 +809,11 @@
          [hash-anchor "company-profile__benefits"]
          [benefits admin-or-owner?]
          [hash-anchor "company-profile__jobs"]
-         [jobs admin-or-owner?]
+         [jobs admin-or-owner?]]
+        [:div.company-profile__side.split-content__side.is-hidden-mobile
+         [company-info admin-or-owner?]]]
+       [:div.split-content
+        [:div.company-profile__main.split-content__main
          [issues admin-or-owner?]
          [hash-anchor "company-profile__how-we-work"]
          [how-we-work admin-or-owner?]
@@ -816,6 +821,15 @@
          [photos admin-or-owner?]
          [videos admin-or-owner?]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile
-         [company-info admin-or-owner?]]]]
+         (cond
+           #?(:cljs (<sub [:user/company?])
+              :clj  false)
+           [how-it-works/pod--company]
+           (empty? (<sub [::subs/issues]))
+           [:div] ;; display nothing if no issues
+           (<sub [:user/logged-in?])
+           [how-it-works/pod--candidate]
+           :else
+           [how-it-works/pod--basic])]]]
       [:div.main.main--center-content
        [not-found/not-found]])))
