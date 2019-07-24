@@ -12,6 +12,7 @@
     [wh.db :as db]
     [wh.graphql-cache :as cache :refer [reg-query]]
     [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields publish-company-profile-mutation]]
+    [wh.graphql.jobs]
     [wh.graphql.tag :as tag-gql]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
@@ -48,6 +49,10 @@
                       [[:blogs
                         [:id :title :feature :author :formattedCreationDate :readingTime
                          :upvoteCount :tags :creator :published]]
+                       [:pagination [:total]]]]
+                     [:jobs {:pageSize 2 :pageNumber 1}
+                      [[:jobs
+                        [:fragment/jobCardFields]]
                        [:pagination [:total]]]]
                      [:issues {:pageSize 2 :pageNumber 1}
                       [[:issues

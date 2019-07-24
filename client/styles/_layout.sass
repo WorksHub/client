@@ -84,3 +84,20 @@ h3
   +desktop
     width: 33%
     max-width: 350px
+
+.company-jobs__list
+  +desktop
+    display: flex
+    flex-direction: row
+  +mobile
+    overflow-x: auto
+    overflow-y: hidden
+    white-space: nowrap
+    margin: 0 -18px
+    padding: 0 18px
+    .card
+      width: 80%
+      white-space: normal
+      vertical-align: top
+  .card + .card
+    margin-left: 12px

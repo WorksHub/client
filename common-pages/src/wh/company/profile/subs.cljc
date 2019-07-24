@@ -170,6 +170,12 @@
     (-> company-extra-data :blogs :blogs)))
 
 (reg-sub
+  ::jobs
+  :<- [::company-extra-data]
+  (fn [company-extra-data _]
+    (-> company-extra-data :jobs :jobs)))
+
+(reg-sub
   ::issues
   :<- [::company]
   :<- [::company-extra-data]
@@ -310,12 +316,6 @@
                    (= search-term-lower (some-> results (first) (:label) (str/lower-case))))
             nil
             results))))))
-
-(reg-sub
-  ::jobs
-  :<- [::sub-db]
-  (fn [db _]
-    nil))
 
 (reg-sub
   ::publishing?

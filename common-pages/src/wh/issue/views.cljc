@@ -223,7 +223,7 @@
     #_[link "View all"
        :jobs :company-id (<sub [::subs/company-id])
        :class "a--underlined"]] ;; TODO this route doesn't exist yet
-   [:div.issue__company-jobs__list
+   [:div.company-jobs__list
     (let [jobs (<sub [::subs/company-jobs])]
       (if jobs
         (doall

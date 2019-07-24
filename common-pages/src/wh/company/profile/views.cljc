@@ -5,6 +5,7 @@
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
     #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+    #?(:cljs [wh.user.subs])
     [clojure.string :as str]
     [wh.common.data.company-profile :as data]
     [wh.common.specs.company :as company-spec]
@@ -17,6 +18,7 @@
     [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue-card]]
+    [wh.components.job :refer [job-card]]
     [wh.components.not-found :as not-found]
     [wh.components.tag :as tag]
     [wh.components.videos :as videos]
@@ -216,6 +218,32 @@
             (for [issue issues]
               ^{:key (:id issue)}
               [issue-card issue]))])])))
+
+(defn jobs
+  [admin-or-owner?]
+  (let [jobs (<sub [::subs/jobs])]
+    (when (or admin-or-owner? (not-empty jobs))
+      [:section.company-profile__jobs
+       [:div.is-flex
+        [:h2.title "Jobs"]]
+       (if (empty? jobs)
+         [link
+          [:button.button.button--medium.button--inverted.company-profile__cta-button
+           "Publish a job"]
+          :create-job]
+         [:div
+          [:div.company-jobs__list
+           (doall
+             (for [job jobs]
+               ^{:key (:id job)}
+               [job-card job (merge {:public? false}
+                                    #?(:cljs
+                                       {:liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
+                                        :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}))]))]
+          #_[link
+           [:button.button.button--medium.button--inverted.company-profile__cta-button
+            "View all"]
+           :create-job]])])))
 
 (defn pswp-element
   []
@@ -779,7 +807,8 @@
          [technology admin-or-owner?]
          [hash-anchor "company-profile__benefits"]
          [benefits admin-or-owner?]
-         ;; TODO JOBS
+         [hash-anchor "company-profile__jobs"]
+         [jobs admin-or-owner?]
          [issues admin-or-owner?]
          [hash-anchor "company-profile__how-we-work"]
          [how-we-work admin-or-owner?]
