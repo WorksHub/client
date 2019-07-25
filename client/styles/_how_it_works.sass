@@ -619,7 +619,7 @@
 .how-it-works-pod__carousel
   height: 140px
   display: flex
-  justify-content: space-between
+  justify-content: center
 
 .how-it-works-pod__selection-img
   user-select: none
@@ -632,21 +632,6 @@
   height: 62px
   +mobile
     text-align: center
-
-.how-it-works-pod__chevron
-  cursor: pointer
-  &:hover
-    .icon
-      fill: $hover-orange
-  .icon
-    fill: $red
-    height: 100%
-    width: 32px
-
-.how-it-works-pod__chevron--disabled
-  pointer-events: none
-  .icon
-    fill: $disabled-gray
 
 .how-it-works-pod__pips-wrapper
   width: 100%
@@ -711,3 +696,11 @@
     min-width: 130px
     max-width: 150px
     display: block
+
+.how-it-works-pod--candidate,
+.how-it-works-pod--company
+  .carousel
+    height: 240px
+    margin-bottom: 12px
+    .how-it-works-pod__carousel
+      margin-bottom: 12px

@@ -2,6 +2,7 @@
   (:require
     #?(:cljs [reagent.core :as r])
     [wh.common.data :as data]
+    [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [link]]
     [wh.components.faq :as faq]
     [wh.components.github :as github]
@@ -34,47 +35,47 @@
   [:div.how-it-works__type-slider
    [:div
     {:class (util/merge-classes
-             "how-it-works__type-slider__option" "how-it-works__type-slider__option--company"
-             (when-not (= :company selected-site)
-               "how-it-works__type-slider__option--disabled"))}
+              "how-it-works__type-slider__option" "how-it-works__type-slider__option--company"
+              (when-not (= :company selected-site)
+                "how-it-works__type-slider__option--disabled"))}
     [:img {:src "/images/get_started/company.svg"
            :alt ""}]
     (if on-slide
       [:button
        {:class (util/merge-classes
-                "button"
-                (when-not (= :company selected-site)
-                  "button--disabled"))
+                 "button"
+                 (when-not (= :company selected-site)
+                   "button--disabled"))
         :on-click #(on-slide :company)}
        "Company"]
       [link
        [:button {:class (util/merge-classes
-                         "button"
-                         (when-not (= :company selected-site)
-                           "button--disabled"))}
+                          "button"
+                          (when-not (= :company selected-site)
+                            "button--disabled"))}
         "Company"]
        :how-it-works :query-params {:site "company"}])]
    [:div
     {:class (util/merge-classes
-             "how-it-works__type-slider__option" "how-it-works__type-slider__option--candidate"
-             (when-not (= :candidate selected-site)
-               "how-it-works__type-slider__option--disabled"))}
+              "how-it-works__type-slider__option" "how-it-works__type-slider__option--candidate"
+              (when-not (= :candidate selected-site)
+                "how-it-works__type-slider__option--disabled"))}
     [:img {:src "/images/get_started/candidate.svg"
            :alt ""}]
     (if on-slide
       [:button
        {:class (util/merge-classes
-                "button"
-                (when-not (= :candidate selected-site)
-                  "button--disabled"))
+                 "button"
+                 (when-not (= :candidate selected-site)
+                   "button--disabled"))
         :on-click #(on-slide :candidate)}
        "Candidate"]
       [link
        [:button
         {:class (util/merge-classes
-                 "button"
-                 (when-not (= :candidate selected-site)
-                   "button--disabled"))}
+                  "button"
+                  (when-not (= :candidate selected-site)
+                    "button--disabled"))}
         "Candidate"]
        :how-it-works :query-params {:site "candidate"}])]])
 
@@ -130,10 +131,10 @@
     [:div.how-it-works__explanation__steps
      (let [steps (get data/how-it-works-explanation-steps selected-site)]
        (doall
-        (for [i (range (count steps))]
-          (let [{:keys [img txt]} (nth steps i)]
-            ^{:key img}
-            [explanation-step img txt (inc i)]))))]
+         (for [i (range (count steps))]
+           (let [{:keys [img txt]} (nth steps i)]
+             ^{:key img}
+             [explanation-step img txt (inc i)]))))]
     [get-started-link github?]]
    [step-line 4]])
 
@@ -152,9 +153,9 @@
   [items {:keys [class]}]
   [:div {:class (util/merge-classes "how-it-works__benefits-list" class)}
    (doall
-    (for [item items]
-      ^{:key (:img item)}
-      [benefit item]))])
+     (for [item items]
+       ^{:key (:img item)}
+       [benefit item]))])
 
 (defn benefits
   [selected-site github?]
@@ -184,8 +185,8 @@
   (let [{:keys [title subtitle info blue grey orange]} (get data/how-it-works-stats selected-site)]
     [:div
      {:class (util/merge-classes
-              "how-it-works__stats"
-              (str "how-it-works__stats--" (name selected-site)))}
+               "how-it-works__stats"
+               (str "how-it-works__stats--" (name selected-site)))}
      [:div.how-it-works__stats__inner
       [get-started-link github? "is-hidden-desktop"]
       [:div.how-it-works__stats__balls.is-hidden-mobile
@@ -260,82 +261,17 @@
     [:img {:src "/images/hiw/header.svg"
            :alt ""}]]])
 
-(defn pod-carousel-pips
-  [n active-n on-click]
-  [:div.how-it-works-pod__pips-wrapper
-   [:div.how-it-works-pod__pips
-    (for [i (range n)]
-      ^{:key i}
-      [:div
-       (merge {:class (util/merge-classes "how-it-works-pod__pip"
-                                          (when on-click "how-it-works-pod__pip--clickable")
-                                          (when (= i active-n) "how-it-works-pod__pip--active"))}
-              (when on-click
-                {:on-click #(on-click i)}))
-       (icon "circle")])]])
-
-(defn pod--side-render
-  [mode active-n on-click]
-  (let [{:keys [img txt]} (get-in data/how-it-works-explanation-steps [mode active-n])
-        max-n (count (get data/how-it-works-explanation-steps mode))]
-    [:div
-     {:class (util/merge-classes
-              "pod" "how-it-works-pod"
-              (str "how-it-works-pod--" (name mode)))}
-     [:h2 "How it works"]
-     [:div.how-it-works-pod__carousel
-      [:div
-       {:class (util/merge-classes
-                "how-it-works-pod__chevron"
-                (when (zero? active-n)
-                  "how-it-works-pod__chevron--disabled"))
-        :on-click #(on-click (dec active-n))}
-       [icon "chevron_left"]]
-      [:div.how-it-works-pod__selection-img
-       [:img {:src img
-              :alt ""}]]
-      [:div
-       {:class (util/merge-classes
-                "how-it-works-pod__chevron"
-                (when (>= (inc active-n) max-n)
-                  "how-it-works-pod__chevron--disabled"))
-        :on-click #(on-click (inc active-n))}
-       [icon "chevron_right"]]]
-     [:p.how-it-works-pod__selection-txt
-      txt]
-     [pod-carousel-pips max-n active-n
-      #?(:cljs on-click
-         :clj nil)]
-     (when (= mode :candidate)
-       [link [:button.button.button--inverted "view all open source issues"]
-        :issues])
-     [link [:button.button "Tell me more"] :how-it-works :query-params (when (= mode :candidate) {:site "candidate"})]]))
-
-(defn pod--company
-  []
-  #?(:cljs (let [step (r/atom 0)]
-             (fn []
-               [pod--side-render :company @step #(reset! step %)]))
-     :clj  [pod--side-render :company 0 nil]))
-
-(defn pod--candidate
-  []
-  #?(:cljs (let [step (r/atom 0)]
-             (fn []
-               [pod--side-render :candidate @step #(reset! step %)]))
-     :clj  [pod--side-render :candidate 0 nil]))
-
 (defn pod--benefits-render
   [user-type selected-site on-slide]
   (let [img-selector {:company "/images/hiw/company/benefits/benefit2.svg"
                       :candidate "/images/hiw/candidate/hiw/hiw4.svg"}]
     [:div
      {:class (util/merge-classes
-              "pod"
-              "how-it-works-pod"
-              "how-it-works-pod--benefits"
-              (when (nil? user-type)
-                "how-it-works-pod--benefits--slider"))}
+               "pod"
+               "how-it-works-pod"
+               "how-it-works-pod--benefits"
+               (when (nil? user-type)
+                 "how-it-works-pod--benefits--slider"))}
      (when (nil? user-type)
        [slider selected-site on-slide])
      [:div.is-flex
@@ -355,3 +291,35 @@
      :cljs (let [selected-site (r/atom (if user-type (keyword user-type) (<sub [::subs/selected-site])))]
              (fn [& [user-type]]
                (pod--benefits-render user-type @selected-site #(reset! selected-site %))))))
+
+(defn pod--side-render
+  [mode arrows?]
+  (let [steps (get data/how-it-works-explanation-steps mode)]
+    [:div
+     {:class (util/merge-classes
+               "pod" "how-it-works-pod"
+               (str "how-it-works-pod--" (name mode)))}
+     [:h2 "How it works"]
+     [carousel
+      (for [{:keys [img txt idx]} (map-indexed #(assoc %2 :idx %1) steps)]
+        [:div
+         [:div.how-it-works-pod__carousel
+          [:div.how-it-works-pod__selection-img
+           [:img {:src img
+                  :alt ""}]]]
+         [:p.how-it-works-pod__selection-txt
+          txt]])
+      arrows?]
+
+     (when (= mode :candidate)
+       [link [:button.button.button--inverted "view all open source issues"]
+        :issues])
+     [link [:button.button "Tell me more"] :how-it-works :query-params (when (= mode :candidate) {:site "candidate"})]]))
+
+(defn pod--candidate
+  []
+  [pod--side-render :candidate true])
+
+(defn pod--company
+  []
+  [pod--side-render :company true])

@@ -827,9 +827,7 @@
            [how-it-works/pod--company]
            (empty? (<sub [::subs/issues]))
            [:div] ;; display nothing if no issues
-           (<sub [:user/logged-in?])
-           [how-it-works/pod--candidate]
            :else
-           [how-it-works/pod--basic])]]]
+           [how-it-works/pod--candidate])]]]
       [:div.main.main--center-content
        [not-found/not-found]])))

@@ -15004,7 +15004,7 @@ h3 {
 .how-it-works-pod__carousel {
   height: 140px;
   display: flex;
-  justify-content: space-between; }
+  justify-content: center; }
 
 .how-it-works-pod__selection-img {
   user-select: none;
@@ -15018,20 +15018,6 @@ h3 {
   @media screen and (max-width: 1007px) {
     .how-it-works-pod__selection-txt {
       text-align: center; } }
-
-.how-it-works-pod__chevron {
-  cursor: pointer; }
-  .how-it-works-pod__chevron:hover .icon {
-    fill: #ff9f90; }
-  .how-it-works-pod__chevron .icon {
-    fill: #ff7c6e;
-    height: 100%;
-    width: 32px; }
-
-.how-it-works-pod__chevron--disabled {
-  pointer-events: none; }
-  .how-it-works-pod__chevron--disabled .icon {
-    fill: #e8e8e8; }
 
 .how-it-works-pod__pips-wrapper {
   width: 100%;
@@ -15094,6 +15080,14 @@ h3 {
     min-width: 130px;
     max-width: 150px;
     display: block; }
+
+.how-it-works-pod--candidate .carousel,
+.how-it-works-pod--company .carousel {
+  height: 240px;
+  margin-bottom: 12px; }
+  .how-it-works-pod--candidate .carousel .how-it-works-pod__carousel,
+  .how-it-works-pod--company .carousel .how-it-works-pod__carousel {
+    margin-bottom: 12px; }
 
 .faq {
   display: flex; }
@@ -15257,6 +15251,29 @@ h3 {
   opacity: 1;
   visibility: visible;
   transition: visibility 0s linear 0s, opacity 0.5s; }
+
+.carousel__arrows {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  justify-content: space-between; }
+
+.carousel-arrow {
+  cursor: pointer; }
+  .carousel-arrow:hover .icon {
+    fill: #ff9f90; }
+  .carousel-arrow .icon {
+    fill: #ff7c6e;
+    height: 100%;
+    width: 32px; }
+
+.carousel-arrow--disabled {
+  cursor: default;
+  pointer-events: none; }
+  .carousel-arrow--disabled:hover .icon {
+    fill: #e8e8e8; }
+  .carousel-arrow--disabled .icon {
+    fill: #e8e8e8; }
 
 .tracking-popups {
   display: none; }

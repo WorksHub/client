@@ -76,6 +76,27 @@ function loadJavaScript(filename) {
 /*--------------------------------------------------------------------------*/
 
 function enableCarousel($carousel) {
+
+    function getArrow(dir, f) {
+        const $arrow = $carousel.querySelector('.carousel-arrow--' + dir);
+        if($arrow != null){
+            f($arrow);
+        }
+    }
+
+    function highlightArrows(currentIdx) {
+        if((currentIdx + 1) >= total) {
+            getArrow('left',  a => { a.classList.remove("carousel-arrow--disabled");});
+            getArrow('right', a => { a.classList.add("carousel-arrow--disabled");});
+        } else if (currentIdx <= 0) {
+            getArrow('left',  a => { a.classList.add("carousel-arrow--disabled");});
+            getArrow('right', a => { a.classList.remove("carousel-arrow--disabled");});
+        } else {
+            getArrow('left',  a => { a.classList.remove("carousel-arrow--disabled");});
+            getArrow('right', a => { a.classList.remove("carousel-arrow--disabled");});
+        }
+    }
+
     function switchItem(i) {
         const $prevPip = $carousel.getElementsByClassName('carousel-pip--active')[0],
               $nextPip = $carousel.getElementsByClassName('carousel-pip')[i],
@@ -87,6 +108,7 @@ function enableCarousel($carousel) {
             $prevItem.classList.remove('carousel-item--active');
             $nextItem.classList.add('carousel-item--active');
         }
+        highlightArrows(i);
     }
 
     function currentItem() {
@@ -97,14 +119,35 @@ function enableCarousel($carousel) {
     var total = $carousel.getElementsByClassName('carousel-pip').length,
         rotate = setInterval(() => switchItem((currentItem() + 1) % total), 5000);
 
+
+
+    function slideItems(d) {
+        const $newIdx = currentItem() + d;
+        if($newIdx < total && $newIdx >= 0) {
+            switchItem($newIdx);
+        }
+    }
+
     function pipClicked(i) {
         switchItem(i);
+        clearInterval(rotate);
+    }
+
+    function slideLeftClicked() {
+        slideItems(-1);
+        clearInterval(rotate);
+    }
+
+    function slideRightClicked() {
+        slideItems(1);
         clearInterval(rotate);
     }
 
     $carousel.querySelectorAll('.carousel-pip').forEach((node, i) => {
         node.addEventListener('click', event => pipClicked(i));
     });
+    getArrow('left',  a => { a.addEventListener('click', event => slideLeftClicked());});
+    getArrow('right', a => { a.addEventListener('click', event => slideRightClicked());});
 }
 
 /*--------------------------------------------------------------------------*/

@@ -45,3 +45,28 @@
   opacity: 1
   visibility: visible
   transition: visibility 0s linear 0s, opacity 0.5s
+
+.carousel__arrows
+  position: absolute
+  display: flex
+  width: 100%
+  justify-content: space-between
+
+.carousel-arrow
+  cursor: pointer
+  &:hover
+    .icon
+      fill: $hover-orange
+  .icon
+    fill: $red
+    height: 100%
+    width: 32px
+
+.carousel-arrow--disabled
+  cursor: default
+  pointer-events: none
+  &:hover
+    .icon
+      fill: $disabled-gray
+  .icon
+    fill: $disabled-gray
