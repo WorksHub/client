@@ -5967,6 +5967,49 @@ a.navbar-item,
   font-weight: 600;
   text-decoration: underline; }
 
+.html-content h2 {
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 21px; }
+
+.html-content h2:not(:first-of-type) {
+  margin-top: 12px; }
+
+.html-content li.ql-indent-1 {
+  margin-left: 15px;
+  list-style-type: circle; }
+
+.html-content h3, .html-content .h3 {
+  font-size: 12px;
+  line-height: 21px;
+  margin-bottom: 4px;
+  font-weight: 600; }
+
+.html-content p, .html-content ul, .html-content ol, .html-content pre, .html-content table, .html-content blockquote {
+  margin-top: 0;
+  margin-bottom: 21px; }
+
+.html-content ul ul, .html-content ol ol, .html-content ul ol, .html-content ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style: circle;
+  margin-left: 2em; }
+
+.html-content ul {
+  margin-left: 30px; }
+
+.html-content ol {
+  margin-left: 26px; }
+
+.html-content ul {
+  list-style: disc; }
+
+.html-content ol li {
+  padding-left: 4px; }
+
+.html-content strong {
+  color: #6E7F89; }
+
 /* two cards in a standard content section inc. 12px margin */
 .card {
   width: 100%;
@@ -9856,35 +9899,6 @@ h3 {
   font-size: 14px;
   line-height: 24px;
   margin-bottom: 16px; }
-  .job__content li.ql-indent-1 {
-    margin-left: 15px;
-    list-style-type: circle; }
-  .job__content h2, .job__content .h2 {
-    font-size: 14px;
-    line-height: 21px;
-    margin-bottom: 12px; }
-  .job__content h3, .job__content .h3 {
-    font-size: 12px;
-    line-height: 21px;
-    margin-bottom: 12px; }
-  .job__content p, .job__content ul, .job__content ol, .job__content pre, .job__content table, .job__content blockquote {
-    margin-top: 0;
-    margin-bottom: 21px; }
-  .job__content ul ul, .job__content ol ol, .job__content ul ol, .job__content ol ul {
-    margin-top: 0;
-    margin-bottom: 0;
-    list-style: circle;
-    margin-left: 2em; }
-  .job__content ul {
-    margin-left: 30px; }
-  .job__content ol {
-    margin-left: 26px; }
-  .job__content ul {
-    list-style: disc; }
-  .job__content ol li {
-    padding-left: 4px; }
-  .job__content strong {
-    color: #6E7F89; }
 
 .job__content--expanded {
   max-height: unset;
@@ -15367,12 +15381,6 @@ h3 {
     .company-profile__main > section.company-profile__section--headed .ql-container,
     .company-profile__side > section.company-profile__section--headed .ql-container {
       min-height: 300px; }
-    .company-profile__main > section.company-profile__section--headed .html-content h2,
-    .company-profile__side > section.company-profile__section--headed .html-content h2 {
-      margin-bottom: 4px; }
-    .company-profile__main > section.company-profile__section--headed .html-content h2:not(:first-of-type),
-    .company-profile__side > section.company-profile__section--headed .html-content h2:not(:first-of-type) {
-      margin-top: 12px; }
 
 .company-profile__section--editing {
   box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important; }
@@ -15884,6 +15892,9 @@ h3 {
     .company-profile__hash-anchor {
       margin-top: -46px;
       padding-bottom: 46px; } }
+
+.company-profile__how-we-work {
+  line-height: 18px; }
 
 .auth-popup__content {
   display: none; }
