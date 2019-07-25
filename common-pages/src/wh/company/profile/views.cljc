@@ -648,7 +648,7 @@
          (when-let [founded-year (<sub [::subs/founded-year])]
            [:li [icon "founded"] "Founded: " founded-year])
          (when-let [location (some-> (<sub [::subs/location]) )]
-           [:li [icon "location"] "Location: " location])]
+           [:li [icon "location"] location])]
         [:form.wh-formx.wh-formx__layout
          #?(:cljs
             [:div

@@ -15734,8 +15734,10 @@ h3 {
   position: fixed !important;
   overflow-y: auto; }
   .company-profile__company-info .is-full-panel-overlay .popup {
-    margin-bottom: 24px;
-    top: calc(50% - (600px / 2)); }
+    margin-bottom: 24px; }
+    @media screen and (min-width: 1008px) {
+      .company-profile__company-info .is-full-panel-overlay .popup {
+        top: calc(50% - (600px / 2)); } }
   .company-profile__company-info .is-full-panel-overlay .radio-item {
     letter-spacing: 1px; }
     .company-profile__company-info .is-full-panel-overlay .radio-item label {
