@@ -452,3 +452,15 @@
   ::company-permissions
   (fn [db _]
     (job/company-permissions db)))
+
+(reg-sub
+  ::profile-enabled?
+  :<- [::sub-db]
+  (fn [{:keys [::job/company]} _]
+    (:profile-enabled company)))
+
+(reg-sub
+  ::company-slug
+  :<- [::sub-db]
+  (fn [{:keys [::job/company]} _]
+    (:slug company)))

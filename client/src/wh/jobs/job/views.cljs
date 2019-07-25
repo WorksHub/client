@@ -181,13 +181,15 @@
      [:div.job__company-header__logo
       (let [logo (<sub [::subs/logo])]
         (if (or logo (<sub [::subs/loaded?]))
-          (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 80 :h 80 :class "logo"})
+          (let [logo-img (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 80 :h 80 :class "logo"})]
+            (if (<sub [::subs/profile-enabled?])
+              [link logo-img :company :slug (<sub [::subs/company-slug])]
+              logo-img))
           [:div.logo--skeleton]))])
    [:div.job__company-header__info
     (when (<sub [::user-subs/approved?])
-      (if (<sub [:user/admin?])
-        [link [:h2 (<sub [::subs/company-name])]
-         :company-dashboard :id (<sub [::subs/company-id])]
+      (if (<sub [::subs/profile-enabled?])
+        [link [:h2 (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
         [:h2 (<sub [::subs/company-name])]))
     [:h1 (<sub [::subs/title])]
     [:h3 (if (<sub [::subs/remote?])

@@ -132,7 +132,11 @@
          [:div.company-profile__header__inner__top
           [:div.company-profile__logo
            (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
-          [:div.company-profile__name (<sub [::subs/name])]]]
+          [:div.company-profile__name
+           (if (<sub [:user/admin?])
+             [link (<sub [::subs/name])
+              :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
+             (<sub [::subs/name]))]]]
         [:div.company-profile__header__inner
          #?(:cljs
             [:form.form.wh-formx
