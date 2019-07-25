@@ -15916,6 +15916,32 @@ h3 {
   line-height: 18px;
   margin-right: 1em; }
 
+.company-profile__jobs {
+  margin-top: 0 !important; }
+
+.company-profile__job-cta {
+  background-color: white;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0px 18px 24px 18px; }
+  .company-profile__job-cta h2 {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px; }
+  .company-profile__job-cta p {
+    font-family: "Inconsolata", sans-serif;
+    font-size: 12px;
+    line-height: 21px;
+    margin-bottom: 12px; }
+  .company-profile__job-cta img {
+    flex: 1 0 220px; }
+    .company-profile__job-cta img.company-profile__job-cta__login-img {
+      margin-right: -30px;
+      margin-left: -12px; }
+  .company-profile__job-cta div {
+    flex: 1 1 50%;
+    padding-left: 12px; }
+
 .auth-popup__content {
   display: none; }
   .auth-popup__content.is-visible {

@@ -194,10 +194,12 @@
 
 (reg-sub
   ::show-fetch-all?
+  :<- [:user/logged-in?]
   :<- [::all-jobs]
   :<- [::total-number-of-jobs]
-  (fn [[all-jobs total] _]
-    (and (> total 2)
+  (fn [[logged-in? all-jobs total] _]
+    (and logged-in?
+         (> total 2)
          (not (boolean (seq all-jobs))))))
 
 (reg-sub
