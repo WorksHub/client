@@ -56,7 +56,7 @@
      [:div.tagline tagline]
      [:div.apply
       [:div.buttons
-       [:a.button {:href (routes/path :job :params {:slug slug})}
+       [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
         "More Info"]
        [:button.button (if public?
                          (interop/on-click-fn

@@ -63,8 +63,22 @@
                          [:repo [:name :owner :primary_language]]]]
                        [:pagination [:total]]]]]]]})
 
+(defquery fetch-all-company-jobs-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}
+                     {:variable/name "total"
+                      :variable/type :Int!}]
+   :venia/queries [[:company {:slug :$slug}
+                    [[:jobs {:pageSize :$total :pageNumber 1}
+                      [[:jobs
+                        [:fragment/jobCardFields]]
+                       [:pagination [:total]]]]]]]})
+
 (reg-query :company fetch-company-query)
 (reg-query :company-issues-and-blogs fetch-company-blogs-and-issues-query)
+(reg-query :all-company-jobs fetch-all-company-jobs-query)
 
 (defquery fetch-tags
   {:venia/operation {:operation/type :query
@@ -82,6 +96,10 @@
 (defn extra-data-query [db]
   [:company-issues-and-blogs {:slug (get-in db [:wh.db/page-params :slug])}])
 
+(defn all-jobs-query [db total-jobs]
+  [:all-company-jobs {:slug (get-in db [:wh.db/page-params :slug])
+                      :total total-jobs}])
+
 (defn tag-query [type-filter]
   (if type-filter
     [:tags {:type type-filter}]
@@ -96,6 +114,11 @@
   (->> (cache/result db :company {:slug (company-slug db)})
        :company
        (profile/->company)))
+
+(defn cached-company-extra-data
+  [db]
+  (->> (cache/result db :company-issues-and-blogs {:slug (company-slug db)})
+       :company))
 
 #?(:cljs
    (defmethod on-page-load :company
@@ -509,3 +532,10 @@
       {:dispatch [:graphql/update-entry :company {:slug slug}
                   :merge {:company {:profile-enabled enabled?}}]
        :db (assoc db ::profile/publishing? false)})))
+
+(reg-event-fx
+  ::fetch-all-jobs
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [total (-> db (cached-company-extra-data) :jobs :pagination :total )]
+      {:dispatch (into [:graphql/query] (all-jobs-query db total))})))

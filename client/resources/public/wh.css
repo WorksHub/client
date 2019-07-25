@@ -9070,7 +9070,11 @@ h3 {
 @media screen and (min-width: 1008px) {
   .company-jobs__list {
     display: flex;
-    flex-direction: row; } }
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between; }
+    .company-jobs__list .card:nth-of-type(n+3) {
+      margin-top: 8px; } }
 
 @media screen and (max-width: 1007px) {
   .company-jobs__list {
@@ -9083,9 +9087,6 @@ h3 {
       width: 80%;
       white-space: normal;
       vertical-align: top; } }
-
-.company-jobs__list .card + .card {
-  margin-left: 12px; }
 
 .blog {
   box-sizing: border-box;
@@ -15883,6 +15884,13 @@ h3 {
     .company-profile__cta-button {
       width: 100%; } }
 
+.company-profile__all-jobs-button {
+  width: 100%;
+  margin-top: 18px; }
+  .company-profile__all-jobs-button svg {
+    margin-right: 6px;
+    height: 10px; }
+
 .company-profile__hash-anchor {
   display: block;
   pointer-events: none; }
@@ -15894,6 +15902,12 @@ h3 {
     .company-profile__hash-anchor {
       margin-top: -46px;
       padding-bottom: 46px; } }
+
+.company-profile__jobs-title {
+  margin-bottom: 0 !important; }
+
+.company-profile__jobs-list {
+  margin-top: 18px; }
 
 .company-profile__how-we-work {
   line-height: 18px; }

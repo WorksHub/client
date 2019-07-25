@@ -220,13 +220,21 @@
               ^{:key (:id issue)}
               [issue-card issue]))])])))
 
+(defn job-header
+  [admin-or-owner?]
+  (let [jobs (<sub [::subs/jobs])
+        total-jobs (<sub [::subs/total-number-of-jobs])]
+    (when (or admin-or-owner? (and (<sub [:user/candidate?]) (not-empty jobs)))
+      [:section.company-profile__jobs.company-profile__section--headed
+       [:div
+        [:h2.title.company-profile__jobs-title (str "Jobs" (when total-jobs (str " (" total-jobs ")")))]]])))
+
 (defn jobs
   [admin-or-owner?]
-  (let [jobs (<sub [::subs/jobs])]
-    (when (or admin-or-owner? (not-empty jobs))
-      [:section.company-profile__jobs
-       [:div.is-flex
-        [:h2.title "Jobs"]]
+  (let [jobs (<sub [::subs/jobs])
+        total-jobs (<sub [::subs/total-number-of-jobs])]
+    (when (or admin-or-owner? (and (<sub [:user/candidate?]) (not-empty jobs)))
+      [:div.company-profile__jobs-list
        (if (empty? jobs)
          [link
           [:button.button.button--medium.button--inverted.company-profile__cta-button
@@ -241,10 +249,10 @@
                                     #?(:cljs
                                        {:liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
                                         :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}))]))]
-          #_[link
-           [:button.button.button--medium.button--inverted.company-profile__cta-button
-            "View all"]
-           :create-job]])])))
+          (when (<sub [::subs/show-fetch-all?])
+            [:button.button.button--inverted.company-profile__all-jobs-button
+             {:on-click #(dispatch [::events/fetch-all-jobs])}
+             [icon "plus"] (str "Show all " total-jobs " jobs")])])])))
 
 (defn pswp-element
   []
@@ -817,9 +825,11 @@
          [hash-anchor "company-profile__benefits"]
          [benefits admin-or-owner?]
          [hash-anchor "company-profile__jobs"]
+         [job-header admin-or-owner?]
          [jobs admin-or-owner?]]
         [:div.company-profile__side.split-content__side.is-hidden-mobile
          [company-info admin-or-owner?]]]
+       ;;;
        [:div.split-content
         [:div.company-profile__main.split-content__main
          [issues admin-or-owner?]

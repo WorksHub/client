@@ -156,7 +156,7 @@
      [:div.state
       [:span.applied-state "Status: " (state->candidate-status state)]])
    [:div.buttons
-    [:a.button
+    [:a.button.button--inverted
      {:id       (str "job-card__more-info-button_job-" id)
       :href     (routes/path :job :params {:slug slug})}
      "More Info"]

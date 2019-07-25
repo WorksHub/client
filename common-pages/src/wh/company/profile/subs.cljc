@@ -31,6 +31,15 @@
         (:company result)))))
 
 (reg-sub-raw
+  ::all-jobs
+  (fn [_ _]
+    (reaction
+      (let [slug     (<sub [:wh/page-param :slug])
+            total    (<sub [::total-number-of-jobs])
+            result (<sub [:graphql/result :all-company-jobs {:slug slug :total total}])]
+        (-> result :company :jobs :jobs)))))
+
+(reg-sub-raw
   ::all-tags
   (fn [_ _]
     (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
@@ -172,8 +181,24 @@
 (reg-sub
   ::jobs
   :<- [::company-extra-data]
+  :<- [::all-jobs]
+  (fn [[company-extra-data all-jobs] _]
+    (or all-jobs
+        (-> company-extra-data :jobs :jobs))))
+
+(reg-sub
+  ::total-number-of-jobs
+  :<- [::company-extra-data]
   (fn [company-extra-data _]
-    (-> company-extra-data :jobs :jobs)))
+    (-> company-extra-data :jobs :pagination :total)))
+
+(reg-sub
+  ::show-fetch-all?
+  :<- [::all-jobs]
+  :<- [::total-number-of-jobs]
+  (fn [[all-jobs total] _]
+    (and (> total 2)
+         (not (boolean (seq all-jobs))))))
 
 (reg-sub
   ::issues

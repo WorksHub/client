@@ -89,6 +89,10 @@ h3
   +desktop
     display: flex
     flex-direction: row
+    flex-wrap: wrap
+    justify-content: space-between
+    .card:nth-of-type(n+3)
+      margin-top: 8px
   +mobile
     overflow-x: auto
     overflow-y: hidden
@@ -99,5 +103,3 @@ h3
       width: 80%
       white-space: normal
       vertical-align: top
-  .card + .card
-    margin-left: 12px
