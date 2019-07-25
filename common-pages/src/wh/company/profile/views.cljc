@@ -638,17 +638,25 @@
                                            {:locations [location]})))] ;; TODO we only do one locatio for now
                        (dispatch-sync [::events/update-company changes])
                        (dispatch [::events/reset-location-search])))}
-        [:ul.company-profile__company-info__list
-         (when-let [industry (<sub [::subs/industry])]
-           [:li [icon "industry"] [tag/tag :div industry]])
-         (when-let [funding (<sub [::subs/funding])]
-           [:li [icon "funding"] [tag/tag :div funding]])
-         (when-let [size (some-> (<sub [::subs/size]) company-spec/size->range)]
-           [:li [icon "people"] "People: " size])
-         (when-let [founded-year (<sub [::subs/founded-year])]
-           [:li [icon "founded"] "Founded: " founded-year])
-         (when-let [location (some-> (<sub [::subs/location]) )]
-           [:li [icon "location"] location])]
+        (let [industry     (<sub [::subs/industry])
+              funding      (<sub [::subs/funding])
+              size         (some-> (<sub [::subs/size]) company-spec/size->range)
+              founded-year (<sub [::subs/founded-year])
+              location     (some-> (<sub [::subs/location]))]
+          (if (not (or industry funding size founded-year location))
+            [:div.company-profile__company-info__prompt
+             [:i "Edit this section to include information about your company, such as industry and location."]]
+            [:ul.company-profile__company-info__list
+             (when industry
+               [:li [icon "industry"] [tag/tag :div industry]])
+             (when funding
+               [:li [icon "funding"] [tag/tag :div funding]])
+             (when size
+               [:li [icon "people"] "People: " size])
+             (when founded-year
+               [:li [icon "founded"] "Founded: " founded-year])
+             (when location
+               [:li [icon "location"] location])]))
         [:form.wh-formx.wh-formx__layout
          #?(:cljs
             [:div
