@@ -86,20 +86,18 @@ h3
     max-width: 350px
 
 .company-jobs__list
-  +desktop
-    display: flex
-    flex-direction: row
-    flex-wrap: wrap
-    justify-content: space-between
-    .card:nth-of-type(n+3)
-      margin-top: 8px
-  +mobile
-    overflow-x: auto
-    overflow-y: hidden
-    white-space: nowrap
-    margin: 0 -18px
-    padding: 0 18px
-    .card
-      width: 80%
-      white-space: normal
-      vertical-align: top
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  justify-content: space-between
+  .card
+    +desktop
+      flex: 1 0 247px
+      max-width: calc(50% - 4px)
+      &:nth-of-type(even)
+        margin-left: 8px
+      &:nth-of-type(n+3)
+        margin-top: 8px
+    +mobile
+      max-width: unset
+      margin-bottom: 8px

@@ -13,16 +13,19 @@
     [wh.verticals :as verticals]))
 
 (defn job-card
-  [{:keys [company-name tagline title logo display-salary remuneration remote sponsorship-offered display-location role-type tags slug id] :as job}
-   {:keys [public? liked? user-has-applied?]
+  [{:keys [company-name tagline title logo display-salary remuneration remote sponsorship-offered display-location role-type tags slug id published]
+    :or   {published true}
+    :as   job}
+   {:keys [public? liked? user-has-applied? user-is-owner?]
     :or   {public?           true
            liked?            false
-           user-has-applied? false}}]
+           user-has-applied? false
+           user-is-owner?    false}}]
   (let [skeleton? (and job (empty? (dissoc job :id)))
-        salary (or display-salary (jobc/format-job-remuneration remuneration))
-        job-tags (if skeleton?
-                   (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " "))) (range 6))
-                   tags)]
+        salary    (or display-salary (jobc/format-job-remuneration remuneration))
+        job-tags  (if skeleton?
+                    (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " "))) (range 6))
+                    tags)]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
                                       (str "card-border-color-" (rand-int 9))
@@ -46,9 +49,9 @@
            [:div.company-name company-name])
          [:div.location display-location]
          (cond-> [:div.card__perks]
-           remote (conj [icon "job-remote" :class "job__icon--small"] "Remote")
-           (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
-           sponsorship-offered (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
+                 remote                       (conj [icon "job-remote" :class "job__icon--small"] "Remote")
+                 (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
+                 sponsorship-offered          (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
          [:div.salary salary]]]]]
      (into [:ul.tags.tags__job]
            (map (fn [tag] [:li [:a {:href (routes/path :pre-set-search :params {:tag (slug/slug tag)})} tag]])
@@ -57,14 +60,18 @@
      [:div.apply
       [:div.buttons
        [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
-        "More Info"]
-       [:button.button (if public?
-                         (interop/on-click-fn
-                           (interop/show-auth-popup :jobcard-apply [:job :params {:slug slug} :query-params {:apply true}])) ;; TODO upate with slug
-                         {:href (routes/path :job :params {:slug slug} :query-params {:apply true})})
-        (if user-has-applied?
-          "1-Click Apply"
-          "Easy Apply")]]]]))
+        (if user-is-owner? "View" "More Info")]
+       (when (not user-is-owner?)
+         [:button.button (if public?
+                           (interop/on-click-fn
+                             (interop/show-auth-popup :jobcard-apply [:job :params {:slug slug} :query-params {:apply true}])) ;; TODO upate with slug
+                           {:href (routes/path :job :params {:slug slug} :query-params {:apply true})})
+          (if user-has-applied?
+            "1-Click Apply"
+            "Easy Apply")])]]
+     (when (not published)
+       [:div.card__label.card__label--unpublished.card__label--job
+        "Unpublished"])]))
 
 (defn company-header [{:wh.jobs.job.db/keys [title remote location]}]
   [:section.is-flex.job__company-header

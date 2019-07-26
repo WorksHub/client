@@ -9067,26 +9067,23 @@ h3 {
     width: 33%;
     max-width: 350px; } }
 
-@media screen and (min-width: 1008px) {
-  .company-jobs__list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between; }
-    .company-jobs__list .card:nth-of-type(n+3) {
-      margin-top: 8px; } }
-
-@media screen and (max-width: 1007px) {
-  .company-jobs__list {
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    margin: 0 -18px;
-    padding: 0 18px; }
+.company-jobs__list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between; }
+  @media screen and (min-width: 1008px) {
     .company-jobs__list .card {
-      width: 80%;
-      white-space: normal;
-      vertical-align: top; } }
+      flex: 1 0 247px;
+      max-width: calc(50% - 4px); }
+      .company-jobs__list .card:nth-of-type(even) {
+        margin-left: 8px; }
+      .company-jobs__list .card:nth-of-type(n+3) {
+        margin-top: 8px; } }
+  @media screen and (max-width: 1007px) {
+    .company-jobs__list .card {
+      max-width: unset;
+      margin-bottom: 8px; } }
 
 .blog {
   box-sizing: border-box;

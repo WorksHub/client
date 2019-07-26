@@ -264,7 +264,7 @@
 
 (defn jobs
   [admin-or-owner?]
-  (let [jobs (<sub [::subs/jobs])
+  (let [jobs       (<sub [::subs/jobs])
         total-jobs (<sub [::subs/total-number-of-jobs])]
     [:section.company-profile__jobs
      (cond (and admin-or-owner? (empty? jobs))
@@ -281,6 +281,7 @@
                    [job-card job (merge {:public? false}
                                         #?(:cljs
                                            {:liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
+                                            :user-is-owner?    admin-or-owner?
                                             :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}))]))]]))
      (when (<sub [::subs/show-fetch-all?])
        [:button.button.button--inverted.company-profile__all-jobs-button
