@@ -22,5 +22,5 @@
     :or {label "Integrate with"}}]
   [:a.button.button--black.button--public.button--github
    {:class class
-    :href (routes/path :login :params {:step :github})}
+    :href (routes/path :login :params {:step :github} :query-params {:user-type (name user-type)})}
    [:span label] [:div]])

@@ -130,4 +130,5 @@
    (when-let [cached-redirect (js/popAuthRedirect)]
      (vec (concat [:login/set-redirect] (r/read-string cached-redirect))))
    (when (= :github (get-in db [::db/page-params :step]))
-     [:github/call {:type :login-page} nil])))
+     (let [user-type (get-in db [::db/query-params "user-type"] "candidate")]
+       [:github/call {:type :login-page} (keyword user-type)]))))

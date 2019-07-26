@@ -256,7 +256,6 @@
                                (dispatch [::events/upgrade]))}))
            [:img {:src "/images/company/greenhouse.svg"}]]])]
       (when (and (not (<sub [:user/admin?]))
-                 (<sub [::user-subs/workshub?])
                  (not (<sub [:user/company-connected-github?])))
         [github/connect-github-button])])
    (when (<sub [::subs/some-integrations-connected?])
