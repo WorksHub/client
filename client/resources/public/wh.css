@@ -15799,8 +15799,9 @@ h3 {
   margin-top: 18px; }
 
 .company-profile__tech-scale {
-  display: flex;
-  margin-bottom: 18px; }
+  display: flex; }
+  .company-profile__tech-scale:not(:last-of-type) {
+    margin-bottom: 18px; }
   .company-profile__tech-scale h3 {
     width: 100px; }
 

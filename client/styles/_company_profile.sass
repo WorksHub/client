@@ -410,7 +410,8 @@
 
 .company-profile__tech-scale
   display: flex
-  margin-bottom: 18px
+  &:not(:last-of-type)
+    margin-bottom: 18px
   h3
     width: 100px
 .company-profile__tech-scale__selector

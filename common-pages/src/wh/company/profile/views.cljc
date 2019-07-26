@@ -102,69 +102,69 @@
         new-company-name (r/atom nil)]
     (fn [admin-or-owner?]
       (let [pending-logo (<sub [::subs/pending-logo])]
-      [:section
-       {:class (util/merge-classes
-                 "company-profile__header"
-                 "company-profile__section--headed"
-                 (when @editing? "company-profile__section--editing"))}
-       [editable
-        {:editable?                       admin-or-owner?
-         :prompt-before-cancel? (boolean (or @new-company-name
-                                             pending-logo))
-         :on-editing           #(do (reset! editing? true))
-         :on-cancel            #(do (reset! editing? false)
-                                    (reset! new-company-name false)
-                                    (dispatch [::events/reset-pending-logo]))
-         :on-save
-         #(do
-            (reset! editing? false)
-            (when-let [changes
-                       (not-empty
-                         (merge {}
-                                (when (text/not-blank @new-company-name)
-                                  {:name @new-company-name})
-                                (when pending-logo
-                                  {:logo pending-logo})))]
-              (dispatch-sync [::events/update-company changes]))
-            (dispatch [::events/reset-pending-logo])
-            (reset! new-company-name nil))}
-        [:div.company-profile__header__inner
-         [:div.company-profile__header__inner__top
-          [:div.company-profile__logo
-           (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
-          [:div.company-profile__name
-           (if (<sub [:user/admin?])
-             [link (<sub [::subs/name])
-              :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
-             (<sub [::subs/name]))]]]
-        [:div.company-profile__header__inner
-         #?(:cljs
-            [:form.form.wh-formx
-             [logo-field
-              {:on-change [::events/set-logo]
-               :value (or pending-logo
-                          (<sub [::subs/logo]))
-               :loading? (<sub [::subs/logo-uploading?])
-               :on-select-file (upload/handler
-                                 :launch [:wh.common.logo/logo-upload]
-                                 :on-upload-start [::events/logo-upload-start]
-                                 :on-success [::events/logo-upload-success]
-                                 :on-failure [::events/logo-upload-failure])}]
-             [text-field (or @new-company-name
-                             (<sub [::subs/name])
-                             "")
-              {:type :text
-               :label "Company name"
-               :class "company-profile__header__edit-name"
-               :on-change (fn [v] (reset! new-company-name v))}]])]]
-       [:div.company-profile__header__links
-        (header-link "About"       "company-profile__about-us")
-        (header-link "Technology"  "company-profile__technology")
-        (when (<sub [::subs/jobs])
+        [:section
+         {:class (util/merge-classes
+                   "company-profile__header"
+                   "company-profile__section--headed"
+                   (when @editing? "company-profile__section--editing"))}
+         [editable
+          {:editable?                       admin-or-owner?
+           :prompt-before-cancel? (boolean (or @new-company-name
+                                               pending-logo))
+           :on-editing           #(do (reset! editing? true))
+           :on-cancel            #(do (reset! editing? false)
+                                      (reset! new-company-name false)
+                                      (dispatch [::events/reset-pending-logo]))
+           :on-save
+           #(do
+              (reset! editing? false)
+              (when-let [changes
+                         (not-empty
+                           (merge {}
+                                  (when (text/not-blank @new-company-name)
+                                    {:name @new-company-name})
+                                  (when pending-logo
+                                    {:logo pending-logo})))]
+                (dispatch-sync [::events/update-company changes]))
+              (dispatch [::events/reset-pending-logo])
+              (reset! new-company-name nil))}
+          [:div.company-profile__header__inner
+           [:div.company-profile__header__inner__top
+            [:div.company-profile__logo
+             (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
+            [:div.company-profile__name
+             (if (<sub [:user/admin?])
+               [link (<sub [::subs/name])
+                :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
+               (<sub [::subs/name]))]]]
+          [:div.company-profile__header__inner
+           #?(:cljs
+              [:form.form.wh-formx
+               [logo-field
+                {:on-change [::events/set-logo]
+                 :value (or pending-logo
+                            (<sub [::subs/logo]))
+                 :loading? (<sub [::subs/logo-uploading?])
+                 :on-select-file (upload/handler
+                                   :launch [:wh.common.logo/logo-upload]
+                                   :on-upload-start [::events/logo-upload-start]
+                                   :on-success [::events/logo-upload-success]
+                                   :on-failure [::events/logo-upload-failure])}]
+               [text-field (or @new-company-name
+                               (<sub [::subs/name])
+                               "")
+                {:type :text
+                 :label "Company name"
+                 :class "company-profile__header__edit-name"
+                 :on-change (fn [v] (reset! new-company-name v))}]])]]
+         [:div.company-profile__header__links
+          (header-link "About"       "company-profile__about-us")
+          (header-link "Technology"  "company-profile__technology")
+          (when (<sub [::subs/jobs])
             (header-link "Jobs"        "company-profile__jobs"))
-        (header-link "Benefits"    "company-profile__benefits")
-        (when (<sub [::subs/how-we-work])
-        (header-link "How we work" "company-profile__how-we-work"))]]))))
+          (header-link "Benefits"    "company-profile__benefits")
+          (when (<sub [::subs/how-we-work])
+            (header-link "How we work" "company-profile__how-we-work"))]]))))
 
 (defn videos
   [_admin-or-owner?]
@@ -266,26 +266,26 @@
   [admin-or-owner?]
   (let [jobs (<sub [::subs/jobs])
         total-jobs (<sub [::subs/total-number-of-jobs])]
-      [:section.company-profile__jobs
-       (cond (and admin-or-owner? (empty? jobs))
-             [publish-job-banner]
-             (not (<sub [:user/logged-in?]))
-             [login-to-see-jobs-banner]
-             :else
-             (when (or admin-or-owner? (and (<sub [:user/candidate?]) (not-empty jobs)))
-               [:div.company-profile__jobs-list
-                [:div.company-jobs__list
-                 (doall
-                   (for [job jobs]
-                     ^{:key (:id job)}
-                     [job-card job (merge {:public? false}
-                                          #?(:cljs
-                                             {:liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
-                                              :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}))]))]]))
-       (when (<sub [::subs/show-fetch-all?])
-         [:button.button.button--inverted.company-profile__all-jobs-button
-          {:on-click #(dispatch [::events/fetch-all-jobs])}
-          [icon "plus"] (str "Show all " total-jobs " jobs")])]))
+    [:section.company-profile__jobs
+     (cond (and admin-or-owner? (empty? jobs))
+           [publish-job-banner]
+           (not (<sub [:user/logged-in?]))
+           [login-to-see-jobs-banner]
+           :else
+           (when (or admin-or-owner? (and (<sub [:user/candidate?]) (not-empty jobs)))
+             [:div.company-profile__jobs-list
+              [:div.company-jobs__list
+               (doall
+                 (for [job jobs]
+                   ^{:key (:id job)}
+                   [job-card job (merge {:public? false}
+                                        #?(:cljs
+                                           {:liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
+                                            :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}))]))]]))
+     (when (<sub [::subs/show-fetch-all?])
+       [:button.button.button--inverted.company-profile__all-jobs-button
+        {:on-click #(dispatch [::events/fetch-all-jobs])}
+        [icon "plus"] (str "Show all " total-jobs " jobs")])]))
 
 (defn pswp-element
   []
@@ -322,10 +322,10 @@
                   :or {key (:url image)}}]
   [:div
    (merge {:key key
-    :class (util/merge-classes "company-profile__photos__img"
-                               (when solo? "company-profile__photos__img--solo"))
+           :class (util/merge-classes "company-profile__photos__img"
+                                      (when solo? "company-profile__photos__img--solo"))
            :style (videos/background-image (base-img (:url image) opts))}
-    (interop/on-click-fn (open-fn (:index image))))
+          (interop/on-click-fn (open-fn (:index image))))
    (when edit?
      [:div.company-profile__photos__delete
       {:on-click #(do
@@ -349,7 +349,7 @@
         (when (or admin-or-owner? (not-empty images))
           [:section.compan-profile__photos
            [:h2.title "Photos"]
-            [:div.company-profile__photos__gallery
+           [:div.company-profile__photos__gallery
             (doall
               (for [{:keys [index simage]} simages]
                 (let [first? (zero? index)]
@@ -535,23 +535,44 @@
 (defn technology
   [_admin-or-owner?]
   (let [existing-tag-ids (r/atom #{})
-        tech-editing?    (r/atom false)
-        scales-editing?  (r/atom false)
+        editing?         (r/atom false)
         new-ati          (r/atom nil)
         new-tech-scales  (r/atom {})
         tag-type         :tech]
     (fn [admin-or-owner?]
       (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids--map tag-type]))))
-            ati              (<sub [::subs/additional-tech-info])]
+            ati              (<sub [::subs/additional-tech-info])
+            tech-scales      (not-empty (<sub [::subs/tech-scales]))
+            tech-scales-view [:div.company-profile__tech-scales
+                              [tech-scale {:key          :testing
+                                           :atom         new-tech-scales
+                                           :label        "Testing"
+                                           :scale-labels ["Manual" "Fully automated"]
+                                           :force-show?  admin-or-owner?
+                                           :editing?     @editing?}]
+                              [tech-scale {:key          :ops
+                                           :atom         new-tech-scales
+                                           :label        "Ops"
+                                           :scale-labels ["DevOps" "Dedicated Ops team"]
+                                           :force-show?  admin-or-owner?
+                                           :editing?     @editing?}]
+                              [tech-scale {:key          :time-to-deploy
+                                           :atom         new-tech-scales
+                                           :label        "Time to deploy"
+                                           :scale-labels ["More than 5 hours" "Less than 1 hour"]
+                                           :force-show?  admin-or-owner?
+                                           :editing?     @editing?}]]]
         [:section
          {:class (util/merge-classes
                    "company-profile__section--headed"
-                   (when (or @tech-editing? @scales-editing?) "company-profile__section--editing")
+                   (when @editing? "company-profile__section--editing")
                    "company-profile__technology")}
          [editable {:editable?             admin-or-owner?
-                    :prompt-before-cancel? (not= selected-tag-ids @existing-tag-ids)
+                    :prompt-before-cancel? (or (not= selected-tag-ids @existing-tag-ids)
+                                               (text/not-blank @new-ati)
+                                               (not-empty @new-tech-scales))
                     :on-editing            #(do
-                                              (reset! tech-editing? true)
+                                              (reset! editing? true)
                                               (reset! existing-tag-ids #{})
                                               (reset! new-ati nil)
                                               (run! (fn [subtype]
@@ -559,32 +580,36 @@
                                                       (dispatch-sync [::events/reset-selected-tag-ids tag-type subtype])) tag-spec/tech-subtypes))
                     :on-cancel             #(do
                                               (reset! new-ati nil)
-                                              (reset! tech-editing? false))
+                                              (reset! new-tech-scales {})
+                                              (reset! editing? false))
                     :on-save
                     #(do
-                       (reset! tech-editing? false)
+                       (reset! editing? false)
                        (when-let [changes
                                   (not-empty
                                     (merge {}
                                            (when (not= selected-tag-ids @existing-tag-ids)
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})
                                            (when (text/not-blank @new-ati)
-                                             {:additional-tech-info @new-ati})))]
-                         (dispatch-sync [::events/update-company changes "company-profile__technology"])))}
+                                             {:additional-tech-info @new-ati})
+                                           (when (not-empty @new-tech-scales)
+                                             {:tech-scales (merge tech-scales @new-tech-scales)})))]
+                         (dispatch-sync [::events/update-company changes "company-profile__technology"]))
+                       (reset! new-tech-scales {}))}
           [:div
            [:h2.title "Technology"]
-           [:h2.subtitle "Tech stack"]
            (doall
              (for [k (keys data/dev-setup-data)]
                ^{:key k}
                [tag-display tag-type k (get data/dev-setup-data k)]))
-           (when ati
-             [:div.company-profile__technology__additional
-              [putil/html ati]])]
+           [:div.company-profile__technology__additional
+            (when ati
+              [putil/html ati])]
+           (when (or admin-or-owner? tech-scales)
+             tech-scales-view)]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
            [:h2.title "Technology"]
-           [:h2.subtitle "Tech stack"]
            (doall
              (for [k (keys data/dev-setup-data)]
                ^{:key k}
@@ -595,49 +620,8 @@
                                 :placeholder "Please enter any additional technical information..."
                                 :on-change   #(if (= % ati)
                                                 (reset! new-ati nil)
-                                                (reset! new-ati %))}])]]
-
-         (let [tech-scales (not-empty (<sub [::subs/tech-scales]))
-               tech-scales-view
-               (when (or admin-or-owner? tech-scales )
-                 [:div
-                  (when @scales-editing?
-                    [:hr])
-                  [:h2.subtitle "Testing and Ops"]
-                  [tech-scale {:key          :testing
-                               :atom         new-tech-scales
-                               :label        "Testing"
-                               :scale-labels ["Manual" "Fully automated"]
-                               :force-show?  admin-or-owner?
-                               :editing?     @scales-editing?}]
-                  [tech-scale {:key          :ops
-                               :atom         new-tech-scales
-                               :label        "Ops"
-                               :scale-labels ["DevOps" "Dedicated Ops team"]
-                               :force-show?  admin-or-owner?
-                               :editing?     @scales-editing?}]
-                  [tech-scale {:key          :time-to-deploy
-                               :atom         new-tech-scales
-                               :label        "Time to deploy"
-                               :scale-labels ["More than 5 hours" "Less than 1 hour"]
-                               :force-show?  admin-or-owner?
-                               :editing?     @scales-editing?}]])]
-
-           [editable {:editable?             admin-or-owner?
-                      :prompt-before-cancel? (boolean (not-empty @new-tech-scales))
-                      :on-editing            #(do (reset! scales-editing? true))
-                      :on-cancel             #(do (reset! scales-editing? false)
-                                                  (reset! new-tech-scales {}))
-                      :on-save
-                      #(do
-                         (reset! scales-editing? false)
-                         (when-let [changes
-                                    (when (not-empty @new-tech-scales)
-                                      {:tech-scales (merge tech-scales @new-tech-scales)})]
-                           (dispatch-sync [::events/update-company changes "company-profile__technology"]))
-                         (reset! new-tech-scales {}))}
-            tech-scales-view
-            tech-scales-view])]))))
+                                                (reset! new-ati %))}])
+           tech-scales-view]]]))))
 
 (defn company-info
   [_admin-or-owner? & [_cls]]
