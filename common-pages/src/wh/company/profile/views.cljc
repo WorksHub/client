@@ -185,7 +185,7 @@
                               :delete-event  [::events/delete-video]
                               :add-event     [::events/add-video]
                               :update-event  [::events/update-video]}]])
-           (when admin-or-owner?
+           (when (and admin-or-owner? @editing?)
              [edit-close-button editing?])])))))
 
 (defn blogs
@@ -341,7 +341,7 @@
   [admin-or-owner?]
   (let [editing? (r/atom false)]
     (fn [admin-or-owner?]
-      (let [images (<sub [::subs/images])
+      (let [images  (<sub [::subs/images])
             open-fn (fn [index] (interop/open-photo-gallery index (map img->imgix images)))
             simages (->> images
                          (take 5)
@@ -349,25 +349,31 @@
         (when (or admin-or-owner? (not-empty images))
           [:section.compan-profile__photos
            [:h2.title "Photos"]
-           [:div.company-profile__photos__gallery
-            (doall
-              (for [{:keys [index simage]} simages]
-                (let [first? (zero? index)]
-                  (photo simage open-fn
-                         {:w 134 :h 103
-                          :edit? admin-or-owner? :key index}))))]
+           (cond (not-empty images)
+                 [:div.company-profile__photos__gallery
+                  (doall
+                    (for [{:keys [index simage]} simages]
+                      (let [first? (zero? index)]
+                        (photo simage open-fn
+                               {:w     134
+                                :h     103
+                                :edit? admin-or-owner? :key index}))))]
+                 (and admin-or-owner? (not @editing?))
+                 [:button.button.button--medium.button--inverted.company-profile__cta-button
+                  {:on-click #(reset! editing? true)}
+                  "Upload a photo"])
            #?(:cljs
               (when (and admin-or-owner? @editing?)
                 [:div.company-profile__photos__add
                  (if (<sub [::subs/photo-uploading?])
                    [:div.company-profile__photos__add--loading]
-                   [:input {:type "file"
+                   [:input {:type      "file"
                             :on-change (upload/handler
                                          :launch [::events/photo-upload]
                                          :on-upload-start [::events/photo-upload-start]
                                          :on-success [::events/photo-upload-success]
                                          :on-failure [::events/photo-upload-failure])}])]))
-           (when admin-or-owner?
+           (when (and admin-or-owner? @editing?)
              [edit-close-button editing?])
            (pswp-element)])))))
 
