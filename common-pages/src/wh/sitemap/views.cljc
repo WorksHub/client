@@ -29,6 +29,11 @@
    [:section.sitemap
     [:h1 (verticals/config "www" :platform-name)]
     [:section
+     [:h2 "Companies"]
+     [:div.sitemap__container
+      (for [{:keys [title url]} (:companies links)]
+        [:span.sitemap__link [:a {:href url} title]])]]
+    [:section
      [:h2 "Jobs by tech"]
      (for [[_vertical l] (:tech links)]
        [:div
