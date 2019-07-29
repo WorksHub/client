@@ -15416,8 +15416,6 @@ h3 {
     margin: 0px;
     background-color: white;
     padding: 18px; }
-  .company-profile__side .how-it-works-pod {
-    margin-top: 41px; }
 
 .company-profile__toggle {
   height: 78px;
@@ -15957,9 +15955,6 @@ h3 {
       margin-top: -107px;
       height: 107px; } }
 
-.company-profile__jobs-title {
-  margin-bottom: 0 !important; }
-
 .company-profile__jobs-list {
   margin-top: 18px; }
 
@@ -16009,31 +16004,39 @@ h3 {
       .company-profile__sticky .company-profile__header__links {
         margin-left: 32px; } }
 
-.company-profile__jobs {
+.company-profile__jobs-title,
+.company-profile__issues-title {
+  margin-bottom: 0 !important; }
+
+.company-profile__jobs,
+.company-profile__issues--banner {
   margin-top: 0 !important; }
 
-.company-profile__job-cta {
+.company-profile__banner-cta {
   background-color: white;
   display: flex;
   flex-wrap: wrap;
   padding: 0px 18px 24px 18px; }
-  .company-profile__job-cta h2 {
+  @media screen and (max-width: 1007px) {
+    .company-profile__banner-cta .button {
+      width: 100%; } }
+  .company-profile__banner-cta h2 {
     font-size: 24px;
     font-weight: bold;
     line-height: 34px; }
-  .company-profile__job-cta p {
+  .company-profile__banner-cta p {
     font-family: "Inconsolata", sans-serif;
     font-size: 12px;
     line-height: 21px;
     margin-bottom: 12px; }
-  .company-profile__job-cta img {
-    flex: 1 0 220px;
+  .company-profile__banner-cta img {
+    flex: 1 0 210px;
     height: 100%;
     max-height: 400px; }
-    .company-profile__job-cta img.company-profile__job-cta__login-img {
+    .company-profile__banner-cta img.company-profile__banner-cta__login-img {
       margin-right: -30px;
       margin-left: -12px; }
-  .company-profile__job-cta div {
+  .company-profile__banner-cta > div {
     flex: 1 1 50%;
     padding-left: 12px; }
 

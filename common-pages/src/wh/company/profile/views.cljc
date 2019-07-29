@@ -209,24 +209,45 @@
                   [:div.column.is-half
                    [blog-card blog]]))])])))
 
+(defn issues-header
+  [admin-or-owner?]
+  (let [issues (<sub [::subs/issues])]
+    (when (or admin-or-owner? (not-empty issues))
+      [:section.company-profile__section--headed
+       [:div
+        [:h2.title.company-profile__issues-title "Open Source"]]])))
+
+(defn integrate-issues-banner
+  []
+  [:div.company-profile__banner-cta
+   [:img.company-profile__banner-cta__publish-img
+    {:src "/images/hiw/header.svg"
+     :alt ""}]
+   [:div.company-profile__banner-cta__copy
+    [:h2 "Use Open Source Issues to find your next hire"]
+    [:p "Connect your company Github account and add tasks to your job descriptions to get more qualified applications."]
+    [github/integrate-github-button {:class "company-profile__cta-button", :user-type :company}]]])
+
 (defn issues
   [admin-or-owner?]
   (let [issues (<sub [::subs/issues])]
     (when (or admin-or-owner? (not-empty issues))
-      [:section.company-profile__issues
-       [:div.is-flex
-        [:h2.title "Open Source Issues from this company"]
-        (when (not-empty issues)
-          [link "View all"
-           :issues-for-company-id :company-id (<sub [::subs/id])
-           :class "a--underlined"])]
-       (if (empty? issues)
-         [github/integrate-github-button {:class "company-profile__cta-button", :user-type :company}]
-         [:div
-          (doall
-            (for [issue issues]
-              ^{:key (:id issue)}
-              [issue-card issue]))])])))
+      [:section
+       {:class (util/merge-classes "company-profile__issues"
+                                   (when (empty? issues) "company-profile__issues--banner"))}
+        (if (not-empty issues)
+          [:div
+           [:div.is-flex
+            [:h2 "Open source issues from this company"]
+            [link "View all"
+             :issues-for-company-id :company-id (<sub [::subs/id])
+             :class "a--underlined"]]
+           [:div
+            (doall
+              (for [issue issues]
+                ^{:key (:id issue)}
+                [issue-card issue]))]]
+          [integrate-issues-banner])])))
 
 (defn job-header
   [admin-or-owner?]
@@ -242,11 +263,11 @@
 
 (defn publish-job-banner
   []
-  [:div.company-profile__job-cta
-   [:img.company-profile__job-cta__publish-img
-    {:src "/images/hiw/header.svg"
+  [:div.company-profile__banner-cta
+   [:img.company-profile__banner-cta__publish-img
+    {:src "/images/homepage/header.svg"
      :alt ""}]
-   [:div.company-profile__job-cta__copy
+   [:div.company-profile__banner-cta__copy
     [:h2 "Hire software engineers based on their interests and experience"]
     [:p "Through open-source contributions we generate objective ratings to help you hire the right engineers, faster."]
     (link [:button.button.button--medium
@@ -255,11 +276,11 @@
 
 (defn login-to-see-jobs-banner
   []
-  [:div.company-profile__job-cta
-   [:img.company-profile__job-cta__login-img
+  [:div.company-profile__banner-cta
+   [:img.company-profile__banner-cta__login-img
     {:src "/images/homepage/header.svg"
      :alt ""}]
-   [:div.company-profile__job-cta__copy
+   [:div.company-profile__banner-cta__copy
     [:h2 "Sign up and see " (<sub [::subs/name]) " roles!"]
     [:p "Discover the best opportunities in tech. We match your skills to great jobs using languages you love."]
     (link [:button.button.button--medium
@@ -878,6 +899,7 @@
           [company-info admin-or-owner?]]]
         [:div.split-content
          [:div.company-profile__main.split-content__main
+          [issues-header admin-or-owner?]
           [issues admin-or-owner?]
           [hash-anchor "company-profile__how-we-work"]
           [how-we-work admin-or-owner?]
