@@ -450,3 +450,14 @@
      :disabled (false? enabled?)
      :on-click #(when on-click (on-click id))}
     text]])
+
+(defn toggle
+  [{:keys [value on-change]}]
+  [:div
+   {:class (util/merge-classes "toggle"
+                               (when value "toggle--enabled"))}
+   [:div.toggle__track]
+   [:div.toggle__thumb-wrapper
+    [:div.toggle__thumb
+     {:on-click #(when on-change
+                   (on-change (not value)))}]]])

@@ -3,7 +3,7 @@
     #?(:cljs [wh.common.logo])
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
-    #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field]])
+    #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     #?(:cljs [wh.user.subs])
     [clojure.string :as str]
@@ -817,12 +817,17 @@
                ^{:key k}
                [edit-tag-display tag-type k (get data/benefits-data k)]))]]]))))
 
-(defn publish-toggle [enabled?]
+(defn publish-toggle
+  [enabled?]
   [:section.company-profile__toggle
-   [:button.button.button--inverted.button--small
-    {:class    (when (<sub [::subs/publishing?]) "button--loading")
-     :on-click #(dispatch [::events/publish-profile])}
-    (str (if enabled? "Un-Publish" "Publish"))]])
+   #?(:cljs
+      [toggle {:value enabled?
+               :on-change #(dispatch [::events/publish-profile])}])
+   [:div.company-profile__toggle__copy
+    [:h3 (if enabled? "Published" "Unpublished")]
+    [:span (if enabled?
+             "Awesome! Your company profile is live!"
+             "Set your profile to 'Published' so that candidates can view it.")]]])
 
 (defn hash-anchor
   [id]

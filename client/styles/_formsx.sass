@@ -421,3 +421,40 @@ $logo-dimension: 62px
     padding-left: 4px
   strong
     color: $steel-gray
+
+.toggle
+  position: relative
+  height: 20px
+  width: 60px
+
+.toggle--enabled
+  .toggle__thumb-wrapper
+    width: 52px
+  .toggle__thumb
+    background-color: $red
+
+.toggle__track
+  width: 32px
+  height: 14px
+  border-radius: 15px
+  background-color: $pale-red
+  position: absolute
+  top: 3px
+  left: 10px
+
+.toggle__thumb-wrapper
+  position: absolute
+  top: 0
+  width: 20px
+  transition: width 0.2s
+
+.toggle__thumb
+  width: 20px
+  height: 20px
+  border-radius: 20px
+  background-color: $white
+  border: 2px solid $red
+  float: right
+  cursor: pointer
+  transition: background-color 0.2s
+  box-shadow: 1px 1px 1px grey

@@ -6010,6 +6010,43 @@ a.navbar-item,
 .html-content strong {
   color: #6E7F89; }
 
+.toggle {
+  position: relative;
+  height: 20px;
+  width: 60px; }
+
+.toggle--enabled .toggle__thumb-wrapper {
+  width: 52px; }
+
+.toggle--enabled .toggle__thumb {
+  background-color: #ff7c6e; }
+
+.toggle__track {
+  width: 32px;
+  height: 14px;
+  border-radius: 15px;
+  background-color: #ffd4cf;
+  position: absolute;
+  top: 3px;
+  left: 10px; }
+
+.toggle__thumb-wrapper {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  transition: width 0.2s; }
+
+.toggle__thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: white;
+  border: 2px solid #ff7c6e;
+  float: right;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 1px 1px 1px grey; }
+
 /* two cards in a standard content section inc. 12px margin */
 .card {
   width: 100%;
@@ -15394,7 +15431,28 @@ h3 {
     margin-top: 41px; }
 
 .company-profile__toggle {
-  margin-bottom: 18px; }
+  height: 78px;
+  background-color: white;
+  padding: 18px;
+  display: flex; }
+  @media screen and (min-width: 1008px) {
+    .company-profile__toggle {
+      border: 1px solid #ffd4cf;
+      margin-bottom: 18px; } }
+  @media screen and (max-width: 1007px) {
+    .company-profile__toggle {
+      margin-bottom: 12px !important; } }
+  .company-profile__toggle .toggle {
+    margin-right: 8px; }
+
+.company-profile__toggle__copy {
+  flex: 1;
+  line-height: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; }
+  .company-profile__toggle__copy h3 {
+    margin: 0; }
 
 .company-profile__header {
   height: 148px;
@@ -15845,14 +15903,16 @@ h3 {
       width: 18px;
       border-radius: 14px;
       background: #ffffff;
-      cursor: pointer; }
+      cursor: pointer;
+      box-shadow: 1px 1px 1px grey; }
     .company-profile__tech-scale__input-wrapper input::-moz-range-thumb {
       border: 2px solid #ff7c6e;
       height: 18px;
       width: 18px;
       border-radius: 14px;
       background: #ffffff;
-      cursor: pointer; }
+      cursor: pointer;
+      box-shadow: 1px 1px 1px grey; }
     .company-profile__tech-scale__input-wrapper input::-ms-track {
       width: 100%;
       cursor: pointer;
