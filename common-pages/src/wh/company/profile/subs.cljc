@@ -183,8 +183,9 @@
   :<- [::company-extra-data]
   :<- [::all-jobs]
   (fn [[company-extra-data all-jobs] _]
-    (or all-jobs
-        (-> company-extra-data :jobs :jobs))))
+    (not-empty
+      (or all-jobs
+          (-> company-extra-data :jobs :jobs)))))
 
 (reg-sub
   ::total-number-of-jobs
@@ -349,3 +350,18 @@
   :<- [::sub-db]
   (fn [db _]
     (::profile/publishing? db)))
+
+(reg-sub
+  ::show-sticky?
+  :<- [::sub-db]
+  (fn [db _]
+    (boolean (::profile/show-stick? db))))
+
+(reg-sub
+  ::show-jobs-link?
+  :<- [:user/candidate?]
+  :<- [::jobs]
+  (fn [[candidate? jobs] _]
+    ;; we only hide the job link if
+    ;; user is a candidate and there are no jobs to show
+    (not (and candidate? (not jobs)))))

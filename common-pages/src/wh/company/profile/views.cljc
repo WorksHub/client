@@ -96,6 +96,17 @@
       :cljs {:on-click #(.scrollIntoView (.getElementById js/document id))})
    label])
 
+(defn header-links
+  []
+  [:div.company-profile__header__links
+   (header-link "About"       "company-profile__about-us")
+   (header-link "Technology"  "company-profile__technology")
+   (when (<sub [::subs/show-jobs-link?])
+     (header-link "Jobs"        "company-profile__jobs"))
+   (header-link "Benefits"    "company-profile__benefits")
+   (when (<sub [::subs/how-we-work])
+     (header-link "How we work" "company-profile__how-we-work"))])
+
 (defn header
   [_admin-or-owner?]
   (let [editing? (r/atom false)
@@ -157,14 +168,7 @@
                  :label "Company name"
                  :class "company-profile__header__edit-name"
                  :on-change (fn [v] (reset! new-company-name v))}]])]]
-         [:div.company-profile__header__links
-          (header-link "About"       "company-profile__about-us")
-          (header-link "Technology"  "company-profile__technology")
-          (when (<sub [::subs/jobs])
-            (header-link "Jobs"        "company-profile__jobs"))
-          (header-link "Benefits"    "company-profile__benefits")
-          (when (<sub [::subs/how-we-work])
-            (header-link "How we work" "company-profile__how-we-work"))]]))))
+         [header-links]]))))
 
 (defn videos
   [_admin-or-owner?]
@@ -834,47 +838,63 @@
   [:span.company-profile__hash-anchor
    {:id id}])
 
+(defn sticky-nav-bar
+  []
+  [:div
+   {:class (util/merge-classes "company-profile__sticky"
+                               "sticky"
+                               (when (<sub [:user/logged-in?])
+                                 "company-profile__sticky--logged-in"))
+    :id "company-profile__sticky"}
+   [:div.main
+    [:div.company-profile__sticky_logo
+     (wrap-img img (<sub [::subs/logo]) {:w 32 :h 32})]
+    [header-links]]])
+
 (defn page []
-  (let [enabled? (<sub [::subs/profile-enabled?])
-        company-id (<sub [::subs/id])
+  (let [enabled?        (<sub [::subs/profile-enabled?])
+        company-id      (<sub [::subs/id])
         admin-or-owner? (or (<sub [:user/admin?])
                             (<sub [:user/owner? company-id]))]
-    (if (or enabled? admin-or-owner?)
-      [:div.main.company-profile
-       (when admin-or-owner?
-         [publish-toggle enabled?])
-       [header admin-or-owner?]
-       [:div.split-content
-        [:div.company-profile__main.split-content__main
-         [hash-anchor "company-profile__about-us"]
-         [about-us admin-or-owner?]
-         [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
-         [hash-anchor "company-profile__technology"]
-         [technology admin-or-owner?]
-         [hash-anchor "company-profile__benefits"]
-         [benefits admin-or-owner?]
-         [hash-anchor "company-profile__jobs"]
-         [job-header admin-or-owner?]
-         [jobs admin-or-owner?]]
-        [:div.company-profile__side.split-content__side.is-hidden-mobile
-         [company-info admin-or-owner?]]]
-       ;;;
-       [:div.split-content
-        [:div.company-profile__main.split-content__main
-         [issues admin-or-owner?]
-         [hash-anchor "company-profile__how-we-work"]
-         [how-we-work admin-or-owner?]
-         [blogs admin-or-owner?]
-         [photos admin-or-owner?]
-         [videos admin-or-owner?]]
-        [:div.company-profile__side.split-content__side.is-hidden-mobile
-         (cond
-           #?(:cljs (<sub [:user/company?])
-              :clj  false)
-           [how-it-works/pod--company]
-           (empty? (<sub [::subs/issues]))
-           [:div] ;; display nothing if no issues
-           :else
-           [how-it-works/pod--candidate])]]]
-      [:div.main.main--center-content
-       [not-found/not-found]])))
+    [:div
+     (if (or enabled? admin-or-owner?)
+       [:div.main.company-profile
+        (when admin-or-owner?
+          [publish-toggle enabled?])
+        [header admin-or-owner?]
+        [:div.split-content
+         [:div.company-profile__main.split-content__main
+          [hash-anchor "company-profile__about-us"]
+          [about-us admin-or-owner?]
+          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
+          [hash-anchor "company-profile__technology"]
+          [technology admin-or-owner?]
+          [hash-anchor "company-profile__benefits"]
+          [benefits admin-or-owner?]
+          [hash-anchor "company-profile__jobs"]
+          [job-header admin-or-owner?]
+          [jobs admin-or-owner?]]
+         [:div.company-profile__side.split-content__side.is-hidden-mobile
+          [company-info admin-or-owner?]]]
+        [:div.split-content
+         [:div.company-profile__main.split-content__main
+          [issues admin-or-owner?]
+          [hash-anchor "company-profile__how-we-work"]
+          [how-we-work admin-or-owner?]
+          [blogs admin-or-owner?]
+          [photos admin-or-owner?]
+          [videos admin-or-owner?]]
+         [:div.company-profile__side.split-content__side.is-hidden-mobile
+          (cond
+            #?(:cljs (<sub [:user/company?])
+               :clj  false)
+            [how-it-works/pod--company]
+            (empty? (<sub [::subs/issues]))
+            [:div] ;; display nothing if no issues
+            :else
+            [how-it-works/pod--candidate])]]]
+       [:div.main.main--center-content
+        [not-found/not-found]])
+     [sticky-nav-bar]
+     [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
+                                           (if admin-or-owner? 170 100))]]))

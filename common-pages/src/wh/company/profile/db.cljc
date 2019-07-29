@@ -22,6 +22,8 @@
 
 (s/def ::publishing? boolean?)
 
+(s/def ::show-sticky? boolean?)
+
 (defn ->tag
   [m]
   (-> m

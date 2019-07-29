@@ -1,3 +1,7 @@
+$company-profile-sticky-height: 61px
+$company-profile-anchor-offset-desktop: $company-profile-sticky-height - 5px
+$company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-mobile-height
+
 .company-profile
   +mobile
     padding: 0px
@@ -142,6 +146,12 @@
   img
     width: 60px
     height: 60px
+
+.company-profile__sticky_logo
+  flex: 1 0 32px
+  img
+    width: 32px
+    height: 32px
 
 .company-profile__name
   font-size: 24px
@@ -521,11 +531,12 @@
   display: block
   pointer-events: none
   +desktop
-    margin-top: 0px
+    margin-top: -$company-profile-anchor-offset-desktop
+    height: $company-profile-anchor-offset-desktop
     padding-bottom: 0px
   +mobile
-    margin-top: -$navbar-mobile-height
-    padding-bottom: $navbar-mobile-height
+    margin-top: -$company-profile-anchor-offset-mobile
+    height: $company-profile-anchor-offset-mobile
 
 .company-profile__jobs-title
   margin-bottom: 0 !important
@@ -539,6 +550,39 @@
 .company-profile__company-info__prompt
   line-height: 18px
   margin-right: 1em
+
+.company-profile__sticky
+  height: $company-profile-sticky-height
+  box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1)
+  right: 0
+  left: 0
+  width: unset
+  +mobile
+    top: -20px
+  +desktop
+    top: -10px
+    &.company-profile__sticky--logged-in
+      left: $left-menu-width
+  .main
+    padding-top: unset
+    padding-bottom: unset
+    display: flex
+    align-items: center
+    +mobile
+      padding-left: 8px
+    +desktop
+      padding-left: 12px
+  .company-profile__header__links
+    border: 0
+    padding: 0px
+    height: 20px
+    width: 100%
+    +mobile
+      padding: 8px 0px 0px 0px
+      margin-left: 16px
+      height: 40px
+    +desktop
+      margin-left: 32px
 
 .company-profile__jobs
   margin-top: 0 !important
@@ -562,6 +606,8 @@
       margin-right: -30px
       margin-left: -12px
     flex: 1 0 220px
+    height: 100%
+    max-height: 400px
   div
     flex: 1 1 50%
     padding-left: 12px

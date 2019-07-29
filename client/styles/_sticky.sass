@@ -1,0 +1,15 @@
+.sticky
+  position: fixed
+  background-color: white
+  border-bottom: 1px solid $grey
+  transition: top 0.4s
+  padding: 12px
+  align-items: center
+  justify-content: space-between
+  -webkit-transform: translate3d(0,0,0)
+
+.sticky--shown
+  +desktop
+    top: $navbar-height
+  +mobile
+    top: $navbar-mobile-height

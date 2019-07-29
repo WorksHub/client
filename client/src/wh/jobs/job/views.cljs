@@ -421,8 +421,8 @@
 
 (defn apply-sticky
   []
-  [:div.job__apply-sticky.is-hidden-desktop.is-flex
-   {:class (if (<sub [::subs/show-apply-sticky?]) "job__apply-sticky--shown" "job__apply-sticky--hidden")}
+  [:div.job__apply-sticky.is-hidden-desktop.is-flex.sticky
+   {:class (when (<sub [::subs/show-apply-sticky?]) "sticky--shown")}
    [:div.job__apply-sticky__logo
     (if-let [logo (<sub [::subs/logo])]
       (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :class "logo"})
@@ -438,55 +438,55 @@
 (defn job-details
   []
   (r/create-class
-   {:component-did-mount
-    (fn [this]
-      (putil/attach-on-scroll-event
-       (fn [_]
-         (dispatch [::events/set-show-apply-sticky? (> (.-scrollY js/window) 210)]))))
-    :reagent-render
-    (fn []
-      (let [admin? (<sub [:user/admin?])
-            company? (<sub [:user/company?])
-            actions (cond (<sub [::subs/owner?])
-                          [:div.section-container
-                           [company-action]
-                           [job-stats]]
-                          admin?
-                          [:div.section-container
-                           [admin-action]
-                           [job-stats]]
-                          company? ;; but not owner
-                          [:div]
-                          :else
-                          [candidate-action])]
-        [:div.main-container
-         [:div.main.job
-          [:div.is-flex
-           [:div.job__main
-            [company-header]
-            [:div.is-hidden-desktop
+    {:component-did-mount
+     (fn [this]
+       (putil/attach-on-scroll-event
+         (fn [_]
+           (dispatch [::events/set-show-apply-sticky? (> (.-scrollY js/window) 160)]))))
+     :reagent-render
+     (fn []
+       (let [admin? (<sub [:user/admin?])
+             company? (<sub [:user/company?])
+             actions (cond (<sub [::subs/owner?])
+                           [:div.section-container
+                            [company-action]
+                            [job-stats]]
+                           admin?
+                           [:div.section-container
+                            [admin-action]
+                            [job-stats]]
+                           company? ;; but not owner
+                           [:div]
+                           :else
+                           [candidate-action])]
+         [:div.main-container
+          [:div.main.job
+           [:div.is-flex
+            [:div.job__main
+             [company-header]
+             [:div.is-hidden-desktop
+              actions
+              [job-highlights]]
+             [tagline]
+             [information]
+             (when (<sub [::subs/show-issues?])
+               [:div.is-hidden-desktop
+                [company-issues]])
+             (when-not (or admin? company? (<sub [::subs/applied?]))
+               [lower-cta])]
+            [:div.job__side.is-hidden-mobile
              actions
-             [job-highlights]]
-            [tagline]
-            [information]
-            (when (<sub [::subs/show-issues?])
-              [:div.is-hidden-desktop
-               [company-issues]])
-            (when-not (or admin? company? (<sub [::subs/applied?]))
-              [lower-cta])]
-           [:div.job__side.is-hidden-mobile
-            actions
-            [job-highlights]
-            (when (<sub [::subs/show-issues?])
-              [company-issues])]]
-          [other-roles]
-          (when (<sub [::subs/show-notes-overlay?])
-            [notes-overlay
-             :value     (<sub [::subs/note])
-             :on-change [::events/edit-note]
-             :on-ok     #(dispatch [::events/hide-notes-overlay])
-             :on-close  #(dispatch [::events/hide-notes-overlay])])]
-         [apply-sticky]]))}))
+             [job-highlights]
+             (when (<sub [::subs/show-issues?])
+               [company-issues])]]
+           [other-roles]
+           (when (<sub [::subs/show-notes-overlay?])
+             [notes-overlay
+              :value     (<sub [::subs/note])
+              :on-change [::events/edit-note]
+              :on-ok     #(dispatch [::events/hide-notes-overlay])
+              :on-close  #(dispatch [::events/hide-notes-overlay])])]
+          [apply-sticky]]))}))
 
 (defn admin-publish-prompt
   [permissions company-id success-event]

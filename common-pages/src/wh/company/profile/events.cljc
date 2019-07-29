@@ -539,3 +539,9 @@
   (fn [{db :db} _]
     (let [total (-> db (cached-company-extra-data) :jobs :pagination :total )]
       {:dispatch (into [:graphql/query] (all-jobs-query db total))})))
+
+(reg-event-db
+  ::set-show-sticky?
+  profile-interceptors
+  (fn [db [show?]]
+    (assoc db :show-sticky? show?)))

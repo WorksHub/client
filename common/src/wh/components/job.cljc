@@ -181,7 +181,8 @@
              [:div.column [job-card job {:public? true}]]))]])
 
 (defn apply-sticky [{:wh.jobs.job.db/keys [title slug] :as _job}]
-  [:div.job__apply-sticky.is-hidden-desktop.is-flex {:id "job__apply-sticky"}
+  [:div.job__apply-sticky.is-hidden-desktop.is-flex.sticky
+   {:id "job__apply-sticky"}
    [:div.job__apply-sticky__logo
     [icon "codi"]]
    [:div.job__apply-sticky__title title]
@@ -224,4 +225,4 @@
            [job-highlights job]]]
          [other-roles recommended-jobs]])
       [apply-sticky job]
-      [:script (interop/set-class-on-scroll "job__apply-sticky" "job__apply-sticky--shown" 300)]]]))
+      [:script (interop/set-class-on-scroll "job__apply-sticky" "sticky--shown" 160)]]]))

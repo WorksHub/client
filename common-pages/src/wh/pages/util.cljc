@@ -20,7 +20,7 @@
 
 (defn html [html-content]
   (if html-content
-    #?(:clj (html->hiccup html-content)
+    #?(:clj [:div.html-content (html->hiccup html-content)]
        :cljs [:div.html-content {:dangerouslySetInnerHTML {:__html html-content}}])
     [:div.html-content.html-content--skeleton
      (reduce (fn [a _] (conj a [:div {:style (rand-width)}])) [:div] (range (+ 4 (rand-int 6))))]))
