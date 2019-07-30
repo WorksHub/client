@@ -44,24 +44,21 @@
    :venia/queries [[:company {:id :$id}
                     [:id :permissions :package [:pendingOffer [:recurringFee]]]]]})
 
-(defquery issues-query
-  {:venia/operation {:operation/name "jobIssues"
-                     :operation/type :query}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID}]
-   :venia/queries [[:query_issues {:company_id :$id, :page_size 2}
-                    [[:issues [:id :title :level [:repo [:primary_language]]]]]]]})
-
 (defn translate-job [job]
   (as-> job job
         (cases/->kebab-case job)
         (util/namespace-map "wh.jobs.job.db" job)))
 
+(defn admin-or-job-owner? [db]
+  (or (user/admin? db)
+      (and (user/company? db)
+           (= (get-in db [::job/sub-db ::job/company-id]) (user/company-id db)))))
+
 (reg-event-fx
   ::fetch-company-issues
   job-interceptors
-  (fn [{db :db} [res]]
-    {:graphql {:query issues-query
+  (fn [{db :db} _]
+    {:graphql {:query graphql-jobs/issues-query
                :variables {:id (::job/company-id db)}
                :on-success [::fetch-company-issues-success]
                :on-failure [::fetch-company-issues-failure]}}))
@@ -85,12 +82,12 @@
                      :operation/type :query}
    :venia/variables [{:variable/name "company_id"
                       :variable/type :ID}
-                     {:variable/name "job_slug"
+                     {:variable/name "job_id"
                       :variable/type :String}
                      {:variable/name "end_date"
                       :variable/type :String}]
    :venia/queries [[:job_analytics {:company_id :$company_id
-                                    :job_slug :$job_slug
+                                    :job_id :$job_id
                                     :end_date :$end_date
                                     :granularity 0
                                     :num_periods 0}
@@ -100,12 +97,12 @@
                      [:likes [:date :count]]]]]})
 
 (reg-event-fx
-  ::fetch-job-analytics ;; TODO change this to slug?
-  db/default-interceptors
-  (fn [{db :db} [job-slug company-id]]
+  ::fetch-job-analytics
+  job-interceptors
+  (fn [{db :db} _]
     {:graphql {:query job-analytics-query
-               :variables {:company_id company-id
-                           :job_slug job-slug
+               :variables {:company_id (::job/company-id db)
+                           :job_id (::job/id db)
                            :end_date (tf/unparse (tf/formatters :date) (t/now))}
                :on-success [::fetch-job-analytics-success]
                :on-failure [::fetch-job-analytics-failure]}}))
@@ -125,19 +122,17 @@
   ::fetch-job-success
   db/default-interceptors
   (fn [{db :db} [res]]
-    (let [job (translate-job (get-in res [:data :job]))]
-      (merge
-        {:db (update db ::job/sub-db
+    (let [job (translate-job (get-in res [:data :job]))
+          db (update db ::job/sub-db
                      merge job
                      {::job/error nil
-                      ::job/preset-slug (::job/slug job)})};; the current job is now the preset one
-        (when (user/admin? db)
-          {:dispatch [::fetch-company-issues]})
-        (if (or (user/admin? db)
-                (and (user/company? db)
-                     (= (::job/company-id job) (user/company-id db))))
-          {:graphql {:query company-query
-                     :variables {:id (::job/company-id job)}
+                      ::job/preset-slug (::job/slug job)})] ;; the current job is now the preset one
+      (merge
+        {:db       db
+         :dispatch [::fetch-issues-and-analytics]}
+        (when (admin-or-job-owner? db)
+          {:graphql {:query      company-query
+                     :variables  {:id (::job/company-id job)}
                      :on-success [::fetch-company-success]
                      :on-failure [::fetch-company-failure]}})))))
 
@@ -149,9 +144,7 @@
                       (get-in [:data :company])
                       (update :permissions #(set (map keyword %)))
                       (cases/->kebab-case))]
-      (merge {:db (update-in db [::job/sub-db ::job/company] merge company)}
-             (when (user/admin? db)
-               {:dispatch [::fetch-job-analytics (get-in db [::job/sub-db ::job/id]) (:id company)]})))))
+      {:db (update-in db [::job/sub-db ::job/company] merge company)})))
 
 (reg-event-fx
   ::fetch-failure
@@ -514,6 +507,17 @@
              {::job/preset-slug slug}
              (util/namespace-map "wh.jobs.job.db" preset-fields)))))
 
+(reg-event-fx
+  ::fetch-issues-and-analytics
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:dispatch-n (cond-> []
+                         (empty? (get-in db [::job/sub-db ::job/company :issues]))
+                         (conj [::fetch-company-issues])
+
+                         (admin-or-job-owner? db)
+                         (conj [::fetch-job-analytics]))}))
+
 (reg-event-db
   ::initialize-db
   job-interceptors
@@ -538,10 +542,7 @@
        [::initialize-db])
      (if (not= requested-slug slug-in-db)
        [::fetch-job requested-slug]
-       (when (user/admin? db)
-         [::fetch-company-issues]))
-     (when (user/company? db)
-       [::fetch-job-analytics requested-slug (user/company-id db)])
+       [::fetch-issues-and-analytics])
      (when (get-in db [::db/query-params "apply"])
        [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
      [::fetch-recommended-jobs requested-slug]

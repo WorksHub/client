@@ -32,6 +32,7 @@
 (s/def ::sponsorship-offered boolean?)
 (s/def ::remote boolean?)
 (s/def ::id string?)
+(s/def ::company-id string?)
 (s/def ::slug string?)
 (s/def ::published (s/nilable boolean?))
 (s/def ::street (s/nilable string?))

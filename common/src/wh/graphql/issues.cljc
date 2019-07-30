@@ -155,5 +155,5 @@
                              :company_id :$id
                              :page_size 2
                              :page_number 1}
-                      [:id :title :remote
+                      [:id :title :remote :slug
                        [:location [:city :state :country :countryCode]]]]]})

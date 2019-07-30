@@ -432,9 +432,8 @@
 (reg-sub
   ::show-issues?
   :<- [::issues]
-  :<- [:wh.user.subs/workshub?]
-  (fn [[issues workshub?] _]
-    (and workshub? (seq issues) true)))
+  (fn [issues _]
+    (seq issues)))
 
 (reg-sub
   :wh.job/show-admin-publish-prompt?

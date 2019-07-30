@@ -67,3 +67,11 @@
 
 (def-query-from-template job-query--candidate job-query
                          {:fields [[:fragment/jobFields] :userScore]})
+
+(defquery issues-query
+  {:venia/operation {:operation/name "jobIssues"
+                     :operation/type :query}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID}]
+   :venia/queries [[:query_issues {:company_id :$id, :page_size 2}
+                    [[:issues [:id :title :level [:repo [:primary_language]]]]]]]})

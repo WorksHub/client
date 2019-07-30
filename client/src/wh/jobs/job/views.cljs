@@ -188,8 +188,14 @@
           [:div.logo--skeleton]))])
    [:div.job__company-header__info
     (when (<sub [::user-subs/approved?])
-      (if (<sub [::subs/profile-enabled?])
+      (cond
+        (<sub [::subs/profile-enabled?])
         [link [:h2 (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
+
+        (<sub [:user/admin?])
+        [link [:h2 (<sub [::subs/company-name])] :company-dashboard :id (<sub [::subs/company-id])]
+
+        :else
         [:h2 (<sub [::subs/company-name])]))
     [:h1 (<sub [::subs/title])]
     [:h3 (if (<sub [::subs/remote?])
@@ -307,11 +313,11 @@
        (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 40 :h 40 :class "logo"})
        [:div.logo--skeleton]))
    [:p.cta
-    "Improve your application – solve " (<sub [::subs/company-name]) "’s Open Source Issues on GitHub"]
+    "Interested in seeing how " (<sub [::subs/company-name]) " work? Contribute to their Open Source."]
    (for [item (<sub [::subs/issues])]
      ^{:key (:id item)}
      [issue item])
-   [link "View All Issues" :issues :company-id (<sub [::subs/company-id]) :class "button"]])
+   [link "View All Issues" :issues-for-company-id :company-id (<sub [::subs/company-id]) :class "button"]])
 
 (defn show-more
   [event]

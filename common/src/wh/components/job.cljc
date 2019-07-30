@@ -3,6 +3,7 @@
     [wh.common.job :as jobc]
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
+    [wh.components.issue :refer [level->str level->icon]]
     [wh.interop :as interop]
     [wh.pages.util :refer [html->hiccup]]
     [wh.re-frame.events :refer [dispatch]]
@@ -194,6 +195,25 @@
                                        :params {:slug slug}])))
     "Easy Apply"]])
 
+(defn issue
+  [{:keys [id title repo level]}]
+  [:div.issue
+   [link title :issue :id id :class "title"]
+   [:div.level
+    [icon (level->icon level)] (str "Level: " (level->str level))]
+   (when-let [language (:primary-language repo)]
+     [:ul.tags.tags--inline
+      [:li language]])])
+
+(defn company-issues [{:wh.jobs.job.db/keys [company company-id] :as _job}]
+  [:section.job__company-issues
+   [:p.cta
+    "Interested in seeing this company work? Contribute to their Open Source."]
+   (for [item (:issues company)]
+     ^{:key (:id item)}
+     [issue item])
+   [link "View All Issues" :issues-for-company-id :company-id company-id :class "button"]])
+
 (defn page []
   (let [app-db @re-frame.db/app-db ; TODO: make it subscription-based
         vertical (<sub [:wh/vertical])
@@ -214,7 +234,8 @@
            [company-header job]
            [:div.is-hidden-desktop
             [candidate-action job]
-            [job-highlights job]]
+            [job-highlights job]
+            [company-issues job]]
            [:section.job__tagline
             [:h2 (when tagline "To sum it up...")]
             [:div tagline]]
@@ -222,7 +243,8 @@
            [lower-cta vertical job]]
           [:div.job__side.is-hidden-mobile
            [candidate-action job]
-           [job-highlights job]]]
+           [job-highlights job]
+           [company-issues job]]]
          [other-roles recommended-jobs]])
       [apply-sticky job]
       [:script (interop/set-class-on-scroll "job__apply-sticky" "sticky--shown" 160)]]]))
