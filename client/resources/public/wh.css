@@ -15171,6 +15171,10 @@ h3 {
     line-height: 32px;
     margin-bottom: 32px; }
 
+.faq__terms {
+  display: block;
+  margin-top: 10px; }
+
 .faq__question {
   padding: 30px 24px 24px 24px;
   background-color: #f4f5f8; }
