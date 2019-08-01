@@ -521,7 +521,7 @@
   [tag-type k data]
   (let  [dsid (str "company-profile__tag-display--" (name k))]
     (fn [tag-type k data]
-      (let [tags (<sub [::subs/tags tag-type k])]
+      (when-let [tags (not-empty (<sub [::subs/tags tag-type k]))]
         [:article
          {:id dsid
           :class (util/merge-classes "company-profile__tag-display"
