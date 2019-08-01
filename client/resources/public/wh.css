@@ -11521,6 +11521,9 @@ h3 {
   -ms-user-select: none;
   user-select: none; }
 
+.is-underlined {
+  text-decoration: underline; }
+
 .pod {
   position: relative;
   background-color: white;

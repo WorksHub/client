@@ -190,7 +190,7 @@
     (when (<sub [::user-subs/approved?])
       (cond
         (<sub [::subs/profile-enabled?])
-        [link [:h2 (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
+        [link [:h2.is-underlined (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
 
         (<sub [:user/admin?])
         [link [:h2 (<sub [::subs/company-name])] :company-dashboard :id (<sub [::subs/company-id])]
