@@ -191,7 +191,7 @@
   ::total-number-of-jobs
   :<- [::company-extra-data]
   (fn [company-extra-data _]
-    (-> company-extra-data :jobs :pagination :total)))
+    (or (-> company-extra-data :jobs :pagination :total) 0)))
 
 (reg-sub
   ::show-fetch-all?
@@ -215,6 +215,18 @@
                 (-> issue
                     (assoc :company (select-keys company [:logo]))
                     (gql-issue->issue)))))))
+
+(reg-sub
+  ::repos
+  :<- [::company-extra-data]
+  (fn [extra-data _]
+    (->> extra-data :repos :repos)))
+
+(reg-sub
+  ::github-orgs
+  :<- [::repos]
+  (fn [repos _]
+    (set (map :owner repos))))
 
 (reg-sub
   ::video-error

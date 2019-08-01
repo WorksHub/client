@@ -1,17 +1,25 @@
 /* Toggles class on element of given ID */
 function toggleClass(id, cls){
     var d = document.getElementById(id);
-    d.classList.toggle(cls);
+    if(d) {
+        d.classList.toggle(cls);
+    } else {
+        console.warn("Tried to toggle class on '" + id + "' but the element couldn't be found.")
+    }
 }
 
 /* Sets class on or off element of given ID */
 function setClass(id, cls, on){
     var d = document.getElementById(id);
-    if(on) {
-        d.classList.add(cls);
-    }
-    else {
-        d.classList.remove(cls);
+    if(d) {
+        if(on) {
+            d.classList.add(cls);
+        }
+        else {
+            d.classList.remove(cls);
+        }
+    } else {
+        console.warn("Tried to set class on '" + id + "' but the element couldn't be found.")
     }
 }
 

@@ -61,7 +61,10 @@
                          [:contributors [:id]]
                          [:labels [:name]]
                          [:repo [:name :owner :primary_language]]]]
-                       [:pagination [:total]]]]]]]})
+                       [:pagination [:total]]]]
+                     [:repos {:pageSize 10 :pageNumber 1}
+                      [[:repos
+                        [:github_id :name :description :primary_language :owner]]]]]]]})
 
 (defquery fetch-all-company-jobs-query
   {:venia/operation {:operation/type :query

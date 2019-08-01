@@ -54,6 +54,7 @@
                                           :wh.repo/hook-secret
                                           :wh.repo/readme-url
                                           :wh.repo/contributing-url])))
+(s/def :wh/repos (s/coll-of :wh/repo))
 
 (s/def :wh.issue/id #?(:clj  sc/string-uuid
                        :cljs string?))

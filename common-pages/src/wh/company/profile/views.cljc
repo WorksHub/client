@@ -209,13 +209,35 @@
                   [:div.column.is-half
                    [blog-card blog]]))])])))
 
+(defn github-details
+  [admin-or-owner?]
+  (let [owners (<sub [::subs/github-orgs])
+        repos  (<sub [::subs/repos])]
+    [:div.company-profile__github-details
+     [:h2.subtitle "On GitHub"]
+     [:div.company-profile__github-details__owners
+      (for [owner owners]
+        ^{:key owner}
+        [:div.company-profile__github-details__owner
+         [icon "github"]
+         [:a.a--underlined {:href (str "https://github.com/" owner) :target "_blank"} owner]])]
+     [:div.company-profile__github-details__repos
+      [:h3 "Repositories"]
+      (for [{:keys [name owner description]} repos]
+        ^{:key name}
+        [:div.company-profile__github-details__repo
+         [:a.a--underlined {:href (str "https://github.com/" owner "/" name) :target "_blank"} name]
+         [:span description]])]]))
+
 (defn issues-header
   [admin-or-owner?]
   (let [issues (<sub [::subs/issues])]
     (when (or admin-or-owner? (not-empty issues))
       [:section.company-profile__section--headed
        [:div
-        [:h2.title.company-profile__issues-title "Open Source"]]])))
+        [:h2.title.company-profile__issues-title "Open Source"]
+        (when (not-empty issues)
+          [github-details admin-or-owner?])]])))
 
 (defn integrate-issues-banner
   []
@@ -235,19 +257,19 @@
       [:section
        {:class (util/merge-classes "company-profile__issues"
                                    (when (empty? issues) "company-profile__issues--banner"))}
-        (if (not-empty issues)
-          [:div
-           [:div.is-flex
-            [:h2 "Open source issues from this company"]
-            [link "View all"
+       (if (not-empty issues)
+         [:div
+          [:div.is-flex
+           [:h2 "Open source issues from this company"]
+           [link "View all"
              :issues-for-company-id :company-id (<sub [::subs/id])
              :class "a--underlined"]]
-           [:div
-            (doall
-              (for [issue issues]
-                ^{:key (:id issue)}
-                [issue-card issue]))]]
-          [integrate-issues-banner])])))
+          [:div
+           (doall
+             (for [issue issues]
+               ^{:key (:id issue)}
+               [issue-card issue]))]]
+         [integrate-issues-banner])])))
 
 (defn job-header
   [admin-or-owner?]
@@ -919,4 +941,4 @@
         [not-found/not-found]])
      [sticky-nav-bar]
      [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
-                                           (if admin-or-owner? 170 100))]]))
+                                             (if admin-or-owner? 170 100))]]))
