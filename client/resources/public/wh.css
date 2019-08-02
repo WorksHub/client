@@ -6010,6 +6010,9 @@ a.navbar-item,
 .html-content strong {
   color: #6E7F89; }
 
+.html-content p:last-child {
+  margin-bottom: 0; }
+
 .toggle {
   position: relative;
   height: 20px;
@@ -16012,11 +16015,15 @@ h3 {
         margin-left: 32px; } }
 
 .company-profile__jobs-title,
-.company-profile__issues-title {
+.company-profile__issues-title,
+.company-profile__hww-title {
   margin-bottom: 0 !important; }
 
 .company-profile__jobs,
 .company-profile__issues--banner {
+  margin-top: 0 !important; }
+
+.company-profile__hww-title + .company-profile__how-we-work {
   margin-top: 0 !important; }
 
 .company-profile__banner-cta {

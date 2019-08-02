@@ -104,7 +104,10 @@
    (when (<sub [::subs/show-jobs-link?])
      (header-link "Jobs"        "company-profile__jobs"))
    (header-link "Benefits"    "company-profile__benefits")
-   (when (<sub [::subs/how-we-work])
+   (when (or (<sub [::subs/how-we-work])
+             (not-empty (<sub [::subs/blogs]))
+             (not-empty (<sub [::subs/images]))
+             (not-empty (<sub [::subs/videos])))
      (header-link "How we work" "company-profile__how-we-work"))])
 
 (defn header
@@ -778,47 +781,60 @@
                   [:i "Current location"]
                   [:p location]]))])]]])))
 
+(defn how-we-work-header
+  [_admin-or-owner?]
+  (fn [admin-or-owner?]
+    (let [hww (<sub [::subs/how-we-work])]
+      (when (and (str/blank? hww)
+                 (not admin-or-owner?)
+                 (or (not-empty (<sub [::subs/videos]))
+                     (not-empty (<sub [::subs/images]))
+                     (not-empty (<sub [::subs/blogs]))))
+        [:section.company-profile__section--headed
+         [:h2.title.company-profile__hww-title "How we work"]]))))
+
 (defn how-we-work
   [_admin-or-owner?]
-  (let []
-    (let [editing?        (r/atom false)
-          new-how-we-work (r/atom nil)]
-      (fn [admin-or-owner?]
-        (let [hww (<sub [::subs/how-we-work])]
-          (when (or admin-or-owner?
-                    (text/not-blank hww))
-            [:section
-             {:class (util/merge-classes
-                       "company-profile__section--headed"
-                       (when @editing? "company-profile__section--editing")
-                       "company-profile__how-we-work")}
-             [editable {:editable?             admin-or-owner?
-                        :prompt-before-cancel? @new-how-we-work
-                        :on-editing            #(do
-                                                  (reset! editing? true)
+  (let [editing?        (r/atom false)
+        new-how-we-work (r/atom nil)
+        placeholder "Please enter a description of the company's work style, project management process, product cycle etc..."]
+    (fn [admin-or-owner?]
+      (let [hww (<sub [::subs/how-we-work])]
+        (when (or admin-or-owner?
+                  (text/not-blank hww))
+          [:section
+           {:class (util/merge-classes
+                     "company-profile__section--headed"
+                     (when @editing? "company-profile__section--editing")
+                     "company-profile__how-we-work")}
+           [editable {:editable?             admin-or-owner?
+                      :prompt-before-cancel? @new-how-we-work
+                      :on-editing            #(do
+                                                (reset! editing? true)
 
-                                                  )
-                        :on-cancel #(do (reset! editing? false)
-                                        (reset! new-how-we-work nil))
-                        :on-save
-                        #(do
-                           (reset! editing? false)
-                           (when-let [changes
-                                      (when (text/not-blank @new-how-we-work)
-                                        {:how-we-work @new-how-we-work})]
-                             (dispatch-sync [::events/update-company changes "company-profile__how-we-work"])))}
-              [:div
-               [:h2.title "How we work"]
-               [putil/html hww]]
+                                                )
+                      :on-cancel #(do (reset! editing? false)
+                                      (reset! new-how-we-work nil))
+                      :on-save
+                      #(do
+                         (reset! editing? false)
+                         (when-let [changes
+                                    (when (text/not-blank @new-how-we-work)
+                                      {:how-we-work @new-how-we-work})]
+                           (dispatch-sync [::events/update-company changes "company-profile__how-we-work"])))}
+            [:div
+             [:h2.title "How we work"]
+             [putil/html (or hww
+                             (str"<p><i>"placeholder"</i></p>"))]]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-              [:div
-               [:h2.title "How we work"]
-               #?(:cljs
-                  [rich-text-field {:value       (or @new-how-we-work hww "")
-                                    :placeholder "Please enter a description of the company's work style, project management process, product cycle etc..."
-                                    :on-change   #(if (= % hww)
-                                                    (reset! new-how-we-work nil)
-                                                    (reset! new-how-we-work %))}])]]]))))))
+            [:div
+             [:h2.title "How we work"]
+             #?(:cljs
+                [rich-text-field {:value       (or @new-how-we-work hww "")
+                                  :placeholder placeholder
+                                  :on-change   #(if (= % hww)
+                                                  (reset! new-how-we-work nil)
+                                                  (reset! new-how-we-work %))}])]]])))))
 
 (defn benefits
   [_admin-or-owner?]
@@ -924,6 +940,7 @@
           [issues-header admin-or-owner?]
           [issues admin-or-owner?]
           [hash-anchor "company-profile__how-we-work"]
+          [how-we-work-header admin-or-owner?]
           [how-we-work admin-or-owner?]
           [blogs admin-or-owner?]
           [photos admin-or-owner?]
@@ -941,4 +958,4 @@
         [not-found/not-found]])
      [sticky-nav-bar]
      [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
-                                             (if admin-or-owner? 170 100))]]))
+                                           (if admin-or-owner? 170 100))]]))
