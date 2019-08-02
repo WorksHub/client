@@ -79,9 +79,22 @@
                         [:fragment/jobCardFields]]
                        [:pagination [:total]]]]]]]})
 
+(defquery analytics-query
+  {:venia/operation {:operation/name "jobAnalytics"
+                     :operation/type :query}
+   :venia/variables [{:variable/name "company_id"
+                      :variable/type :ID}]
+   :venia/queries [[:job_analytics {:company_id :$company_id
+                                    :granularity 0
+                                    :num_periods 0}
+                    [:granularity
+                     [:applications [:date :count]]
+                     [:profileViews [:date :count]]]]]})
+
 (reg-query :company fetch-company-query)
 (reg-query :company-issues-and-blogs fetch-company-blogs-and-issues-query)
 (reg-query :all-company-jobs fetch-all-company-jobs-query)
+(reg-query :company-stats analytics-query)
 
 (defquery fetch-tags
   {:venia/operation {:operation/type :query
@@ -94,7 +107,7 @@
 (reg-query :tags fetch-tags)
 
 (defn initial-query [db]
-  [:company {:slug (get-in db [:wh.db/page-params :slug])}])
+  [:company {:slug (get-in db [:wh.db/page-params :slug])} ])
 
 (defn extra-data-query [db]
   [:company-issues-and-blogs {:slug (get-in db [:wh.db/page-params :slug])}])
@@ -102,6 +115,9 @@
 (defn all-jobs-query [db total-jobs]
   [:all-company-jobs {:slug (get-in db [:wh.db/page-params :slug])
                       :total total-jobs}])
+
+(defn company-stats-query [company-id]
+  [:company-stats {:company_id company-id}])
 
 (defn tag-query [type-filter]
   (if type-filter
@@ -124,9 +140,8 @@
        :company))
 
 #?(:cljs
-   (defmethod on-page-load :company
-     [db]
-     (list (into [:graphql/query] (initial-query db))
+   (defmethod on-page-load :company [db]
+     (list (into [:graphql/query] (conj (initial-query db) {:on-success [::fetch-stats]}) )
            [::load-photoswipe]
            [:google/load-maps]
            (into [:graphql/query] (extra-data-query db))
@@ -148,6 +163,16 @@
      ::photo-upload
      db/default-interceptors
      upload/image-upload-fn))
+
+#?(:cljs
+  (reg-event-fx
+  ::fetch-stats
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:dispatch (into [:graphql/query] (-> db
+                                          (cached-company)
+                                          :id
+                                          (company-stats-query )))})))
 
 (reg-event-db
   ::photo-upload-start

@@ -60,4 +60,4 @@
     [:span.stats__increase change]]
    [chart x-axis y-axis values]])
 
-(reset! views/stats-item-impl stats-item)
+#?(:cljs (reset! views/stats-item-impl stats-item))

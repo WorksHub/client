@@ -5,6 +5,7 @@
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
     #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+    #?(:cljs [wh.components.stats.views :refer [stats-item]])
     #?(:cljs [wh.user.subs])
     [clojure.string :as str]
     [wh.common.data.company-profile :as data]
@@ -20,6 +21,7 @@
     [wh.components.issue :refer [issue-card]]
     [wh.components.job :refer [job-card]]
     [wh.components.not-found :as not-found]
+    [wh.components.stats.impl :refer #?(:clj [stats-item] :cljs [])]
     [wh.components.tag :as tag]
     [wh.components.videos :as videos]
     [wh.how-it-works.views :as how-it-works]
@@ -83,11 +85,11 @@
 
 (defn edit-close-button
   [editing-atom]
-    (if (not @editing-atom)
-      [edit-button editing-atom nil]
-      [:div.editable--edit-button
-       [icon "close"
-        :on-click #(reset! editing-atom false)]]))
+  (if (not @editing-atom)
+    [edit-button editing-atom nil]
+    [:div.editable--edit-button
+     [icon "close"
+      :on-click #(reset! editing-atom false)]]))
 
 (defn header-link
   [label id]
@@ -265,8 +267,8 @@
           [:div.is-flex
            [:h2 "Open source issues from this company"]
            [link "View all"
-             :issues-for-company-id :company-id (<sub [::subs/id])
-             :class "a--underlined"]]
+            :issues-for-company-id :company-id (<sub [::subs/id])
+            :class "a--underlined"]]
           [:div
            (doall
              (for [issue issues]
@@ -910,6 +912,19 @@
      (wrap-img img (<sub [::subs/logo]) {:w 32 :h 32})]
     [header-links]]])
 
+(defn company-stats
+  [& [class]]
+  [:section {:class (util/merge-classes
+                      "sidebar__stats stats company-profile__stats"
+                      (when class class))}
+   [:h2 (<sub [::subs/stats-title])]
+   [stats-item (merge {:icon-name "views"
+                       :caption   "Company Views"}
+                      (<sub [::subs/stats-item :profile-views]))]
+   [stats-item (merge {:icon-name "applications"
+                       :caption   "Applications"}
+                      (<sub [::subs/stats-item :applications]))]])
+
 (defn page []
   (let [enabled?        (<sub [::subs/profile-enabled?])
         company-id      (<sub [::subs/id])
@@ -926,6 +941,7 @@
           [hash-anchor "company-profile__about-us"]
           [about-us admin-or-owner?]
           [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
+          [company-stats "is-hidden-desktop"]
           [hash-anchor "company-profile__technology"]
           [technology admin-or-owner?]
           [hash-anchor "company-profile__benefits"]
@@ -934,7 +950,8 @@
           [job-header admin-or-owner?]
           [jobs admin-or-owner?]]
          [:div.company-profile__side.split-content__side.is-hidden-mobile
-          [company-info admin-or-owner?]]]
+          [company-info admin-or-owner?]
+          [company-stats]]]
         [:div.split-content
          [:div.company-profile__main.split-content__main
           [issues-header admin-or-owner?]

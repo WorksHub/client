@@ -423,11 +423,7 @@
   ::stats-item
   :<- [::stats]
   (fn [stats [_ stat]]
-    {:x-axis (stats/x-axis stats stat)
-     :y-axis (stats/y-axis stats stat)
-     :values (stats/chart-values stats stat)
-     :total  (stats/stat-total stats stat)
-     :change (stats/stat-change stats stat)}))
+    (stats/stat-item-data stats stat)))
 
 (reg-sub
   ::show-issues?

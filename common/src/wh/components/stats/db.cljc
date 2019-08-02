@@ -6,7 +6,9 @@
    :visible false})
 
 (defn y-axis [stats stat]
-  {:domain [0 (apply max (map :count (get stats stat)))]
+  {:domain [0 (if-let [s (get stats stat)]
+                (apply max (map :count s))
+                0)]
    :range [100 0]
    :visible false})
 
@@ -16,7 +18,8 @@
 (defn stat-change [stats stat]
   (let [current (:count (last (get stats stat)))
         previous (:count (last (drop-last (get stats stat))))
-        change (when previous (/ (- current previous) previous))]
+        change (when (and previous (pos? previous))
+                 (/ (- current previous) previous))]
     (cond
       (nil? change) nil
       (zero? change) "0%"
@@ -29,3 +32,12 @@
                        (take-last 4 (into [0 0 0 0] counts))
                        counts))]
     (vec (map-indexed vector counts))))
+
+(defn stat-item-data [stats stat]
+  {:x-axis (x-axis stats stat)
+   :y-axis (y-axis stats stat)
+   :values (chart-values stats stat)
+   :total  (stat-total stats stat)
+   :change (stat-change stats stat)})
+
+

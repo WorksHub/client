@@ -214,7 +214,7 @@
 
 (defn job-stats
   []
-  [:section.job__stats.stats
+  [:section.sidebar__stats.stats
    [:h2 (<sub [::subs/stats-title])]
    [stats-item (merge {:icon-name "views"
                        :caption "Views"}

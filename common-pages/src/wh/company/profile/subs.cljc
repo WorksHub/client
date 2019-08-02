@@ -5,6 +5,7 @@
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.common.location :as location]
     [wh.company.profile.db :as profile]
+    [wh.components.stats.db :as stats]
     [wh.re-frame.subs :refer [<sub]])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
@@ -29,6 +30,15 @@
       (let [slug     (<sub [:wh/page-param :slug])
             result (<sub [:graphql/result :company-issues-and-blogs {:slug slug}])]
         (:company result)))))
+
+(reg-sub-raw
+  ::stats
+  (fn [_ _]
+    (reaction
+      (let [slug (<sub [:wh/page-param :slug])
+            company (<sub [:graphql/result :company {:slug slug}])
+            result (<sub [:graphql/result :company-stats {:company_id (-> company :company :id)}])]
+        (:job-analytics result)))))
 
 (reg-sub-raw
   ::all-jobs
@@ -377,3 +387,25 @@
     ;; we only hide the job link if
     ;; user is a candidate and there are no jobs to show
     (not (and candidate? (not jobs)))))
+
+(reg-sub
+  ::granularity
+  :<- [::stats]
+  (fn [stats _]
+    (if (= (:granularity stats) 7)
+      :week
+      :month)))
+
+(reg-sub
+  ::stats-title
+  :<- [::granularity]
+  (fn [granularity _]
+    (if (= granularity :week)
+      "Last 7 Days’ Stats"
+      "Last Month’s Stats")))
+
+(reg-sub
+  ::stats-item
+  :<- [::stats]
+  (fn [stats [_ stat]]
+    (stats/stat-item-data stats stat)))

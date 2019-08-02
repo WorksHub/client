@@ -1,6 +1,5 @@
 (ns wh.jobs.job.events
   (:require
-    [cljs-time.coerce :as tc]
     [cljs-time.core :as t]
     [cljs-time.format :as tf]
     [clojure.string :as str]
