@@ -7,7 +7,7 @@
     [wh.components.cards.views :refer [job-card]]
     [wh.components.forms.views :refer [labelled-checkbox multiple-checkboxes select-field text-input text-field radio-buttons]]
     [wh.components.icons :refer [icon]]
-    [wh.components.loader.views :refer [loader]]
+    [wh.components.loader :refer [loader]]
     [wh.components.pagination :as pagination]
     [wh.jobs.jobsboard.events :as events]
     [wh.jobs.jobsboard.subs :as subs]

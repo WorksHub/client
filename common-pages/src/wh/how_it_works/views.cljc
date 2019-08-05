@@ -102,7 +102,7 @@
    (let [forms (butlast (interleave (range n) (map (partial str "border") (range n))))]
      (for [form forms]
        (if (number? form)
-         [:div.how-it-works__step-line__circle {:key form} (inc form)]
+         [:div.number-circle.how-it-works__step-line__circle {:key form} (inc form)]
          [:div.how-it-works__step-line__line   {:key form}])))])
 
 (defn explanation-step
@@ -112,7 +112,7 @@
     [:img {:src img-src
            :alt ""}]
     [:div.how-it-works__explanation-step__description
-     [:div.how-it-works__step-line__circle.is-hidden-desktop n]
+     [:div.number-circle.how-it-works__step-line__circle.is-hidden-desktop n]
      [:p description]]]])
 
 (defn explanation

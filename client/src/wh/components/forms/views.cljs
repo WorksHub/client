@@ -236,8 +236,8 @@
              or maps with :id and :label (\"foo\" is shorthand for
              {:id \"foo\", :label \"foo\"}).
   :value - should be one of the :id's."
-  [value {:keys [dirty?] :as options}]
-  (field-container (if dirty?
+  [value {:keys [dirty? force-error?] :as options}]
+  (field-container (if (or dirty? force-error?)
                      options
                      (dissoc options :error))
                    (select-input (or value (:value options)) options)))
@@ -419,19 +419,19 @@
          (if loading?
            [:div.logo__is-loading]
            (field-container
-            {}
-            [:label
-             [:input.file-input {:type      "file"
-                                 :name      [:span "logo"]
-                                 :on-change #(do
-                                               (reset! dirty true)
-                                               (on-select-file %))}]
-             (if-not (clojure.string/blank? value)
-               [:img.logo__add-new {:src (:value options)}]
-               [:div.logo__add-new.logo__add-new--empty
-                {:class (when error "logo__add-new--errored")}
-                [:div "+"]
-                [:div text]])]))]))))
+             {}
+             [:label
+              [:input.file-input {:type      "file"
+                                  :name      [:span "logo"]
+                                  :on-change #(do
+                                                (reset! dirty true)
+                                                (on-select-file %))}]
+              (if-not (clojure.string/blank? value)
+                [:img.logo__add-new {:src (:value options)}]
+                [:div.logo__add-new.logo__add-new--empty
+                 {:class (when error "logo__add-new--errored")}
+                 [:div "+"]
+                 [:div text]])]))]))))
 
 (defn status-button
   [{:keys [id on-click class text enabled? waiting? status]}]

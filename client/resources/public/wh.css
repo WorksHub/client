@@ -14579,18 +14579,6 @@ h3 {
   top: 346px;
   left: calc(50% - 16px); }
 
-.how-it-works__step-line__circle {
-  min-width: 32px;
-  width: 32px;
-  height: 32px;
-  background-color: #ff7c6e;
-  color: white;
-  border-radius: 32px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 500;
-  padding-top: 1px; }
-
 .how-it-works__step-line__line {
   height: 228px;
   width: 2px;
@@ -15389,6 +15377,9 @@ h3 {
   .company-profile__side > section .title {
     color: #6E7F89;
     margin: 0px 0px 18px 0px; }
+  .company-profile__main > section .ql-container,
+  .company-profile__side > section .ql-container {
+    min-height: 300px; }
   .company-profile__main > section.company-profile__section--headed,
   .company-profile__side > section.company-profile__section--headed {
     background-color: white;
@@ -15412,16 +15403,12 @@ h3 {
     .company-profile__main > section.company-profile__section--headed .subtitle:not(first-of-type),
     .company-profile__side > section.company-profile__section--headed .subtitle:not(first-of-type) {
       margin-top: 18px; }
-    .company-profile__main > section.company-profile__section--headed .ql-container,
-    .company-profile__side > section.company-profile__section--headed .ql-container {
-      min-height: 300px; }
 
 .company-profile__section--editing {
   box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important; }
 
 .company-profile__side {
-  margin-top: 18px;
-  min-height: 400px; }
+  margin-top: 18px; }
   .company-profile__side > section {
     margin: 0px;
     background-color: white;
@@ -16060,6 +16047,67 @@ h3 {
     flex: 1 1 50%;
     padding-left: 12px; }
 
+.company-profile__create-profile-carousel {
+  background-color: white;
+  padding: 48px;
+  height: 312px;
+  margin-bottom: 24px; }
+  .company-profile__create-profile-carousel > h1 {
+    font-size: 24px;
+    font-weight: 600; }
+  .company-profile__create-profile-carousel p {
+    font-family: "Inconsolata", sans-serif;
+    font-size: 16px;
+    line-height: 2; }
+  .company-profile__create-profile-carousel .carousel {
+    height: calc(100% - 20px); }
+
+.company-profile__create-profile-carousel__slide {
+  display: flex; }
+  .company-profile__create-profile-carousel__slide p {
+    padding: 12px 18px 0px 0px;
+    flex: 2; }
+  .company-profile__create-profile-carousel__slide img {
+    flex: 1; }
+    @media screen and (min-width: 1008px) {
+      .company-profile__create-profile-carousel__slide img {
+        margin-top: -18px;
+        max-height: 180px; } }
+
+.company-profile__section--create {
+  padding-right: 24px; }
+  @media screen and (min-width: 1008px) {
+    .company-profile__section--create > .button {
+      width: 50%;
+      float: right; } }
+  @media screen and (max-width: 1007px) {
+    .company-profile__section--create > .button {
+      width: 100%; } }
+
+.company-profile__create-profile-step-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 18px; }
+  @media screen and (min-width: 1008px) {
+    .company-profile__create-profile-step-header > .number-circle {
+      margin-right: 18px; } }
+  .company-profile__create-profile-step-header > h2 {
+    margin: 0px;
+    color: #ff7c6e; }
+
+.company-profile__create-profile-step {
+  padding-left: 48px; }
+
+.company-profile__create-profile__logo-and-name .company-profile__create-profile__logo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start; }
+  .company-profile__create-profile__logo-and-name .company-profile__create-profile__logo .button {
+    margin-top: 16px; }
+  .company-profile__create-profile__logo-and-name .company-profile__create-profile__logo > .logo {
+    margin-right: 18px; }
+
 .company-profile__github-details .icon {
   width: 24px;
   height: 24px;
@@ -16494,6 +16542,23 @@ h3 {
 @media screen and (max-width: 1007px) {
   .sticky--shown {
     top: 46px; } }
+
+.number-circle {
+  min-width: 32px;
+  width: 32px;
+  height: 32px;
+  background-color: #ff7c6e;
+  color: white;
+  border-radius: 32px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  padding-top: 1px; }
+
+.number-circle--inverted {
+  background-color: white;
+  color: #ff7c6e;
+  border: 1px solid #ff7c6e; }
 
 @media screen and (min-width: 1008px) {
   html, body {

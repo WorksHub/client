@@ -3,6 +3,7 @@
     #?(:cljs [wh.common.logo])
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
+    #?(:cljs [wh.components.conversation.views :refer [codi-message]])
     #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     #?(:cljs [wh.components.stats.views :refer [stats-item]])
@@ -12,14 +13,17 @@
     [wh.common.specs.company :as company-spec]
     [wh.common.specs.tags :as tag-spec]
     [wh.common.text :as text]
+    [wh.company.profile.db :as profile]
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
     [wh.components.cards :refer [blog-card]]
+    [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [link wrap-img img base-img]]
     [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue-card]]
     [wh.components.job :refer [job-card]]
+    [wh.components.loader :refer [loader]]
     [wh.components.not-found :as not-found]
     [wh.components.stats.impl :refer #?(:clj [stats-item] :cljs [])]
     [wh.components.tag :as tag]
@@ -430,11 +434,10 @@
              [edit-close-button editing?])
            (pswp-element)])))))
 
-
 (defn profile-tag-field
   [_args]
   (let [tags-collapsed?  (r/atom true)]
-    (fn [{:keys [label placeholder tag-type tag-subtype]}]
+    (fn [{:keys [label placeholder tag-type tag-subtype ]}]
       #?(:cljs
          (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type tag-subtype])
                matching-tags (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type}
@@ -925,54 +928,304 @@
                        :caption   "Applications"}
                       (<sub [::subs/stats-item :applications]))]])
 
-(defn page []
+(defn edit-page
+  [admin-or-owner?]
+  [:div
+   [:div.main.company-profile
+    (when admin-or-owner?
+      [publish-toggle (<sub [::subs/profile-enabled?])])
+    [header admin-or-owner?]
+    [:div.split-content
+     [:div.company-profile__main.split-content__main
+      [hash-anchor "company-profile__about-us"]
+      [about-us admin-or-owner?]
+      [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
+      [company-stats "is-hidden-desktop"]
+      [hash-anchor "company-profile__technology"]
+      [technology admin-or-owner?]
+      [hash-anchor "company-profile__benefits"]
+      [benefits admin-or-owner?]
+      [hash-anchor "company-profile__jobs"]
+      [job-header admin-or-owner?]
+      [jobs admin-or-owner?]]
+     [:div.company-profile__side.split-content__side.is-hidden-mobile
+      [company-info admin-or-owner?]
+      [company-stats]]]
+    [:div.split-content
+     [:div.company-profile__main.split-content__main
+      [issues-header admin-or-owner?]
+      [issues admin-or-owner?]
+      [hash-anchor "company-profile__how-we-work"]
+      [how-we-work admin-or-owner?]
+      [blogs admin-or-owner?]
+      [photos admin-or-owner?]
+      [videos admin-or-owner?]]
+     [:div.company-profile__side.split-content__side.is-hidden-mobile
+      (cond
+        #?(:cljs (<sub [:user/company?])
+           :clj  false)
+        [how-it-works/pod--company]
+        (empty? (<sub [::subs/issues]))
+        [:div] ;; display nothing if no issues
+        :else
+        [how-it-works/pod--candidate])]]]
+   [sticky-nav-bar]
+   [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
+                                         (if admin-or-owner? 170 100))]])
+
+(defn create-profile-carousel
+  []
+  [:div.company-profile__create-profile-carousel
+   [:h1 "Welcome to your company profile"]
+   [carousel
+    [[:div.company-profile__create-profile-carousel__slide
+      [:p "This is where you can tell the world about your company. It’s your place  to connect with our community by shouting about what you do and how great you are to work for."]
+      [:img {:src "/images/homepage/feature01.svg"}]]
+     [:div.company-profile__create-profile-carousel__slide
+      [:p "We’ve made it really easy to publish with the minimum amount of information - just complete the 5 steps on this page."]
+      [:img {:src "/images/hiw/candidate/hiw/hiw3.svg"}]]
+     [:div.company-profile__create-profile-carousel__slide
+      [:p "Once it’s live it will look more like this and you’ll be able to edit and add information straight on the page. Now let’s get started with your logo and company name…"]
+      [:img {:src "/images/hiw/candidate/benefits/benefit4.svg"}]]]
+    false]])
+
+(defn create-new-profile-header
+  [num txt]
+  [:div.company-profile__create-profile-step-header
+   {:id (profile/section->id num)}
+   [:div.number-circle.number-circle--inverted num]
+   [:h2.subtitle txt]])
+
+(defn create-new-profile--logo-and-name
+  [_new-company-name]
+  #?(:cljs
+     (let [logo-field-id (gensym)]
+       (fn [new-company-name]
+         (let [pending-logo (<sub [::subs/pending-logo])
+               logo-error (<sub [::subs/error-message :logo])]
+           [:div.company-profile__create-profile-step.company-profile__create-profile__logo-and-name
+            [:form.form.wh-formx
+             [:label {:class (util/merge-classes "label"
+                                                 (when logo-error "field--invalid"))}
+              "* Your company logo"]
+             [:div.company-profile__create-profile__logo
+              [logo-field
+               {:id logo-field-id
+                :on-change [::events/set-logo]
+                :error logo-error
+                :force-error? true
+                :value (or pending-logo
+                           (<sub [::subs/logo]))
+                :loading? (<sub [::subs/logo-uploading?])
+                :on-select-file (upload/handler
+                                  :launch [:wh.common.logo/logo-upload]
+                                  :on-upload-start [::events/logo-upload-start]
+                                  :on-success [::events/logo-upload-success]
+                                  :on-failure [::events/logo-upload-failure])}]
+              [:div
+               [:button.button.button--inverted
+                {:on-click #(do
+                              (.preventDefault %)
+                              (when-let [logo-fld (.querySelector js/document (str "#" logo-field-id " input"))]
+                                (.click logo-fld)))}
+                "Upload a different logo"]
+               (when logo-error
+                 [:label {:class (util/merge-classes "label"
+                                                     "field--invalid")}
+                  logo-error])]]
+             [text-field (or @new-company-name
+                             (<sub [::subs/name])
+                             "")
+              {:type :text
+               :error (<sub [::subs/error-message :name])
+               :force-error? true
+               :label "* Your company name"
+               :class "company-profile__header__edit-name"
+               :on-blur #(dispatch [::events/check-field {:name @new-company-name}])
+               :on-change (fn [v] (reset! new-company-name v))}]]])))))
+
+(defn create-new-profile--description
+  [_new-desc]
+  #?(:cljs
+     (fn [new-desc]
+       (let [description (<sub [::subs/description])]
+         [:div.company-profile__create-profile-step.company-profile__create-profile__description
+          [:form.form.wh-formx
+           [rich-text-field {:value       (or @new-desc description "")
+                             :error       (<sub [::subs/error-message :description])
+                             :on-blur #(dispatch [::events/check-field {:description @new-desc}])
+                             :force-error? true
+                             :placeholder "eg WorksHub enables companies to gain access to the right talent in a crowded market. Our smart personalised candidate experience gives users the ability to make better data-driven applications in real-time reducing the time to hire from weeks to days. We are striving to build something amazing! "
+                             :on-change   #(if (= % description)
+                                             (reset! new-desc nil)
+                                             (reset! new-desc %))}]]]))))
+
+(defn create-new-profile--company-info
+  [_new-industry-tag _new-funding-tag _new-size _new-founded-year]
+  #?(:cljs
+     (fn [new-industry-tag new-funding-tag new-size new-founded-year]
+       (let [description (<sub [::subs/description])]
+         [:div.company-profile__create-profile-step.company-profile__create-profile__company-info
+          [:form.wh-formx.wh-formx__layout
+           [:div
+            [select-field (or @new-industry-tag (:id (<sub [::subs/industry])))
+             {:options   (into [{:id nil, :label "--"}] ;; add unselected
+                               (sort-by :label (<sub [::subs/all-tags-of-type :industry])))
+              :error     (<sub [::subs/error-message :industry-tag])
+              :force-error? true
+              :label     "* Select an industry that best describes your company"
+              :on-change #(do
+                            (reset! new-industry-tag %)
+                            (dispatch [::events/check-field {:industry-tag @new-industry-tag}]))}]
+            [select-field (or @new-funding-tag (:id (<sub [::subs/funding])))
+             {:options   (into [{:id nil, :label "--"}] ;; add unselected
+                               (sort-by :label (<sub [::subs/all-tags-of-type :funding])))
+              :error     (<sub [::subs/error-message :funding-tag])
+              :force-error? true
+              :label     "* Select the primary source of funding for your company"
+              :on-change #(do
+                            (reset! new-funding-tag %)
+                            (dispatch [::events/check-field {:funding-tag @new-funding-tag}]))}]
+            [radio-field (or @new-size (<sub [::subs/size]))
+             {:options   (map #(hash-map :id % :label (company-spec/size->range %)) (reverse company-spec/sizes))
+              :label     "* How many people work for your company?"
+              :error     (<sub [::subs/error-message :size])
+              :force-error? true
+              :on-change #(do (reset! new-size %)
+                              (dispatch [::events/check-field {:size @new-size}]))}]
+            [text-field (or @new-founded-year (<sub [::subs/founded-year]) "")
+             {:type      :number
+              :label     "* When was your company founded?"
+              :error (<sub [::subs/error-message :founded-year])
+              :force-error? true
+              :on-blur   #(do
+                            (when (str/blank? @new-founded-year)
+                              (reset! new-founded-year nil))
+                            (dispatch [::events/check-field {:founded-year @new-founded-year}]))
+              :on-change (fn [v] (if v
+                                   (reset! new-founded-year v)
+                                   (reset! new-founded-year "")))}]]]]))))
+
+(defn create-new-profile--edit-tag-display
+  [tag-type error-field label placeholder]
+  #?(:cljs
+     (let [tags-collapsed? (r/atom true)]
+       (fn [tag-type error-field label placeholder]
+         (let [selected-tag-ids (<sub [::subs/selected-tag-ids--all-of-type tag-type])
+               matching-tags    (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type})])
+               tag-search       (<sub [::subs/tag-search tag-type])]
+           [:div.company-profile__create-profile-step.company-profile__create-profile__technology
+            (when-let [error (<sub [::subs/error-message error-field])]
+              [:span.is-error error])
+            [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
+             {:on-submit #(.preventDefault %)}
+             [tags-field
+              tag-search
+              {:tags               (map #(if (contains? selected-tag-ids (:key %))
+                                           (assoc % :selected true)
+                                           %) matching-tags)
+               :collapsed?         @tags-collapsed?
+               :on-change          [::events/set-tag-search tag-type nil]
+               :label              label
+               :placeholder        placeholder
+               :on-toggle-collapse #(swap! tags-collapsed? not)
+               :on-tag-click
+               #(when-let [tag (some (fn [tx] (when (= (:tag tx) %) tx)) matching-tags)]
+                  (dispatch [::events/toggle-selected-tag-id tag-type (:subtype tag) (:id tag)]))}]
+             (when (<sub [::subs/creating-tag?])
+               [:div.company-profile__tag-loader [:div]])]])))))
+
+(defn create-new-profile--technology
+  []
+  [create-new-profile--edit-tag-display
+   :tech :tech-tags
+   "* Type to search and apply technologies"
+   "e.g. clojure, python, java, aws, heroku, azure, docker etc"])
+
+(defn create-new-profile--benefits
+  []
+  [create-new-profile--edit-tag-display
+   :benefit :benefit-tags
+   "* Type to search and apply benefits"
+   "e.g. remote working, flexible hours, paid time off, parental leave etc"])
+
+(defn create-new-profile
+  [admin-or-owner?]
+  (let [new-name         (r/atom nil)
+        new-desc         (r/atom nil)
+        new-industry-tag (r/atom nil)
+        new-funding-tag  (r/atom nil)
+        new-size         (r/atom nil)
+        new-founded-year (r/atom nil)]
+    (fn [admin-or-owner?]
+      [:div.main.company-profile
+       [create-profile-carousel]
+       #?(:cljs
+          [:div
+           [:div.split-content ;; 1 & 2
+            [:div.company-profile__main.split-content__main
+             [:section.company-profile__section--create
+              [create-new-profile-header 1
+               "Check your logo and company name are correct"]
+              [create-new-profile--logo-and-name new-name]]
+             [:section.company-profile__section--create
+              [create-new-profile-header 2
+               "Tell our community about what you’re building"]
+              [create-new-profile--description new-desc]]]
+            [:div.company-profile__side.split-content__side.is-hidden-mobile
+             [codi-message (str "Hello " (<sub [:user/name]) ", I’ve got some tips to help get your company profile live.")]
+             [codi-message "1 - We’ve displayed what we think is your company logo. If this isn’t correct please upload a new one. This will be displayed in square format so it’s best to use one that is just a graphic and has no text."]
+             [codi-message "2 - Give us your mission statement. This will be displayed right at the top of your profile so keep it short and sweet."]]]
+           [:div.split-content ;; 3
+            [:div.company-profile__main.split-content__main
+             [:section.company-profile__section--create
+              [create-new-profile-header 3
+               "Give us some key information about your company"]
+              [create-new-profile--company-info new-industry-tag new-funding-tag new-size new-founded-year]]]
+            [:div.company-profile__side.split-content__side.is-hidden-mobile
+             [codi-message "3 - Select the information that applies to your company."]]]
+           [:div.split-content ;; 4
+            [:div.company-profile__main.split-content__main
+             [:section.company-profile__section--create
+              [create-new-profile-header 4
+               "Build your tech stack"]
+              [create-new-profile--technology]]]
+            [:div.company-profile__side.split-content__side.is-hidden-mobile
+             [codi-message " 4 - Select all the key technologies that you work with. You can add more technical details after your profile is live."]]]
+           [:div.split-content ;; 5
+            [:div.company-profile__main.split-content__main
+             [:section.company-profile__section--create
+              [create-new-profile-header 5
+               "Shout about the best benefits you have"]
+              [create-new-profile--benefits]]
+             [:section.company-profile__section--create
+              [:button.button.button--medium
+               {:class (when (<sub [::subs/updating?]) "button--loading button--inverted")
+                :on-click #(dispatch [::events/create-new-profile {:name         @new-name
+                                                                   :description  @new-desc
+                                                                   :industry-tag @new-industry-tag
+                                                                   :funding-tag  @new-funding-tag
+                                                                   :size         @new-size
+                                                                   :founded-year @new-founded-year}])}
+               "Publish your company profile"]]]
+            [:div.company-profile__side.split-content__side.is-hidden-mobile
+             [codi-message "5 - Great benefits are so important. We’ve supplied some of the most popular ones here, select all that apply. Don’t worry you can go into more detail on these once you’ve published your profile."]]]]
+          :clj
+          [:div.loader-wrapper
+           [loader]])])))
+
+(defn page
+  []
   (let [enabled?        (<sub [::subs/profile-enabled?])
         company-id      (<sub [::subs/id])
         admin-or-owner? (or (<sub [:user/admin?])
-                            (<sub [:user/owner? company-id]))]
-    [:div
-     (if (or enabled? admin-or-owner?)
-       [:div.main.company-profile
-        (when admin-or-owner?
-          [publish-toggle enabled?])
-        [header admin-or-owner?]
-        [:div.split-content
-         [:div.company-profile__main.split-content__main
-          [hash-anchor "company-profile__about-us"]
-          [about-us admin-or-owner?]
-          [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
-          [company-stats "is-hidden-desktop"]
-          [hash-anchor "company-profile__technology"]
-          [technology admin-or-owner?]
-          [hash-anchor "company-profile__benefits"]
-          [benefits admin-or-owner?]
-          [hash-anchor "company-profile__jobs"]
-          [job-header admin-or-owner?]
-          [jobs admin-or-owner?]]
-         [:div.company-profile__side.split-content__side.is-hidden-mobile
-          [company-info admin-or-owner?]
-          [company-stats]]]
-        [:div.split-content
-         [:div.company-profile__main.split-content__main
-          [issues-header admin-or-owner?]
-          [issues admin-or-owner?]
-          [hash-anchor "company-profile__how-we-work"]
-          [how-we-work-header admin-or-owner?]
-          [how-we-work admin-or-owner?]
-          [blogs admin-or-owner?]
-          [photos admin-or-owner?]
-          [videos admin-or-owner?]]
-         [:div.company-profile__side.split-content__side.is-hidden-mobile
-          (cond
-            #?(:cljs (<sub [:user/company?])
-               :clj  false)
-            [how-it-works/pod--company]
-            (empty? (<sub [::subs/issues]))
-            [:div] ;; display nothing if no issues
-            :else
-            [how-it-works/pod--candidate])]]]
-       [:div.main.main--center-content
-        [not-found/not-found]])
-     [sticky-nav-bar]
-     [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
-                                           (if admin-or-owner? 170 100))]]))
+                            (<sub [:user/owner? company-id]))
+        has-published-profile? (<sub [::subs/has-published-profile?])]
+    (cond
+      (and admin-or-owner? (not has-published-profile?))
+      [create-new-profile admin-or-owner?]
+      (or admin-or-owner? enabled?)
+      [edit-page admin-or-owner?]
+      :else
+      [:div.main.main--center-content
+       [not-found/not-found]])))

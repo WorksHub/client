@@ -23,6 +23,8 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
     .title
       color: $steel-gray
       margin: 0px 0px 18px 0px
+    .ql-container
+      min-height: 300px
     &.company-profile__section--headed
       background-color: white
       padding: 18px
@@ -40,15 +42,12 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
           font-size: 18px
       .subtitle:not(first-of-type)
         margin-top: 18px
-      .ql-container
-        min-height: 300px
 
 .company-profile__section--editing
   box-shadow: 0 1px 10px 3px rgba(0, 0, 0, 0.2) !important
 
 .company-profile__side
   margin-top: 18px
-  min-height: 400px
   & > section
     margin: 0px
     background-color: white
@@ -623,6 +622,66 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
   & > div
     flex: 1 1 50%
     padding-left: 12px
+
+.company-profile__create-profile-carousel
+  background-color: white
+  padding: 48px
+  height: 312px
+  margin-bottom: 24px
+  & > h1
+    font-size: 24px
+    font-weight: $font-semi-bold
+  p
+    font-family: $family-secondary
+    font-size: 16px
+    line-height: 2
+  .carousel
+    height: calc(100% - 20px)
+
+.company-profile__create-profile-carousel__slide
+  display: flex
+  p
+    padding: 12px 18px 0px 0px
+    flex: 2
+  img
+    flex: 1
+    +desktop
+      margin-top: -18px
+      max-height: 180px
+
+.company-profile__section--create
+  padding-right: 24px
+  & > .button
+    +desktop
+      width: 50%
+      float: right
+    +mobile
+      width: 100%
+
+.company-profile__create-profile-step-header
+  display: flex
+  justify-content: flex-start
+  align-items: center
+  margin-bottom: 18px
+  +desktop
+    & > .number-circle
+      margin-right: 18px
+  & > h2
+    margin: 0px
+    color: $red
+
+.company-profile__create-profile-step
+  padding-left: 48px
+
+.company-profile__create-profile__logo-and-name
+  .company-profile__create-profile__logo
+    display: flex
+    justify-content: flex-start
+    align-items: flex-start
+    .button
+      margin-top: 16px
+    & > .logo
+      margin-right: 18px
 
 .company-profile__github-details
   .icon

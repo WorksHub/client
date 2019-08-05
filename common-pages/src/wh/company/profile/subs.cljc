@@ -263,6 +263,13 @@
     (some-> company :locations first location/format-location)))
 
 (reg-sub
+  ::has-published-profile?
+  :<- [::company]
+  (fn [company _]
+    (or (:has-published-profile company)
+        (:profile-enabled company))))
+
+(reg-sub
   ::pending-location--raw
   :<- [::sub-db]
   (fn [sub-db _]
@@ -293,11 +300,11 @@
     (::profile/tag-search sub-db)))
 
 (defn tag->form-tag
-  [{:keys [id label type]}]
-  {:tag label
-   :key id
-   :class (str "tag--type-" (name type))
-   :selected false})
+  [{:keys [id label type] :as tag}]
+  (merge tag {:tag label
+              :key id
+              :class (str "tag--type-" (name type))
+              :selected false}))
 
 (reg-sub-raw
   ::current-tag-ids
@@ -320,7 +327,7 @@
           matching-but-not-included (filter (fn [tag] (and (or (str/blank? tag-search)
                                                                (str/includes? (str/lower-case (:label tag)) tag-search))
                                                            (= type (:type tag))
-                                                           (= subtype (:subtype tag))
+                                                           (if subtype (= subtype (:subtype tag)) true)
                                                            (not (contains? include-ids (:id tag))))) tags)
           included-tags (filter (fn [tag] (contains? include-ids (:id tag))) tags)]
       (->> (concat included-tags matching-but-not-included)
@@ -337,7 +344,13 @@
   ::selected-tag-ids
   :<- [::sub-db]
   (fn [sub-db [_ tag-type tag-subtype]]
-    (set (get-in sub-db (cond-> [::profile/selected-tag-ids tag-type tag-subtype])))))
+    (set (get-in sub-db [::profile/selected-tag-ids tag-type tag-subtype]))))
+
+(reg-sub
+  ::selected-tag-ids--all-of-type
+  :<- [::sub-db]
+  (fn [sub-db [_ tag-type]]
+    (set (reduce concat (vals (get-in sub-db [::profile/selected-tag-ids tag-type]))))))
 
 (reg-sub
   ::selected-tag-ids--map
@@ -387,6 +400,12 @@
     ;; we only hide the job link if
     ;; user is a candidate and there are no jobs to show
     (not (and candidate? (not jobs)))))
+
+(reg-sub
+  ::error-message
+  :<- [::sub-db]
+  (fn [sub-db [_ k]]
+    (get-in sub-db [::profile/error-map k])))
 
 (reg-sub
   ::granularity

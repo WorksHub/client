@@ -7,9 +7,9 @@
     [wh.components.common :refer [link]]
     [wh.components.forms.views :refer [text-field]]
     [wh.components.icons :refer [icon url-icons]]
-    [wh.components.loader.views :refer [loader]]
-    [wh.components.pagination :as pagination]
+    [wh.components.loader :refer [loader]]
     [wh.components.not-found :as not-found]
+    [wh.components.pagination :as pagination]
     [wh.routes :refer [path]]
     [wh.subs :refer [<sub]]))
 

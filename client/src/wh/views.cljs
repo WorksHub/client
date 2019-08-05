@@ -9,7 +9,7 @@
     [wh.components.error.views :refer [global-status-box]]
     [wh.components.footer :as footer]
     [wh.components.icons :refer [icon]]
-    [wh.components.loader.views :refer [loader]]
+    [wh.components.loader :refer [loader]]
     [wh.components.menu :as menu]
     [wh.components.navbar :as navbar]
     [wh.events :as events]

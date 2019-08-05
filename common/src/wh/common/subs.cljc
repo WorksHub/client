@@ -48,6 +48,11 @@
   (fn [db [_ id]]
     (= (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) id)))
 
+(reg-sub
+  :user/name
+  (fn [db _]
+    (get-in db [:wh.user.db/sub-db :wh.user.db/name])))
+
 ;; MISC
 
 (reg-sub

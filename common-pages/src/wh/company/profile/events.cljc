@@ -7,6 +7,8 @@
     #?(:cljs [ajax.json :as ajax-json])
     #?(:cljs [wh.common.fx.google-maps :as google-maps])
     #?(:cljs [wh.common.location :as location])
+    #?(:cljs [cljs.spec.alpha :as s]
+       :clj  [clojure.spec.alpha :as s])
     [re-frame.core :refer [path]]
     [wh.company.profile.db :as profile]
     [wh.db :as db]
@@ -32,7 +34,7 @@
                       :variable/type :String!}]
    :venia/queries [[:company {:slug :$slug}
                     [:id :slug :name :logo :profileEnabled :descriptionHtml :size
-                     :foundedYear :howWeWork :additionalTechInfo
+                     :foundedYear :howWeWork :additionalTechInfo :hasPublishedProfile
                      [:techScales [:testing :ops :timeToDeploy]]
                      [:locations [:city :country :countryCode :region :subRegion :state]]
                      [:tags [:id :type :label :slug :subtype]]
@@ -102,7 +104,7 @@
    :venia/variables [{:variable/name "type"
                       :variable/type :tag_type}]
    :venia/queries [[:list_tags {:type :$type}
-                    [[:tags [:id :label :type :slug :subtype]]]]]})
+                    [[:tags [:id :label :type :slug :subtype :weight]]]]]})
 
 (reg-query :tags fetch-tags)
 
@@ -367,7 +369,7 @@
       {:db (assoc-in db [::profile/sub-db ::profile/updating?] true)
        :dispatch [:graphql/update-entry :company {:slug (:slug company)}
                   :merge {:company (company-changes->cache db changes)}]
-       :graphql {:query (update-company-mutation-with-fields [:id :slug
+       :graphql {:query (update-company-mutation-with-fields [:id :slug :profileEnabled
                                                               [:tags [:id :label :slug :type :subtype]]])
                  :variables {:update_company
                              (merge {:id (:id company)}
@@ -417,12 +419,20 @@
                    (map :id)
                    (set)))))
 
-(reg-event-db
+(reg-event-fx
   ::toggle-selected-tag-id
   db/default-interceptors
-  (fn [db [tag-type tag-subtype id]]
-    (update-in db [::profile/sub-db ::profile/selected-tag-ids tag-type tag-subtype] (fnil util/toggle #{}) id)))
-
+  (fn [{db :db} [tag-type tag-subtype id]]
+    (let [company (cached-company db)
+          updated-db (update-in db [::profile/sub-db ::profile/selected-tag-ids tag-type tag-subtype] (fnil util/toggle #{}) id)
+          tag-ids (get-in updated-db [::profile/sub-db ::profile/selected-tag-ids tag-type])]
+      (merge
+        {:db updated-db}
+        (when-not (:has-published-profile company) ;; if were in 'create profile' mode, check the fields
+          (cond (= :tech tag-type)
+                {:dispatch [::check-field {:tech-tags tag-ids}]}
+                (= :benefit tag-type)
+                {:dispatch [::check-field {:benefit-tags tag-ids}]}))))))
 (reg-event-fx
   ::create-new-tag
   profile-interceptors
@@ -441,11 +451,11 @@
           all-tags (cache/result db :tags {})]
       (merge {:db (-> db
                       (assoc-in  [::profile/sub-db ::profile/creating-tag?] false)
-                      (assoc-in  [::profile/sub-db ::profile/tag-search tag-type] nil)
-                      (update-in [::profile/sub-db ::profile/selected-tag-ids tag-type tag-subtype] (fnil conj #{}) (:id new-tag)))}
-             (when (not (some #(= (:id new-tag) (:id %)) (get-in all-tags [:list-tags :tags]))) ;; check the tag isn't an existing tag
-               {:dispatch [:graphql/update-entry :tags {}
-                           :overwrite (update-in all-tags [:list-tags :tags] conj new-tag)]})))))
+                      (assoc-in  [::profile/sub-db ::profile/tag-search tag-type] nil))
+              :dispatch-n [[::toggle-selected-tag-id tag-type tag-subtype (:id new-tag)]
+                           (when (not (some #(= (:id new-tag) (:id %)) (get-in all-tags [:list-tags :tags]))) ;; check the tag isn't an existing tag
+                             [:graphql/update-entry :tags {}
+                              :overwrite (update-in all-tags [:list-tags :tags] conj new-tag)])]}))))
 
 (reg-event-fx
   ::create-new-tag-failure
@@ -573,3 +583,124 @@
   profile-interceptors
   (fn [db [show?]]
     (assoc db :show-sticky? show?)))
+
+(defn get-all-tag-ids
+  [db]
+  (let [selected-tag-ids  (get-in db [::profile/sub-db ::profile/selected-tag-ids])]
+    (reduce #(concat %1 (reduce concat (vals %2))) [] (vals selected-tag-ids))))
+
+(defn create-new-profile-data->minimum-data-form
+  [db {:keys [industry-tag funding-tag name description size founded-year] :as form-data}]
+  (let [company          (cached-company db)
+        selected-tag-ids (set (concat (get-all-tag-ids db) [industry-tag funding-tag]))
+        selected-tags    (->> (cache/result db :tags {})
+                              :list-tags
+                              :tags
+                              (filter #(contains? selected-tag-ids (:id %)))
+                              (map profile/->tag))]
+    (-> form-data
+        (assoc :industry-tag (some #(when (= industry-tag (:id %)) (dissoc % :subtype)) selected-tags)
+               :funding-tag  (some #(when (= funding-tag (:id %)) (dissoc % :subtype)) selected-tags)
+               :tech-tags    (filter #(= :tech (:type %)) selected-tags)
+               :benefit-tags (filter #(= :benefit (:type %)) selected-tags)
+               :logo         (or (get-in db [::profile/sub-db ::profile/pending-logo]) (:logo company))
+               :name         (or name (:name company))
+               :size         (or size (:size company))
+               :founded-year (or founded-year (:founded-year company))
+               :description  (or description (:description-html company))))))
+
+(defn form-data->company-data
+  [db {:keys [industry-tag funding-tag name description size founded-year] :as form-data}]
+  (let [company          (cached-company db)
+        selected-tag-ids (set (concat (get-all-tag-ids db) [industry-tag funding-tag]))]
+    (-> form-data
+        (dissoc :industry-tag :funding-tag :description)
+        (assoc :tag-ids          selected-tag-ids
+               :logo             (or (get-in db [::profile/sub-db ::profile/pending-logo]) (:logo company))
+               :name             (or name (:name company))
+               :size             (or size (:size company))
+               :founded-year     (or founded-year (:founded-year company))
+               :description-html (or description (:description-html company))
+               :profile-enabled  true))))
+
+(defmulti error-pred->message (fn [k v] k))
+
+(defmethod error-pred->message :default
+  [_ _]
+  "There is a problem with this field")
+
+(defmethod error-pred->message :name
+  [_ _]
+  "This field cannot be left blank.")
+
+(defmethod error-pred->message :logo
+  [_ _]
+  "Please upload a logo for your company.")
+
+(defmethod error-pred->message :description
+  [_ _]
+  "Please provide a brief description for your company.")
+
+(defmethod error-pred->message :industry-tag
+  [_ _]
+  "Please select an industry for your company.")
+
+(defmethod error-pred->message :funding-tag
+  [_ _]
+  "Please select a funding type that applies to your company.")
+
+(defmethod error-pred->message :size
+  [_ _]
+  "Please select a size for your company.")
+
+(defmethod error-pred->message :founded-year
+  [_ _]
+  "Please provide a founding year for your company.")
+
+(defmethod error-pred->message :tech-tags
+  [_ _]
+  "Please select at least one Technology tag.")
+
+(defmethod error-pred->message :benefit-tags
+  [_ _]
+  "Please select at least one Benefit tag.")
+
+(defn error-data->error-map
+  [error-data]
+  (let [error-map (->> (::s/problems error-data)
+                       (map (juxt (comp last :path) :pred))
+                       (filter first)
+                       (into {})
+                       (not-empty))]
+    (reduce-kv (fn [a k v] (assoc a k (error-pred->message k v)) ) {} error-map)))
+
+(defn generate-error-map
+  [db m]
+  (let [data (create-new-profile-data->minimum-data-form db m)
+        error-data (s/explain-data ::profile/form data)]
+    (error-data->error-map error-data)))
+
+(reg-event-db
+  ::check-field
+  db/default-interceptors
+  (fn [db [m]]
+    (let [em (-> db
+                 (generate-error-map m)
+                 (select-keys (keys m)))]
+      (if (not-empty em)
+        (update-in db [::profile/sub-db ::profile/error-map] merge em)
+        (update-in db [::profile/sub-db ::profile/error-map] #(apply dissoc % (keys m)))))))
+
+(reg-event-fx
+  ::create-new-profile
+  db/default-interceptors
+  (fn [{db :db} [form-data]]
+    (let [error-map (generate-error-map db form-data)
+          updated-db (assoc-in db [::profile/sub-db ::profile/error-map] error-map)]
+      (merge {:db updated-db}
+             (if-not (not-empty error-map)
+               {:dispatch [::update-company (form-data->company-data db form-data) nil]
+                :dispatch-debounce {:id       :scroll-to-top-after-completing-profile
+                                    :dispatch [:wh.events/scroll-to-top]
+                                    :timeout  500}}
+               {:scroll-into-view (profile/section->id (apply min (map profile/field->section (keys error-map))))})))))

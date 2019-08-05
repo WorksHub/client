@@ -7,7 +7,7 @@
             [wh.components.common :refer [companies-section]]
             [wh.components.forms.views :as f]
             [wh.components.icons :refer [icon]]
-            [wh.components.loader.views :refer [loader]]
+            [wh.components.loader :refer [loader]]
             [wh.db :as db]
             [wh.subs :refer [<sub error-sub-key]]))
 

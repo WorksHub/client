@@ -5,7 +5,7 @@
             [wh.components.conversation.views :refer [button codi-message]]
             [wh.components.error.views :refer [loading-error]]
             [wh.components.icons :refer [icon]]
-            [wh.components.loader.views :refer [loader-cover]]
+            [wh.components.loader :refer [loader-cover]]
             [wh.logged-in.dashboard.events :as events]
             [wh.logged-in.dashboard.subs :as subs]
             [wh.subs :refer [<sub]]
