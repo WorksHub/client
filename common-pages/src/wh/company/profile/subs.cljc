@@ -346,11 +346,16 @@
   (fn [sub-db [_ tag-type tag-subtype]]
     (set (get-in sub-db [::profile/selected-tag-ids tag-type tag-subtype]))))
 
-(reg-sub
+
+(reg-sub-raw
   ::selected-tag-ids--all-of-type
-  :<- [::sub-db]
-  (fn [sub-db [_ tag-type]]
-    (set (reduce concat (vals (get-in sub-db [::profile/selected-tag-ids tag-type]))))))
+  (fn [_ [_ tag-type include-existing?]]
+    (reaction
+      (let [sub-db (<sub [::sub-db])
+            r (set (reduce concat (vals (get-in sub-db [::profile/selected-tag-ids tag-type]))))]
+        (if include-existing?
+          (reduce conj r (map :id (<sub [::tags tag-type])))
+          r)))))
 
 (reg-sub
   ::selected-tag-ids--map

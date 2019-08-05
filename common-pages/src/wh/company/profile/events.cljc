@@ -439,7 +439,9 @@
   (fn [{db :db} [label tag-type tag-subtype]]
     {:db (assoc db ::profile/creating-tag? true)
      :graphql {:query tag-gql/create-tag-mutation
-               :variables {:label label :type tag-type :subtype tag-subtype}
+               :variables (merge {:label label :type tag-type}
+                                 (when tag-subtype
+                                   {:subtype tag-subtype}))
                :on-success [::create-new-tag-success tag-type tag-subtype]
                :on-failure [::create-new-tag-failure]}}))
 
@@ -592,15 +594,21 @@
 (defn create-new-profile-data->minimum-data-form
   [db {:keys [industry-tag funding-tag name description size founded-year] :as form-data}]
   (let [company          (cached-company db)
-        selected-tag-ids (set (concat (get-all-tag-ids db) [industry-tag funding-tag]))
+        selected-tag-ids (->> [industry-tag funding-tag]
+                              (concat (get-all-tag-ids db))
+                              (concat (map :id (:tags company)))
+                              (remove nil?)
+                              (set))
         selected-tags    (->> (cache/result db :tags {})
                               :list-tags
                               :tags
                               (filter #(contains? selected-tag-ids (:id %)))
                               (map profile/->tag))]
     (-> form-data
-        (assoc :industry-tag (some #(when (= industry-tag (:id %)) (dissoc % :subtype)) selected-tags)
-               :funding-tag  (some #(when (= funding-tag (:id %)) (dissoc % :subtype)) selected-tags)
+        (assoc :industry-tag (or (some #(when (= industry-tag (:id %)) (dissoc % :subtype)) selected-tags)
+                                 (some #(when (= :industry (:type %))  (dissoc % :subtype)) selected-tags))
+               :funding-tag  (or (some #(when (= funding-tag (:id %)) (dissoc % :subtype)) selected-tags)
+                                 (some #(when (= :funding (:type %))  (dissoc % :subtype)) selected-tags))
                :tech-tags    (filter #(= :tech (:type %)) selected-tags)
                :benefit-tags (filter #(= :benefit (:type %)) selected-tags)
                :logo         (or (get-in db [::profile/sub-db ::profile/pending-logo]) (:logo company))
@@ -612,7 +620,11 @@
 (defn form-data->company-data
   [db {:keys [industry-tag funding-tag name description size founded-year] :as form-data}]
   (let [company          (cached-company db)
-        selected-tag-ids (set (concat (get-all-tag-ids db) [industry-tag funding-tag]))]
+        selected-tag-ids (->> [industry-tag funding-tag]
+                              (concat (get-all-tag-ids db))
+                              (concat (map :id (:tags company)))
+                              (remove nil?)
+                              (set))]
     (-> form-data
         (dissoc :industry-tag :funding-tag :description)
         (assoc :tag-ids          selected-tag-ids

@@ -1111,7 +1111,7 @@
   #?(:cljs
      (let [tags-collapsed? (r/atom true)]
        (fn [tag-type error-field label placeholder]
-         (let [selected-tag-ids (<sub [::subs/selected-tag-ids--all-of-type tag-type])
+         (let [selected-tag-ids (<sub [::subs/selected-tag-ids--all-of-type tag-type true])
                matching-tags    (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type})])
                tag-search       (<sub [::subs/tag-search tag-type])]
            [:div.company-profile__create-profile-step.company-profile__create-profile__technology
