@@ -15413,6 +15413,8 @@ h3 {
     margin: 0px;
     background-color: white;
     padding: 18px; }
+  .company-profile__side section + section {
+    margin-top: 18px; }
 
 .company-profile__toggle {
   height: 78px;
@@ -16133,6 +16135,21 @@ h3 {
   .company-profile__github-details__repo span {
     line-height: 22px;
     color: #bcbcbc; }
+
+.company-profile__company-cta h3 {
+  line-height: 18px; }
+
+.company-profile__company-cta p {
+  line-height: 21px;
+  margin-bottom: 18px; }
+
+.company-profile__company-cta__img {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; }
+  .company-profile__company-cta__img img {
+    margin: 18px 0px 0px 0px;
+    max-height: 150px; }
 
 .auth-popup__content {
   display: none; }

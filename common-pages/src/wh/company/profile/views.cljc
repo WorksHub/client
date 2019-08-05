@@ -915,6 +915,18 @@
      (wrap-img img (<sub [::subs/logo]) {:w 32 :h 32})]
     [header-links]]])
 
+
+(defn company-cta
+  [admin-or-owner?]
+  (when-not (<sub [:user/logged-in?])
+    [:section.company-profile__company-cta
+     [:h3 "Get involved - create a free profile page for your company"]
+     [:p "Use this space to connect with our community and potential new employees"]
+     [link [:button.button.is-full-width "Get Started"] :get-started]
+     [:div.company-profile__company-cta__img
+      [:img {:src "/images/hiw/company/hiw/hiw4.svg"
+             :alt ""}]]]))
+
 (defn company-stats
   [& [class]]
   [:section {:class (util/merge-classes
@@ -950,7 +962,8 @@
       [jobs admin-or-owner?]]
      [:div.company-profile__side.split-content__side.is-hidden-mobile
       [company-info admin-or-owner?]
-      [company-stats]]]
+      [company-stats]
+      [company-cta admin-or-owner?]]]
     [:div.split-content
      [:div.company-profile__main.split-content__main
       [issues-header admin-or-owner?]
