@@ -15445,8 +15445,7 @@ h3 {
   background: white;
   margin: 0 !important;
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  transition: box-shadow 0.3s ease-in-out;
-  overflow: hidden; }
+  transition: box-shadow 0.3s ease-in-out; }
   @media screen and (min-width: 1008px) {
     .company-profile__header {
       padding: 18px; } }
@@ -15650,19 +15649,33 @@ h3 {
 
 .editable {
   position: relative; }
-  .editable .editable--edit-button {
+  .editable .editable__buttons {
     right: 0px; }
 
-.editable--edit-button {
+.editable__buttons {
+  display: flex;
   position: absolute;
   top: 0;
   right: 18px;
   cursor: pointer; }
-  .editable--edit-button .icon--close {
-    width: 28px;
-    height: 28px; }
-  .editable--edit-button .icon {
+  .editable__buttons div + div {
+    margin-left: 8px; }
+  .editable__buttons .icon--edit {
+    fill: #adadad;
+    margin-left: 4px; }
+  .editable__buttons .icon--close {
+    width: 22px;
+    height: 22px;
     fill: #adadad; }
+    @media screen and (max-width: 1007px) {
+      .editable__buttons .icon--close {
+        width: 28px;
+        height: 28px; } }
+
+.info-icon .icon--info {
+  fill: #ffd4cf;
+  width: 22px;
+  height: 22px; }
 
 .editable--save-cancel-buttons {
   display: flex;
@@ -15819,6 +15832,10 @@ h3 {
   .company-profile__company-info__list li + li {
     margin-top: 18px; } }
 
+@media screen and (max-width: 1007px) {
+  .company-profile__company-info__list--editable {
+    padding-top: 36px; } }
+
 .company-profile__company-info__industry-check {
   text-align: left !important;
   margin-top: -32px; }
@@ -15850,6 +15867,13 @@ h3 {
 
 .company-profile__technology__additional {
   margin-top: 18px; }
+
+.company-profile__technology__additional-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; }
+  .company-profile__technology__additional-title .info-icon {
+    height: 18px; }
 
 .company-profile__tech-scale {
   display: flex; }
@@ -15968,7 +15992,7 @@ h3 {
 
 .company-profile__company-info__prompt {
   line-height: 18px;
-  margin-right: 1em; }
+  margin-right: 4.6em; }
 
 .company-profile__sticky {
   height: 61px;
@@ -16560,6 +16584,65 @@ h3 {
     margin-right: 6px;
     cursor: pointer; }
 
+.has-tooltip {
+  position: relative;
+  display: inline-block; }
+  .has-tooltip .tooltip {
+    background-color: white;
+    color: #6E7F89 !important;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: left;
+    padding: 18px;
+    border: 4px solid #ffd4cf;
+    box-shadow: 1px 1px 10px 4px rgba(110, 127, 137, 0.2);
+    z-index: 1;
+    opacity: 1 !important;
+    transition: opacity 0.3s; }
+    @media screen and (min-width: 1008px) {
+      .has-tooltip .tooltip {
+        max-width: 300px; } }
+    @media screen and (max-width: 1007px) {
+      .has-tooltip .tooltip {
+        right: 18px !important;
+        left: 18px !important; } }
+    .has-tooltip .tooltip:after {
+      border: 0 !important;
+      width: 30px;
+      height: 15px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' height='15' width='30'><polygon fill='%23ffd4cf' points='0,0 30,0 15,15'/><polygon fill='white' points='5,0 25,0 15,10'/></svg>"); }
+    .has-tooltip .tooltip.place-top {
+      margin-top: -35px; }
+      .has-tooltip .tooltip.place-top:after {
+        bottom: -15px !important;
+        margin-left: -7px !important; }
+        @media screen and (max-width: 1007px) {
+          .has-tooltip .tooltip.place-top:after {
+            left: unset;
+            right: 39px; } }
+    .has-tooltip .tooltip.place-bottom {
+      margin-top: 35px; }
+      .has-tooltip .tooltip.place-bottom:after {
+        transform: rotate(180deg);
+        top: -15px !important;
+        margin-left: -8px !important; }
+        @media screen and (max-width: 1007px) {
+          .has-tooltip .tooltip.place-bottom:after {
+            left: unset;
+            right: 39px; } }
+    .has-tooltip .tooltip.place-left {
+      margin-left: -25px;
+      margin-top: -5px; }
+      .has-tooltip .tooltip.place-left:after {
+        transform: rotate(-90deg);
+        right: -22px !important; }
+    .has-tooltip .tooltip.place-right {
+      margin-right: -25px;
+      margin-top: -5px; }
+      .has-tooltip .tooltip.place-right:after {
+        transform: rotate(90deg);
+        left: -22px !important; }
+
 .sticky {
   position: fixed;
   background-color: white;
@@ -16568,6 +16651,7 @@ h3 {
   padding: 12px;
   align-items: center;
   justify-content: space-between;
+  z-index: 5;
   -webkit-transform: translate3d(0, 0, 0); }
 
 @media screen and (min-width: 1008px) {

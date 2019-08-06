@@ -40,3 +40,9 @@
    :diversity {:icon        "cp-diversity"
                :title       "Diversity"
                :placeholder "e.g. diversity policy, equal pay"}})
+
+(def information-tooltips
+  {:about-us        "Think of this as your elevator pitch. What are you building and how do you plan to achieve it? Be as clear and concise as you can."
+   :company-info    "Edit this section to include information about your company, such as industry and location."
+   :additional-info "Feel free to provide any additional information about how your tech team setup here. What's your process. What methodology do you use? Do you have mandatory code reviews? What's the size of your teams and how are they managed and structured?"
+   :how-we-work     "Describe your management team. Do they come from a technical or non-technical background? Describe your hiring process. What are the stages like for the candidate and how many will there be? Do you ask candidates to take a coding test? Can you give more information about what this involves? What's your working evnvironment?"})

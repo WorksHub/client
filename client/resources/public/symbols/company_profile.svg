@@ -33,4 +33,7 @@
     <symbol id="chevron_right" viewBox="0 0 86 86">
         <path d="m21.003 80.094c-1.338 1.352-1.338 3.541 0 4.893 1.337 1.35 3.506 1.352 4.845 0l39.149-39.539c1.338-1.352 1.338-3.543 0-4.895l-39.149-39.539c-1.339-1.352-3.506-1.352-4.845 0-1.338 1.352-1.338 3.541-1e-3 4.893l35.704 37.093-35.703 37.094z"/>
     </symbol>
+    <symbol id="info" viewBox="0 0 22 22">
+        <g fill="none" fill-rule="evenodd"><circle fill="#FFD4CF" cx="11" cy="11" r="11"/><text font-family="Montserrat-Bold, Montserrat" font-size="14" font-weight="bold" fill="#FFF"><tspan x="8.809" y="16">i</tspan></text></g>
+    </symbol>
 </svg>

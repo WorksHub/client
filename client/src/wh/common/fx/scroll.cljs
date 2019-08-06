@@ -4,8 +4,10 @@
     [wh.pages.core :refer [force-scroll-to-top!]]))
 
 (defn scroll-to-top
-  [_]
-  (force-scroll-to-top!))
+  ([]
+   (force-scroll-to-top!))
+  ([_ &]
+   (scroll-to-top)))
 
 (defn scroll-into-view-effect
   [id]

@@ -21,6 +21,7 @@
     [wh.components.common :refer [link wrap-img img base-img]]
     [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
+    [wh.components.info-icon :refer [info-icon]]
     [wh.components.issue :refer [issue-card]]
     [wh.components.job :refer [job-card]]
     [wh.components.loader :refer [loader]]
@@ -40,23 +41,36 @@
   [editing-atom on-editing]
   #?(:cljs
      [:div.editable--edit-button
-      [icon "edit"
-       :on-click #(do (reset! editing-atom true)
-                      (when on-editing
-                        (on-editing)))]]))
+     (if (not @editing-atom)
+        [icon "edit"
+         :on-click #(do (reset! editing-atom true)
+                        (when on-editing
+                          (on-editing)))]
+        [icon "close"
+         :on-click #(reset! editing-atom false)])]))
+
+(defn editable-buttons
+  ([editing-atom info-id]
+   [editable-buttons editing-atom info-id nil])
+  ([editing-atom info-id on-editing]
+   (if (<sub [::subs/updating?])
+     [:div.editable__buttons
+      [:div.editable--loading]]
+     [:div.editable__buttons
+      (when info-id
+        [info-icon info-id (get data/information-tooltips info-id)])
+      [edit-button editing-atom on-editing]])))
 
 (defn editable
   [_args _read-body _write-body]
   (let [editing? (r/atom false)]
-    (fn [{:keys [editable? prompt-before-cancel? on-editing on-cancel on-save modal?]
+    (fn [{:keys [editable? prompt-before-cancel? on-editing on-cancel on-save modal? info]
           :or   {modal?                false
                  prompt-before-cancel? false}}
          read-body write-body]
       (let [read-body' [:div.editable read-body
                         (when editable?
-                          (if (<sub [::subs/updating?])
-                            [:div.editable--loading]
-                            [edit-button editing? on-editing]))]
+                          [editable-buttons editing? info on-editing])]
             write-body'
             (if write-body [:div.editable.editable--editing write-body
                             #?(:cljs
@@ -87,14 +101,6 @@
                  write-body']
                 write-body')))]))))
 
-(defn edit-close-button
-  [editing-atom]
-  (if (not @editing-atom)
-    [edit-button editing-atom nil]
-    [:div.editable--edit-button
-     [icon "close"
-      :on-click #(reset! editing-atom false)]]))
-
 (defn header-link
   [label id]
   [:a.company-profile__header__link
@@ -118,7 +124,7 @@
 
 (defn header
   [_admin-or-owner?]
-  (let [editing? (r/atom false)
+  (let [editing?         (r/atom false)
         new-company-name (r/atom nil)]
     (fn [admin-or-owner?]
       (let [pending-logo (<sub [::subs/pending-logo])]
@@ -128,13 +134,13 @@
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing"))}
          [editable
-          {:editable?                       admin-or-owner?
+          {:editable?             admin-or-owner?
            :prompt-before-cancel? (boolean (or @new-company-name
                                                pending-logo))
-           :on-editing           #(do (reset! editing? true))
-           :on-cancel            #(do (reset! editing? false)
-                                      (reset! new-company-name false)
-                                      (dispatch [::events/reset-pending-logo]))
+           :on-editing            #(do (reset! editing? true))
+           :on-cancel             #(do (reset! editing? false)
+                                       (reset! new-company-name false)
+                                       (dispatch [::events/reset-pending-logo]))
            :on-save
            #(do
               (reset! editing? false)
@@ -161,10 +167,10 @@
            #?(:cljs
               [:form.form.wh-formx
                [logo-field
-                {:on-change [::events/set-logo]
-                 :value (or pending-logo
-                            (<sub [::subs/logo]))
-                 :loading? (<sub [::subs/logo-uploading?])
+                {:on-change      [::events/set-logo]
+                 :value          (or pending-logo
+                                     (<sub [::subs/logo]))
+                 :loading?       (<sub [::subs/logo-uploading?])
                  :on-select-file (upload/handler
                                    :launch [:wh.common.logo/logo-upload]
                                    :on-upload-start [::events/logo-upload-start]
@@ -173,9 +179,9 @@
                [text-field (or @new-company-name
                                (<sub [::subs/name])
                                "")
-                {:type :text
-                 :label "Company name"
-                 :class "company-profile__header__edit-name"
+                {:type      :text
+                 :label     "Company name"
+                 :class     "company-profile__header__edit-name"
                  :on-change (fn [v] (reset! new-company-name v))}]])]]
          [header-links]]))))
 
@@ -198,8 +204,8 @@
                               :delete-event  [::events/delete-video]
                               :add-event     [::events/add-video]
                               :update-event  [::events/update-video]}]])
-           (when (and admin-or-owner? @editing?)
-             [edit-close-button editing?])])))))
+           (when (and admin-or-owner? (or @editing? (not-empty videos)))
+             [editable-buttons editing? nil])])))))
 
 (defn blogs
   [admin-or-owner?]
@@ -430,8 +436,8 @@
                                          :on-upload-start [::events/photo-upload-start]
                                          :on-success [::events/photo-upload-success]
                                          :on-failure [::events/photo-upload-failure])}])]))
-           (when (and admin-or-owner? @editing?)
-             [edit-close-button editing?])
+           (when (and admin-or-owner? (or @editing? (not-empty simages)))
+             [editable-buttons editing? nil])
            (pswp-element)])))))
 
 (defn profile-tag-field
@@ -483,7 +489,8 @@
                    "company-profile__section--headed"
                    (when @editing? "company-profile__section--editing")
                    "company-profile__about-us")}
-         [editable {:editable?             admin-or-owner?
+         [editable {:info                  :about-us
+                    :editable?             admin-or-owner?
                     :prompt-before-cancel? (boolean (or @new-desc (not= selected-tag-ids @existing-tag-ids)))
                     :on-editing            #(do
                                               (reset! editing? true)
@@ -676,7 +683,9 @@
              (for [k (keys data/dev-setup-data)]
                ^{:key k}
                [edit-tag-display tag-type k (get data/dev-setup-data k)]))
-           [:h2.subtitle "Additional Information"]
+           [:div.company-profile__technology__additional-title
+            [:h2.subtitle "Additional Information"]
+            [info-icon :additional-info (get data/information-tooltips :additional-info)]]
            #?(:cljs
               [rich-text-field {:value       (or @new-ati ati "")
                                 :placeholder "Please enter any additional technical information..."
@@ -696,7 +705,8 @@
       [:section
        {:class (util/merge-classes "company-profile__company-info"
                                    (when cls (name cls)))}
-       [editable {:editable?             admin-or-owner?
+       [editable {:info                  :company-info
+                  :editable?             admin-or-owner?
                   :modal?                true
                   :prompt-before-cancel? (or @new-industry-tag @new-size @new-founded-year)
                   :on-editing            #(reset! editing? true)
@@ -733,7 +743,9 @@
           (if (not (or industry funding size founded-year location))
             [:div.company-profile__company-info__prompt
              [:i "Edit this section to include information about your company, such as industry and location."]]
-            [:ul.company-profile__company-info__list
+            [:ul
+             {:class (util/merge-classes "company-profile__company-info__list"
+                                         (when admin-or-owner? "company-profile__company-info__list--editable"))}
              (when industry
                [:li [icon "industry"] [tag/tag :div industry]])
              (when funding
@@ -812,7 +824,8 @@
                      "company-profile__section--headed"
                      (when @editing? "company-profile__section--editing")
                      "company-profile__how-we-work")}
-           [editable {:editable?             admin-or-owner?
+           [editable {:info                  :how-we-work
+                      :editable?             admin-or-owner?
                       :prompt-before-cancel? @new-how-we-work
                       :on-editing            #(do
                                                 (reset! editing? true)
@@ -843,9 +856,9 @@
 
 (defn benefits
   [_admin-or-owner?]
-  (let [editing? (r/atom false)
+  (let [editing?         (r/atom false)
         existing-tag-ids (r/atom #{})
-        tag-type :benefit]
+        tag-type         :benefit]
     (fn [admin-or-owner?]
       (let [selected-tag-ids (set (reduce concat (vals (<sub [::subs/selected-tag-ids--map tag-type]))))]
         [:section
@@ -861,7 +874,7 @@
                                               (run! (fn [subtype]
                                                       (swap! existing-tag-ids clojure.set/union (<sub [::subs/current-tag-ids tag-type subtype]))
                                                       (dispatch-sync [::events/reset-selected-tag-ids tag-type subtype])) tag-spec/benefit-subtypes))
-                    :on-cancel #(reset! editing? false)
+                    :on-cancel             #(reset! editing? false)
                     :on-save
                     #(do
                        (reset! editing? false)
