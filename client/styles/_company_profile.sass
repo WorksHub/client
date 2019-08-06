@@ -713,15 +713,28 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
     color: $pinkish-grey
 
 .company-profile__company-cta
+  +mobile
+    background-color: white
+    padding: 18px
+  .is-flex
+    +desktop
+      flex-direction: column
   h3
     line-height: 18px
   p
     line-height: 21px
-    margin-bottom: 18px
+    flex: 1
+    +desktop
+      margin-bottom: 18px
+
 .company-profile__company-cta__img
+  flex: 1
   display: flex
   justify-content: center
   align-items: flex-end
   img
-    margin: 18px 0px 0px 0px
+    +desktop
+      margin: 18px 0px 0px 0px
+    +mobile
+      margin: 0px 0px 18px 0px
     max-height: 150px

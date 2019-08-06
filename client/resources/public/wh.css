@@ -16136,20 +16136,38 @@ h3 {
     line-height: 22px;
     color: #bcbcbc; }
 
+@media screen and (max-width: 1007px) {
+  .company-profile__company-cta {
+    background-color: white;
+    padding: 18px; } }
+
+@media screen and (min-width: 1008px) {
+  .company-profile__company-cta .is-flex {
+    flex-direction: column; } }
+
 .company-profile__company-cta h3 {
   line-height: 18px; }
 
 .company-profile__company-cta p {
   line-height: 21px;
-  margin-bottom: 18px; }
+  flex: 1; }
+  @media screen and (min-width: 1008px) {
+    .company-profile__company-cta p {
+      margin-bottom: 18px; } }
 
 .company-profile__company-cta__img {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-end; }
   .company-profile__company-cta__img img {
-    margin: 18px 0px 0px 0px;
     max-height: 150px; }
+    @media screen and (min-width: 1008px) {
+      .company-profile__company-cta__img img {
+        margin: 18px 0px 0px 0px; } }
+    @media screen and (max-width: 1007px) {
+      .company-profile__company-cta__img img {
+        margin: 0px 0px 18px 0px; } }
 
 .auth-popup__content {
   display: none; }

@@ -917,15 +917,19 @@
 
 
 (defn company-cta
-  [admin-or-owner?]
+  [admin-or-owner? & [cls]]
   (when-not (<sub [:user/logged-in?])
-    [:section.company-profile__company-cta
+    [:section
+     {:class (util/merge-classes "company-profile__company-cta"
+                                 cls)}
      [:h3 "Get involved - create a free profile page for your company"]
-     [:p "Use this space to connect with our community and potential new employees"]
-     [link [:button.button.is-full-width "Get Started"] :get-started]
-     [:div.company-profile__company-cta__img
-      [:img {:src "/images/hiw/company/hiw/hiw4.svg"
-             :alt ""}]]]))
+     [:div.is-flex
+      [:p "Use this space to connect with our community and potential new employees"]
+      [link [:button.button.is-full-width.is-hidden-mobile "Get Started"] :get-started]
+      [:div.company-profile__company-cta__img
+       [:img {:src "/images/hiw/company/hiw/hiw4.svg"
+             :alt ""}]]]
+     [link [:button.button.is-full-width.is-hidden-desktop "Get Started"] :get-started]]))
 
 (defn company-stats
   [& [class]]
@@ -957,6 +961,7 @@
       [technology admin-or-owner?]
       [hash-anchor "company-profile__benefits"]
       [benefits admin-or-owner?]
+      [company-cta admin-or-owner? "is-hidden-desktop"]
       [hash-anchor "company-profile__jobs"]
       [job-header admin-or-owner?]
       [jobs admin-or-owner?]]
