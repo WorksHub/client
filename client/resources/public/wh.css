@@ -16333,8 +16333,10 @@ h3 {
   flex: 1 0 245px;
   margin-bottom: 20px; }
   @media screen and (min-width: 1008px) {
-    .video:nth-of-type(even) {
-      margin-left: 12px; } }
+    .video {
+      max-width: 49%; }
+      .video:nth-of-type(even) {
+        margin-left: 12px; } }
   @media screen and (max-width: 1007px) {
     .video {
       margin-right: 12px; } }
