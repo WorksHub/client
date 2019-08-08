@@ -360,7 +360,10 @@
         "robert"          "Robert Nastro"
         "daniel.earnshaw" "Daniel Earnshaw"
         "quan"            "Quan Truc"
-        "nicole"          "Nicole Sadozai"}
+        "nicole"          "Nicole Sadozai"
+        "sheryl"          "Sheryl Martin"
+        "hanna"           "Hanna Poplawska"
+        "nikolaus"        "Nikolaus Krahé"}
        (map (fn [[k v]] [(->email k) v]))
        (into {})))
 
