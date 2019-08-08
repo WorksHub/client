@@ -1425,3 +1425,90 @@ $description-height: 300px
     display: block
     margin: 5px auto
     width: 200px
+
+.company-dashboard__profile-banner
+  section
+    background-color: white
+    padding: 18px
+    display: flex
+
+.company-dashboard__profile-banner__complete
+  flex-direction: column
+  padding-top: 34px !important
+
+.company-dashboard__profile-banner__publish
+  +mobile
+    flex-direction: column
+  ul
+    +desktop
+      height: 84px
+  p
+    margin-bottom: 12px
+  span, li, p
+    font-family: $family-secondary
+    font-size: 14px
+    line-height: 21px
+  li
+    display: flex
+    .icon
+      margin-top: 4px
+      width: 14px
+      height: 14px
+      min-width: 14px
+      min-height: 14px
+      margin-right: 12px
+  h2
+    line-height: 26px
+    color: $red
+    +desktop
+      max-width: 400px
+    +mobile
+      max-width: 300px
+  a
+    +mobile
+      display: block
+      width: 100%
+      button
+        width: 100%
+        margin-bottom: 12px
+  button:last-of-type
+    margin-top: 12px
+  div:nth-of-type(1)
+    flex: 2
+  div:nth-of-type(2)
+    flex: 1
+
+.company-dashboard__profile-banner__img
+  display: flex
+  align-items: center
+  +desktop
+    justify-content: flex-end
+  +mobile
+    justify-content: center
+
+.company-dashboard__profile-banner__complete__info
+  margin-top: 12px
+  display: flex
+  align-items: flex-end
+  +mobile
+    flex-direction: column
+    a, button
+      margin-top: 6px
+      width: 100%
+  button
+    padding: 0px 12px
+  h3
+    color: $red
+  p
+    font-size: 12px
+    line-height: 18px
+    color: $grey-darker
+  div
+    +mobile
+      width: 100%
+  div:nth-of-type(1)
+    flex: 2
+  div:nth-of-type(2)
+    flex: 1
+    a
+      float: right

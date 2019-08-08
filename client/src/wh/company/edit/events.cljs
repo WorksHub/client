@@ -235,11 +235,7 @@
   (fn [{db :db} [resp]]
     (let [company (-> (get-in resp [:data :company])
                       (cases/->kebab-case))]
-      {:db
-       (-> db
-           (assoc-in [::user/sub-db ::user/company-connected-github?]
-                     (:connected-github company))
-           (update ::edit/sub-db
+      {:db (update db ::edit/sub-db
                    (fn [sub-db]
                      (-> sub-db
                          (merge (util/namespace-map "wh.company.edit.db" company))
@@ -249,8 +245,8 @@
                          (util/update-in* [::edit/payment :billing-period] keyword)
                          (util/update-in* [::edit/payment :coupon :duration] keyword)
                          (util/update-in* [::edit/invoices] #(map process-invoice %))
-                         (assoc  ::edit/original-company company
-                                 ::edit/loading? false)))))})))
+                         (assoc ::edit/original-company company
+                                ::edit/loading? false))))})))
 
 (reg-event-db
   ::fetch-company-failure

@@ -45,8 +45,9 @@
              (if syncing?
                [syncing-issues-overlay]
                [:div.repo__content
-                [:div.repo__language
-                 [:ul.tags [:li.tag (:primary-language repo)]]]
+                (when-let [primary-lang (:primary-language repo)]
+                  [:div.repo__language
+                   [:ul.tags [:li.tag primary-lang]]])
                 [:div.publish-container
                  [:span.publish.publish-all "Publish All"]]
                 [:div.repo__checkbox__container

@@ -87,7 +87,7 @@
                                  :opt-un [:wh.company/logo]))
 
 (s/def :wh.issue.author/login string?)
-(s/def :wh.issue.author/name string?)
+(s/def :wh.issue.author/name (s/nilable string?))
 (s/def :wh.issue/author (s/keys :req-un [:wh.issue.author/login]
                                 :opt-un [:wh.issue.author/name]))
 (s/def :wh.issue/viewer-contributed boolean?)

@@ -20,7 +20,7 @@
   (fn [db _]
     (update db ::db/page-mapping merge page-mapping)))
 
-(dispatch [::edit-issue/initialize-db])
+(dispatch-sync [::edit-issue/initialize-db])
 (dispatch-sync [::initialize-page-mapping])
 
 ;; load extra symbols

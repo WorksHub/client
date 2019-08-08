@@ -55,7 +55,9 @@
   ::gh-connect-success
   db/default-interceptors
   (fn [{db :db} [_]]
-    {:navigate [:manage-issues]}))
+    {:db (assoc-in db [::user/sub-db ::user/company :connected-github] true)
+     :dispatch [::pages/unset-loader]
+     :navigate [:manage-issues]}))
 
 (reg-event-fx
   ::gh-auth-fail

@@ -79,4 +79,5 @@
 (defn ->company
   [m]
   (-> m
-      (update :tags (partial map ->tag))))
+      (update :tags (partial map ->tag))
+      (update :size keyword)))

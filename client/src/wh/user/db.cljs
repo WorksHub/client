@@ -52,6 +52,10 @@
   [db id]
   (= (get-in db [::sub-db ::company-id]) id))
 
+(defn owner-by-slug?
+  [db slug]
+  (= (get-in db [::sub-db ::company :slug]) slug))
+
 (defn user-name [db]
   (get-in db [::sub-db ::name]))
 

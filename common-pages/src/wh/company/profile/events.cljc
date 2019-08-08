@@ -108,8 +108,12 @@
 
 (reg-query :tags fetch-tags)
 
+(defn company-slug
+  [db]
+  (get-in db [:wh.db/page-params :slug]))
+
 (defn initial-query [db]
-  [:company {:slug (get-in db [:wh.db/page-params :slug])} ])
+  [:company {:slug (company-slug db)}])
 
 (defn extra-data-query [db]
   [:company-issues-and-blogs {:slug (get-in db [:wh.db/page-params :slug])}])
@@ -125,10 +129,6 @@
   (if type-filter
     [:tags {:type type-filter}]
     [:tags {}]))
-
-(defn company-slug
-  [db]
-  (get-in db [:wh.db/page-params :slug]))
 
 (defn cached-company
   [db]
@@ -148,7 +148,8 @@
            [:google/load-maps]
            (into [:graphql/query] (extra-data-query db))
            (when (or (user/admin? db)
-                     (user/owner? db (:id (cached-company db))))
+                     (user/owner? db (:id (cached-company db)))
+                     (user/owner-by-slug? db (company-slug db)))
              [::fetch-all-tags])))) ;; TODO for now we get all tags and filter client-side
 
 #?(:cljs
@@ -167,14 +168,14 @@
      upload/image-upload-fn))
 
 #?(:cljs
-  (reg-event-fx
-  ::fetch-stats
-  db/default-interceptors
-  (fn [{db :db} _]
-    {:dispatch (into [:graphql/query] (-> db
-                                          (cached-company)
-                                          :id
-                                          (company-stats-query )))})))
+   (reg-event-fx
+     ::fetch-stats
+     db/default-interceptors
+     (fn [{db :db} _]
+       {:dispatch (into [:graphql/query] (-> db
+                                             (cached-company)
+                                             :id
+                                             (company-stats-query )))})))
 
 (reg-event-db
   ::photo-upload-start

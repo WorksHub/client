@@ -44,5 +44,4 @@
                           ::loading?            false})
     company (update ::sub-db merge {::company (into {} company)})
     me (update :wh.user.db/sub-db merge
-               {:wh.user.db/welcome-msgs              (set (:welcomeMsgs me))
-                :wh.user.db/company-connected-github? (get-in me [:company :connectedGithub])})))
+               {:wh.user.db/welcome-msgs (set (:welcomeMsgs me))})))

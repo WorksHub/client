@@ -32,12 +32,15 @@
                                                 :wh.company.tech-scales/ops
                                                 :wh.company.tech-scales/time-to-deploy]))
 
+(s/def :wh.company/has-published-profile boolean?)
+
 ;; these 'profile' keys exist because creating a company without these
 ;; fields is fine, but publishing a profile is not
 (defn includes-tech? [c] ((set (map :type c)) :tech))
 (defn includes-industry? [c] ((set (map :type c)) :industry))
 (defn includes-funding? [c] ((set (map :type c)) :funding))
 (defn includes-benefit? [c] ((set (map :type c)) :benefit))
+(defn includes-company? [c] ((set (map :type c)) :company))
 (defn description-is-not-placeholder? [d]
   (not (or (= d description-placeholder)
            (= d (str "<p>" description-placeholder "</p>")))))
@@ -52,11 +55,23 @@
                                        includes-industry?
                                        includes-funding?
                                        includes-tech?
-                                       includes-benefit?))
+                                       includes-benefit?
+                                       includes-company?))
 
-(s/def :wh.company/minimum-profile (s/keys :req-un [:wh.company.profile/logo
-                                                    :wh.company/name
-                                                    :wh.company.profile/description-html
-                                                    :wh.company.profile/tags
-                                                    :wh.company/size
-                                                    :wh.company/founded-year]))
+(s/def :wh.company.profile/blogs (s/coll-of map? :min-count 1))
+(s/def :wh.company.profile/images (s/coll-of map? :min-count 1))
+(s/def :wh.company.profile/videos (s/coll-of map? :min-count 1))
+(s/def :wh.company.profile/locations (s/coll-of map? :min-count 1))
+
+(s/def :wh.company/top-score-profile (s/keys :req-un [:wh.company.profile/logo
+                                                      :wh.company/name
+                                                      :wh.company.profile/description-html
+                                                      :wh.company.profile/tags
+                                                      :wh.company/how-we-work
+                                                      :wh.company/size
+                                                      :wh.company/founded-year
+                                                      :wh.company.profile/blogs
+                                                      :wh.company.profile/images
+                                                      :wh.company.profile/videos
+                                                      :wh.company.profile/locations
+                                                      :wh.company/tech-scales]))

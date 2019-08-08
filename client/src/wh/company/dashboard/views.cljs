@@ -228,18 +228,74 @@
 
 (defn roles [class-name title jobs live-roles?]
   (into
-   [:section {:class class-name}
-    [:h2 title]]
-   (let [cards (concat
-                (when (and live-roles? (<sub [::user-subs/welcome-msg-not-seen? "live_roles"]))
-                  [[intro-live-roles]])
-                (for [job jobs] [job-card job])
-                (when live-roles?
-                  [[add-job-card]]))]
-     (for [part (partition-all 2 cards)]
-       (into [:div.columns]
-             (for [card part]
-               [:div.column.is-6 card]))))))
+    [:section {:class class-name}
+     [:h2 title]]
+    (let [cards (concat
+                  (when (and live-roles? (<sub [::user-subs/welcome-msg-not-seen? "live_roles"]))
+                    [[intro-live-roles]])
+                  (for [job jobs] [job-card job])
+                  (when live-roles?
+                    [[add-job-card]]))]
+      (for [part (partition-all 2 cards)]
+        (into [:div.columns]
+              (for [card part]
+                [:div.column.is-6 card]))))))
+
+(defn complete-profile-text
+  [amount]
+  (cond
+    (= amount 100)
+    "We have Take-Off! Your profile is complete! Make sure your details are up-to-date and remember, you can always add more content, such as blogs, images and videos."
+    (>= amount 80)
+    "Don’t stop now! Companies with a completed profile are seeing an 18% increase in applications."
+    (>= amount 60)
+    "Make sure your benefits and tech stack are clearly outlined as this will help you attract better applications."
+    :else
+    "It’s in good shape but adding some other content such as articles or videos of your tech talks will really help increase your exposure on Workshub."))
+
+(defn profile-banner
+  []
+  [:div.company-dashboard__profile-banner
+   (if (<sub [::subs/profile-enabled?])
+     (let [amount (<sub [::subs/profile-completion-percentage])
+           amount-pc (str amount "%")]
+       [:div
+        [:h2 "Your Company Profile"]
+        [:section.company-dashboard__profile-banner__complete
+         [:div.progress-bar
+          [:div.progress-bar__background]
+          [:div.progress-bar__foreground {:style {:width amount-pc}}]
+          [:div.progress-bar__markers
+           [:div.progress-bar__marker {:data-label "0%"}]
+           [:div.progress-bar__marker {:data-label "20%"}]
+           [:div.progress-bar__marker {:data-label "40%"}]
+           [:div.progress-bar__marker {:data-label "60%"}]
+           [:div.progress-bar__marker {:data-label "80%"}]
+           [:div.progress-bar__marker {:data-label "100%"}]]
+          [:div.progress-bar__thumb {:style {:width amount-pc}}
+           [:div.progress-bar__thumb__img
+            [:img {:src "/images/rocket.svg"
+                   :alt ""}]]]]
+         [:div.company-dashboard__profile-banner__complete__info
+          [:div
+           [:h3 "Your profile is " amount-pc " complete"]
+           [:p (complete-profile-text amount)]]
+          [:div
+           [link [:button.button {:id "company-dashboard__profile-banner__add-to-profile"}
+                  "Update company profile"]
+            :company :slug (<sub [::subs/slug])]]]]])
+     [:section.company-dashboard__profile-banner__publish
+      [:div
+       [:h2 "Want to improve your monthly stats? Complete your company profile now"]
+       [:p "It's totally free and will help you..."]
+       [:ul
+        [:li [icon "cutout-tick"] "improve interest in your jobs and open source issues"]
+        [:li [icon "cutout-tick"] "engage with more passive candidates"]
+        [:li [icon "cutout-tick"] "tell our community all about your company culture and working environment"]]
+       [link [:button.button "Complete company profile now"] :company :slug (<sub [::subs/slug])]]
+      [:div.company-dashboard__profile-banner__img
+       [:img {:src "/images/hiw/company/hiw/hiw4.svg"
+              :alt ""}]]])])
 
 (defn live-roles []
   (roles "live-roles"
@@ -339,7 +395,9 @@
     [:div.company-dashboard__grid
      [intro-your-company]
      [your-company]
-     [stats]
+     [stats]]
+    [profile-banner]
+    [:div.company-dashboard__grid
      [activity]
      [live-roles]
      [unpublished-roles]]]

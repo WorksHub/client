@@ -928,7 +928,6 @@
      (wrap-img img (<sub [::subs/logo]) {:w 32 :h 32})]
     [header-links]]])
 
-
 (defn company-cta
   [admin-or-owner? & [cls]]
   (when-not (<sub [:user/logged-in?])
@@ -937,11 +936,11 @@
                                  cls)}
      [:h3 "Get involved - create a free profile page for your company"]
      [:div.is-flex
-      [:p "Use this space to connect with our community and potential new employees"]
+      [:p "Use this space to connect with our community. Companies with profiles typical get 20% more applications!"]
       [link [:button.button.is-full-width.is-hidden-mobile "Get Started"] :get-started]
       [:div.company-profile__company-cta__img
        [:img {:src "/images/hiw/company/hiw/hiw4.svg"
-             :alt ""}]]]
+              :alt ""}]]]
      [link [:button.button.is-full-width.is-hidden-desktop "Get Started"] :get-started]]))
 
 (defn company-stats
@@ -987,6 +986,7 @@
       [issues-header admin-or-owner?]
       [issues admin-or-owner?]
       [hash-anchor "company-profile__how-we-work"]
+      [how-we-work-header admin-or-owner?]
       [how-we-work admin-or-owner?]
       [blogs admin-or-owner?]
       [photos admin-or-owner?]
@@ -1024,8 +1024,9 @@
   [num txt]
   [:div.company-profile__create-profile-step-header
    {:id (profile/section->id num)}
-   [:div.number-circle.number-circle--inverted num]
-   [:h2.subtitle txt]])
+   [:div.number-circle.number-circle--inverted.is-hidden-mobile num]
+   [:h2.subtitle.is-hidden-mobile txt]
+   [:h2.subtitle.is-hidden-desktop (str num ". " txt)]])
 
 (defn create-new-profile--logo-and-name
   [_new-company-name]

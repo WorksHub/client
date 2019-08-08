@@ -2,13 +2,16 @@
   (:require
     [cljs-time.core :as t]
     [cljs-time.format :as tf]
+    [cljs.spec.alpha :as s]
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub]]
     [wh.common.data :refer [package-data]]
+    [wh.common.specs.company]
     [wh.company.dashboard.db :as sub-db]
     [wh.components.stats.db :as stats]
     [wh.routes :as routes]
-    [wh.user.subs :as user-subs])
+    [wh.user.subs :as user-subs]
+    [wh.util :as util])
   (:require-macros
     [clojure.core.strint :refer [<<]]))
 
@@ -223,3 +226,31 @@
   (fn [sub-db _]
     (and (::sub-db/pending-offer sub-db)
          (get-in sub-db [::sub-db/pending-offer :recurring-fee])))) ;; need to make sure there is a fee, otherwise it's possible the offer wasn't created
+
+(defn sub-db->minimum-company
+  [sub-db]
+  (-> sub-db
+      (util/strip-ns-from-map-keys)
+      (update :blogs (fn [blogs] (:blogs blogs)))
+      (update :tech-scales (fn [ts] (util/remove-nils ts)))
+      (update :tags (fn [tags] (map (fn [tag] (cond-> tag
+                                                      (nil? (:subtype tag))
+                                                      (dissoc :subtype)
+                                                      :always
+                                                      (util/update-in* [:subtype] keyword))) tags)))))
+
+(defn round-up-to
+  [base x]
+  (* base (Math/ceil (/ x base))))
+
+(reg-sub
+  ::profile-completion-percentage
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (let [company (sub-db->minimum-company sub-db)
+          max-score (count (reduce concat (filter vector? (s/form (s/get-spec :wh.company/top-score-profile)))))
+          penalties (count (::s/problems (s/explain-data :wh.company/top-score-profile company)))]
+      (->> (* (/ (- max-score penalties) max-score) 100)
+           (round-up-to 5)
+           (max 0)
+           (min 100)))))

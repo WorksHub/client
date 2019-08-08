@@ -28,6 +28,19 @@
 (defn dashboard-query [id]
   {:venia/queries [[:company {:id id}
                     [:id :name :descriptionHtml :logo :package :permissions :disabled :slug :profileEnabled
+
+                     ;; ----------
+                     ;; required for profile completion percentage
+                     :size :foundedYear :howWeWork
+                     [:tags [:id :type :label :slug :subtype]]
+                     [:techScales [:testing :ops :timeToDeploy]]
+                     [:locations [:city]]
+                     [:videos [:youtubeId]]
+                     [:images [:url]]
+                     [:blogs {:pageSize 1 :pageNumber 1}
+                      [[:blogs
+                        [:id]]]]
+                     ;; ----------
                      [:pendingOffer [:recurringFee]]
                      [:payment [:billingPeriod]]]]
                    [:jobs {:filter_type "all"
@@ -117,20 +130,24 @@
   db/default-interceptors
   (fn [{db :db} [resp]]
     {:db (let [company (-> resp
-                            (get-in [:data :company])
-                            (cases/->kebab-case)
-                            (update :package keyword)
-                            (update :permissions #(set (map keyword %))))
+                           (get-in [:data :company])
+                           (cases/->kebab-case)
+                           (update :package keyword)
+                           (update :size keyword)
+                           (update :permissions #(set (map keyword %)))
+                           (update :tags #(map (fn [tag] (-> tag
+                                                             (update :type keyword)
+                                                             (assoc :weight 0.0))) %)))
                company-db (as-> company x
-                            (util/namespace-map (namespace `::sub-db/x) x)
-                            (assoc x ::sub-db/stats (get-in resp [:data :job_analytics]))
-                            (assoc x ::sub-db/jobs (mapv translate-job (get-in resp [:data :jobs])))
-                            (assoc x ::sub-db/activity (->> (get-in resp [:data :activity])
-                                                            (map cases/->kebab-case)
-                                                            (mapv #(update % :timestamp str->date-time))))
-                            (assoc x ::sub-db/activity-items-count
-                                   (initial-activity-count (count (::sub-db/jobs x))
-                                                           (::sub-db/activity x))))]
+                                (util/namespace-map (namespace `::sub-db/x) x)
+                                (assoc x ::sub-db/stats (get-in resp [:data :job_analytics]))
+                                (assoc x ::sub-db/jobs (mapv translate-job (get-in resp [:data :jobs])))
+                                (assoc x ::sub-db/activity (->> (get-in resp [:data :activity])
+                                                                (map cases/->kebab-case)
+                                                                (mapv #(update % :timestamp str->date-time))))
+                                (assoc x ::sub-db/activity-items-count
+                                       (initial-activity-count (count (::sub-db/jobs x))
+                                                               (::sub-db/activity x))))]
            (-> db
                (assoc :wh.company.dashboard.db/sub-db company-db)
                (util/update-in* [:wh.user.db/sub-db :wh.user.db/company]
