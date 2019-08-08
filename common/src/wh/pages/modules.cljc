@@ -12,7 +12,8 @@
    :candidate-edit-cv :company
    :candidate-edit-private :company
    :candidates :admin
-   :companies :admin
+   :admin-companies :admin
+   :companies :company-profile
    :company :company-profile
    :company-applications :company
    :company-dashboard :company

@@ -16,7 +16,7 @@
 (def page-mapping
   {:candidates           {:page candidates/page, :can-access? user/admin?}
    :create-candidate     {:page create-candidate/page, :can-access? user/admin?}
-   :companies            {:page companies/page, :can-access? user/admin?}
+   :admin-companies      {:page companies/page, :can-access? user/admin?}
    :create-company-offer {:page create-offer/page, :can-access? user/admin?}
    :tags-edit            {:page tags/page, :can-access? user/admin?}})
 

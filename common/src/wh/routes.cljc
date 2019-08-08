@@ -64,6 +64,7 @@
 ;; there will be a server-side redirect to the correct one.
 
 (def routes ["/" [["" :homepage]
+                  ["admin/" {"companies" :admin-companies}]
                   ["hire-" {[:template] :homepage}]
                   ["register/" {"name"         (with-params :register :step :name)
                                 "thanks"       (with-params :register :step :thanks)

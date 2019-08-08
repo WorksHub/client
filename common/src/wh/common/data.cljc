@@ -635,7 +635,7 @@
     [{:section "Admin"
       :class   "admin"
       :items   [[[:admin-applications :homepage] "applications" "Applications"]
-                [:companies                      "recommend"    "Companies"]
+                [:admin-companies                "recommend"    "Companies"]
                 [:candidates                     "profile"      "Candidates"]
                 [:create-job                     "resources"    "Create role"]
                 [:create-company                 "jobs-board"   "Create company"]

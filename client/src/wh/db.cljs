@@ -10,6 +10,7 @@
 (s/def ::twitter string?)
 (s/def ::default-technologies (s/* string?))
 (s/def ::page #{:admin-applications
+                :admin-companies
                 :admin-company-applications
                 :admin-edit-company
                 :blog

@@ -155,6 +155,6 @@
     (let [new-db (companies/initialize-db db)]
       {:db (assoc db ::companies/sub-db new-db)})))
 
-(defmethod on-page-load :companies [db]
+(defmethod on-page-load :admin-companies [db]
   [[::initialize-db]
    [::fetch-companies]])
