@@ -155,14 +155,13 @@
               (dispatch [::events/reset-pending-logo])
               (reset! new-company-name nil))}
           [:div.company-profile__header__inner
-           [:div.company-profile__header__inner__top
-            [:div.company-profile__logo
-             (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
-            [:div.company-profile__name
-             (if (<sub [:user/admin?])
-               [link (<sub [::subs/name])
-                :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
-               (<sub [::subs/name]))]]]
+           [:div.company-profile__logo
+            (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
+           [:div.company-profile__name
+            (if (<sub [:user/admin?])
+              [link [:h1 (<sub [::subs/name])]
+               :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
+              [:h1 (<sub [::subs/name])])]]
           [:div.company-profile__header__inner
            #?(:cljs
               [:form.form.wh-formx

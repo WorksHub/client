@@ -106,7 +106,9 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
     margin-right: 18px
 
 .company-profile__header__inner
+  height: 78px
   width: 100%
+  display: flex
   form
     display: flex
     align-items: flex-end
@@ -115,11 +117,6 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
     .field
       label
         margin: 0 !important
-
-.company-profile__header__inner__top
-  display: grid
-  grid-template-columns: 60px auto
-  grid-template-rows: 78px
 
 .company-profile__header__links
   border-top: 1px solid $pale-blue
@@ -144,6 +141,7 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
     padding: 0px 18px 0px 18px
 
 .company-profile__logo
+  flex: 0 0 60px
   img
     width: 60px
     height: 60px
@@ -155,10 +153,22 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
     height: 32px
 
 .company-profile__name
-  font-size: 24px
-  margin-left: 18px
-  line-height: 60px
-  font-weight: $font-semi-bold
+  display: flex
+  align-items: center
+  flex: 1
+  min-width: 0
+  a
+    min-width: 0
+  h1
+    min-width: 0
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+    font-size: 24px
+    margin-left: 18px
+    font-weight: $font-semi-bold
+    color: $grey-darker
+    line-height: 60px
 
 .company-profile__photos__add
   position: relative
