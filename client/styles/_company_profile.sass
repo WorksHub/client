@@ -3,6 +3,13 @@ $company-profile-anchor-offset-desktop: $company-profile-sticky-height - 5px
 $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-mobile-height
 
 .company-profile
+  .html-content
+    color: $grey-darker
+    p
+      font-size: 14px
+      line-height: 24px
+      &:not(:empty):last-of-type
+        margin-bottom: 12px
   +mobile
     padding: 0px
     .split-content:not(:first-of-type)

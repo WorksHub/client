@@ -128,7 +128,9 @@
   ::additional-tech-info
   :<- [::company]
   (fn [company _]
-    (:additional-tech-info company)))
+    (when-let [ati (:additional-tech-info company)]
+      (when (and ati (not= ati "<p><br></p>")) ;; quill's version of 'empty'
+        ati))))
 
 (reg-sub
   ::tags

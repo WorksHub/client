@@ -15454,6 +15454,14 @@ h3 {
   .tracking-popup--expanded.is-open {
     display: block; }
 
+.company-profile .html-content {
+  color: #434E55; }
+  .company-profile .html-content p {
+    font-size: 14px;
+    line-height: 24px; }
+    .company-profile .html-content p:not(:empty):last-of-type {
+      margin-bottom: 12px; }
+
 @media screen and (max-width: 1007px) {
   .company-profile {
     padding: 0px; }
