@@ -134,9 +134,7 @@
                                                city-info)
                                          :wh.search/salary-ranges
                                          (mapv cases/->kebab-case remuneration-ranges)))
-          jobsboard-db #:wh.jobs.jobsboard.db{:jobs                     (if (= page-number 1)
-                                                                          (mapv job/translate-job (:jobs jobs-search))
-                                                                          (concat (::jobsboard/jobs sub-db) (mapv job/translate-job (:jobs jobs-search))))
+          jobsboard-db #:wh.jobs.jobsboard.db{:jobs                     (mapv job/translate-job (:jobs jobs-search))
                                               :promoted-jobs            (mapv job/translate-job (:promoted jobs-search))
                                               :number-of-search-results (:numberOfHits jobs-search)
                                               :current-page             (:page jobs-search)
