@@ -90,7 +90,7 @@
                                                            (get-in [::companies/sub-db ::companies/tags])
                                                            (util/toggle tag))]
                                       {"tags" (when (not-empty updated-tags) (str/join "," updated-tags))})))]
-      {:navigate [:companies :query-params (util/remove-nils new-query-params)]})))
+      {:navigate [:admin-companies :query-params (util/remove-nils new-query-params)]})))
 
 (reg-event-fx
   ::fetch-companies
@@ -145,7 +145,7 @@
   db/default-interceptors
   (fn [{db :db} [sort]]
     (let [sort-key (some #(when (= sort (second %)) (first %)) companies/sorts)]
-      {:navigate [:companies :query-params
+      {:navigate [:admin-companies :query-params
                   (merge (get db ::db/query-params) {"sort" sort-key})]})))
 
 (reg-event-fx

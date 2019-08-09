@@ -935,7 +935,7 @@
                                  cls)}
      [:h3 "Get involved - create a free profile page for your company"]
      [:div.is-flex
-      [:p "Use this space to connect with our community. Companies with profiles typical get 20% more applications!"]
+      [:p "Use this space to connect with our community. Companies with profiles typically get 20% more applications!"]
       [link [:button.button.is-full-width.is-hidden-mobile "Get Started"] :get-started]
       [:div.company-profile__company-cta__img
        [:img {:src "/images/hiw/company/hiw/hiw4.svg"
