@@ -152,6 +152,8 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
   img
     width: 60px
     height: 60px
+    &:not([src])
+      background-color: $skeleton-background-color
 
 .company-profile__sticky_logo
   flex: 1 0 32px
@@ -160,21 +162,29 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
     height: 32px
 
 .company-profile__name
+  &:empty
+    &::after
+      @include skeleton(50%, 24px)
+      position: absolute
+      content: " "
+      margin-left: 18px
+      top: calc(50% - 18px)
   display: flex
   align-items: center
   flex: 1
   min-width: 0
   a
     min-width: 0
-  h1
+  h1, h2
     min-width: 0
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
+    color: $grey-darker
+  h1
     font-size: 24px
     margin-left: 18px
     font-weight: $font-semi-bold
-    color: $grey-darker
     line-height: 60px
 
 .company-profile__photos__add
@@ -595,6 +605,10 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
 .company-profile__company-info__prompt
   line-height: 18px
   margin-right: 4.6em
+  &:empty
+    @include skeleton(50%, 24px)
+  &:empty::after
+    @include skeleton(70%, 24px)
 
 .company-profile__sticky
   height: $company-profile-sticky-height

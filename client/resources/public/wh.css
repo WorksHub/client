@@ -7154,6 +7154,93 @@ a.navbar-item,
   max-width: 400px;
   margin-top: 30px; }
 
+.companies__main .companies__company {
+  margin-bottom: 12px; }
+
+@media screen and (min-width: 1008px) {
+  .companies__main .company-profile__name {
+    max-height: 21px; } }
+
+.companies__main .company-profile__name a .is-flex {
+  align-items: center; }
+  @media screen and (max-width: 1007px) {
+    .companies__main .company-profile__name a .is-flex h2 {
+      margin-left: 12px; } }
+
+.companies__main .company-profile__name h2 {
+  margin: 0; }
+  @media screen and (max-width: 1007px) {
+    .companies__main .company-profile__name h2 {
+      font-size: 18px; } }
+
+.companies__company {
+  background: white;
+  padding: 18px;
+  display: flex; }
+
+.companies__company__container {
+  width: 100%;
+  display: flex; }
+
+.companies__company__info-container {
+  min-width: 0;
+  padding-left: 12px; }
+
+.companies__company__info-strip {
+  line-height: 18px;
+  display: flex; }
+  @media screen and (min-width: 1008px) {
+    .companies__company__info-strip {
+      margin-top: 12px; } }
+  .companies__company__info-strip li {
+    font-size: 12px;
+    line-height: 18px;
+    color: #adadad;
+    display: inline-block; }
+    .companies__company__info-strip li:not(:last-child) {
+      margin-right: 26px; }
+    .companies__company__info-strip li > div {
+      display: flex;
+      align-items: flex-start;
+      min-width: 70px; }
+    .companies__company__info-strip li .icon {
+      flex: 0 0 18px;
+      margin-right: 6px; }
+
+/* https://css-tricks.com/almanac/properties/l/line-clamp/ */
+/* https://codepen.io/martinwolf/pen/qlFdp */
+.companies__company__description {
+  margin-top: 12px; }
+  .companies__company__description .html-content {
+    font-style: italic;
+    display: block;
+    display: -webkit-box;
+    font-size: 12px;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #6E7F89;
+    position: relative; }
+    @media screen and (min-width: 1008px) {
+      .companies__company__description .html-content {
+        max-height: 36px; } }
+    @media screen and (max-width: 1007px) {
+      .companies__company__description .html-content {
+        max-height: 54px; } }
+    @media screen and (min-width: 1008px) {
+      .companies__company__description .html-content {
+        -webkit-line-clamp: 2; } }
+    @media screen and (max-width: 1007px) {
+      .companies__company__description .html-content {
+        -webkit-line-clamp: 3; } }
+
+.companies__company__tags {
+  margin-top: 12px; }
+
+.companies__side > section {
+  background-color: white; }
+
 .company-signup,
 .payment-setup {
   margin: auto;
@@ -8320,6 +8407,7 @@ a.navbar-item,
     .companies__sort-dropdown .field {
       width: 100%; } }
 
+/* TODO: REMOVE companies__company-card */
 .companies__company-card {
   height: 100px;
   padding: 9px;
@@ -15618,6 +15706,8 @@ h3 {
   .company-profile__logo img {
     width: 60px;
     height: 60px; }
+    .company-profile__logo img:not([src]) {
+      background-color: #ddd; }
 
 .company-profile__sticky_logo {
   flex: 1 0 32px; }
@@ -15630,17 +15720,27 @@ h3 {
   align-items: center;
   flex: 1;
   min-width: 0; }
+  .company-profile__name:empty::after {
+    background-color: #ddd;
+    border-radius: 5px;
+    width: 50%;
+    height: 24px;
+    position: absolute;
+    content: " ";
+    margin-left: 18px;
+    top: calc(50% - 18px); }
   .company-profile__name a {
     min-width: 0; }
-  .company-profile__name h1 {
+  .company-profile__name h1, .company-profile__name h2 {
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #434E55; }
+  .company-profile__name h1 {
     font-size: 24px;
     margin-left: 18px;
     font-weight: 600;
-    color: #434E55;
     line-height: 60px; }
 
 .company-profile__photos__add {
@@ -16114,6 +16214,16 @@ h3 {
 .company-profile__company-info__prompt {
   line-height: 18px;
   margin-right: 4.6em; }
+  .company-profile__company-info__prompt:empty {
+    background-color: #ddd;
+    border-radius: 5px;
+    width: 50%;
+    height: 24px; }
+  .company-profile__company-info__prompt:empty::after {
+    background-color: #ddd;
+    border-radius: 5px;
+    width: 70%;
+    height: 24px; }
 
 .company-profile__sticky {
   height: 61px;

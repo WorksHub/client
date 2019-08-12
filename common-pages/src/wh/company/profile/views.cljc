@@ -158,10 +158,11 @@
            [:div.company-profile__logo
             (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
            [:div.company-profile__name
-            (if (<sub [:user/admin?])
-              [link [:h1 (<sub [::subs/name])]
-               :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
-              [:h1 (<sub [::subs/name])])]]
+            (when-let [n (text/not-blank (<sub [::subs/name]))]
+              (if (<sub [:user/admin?])
+                [link [:h1 n]
+                 :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
+                [:h1 n]))]]
           [:div.company-profile__header__inner
            #?(:cljs
               [:form.form.wh-formx
@@ -741,7 +742,8 @@
               location     (some-> (<sub [::subs/location]))]
           (if (not (or industry funding size founded-year location))
             [:div.company-profile__company-info__prompt
-             [:i "Edit this section to include information about your company, such as industry and location."]]
+             (when-not (<sub [::subs/company-query-loading?])
+               [:i "Edit this section to include information about your company, such as industry and location."])]
             [:ul
              {:class (util/merge-classes "company-profile__company-info__list"
                                          (when admin-or-owner? "company-profile__company-info__list--editable"))}
@@ -928,7 +930,7 @@
     [header-links]]])
 
 (defn company-cta
-  [admin-or-owner? & [cls]]
+  [_admin-or-owner? & [cls]]
   (when-not (<sub [:user/logged-in?])
     [:section
      {:class (util/merge-classes "company-profile__company-cta"
@@ -956,7 +958,7 @@
                       (<sub [::subs/stats-item :applications]))]])
 
 (defn edit-page
-  [admin-or-owner?]
+  [admin-or-owner? loading?]
   [:div
    [:div.main.company-profile
     (when admin-or-owner?
@@ -969,36 +971,41 @@
       [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
       [company-stats "is-hidden-desktop"]
       [hash-anchor "company-profile__technology"]
-      [technology admin-or-owner?]
+      (when-not loading?
+        [technology admin-or-owner?])
       [hash-anchor "company-profile__benefits"]
-      [benefits admin-or-owner?]
+      (when-not loading?
+        [benefits admin-or-owner?])
       [company-cta admin-or-owner? "is-hidden-desktop"]
       [hash-anchor "company-profile__jobs"]
-      [job-header admin-or-owner?]
-      [jobs admin-or-owner?]]
+      (when-not loading?
+        [job-header admin-or-owner?])
+      (when-not loading?
+        [jobs admin-or-owner?])]
      [:div.company-profile__side.split-content__side.is-hidden-mobile
       [company-info admin-or-owner?]
       [company-stats]
       [company-cta admin-or-owner?]]]
-    [:div.split-content
-     [:div.company-profile__main.split-content__main
-      [issues-header admin-or-owner?]
-      [issues admin-or-owner?]
-      [hash-anchor "company-profile__how-we-work"]
-      [how-we-work-header admin-or-owner?]
-      [how-we-work admin-or-owner?]
-      [blogs admin-or-owner?]
-      [photos admin-or-owner?]
-      [videos admin-or-owner?]]
-     [:div.company-profile__side.split-content__side.is-hidden-mobile
-      (cond
-        #?(:cljs (<sub [:user/company?])
-           :clj  false)
-        [how-it-works/pod--company]
-        (empty? (<sub [::subs/issues]))
-        [:div] ;; display nothing if no issues
-        :else
-        [how-it-works/pod--candidate])]]]
+    (when-not loading?
+      [:div.split-content
+       [:div.company-profile__main.split-content__main
+        [issues-header admin-or-owner?]
+        [issues admin-or-owner?]
+        [hash-anchor "company-profile__how-we-work"]
+        [how-we-work-header admin-or-owner?]
+        [how-we-work admin-or-owner?]
+        [blogs admin-or-owner?]
+        [photos admin-or-owner?]
+        [videos admin-or-owner?]]
+       [:div.company-profile__side.split-content__side.is-hidden-mobile
+        (cond
+          #?(:cljs (<sub [:user/company?])
+             :clj  false)
+          [how-it-works/pod--company]
+          (empty? (<sub [::subs/issues]))
+          [:div] ;; display nothing if no issues
+          :else
+          [how-it-works/pod--candidate])]])]
    [sticky-nav-bar]
    [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
                                          (if admin-or-owner? 170 100))]])
@@ -1247,16 +1254,17 @@
 
 (defn page
   []
-  (let [enabled?        (<sub [::subs/profile-enabled?])
-        company-id      (<sub [::subs/id])
-        admin-or-owner? (or (<sub [:user/admin?])
-                            (<sub [:user/owner? company-id]))
+  (let [loading?               (<sub [::subs/company-query-loading?])
+        enabled?               (<sub [::subs/profile-enabled?])
+        company-id             (<sub [::subs/id])
+        admin-or-owner?        (or (<sub [:user/admin?])
+                                   (<sub [:user/owner? company-id]))
         has-published-profile? (<sub [::subs/has-published-profile?])]
     (cond
-      (and admin-or-owner? (not has-published-profile?))
+      (and admin-or-owner? (not has-published-profile?) (not loading?))
       [create-new-profile admin-or-owner?]
-      (or admin-or-owner? enabled?)
-      [edit-page admin-or-owner?]
+      (or admin-or-owner? enabled? loading?)
+      [edit-page admin-or-owner? loading?]
       :else
       [:div.main.main--center-content
        [not-found/not-found]])))

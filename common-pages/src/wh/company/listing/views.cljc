@@ -9,20 +9,64 @@
     [wh.company.listing.db :as companies]
     [wh.company.listing.events :as events]
     [wh.company.listing.subs :as subs]
+    [wh.company.profile.views :as company]
     [wh.components.common :refer [link wrap-img img base-img]]
     [wh.components.icons :refer [icon]]
+    [wh.components.pagination :as pagination]
     [wh.components.tag :as tag]
+    [wh.pages.util :as putil]
     [wh.re-frame :as r]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
 
+(defn company-card
+  [{:keys [logo id name slug tags size location description-html]}]
+  [:section.companies__company
+   [:div.companies__company__container
+    [:div.company-profile__logo.is-hidden-mobile
+     (wrap-img img logo {:w 60 :h 60})]
+    [:div.companies__company__info-container
+     [:div.company-profile__name
+      [link [:div.is-flex
+             [:div.company-profile__logo.is-hidden-desktop
+              (wrap-img img logo {:w 36 :h 36})]
+             [:h2 name]]
+       :company :slug slug]]
+     [:ul.companies__company__info-strip
+      (when size
+        [:li [:div [icon "people"] size]])
+      (when location
+        [:li [:div [icon "location"] location]])]
+     [:div.companies__company__description
+      [putil/html description-html]]
+     [:div.companies__company__tags
+      [tag/tag-list tags]]]]])
+
 (defn page
   []
-  (let [admin? (<sub [:user/admin?])]
+  (let [admin?          (<sub [:user/admin?])
+        current-page    (<sub [::subs/current-page])
+        result          (<sub [::subs/companies])
+        {:keys [total]} (:pagination result)
+        companies       (or (:companies result)
+                            (map (partial hash-map :id) (range 10)))
+        query-params (<sub [:wh/query-params])]
     [:div
      [:div.main.companies
       [:h1 "Companies using WorksHub"]
       [:div.split-content
-       [:div.companies__main.split-content__main]
-       [:div.companies__side.split-content__side.is-hidden-mobile]]]]))
+       [:div.companies__main.split-content__main
+        (doall
+          (for [company companies]
+            ^{:key (:id company)}
+            [company-card company]))
+        (when (and (not-empty companies) (> total companies/page-limit))
+          [pagination/pagination
+           current-page
+           (pagination/generate-pagination
+             current-page
+             (int (#?(:cljs js/Math.ceil :clj Math/ceil) (/ total companies/page-limit))))
+           :companies query-params])]
+       [:div.companies__side.split-content__side.is-hidden-mobile
+        [company/company-cta false]]]]]))

@@ -16,10 +16,18 @@
     (::profile/sub-db db)))
 
 (reg-sub-raw
+  ::company-query-loading?
+  (fn [_ _]
+    (reaction
+      (let [slug  (<sub [:wh/page-param :slug])
+            state (<sub [:graphql/state :company {:slug slug}])]
+        (or (not state) (= state :executing))))))
+
+(reg-sub-raw
   ::company
   (fn [_ _]
     (reaction
-      (let [slug     (<sub [:wh/page-param :slug])
+      (let [slug   (<sub [:wh/page-param :slug])
             result (<sub [:graphql/result :company {:slug slug}])]
         (profile/->company (:company result))))))
 
@@ -27,7 +35,7 @@
   ::company-extra-data
   (fn [_ _]
     (reaction
-      (let [slug     (<sub [:wh/page-param :slug])
+      (let [slug   (<sub [:wh/page-param :slug])
             result (<sub [:graphql/result :company-issues-and-blogs {:slug slug}])]
         (:company result)))))
 
@@ -35,17 +43,17 @@
   ::stats
   (fn [_ _]
     (reaction
-      (let [slug (<sub [:wh/page-param :slug])
+      (let [slug    (<sub [:wh/page-param :slug])
             company (<sub [:graphql/result :company {:slug slug}])
-            result (<sub [:graphql/result :company-stats {:company_id (-> company :company :id)}])]
+            result  (<sub [:graphql/result :company-stats {:company_id (-> company :company :id)}])]
         (:job-analytics result)))))
 
 (reg-sub-raw
   ::all-jobs
   (fn [_ _]
     (reaction
-      (let [slug     (<sub [:wh/page-param :slug])
-            total    (<sub [::total-number-of-jobs])
+      (let [slug   (<sub [:wh/page-param :slug])
+            total  (<sub [::total-number-of-jobs])
             result (<sub [:graphql/result :all-company-jobs {:slug slug :total total}])]
         (-> result :company :jobs :jobs)))))
 

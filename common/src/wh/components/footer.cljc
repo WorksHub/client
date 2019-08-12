@@ -27,6 +27,8 @@
                  ;; TODO BLOG PAGE FROM BOGDAN
                  #_{:title "Case studies"
                     :href  "#"}
+                 {:title "Companies"
+                  :route [:companies]}
                  {:title "Sitemap"
                   :route [:sitemap]}]
                 (vertical-links))

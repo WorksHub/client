@@ -1,0 +1,84 @@
+.companies__main
+  .companies__company
+    margin-bottom: 12px
+  .company-profile__name
+    +desktop
+      max-height: 21px
+    a
+      .is-flex
+        align-items: center
+        +mobile
+          h2
+            margin-left: 12px
+    h2
+      margin: 0
+      +mobile
+        font-size: 18px
+
+.companies__company
+  background: white
+  padding: 18px
+  display: flex
+
+.companies__company__container
+  width: 100%
+  display: flex
+
+.companies__company__info-container
+  min-width: 0
+  padding-left: 12px
+
+.companies__company__info-strip
+  +desktop
+    margin-top: 12px
+  line-height: 18px
+  display: flex
+  li
+    font-size: 12px
+    line-height: 18px
+    color: $greyish
+    display: inline-block
+    &:not(:last-child)
+      margin-right: 26px
+    &>div
+      display: flex
+      align-items: flex-start
+      min-width: 70px
+    .icon
+      flex: 0 0 18px
+      margin-right: 6px
+
+/* https://css-tricks.com/almanac/properties/l/line-clamp/ */
+/* https://codepen.io/martinwolf/pen/qlFdp */
+$cc-desc-font-size: 12px
+$cc-desc-line-height: 1.5
+$cc-desc-lines-to-show-desktop: 2
+$cc-desc-lines-to-show-mobile: 3
+.companies__company__description
+  margin-top: 12px
+  .html-content
+    font-style: italic
+    display: block /* Fallback for non-webkit */
+    display: -webkit-box
+    +desktop
+      max-height: $cc-desc-font-size * $cc-desc-line-height * $cc-desc-lines-to-show-desktop /* Fallback for non-webkit */
+    +mobile
+      max-height: $cc-desc-font-size * $cc-desc-line-height * $cc-desc-lines-to-show-mobile /* Fallback for non-webkit */
+    font-size: $cc-desc-font-size
+    line-height: $cc-desc-line-height
+    +desktop
+      -webkit-line-clamp: $cc-desc-lines-to-show-desktop
+    +mobile
+      -webkit-line-clamp: $cc-desc-lines-to-show-mobile
+    -webkit-box-orient: vertical
+    overflow: hidden
+    text-overflow: ellipsis
+    color: $steel-gray
+    position: relative
+
+.companies__company__tags
+  margin-top: 12px
+
+.companies__side
+  &>section
+    background-color: white

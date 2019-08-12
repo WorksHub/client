@@ -46,7 +46,9 @@
 (reg-sub
   :user/owner?
   (fn [db [_ id]]
-    (= (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) id)))
+    (and
+      (= (get-in db [:wh.user.db/sub-db :wh.user.db/type]) "company")
+      (= (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) id))))
 
 (reg-sub
   :user/name
