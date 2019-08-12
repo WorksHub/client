@@ -21,7 +21,8 @@
     [wh.util :as util]))
 
 (defn company-card
-  [{:keys [logo id name slug tags size location description-html]}]
+  [{:keys [logo id name slug tags size location description-html
+           total-published-job-count]}]
   [:section.companies__company
    [:div.companies__company__container
     [:div.company-profile__logo.is-hidden-mobile
@@ -31,7 +32,7 @@
       [link [:div.is-flex
              [:div.company-profile__logo.is-hidden-desktop
               (wrap-img img logo {:w 36 :h 36})]
-             [:h2 name]]
+             [:h2 {:class (when (pos? total-published-job-count) "truncate")} name]]
        :company :slug slug]]
      [:ul.companies__company__info-strip
       (when size
@@ -41,7 +42,13 @@
      [:div.companies__company__description
       [putil/html description-html]]
      [:div.companies__company__tags
-      [tag/tag-list tags]]]]])
+      [tag/tag-list tags]]]]
+   (when (pos? total-published-job-count)
+     [link
+      [:div.companies__company__job-count
+       [:img {:src "/cursors/cursor-2.svg"}]
+       [:span (str "View " total-published-job-count " " (text/pluralize total-published-job-count "job"))]]
+      :company :slug slug])]) ;; TODO link to jobs?
 
 (defn page
   []

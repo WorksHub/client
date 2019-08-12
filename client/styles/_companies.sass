@@ -10,6 +10,8 @@
         +mobile
           h2
             margin-left: 12px
+            &.truncate
+              padding-right: 65px
     h2
       margin: 0
       +mobile
@@ -19,6 +21,31 @@
   background: white
   padding: 18px
   display: flex
+  position: relative
+
+.companies__company__job-count
+  position: absolute
+  width: 57px
+  height: 56px
+  background-color: $pale-blue
+  top: 0
+  right: 18px
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  span
+    text-align: center
+    font-size: 9px
+    line-height: 10px
+    letter-spacing: 0.5px
+    color: $green
+    text-transform: uppercase
+    font-weight: $font-semi-bold
+  img
+    width: 18px
+    height: 18px
+    margin-bottom: 6px
 
 .companies__company__container
   width: 100%

@@ -7165,7 +7165,9 @@ a.navbar-item,
   align-items: center; }
   @media screen and (max-width: 1007px) {
     .companies__main .company-profile__name a .is-flex h2 {
-      margin-left: 12px; } }
+      margin-left: 12px; }
+      .companies__main .company-profile__name a .is-flex h2.truncate {
+        padding-right: 65px; } }
 
 .companies__main .company-profile__name h2 {
   margin: 0; }
@@ -7176,7 +7178,32 @@ a.navbar-item,
 .companies__company {
   background: white;
   padding: 18px;
-  display: flex; }
+  display: flex;
+  position: relative; }
+
+.companies__company__job-count {
+  position: absolute;
+  width: 57px;
+  height: 56px;
+  background-color: #f2f7f8;
+  top: 0;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
+  .companies__company__job-count span {
+    text-align: center;
+    font-size: 9px;
+    line-height: 10px;
+    letter-spacing: 0.5px;
+    color: #80b5bc;
+    text-transform: uppercase;
+    font-weight: 600; }
+  .companies__company__job-count img {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 6px; }
 
 .companies__company__container {
   width: 100%;

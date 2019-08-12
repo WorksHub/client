@@ -22,6 +22,7 @@
                       [[:pagination [:total :count]]
                        [:companies
                         [:id :slug :name :logo :size :descriptionHtml
+                         :totalPublishedJobCount :totalPublishedIssueCount
                          [:tags [:id :label :slug :type :subtype :weight]]
                          [:locations [:city :country :countryCode :region :subRegion :state]]]]]]]})
 
