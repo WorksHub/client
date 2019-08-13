@@ -20,6 +20,7 @@
 (def pricing-link   (routes/path :pricing))
 (def issues-link    (routes/path :issues))
 (def jobsboard-link (routes/path :jobsboard))
+(def companies-link (routes/path :companies))
 
 (defn logo-title
   ([vertical]
@@ -49,7 +50,7 @@
        (icon vertical)
        [:span (verticals/config vertical :platform-name)]]))])
 
-(defn logged-out-menu
+(defn mobile-logged-out-menu
   [{:keys [vertical  env query-params]}]
   (let [link-opts (interop/multiple-on-click (interop/set-is-open-on-click logged-out-menu-id false)
                                              (interop/disable-no-scroll-on-click))
@@ -69,11 +70,13 @@
         [:hr]
         [:a.navbar-menu-item (merge link-opts {:href jobsboard-link}) "Jobs"]
         [:hr]
+        [:a.navbar-menu-item (merge link-opts {:href companies-link}) "Companies"]
+        [:hr]
+        [:a.navbar-menu-item (merge link-opts {:href issues-link}) "Issues"]
+        [:hr]
         [:a.navbar-menu-item (merge link-opts {:href learn-link}) "Blog"]
         [:hr]
         [:a.navbar-menu-item (merge link-opts {:href pricing-link}) "Pricing"]
-        [:hr]
-        [:a.navbar-menu-item (merge link-opts {:href issues-link}) "Open Source Issues"]
         [:hr]
         [:a.navbar-menu-item (merge {:href (routes/path :get-started)}) "Get Started"]]
        [:div.navbar-menu-close-area link-opts]]
@@ -83,7 +86,9 @@
        [:div.navbar-menu-items
         [:a.navbar-menu-item (merge link-opts {:href jobsboard-link}) "Jobs"]
         [:hr]
-        [:a.navbar-menu-item (merge link-opts {:href issues-link}) "Open Source Issues"]
+        [:a.navbar-menu-item (merge link-opts {:href companies-link}) "Companies"]
+        [:hr]
+        [:a.navbar-menu-item (merge link-opts {:href issues-link}) "Issues"]
         [:hr]
         [:a.navbar-menu-item (merge link-opts {:href learn-link}) "Learn"]
         [:hr]
@@ -209,9 +214,12 @@
      [:a.navbar-item.is-hidden-mobile.navbar-item--jobs
       (merge {:href jobsboard-link}
              (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Jobs"]
+     [:a.navbar-item.is-hidden-mobile.navbar-item--companies
+      (merge {:href companies-link}
+             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Companies"]
      [:a.navbar-item.is-hidden-mobile.navbar-item--issues
       (merge {:href issues-link}
-             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Open Source Issues"]
+             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Issues"]
      [:a.navbar-item.is-hidden-mobile.navbar-item--learn
       (merge {:href learn-link}
              (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Blog"]
@@ -225,8 +233,10 @@
     [:div.navbar-items
      [:a.navbar-item.is-hidden-mobile.navbar-item--jobs
       {:href jobsboard-link} "Jobs"]
+     [:a.navbar-item.is-hidden-mobile.navbar-item--companies
+      {:href companies-link} "Companies"]
      [:a.navbar-item.is-hidden-mobile.navbar-item--issues
-      {:href issues-link} "Open Source Issues"]
+      {:href issues-link} "Issues"]
      [:a.navbar-item.is-hidden-mobile.navbar-item--learn
       {:href learn-link} "Learn"]
      [:a.navbar-item.is-hidden-mobile.navbar-item--hiring
@@ -246,7 +256,7 @@
      (when content?
        [navbar-end args])
      (when (and content? (not logged-in?))
-       [logged-out-menu args])
+       [mobile-logged-out-menu args])
      (when content?
        [candidates-menu args])
      (when content?
