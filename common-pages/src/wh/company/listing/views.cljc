@@ -22,7 +22,7 @@
 
 (defn company-card
   [{:keys [logo id name slug tags size location description-html
-           total-published-job-count]}]
+           total-published-job-count total-published-issue-count]}]
   [:section.companies__company
    [:div.companies__company__container
     [:div.company-profile__logo.is-hidden-mobile
@@ -42,7 +42,9 @@
      [:div.companies__company__description
       [putil/html description-html]]
      [:div.companies__company__tags
-      [tag/tag-list tags]]]]
+      [tag/tag-list (cond-> (vec tags)
+                            (pos? total-published-issue-count)
+                            (conj {:icon "pr" :id id :type :icon :label total-published-issue-count}))]]]]
    (when (pos? total-published-job-count)
      [link
       [:div.companies__company__job-count

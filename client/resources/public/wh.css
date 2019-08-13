@@ -16645,7 +16645,8 @@ h3 {
   background-color: #ffe9e7;
   color: #ff7c6e;
   border-radius: 2px;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  height: 30px; }
   .tags li:last-child, .tag:last-child {
     margin-right: 0; }
 
@@ -16756,11 +16757,18 @@ h3 {
 
 .tag {
   position: relative; }
+  .tag .icon + span {
+    margin-left: 18px; }
   .tag .icon {
     position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 18px;
+    height: 18px;
+    fill: #ff7c6e; }
+  .tag .icon--close {
     top: 8px;
     right: 4px;
-    fill: #ff7c6e;
     width: 14px;
     height: 14px; }
 
