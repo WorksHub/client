@@ -619,18 +619,15 @@
    :class   "explore"
    :items   [[:learn     "resources"  "Learn"]
              [:issues    "pr"         "Open Source Issues"]
-             [:jobsboard "jobs-board" "Job Board"]]})
+             [:jobsboard "jobs-board" "Job Board"]
+             [:companies "company"    "Companies"]]})
 
 (defn menu
   [type user]
   (case type
     "candidate"
     [default-for-you-section
-     {:section "Explore"
-      :class   "explore"
-      :items   [[:learn                      "resources"  "Learn"]
-                [:jobsboard                  "jobs-board" "Job Board"]
-                [:issues                     "pr"         "Open Source Issues"]]}]
+     default-explore-section]
     "admin"
     [{:section "Admin"
       :class   "admin"
