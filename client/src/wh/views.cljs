@@ -36,6 +36,7 @@
 (defn main-panel []
   (let [page (<sub [:wh.pages.core/page])
         user-type (<sub [:user/type])
+        user-sub-db (<sub [:user/sub-db])
         ;; specify links on the menu that should be restricted
         restricted-links (when-not (<sub [:company/has-permission? :can_see_applications])
                            #{:company-applications})
@@ -56,6 +57,7 @@
        (when (<sub [::subs/show-left-menu?])
          [menu/menu
           user-type
+          user-sub-db
           page
           restricted-links
           (:menu query-params)])

@@ -59,7 +59,8 @@
              (apply item (assoc i 0 nil))
              (apply item i)))]])]))
 
-(defn menu [type current-page restricted-links]
+(defn menu
+  [type user current-page restricted-links]
   [:div.menu-container
    {:id logged-in-menu-id}
-   (render-menu (data/menu type) current-page restricted-links)])
+   (render-menu (data/menu type user) current-page restricted-links)])

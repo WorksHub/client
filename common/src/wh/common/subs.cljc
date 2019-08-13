@@ -9,6 +9,11 @@
 ;; USER
 
 (reg-sub
+  :user/sub-db
+  (fn [db _]
+    (get-in db [:wh.user.db/sub-db])))
+
+(reg-sub
   :user/logged-in?
   (fn [db _]
     (get-in db [:wh.user.db/sub-db :wh.user.db/id])))

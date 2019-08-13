@@ -622,7 +622,7 @@
              [:jobsboard "jobs-board" "Job Board"]]})
 
 (defn menu
-  [type]
+  [type user]
   (case type
     "candidate"
     [default-for-you-section
@@ -646,6 +646,8 @@
     [{:section "For You"
       :class   "for-you"
       :items   [[[:company-dashboard :homepage] "dashboard" "Dashboard"]
+                [[:company [:slug (get-in user [:wh.user.db/company :slug])]]
+                 "company" "Company Profile"]
                 [:company-applications "applications" "Applications"]
                 [:create-job "add-new" "Add new role"]
                 [:company-issues "pr" "Your issues"]
