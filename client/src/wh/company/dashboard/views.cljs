@@ -108,7 +108,7 @@
                                                            :billing (or (<sub [::subs/billing-period])
                                                                         data/default-billing-period)}]]
         ;;
-        (not= :unselected package)
+        (not= :explore package)
         [:div.your-company__package
          [:div.your-company__package-top-line
           [:div.your-company__package-logo
@@ -127,7 +127,7 @@
             "It’s great to start out with this, but if you have more ambitious hiring plans you should upgrade to our Take-Off Package.")]]
         ;;
         :else
-        [:div.your-company__payment-setup.your-company__payment-setup--unselected
+        [:div.your-company__payment-setup.your-company__payment-setup--explore
          [:div [:h3 "Welcome!"]
           [:p "To get started just click Publish on any of your jobs and you will be guided through the next steps, including selecting one of our pricing packages."]]])]]))
 

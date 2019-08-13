@@ -209,19 +209,18 @@
         can-start-trial?      (<sub [::subs/has-permission? :can_start_free_trial])]
     (cond
       (and (= :take_off package)
-           (<sub [::subs/company-new-offer])) [:free :essential :launch_pad]
-      (= :take_off package)                   [:free :essential :launch_pad :take_off]
-      (= :launch_pad package)                 [:free :essential :launch_pad]
-      (and (#{:free :essential} package)
-           missing-publish?)                  [:free :essential]
-      (and (#{:free :essential} package)
-           missing-integrations?)             [:free :essential]
-      (and (#{:free :essential} package)
-           missing-applications?)             (if (= :free package) [:free] [:free :essential])
-      (= :essential package)                  [:free :essential]
-      (= :free package)                       [:free]
-      (not can-start-trial?)                  [:free]
-      missing-applications?                   [:free]
+           (<sub [::subs/company-new-offer])) [:explore :launch_pad]
+      (= :take_off package)                   [:explore :launch_pad :take_off]
+      (= :launch_pad package)                 [:explore :launch_pad]
+      (and (#{:free :essential :explore} package)
+           missing-publish?)                  [:explore]
+      (and (#{:free :essential :explore} package)
+           missing-integrations?)             [:explore]
+      (and (#{:free :essential :explore} package)
+           missing-applications?)             [:explore]
+      (= :explore package)                    [:explore]
+      (not can-start-trial?)                  [:explore]
+      missing-applications?                   [:explore]
       :else                                   nil)))
 
 (defmethod payment-setup-step-content
@@ -426,7 +425,7 @@
     (fn [_]
       (let [offer (<sub [::subs/company-new-offer])
             upgrading? (<sub [::subs/upgrading?])]
-        (if upgrading?
+        (if (and upgrading? offer)
           (pay-confirm-content :default)
           [:div
            [:h1 "You have selected the Take Off package. This is our premium service which can be tailored to your specific hiring requirements."]

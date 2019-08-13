@@ -13,7 +13,7 @@
                                (when @collapsed? "is-collapsed"))}
    [:div
     {:class (util/merge-classes "package-selector__column column"
-                                (str "is-" (* 3 (count restrict-packages)))
+                                (str "is-" (* 4 (count restrict-packages)))
                                 (when (and mobile-fullscreen?
                                            (>= mobile-selected-idx (count restrict-packages)))
                                   "is-collapsed"))}
@@ -39,10 +39,11 @@
       [:h2.package-selector__title (:name package)]
       (if-let [cost (:cost package)]
         [:div.package-selector__price
-         [:span.package-selector__amount (cost/int->dollars (cost/calculate-monthly-cost cost (:discount billing-data) coupon))]
-         [:span.package-selector__amount-per (cond
-                                               (:per package)    (str "per " (:per package))
-                                               (= :free id) (:trial package))]
+         [:span.package-selector__amount (if (zero? cost)
+                                           "Free"
+                                           (cost/int->dollars (cost/calculate-monthly-cost cost (:discount billing-data) coupon)))]
+         (when (:per package)
+           [:span.package-selector__amount-per (str "per " (:per package))])
          [:span.package-selector__amount-billed (when (pos? cost) (:description billing-data))]
          (when (pos? cost)
            (when-let [discount (:discount billing-data)]

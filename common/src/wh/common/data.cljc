@@ -407,13 +407,16 @@
         10)))
 
 ;; removed essential on 24/05/2019
-(def packages #{:unselected :free #_:essential :launch_pad :take_off})
+;; removed :unselected and :free on 13/08/2019
+(def packages #{#_:unselected #_:free #_:essential
+                :explore :launch_pad :take_off})
 
 (def all-package-perks
   ["Unlimited hubs"
-   "Job analytics"
-   "Review, track & share applicants"
+   "Performance analytics"
    "Github integration"
+   "Company profile"
+   "Review, track & share applicants"
    "ATS Integrations"
    "Account manager"
    "Active sourcing"
@@ -432,9 +435,22 @@
           :img {:src "/images/employers/free.svg"
                 :alt "Free icon"}
           :perks #{"Unlimited hubs"
-                   "Job analytics"}
+                   "Performance analytics"}
           :order 1
           :description (str "Our " free-trial-days "-day trial allows you to post a job in minutes and experience our core features before upgrading.")}
+   :explore {:name "Explore"
+             :cost 0
+             :per nil
+             :button "Get Started"
+             :live-jobs "None"
+             :img {:src "/images/employers/essential.svg"
+                   :alt "Explore icon"}
+             :perks #{"Unlimited hubs"
+                      "Performance analytics"
+                      "Github integration"
+                      "Company profile"}
+             :order 1
+             :description (str "Our basic package allows you to attract talent by creating a company profile and posting open-soure issues. This way you can experience some of our core features before upgrading.")}
    :essential {:name "Essential"
                :cost 500
                :per "month"
@@ -444,9 +460,10 @@
                :img {:src "/images/employers/essential.svg"
                      :alt "Essential icon"}
                :perks #{"Unlimited hubs"
-                        "Job analytics"
-                        "Review, track & share applicants"
-                        "Github integration"}
+                        "Performance analytics"
+                        "Github integration"
+                        "Company profile"
+                        "Review, track & share applicants"}
                :order 2
                :description "For those looking to get good exposure to our dedicated pool of technical talent with limited hiring needs."}
    :launch_pad {:name "Launch Pad"
@@ -458,9 +475,10 @@
                 :img {:src "/images/employers/launch_pad.svg"
                       :alt "Launch Pad icon"}
                 :perks #{"Unlimited hubs"
-                         "Job analytics"
-                         "Review, track & share applicants"
+                         "Performance analytics"
                          "Github integration"
+                         "Company profile"
+                         "Review, track & share applicants"
                          "ATS Integrations"
                          "Account manager"}
                 :order 3

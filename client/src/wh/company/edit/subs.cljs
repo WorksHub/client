@@ -356,7 +356,7 @@
   ::has-subscription?
   :<- [::package-kw]
   (fn [package _]
-    (and (not= package :unselected)
+    (and (not= package :explore)
          (not= package :free))))
 
 (reg-sub

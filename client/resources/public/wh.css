@@ -12598,9 +12598,9 @@ h3 {
     max-width: unset;
     padding: 0;
     margin: 0; }
-    .package-selector__info-message.package-selector__columns .package-selector__column.is-3 {
+    .package-selector__info-message.package-selector__columns .package-selector__column.is-4 {
       padding-right: 14px; }
-    .package-selector__info-message.package-selector__columns .package-selector__column.is-6 {
+    .package-selector__info-message.package-selector__columns .package-selector__column.is-8 {
       padding-right: 12px; }
   .package-selector__info-message.package-selector__columns .package-selector__column-inner {
     position: relative;
@@ -16768,6 +16768,7 @@ h3 {
     fill: #ff7c6e; }
   .tag .icon--close {
     top: 8px;
+    left: unset;
     right: 4px;
     width: 14px;
     height: 14px; }
