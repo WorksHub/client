@@ -76,10 +76,11 @@
      [:h2 "Your Company" [:span.slender " | " (<sub [::subs/today])]]
      [:div.your-company__card.card
       [:div.your-company__name-line
-       (if-let [logo (<sub [::subs/logo])]
-         [:img.your-company__logo {:src logo}]
-         [company-edit-link [icon "add-new-2"]
-          :class "button button--inverted your-company__logo"])
+       (cond
+         (<sub [:wh.company.register.subs/logo-uploading?]) [:div.your-company__logo [:div.your-company__logo--loading]]
+         (<sub [::subs/logo]) [:img.your-company__logo {:src (<sub [::subs/logo])}]
+         :else [company-edit-link [icon "add-new-2"]
+                :class "button button--inverted your-company__logo"])
        [:div.your-company__name
         [ellipsis (<sub [::subs/name]) {:vcenter? true}]]
        (when (<sub [:user/admin?])

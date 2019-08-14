@@ -34,7 +34,7 @@
                 (vertical-links))
    :employers [(if (= "www" vertical)
                  {:title "Start your trial"
-                  :route [:register-company :params {:step :company-details}]}
+                  :route [:register-company]}
                  {:title "Employers"
                   :href  (str routes/company-landing-page
                               (get-in data/in-demand-hiring-data [vertical :href]))})

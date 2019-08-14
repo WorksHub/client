@@ -7448,11 +7448,6 @@ a.navbar-item,
     font-weight: 600;
     color: #6E7F89; }
 
-.company-signup__content-container--step-complete {
-  text-align: center; }
-  .company-signup__content-container--step-complete .loader {
-    margin-bottom: 20px; }
-
 .company-dashboard__grid {
   display: grid; }
   @media screen and (min-width: 1008px) {
@@ -7525,6 +7520,24 @@ a.navbar-item,
   margin-right: 15px; }
   .your-company__logo .icon {
     fill: #ff7c6e; }
+  .your-company__logo .your-company__logo--loading {
+    color: transparent !important;
+    pointer-events: none;
+    position: relative;
+    height: 100%; }
+    .your-company__logo .your-company__logo--loading:after {
+      animation: spinAround 500ms infinite linear;
+      border: 2px solid #ff7c6e;
+      border-radius: 290486px;
+      border-right-color: transparent;
+      border-top-color: transparent;
+      content: "";
+      display: block;
+      height: 1em;
+      width: 1em;
+      position: absolute !important;
+      left: calc(50% - (1em / 2));
+      top: calc(50% - (1em / 2)); }
 
 .your-company__name-line {
   display: flex;

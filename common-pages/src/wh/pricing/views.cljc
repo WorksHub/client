@@ -30,7 +30,6 @@
 (defn signup-button [label package billing-period]
   [:a
    {:href (routes/path :register-company
-                       :params {:step :company-details}
                        :query-params {:package (name package)
                                       :billing (name billing-period)})
     :id (str "employers_signup-btn-" label

@@ -159,11 +159,6 @@
     color: $steel-gray
 
 
-.company-signup__content-container--step-complete
-  text-align: center
-  .loader
-    margin-bottom: 20px
-
 $company-card-padding: 18px
 $company-card-padding-mobile: 16px
 $column-gap: 1.5rem
@@ -234,6 +229,15 @@ $column-gap: 1.5rem
   margin-right: 15px
   .icon
     fill: $red
+  .your-company__logo--loading
+    color: transparent !important
+    pointer-events: none
+    position: relative
+    height: 100%
+    &:after
+      @include spinner
+      left: calc(50% - (1em / 2))
+      top: calc(50% - (1em / 2))
 
 
 .your-company__name-line

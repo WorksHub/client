@@ -1,24 +1,14 @@
 (ns wh.company.register.subs
-  (:require [cljs.spec.alpha :as s]
-            [clojure.string :as str]
-            [re-frame.core :refer [reg-sub]]
-            [wh.common.data :as data]
-            [wh.common.errors :as errors]
-            [wh.common.specs.primitives :as primitives]
-            [wh.company.register.db :as register]
-            [wh.subs :refer [error-sub-key]]))
-
-(defn step
-  [db]
-  (get-in db [:wh.db/page-params :step]))
+  (:require
+    [cljs.spec.alpha :as s]
+    [clojure.string :as str]
+    [re-frame.core :refer [reg-sub]]
+    [wh.common.errors :as errors]
+    [wh.common.specs.primitives :as primitives]
+    [wh.company.register.db :as register]
+    [wh.subs :refer [error-sub-key]]))
 
 (doseq [{k :key} register/company-fields-maps]
-  (reg-sub
-    k
-    (fn [db _]
-      (get-in db [::register/sub-db k]))))
-
-(doseq [{k :key} register/job-fields-maps]
   (reg-sub
     k
     (fn [db _]
@@ -48,17 +38,6 @@
     (fn [db _]
       (error-query db k spec))))
 
-(doseq [{k :key spec :spec} register/job-fields-maps]
-  (reg-sub
-    (error-sub-key k)
-    (fn [db _]
-      (error-query db k spec))))
-
-(reg-sub
-  ::company-signup-step
-  (fn [db _]
-    (step db)))
-
 (reg-sub
   ::company-signup-form-checked?
   (fn [db _]
@@ -66,21 +45,14 @@
        (set (keys (get-in db [::register/sub-db ::register/checked-form]))))))
 
 (reg-sub
-  ::job-form-checked?
-  (fn [db _]
-    (= (set (map :key register/job-fields-maps))
-       (set (keys (get-in db [::register/sub-db ::register/checked-form]))))))
-
-(reg-sub
-  ::billing-period
-  (fn [db _]
-    (keyword (get-in db [:wh.db/query-params "billing-period"] "one"))))
-
-(reg-sub
   ::loading?
   (fn [db _]
-    (or (get-in db [::register/sub-db ::register/loading?])
-        (get-in db [::register/sub-db ::register/logo-uploading?]))))
+    (get-in db [::register/sub-db ::register/loading?])))
+
+(reg-sub
+  ::logo-uploading?
+  (fn [db _]
+    (get-in db [::register/sub-db ::register/logo-uploading?])))
 
 (reg-sub
   ::error
@@ -106,35 +78,6 @@
           results)))))
 
 (reg-sub
-  ::location-suggestions
-  (fn [db _]
-    (format-suggestions db ::register/location ::register/location-suggestions :description)))
-
-(reg-sub
   ::company-suggestions
   (fn [db _]
     (format-suggestions db ::register/company-name ::register/company-suggestions :name)))
-
-(reg-sub
-  ::tags-collapsed?
-  (fn [db _]
-    (get-in db [::register/sub-db ::register/tags-collapsed?])))
-
-(reg-sub
-  ::tag-search
-  (fn [db _]
-    (get-in db [::register/sub-db ::register/tag-search])))
-
-(reg-sub
-  ::matching-tags
-  (fn [db _]
-    (let [tag-search (some-> db (get-in [::register/sub-db ::register/tag-search]) (str/lower-case))
-          all-tags (get-in db [::register/sub-db ::register/available-tags])
-          selected-tags (get-in db [::register/sub-db ::register/tags])
-          selected-tag-set (set (map :tag selected-tags))]
-      (take 20
-            (concat selected-tags
-                    (filter (fn [{:keys [tag]}]
-                              (and (or (str/blank? tag-search)
-                                       (str/includes? tag tag-search))
-                                   (not (contains? selected-tag-set tag)))) all-tags))))))

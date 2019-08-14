@@ -90,6 +90,7 @@
                                       "manage" :manage-issues}]
                   ["dashboard" :homepage-dashboard]
                   ["how-it-works" :how-it-works]
+                  ["company-registration" :register-company]
                   ["companies/" {""    :companies
                                  "new" :create-company
                                  "applications" :company-applications
@@ -97,10 +98,7 @@
                                  [:id "/edit"] :admin-edit-company
                                  [:id "/dashboard"] :company-dashboard
                                  [:id "/applications"] :admin-company-applications
-                                 [:id "/offer"] :create-company-offer
-                                 "register/" {"details"  (with-params :register-company :step :company-details)
-                                              "job"      (with-params :register-company :step :job-details)
-                                              "complete" (with-params :register-company :step :complete)}}]
+                                 [:id "/offer"] :create-company-offer}]
                   ["liked" :liked]
                   ["recommended" :recommended]
                   [#{[:tag "-jobs-in-" :location]
