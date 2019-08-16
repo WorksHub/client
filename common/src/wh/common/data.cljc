@@ -424,12 +424,13 @@
    "Guaranteed hires"])
 
 (def free-trial-days 14)
+(def launch-pad-trial-days 10)
 
 (def package-data
   {:free {:name "Trial"
           :cost 0
           :per nil
-          :trial (str free-trial-days "-day trial")
+          :trial free-trial-days
           :button "Start Trial"
           :live-jobs "Unlimited"
           :img {:src "/images/employers/free.svg"
@@ -469,6 +470,7 @@
    :launch_pad {:name "Launch Pad"
                 :cost 1500
                 :per "month"
+                :trial launch-pad-trial-days
                 :button "Start Hiring"
                 :button-alt "Select & Pay"
                 :live-jobs "Unlimited"

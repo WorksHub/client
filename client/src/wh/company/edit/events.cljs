@@ -547,18 +547,20 @@
                                          {:variable/name "immediately"
                                           :variable/type :Boolean!}]
                        :venia/queries [[:cancel_plan {:id :$id :immediately :$immediately}]]}
-               :variables {:id (get-in db [::db/page-params :id])
+               :variables {:id (or (get-in db [::db/page-params :id])
+                                   (get-in db [::edit/sub-db ::edit/id]))
                            :immediately immediately?}
                :on-success [::cancel-plan-success]
                :on-failure [::cancel-plan-failure]}}))
 
-(reg-event-db
+(reg-event-fx
   ::cancel-plan-success
   company-interceptors
-  (fn [db [resp]]
-    (-> db
-        (assoc ::edit/cancel-plan-loading? false)
-        (assoc-in [::edit/payment :expires] (get-in resp [:data :cancel_plan])))))
+  (fn [{db :db} [resp]]
+    {:db (-> db
+             (assoc ::edit/cancel-plan-loading? false)
+             (assoc-in [::edit/payment :expires] (get-in resp [:data :cancel_plan])))
+     :reload true}))
 
 (reg-event-fx
   ::cancel-plan-failure

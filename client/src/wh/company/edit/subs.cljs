@@ -364,3 +364,15 @@
   :<- [::sub-db]
   (fn [db _]
     (::edit/deleting-integration? db)))
+
+(reg-sub
+  ::permissions
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (set (::edit/permissions sub-db))))
+
+(reg-sub
+  ::can-cancel-sub?
+  :<- [::permissions]
+  (fn [perms _]
+    (contains? perms "can_cancel_subscription")))

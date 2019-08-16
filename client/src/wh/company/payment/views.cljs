@@ -233,6 +233,7 @@
       (merge {:signup-button select-package-button
               :contact-button fake-demo-button
               :mobile-fullscreen? true
+              :show-trials? (<sub [::subs/has-permission? :can_start_free_trial])
               :show-billing-period-selector? (not upgrading?)
               :restrict-packages (restricted-packages)
               :coupon (<sub [::subs/company-coupon])
@@ -339,9 +340,12 @@
 
 (defn initial-payment-details
   [package billing-period]
-  (let [{:keys [cost]} (<sub [::subs/current-package-data])
+  (let [{:keys [cost trial] :or {trial 0}} (<sub [::subs/current-package-data])
+        trial (if (<sub [::subs/has-permission? :can_start_free_trial]) trial 0)
         {:keys [discount number description] :as bp} (get data/billing-data billing-period)
-        date (t/plus (t/now) (t/months number))
+        date (-> (t/now)
+                 (t/plus (t/months number))
+                 (t/plus (t/days trial)))
         date-str (tf/unparse (tf/formatter "d MMM Y") date)
         coupon (<sub [::subs/current-coupon])
         monthly-cost (cost/calculate-monthly-cost cost discount coupon)
@@ -350,8 +354,14 @@
      [:p.li [icon "cutout-tick"] "the cost is " (int->dollars monthly-cost) " per month"]
      [:p.li [icon "cutout-tick"] "you will be " (or description "billed monthly")]
      (if after-coupon
-       [:p.li [icon "cutout-tick"] "the first payment will be taken immediately (" (int->dollars after-coupon) " = " (int->dollars before-coupon) " − " (int->dollars (- before-coupon after-coupon)) " promotion)"]
-       [:p.li [icon "cutout-tick"] "the first payment will be taken immediately (" (int->dollars before-coupon) ")"])
+       [:p.li [icon "cutout-tick"] "the first payment will be taken " (if (zero? trial)
+                                                                        "immediately"
+                                                                        (str "in " trial " days"))
+        " (" (int->dollars after-coupon) " = " (int->dollars before-coupon) " − " (int->dollars (- before-coupon after-coupon)) " promotion)"]
+       [:p.li [icon "cutout-tick"] "the first payment will be taken " (if (zero? trial)
+                                                                        "immediately"
+                                                                        (str "in " trial " days"))
+        " (" (int->dollars before-coupon) ")"])
      [:p.li [icon "cutout-tick"] "the next payment will be taken " date-str]
      (when coupon
        [:p.li.coupon [icon "cutout-tick"] "promotion applied: " (str/lower-case (:description coupon)) ""])]))

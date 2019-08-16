@@ -25,7 +25,7 @@
      [:p info-message]]]])
 
 (defn package
-  [{:keys [id package style restricted? coupon current?
+  [{:keys [id package style restricted? coupon current? show-trials?
            billing-period signup-button contact-button]}]
   (let [billing-data (get billing-data billing-period)]
     [:div
@@ -71,14 +71,18 @@
           [:span
            {:class (when (contains? (:perks package) perk) "package-selector__perk--included")}
            perk]
-          [icon (if (contains? (:perks package) perk) "cutout-tick" "cross")]])]]]))
+          [icon (if (contains? (:perks package) perk) "cutout-tick" "cross")]])]
+      (when show-trials?
+        (when-let [trial (:trial package)]
+          [:div.package-selector__trial (str trial "-day free trial")]))]]))
 
 (defn- package-selector-render
   [selected-billing-period mobile-selected-idx mobile-view-width info-message-collapsed?]
-  (fn [{:keys [signup-button contact-button mobile-fullscreen? show-billing-period-selector?
+  (fn [{:keys [signup-button contact-button mobile-fullscreen? show-billing-period-selector? show-trials?
                exclude-packages restrict-packages billing-period current-package coupon info-message package-data]
         :or   {mobile-fullscreen?            false
                show-billing-period-selector? true
+               show-trials?                  true
                exclude-packages              #{}
                restrict-packages             #{}
                package-data                  data/package-data}}]
@@ -102,26 +106,27 @@
                                      (when mobile-fullscreen? "is-mobile")
                                      (when show-billing-period-selector? "below-selector"))}
          (doall
-          (for [[k [p idx]] selected-packages]
-            ^{:key k}
-            [package {:id             k
-                      :package        p
-                      :signup-button  signup-button
-                      :contact-button contact-button
-                      :current?       (= k current-package)
-                      :restricted?    (contains? (set restrict-packages) k)
-                      :coupon         coupon
-                      :billing-period billing-period
-                      :style          (if (and (zero? idx) mobile-fullscreen? @mobile-view-width)
-                                        {:margin-left (* -1 (* @mobile-selected-idx @mobile-view-width))}
-                                        {:margin-left 0})}]))]
+           (for [[k [p idx]] selected-packages]
+             ^{:key k}
+             [package {:id             k
+                       :package        p
+                       :signup-button  signup-button
+                       :contact-button contact-button
+                       :show-trials?   show-trials?
+                       :current?       (= k current-package)
+                       :restricted?    (contains? (set restrict-packages) k)
+                       :coupon         coupon
+                       :billing-period billing-period
+                       :style          (if (and (zero? idx) mobile-fullscreen? @mobile-view-width)
+                                         {:margin-left (* -1 (* @mobile-selected-idx @mobile-view-width))}
+                                         {:margin-left 0})}]))]
         ;;
         (when (and (-> restrict-packages count pos?) info-message)
           [info-message-display
-           {:info-message info-message
-            :collapsed? info-message-collapsed?
-            :restrict-packages restrict-packages
-            :mobile-fullscreen? mobile-fullscreen?
+           {:info-message        info-message
+            :collapsed?          info-message-collapsed?
+            :restrict-packages   restrict-packages
+            :mobile-fullscreen?  mobile-fullscreen?
             :mobile-selected-idx @mobile-selected-idx}])]
        ;;
        (when mobile-fullscreen?

@@ -16,7 +16,7 @@
 (def payment-interceptors (into db/default-interceptors
                                 [(path ::payment/sub-db)]))
 
-(def company-fields [:id :name :package :permissions :disabled
+(def company-fields [:id :name :package :permissions :disabled :freeTrialStarted
                      [:nextInvoice [:amount [:coupon [:discountAmount :discountPercentage :duration :description]]]]
                      [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]
                                 [:coupon [:discountAmount :discountPercentage :duration :description]]]]

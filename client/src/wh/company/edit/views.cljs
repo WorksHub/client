@@ -301,14 +301,25 @@
    {:id :cancel-plan
     :codi? false
     :on-close #(dispatch [::events/show-cancel-plan-dialog false])}
-   [:h1 (str "When would you like to cancel this subscription?")]
-   [:p "The company will be moved to the Unselected package and all jobs will be unpublished."]
-   [:button.button
-    {:on-click #(dispatch [::events/cancel-plan false])}
-    "At the end of the period"]
-   [:button.button.button--inverted
-    {:on-click #(dispatch [::events/cancel-plan true])}
-    "Immediately"]])
+   (if (<sub [:user/admin?])
+     [:div
+      [:h1 "When would you like to cancel this subscription?"]
+      [:p "The company will be moved to the Unselected package and all jobs will be unpublished."]
+      [:button.button
+       {:on-click #(dispatch [::events/cancel-plan false])}
+       "At the end of the period"]
+      [:button.button.button--inverted
+       {:on-click #(dispatch [::events/cancel-plan true])}
+       "Immediately"]]
+     [:div
+      [:h1 "Are you sure you want to cancel your subscription?"]
+      [:p "Your active subscription will be cancelled and all your jobs will be taken offline."]
+      [:button.button.button--inverted
+       {:on-click #(dispatch [::events/cancel-plan true])}
+       "Cancel immediately"]
+      [:button.button
+       {:on-click #(dispatch [::events/show-cancel-plan-dialog false])}
+       "Don't cancel"]])])
 
 (defn card-data
   [{:keys [last-4-digits brand expiry] :as card}]
@@ -365,20 +376,20 @@
                           (payment/submit-stripe-form! :company-settings-update event))
              :class "button--inverted"
              :text "Update Payment Details"}]])])
-     [:div
-      [:div.company-edit__payment-details__billing-and-pricing
-       [:h2 "Change billing period"]
+     (when (<sub [::subs/has-subscription?])
        [:div
-        [:p (billing-paragraph billing-period)]
-        [link
-         [:button.button "Change billing period"]
-         :payment-setup
-         :step :pay-confirm
-         :query-params {:billing billing-period
-                        :package package
-                        :existing-billing billing-period
-                        :breakdown false}]]]
-      (when (<sub [::subs/has-subscription?])
+        [:div.company-edit__payment-details__billing-and-pricing
+         [:h2 "Change billing period"]
+         [:div
+          [:p (billing-paragraph billing-period)]
+          [link
+           [:button.button "Change billing period"]
+           :payment-setup
+           :step :pay-confirm
+           :query-params {:billing billing-period
+                          :package package
+                          :existing-billing billing-period
+                          :breakdown false}]]]
         [:div.company-edit__payment-details__coupons
          [:h2 "Discounts"]
          [:div
@@ -390,30 +401,33 @@
           (when (<sub [::subs/coupon-apply-success?])
             [:p.company-edit__payment-details__coupons__new-coupon
              [:i "Success! A new coupon has been applied to your subscription."]])
-          [payment/coupon-field true [::events/apply-coupon]]]])]]))
+          [payment/coupon-field true [::events/apply-coupon]]]]])]))
 
 (defn cancel-payment
   []
-  (let [exp (<sub [::subs/payment-expires])]
-    [:div.company-edit__payment-details.company-edit__payment-details__cancel-plan
-     [:h2 "Cancel your plan"]
-     [:p "We'll be very sorry to see you go \uD83D\uDE15"]
-     [:p "Please drop us an email to let us know why you’d like to cancel and then we’ll get it sorted for you."]
-     [:p "Your account will close on the last day of your current plan and no further payments will be taken."]
-     [:div
-      (when exp
-        [:p.is-error (str "This subscription is set to expire on " exp)])
-      (if (<sub [:wh.user/super-admin?])
-        [:button.button
-         {:class (when (<sub [::subs/cancel-plan-loading?]) "button--loading button--inverted")
-          :disabled exp
-          :on-click #(dispatch [::events/show-cancel-plan-dialog true])}
-         "Cancel plan"]
-        [:a {:href (str "mailto:hello@works-hub.com?subject=[" (<sub [::subs/name]) "]+I+wish+to+cancel+my+plan")
-             :target "_blank"
-             :rel    "noopener"}
-         [:button.button
-          "Contact WorksHub"]])]]))
+  (when (<sub [::subs/has-subscription?])
+    (let [exp (<sub [::subs/payment-expires])]
+      [:div.company-edit__payment-details.company-edit__payment-details__cancel-plan
+       [:h2 "Cancel your plan"]
+       [:p "We'll be very sorry to see you go \uD83D\uDE15"]
+       [:p "Please drop us an email to let us know why you’d like to cancel and then we’ll get it sorted for you."]
+       [:p "Your account will close on the last day of your current plan and no further payments will be taken."]
+       [:div
+        (when exp
+          [:p.is-error (str "This subscription is set to expire on " exp)])
+        (if
+            (or (<sub [::subs/can-cancel-sub?])
+                (<sub [:wh.user/super-admin?]))
+          [:button.button
+           {:class (when (<sub [::subs/cancel-plan-loading?]) "button--loading button--inverted")
+            :disabled exp
+            :on-click #(dispatch [::events/show-cancel-plan-dialog true])}
+           "Cancel plan"]
+          [:a {:href (str "mailto:hello@works-hub.com?subject=[" (<sub [::subs/name]) "]+I+wish+to+cancel+my+plan")
+               :target "_blank"
+               :rel    "noopener"}
+           [:button.button
+            "Contact WorksHub"]])]])))
 
 (defmulti error->message identity)
 (defmethod error->message :default [_]
@@ -557,7 +571,7 @@
      (when (<sub [::subs/show-integration-popup?])
        (integration-popup))
      (when (<sub [::subs/showing-cancel-plan-dialog?])
-       (cancel-plan-dialog))]))
+       [cancel-plan-dialog])]))
 
 (defn create-page []
   (page false true))

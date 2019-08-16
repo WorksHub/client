@@ -8,5 +8,6 @@
     [wh.common.fx.google-maps]
     [wh.common.fx.graphql]
     [wh.common.fx.http]
+    [wh.common.fx.reload]
     ;; we don't load wh.common.fx.persistent-state since it's only needed in login module
     [wh.common.fx.scroll]))

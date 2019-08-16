@@ -27,6 +27,7 @@
     justify-content: center
 
 .package-selector__column
+  position: relative
   color: $steel-gray
   text-align: center
   padding: 0
@@ -38,7 +39,7 @@
     margin-bottom: 5px
 
 .package-selector__column-inner
-  padding: 24px 18px 18px 18px
+  padding: 38px 18px 18px 18px
   background-color: white
   +mobile
     margin-bottom: 40px
@@ -273,3 +274,17 @@
         position: absolute
         bottom: 0
         transition: height 0.5s
+
+.package-selector__trial
+  position: absolute
+  top: 0
+  left: 0
+  height: 24px
+  right: 0
+  line-height: 24px
+  color: $red
+  background-color: $lighter-red
+  font-weight: $font-semi-bold
+  text-transform: uppercase
+  +mobile
+    margin: 0 10%

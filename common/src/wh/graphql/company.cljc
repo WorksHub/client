@@ -48,7 +48,7 @@
 
 (def default-company-fields
   [:id :slug :name :manager :descriptionHtml
-   :logo :package :vertical :autoApprove
+   :logo :package :vertical :autoApprove :permissions
    :paidOfflineUntil :disabled :profileEnabled
    [:videos [:youtubeId :thumbnail :description]]
    [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]]]

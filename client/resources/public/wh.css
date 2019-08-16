@@ -4846,7 +4846,8 @@ a.navbar-item,
   top: 0;
   background: rgba(37, 65, 84, 0.6);
   top: 76px;
-  z-index: 3000; }
+  z-index: 3000;
+  position: fixed; }
   @media screen and (max-width: 1007px) {
     .is-full-panel-overlay {
       top: 46px; } }
@@ -7787,11 +7788,7 @@ a.navbar-item,
       margin-top: 0; } }
 
 .company-edit__side-pods--container {
-  position: absolute;
   width: 100%; }
-  @media screen and (max-width: 1007px) {
-    .company-edit__side-pods--container {
-      position: initial; } }
 
 .company-edit__manager-pod .wh-formx {
   margin-top: 30px; }
@@ -8898,10 +8895,13 @@ a.navbar-item,
 .main-wrapper--register-company {
   min-height: unset !important; }
 
+.generic-popup__popup--cancel-plan h1 {
+  margin-top: 16px; }
+
 .generic-popup__popup--cancel-plan .button {
   display: block;
   margin: 5px auto;
-  width: 200px; }
+  width: 260px; }
 
 .company-dashboard__profile-banner section {
   background-color: white;
@@ -12396,6 +12396,7 @@ h3 {
     justify-content: center; } }
 
 .package-selector__column {
+  position: relative;
   color: #6E7F89;
   text-align: center;
   padding: 0; }
@@ -12409,7 +12410,7 @@ h3 {
       margin-bottom: 5px; } }
 
 .package-selector__column-inner {
-  padding: 24px 18px 18px 18px;
+  padding: 38px 18px 18px 18px;
   background-color: white; }
   @media screen and (max-width: 1007px) {
     .package-selector__column-inner {
@@ -12657,6 +12658,21 @@ h3 {
     position: absolute;
     bottom: 0;
     transition: height 0.5s; } }
+
+.package-selector__trial {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  right: 0;
+  line-height: 24px;
+  color: #ff7c6e;
+  background-color: #ffe9e7;
+  font-weight: 600;
+  text-transform: uppercase; }
+  @media screen and (max-width: 1007px) {
+    .package-selector__trial {
+      margin: 0 10%; } }
 
 @media screen and (max-width: 1007px) {
   .issues__main,
