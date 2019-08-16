@@ -1,11 +1,41 @@
 $logo-width: 324px
 $engineers-menu-offset: 654px
 
-.navbar
+.navbar__content
+  width: 100%;
+  display: flex;
+  align-items: stretch;
   border-bottom: #dedede 1px solid
+  background-color: white
+
+.navbar.navbar--has-promo-banner
+  +desktop
+    height: $navbar-height + $promo-banner-height
+  +mobile
+    height: $navbar-mobile-height + $promo-banner-height
+
+.navbar__promo-banner
+  height: $promo-banner-height
+  right: 0
+  line-height: $promo-banner-height
+  &, a
+    color: $red
+  background-color: $lighter-red
+  font-weight: $font-semi-bold
+  text-transform: uppercase
+  text-align: center
+  font-size: 14px
+  +mobile
+    font-size: 12px
+
+.navbar__promo-banner.scrolled + .navbar__content
+  .navbar-overlay--candidates
+    top: $navbar-height
+
+.navbar
   width: 100%
   display: flex
-  align-items: stretch
+  flex-direction: column
   z-index: 11
   +desktop
     height: $navbar-height
@@ -337,7 +367,7 @@ $engineers-menu-offset: 654px
     position: absolute
     z-index: 1
   .navbar-overlay--candidates
-    top: $navbar-height
+    top: $navbar-height + $promo-banner-height
     margin-top: -6px
     transition: opacity 0.3s, margin 0.2s ease-out
     &.is-open

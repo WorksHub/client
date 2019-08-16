@@ -9,7 +9,13 @@
     [wh.components.menu :as menu]
     [wh.interop :as interop]
     [wh.routes :as routes]
+    [wh.util :as util]
     [wh.verticals :as verticals]))
+
+(defn show-promo-banner?
+  [page vertical]
+  (or (contains? #{:pricing :how-it-works :issues} page)
+      (= "www" vertical)))
 
 (def candidates-overlay-menu-id "candidates-overlay-menu")
 (def candidates-menu-id         "candidates-menu")
@@ -40,15 +46,15 @@
     :class class}
    [:div "What's your area of expertise?"]
    (doall
-    (for [vertical verticals/ordered-job-verticals]
-      ^{:key vertical}
-      [:a
-       {:class link-class
-        :href (url/vertical-homepage-href
-               (name env)
-               vertical)}
-       (icon vertical)
-       [:span (verticals/config vertical :platform-name)]]))])
+     (for [vertical verticals/ordered-job-verticals]
+       ^{:key vertical}
+       [:a
+        {:class link-class
+         :href (url/vertical-homepage-href
+                 (name env)
+                 vertical)}
+        (icon vertical)
+        [:span (verticals/config vertical :platform-name)]]))])
 
 (defn mobile-logged-out-menu
   [{:keys [vertical  env query-params]}]
@@ -244,20 +250,31 @@
 
 (defn top-bar
   [{:keys [env vertical logged-in? query-params page] :as args}]
-  (let [content? (not (contains? routes/no-menu-pages page))]
-    [:nav.navbar {:id         "wh-navbar"
-                  :role       "navigation"
-                  :aria-label "main navigation"}
-     [:div.navbar-item.navbar__logo-container
-      [:svg.icon.navbar__logo [icon vertical]]
-      (logo-title vertical env)]
-     (when content?
-       [navbar-content args])
-     (when content?
-       [navbar-end args])
-     (when (and content? (not logged-in?))
-       [mobile-logged-out-menu args])
-     (when content?
-       [candidates-menu args])
-     (when content?
-       [mobile-search (:search query-params) query-params])]))
+  (let [content? (not (contains? routes/no-menu-pages page))
+        promo-banner? (and (show-promo-banner? page vertical)
+                           (not logged-in?))]
+    [:nav {:class (util/merge-classes "navbar"
+                                      (when promo-banner? "navbar--has-promo-banner"))
+           :id         "wh-navbar"
+           :role       "navigation"
+           :aria-label "main navigation"}
+     (when promo-banner?
+       [:div.navbar__promo-banner
+        {:id "promo-banner"}
+        [link [:div "Start hiring for free on our 10-day trial!"] :register-company]
+        [:script {:type "text/javascript"}
+         "initPromoBanner(\"promo-banner\")"]])
+     [:div.navbar__content
+      [:div.navbar-item.navbar__logo-container
+       [:svg.icon.navbar__logo [icon vertical]]
+       (logo-title vertical env)]
+      (when content?
+        [navbar-content args])
+      (when content?
+        [navbar-end args])
+      (when (and content? (not logged-in?))
+        [mobile-logged-out-menu args])
+      (when content?
+        [candidates-menu args])
+      (when content?
+        [mobile-search (:search query-params) query-params])]]))

@@ -90,6 +90,8 @@ $navbar-item-color: $steel-gray
 $navbar-item-hover-color: $steel-gray
 $navbar-dropdown-item-hover-color: $steel-gray
 $navbar-mobile-logo-height: 26px
+$navbar-background-color: transparent
+$promo-banner-height: 48px
 
 $file-cta-hover-color: white
 $file-cta-background-color: $red
@@ -197,6 +199,9 @@ $file-cta-background-color: $red
       -webkit-overflow-scrolling: touch
       +desktop
         margin-left: $left-menu-width
+
+    .navbar--has-promo-banner + .page-container
+      margin-top: $promo-banner-height
 
     .page-container--no-menu
       margin-left: 0
