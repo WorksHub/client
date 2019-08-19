@@ -109,7 +109,7 @@
                                                            :billing (or (<sub [::subs/billing-period])
                                                                         data/default-billing-period)}]]
         ;;
-        (not= :explore package)
+        :else
         [:div.your-company__package
          [:div.your-company__package-top-line
           [:div.your-company__package-logo
@@ -121,16 +121,12 @@
             [:div.your-company__package-link
              (upgrade-link "")])] ; content specified in CSS
          [:div.your-company__package-description
-          (if (= :take_off (<sub [::subs/package]))
-            [:p "Now that you are our premium client with a Take-Off package, why not "
-             (mailto-link "talk to us")
-             " about what we can do for you?"]
-            "It’s great to start out with this, but if you have more ambitious hiring plans you should upgrade to our Take-Off Package.")]]
-        ;;
-        :else
-        [:div.your-company__payment-setup.your-company__payment-setup--explore
-         [:div [:h3 "Welcome!"]
-          [:p "To get started just click Publish on any of your jobs and you will be guided through the next steps, including selecting one of our pricing packages."]]])]]))
+          (case (<sub [::subs/package])
+            :take_off [:p "Now that you are our premium client with a Take-Off package, why not "
+                       (mailto-link "talk to us")
+                       " about what we can do for you?"]
+            :launch_pad "It’s great to start out with this, but if you have more ambitious hiring plans you should upgrade to our Take-Off Package."
+            "Once you have had time to explore upgrade with a 10-day free trial and start hiring.")]])]]))
 
 (defn stats-codi-item []
   [:div.stats__item.stats__codi
