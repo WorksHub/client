@@ -238,8 +238,8 @@
               :restrict-packages (restricted-packages)
               :coupon (<sub [::subs/company-coupon])
               :info-message (<sub [::subs/info-message])
-              :current-package (when (and (not= :take_off package)
-                                          (<sub [::subs/company-new-offer])) ;; if we have pending offer, even if already take_off we want to show it
+              :current-package (when-not (and (= :take_off package)
+                                              (<sub [::subs/company-new-offer])) ;; if we have pending offer, even if already take_off we want to show it
                                  package)}
              (when upgrading?
                {:billing-period  (<sub [::subs/company-billing-period])}))]]))
