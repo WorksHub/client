@@ -18,7 +18,7 @@
 
 (defn company-sort
   [qps]
-  (get qps "sort" "created"))
+  (get qps "sort" "published"))
 
 (def tag-sort
   {:industry 1
