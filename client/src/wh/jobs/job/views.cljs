@@ -496,31 +496,26 @@
 
 (defn admin-publish-prompt
   [permissions company-id success-event]
-  (let [can-start-free-trial? (contains? permissions :can_start_free_trial)]
-    (popup-wrapper
-     {:id :admin-publish-prompt
-      :codi? false}
-     [:div.job__admin-publish-prompt
-      [:div.job__admin-publish-prompt__content
-       [:h1 "Company requires upgrade in order to publish role:"]
-       [:hr]
-       [:h1 "Here are the options:"]
-       [:div.buttons
-        (when can-start-free-trial?
-          [:button.button
-           {:on-click #(dispatch [::events/admin-set-company-to-free company-id success-event])}
-           [:span "Set Company to Free"]])
-        [:a
-         {:href (routes/path :create-company-offer :params {:id company-id})}
-         [:button.button
-          [:span "Create Take-off Offer"]]]]
-       [:hr]
-       [:p "Always speak to the company and inform them of your intentions. If you're unsure, please seek assistance from your manager or the dev team. "]
-       [:button.button.button--inverted
-        {:on-click #(dispatch [::events/show-admin-publish-prompt? false])}
-        "Cancel"]]
-      (when (<sub [::subs/admin-publish-prompt-loading?])
-        [:div.job__admin-publish-prompt__loader])])))
+  (popup-wrapper
+    {:id :admin-publish-prompt
+     :codi? false}
+    [:div.job__admin-publish-prompt
+     [:div.job__admin-publish-prompt__content
+      [:h1 "Company requires upgrade in order to publish role:"]
+      [:hr]
+      [:h1 "Here are the options:"]
+      [:div.buttons
+       [:a
+        {:href (routes/path :create-company-offer :params {:id company-id})}
+        [:button.button
+         [:span "Create Take-off Offer"]]]]
+      [:hr]
+      [:p "Always speak to the company and inform them of your intentions. If you're unsure, please seek assistance from your manager or the dev team. "]
+      [:button.button.button--inverted
+       {:on-click #(dispatch [::events/show-admin-publish-prompt? false])}
+       "Cancel"]]
+     (when (<sub [::subs/admin-publish-prompt-loading?])
+       [:div.job__admin-publish-prompt__loader])]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
