@@ -7,6 +7,7 @@
     [wh.db :as db]
     [wh.graphql.company :refer [company-query job-query update-company-mutation update-job-mutation]]
     [wh.jobs.job.db :as job]
+    [wh.jobs.job.events :refer [process-publish-role-intention]]
     [wh.pages.core :as pages :refer [on-page-load force-scroll-to-top!]]
     [wh.user.db :as user]
     [wh.util :as util])
@@ -16,14 +17,16 @@
 (def payment-interceptors (into db/default-interceptors
                                 [(path ::payment/sub-db)]))
 
-(def company-fields [:id :name :package :permissions :disabled :freeTrialStarted
+(def job-fields [:id :slug :title :verticals :valid])
+
+(def company-fields [:id :name :package :permissions :disabled :freeTrialStarted :slug
+                     [:jobs {:pageSize 5 :pageNumber 1 :published false}
+                      [[:jobs [:id :title :published]]]]
                      [:nextInvoice [:amount [:coupon [:discountAmount :discountPercentage :duration :description]]]]
                      [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]
                                 [:coupon [:discountAmount :discountPercentage :duration :description]]]]
                      [:offer [:recurringFee :placementPercentage :acceptedAt]]
                      [:pendingOffer [:recurringFee :placementPercentage]]])
-
-(def job-fields [:id :slug :title :tagline :tags :verticals :valid])
 
 (def update-company-mutation+
   (update-in update-company-mutation [:venia/queries 0] assoc 2 company-fields))
@@ -288,13 +291,34 @@
   (fn [db _]
     (update db ::payment/sub-db merge payment/default-db)))
 
+(reg-event-db
+  ::launch-pad-publish-job-success
+  payment-interceptors
+  (fn [db [job-id]]
+    (assoc-in db [::payment/job-states job-id] :published)))
+
+(reg-event-fx
+  ::publish-role
+  db/default-interceptors
+  (fn [{db :db} [job-id]]
+    (let [perms (get-in db [::payment/sub-db ::payment/company :permissions])]
+      (process-publish-role-intention
+        {:db db
+         :job-id job-id
+         :permissions perms
+         ;;  :pending-offer pending-offer
+         :publish-events {:success [::launch-pad-publish-job-success job-id]
+                          :failure [::publish-job-failure job-id]
+                          :retry   [::publish-role job-id]}
+         :on-publish (fn [db]
+                       (assoc-in db [::payment/sub-db ::payment/job-states job-id] :loading))}))))
+
 (defmethod on-page-load :payment-setup [db]
   (let [job-id (subs/job-id db)]
     (concat [[::initialize-db]]
-            (when (and (or (not (get-in db [::payment/sub-db ::payment/company :id]))
-                           (not= (get-in db [::payment/sub-db ::payment/company :id])
-                                 (get-in db [::user/sub-db ::user/company :id])))
-                       (not= :pay-success (subs/payment-step db)))
+            (when (or (not (get-in db [::payment/sub-db ::payment/company :id]))
+                      (not= (get-in db [::payment/sub-db ::payment/company :id])
+                            (get-in db [::user/sub-db ::user/company :id])))
               [[::fetch-company]])
             (when (and (get-in db [::payment/sub-db ::payment/company :id])
                        (subs/upgrading? db)

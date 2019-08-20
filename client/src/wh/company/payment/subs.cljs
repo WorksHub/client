@@ -43,6 +43,12 @@
                       (not (get-in sub-db [::payment/job :valid]))))))))
 
 (reg-sub
+  ::company-loading?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (not (get-in sub-db [::payment/company :id]))))
+
+(reg-sub
   ::waiting?
   :<- [::sub-db]
   (fn [sub-db _]
@@ -161,6 +167,12 @@
   :<- [::sub-db]
   (fn [sub-db _]
     (get-in sub-db [::payment/company :name])))
+
+(reg-sub
+  ::company-slug
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (get-in sub-db [::payment/company :slug])))
 
 (reg-sub
   ::has-permission?
@@ -294,3 +306,21 @@
       (merge (get data/package-data package)
              {:cost (:recurring-fee pending-offer) :per "month"})
       (get data/package-data package))))
+
+(reg-sub
+  ::jobs
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (get-in sub-db [::payment/company :jobs :jobs])))
+
+(reg-sub
+  ::job-state
+  :<- [::sub-db]
+  (fn [sub-db [_ job-id]]
+    (get-in sub-db [::payment/job-states job-id])))
+
+(reg-sub
+  ::has-published-at-least-one-role?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (contains? (set (vals (get sub-db ::payment/job-states))) :published)))

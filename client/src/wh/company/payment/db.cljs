@@ -27,6 +27,9 @@
 (s/def ::stripe-card-form-enabled? boolean?)
 (s/def ::stripe-card-form-error (s/nilable string?))
 
+(s/def ::job-state #{:loading :published})
+(s/def ::job-states (s/map-of string? ::job-state))
+
 (def default-db
   {::token  nil
    ::error nil
@@ -38,4 +41,5 @@
    ::coupon-loading? false
    ::coupon-error nil
    ::coupon-code ""
-   ::current-coupon nil})
+   ::current-coupon nil
+   ::job-states {}})

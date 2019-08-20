@@ -63,6 +63,10 @@
 (s/def :wh.company.profile/videos (s/coll-of map? :min-count 1))
 (s/def :wh.company.profile/locations (s/coll-of map? :min-count 1))
 
+(s/def :wh.company/minimum-company (s/keys :req-un [:wh.company.profile/logo
+                                                    :wh.company/name
+                                                    :wh.company.profile/description-html]))
+
 (s/def :wh.company/top-score-profile (s/keys :req-un [:wh.company.profile/logo
                                                       :wh.company/name
                                                       :wh.company.profile/description-html

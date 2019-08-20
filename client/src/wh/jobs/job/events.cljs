@@ -234,11 +234,12 @@
   ::publish-job-failure-internal
   db/default-interceptors
   (fn [{db :db} [job-id failure-event retry-event resp]]
-    (let [reason (some-> resp :errors first :key keyword)]
+    (let [reason (some-> resp :errors first :message keyword)
+          redirect-to-job {:navigate [:edit-job :params {:id job-id} :query-params {:save 1}]
+                           :dispatch failure-event}]
       (case reason
-        :invalid-job
-        {:navigate [:edit-job :params {:id job-id} :query-params {:save 1}]
-         :dispatch failure-event}
+        :invalid-job     redirect-to-job
+        :invalid-company redirect-to-job
         :missing-permission
         (if (user/admin? db)
           ;; TODO admin popup could go here instead...

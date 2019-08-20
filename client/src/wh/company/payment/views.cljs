@@ -22,7 +22,7 @@
     [wh.components.package-selector :refer [package-selector]]
     [wh.db :as db]
     [wh.subs :refer [<sub] :as core-subs]
-    [wh.util :refer [list->sentence]]
+    [wh.util :as util]
     [wh.verticals :as verticals]))
 
 (defonce stripe-form-contexts (r/atom {}))
@@ -584,7 +584,7 @@
      [:h1 "Welcome to the team!"]
      [icon "tick"]
      (cond (and job-id (= :publish action))
-           [:p "Your role of '" role "' at '" company "' is now live on " (list->sentence (map (comp #(str % "Works") str/capitalize) verts)) "!"]
+           [:p "Your role of '" role "' at '" company "' is now live on " (util/list->sentence (map (comp #(str % "Works") str/capitalize) verts)) "!"]
            (and job-id (= :applications action))
            [:p "Your can now view the applications for your role '" role "'!"]
            (= :free package)
@@ -592,25 +592,62 @@
            existing-billing-period
            [:p "Your update was successful!"]
            :else
-           [:p "Your payment was successful!"])
-     [:div.columns
-      (cond
-        job-id
-        [:div.column
-         (if (= :publish action)
-           [link [:button.button.is-full-width
-                  "View your role"] :job :slug job-slug]
-           [link [:button.button.is-full-width
-                  "View applications"] :company-applications :query-params {:job-id job-id}])]
-        action
-        (when (= :applications action)
+           [:p "The transaction was successful!"])
+     (if (<sub [::subs/company-loading?])
+       [:div.payment-setup__pay-success__loader
+        [:div.is-loading-spinner]]
+       [:div.columns
+        (cond
+          job-id
+          [:div.column
+           (if (= :publish action)
+             [link [:button.button.is-full-width
+                    "View your role"] :job :slug job-slug]
+             [link [:button.button.is-full-width
+                    "View applications"] :company-applications :query-params {:job-id job-id}])]
+          action
+          (when (= :applications action)
+            [:div.column
+             [link [:button.button.is-full-width
+                    "View all applications"] :company-applications]]))
+        (if (= :explore package)
           [:div.column
            [link [:button.button.is-full-width
-                  "View all applications"] :company-applications]]))
-      [:div.column
-       [link [:button.button.is-full-width
-              {:class (when action "button--inverted")}
-              "View your dashboard"] :homepage]]]]))
+                  "Create your company profile"] :company :slug (<sub [::subs/company-slug])]
+           [link [:button.button.is-full-width
+                  {:class "button--inverted"}
+                  "View your dashboard"] :homepage]]
+          [:div.column
+           (when-let [jobs (not-empty (<sub [::subs/jobs]))]
+             [:div.payment-setup__pay-success__jobs
+              [:p "Now select one or more jobs you'd like to publish:"]
+              [:ul
+               (doall
+                 (for [job jobs
+                       :let [job-id (:id job)]]
+                   ^{:key job-id}
+                   [:li.payment-setup__pay-success__job
+                    [:h3 (:title job)]
+                    (let [state (<sub [::subs/job-state job-id])]
+                      [:button
+                       {:class (util/merge-classes
+                                 "button"
+                                 "is-full-width"
+                                 (when state
+                                   "button--inverted")
+                                 (when (= state :loading)
+                                   "button--loading"))
+                        :on-click #(dispatch [::events/publish-role job-id])
+                        :disabled (= state :published)}
+                       (if (= state :published)
+                         [icon "cutout-tick"]
+                         "Publish now")])]))
+               (when (<sub [::subs/has-published-at-least-one-role?])
+                 [:li [:h3] [link [:button.button
+                                   "All done!"] :homepage]])]])
+           [link [:button.button.is-full-width
+                  {:class "button--inverted"}
+                  "Create a new job"] :create-job]])])]))
 
 (defn error-display
   []
@@ -686,4 +723,4 @@
    [:div.payment-publish-celebration__content
     [:h1 "Yay! \uD83C\uDF89"]
     [:h1 (str "The role of " title " at " company-name " is now live on "
-              (list->sentence (map #(get-in verticals/vertical-config [% :platform-name]) verticals)))]]])
+              (util/list->sentence (map #(get-in verticals/vertical-config [% :platform-name]) verticals)))]]])
