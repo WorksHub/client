@@ -1,8 +1,10 @@
 (ns wh.login.events
   (:require
     [ajax.formats :refer [text-request-format raw-response-format]]
+    [bidi.bidi :as bidi]
     [cljs.reader :as r]
     [clojure.string :as str]
+    [goog.Uri :as uri]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.db :as db]
     [wh.login.db :as login]
@@ -122,13 +124,33 @@
                   :timeout          10000
                   :on-success       [::login-as-success]}}))
 
+(defn query-redirect->path
+  [query-redirect]
+  (when-let [route (->> query-redirect
+                        (bidi/url-decode)
+                        (bidi/match-route routes/routes))]
+    (let [query-params (let [params (-> query-redirect uri/parse .getQueryData)]
+                         (zipmap (.getKeys params) (.getValues params)))]
+      ;; url params can be 'route-params' or just 'params' depending on how
+      ;; they are specified in routes (see ':company' vs ':payment-setup')
+      (cond-> (vector (:handler route))
+              (or (not-empty (:route-params route))
+                  (not-empty (:params route)))
+              (concat [:params (merge (:route-params route)
+                                      (:params route))])
+              (not-empty query-params)
+              (concat [:query-params query-params])))))
+
 (defmethod on-page-load :login
   [db]
   (list
-   [:wh.events/scroll-to-top]
-   ;; if there's an auth redirect we pop and set it
-   (when-let [cached-redirect (js/popAuthRedirect)]
-     (vec (concat [:login/set-redirect] (r/read-string cached-redirect))))
-   (when (= :github (get-in db [::db/page-params :step]))
-     (let [user-type (get-in db [::db/query-params "user-type"] "candidate")]
-       [:github/call {:type :login-page} (keyword user-type)]))))
+    [:wh.events/scroll-to-top]
+    ;; if there's an auth redirect we pop and set it
+    (when-let [cached-redirect (js/popAuthRedirect)]
+      (vec (concat [:login/set-redirect] (r/read-string cached-redirect))))
+    ;; if there's a redirect query param
+    (when-let [query-redirect (get-in db [:wh.db/query-params "redirect"])]
+      (vec (concat [:login/set-redirect] (query-redirect->path query-redirect))))
+    (when (= :github (get-in db [::db/page-params :step]))
+      (let [user-type (get-in db [::db/query-params "user-type"] "candidate")]
+        [:github/call {:type :login-page} (keyword user-type)]))))
