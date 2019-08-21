@@ -74,7 +74,7 @@
     [:p "Through open-source contributions we generate objective ratings to help you hire the right engineers, faster."]
     (link [:button.button
            {:id "www-landing__hero"}
-           "Get Started"] :get-started)]])
+           "Get Started For Free"] :get-started)]])
 
 (defn features
   []
@@ -129,7 +129,7 @@
      [:span "Have a question along the way? We have a " [:strong "team of experts"] " that can help at every step of the process helping you make the best possible hire."]
      (link [:button.button
             {:id "www-landing__walkthrough__experts"}
-            "Get Started"] :get-started)]
+            "Get Started For Free"] :get-started)]
     [:div.column.homepage__step__img
      [:img {:src "/images/homepage/walkthrough04.svg"
             :alt ""}]]]])
@@ -167,7 +167,7 @@
    [:h3 "Join our satisfied worldwide clients"]
    (link [:button.button
           {:id "www-landing__testimonials"}
-          "Sign up for your trial today"] :get-started)
+          "Get Started For Free"] :get-started)
    [carousel
     (for [item testimonials-data]
       [testimonial item])]])
@@ -192,7 +192,7 @@
           (icon logo)]])])
    (link [:button.button
           {:id "www-landing__looking-to-hire"}
-          "Get Started"] :get-started)])
+          "Get Started For Free"] :get-started)])
 
 (defn homepage
   ([]
@@ -219,7 +219,7 @@
                   "Discover how we're different"] :pricing)
          (link [:button.button
                 {:id "www-landing__barriers-try"}
-                "Get Started"] :get-started)]]
+                "Get Started For Free"] :get-started)]]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
        [:div.homepage__middle-content__container
         (walkthrough)]
