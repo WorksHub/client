@@ -15,7 +15,7 @@
     [wh.verticals :as verticals]))
 
 (defn demo-button []
-  (fn [secondary? label package]
+  (fn [secondary? label package _billing-period]
     [:a {:href   (if (= :take_off package)
                    verticals/take-off-meeting-link
                    verticals/demo-link)
@@ -80,7 +80,7 @@
         :contact-button (demo-button)}]]
      [:div.pricing-content.has-text-centered
       [:div.pricing__request-demo
-       [(demo-button) false "Request Demo" nil]]]
+       [(demo-button) false "Request Demo" nil nil]]]
      [www/animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
      [:div.pricing-content
       [:h2.pricing__subtitle "FAQS"]
