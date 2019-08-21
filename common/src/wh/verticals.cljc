@@ -18,6 +18,9 @@
 
 (def default-vertical "functional")
 
+(def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/take-off-demo")
+(def demo-link             "https://app.hubspot.com/meetings/workshub/product-demo")
+
 (def vertical-config
   {"functional"
    {:platform-name         "Functional Works"
@@ -27,8 +30,6 @@
     :twitter               "@functionalworks"
     :linkedin              "https://www.linkedin.com/company/functional-works/"
     :default-technologies  ["Clojure" "Haskell" "Scala" "Erlang" "F#" "OCaml"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/functional-works-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/functional-works-15-minute-demo"
     :footer-job-links      ["Scala" "Clojure" "Haskell" "OCaml" "Elixir" "Elm" "Erlang" "ReasonML"]
     :footer-article-links  ["Scala" "Clojure" "Haskell" "F#" "Elixir" "Erlang"]
     :jobsboard-header      {:title       "Functional Programming Jobs"
@@ -48,8 +49,6 @@
     :twitter               "@blockchainworks"
     :linkedin              "https://www.linkedin.com/company/blockchainworks/"
     :default-technologies  ["Ethereum" "Java" "Go" "C++" "Compliance" "Product" "Haskell"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/blockchain-works-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/blockchain-works-15-minute-demo"
     :footer-job-links      ["Blockchain" "Solidity" "Blockchain product" "Quant"]
     :footer-article-links  ["Blockchain" "Solidity" "Ethereum"]
     :jobsboard-header      {:title       "Blockchain Jobs"
@@ -66,8 +65,6 @@
     :twitter               "@javascriptworks"
     :linkedin              "https://www.linkedin.com/company/javascriptworks/"
     :default-technologies  ["JavaScript" "React" "Angular" "Vue" "Node" "CSS"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/javascript-works-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/javascript-works-15-minute-demo"
     :footer-job-links      ["React" "Angular" "NodeJS" "Typescript"]
     :footer-article-links  ["React" "Angular" "NodeJS" "Typescript" "ReasonML"]
     :jobsboard-header      {:title       "JavaScript Jobs"
@@ -85,8 +82,6 @@
     :twitter               "@AIWorksBot"
     :linkedin              "https://www.linkedin.com/company/aiworks/"
     :default-technologies  ["Data Science" "Data Engineering" "Machine Learning" "Python" "Spark" "Scala" "Java" "R"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/ai-works-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/ai-works-15-minute-demo"
     :footer-job-links      ["Data Science" "Data Engineering" "Machine learning" "Artificial Intelligence"]
     :footer-article-links  ["Data Science" "Machine learning" "Artificial Intelligence"]
     :jobsboard-header      {:title       "AI Jobs"
@@ -104,8 +99,6 @@
     :twitter               "@golangworks"
     :linkedin              "https://www.linkedin.com/company/golang-works/"
     :default-technologies  ["Go" "Java" "Spark" "Python" "SQL" "Distributed Systems"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/golang-works-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/golang-works-15-minute-demo"
     :footer-job-links      ["Go" "Golang"]
     :footer-article-links  ["Golang"]
     :jobsboard-header      {:title       "Golang Jobs"
@@ -120,8 +113,6 @@
     :twitter               "@Java_workshub"
     :linkedin              "https://www.linkedin.com/company/javaworks"
     :default-technologies  ["Java" "Play" "Kafka" "Akka" "Spring"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/java-works-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/java-works-15-minute-demo"
     :footer-job-links      ["Java" "Play" "Kafka" "Akka"]
     :footer-article-links  ["Java" "Akka" "Kafka"]
     :jobsboard-header      {:title       "Java Developer Jobs"
@@ -138,8 +129,6 @@
     :twitter               "@python_works"
     :linkedin              "https://www.linkedin.com/showcase/python-works/"
     :default-technologies  ["Python" "Django" "Ansible" "Numpy" "SciPy" "Scikit-Learn" "Pandas"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/python-works-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/python-works-15-minute-demo"
     :footer-job-links      ["Python" "Django" "Ansible"]
     :footer-article-links  ["Python"]
     :jobsboard-header      {:title       "Python Developer Jobs"
@@ -154,8 +143,6 @@
     :twitter               "@workshub"
     :linkedin              "https://www.linkedin.com/company/workshub"
     :default-technologies  ["Python" "Clojure" "Java" "Go" "Data Science" "AI" "JavaScript" "Blockchain" "Scala" "Haskell" "React"]
-    :take-off-meeting-link "https://app.hubspot.com/meetings/workshub/workshub-take-off"
-    :demo-link             "https://app.hubspot.com/meetings/workshub/15-minute-demo"
     :jobsboard-header      {:title       "Software Engineering and Software Developer Jobs"
                             :subtitle    "Browse jobs for developers working across a wide range of technologies"
                             :description "Look for front-end, full-stack and backend roles"}

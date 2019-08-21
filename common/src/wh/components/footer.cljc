@@ -41,7 +41,7 @@
                {:title "Our plans and pricing"
                 :href  (str routes/company-landing-page "/pricing")}
                {:title "Request a demo"
-                :href  (verticals/config vertical :demo-link)}
+                :href  verticals/demo-link}
                {:title "Terms of Service"
                 :route [:terms-of-service]}]})
 

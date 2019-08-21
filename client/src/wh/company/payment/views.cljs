@@ -457,7 +457,7 @@
                            :event [::events/setup-step-forward]}]
                [authorize-card-button]]]
              [:div
-              [:a {:href   (verticals/config (<sub [::core-subs/vertical]) :take-off-meeting-link)
+              [:a {:href   verticals/take-off-meeting-link
                    :target "_blank"
                    :rel    "noopener"
                    :on-click #(reset! clicked? true)}

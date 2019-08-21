@@ -14,12 +14,11 @@
     [wh.util :as util]
     [wh.verticals :as verticals]))
 
-(defn demo-button
-  [vertical]
-  (fn [secondary? label package _billing-period]
+(defn demo-button []
+  (fn [secondary? label package]
     [:a {:href   (if (= :take_off package)
-                   (verticals/config vertical :take-off-meeting-link)
-                   (verticals/config vertical :demo-link))
+                   verticals/take-off-meeting-link
+                   verticals/demo-link)
          :target "_blank"
          :rel    "noopener"}
      [:button#employers_demo-btn
@@ -78,7 +77,10 @@
         :show-billing-period-selector? false
         :billing-period billing-period
         :mobile-fullscreen? true
-        :contact-button (demo-button vertical)}]]
+        :contact-button (demo-button)}]]
+     [:div.pricing-content.has-text-centered
+      [:div.pricing__request-demo
+       [(demo-button) false "Request Demo" nil]]]
      [www/animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
      [:div.pricing-content
       [:h2.pricing__subtitle "FAQS"]

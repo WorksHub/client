@@ -14623,6 +14623,16 @@ h3 {
 .pricing__faqs__question {
   margin-bottom: 20px; }
 
+.pricing__request-demo .button {
+  height: 40px;
+  border-radius: 4px; }
+  @media screen and (min-width: 1008px) {
+    .pricing__request-demo .button {
+      width: 220px; } }
+  @media screen and (max-width: 1007px) {
+    .pricing__request-demo .button {
+      width: 100%; } }
+
 .pagination {
   margin-top: 25px; }
 
