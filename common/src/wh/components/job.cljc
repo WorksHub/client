@@ -22,7 +22,7 @@
            liked?            false
            user-has-applied? false
            user-is-owner?    false}}]
-  (let [skeleton? (and job (empty? (dissoc job :id)))
+  (let [skeleton? (and job (empty? (dissoc job :id :slug)))
         salary    (or display-salary (jobc/format-job-remuneration remuneration))
         job-tags  (if skeleton?
                     (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " "))) (range 6))

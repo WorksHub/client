@@ -192,8 +192,7 @@
   :<- [::sub-db]
   :<- [::num-related-jobs-to-show]
   (fn [[db nx] [_ n]]
-    (not-empty
-     (take (or n nx) (::issue/company-jobs db)))))
+    (take (or n nx) (::issue/company-jobs db))))
 
 (reg-sub
   ::company-issues

@@ -6286,7 +6286,8 @@ a.navbar-item,
   .job-card--skeleton .button {
     background-color: #ddd;
     border-radius: 5px;
-    font-size: 0; }
+    font-size: 0;
+    border: 0; }
 
 .codi-column {
   position: relative; }

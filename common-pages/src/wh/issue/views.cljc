@@ -217,25 +217,26 @@
 
 (defn company-jobs
   []
-  [:section.issue__company-jobs
-   [:div.is-flex
-    [:h2 "Jobs with this company"]
-    #_[link "View all"
-       :jobs :company-id (<sub [::subs/company-id])
-       :class "a--underlined"]] ;; TODO this route doesn't exist yet
-   [:div.company-jobs__list
-    (let [jobs (<sub [::subs/company-jobs])]
-      (if jobs
-        (doall
-          (for [job jobs]
-            ^{:key (:id job)}
-            [job-card job {:public?           false
-                           :liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
-                           :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}]))
-        (doall
-          (for [i (range (<sub [::subs/num-related-jobs-to-show]))]
-            ^{:key i}
-            [job-card {:id (str "skeleton-job-" (inc i)) :slug "#"} {:public? false}]))))]])
+  (let [jobs (<sub [::subs/company-jobs])]
+    (when-not (and jobs (zero? (count jobs)))
+      [:section.issue__company-jobs
+       [:div.is-flex
+        [:h2 "Jobs with this company"]
+        #_[link "View all"
+           :jobs :company-id (<sub [::subs/company-id])
+           :class "a--underlined"]] ;; TODO this route doesn't exist yet
+       [:div.company-jobs__list
+        (if jobs
+          (doall
+            (for [job jobs]
+              ^{:key (:id job)}
+              [job-card job {:public?           false
+                             :liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
+                             :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}]))
+          (doall
+            (for [i (range (<sub [::subs/num-related-jobs-to-show]))]
+              ^{:key i}
+              [job-card {:id (str "skeleton-job-" (inc i)) :slug "#"} {:public? false}])))]])))
 
 (defn other-issues
   []
