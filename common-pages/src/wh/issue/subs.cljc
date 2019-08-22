@@ -200,8 +200,7 @@
   :<- [::sub-db]
   :<- [::num-other-issues-to-show]
   (fn [[db nx] [_ n]]
-    (not-empty
-     (take (or n nx) (::issue/company-issues db)))))
+    (take (or n nx) (::issue/company-issues db))))
 
 (reg-sub
   ::compensation

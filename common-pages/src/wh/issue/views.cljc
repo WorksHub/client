@@ -239,24 +239,25 @@
 
 (defn other-issues
   []
-  [:section.issue__other-issues
-   [:div.is-flex
-    [:h2 "Other Issues from this company"]
-    [link "View all"
-     :issues-for-company-id :company-id (<sub [::subs/company-id])
-     :class "a--underlined"]]
-   [:div
-    (let [issues (<sub [::subs/company-issues])
-          skeleton? (nil? (<sub [::subs/title]))]
-      (if (and issues (not skeleton?))
-        (doall
-          (for [issue issues]
-            ^{:key (:id issue)}
-            [issue-card issue]))
-        (doall
-          (for [i (range (<sub [::subs/num-other-issues-to-show]))]
-            ^{:key i}
-            [issue-card {:id (str "skeleton-isssue-" (inc i))}]))))]])
+  (let [issues (<sub [::subs/company-issues])
+        skeleton? (nil? (<sub [::subs/title]))]
+    (when-not (and issues (zero? (count issues)))
+      [:section.issue__other-issues
+       [:div.is-flex
+        [:h2 "Other Issues from this company"]
+        [link "View all"
+         :issues-for-company-id :company-id (<sub [::subs/company-id])
+         :class "a--underlined"]]
+       [:div
+        (if (and issues (not skeleton?))
+          (doall
+            (for [issue issues]
+              ^{:key (:id issue)}
+              [issue-card issue]))
+          (doall
+            (for [i (range (<sub [::subs/num-other-issues-to-show]))]
+              ^{:key i}
+              [issue-card {:id (str "skeleton-isssue-" (inc i))}])))]])))
 
 (defn extract-github-user
   [urls]
