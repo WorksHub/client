@@ -87,7 +87,8 @@
                               [:company-id] (bidi/tag :issues :issues-for-company-id)}]
                   ["issue/" {[:id] :issue}]
                   ["company-issues/" {""       :company-issues
-                                      "manage" :manage-issues}]
+                                      "repositories" :manage-issues
+                                      ["repositories/" :owner "/" :repo-name] :manage-repository-issues}]
                   ["dashboard" :homepage-dashboard]
                   ["how-it-works" :how-it-works]
                   ["company-registration" :register-company]

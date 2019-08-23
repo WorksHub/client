@@ -788,37 +788,10 @@ $issue-sticky-hide-mobile-offset: 28px
       margin-right: 12px
 
 .manage-issues-list
-  .repo
-    display: block
-    background: $white
-    padding: 10px 20px
-    margin: 12px 0
-    .repo__header
-      display: flex
-      justify-content: space-between
-      .repo__header__content
-        align-items: center
-        max-width: 84%
-        cursor: pointer
-      .repo__header__toggle
-        width: 10px
-        height: 10px
-        margin-right: 18px
-        cursor: pointer
-      .repo__header__logo
-        width: 30px
-        height: 30px
-      .repo__header__title
-        margin: 0 20px
-        color: $grey-darker
-        font-size: 14px
-        line-height: 18px
-        font-weight: $font-medium
-        overflow: hidden
-        text-overflow: ellipsis
-    .repo__content
-      margin-top: 20px
-      margin-left: 28px
+  background: $white
+  display: block
+  padding: 10px 20px
+  margin: 12px 0
   .issue
     border-top: 1px solid $pale-gray
     padding: 18px 0
@@ -1228,3 +1201,51 @@ $issue-sticky-hide-mobile-offset: 28px
     width: 140px
     +mobile
       font-size: 14px
+
+.repository-card
+  display: block
+  padding: 18px
+  margin: 0 0 16px 0
+  min-height: 100px
+  background-color: white
+  +mobile
+    margin-bottom: 12px
+  overflow: hidden
+  .logo
+    width: 30px
+    min-width: 30px
+    height: 30px
+  .empty-logo
+    width: 100%
+    height: 100%
+    border: 1px solid silver
+  .title
+    color: $grey-darker
+    font-size: 14px
+    line-height: 18px
+    font-weight: $font-medium
+    overflow: hidden
+    text-overflow: ellipsis
+    margin-top: 5px
+    +mobile
+      height: 100%
+      display: flex
+      align-items: center
+  .info
+    width: 100%
+    margin-left: 18px
+  .description
+    color: $greyish
+    font-size: 14px
+    line-height: 18px
+    margin: 18px 0
+  .details
+    +desktop
+      display: flex
+      justify-content: space-between
+    .tags
+      li
+        margin-bottom: 0
+  .btn__manage-issues
+    +mobile
+      margin-top: 18px

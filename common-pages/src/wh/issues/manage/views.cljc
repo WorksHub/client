@@ -7,8 +7,7 @@
     [wh.issues.manage.events :as events]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.util :as util]))
+    [wh.routes :as routes]))
 
 
 (defn syncing-repos-overlay []
@@ -21,66 +20,80 @@
    [:div.manage-issues-syncing-issues__spinner]
    [:p.manage-issues-syncing-issues__text "Syncing issues with GitHub"]])
 
-(defn issues-list []
+(defn repo-card
+  [org {:keys [owner description primary-language] :as repo}]
+  [:div.repository-card
+   [:div.is-flex
+    [:div.logo (if-let [url (:avatar-url org)]
+                 (wrap-img img url {})
+                 [:div.empty-logo])]
+    [:div.info
+     [:div.title [link (str owner "/" (:name repo)) :manage-repository-issues :repo-name (:name repo) :owner owner :class "a--hover-red"]]]]
+   [:div.description description]
+   [:div.details
+    [:ul.tags
+     (when-let [language primary-language]
+       [:li.tag language])]
+    [link "Manage Issues" :manage-repository-issues :repo-name (:name repo) :owner owner :class "button button--inverted btn__manage-issues"]]])
+
+(defn repo-list []
   #?(:cljs
-     [:div.manage-issues-list
+     [:div
       (doall
         (for [org (<sub [::subs/orgs])
-              repo (:repositories org)
-              :let [open? (<sub [::subs/open-repo? repo])
-                    syncing? (<sub [::subs/syncing-issues? repo])
-                    issues (<sub [::subs/issues repo])]]
-          [:div.repo {:key (:name repo)}
-           [:div.repo__header
-            [:div.repo__header__content.is-flex  {:on-click #(dispatch [::events/toggle-repo repo])}
-             [:div
-              [icon (if open? "minus" "plus") :class "repo__header__toggle"]]
-             (if-let [avatar-url (:avatar-url org)]
-               (wrap-img img avatar-url
-                         {:alt (str (:name repo) " logo")
-                          :w   30 :h 30 :class "repo__header__logo"})
-               [:div.empty-logo])
-             [:div.repo__header__title (str (:owner repo) "/" (:name repo))]]]
-           (when open?
-             (if syncing?
-               [syncing-issues-overlay]
-               [:div.repo__content
-                (when-let [primary-lang (:primary-language repo)]
-                  [:div.repo__language
-                   [:ul.tags [:li.tag primary-lang]]])
-                [:div.publish-container
-                 [:span.publish.publish-all "Publish All"]]
-                [:div.repo__checkbox__container
-                 [:div.repo__checkbox
-                  [form/labelled-checkbox
-                   (and (seq issues)
-                        (every? true? (map :published issues)))
-                   {:indeterminate? (> (count (distinct (map :published issues))) 1)
-                    :on-change [::events/update-pending issues]}]]]
-                [:div.publish-container
-                 [:span.publish "Published"]]
-                [:div.issues
-                 (if (empty? issues)
-                   [:p "There are no open issues in this repository."]
-                   [:ul
-                    (for [issue issues]
-                      [:li.issue.is-flex {:key (:id issue)}
-                       [:p.manage-issues-list__issue__title (:title issue)]
-                       [form/labelled-checkbox (:published issue)
-                        {:on-change [::events/update-pending [issue]]
-                         :class     "issue-checkbox"}]])])]]))]))]))
+              repo (:repositories org)]
+          [:div {:key (:name repo)}
+           [repo-card org repo]]))]))
 
 (defn page []
   [:div.main
-   [:h1 "Manage Issues"]
-   [:h3 "Click on a repository to manage individual issues"]
+   [:h1 "GitHub Repositories"]
+   [:h3 "Select a repository to manage individual issues"]
    (if (<sub [::subs/syncing-repos?])
      [syncing-repos-overlay]
-     [issues-list])
+     [repo-list])
    [:div.manage-issues-buttons
     [:a.button.button.button--inverted.back
      {:href (routes/path :company-issues)}
-     [icon "arrow-left"] "Back to All"]
+     [icon "arrow-left"] "Back to Company Issues"]]])
+
+(defn issues-list []
+  #?(:cljs
+     [:div.manage-issues-list
+      (let [issues (<sub [::subs/issues])]
+        [:div.repo__content
+         [:div.publish-container
+          [:span.publish.publish-all "Publish All"]]
+         [:div.repo__checkbox__container
+          [:div.repo__checkbox
+           [form/labelled-checkbox
+            (and (seq issues)
+                 (every? true? (map :published issues)))
+            {:indeterminate? (> (count (distinct (map :published issues))) 1)
+             :on-change [::events/update-pending issues]}]]]
+         [:div.publish-container
+          [:span.publish "Published"]]
+         [:div.issues
+          (if (empty? issues)
+            [:p "There are no open issues in this repository."]
+            [:ul
+             (for [issue issues]
+               [:li.issue.is-flex {:key (:id issue)}
+                [:p.manage-issues-list__issue__title (:title issue)]
+                [form/labelled-checkbox (:published issue)
+                 {:on-change [::events/update-pending [issue]]
+                  :class     "issue-checkbox"}]])])]])]))
+
+(defn issues-page []
+  [:div.main
+   [:h1 (str "Manage " (<sub [::subs/full-repo-name]) " Issues")]
+   (if (<sub [::subs/syncing-issues?])
+     [syncing-issues-overlay]
+     [issues-list])
+   [:div.manage-issues-buttons
+    [:a.button.button.button--inverted.back
+     {:href (routes/path :manage-issues)}
+     [icon "arrow-left"] "Back to All Repositories"]
     [:button.button.update {:disabled (<sub [::subs/update-disabled?])
                             :on-click #(when-not (<sub [::subs/update-disabled?])
                                          (dispatch [::events/save-changes]))}

@@ -10,21 +10,14 @@
 (reg-sub
   ::issues
   :<- [::sub-db]
-  (fn [db [_ repo]]
-    (filter #(= (:name repo) (get-in % [:repo :name]))
-            (vals (::manage/issues db)))))
+  (fn [db _]
+    (vals (::manage/issues db))))
 
 (reg-sub
   ::syncing-repos?
   :<- [::sub-db]
   (fn [db _]
     (::manage/syncing-repos? db)))
-
-(reg-sub
-  ::open-repo?
-  :<- [::sub-db]
-  (fn [db [_ repo]]
-    (contains? (::manage/open-repos db) repo)))
 
 (reg-sub
   ::fetched-repo?
@@ -35,9 +28,8 @@
 (reg-sub
   ::syncing-issues?
   :<- [::sub-db]
-  (fn [db [_ repo]]
-    (contains? (::manage/syncing-issues db) (:name repo))))
-
+  (fn [db [_ ]]
+    (::manage/syncing-issues db)))
 
 (reg-sub
   ::orgs
@@ -56,3 +48,7 @@
   :<- [::sub-db]
   (fn [db _]
     (::manage/company db)))
+(reg-sub
+  ::full-repo-name
+  (fn [db _]
+    (str (get-in db [:wh.db/page-params :owner]) "/" (get-in db [:wh.db/page-params :repo-name]))))

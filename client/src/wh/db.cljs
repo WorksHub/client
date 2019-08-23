@@ -50,6 +50,7 @@
                 :liked
                 :login
                 :manage-issues
+                :manage-repository-issues
                 :not-found
                 :notifications-settings
                 :payment-setup

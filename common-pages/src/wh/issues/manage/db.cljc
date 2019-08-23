@@ -15,7 +15,6 @@
    ::syncing-repos? false
    ::pending        #{}
    ::orgs           []
-   ::open-repos     #{}
    ::fetched-repos  #{}
-   ::syncing-issues #{}
+   ::syncing-issues false
    ::issues         {}})

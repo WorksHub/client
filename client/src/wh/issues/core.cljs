@@ -12,6 +12,7 @@
 (def page-mapping
   {:company-issues {:page issues/page :can-access? user/company?}
    :manage-issues {:page manage-issues/page :can-access? user/company?}
+   :manage-repository-issues {:page manage-issues/issues-page :can-access? user/company?}
    :issue issue/page
    :issues issues/page})
 

@@ -13649,47 +13649,20 @@ h3 {
 .generic-popup__popup--edit-issue-confirm .issue__confirm-save__buttons button:not(:last-child) {
   margin-right: 12px; }
 
-.manage-issues-list .repo {
-  display: block;
+.manage-issues-list {
   background: white;
+  display: block;
   padding: 10px 20px;
   margin: 12px 0; }
-  .manage-issues-list .repo .repo__header {
-    display: flex;
+  .manage-issues-list .issue {
+    border-top: 1px solid #f4f5f8;
+    padding: 18px 0;
     justify-content: space-between; }
-    .manage-issues-list .repo .repo__header .repo__header__content {
-      align-items: center;
-      max-width: 84%;
-      cursor: pointer; }
-    .manage-issues-list .repo .repo__header .repo__header__toggle {
-      width: 10px;
-      height: 10px;
-      margin-right: 18px;
-      cursor: pointer; }
-    .manage-issues-list .repo .repo__header .repo__header__logo {
-      width: 30px;
-      height: 30px; }
-    .manage-issues-list .repo .repo__header .repo__header__title {
-      margin: 0 20px;
-      color: #434E55;
+    .manage-issues-list .issue .manage-issues-list__issue__title {
       font-size: 14px;
       line-height: 18px;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis; }
-  .manage-issues-list .repo .repo__content {
-    margin-top: 20px;
-    margin-left: 28px; }
-
-.manage-issues-list .issue {
-  border-top: 1px solid #f4f5f8;
-  padding: 18px 0;
-  justify-content: space-between; }
-  .manage-issues-list .issue .manage-issues-list__issue__title {
-    font-size: 14px;
-    line-height: 18px;
-    color: #434E55;
-    padding-right: 20px; }
+      color: #434E55;
+      padding-right: 20px; }
 
 .issue-checkbox {
   margin-right: 14px; }
@@ -14140,6 +14113,55 @@ h3 {
     @media screen and (max-width: 1007px) {
       .issues__stats__ball--yellow p {
         font-size: 14px; } }
+
+.repository-card {
+  display: block;
+  padding: 18px;
+  margin: 0 0 16px 0;
+  min-height: 100px;
+  background-color: white;
+  overflow: hidden; }
+  @media screen and (max-width: 1007px) {
+    .repository-card {
+      margin-bottom: 12px; } }
+  .repository-card .logo {
+    width: 30px;
+    min-width: 30px;
+    height: 30px; }
+  .repository-card .empty-logo {
+    width: 100%;
+    height: 100%;
+    border: 1px solid silver; }
+  .repository-card .title {
+    color: #434E55;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 5px; }
+    @media screen and (max-width: 1007px) {
+      .repository-card .title {
+        height: 100%;
+        display: flex;
+        align-items: center; } }
+  .repository-card .info {
+    width: 100%;
+    margin-left: 18px; }
+  .repository-card .description {
+    color: #adadad;
+    font-size: 14px;
+    line-height: 18px;
+    margin: 18px 0; }
+  @media screen and (min-width: 1008px) {
+    .repository-card .details {
+      display: flex;
+      justify-content: space-between; } }
+  .repository-card .details .tags li {
+    margin-bottom: 0; }
+  @media screen and (max-width: 1007px) {
+    .repository-card .btn__manage-issues {
+      margin-top: 18px; } }
 
 .landing-page .homepage__middle-content__container:last-of-type {
   padding-bottom: 28px; }

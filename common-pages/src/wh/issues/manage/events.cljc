@@ -41,15 +41,6 @@
             db
             issues)))
 
-(reg-event-fx
-  ::toggle-repo
-  db/default-interceptors
-  (fn [{db :db} [repo]]
-    (let [need-to-fetch-issues? (not (contains? (get-in db [::manage/sub-db ::manage/fetched-repos])
-                                                (:name repo)))]
-      (cond-> {:db (update-in db [::manage/sub-db ::manage/open-repos] util/toggle repo)}
-        need-to-fetch-issues? (merge {:dispatch [::fetch-repo-issues repo]})))))
-
 #?(:cljs
    (reg-event-fx
      ::update-issues-success
@@ -74,7 +65,7 @@
   ::query-issues-success
   db/default-interceptors
   (fn [db [repo {{:keys [query_issues company me]} :data}]]
-    (cond-> (update-in db [::manage/sub-db ::manage/syncing-issues] disj (:name repo))
+    (cond-> (assoc-in db [::manage/sub-db ::manage/syncing-issues] false)
       query_issues (update ::manage/sub-db merge
                            {::manage/issues   (into {} (->> (map (comp (juxt :id identity)
                                                                        gql-issue->issue)
@@ -108,7 +99,7 @@
      ::fetch-repo-issues
      db/default-interceptors
      (fn [{db :db} [{:keys [name owner] :as repo}]]
-       {:db      (update-in db [::manage/sub-db ::manage/syncing-issues] (fnil conj #{}) (:name repo))
+       {:db      (assoc-in db [::manage/sub-db ::manage/syncing-issues] true)
         :graphql {:query      graphql-company/sync-issues-mutation
                   :variables  {:name  name
                                :owner owner}
@@ -139,3 +130,10 @@
      [[:wh.events/scroll-to-top]
       [::initialize-db]
       [::fetch-orgs-and-repos]]))
+
+#?(:cljs
+   (defmethod on-page-load :manage-repository-issues [db]
+     [[:wh.events/scroll-to-top]
+      [::initialize-db]
+      [::fetch-repo-issues {:name (get-in db [::db/page-params :repo-name])
+                            :owner (get-in db [::db/page-params :owner])}]]))

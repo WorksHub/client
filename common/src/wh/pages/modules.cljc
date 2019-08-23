@@ -42,6 +42,7 @@
    :learn-by-tag :blogs
    :login :login
    :manage-issues :issues
+   :manage-repository-issues :issues
    :notifications-settings :logged-in
    :pre-set-search :jobs
    :pricing :pricing
