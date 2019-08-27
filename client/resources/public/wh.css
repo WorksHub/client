@@ -13716,29 +13716,32 @@ h3 {
   background: white;
   min-height: 100px;
   display: flex;
-  flex-direction: column;
-  align-items: center; }
-
-.manage-issues-syncing-issues__spinner {
-  animation: spinAround 500ms infinite linear;
-  border: 2px solid #ff7c6e;
-  border-radius: 290486px;
-  border-right-color: transparent;
-  border-top-color: transparent;
-  content: "";
-  display: block;
-  height: 1em;
-  width: 1em;
-  position: absolute !important;
-  position: initial !important;
-  width: 30px;
-  height: 30px;
-  margin: 10px; }
+  align-items: center;
+  padding: 12px; }
+  @media screen and (max-width: 1007px) {
+    .manage-issues-syncing-issues {
+      flex-direction: column; } }
 
 .manage-issues-syncing-issues__text {
   font-weight: 600;
-  font-size: 14px;
-  margin: 10px; }
+  font-size: 14px; }
+  @media screen and (min-width: 1008px) {
+    .manage-issues-syncing-issues__text {
+      flex: 1 0 200px;
+      margin-right: 12px; } }
+
+.manage-issues__sync-progress {
+  width: 100%;
+  padding: 14px 0 0 0;
+  text-align: center;
+  display: flex; }
+  .manage-issues__sync-progress span {
+    display: block;
+    margin: 2px 0px 18px 12px;
+    font-size: 14px;
+    color: #6E7F89;
+    font-weight: 500;
+    line-height: 14px; }
 
 .manage-issues-buttons {
   display: flex;
@@ -14168,6 +14171,17 @@ h3 {
   @media screen and (max-width: 1007px) {
     .repository-card .btn__manage-issues {
       margin-top: 18px; } }
+
+.manage-issues__queries-loading {
+  background-color: white;
+  padding: 18px;
+  height: 72px;
+  width: 100%;
+  display: flex;
+  justify-content: center; }
+  .manage-issues__queries-loading .is-loading-spinner {
+    width: 32px;
+    height: 32px; }
 
 .landing-page .homepage__middle-content__container:last-of-type {
   padding-bottom: 28px; }

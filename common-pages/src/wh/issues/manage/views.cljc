@@ -1,17 +1,17 @@
 (ns wh.issues.manage.views
   (:require
     #?(:cljs [wh.components.forms.views :as form])
+    [clojure.string :as str]
     [wh.components.common :refer [link img wrap-img]]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue->status]]
     [wh.components.pagination :as pagination]
-    [wh.issues.manage.subs :as subs]
     [wh.issues.manage.events :as events]
+    [wh.issues.manage.subs :as subs]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
-    [wh.util :as util]
-    [clojure.string :as str]))
+    [wh.util :as util]))
 
 
 (defn syncing-repos-overlay []
@@ -19,10 +19,23 @@
    [:div.manage-issues-syncing-repo__spinner]
    [:p.manage-issues-syncing-repo__text "Syncing repositories with GitHub"]])
 
+(defn sync-progress
+  []
+  (let [repo-sync (<sub [::subs/current-repo-sync])
+        amount (if repo-sync (int (* 100 (/ (:running-issue-count repo-sync)
+                                            (:total-issue-count repo-sync))))
+                   0)
+        amount-pc (str amount "%")]
+    [:div.manage-issues__sync-progress
+     [:div.progress-bar
+      [:div.progress-bar__background]
+      [:div.progress-bar__foreground {:style {:width amount-pc}}]]
+     [:span (or (:running-issue-count repo-sync) 0) "/" (or (:total-issue-count repo-sync) "???")]]))
+
 (defn syncing-issues-overlay []
   [:div.manage-issues-syncing-issues
-   [:div.manage-issues-syncing-issues__spinner]
-   [:p.manage-issues-syncing-issues__text "Syncing issues with GitHub"]])
+   [:p.manage-issues-syncing-issues__text "Syncing issues with GitHub"]
+   [sync-progress]])
 
 (defn repo-card
   [org {:keys [owner description primary-language] :as repo}]
@@ -92,11 +105,14 @@
                   :class     "issue-checkbox"}]]))])]])]))
 
 (defn issues-page []
-  [:div.main
+  [:div.main.manage-issues
    [:h1 (str "Manage " (<sub [::subs/full-repo-name]) " Issues")]
-   (if (<sub [::subs/syncing-issues?])
-     [syncing-issues-overlay]
-     [issues-list])
+   (cond (<sub [::subs/syncing-issues?])
+         [syncing-issues-overlay]
+         (<sub [::subs/issues-loading?])
+         [:div.manage-issues__queries-loading [:div.is-loading-spinner]]
+         :else
+         [issues-list])
    [:div.manage-issues-buttons
     [:a.button.button.button--inverted.back
      {:href (routes/path :manage-issues)}
@@ -104,6 +120,7 @@
     [:button.button.update {:disabled (<sub [::subs/update-disabled?])
                             :on-click #(when-not (<sub [::subs/update-disabled?])
                                          (dispatch [::events/save-changes]))}
+
      "Save"]]
    [pagination/pagination
     (<sub [::subs/current-page-number])

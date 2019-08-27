@@ -136,7 +136,8 @@
                      :operation/name "fetch_issues_for_repository"}
    :venia/variables [{:variable/name "name" :variable/type :String!}
                      {:variable/name "owner" :variable/type :String!}]
-   :venia/queries   [[:fetchGithubIssues {:name :$name :owner :$owner}]]})
+   :venia/queries   [[:sync {:name :$name :owner :$owner}
+                      [:id :time_started :total_issue_count]]]})
 
 (defquery sync-orgs-and-repos
   {:venia/queries

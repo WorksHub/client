@@ -845,20 +845,30 @@ $issue-sticky-hide-mobile-offset: 28px
   background: $white
   min-height: 100px
   display: flex
-  flex-direction: column
+  +mobile
+    flex-direction: column
   align-items: center
-
-.manage-issues-syncing-issues__spinner
-  @include spinner
-  position: initial !important
-  width: 30px
-  height: 30px
-  margin: 10px
+  padding: 12px
 
 .manage-issues-syncing-issues__text
   font-weight: $font-semi-bold
   font-size: 14px
-  margin: 10px
+  +desktop
+    flex: 1 0 200px
+    margin-right: 12px
+
+.manage-issues__sync-progress
+  width: 100%
+  padding: 14px 0 0 0
+  text-align: center
+  display: flex
+  span
+    display: block
+    margin: 2px 0px 18px 12px
+    font-size: 14px
+    color: $steel-gray
+    font-weight: $font-medium
+    line-height: 14px
 
 .manage-issues-buttons
   display: flex
@@ -1255,3 +1265,14 @@ $issue-sticky-hide-mobile-offset: 28px
   .btn__manage-issues
     +mobile
       margin-top: 18px
+
+.manage-issues__queries-loading
+  background-color: white
+  padding: 18px
+  height: 72px
+  width: 100%
+  display: flex
+  justify-content: center
+  .is-loading-spinner
+    width: 32px
+    height: 32px

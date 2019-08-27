@@ -1,11 +1,11 @@
 (ns wh.components.job
   (:require
+    #?(:clj [wh.pages.util :refer [html->hiccup]])
     [wh.common.job :as jobc]
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [level->str level->icon]]
     [wh.interop :as interop]
-    [wh.pages.util :refer [html->hiccup]]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]

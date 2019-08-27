@@ -20,8 +20,8 @@
 (reg-event-db
   ::initialize-db
   manage-issues-interceptors
-  (fn [_ _]
-    manage/default-db))
+  (fn [db _]
+    (manage/default-db db)))
 
 (reg-event-fx
   ::failure
@@ -68,27 +68,29 @@
   ::query-issues-success
   db/default-interceptors
   (fn [db [repo {{:keys [query_issues company me]} :data}]]
-    (cond-> (assoc-in db [::manage/sub-db ::manage/syncing-issues] false)
-      query_issues (update ::manage/sub-db merge
-                           {::manage/issues   (into {} (->> (map (comp (juxt :id identity)
-                                                                       gql-issue->issue)
-                                                                 (:issues query_issues))))
-                            ::manage/page-size           default-page-size
-                            ::manage/count               (get-in query_issues [:pagination :total])
-                            ::manage/current-page-number (get-in query_issues [:pagination :page_number])
-                            ::manage/total-pages         (pagination/number-of-pages (get-in query_issues [:pagination :page_size])
-                                                                              (get-in query_issues [:pagination :total]))})
+    (cond-> (-> db
+                (assoc-in [::manage/sub-db ::manage/syncing-issues] false)
+                (assoc-in [::manage/sub-db ::manage/loading?] false))
+            query_issues (update ::manage/sub-db merge
+                                 {::manage/issues   (into {} (->> (map (comp (juxt :id identity)
+                                                                             gql-issue->issue)
+                                                                       (:issues query_issues))))
+                                  ::manage/page-size           default-page-size
+                                  ::manage/count               (get-in query_issues [:pagination :total])
+                                  ::manage/current-page-number (get-in query_issues [:pagination :page_number])
+                                  ::manage/total-pages         (pagination/number-of-pages (get-in query_issues [:pagination :page_size])
+                                                                                           (get-in query_issues [:pagination :total]))})
 
-      company (update ::manage/sub-db merge {::manage/company (into {} company)})
-      me (update :wh.user.db/sub-db merge
-                 {:wh.user.db/welcome-msgs              (set (:welcomeMsgs me))}))))
+            company (update ::manage/sub-db merge {::manage/company (into {} company)})
+            me (update :wh.user.db/sub-db merge
+                       {:wh.user.db/welcome-msgs              (set (:welcomeMsgs me))}))))
 
 #?(:cljs
    (reg-event-fx
      ::query-issues
      db/default-interceptors
      (fn [{:keys [db]} [company-id repo page-number]]
-       {:db      db
+       {:db      (assoc-in db [::manage/sub-db ::manage/loading?] true)
         :graphql {:query      graphql-issues/fetch-company-issues--logged-in
                   :variables  {:id company-id
                                :page_size      default-page-size
@@ -96,25 +98,58 @@
                   :on-success [::query-issues-success repo]
                   :on-failure [::failure [::query-issues company-id repo page-number]]}})))
 
+(defn poll-event-dispatch
+  [repo sync]
+  {:id :poll-for-sync-progress
+   :dispatch [::poll-sync-progress repo sync]
+   :timeout 1000})
+
 (reg-event-fx
-  ::fetch-repo-success
+  ::poll-sync-progress-success
   db/default-interceptors
-  (fn [{db :db} [repo]]
-    {:db       (-> db
-                   (update-in [::manage/sub-db ::manage/fetched-repos] (fnil conj #{}) (:name repo)))
-     :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])]}))
+  (fn [{db :db} [repo sync resp]]
+    (if-let [new-sync (some-> (get-in resp [:data :repo :sync])
+                              (cases/->kebab-case))]
+      {:db (update-in db [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
+                                                               :name (:name repo)}]
+                      merge (util/remove-nils new-sync))
+       :dispatch-debounce (poll-event-dispatch repo sync)}
+      {:db (-> db (update-in [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
+                                                                   :name (:name repo)}]
+                             merge {:running-issue-count (:total-issue-count sync)})
+               (update-in [::manage/sub-db ::manage/fetched-repos] (fnil conj #{}) (:name repo)))
+       :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])]})))
+
+(reg-event-fx
+  ::poll-sync-progress
+  db/default-interceptors
+  (fn [{db :db} [repo sync]]
+    {:graphql {:query      graphql-issues/fetch-repo-query
+               :variables  {:owner (:owner repo) :name (:name repo)}
+               :on-success [::poll-sync-progress-success repo sync]
+               :on-failure [::failure [::poll-sync-progress repo sync]]}}))
+
+
+(reg-event-fx
+  ::sync-repo-success
+  db/default-interceptors
+  (fn [{db :db} [repo resp]]
+    (let [sync (cases/->kebab-case (get-in resp [:data :sync]))]
+      {:db (-> db
+               (assoc-in [::manage/sub-db ::manage/repo-syncs (select-keys repo [:name :owner])] sync))
+       :dispatch-debounce (poll-event-dispatch repo sync)})))
 
 #?(:cljs
    (reg-event-fx
-     ::fetch-repo-issues
+     ::sync-repo-issues
      db/default-interceptors
      (fn [{db :db} [{:keys [name owner] :as repo}]]
        {:db      (assoc-in db [::manage/sub-db ::manage/syncing-issues] true)
         :graphql {:query      graphql-company/sync-issues-mutation
                   :variables  {:name  name
                                :owner owner}
-                  :on-success [::fetch-repo-success repo]
-                  :on-failure [::failure [::fetch-repo-issues repo]]}})))
+                  :on-success [::sync-repo-success repo]
+                  :on-failure [::failure [::sync-repo-issues repo]]}})))
 
 (reg-event-fx
   ::fetch-orgs-success
@@ -143,7 +178,10 @@
 
 #?(:cljs
    (defmethod on-page-load :manage-repository-issues [db]
-     [[:wh.events/scroll-to-top]
-      [::initialize-db]
-      [::fetch-repo-issues {:name (get-in db [::db/page-params :repo-name])
-                            :owner (get-in db [::db/page-params :owner])}]]))
+     (let [repo {:name (get-in db [::db/page-params :repo-name]) :owner (get-in db [::db/page-params :owner])}
+           sync? (nil? (get-in db [::manage/sub-db ::manage/repo-syncs repo]))]
+       (list [:wh.events/scroll-to-top]
+             [::initialize-db]
+             (if sync?
+               [::sync-repo-issues repo]
+               [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])])))))

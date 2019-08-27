@@ -10,7 +10,8 @@
     #?(:clj [wh.spec.user :as user])
     #?(:clj [wh.url :as url])
     [wh.common.specs.date]
-    [wh.common.specs.primitives :as p]))
+    [wh.common.specs.primitives :as p]
+    [wh.components.pagination :as pagination]))
 
 (s/def :wh.repo/id #?(:clj  sc/string-uuid
                       :cljs string?))
@@ -28,6 +29,23 @@
 (s/def :wh.repo/community (s/keys :opt-un [:wh.repo/readme-url
                                            :wh.repo/contributing-url]))
 
+(s/def :wh.repo.sync/id #?(:clj  sc/string-uuid
+                           :cljs string?))
+(s/def :wh.repo.sync/total-issue-count nat-int?)
+(s/def :wh.repo.sync/running-issue-count nat-int?)
+(s/def :wh.repo.sync/batch-count nat-int?)
+(s/def :wh.repo.sync/time-started :wh/date)
+(s/def :wh.repo.sync/time-updated :wh/date)
+(s/def :wh.repo.sync/started-by #?(:clj  :wh.user/id
+                                   :cljs string?))
+(s/def :wh.repo/sync (s/keys :req-un [:wh.repo.sync/id
+                                      :wh.repo.sync/total-issue-count
+                                      :wh.repo.sync/running-issue-count
+                                      :wh.repo.sync/batch-count
+                                      :wh.repo.sync/time-started
+                                      :wh.repo.sync/started-by
+                                      :wh.repo.sync/time-updated]))
+
 (s/def :wh/repo #?(:clj  (s/keys :req-un [:wh.repo/github-id
                                           :wh.repo/viewer-can-administer
                                           :wh.repo/name
@@ -40,7 +58,8 @@
                                           :wh.repo/hook-id
                                           :wh.repo/hook-secret
                                           :wh.repo/readme-url
-                                          :wh.repo/contributing-url])
+                                          :wh.repo/contributing-url
+                                          :wh.repo/sync])
                    :cljs (s/keys :opt-un [:wh.repo/github-id
                                           :wh.repo/viewer-can-administer
                                           :wh.repo/name
@@ -53,7 +72,8 @@
                                           :wh.repo/hook-id
                                           :wh.repo/hook-secret
                                           :wh.repo/readme-url
-                                          :wh.repo/contributing-url])))
+                                          :wh.repo/contributing-url
+                                          :wh.repo/sync])))
 (s/def :wh/repos (s/coll-of :wh/repo))
 
 (s/def :wh.issue/id #?(:clj  sc/string-uuid

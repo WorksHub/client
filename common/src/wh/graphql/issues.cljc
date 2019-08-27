@@ -157,3 +157,14 @@
                              :page_number 1}
                       [:id :title :remote :slug
                        [:location [:city :state :country :countryCode]]]]]})
+
+(defquery fetch-repo-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "getRepo"}
+   :venia/variables [{:variable/name "owner"
+                      :variable/type :String}
+                     {:variable/name "name"
+                      :variable/type :String}]
+   :venia/queries   [[:repo {:owner :$owner
+                             :name :$name}
+                      [[:sync [:id :running_issue_count :time_updated :time_started]]]]]})

@@ -3,7 +3,8 @@
     #?(:cljs [wh.pages.core :refer [on-page-load] :as pages])
     [wh.graphql-cache :as cache :refer [reg-query]]
     [wh.company.listing.subs :as subs]
-    [wh.company.listing.db :as companies])
+    #_[wh.company.listing.db :as listing]
+    ) ;; TODO causes compiler error??
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
@@ -16,7 +17,7 @@
                      {:variable/name "sort" :variable/type :companies_sort}]
    :venia/queries   [[:companies
                       {:page_number :$page_number
-                       :page_size   companies/page-limit
+                       :page_size   20 ;; listing/page-limit TODO causes compiler error??
                        :search_term :$search_term
                        :sort        :$sort}
                       [[:pagination [:total :count]]

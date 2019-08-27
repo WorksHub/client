@@ -49,10 +49,37 @@
   :<- [::sub-db]
   (fn [db _]
     (::manage/company db)))
+
+(reg-sub
+  ::repo-name
+  (fn [db _]
+    (get-in db [:wh.db/page-params :repo-name])))
+
+(reg-sub
+  ::repo-owner
+  (fn [db _]
+    (get-in db [:wh.db/page-params :owner])))
+
 (reg-sub
   ::full-repo-name
-  (fn [db _]
-    (str (get-in db [:wh.db/page-params :owner]) "/" (get-in db [:wh.db/page-params :repo-name]))))
+  :<- [::repo-owner]
+  :<- [::repo-name]
+  (fn [[repo-owner repo-name] _]
+    (str repo-owner "/" repo-name)))
+
+(reg-sub
+  ::repo-sync
+  :<- [::sub-db]
+  (fn [db [_ repo-owner repo-name]]
+    (get-in db [::manage/repo-syncs {:owner repo-owner :name repo-name}])))
+
+(reg-sub
+  ::current-repo-sync
+  :<- [::sub-db]
+  :<- [::repo-owner]
+  :<- [::repo-name]
+  (fn [[db repo-owner repo-name] _]
+    (get-in db [::manage/repo-syncs {:owner repo-owner :name repo-name}])))
 
 (reg-sub
   ::current-page-number
@@ -78,3 +105,10 @@
   :<- [::total-pages]
   (fn [[current-page-number total-pages] _]
     (pagination/generate-pagination current-page-number total-pages)))
+
+
+(reg-sub
+  ::issues-loading?
+  :<- [::sub-db]
+  (fn [db _]
+    (::manage/loading? db)))
