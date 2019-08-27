@@ -52,6 +52,10 @@
          :<- [::query-params]
          (fn [params [_ param]]
            (get params param)))
+(reg-sub
+  ::page
+  (fn [db _]
+    (:wh.db/page db)))
 
 (reg-sub ::blockchain?
          :<- [::vertical]

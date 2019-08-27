@@ -13660,9 +13660,15 @@ h3 {
     justify-content: space-between; }
     .manage-issues-list .issue .manage-issues-list__issue__title {
       font-size: 14px;
-      line-height: 18px;
-      color: #434E55;
-      padding-right: 20px; }
+      line-height: 18px; }
+      .manage-issues-list .issue .manage-issues-list__issue__title span {
+        margin-left: 12px; }
+      .manage-issues-list .issue .manage-issues-list__issue__title svg {
+        vertical-align: middle; }
+      .manage-issues-list .issue .manage-issues-list__issue__title .issue-list__title {
+        color: #434E55;
+        font-weight: 500;
+        padding-right: 20px; }
 
 .issue-checkbox {
   margin-right: 14px; }

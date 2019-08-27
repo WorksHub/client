@@ -1,6 +1,7 @@
 (ns wh.issues.manage.subs
   (:require
     [re-frame.core :refer [reg-sub]]
+    [wh.components.pagination :as pagination]
     [wh.issues.manage.db :as manage]))
 
 (reg-sub
@@ -52,3 +53,28 @@
   ::full-repo-name
   (fn [db _]
     (str (get-in db [:wh.db/page-params :owner]) "/" (get-in db [:wh.db/page-params :repo-name]))))
+
+(reg-sub
+  ::current-page-number
+  :<- [::sub-db]
+  (fn [db _]
+    (::manage/current-page-number db)))
+
+(reg-sub
+  ::page-size
+  :<- [::sub-db]
+  (fn [db _]
+    (::manage/page-size db)))
+
+(reg-sub
+  ::total-pages
+  :<- [::sub-db]
+  (fn [db _]
+    (::manage/total-pages db)))
+
+(reg-sub
+  ::pagination
+  :<- [::current-page-number]
+  :<- [::total-pages]
+  (fn [[current-page-number total-pages] _]
+    (pagination/generate-pagination current-page-number total-pages)))

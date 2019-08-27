@@ -3,11 +3,15 @@
     #?(:cljs [wh.components.forms.views :as form])
     [wh.components.common :refer [link img wrap-img]]
     [wh.components.icons :refer [icon]]
+    [wh.components.issue :refer [issue->status]]
+    [wh.components.pagination :as pagination]
     [wh.issues.manage.subs :as subs]
     [wh.issues.manage.events :as events]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]))
+    [wh.routes :as routes]
+    [wh.util :as util]
+    [clojure.string :as str]))
 
 
 (defn syncing-repos-overlay []
@@ -78,11 +82,14 @@
             [:p "There are no open issues in this repository."]
             [:ul
              (for [issue issues]
-               [:li.issue.is-flex {:key (:id issue)}
-                [:p.manage-issues-list__issue__title (:title issue)]
+               (let [derived-status (issue->status issue)]
+                 [:li.issue.is-flex {:key (:id issue)}
+                [:p.manage-issues-list__issue__title
+                 [:span {:class (util/merge-classes "issue-status" (str "issue-status--" derived-status))} [icon "issue-status"] [:span (str/capitalize derived-status)]]
+                 [:span.issue-list__title (:title issue)]]
                 [form/labelled-checkbox (:published issue)
                  {:on-change [::events/update-pending [issue]]
-                  :class     "issue-checkbox"}]])])]])]))
+                  :class     "issue-checkbox"}]]))])]])]))
 
 (defn issues-page []
   [:div.main
@@ -97,4 +104,10 @@
     [:button.button.update {:disabled (<sub [::subs/update-disabled?])
                             :on-click #(when-not (<sub [::subs/update-disabled?])
                                          (dispatch [::events/save-changes]))}
-     "Save"]]])
+     "Save"]]
+   [pagination/pagination
+    (<sub [::subs/current-page-number])
+    (<sub [::subs/pagination])
+    (<sub [:wh.subs/page])
+    (<sub [:wh.subs/query-params])
+    (<sub [:wh.subs/page-params])]])

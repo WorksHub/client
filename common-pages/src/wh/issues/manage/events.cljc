@@ -4,6 +4,7 @@
     [re-frame.core :refer [path]]
     [wh.common.cases :as cases]
     [wh.common.issue :refer [gql-issue->issue]]
+    [wh.components.pagination :as pagination]
     [wh.db :as db]
     [wh.graphql.company :as graphql-company]
     [wh.graphql.issues :as graphql-issues]
@@ -13,6 +14,8 @@
 
 (def manage-issues-interceptors (into db/default-interceptors
                                       [(path ::manage/sub-db)]))
+
+(def default-page-size 20)
 
 (reg-event-db
   ::initialize-db
@@ -69,7 +72,12 @@
       query_issues (update ::manage/sub-db merge
                            {::manage/issues   (into {} (->> (map (comp (juxt :id identity)
                                                                        gql-issue->issue)
-                                                                 (:issues query_issues))))})
+                                                                 (:issues query_issues))))
+                            ::manage/page-size           default-page-size
+                            ::manage/count               (get-in query_issues [:pagination :total])
+                            ::manage/current-page-number (get-in query_issues [:pagination :page_number])
+                            ::manage/total-pages         (pagination/number-of-pages (get-in query_issues [:pagination :page_size])
+                                                                              (get-in query_issues [:pagination :total]))})
 
       company (update ::manage/sub-db merge {::manage/company (into {} company)})
       me (update :wh.user.db/sub-db merge
@@ -79,12 +87,14 @@
    (reg-event-fx
      ::query-issues
      db/default-interceptors
-     (fn [{:keys [db]} [company-id repo]]
+     (fn [{:keys [db]} [company-id repo page-number]]
        {:db      db
         :graphql {:query      graphql-issues/fetch-company-issues--logged-in
-                  :variables  {:id company-id}
+                  :variables  {:id company-id
+                               :page_size      default-page-size
+                               :page_number    (or page-number 1)}
                   :on-success [::query-issues-success repo]
-                  :on-failure [::failure [::query-issues company-id repo]]}})))
+                  :on-failure [::failure [::query-issues company-id repo page-number]]}})))
 
 (reg-event-fx
   ::fetch-repo-success
@@ -92,7 +102,7 @@
   (fn [{db :db} [repo]]
     {:db       (-> db
                    (update-in [::manage/sub-db ::manage/fetched-repos] (fnil conj #{}) (:name repo)))
-     :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo]}))
+     :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])]}))
 
 #?(:cljs
    (reg-event-fx
