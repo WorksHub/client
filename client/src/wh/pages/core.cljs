@@ -82,13 +82,9 @@
                                 ::db/page :not-found
                                 ::db/loading? false)} ; it might've been set in pre-rendered app-db
                     :login
-                    {:db (-> db
-                             (merge {::db/page :login
-                                     ::db/loading? false} ; ditto
-                                    (when (= :company (module-for handler)) ;; if company, show email login
-                                      {::db/page-params {:step :email}}))
-                             (assoc-in [:wh.login.db/sub-db :wh.login.db/redirect]
-                                       [handler :params params :query-params query-params]))}
+                    (let [current-path (bidi/url-encode (routes/path handler :params params :query-params query-params))
+                          login-step (if (= :company (module-for handler)) :email :root)] ;; if company, show email login
+                      {:navigate [:login :params {:step login-step} :query-params {:redirect current-path}]})
                     ;; otherwise
                     (let [new-db (cond-> db
                                          true (assoc ::db/page handler
