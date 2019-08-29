@@ -472,7 +472,7 @@
                 :per "month"
                 :trial launch-pad-trial-days
                 :button "Start Hiring"
-                :button-alt "Select & Pay"
+                :button-alt "Get Started"
                 :live-jobs "Unlimited"
                 :img {:src "/images/employers/launch_pad.svg"
                       :alt "Launch Pad icon"}
@@ -499,7 +499,7 @@
 
 ;; added three on 25/06/2019
 (def billing-periods #{:one :three :six #_:twelve})
-(def default-billing-period :three)
+(def default-billing-period :one)
 
 (def billing-data
   {:one    {:title "Monthly"

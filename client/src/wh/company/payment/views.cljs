@@ -177,9 +177,12 @@
       :on-click #(dispatch [::events/setup-step-forward (merge {:package package}
                                                                (when-not upgrading?
                                                                  {:billing-period billing-period}))])}
-     (if upgrading?
-       "Upgrade & Pay"
-       label)]))
+     (cond upgrading?
+           "Upgrade & Pay"
+           (and (#{:launch_pad} package)
+                (<sub [::subs/can-start-free-trial?]))
+           "Start Free Trial"
+           :else label)]))
 
 (defn fake-demo-button
   [secondary? label package billing-period]
@@ -351,7 +354,11 @@
         monthly-cost (cost/calculate-monthly-cost cost discount coupon)
         {:keys [before-coupon after-coupon]} (cost/calculate-initial-payment number monthly-cost coupon)]
     [:div
-     [:p.li [icon "cutout-tick"] "the cost is " (int->dollars monthly-cost) " per month"]
+     (when (pos? trial)
+       [:p.li [icon "cutout-tick"] (str "you will be on a FREE TRIAL for " trial " days")])
+     (when (pos? trial)
+       [:p.li [icon "cutout-tick"] "you can cancel your trial at any time"])
+     [:p.li [icon "cutout-tick"] (when (pos? trial) "after the trial, ")  "the cost is " (int->dollars monthly-cost) " per month"]
      [:p.li [icon "cutout-tick"] "you will be " (or description "billed monthly")]
      (if after-coupon
        [:p.li [icon "cutout-tick"] "the first payment will be taken " (if (zero? trial)
@@ -380,6 +387,7 @@
             has-details? (<sub [::subs/has-saved-card-details?])
             enabled? (<sub [::subs/stripe-card-form-enabled?])
             can-proceed? (<sub [::subs/can-press-authorize?])
+            starting-trial? (and (= :launch_pad package) (<sub [::subs/can-start-free-trial?]))
             existing-billing-period (some->> (<sub [::subs/existing-billing-period])
                                              (get data/billing-data))
             breakdown? (<sub [::subs/breakdown?])]
@@ -393,7 +401,7 @@
                      " package and you are changing from the " (:title existing-billing-period)
                      " plan to the " title " plan.")]
            :else
-           [:h1 (str "You have selected the " name
+           [:h1 (str "You have selected " (when starting-trial? " FREE TRIAL for" ) " the " name
                      " package on the " title " plan.")])
          (if upgrading?
            [upgrading-calculator package billing-period]

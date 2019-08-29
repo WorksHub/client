@@ -9,6 +9,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.package-selector :refer [package-selector]]
     [wh.components.www-homepage :as www]
+    [wh.pricing.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
     [wh.util :as util]
@@ -34,8 +35,9 @@
     :id (str "employers_signup-btn-" label
              (when package (str "-" (name package)))
              (when billing-period (str "-" (name billing-period))))}
-   (if (#{:essential :launch_pad} package)
-     [:button.button "Get Started"]
+   (if (and (#{:launch_pad} package)
+            (<sub [::subs/can-start-free-trial?]))
+     [:button.button "Start Free Trial"]
      [:button.button label])])
 
 (defn fake-radio-buttons

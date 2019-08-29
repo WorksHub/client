@@ -181,6 +181,12 @@
     (contains? (set (get-in sub-db [::payment/company :permissions])) permission)))
 
 (reg-sub
+  ::can-start-free-trial?
+  :<- [::has-permission? :can_start_free_trial]
+  (fn [has-perm? _]
+    has-perm?))
+
+(reg-sub
   ::payment-setup-step
   (fn [db _]
     (payment-step db)))
