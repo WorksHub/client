@@ -131,8 +131,7 @@
 (s/def :wh.issue/level #{:beginner :intermediate :advanced})
 (s/def :wh.issue.raw/level #{"beginner" "intermediate" "advanced"})
 
-(s/def :wh/issue #?(:clj  (s/keys :req-un [:wh.issue/author
-                                           :wh.issue/body
+(s/def :wh/issue #?(:clj  (s/keys :req-un [:wh.issue/body
                                            :wh.issue/body-html
                                            :wh.issue/company-id
                                            :wh.issue/created-at
@@ -144,7 +143,8 @@
                                            :wh.issue/github-id
                                            :wh.issue/repo-id
                                            :wh.issue/status]
-                                  :opt-un [:wh.issue/company
+                                  :opt-un [:wh.issue/author
+                                           :wh.issue/company
                                            :wh.issue/compensation
                                            :wh.issue/contributors
                                            :wh.issue/id
