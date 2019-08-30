@@ -108,17 +108,18 @@
   ::poll-sync-progress-success
   db/default-interceptors
   (fn [{db :db} [repo sync resp]]
-    (if-let [new-sync (some-> (get-in resp [:data :repo :sync])
-                              (cases/->kebab-case))]
-      {:db (update-in db [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
-                                                               :name (:name repo)}]
-                      merge (util/remove-nils new-sync))
-       :dispatch-debounce (poll-event-dispatch repo sync)}
-      {:db (-> db (update-in [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
-                                                                   :name (:name repo)}]
-                             merge {:running-issue-count (:total-issue-count sync)})
-               (update-in [::manage/sub-db ::manage/fetched-repos] (fnil conj #{}) (:name repo)))
-       :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])]})))
+    (let [new-sync (some-> (get-in resp [:data :repo :sync])
+                           (cases/->kebab-case))]
+      (if (:time-finished new-sync)
+        {:db (-> db (update-in [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
+                                                                     :name (:name repo)}]
+                               merge {:running-issue-count (:total-issue-count sync)})
+                 (update-in [::manage/sub-db ::manage/fetched-repos] (fnil conj #{}) (:name repo)))
+         :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])]}
+        {:db (update-in db [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
+                                                                 :name (:name repo)}]
+                        merge (util/remove-nils new-sync))
+         :dispatch-debounce (poll-event-dispatch repo sync)}))))
 
 (reg-event-fx
   ::poll-sync-progress

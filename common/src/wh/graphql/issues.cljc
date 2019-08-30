@@ -167,4 +167,4 @@
                       :variable/type :String}]
    :venia/queries   [[:repo {:owner :$owner
                              :name :$name}
-                      [[:sync [:id :running_issue_count :time_updated :time_started]]]]]})
+                      [[:sync [:id :running_issue_count :time_updated :time_started :time_finished]]]]]})
