@@ -56,7 +56,7 @@
                       [[:jobs
                         [:fragment/jobCardFields]]
                        [:pagination [:total]]]]
-                     [:issues {:pageSize 2 :pageNumber 1}
+                     [:issues {:pageSize 2 :pageNumber 1 :published true}
                       [[:issues
                         [:id :url :number :body :title :pr_count :level :status :published :created_at
                          [:compensation [:amount :currency]]
