@@ -30,11 +30,7 @@ function extractUtmFields(qps) {
           .reduce((obj, key) => {
               var v = qps.get(key);
               if(v != "undefined" && v != "") {
-                  if(renameFields.has(key)) {
-                      obj.set(renameFields.get(key), v);
-                  } else {
-                      obj.set(key, v);
-                  }
+                  obj.set(key, v);
               }
               return obj;
           }, new Map());
