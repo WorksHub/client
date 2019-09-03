@@ -44,7 +44,7 @@
                          [[:companyPerks [:name]]
                           [:approval [:status :source :time]]
                           [:likes [:id :slug :title [:company [:name]]]]
-                          [:applied [[:job [:id :slug :title [:company [:name]]]]]]
+                          [:applied [:timestamp :state [:job [:id :slug :title [:company [:name]]]]]]
                           :jobSeekingStatus :roleTypes
                           :hubspotProfileUrl
                           :type

@@ -11,15 +11,6 @@
     [wh.logged-in.profile.views :as profile-views :refer [view-field itemize]]
     [wh.subs :refer [<sub]]))
 
-(defn itemize-jobs [jobs]
-  (if (seq jobs)
-    (itemize (for [{:keys [id slug title company]} jobs]
-               [link (str title " – " (:name company)) :job :slug slug :class "a--underlined"]))
-    "None"))
-
-(defn approval->str [{:keys [source time status]}]
-  (str (str/capitalize (or status "")) (when source (str " by " source)) (when time (str " on " time))))
-
 (defn state->str
   [s]
   (case s
@@ -28,6 +19,24 @@
     "rejected"     "Rejected by WorksHub"
     "hired"        "Hired"
     (str/capitalize s)))
+
+(defn itemize-jobs [jobs]
+  (if (seq jobs)
+    (itemize (for [{:keys [slug title company]} jobs]
+               [link (str title " – " (:name company)) :job :slug slug :class "a--underlined"]))
+    "None"))
+
+(defn itemize-apps [applications]
+  (if (seq applications)
+    (itemize (for [{:keys [job timestamp state]} applications]
+               [:span
+                {:title (str "Applied on " (first (str/split timestamp #"T")))}
+                [link (str (:title job ) " – " (-> job :company :name)) :job :slug (:slug job) :class "a--underlined"]
+                (str " (" (state->str state) ")")]))
+    "None"))
+
+(defn approval->str [{:keys [source time status]}]
+  (str (str/capitalize (or status "")) (when source (str " by " source)) (when time (str " on " time))))
 
 (defn approve-buttons [{:keys [approval id email updating]}]
   [:div
@@ -57,7 +66,7 @@
                                                :rel    "noopener"} hs-url]
                             "No profile yet")]
    (when-not (= type "company")
-     [view-field "Applied jobs:" (itemize-jobs (map :job applied))])
+     [view-field "Applied jobs:" (itemize-apps applied)])
    (when-not (= type "company")
      [view-field "Liked jobs:" (itemize-jobs likes)])])
 
