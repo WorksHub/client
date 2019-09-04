@@ -135,9 +135,10 @@
   {:venia/operation {:operation/type :mutation
                      :operation/name "fetch_issues_for_repository"}
    :venia/variables [{:variable/name "name" :variable/type :String!}
-                     {:variable/name "owner" :variable/type :String!}]
-   :venia/queries   [[:sync {:name :$name :owner :$owner}
-                      [:id :time_started :total_issue_count]]]})
+                     {:variable/name "owner" :variable/type :String!}
+                     {:variable/name "force" :variable/type :Boolean}]
+   :venia/queries   [[:sync {:name :$name :owner :$owner :force :$force}
+                      [:id :time_started :total_issue_count :time_finished]]]})
 
 (defquery sync-orgs-and-repos
   {:venia/queries

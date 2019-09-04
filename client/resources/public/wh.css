@@ -13655,6 +13655,10 @@ h3 {
 .generic-popup__popup--edit-issue-confirm .issue__confirm-save__buttons button:not(:last-child) {
   margin-right: 12px; }
 
+.repo__header {
+  display: flex;
+  justify-content: space-between; }
+
 .manage-issues-list {
   background: white;
   display: block;
@@ -13720,13 +13724,23 @@ h3 {
 
 .manage-issues-syncing-issues {
   background: white;
-  min-height: 100px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   padding: 12px; }
-  @media screen and (max-width: 1007px) {
-    .manage-issues-syncing-issues {
-      flex-direction: column; } }
+  .manage-issues-syncing-issues .is-flex {
+    align-items: center; }
+    @media screen and (max-width: 1007px) {
+      .manage-issues-syncing-issues .is-flex {
+        flex-direction: column; } }
+
+.manage-issues-syncing-issues__restart {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; }
+  .manage-issues-syncing-issues__restart span {
+    line-height: 18px; }
+  .manage-issues-syncing-issues__restart button {
+    margin-left: 8px; }
 
 .manage-issues-syncing-issues__text {
   font-weight: 600;
@@ -13742,12 +13756,15 @@ h3 {
   text-align: center;
   display: flex; }
   .manage-issues__sync-progress span {
+    width: 60px;
+    height: 14px;
     display: block;
     margin: 2px 0px 18px 12px;
     font-size: 14px;
     color: #6E7F89;
     font-weight: 500;
-    line-height: 14px; }
+    line-height: 14px;
+    text-align: right; }
 
 .manage-issues-buttons {
   display: flex;
@@ -13769,7 +13786,8 @@ h3 {
 
 .publish-container {
   position: relative;
-  height: 30px; }
+  height: 30px;
+  min-width: 100px; }
   .publish-container .publish {
     text-transform: uppercase;
     font-size: 9px;
@@ -13777,8 +13795,6 @@ h3 {
     color: #adadad;
     position: absolute;
     right: 0; }
-    .publish-container .publish.publish-all {
-      margin-right: 20px; }
 
 .issues__hiring-pod__header {
   display: flex;
@@ -14188,6 +14204,10 @@ h3 {
   .manage-issues__queries-loading .is-loading-spinner {
     width: 32px;
     height: 32px; }
+
+.manage-issues__sync-info p {
+  line-height: 18px;
+  margin-bottom: 12px; }
 
 .landing-page .homepage__middle-content__container:last-of-type {
   padding-bottom: 28px; }

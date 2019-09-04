@@ -1,6 +1,8 @@
 (ns wh.issues.manage.events
   (:require
     #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
+    [#?(:cljs cljs-time.core
+        :clj clj-time.core) :as t]
     [re-frame.core :refer [path]]
     [wh.common.cases :as cases]
     [wh.common.issue :refer [gql-issue->issue]]
@@ -16,6 +18,10 @@
                                       [(path ::manage/sub-db)]))
 
 (def default-page-size 20)
+
+(defn page
+  [db]
+  (get-in db [::db/query-params "page"] 1))
 
 (reg-event-db
   ::initialize-db
@@ -113,12 +119,13 @@
       (if (:time-finished new-sync)
         {:db (-> db (update-in [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
                                                                      :name (:name repo)}]
-                               merge {:running-issue-count (:total-issue-count sync)})
+                               merge {:running-issue-count (:total-issue-count sync)
+                                      :time-finished (:time-finished new-sync)})
                  (update-in [::manage/sub-db ::manage/fetched-repos] (fnil conj #{}) (:name repo)))
-         :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])]}
+         :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (page db)]}
         {:db (update-in db [::manage/sub-db ::manage/repo-syncs {:owner (:owner repo)
                                                                  :name (:name repo)}]
-                        merge (util/remove-nils new-sync))
+                        merge (util/remove-nils new-sync) {:time-checked (str (t/now))})
          :dispatch-debounce (poll-event-dispatch repo sync)}))))
 
 (reg-event-fx
@@ -135,20 +142,27 @@
   ::sync-repo-success
   db/default-interceptors
   (fn [{db :db} [repo resp]]
-    (let [sync (cases/->kebab-case (get-in resp [:data :sync]))]
-      {:db (-> db
-               (assoc-in [::manage/sub-db ::manage/repo-syncs (select-keys repo [:name :owner])] sync))
-       :dispatch-debounce (poll-event-dispatch repo sync)})))
+    (let [sync (cases/->kebab-case (get-in resp [:data :sync]))
+          updated-db (-> db
+                         (assoc-in [::manage/sub-db ::manage/repo-syncs (select-keys repo [:name :owner])] sync))
+          sync-required? (not (:time-finished sync))]
+      (if sync-required?
+        {:db updated-db
+         :dispatch-debounce (poll-event-dispatch repo sync)}
+        {:db (assoc-in updated-db [::manage/sub-db ::manage/syncing-issues] false)
+         :dispatch [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (page db)]}))))
 
 #?(:cljs
    (reg-event-fx
      ::sync-repo-issues
      db/default-interceptors
-     (fn [{db :db} [{:keys [name owner] :as repo}]]
+     (fn [{db :db} [{:keys [name owner] :as repo} force?]]
        {:db      (assoc-in db [::manage/sub-db ::manage/syncing-issues] true)
         :graphql {:query      graphql-company/sync-issues-mutation
-                  :variables  {:name  name
-                               :owner owner}
+                  :variables  (merge {:name  name
+                                      :owner owner}
+                                     (when force?
+                                       {:force true}))
                   :on-success [::sync-repo-success repo]
                   :on-failure [::failure [::sync-repo-issues repo]]}})))
 
@@ -185,4 +199,4 @@
              [::initialize-db]
              (if sync?
                [::sync-repo-issues repo]
-               [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (get-in db [::db/query-params "page"])])))))
+               [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (page db)])))))

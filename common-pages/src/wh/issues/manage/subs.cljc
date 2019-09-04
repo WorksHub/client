@@ -1,7 +1,14 @@
 (ns wh.issues.manage.subs
   (:require
+    [#?(:cljs cljs-time.coerce
+        :clj clj-time.coerce) :as tc]
+    [#?(:cljs cljs-time.core
+        :clj clj-time.core) :as t]
+    [#?(:cljs cljs-time.format
+        :clj clj-time.format) :as tf]
     [re-frame.core :refer [reg-sub]]
     [wh.components.pagination :as pagination]
+    [wh.db :as db]
     [wh.issues.manage.db :as manage]))
 
 (reg-sub
@@ -61,6 +68,12 @@
     (get-in db [:wh.db/page-params :owner])))
 
 (reg-sub
+  ::repo
+  (fn [db _]
+    {:name (get-in db [::db/page-params :repo-name])
+     :owner (get-in db [::db/page-params :owner])}))
+
+(reg-sub
   ::full-repo-name
   :<- [::repo-owner]
   :<- [::repo-name]
@@ -106,9 +119,17 @@
   (fn [[current-page-number total-pages] _]
     (pagination/generate-pagination current-page-number total-pages)))
 
-
 (reg-sub
   ::issues-loading?
   :<- [::sub-db]
   (fn [db _]
     (::manage/loading? db)))
+
+(def minutes-until-sync-stall 3)
+
+(reg-sub
+  ::sync-wants-restart?
+  :<- [::current-repo-sync]
+  (fn [sync _]
+    (when-let [tu (some->> (:time-updated sync) (tf/parse (tf/formatters :date-time)))]
+      (< minutes-until-sync-stall (t/in-minutes (t/interval tu (t/now)))))))

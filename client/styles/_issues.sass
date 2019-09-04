@@ -787,6 +787,10 @@ $issue-sticky-hide-mobile-offset: 28px
     button:not(:last-child)
       margin-right: 12px
 
+.repo__header
+  display: flex
+  justify-content: space-between
+
 .manage-issues-list
   background: $white
   display: block
@@ -843,12 +847,22 @@ $issue-sticky-hide-mobile-offset: 28px
 
 .manage-issues-syncing-issues
   background: $white
-  min-height: 100px
   display: flex
-  +mobile
-    flex-direction: column
-  align-items: center
+  flex-direction: column
+  .is-flex
+    align-items: center
+    +mobile
+      flex-direction: column
   padding: 12px
+
+.manage-issues-syncing-issues__restart
+  display: flex
+  justify-content: flex-end
+  align-items: center
+  span
+    line-height: 18px
+  button
+    margin-left: 8px
 
 .manage-issues-syncing-issues__text
   font-weight: $font-semi-bold
@@ -863,12 +877,15 @@ $issue-sticky-hide-mobile-offset: 28px
   text-align: center
   display: flex
   span
+    width: 60px
+    height: 14px
     display: block
     margin: 2px 0px 18px 12px
     font-size: 14px
     color: $steel-gray
     font-weight: $font-medium
     line-height: 14px
+    text-align: right
 
 .manage-issues-buttons
   display: flex
@@ -891,6 +908,7 @@ $issue-sticky-hide-mobile-offset: 28px
 .publish-container
   position: relative
   height: 30px
+  min-width: 100px
   .publish
     text-transform: uppercase
     font-size: 9px
@@ -898,8 +916,6 @@ $issue-sticky-hide-mobile-offset: 28px
     color: $greyish
     position: absolute
     right: 0
-    &.publish-all
-      margin-right: 20px
 
 .issues__hiring-pod__header
   display: flex
@@ -1276,3 +1292,8 @@ $issue-sticky-hide-mobile-offset: 28px
   .is-loading-spinner
     width: 32px
     height: 32px
+
+.manage-issues__sync-info
+  p
+    line-height: 18px
+    margin-bottom: 12px

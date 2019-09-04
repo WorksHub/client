@@ -2,6 +2,7 @@
   (:require
     #?(:cljs [wh.components.forms.views :as form])
     [clojure.string :as str]
+    [wh.common.time :as time]
     [wh.components.common :refer [link img wrap-img]]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue->status]]
@@ -30,12 +31,20 @@
      [:div.progress-bar
       [:div.progress-bar__background]
       [:div.progress-bar__foreground {:style {:width amount-pc}}]]
-     [:span (or (:running-issue-count repo-sync) 0) "/" (or (:total-issue-count repo-sync) "???")]]))
+     [:span (when (:total-issue-count repo-sync)
+              (str (or (:running-issue-count repo-sync) 0) "/" (:total-issue-count repo-sync)))]]))
 
 (defn syncing-issues-overlay []
   [:div.manage-issues-syncing-issues
-   [:p.manage-issues-syncing-issues__text "Syncing issues with GitHub"]
-   [sync-progress]])
+   [:div.is-flex
+    [:p.manage-issues-syncing-issues__text "Syncing issues with GitHub"]
+    [sync-progress]]
+   (when (<sub [::subs/sync-wants-restart?])
+     [:div.manage-issues-syncing-issues__restart
+      [:span "Synchronisation appears to be taking longer than usual"]
+      [:button.button.button--inverted
+       {:on-click #(dispatch [::events/sync-repo-issues (<sub [::subs/repo]) true])}
+       "Restart"]])])
 
 (defn repo-card
   [org {:keys [owner description primary-language] :as repo}]
@@ -77,19 +86,27 @@
 (defn issues-list []
   #?(:cljs
      [:div.manage-issues-list
-      (let [issues (<sub [::subs/issues])]
+      (let [issues (<sub [::subs/issues])
+            sync (<sub [::subs/current-repo-sync])]
         [:div.repo__content
-         [:div.publish-container
-          [:span.publish.publish-all "Publish All"]]
-         [:div.repo__checkbox__container
-          [:div.repo__checkbox
-           [form/labelled-checkbox
-            (and (seq issues)
-                 (every? true? (map :published issues)))
-            {:indeterminate? (> (count (distinct (map :published issues))) 1)
-             :on-change [::events/update-pending issues]}]]]
-         [:div.publish-container
-          [:span.publish "Published"]]
+         [:div.repo__header
+          [:div.manage-issues__sync-info
+           [:p "Last GitHub sync: " (time/human-time (:time-finished sync))]
+           [:button.button.button--inverted
+            {:on-click #(dispatch [::events/sync-repo-issues (<sub [::subs/repo]) true])}
+            "Re-sync now"]]
+          [:div
+           [:div.publish-container
+            [:span.publish.publish-all "Publish All"]]
+           [:div.repo__checkbox__container
+            [:div.repo__checkbox
+             [form/labelled-checkbox
+              (and (seq issues)
+                   (every? true? (map :published issues)))
+              {:indeterminate? (> (count (distinct (map :published issues))) 1)
+               :on-change [::events/update-pending issues]}]]]
+           [:div.publish-container
+            [:span.publish "Published"]]]]
          [:div.issues
           (if (empty? issues)
             [:p "There are no open issues in this repository."]
@@ -97,12 +114,12 @@
              (for [issue issues]
                (let [derived-status (issue->status issue)]
                  [:li.issue.is-flex {:key (:id issue)}
-                [:p.manage-issues-list__issue__title
-                 [:span {:class (util/merge-classes "issue-status" (str "issue-status--" derived-status))} [icon "issue-status"] [:span (str/capitalize derived-status)]]
-                 [:span.issue-list__title (:title issue)]]
-                [form/labelled-checkbox (:published issue)
-                 {:on-change [::events/update-pending [issue]]
-                  :class     "issue-checkbox"}]]))])]])]))
+                  [:p.manage-issues-list__issue__title
+                   [:span {:class (util/merge-classes "issue-status" (str "issue-status--" derived-status))} [icon "issue-status"] [:span (str/capitalize derived-status)]]
+                   [:span.issue-list__title (:title issue)]]
+                  [form/labelled-checkbox (:published issue)
+                   {:on-change [::events/update-pending [issue]]
+                    :class     "issue-checkbox"}]]))])]])]))
 
 (defn issues-page []
   [:div.main.manage-issues
