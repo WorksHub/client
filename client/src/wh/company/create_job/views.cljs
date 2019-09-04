@@ -79,46 +79,33 @@
          (if currency
            [:div.column.job-edit__remuneration__salary__slider
             (field-container
-             {:label "* Salary range"}
-             [slider-range
-              {:value     (<sub [::subs/salary-range-js])
-               :min       (<sub [::subs/salary-min])
-               :max       (<sub [::subs/salary-max])
-               :step      (case (<sub [::subs/remuneration__time-period])
-                            "Yearly" 1000
-                            50)
-               :on-change #(dispatch [::events/set-salary-range (js->clj %)])}])]
+              {:label "* Salary range"}
+              [slider-range
+               {:value     (<sub [::subs/salary-range-js])
+                :min       (<sub [::subs/salary-min])
+                :max       (<sub [::subs/salary-max])
+                :step      (case (<sub [::subs/remuneration__time-period])
+                             "Yearly" 1000
+                             50)
+                :on-change #(dispatch [::events/set-salary-range (js->clj %)])}])]
            [:div.column.job-edit__remuneration__currency__prompt
             "Select a currency in order to define the salary range"])
          (when currency
            [:div.column.is-narrow.job-edit__remuneration__salary__label
             [:span (<sub [::subs/salary-label])]])]
         (field-container
-         {:class   "job-edit__remuneration__salary__time-period"
-          :label   "* Salary rate is:"
-          :inline? true}
-         [radio-buttons (<sub [::subs/remuneration__time-period])
-          {:options   (<sub [::subs/time-periods])
-           :on-change [::events/edit-remuneration__time-period]}])])
+          {:class   "job-edit__remuneration__salary__time-period"
+           :label   "* Salary rate is:"
+           :inline? true}
+          [radio-buttons (<sub [::subs/remuneration__time-period])
+           {:options   (<sub [::subs/time-periods])
+            :on-change [::events/edit-remuneration__time-period]}])])
      [:div.job-edit__remuneration__additional-options
       (when-not competitive
         [labelled-checkbox nil (field ::create-job/remuneration__equity
                                       :label "Equity offered")])
       [labelled-checkbox nil (field ::create-job/remuneration__competitive
-                                    :label "Competitive")]]
-
-     [tags-field
-      (<sub [::subs/benefit-search])
-      (field ::create-job/benefits
-             :label              "* Enter the benefits that are offered with this role"
-             :collapsed?         (<sub [::subs/benefits-collapsed?])
-             :placeholder        "e.g. flexible working, gym membership"
-             :empty-label        "Press Enter or click the '+' to add new benefits"
-             :tags               (<sub [::subs/matching-benefits])
-             :on-change          [::events/set-benefit-search]
-             :on-toggle-collapse #(dispatch [::events/toggle-benefits-collapsed])
-             :on-tag-click       #(dispatch [::events/toggle-benefit %])
-             :on-add-tag         #(dispatch [::events/toggle-benefit %]))]]))
+                                    :label "Competitive")]]]))
 
 (defn skills
   [admin?]

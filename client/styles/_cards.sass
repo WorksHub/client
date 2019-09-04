@@ -78,6 +78,10 @@ $card-job-padding: 15px
   .info
     height: 162px
   .logo
+    .logo--empty
+      height: 48px
+      width: 48px
+      border: 1px solid $steel-gray
     img
       height: 48px
     font-size: 30px
@@ -180,6 +184,8 @@ $card-job-padding: 15px
     height: 48px
     width: 48px
     @include skeleton
+    .logo--empty
+      display: none
   .basic-info
     &>div
       margin-top: 2px

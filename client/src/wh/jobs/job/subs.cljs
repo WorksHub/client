@@ -169,9 +169,10 @@
 (reg-sub
   ::benefits
   (fn [db _]
-    (some->> (get-in db [::job/sub-db ::job/benefits])
+    (some->> (get-in db [::job/sub-db ::job/company :tags])
+             (filter #(= :benefit (some-> % :type keyword)))
              (seq)
-             (map str/capitalize))))
+             (map (comp str/capitalize :label)))))
 
 (reg-sub
   ::error

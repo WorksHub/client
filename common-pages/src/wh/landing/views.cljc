@@ -2,6 +2,7 @@
 
 (ns wh.landing.views
   (:require
+    #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     [wh.common.data :as data]
     [wh.components.cards :refer [blog-card]]
     [wh.components.carousel :refer [carousel]]
@@ -11,7 +12,6 @@
     [wh.how-it-works.views :as hiw]
     [wh.interop :as interop]
     [wh.landing.subs :as subs]
-    #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
@@ -38,8 +38,9 @@
     :txt "With our Open Source issues, you can get paid, learn new languages and get noticed by employers. We’re leveraging the power of open source to help you further your career."}])
 
 (defn job-card
-  [{:keys [company-name tagline title logo display-salary display-location role-type tags id slug] :as job}]
-  (let [skeleton? (and job (empty? (dissoc job :id)))]
+  [{:keys [company tagline title display-salary display-location role-type tags id slug] :as job}]
+  (let [{company-name :name logo :logo} company
+        skeleton? (and job (empty? (dissoc job :id)))]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
                                       (str "i-cur-" (rand-int 9))
@@ -68,10 +69,10 @@
       [link [:button.button.button--inverted "More Info"] :job :slug slug]
       [:button.button
        (interop/on-click-fn
-        (interop/show-auth-popup :homepage-jobcard-apply
-                                 [:job
-                                  :params {:slug slug}
-                                  :query-params {:apply "true"}]))
+         (interop/show-auth-popup :homepage-jobcard-apply
+                                  [:job
+                                   :params {:slug slug}
+                                   :query-params {:apply "true"}]))
        "Apply"]]]))
 
 (defn header []

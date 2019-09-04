@@ -18,13 +18,14 @@
 (s/def ::description-html (s/nilable string?))
 (s/def ::name (s/nilable string?))
 (s/def ::logo (s/nilable string?))
+(s/def ::benefits :wh/tags)
 (s/def ::company (s/keys :opt-un [::logo
                                   ::name
-                                  ::description-html]))
+                                  ::description-html
+                                  ::benefits]))
 (s/def ::location-description (s/nilable string?))
 (s/def ::display-location string?)
 (s/def ::tags (s/coll-of (s/nilable string?)))
-(s/def ::benefits (s/coll-of (s/nilable string?)))
 (s/def ::applied (s/nilable boolean?))
 (s/def ::manager (s/nilable string?))
 
@@ -98,7 +99,6 @@
                               ::manager
                               ::title
                               ::tags
-                              ::benefits
                               ::remote
                               ::sponsorship-offered
                               ::id

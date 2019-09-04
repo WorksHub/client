@@ -31,13 +31,6 @@
          (jobs/add-interactions liked-jobs applied-jobs))))
 
 (reg-sub
-  ::show-public-only?
-  :<- [::jobs]
-  :<- [::applied-jobs]
-  (fn [[jobs applied] _]
-    (jobs/show-public-only? (concat jobs applied))))
-
-(reg-sub
   ::display-applied-jobs?
   :<- [::applied-jobs]
   (fn [applied-jobs _]

@@ -152,12 +152,6 @@
   (fn [[company-name recommended-jobs] _]
     (every? (comp (partial = company-name) :company-name) recommended-jobs)))
 
-(reg-sub
-  ::show-public-only?
-  :<- [::recommended-jobs]
-  (fn [jobs _]
-    (jobs/show-public-only? jobs)))
-
 ;; These subscriptions refer to client-side state of the blog.
 
 (reg-sub

@@ -56,9 +56,22 @@
       (= (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) id))))
 
 (reg-sub
+  :user/approved?
+  (fn [db _]
+    (= "approved"
+       (get-in db [:wh.user.db/sub-db :wh.user.db/approval :status]))))
+
+(reg-sub
   :user/name
   (fn [db _]
     (get-in db [:wh.user.db/sub-db :wh.user.db/name])))
+
+(reg-sub
+  :user/public-job-info-only?
+  :<- [:user/logged-in?]
+  :<- [:user/approved?]
+  (fn [[logged-in? approved?] _]
+    (not (and logged-in? approved?))))
 
 ;; MISC
 

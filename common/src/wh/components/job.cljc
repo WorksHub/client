@@ -14,7 +14,7 @@
     [wh.verticals :as verticals]))
 
 (defn job-card
-  [{:keys [company-name tagline title logo display-salary remuneration remote sponsorship-offered display-location role-type tags slug id published]
+  [{:keys [company tagline title display-salary remuneration remote sponsorship-offered display-location role-type tags slug id published]
     :or   {published true}
     :as   job}
    {:keys [public? liked? user-has-applied? user-is-owner?]
@@ -22,7 +22,8 @@
            liked?            false
            user-has-applied? false
            user-is-owner?    false}}]
-  (let [skeleton? (and job (empty? (dissoc job :id :slug)))
+  (let [{company-name :name logo :logo} company
+        skeleton? (and job (empty? (dissoc job :id :slug)))
         salary    (or display-salary (jobc/format-job-remuneration remuneration))
         job-tags  (if skeleton?
                     (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " "))) (range 6))
@@ -41,7 +42,7 @@
       [:a {:href (routes/path :job :params {:slug slug})}
        [:div.info
         [:div.logo
-         (if (or skeleton? (not logo))
+         (if (or skeleton? (not logo) public?)
            [:div]
            (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]
         [:div.basic-info

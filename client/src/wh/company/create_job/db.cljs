@@ -61,12 +61,12 @@
 
 (defn initial-db [db]
   (-> (forms/initial-value fields)
-      (merge {::verticals (if (not= "www" (::db/vertical db))
+      (merge (::sub-db db)
+             {::verticals (if (not= "www" (::db/vertical db))
                             #{(::db/vertical db)}
                             #{verticals/default-vertical})
               ::tag-search ""
               ::tags-collapsed? true
-              ::available-tags nil
               ::benefit-search ""
               ::benefits-collapsed? true
               ::available-benefits default-benefits

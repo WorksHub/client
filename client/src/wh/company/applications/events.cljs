@@ -69,7 +69,8 @@
                                        :manager     manager-email
                                        :page_size   sub-db/jobs-page-size
                                        :page_number 1}
-                                [:id :slug :title :companyId :companyName]]
+                                [:id :slug :title :companyId
+                                 [:company [:name]]]]
                                [:admin_companies [:id :name]]]))}))
 
 (defn application-state-frequencies-query

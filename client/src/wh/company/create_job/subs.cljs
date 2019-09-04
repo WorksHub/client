@@ -187,26 +187,6 @@
     (let [symbol (currency-symbols currency)]
       (str symbol  (format-number min) " – " symbol (format-number max)))))
 
-;; Benefits
-
-(reg-sub
-  ::benefit-search
-  :<- [::sub-db]
-  (fn [db _]
-    (::create-job/benefit-search db)))
-
-(reg-sub
-  ::available-benefits
-  :<- [::sub-db]
-  (fn [db _]
-    (::create-job/available-benefits db)))
-
-(reg-sub
-  ::benefits-collapsed?
-  :<- [::sub-db]
-  (fn [db _]
-    (::create-job/benefits-collapsed? db)))
-
 (defn take-tags
   [num selected-tags all-tags search]
   (let [search (some-> search (str/lower-case))
@@ -215,17 +195,9 @@
          (filter (fn [{:keys [tag]}]
                    (and (or (str/blank? search)
                             (str/includes? tag search))
-                     (not (contains? selected-tags-set tag)))))
+                        (not (contains? selected-tags-set tag)))))
          (concat selected-tags)
          (take num))))
-
-(reg-sub
-  ::matching-benefits
-  :<- [::benefit-search]
-  :<- [::available-benefits]
-  :<- [::benefits]
-  (fn [[benefit-search all-benefits selected-benefits] _]
-    (take-tags 20 selected-benefits all-benefits benefit-search)))
 
 ;; Tags
 

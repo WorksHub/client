@@ -101,9 +101,9 @@
                     (not (str/blank? title))              (str "Check out these jobs using " title)
                     :else                                 "Check out these recommended jobs")])
        (into
-        [:div.columns.is-mobile]
-        (for [job jobs]
-          [:div.column [job-card job :public (<sub [::subs/show-public-only?])]]))])))
+         [:div.columns.is-mobile]
+         (for [job jobs]
+           [:div.column [job-card job :public (<sub [:user/public-job-info-only?])]]))])))
 
 (defn page []
   (let [last-y (reagent/atom 0)

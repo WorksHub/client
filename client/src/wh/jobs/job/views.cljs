@@ -423,7 +423,7 @@
      [:div.columns
       (doall (for [job jobs]
                ^{:key (:id job)}
-               [:div.column [job-card job :public (not (<sub [:user/logged-in?]))]]))]]))
+               [:div.column [job-card job :public (<sub [:user/public-job-info-only?])]]))]]))
 
 (defn apply-sticky
   []

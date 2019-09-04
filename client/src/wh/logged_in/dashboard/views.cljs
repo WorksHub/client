@@ -1,15 +1,16 @@
 (ns wh.logged-in.dashboard.views
-  (:require [wh.components.cards :refer [blog-card]]
-            [wh.components.cards.views :refer [job-card]]
-            [wh.components.common :refer [link]]
-            [wh.components.conversation.views :refer [button codi-message]]
-            [wh.components.error.views :refer [loading-error]]
-            [wh.components.icons :refer [icon]]
-            [wh.components.loader :refer [loader-cover]]
-            [wh.logged-in.dashboard.events :as events]
-            [wh.logged-in.dashboard.subs :as subs]
-            [wh.subs :refer [<sub]]
-            [wh.user.subs :as user-subs]))
+  (:require
+    [wh.components.cards :refer [blog-card]]
+    [wh.components.cards.views :refer [job-card]]
+    [wh.components.common :refer [link]]
+    [wh.components.conversation.views :refer [button codi-message]]
+    [wh.components.error.views :refer [loading-error]]
+    [wh.components.icons :refer [icon]]
+    [wh.components.loader :refer [loader-cover]]
+    [wh.logged-in.dashboard.events :as events]
+    [wh.logged-in.dashboard.subs :as subs]
+    [wh.subs :refer [<sub]]
+    [wh.user.subs :as user-subs]))
 
 (defn jobs-intro []
   [:div
@@ -42,15 +43,17 @@
     (if-not (seq (<sub [::subs/jobs]))
       [:h3 "Sorry, there seem to be no jobs matching your profile \uD83D\uDE25. Try to add/change skills in your profile to see some recommended jobs."]
       (let [jobs (<sub [::subs/jobs])
-            jobs-columns (map (fn [job] [:div.column [job-card job :on-close :reload-dashboard :public (<sub [::subs/show-public-only?])]]) jobs)
+            jobs-columns (map (fn [job] [:div.column [job-card job
+                                                      :on-close :reload-dashboard
+                                                      :public (<sub [:user/public-job-info-only?])]]) jobs)
             columns (if (<sub [::user-subs/welcome-msg-not-seen? "jobs"])
                       (into
-                       [[:div.column.codi-column [jobs-intro]]]
-                       (take 2 jobs-columns))
+                        [[:div.column.codi-column [jobs-intro]]]
+                        (take 2 jobs-columns))
                       jobs-columns)]
         (into
-         [:div.columns.is-mobile]
-         columns)))]])
+          [:div.columns.is-mobile]
+          columns)))]])
 
 (defn user-preferences []
   (let [user-name (<sub [::user-subs/name])
@@ -87,9 +90,9 @@
   [:section
    [:h2 "Applied Jobs"]
    (into
-    [:div.columns.is-mobile]
-    (for [job (<sub [::subs/applied-jobs])]
-      [:div.column [job-card job :public (<sub [::subs/show-public-only?])]]))])
+     [:div.columns.is-mobile]
+     (for [job (<sub [::subs/applied-jobs])]
+       [:div.column [job-card job :public (<sub [:user/public-job-info-only?])]]))])
 
 (defn page []
   (cond (= (<sub [::subs/loading-error]) :unavailable)

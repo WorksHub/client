@@ -20,12 +20,6 @@
          (jobs/add-interactions liked-jobs applied-jobs))))
 
 (reg-sub
-  ::show-public-only?
-  :<- [::jobs]
-  (fn [jobs _]
-    (jobs/show-public-only? jobs)))
-
-(reg-sub
   ::show-load-more?
   :<- [::personalised-jobs]
   (fn [sub-db _]

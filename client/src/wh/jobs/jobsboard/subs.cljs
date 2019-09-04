@@ -87,13 +87,6 @@
          (jobs/add-interactions liked-jobs applied-jobs))))
 
 (reg-sub
-  ::show-public-only?
-  :<- [::jobs]
-  :<- [::promoted-jobs]
-  (fn [[jobs promoted] _]
-    (jobs/show-public-only? (concat jobs promoted))))
-
-(reg-sub
   ::search
   (fn [db _]
     (get-in db [::jobsboard/sub-db ::jobsboard/search])))

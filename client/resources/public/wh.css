@@ -6165,6 +6165,10 @@ a.navbar-item,
     height: 162px; }
   .card--job .logo {
     font-size: 30px; }
+    .card--job .logo .logo--empty {
+      height: 48px;
+      width: 48px;
+      border: 1px solid #6E7F89; }
     .card--job .logo img {
       height: 48px; }
   .card--job .basic-info {
@@ -6265,6 +6269,8 @@ a.navbar-item,
     width: 48px;
     background-color: #ddd;
     border-radius: 5px; }
+    .job-card--skeleton .logo .logo--empty {
+      display: none; }
   .job-card--skeleton .basic-info > div {
     margin-top: 2px;
     height: 20px;
@@ -12686,7 +12692,7 @@ h3 {
   justify-content: flex-start;
   margin-bottom: 1%;
   overflow-y: hidden;
-  height: 260px;
+  height: 290px;
   font-size: 14px;
   line-height: 24px;
   transition: height 0.5s; }

@@ -61,52 +61,54 @@
       [:div.text (gstring/format "%d%% Match" (* score 100))])]))
 
 (defn closed-job
-  [{:keys [company-name tagline title liked display-salary tags sponsorship-offered remote role-type display-location score state] :as job}
+  [{:keys [company tagline title liked display-salary tags sponsorship-offered remote role-type display-location score state] :as job}
    public]
-  [:div.card.card--job {:class (str "card-border-color-" (rand-int 9)
-                                    " i-cur-" (rand-int 9)
-                                    (when public
-                                      " job-card--public"))}
-   [:span
-    (when (and (not public) liked)
-      [icon "like"
-       :class (str "job__icon like job__icon__private" (when liked " selected"))])
-    [:div.info
-     [:div.logo
-      (when-not public
-        [:img {:src (:logo job)
-               :alt (str company-name " logo")}])]
-     [:div.basic-info
-      [:div.job-title title]
-      (when-not public
-        [:div.company-name company-name])
-      [:div.location display-location]
-      (cond-> [:div.card__perks]
-        remote (conj [icon "job-remote" :class "job__icon--small"] "Remote")
-        (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
-        sponsorship-offered (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
-      [:div.salary display-salary]]]]
-   (into [:ul.tags.tags__job]
-         (map (fn [tag]
-                [:li {:on-click #(dispatch [:wh.search/search-by-tag tag false])} tag])
-              tags))
+  (let [{company-name :name logo :logo} company]
+    [:div.card.card--job {:class (str "card-border-color-" (rand-int 9)
+                                      " i-cur-" (rand-int 9)
+                                      (when public
+                                        " job-card--public"))}
+     [:span
+      (when (and (not public) liked)
+        [icon "like"
+         :class (str "job__icon like job__icon__private" (when liked " selected"))])
+      [:div.info
+       [:div.logo
+        (when-not public
+          [:img {:src logo
+                 :alt (str company-name " logo")}])]
+       [:div.basic-info
+        [:div.job-title title]
+        (when-not public
+          [:div.company-name company-name])
+        [:div.location display-location]
+        (cond-> [:div.card__perks]
+                remote (conj [icon "job-remote" :class "job__icon--small"] "Remote")
+                (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
+                sponsorship-offered (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
+        [:div.salary display-salary]]]]
+     (into [:ul.tags.tags__job]
+           (map (fn [tag]
+                  [:li {:on-click #(dispatch [:wh.search/search-by-tag tag false])} tag])
+                tags))
 
-   [:div.tagline tagline]
-   (when score
-     [:div.match
-      [match-circle score]
-      [:span.match__label (str (gstring/format "%.0f%%" (* 100 score)) " match")]])
-   [:div.apply
-    (when state
-      [:div.state
-       [:span.applied-state "Status: " (state->candidate-status state)]])
-    [:div.buttons
-     [:div.card__label.card__label--unpublished
-      "Closed"]]]])
+     [:div.tagline tagline]
+     (when score
+       [:div.match
+        [match-circle score]
+        [:span.match__label (str (gstring/format "%.0f%%" (* 100 score)) " match")]])
+     [:div.apply
+      (when state
+        [:div.state
+         [:span.applied-state "Status: " (state->candidate-status state)]])
+      [:div.buttons
+       [:div.card__label.card__label--unpublished
+        "Closed"]]]]))
 
 (defn job-card-header
-  [{:keys [id slug liked logo remote sponsorship-offered company-name title role-type display-location display-salary] :as job} on-close public]
-  (let [skeleton? (and job (empty? (dissoc job :id)))]
+  [{:keys [id slug liked remote sponsorship-offered company title role-type display-location display-salary] :as job} on-close public]
+  (let [{company-name :name logo :logo} company
+        skeleton? (and job (empty? (dissoc job :id)))]
     [:span
      (when-not (or public skeleton? (<sub [:user/company?]))
        [icon "like"
@@ -121,8 +123,8 @@
      [link
       [:div.info
        [:div.logo
-        (cond skeleton?
-              [:div]
+        (cond (or skeleton? (not logo))
+              [:div.logo--empty]
               (not public)
               (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]
        [:div.basic-info
@@ -131,9 +133,9 @@
           [:div.company-name company-name])
         [:div.location display-location]
         (cond-> [:div.card__perks]
-          remote (conj [icon "job-remote" :class "job__icon--small"] "Remote")
-          (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
-          sponsorship-offered (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
+                remote (conj [icon "job-remote" :class "job__icon--small"] "Remote")
+                (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
+                sponsorship-offered (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
         [:div.salary display-salary]]]
       :job :slug (or slug "")
       :on-click #(dispatch-sync [:wh.job/preset-job-data job])]]))
@@ -181,7 +183,7 @@
            "Easy Apply")]))]])
 
 (defn job-card
-  [{:keys [tagline tags id applied published score company-id] :as job}
+  [{:keys [tagline tags id applied published score company-id company] :as job}
    & {:keys [on-close public]
       :or   {on-close nil public false}}]
   (let [skeleton? (and job (empty? (dissoc job :id)))

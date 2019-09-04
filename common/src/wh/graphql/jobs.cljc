@@ -3,20 +3,18 @@
     [wh.graphql-macros :refer [defquery deffragment def-query-template def-query-from-template]]))
 
 (def job-card-fields
-  [:id :slug :title :companyName :tagline
+  [:id :slug :title :tagline :tags :published :userScore
+   :roleType :sponsorshipOffered :remote :companyId
+   [:company [:name :slug :logo]]
    [:location [:city :state :country :countryCode]]
-   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-   :logo :tags :published :userScore
-   :roleType :sponsorshipOffered :remote :companyId])
+   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
 
-;; and the same for precompiled queries:
-
-(deffragment jobCardFields :JobCard
-  [:id :slug :title :companyName :tagline
+(deffragment jobCardFields :Job
+  [:id :slug :title :tagline :tags :published :userScore
+   :roleType :sponsorshipOffered :remote :companyId
+   [:company [:name :slug :logo]]
    [:location [:city :state :country :countryCode]]
-   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-   :logo :tags :published :userScore
-   :roleType :sponsorshipOffered :remote :companyId])
+   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
 
 (defquery recommended-jobs-for-job
   {:venia/operation {:operation/type :query
@@ -36,14 +34,11 @@
                 :applied (contains? applied-jobs (:id %)))
         jobs))
 
-(defn show-public-only?
-  [jobs]
-  (every? nil? (map :company-name jobs)))
-
 (deffragment jobFields :Job
-  [:id :slug :title :companyId :tagline :descriptionHtml  :tags :benefits :roleType :manager
+  [:id :slug :title :companyId :tagline :descriptionHtml :tags :roleType :manager
    ;; [:company [[:issues [:id :title [:labels [:name]]]]]] ; commented out until company is leonaized
-   [:company [:logo :name :descriptionHtml :profileEnabled :slug]]
+   [:company [:logo :name :descriptionHtml :profileEnabled :slug
+              [:tags [:label :type :subtype :slug]]]]
    [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
    :locationDescription :remote :sponsorshipOffered :applied :published])

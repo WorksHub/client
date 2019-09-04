@@ -497,7 +497,7 @@
   job-interceptors
   (fn [db [{:keys [slug] :as job}]]
     (let [preset-fields (-> job
-                            (select-keys [:title :location :tagline :tags :benefits :remote
+                            (select-keys [:title :location :tagline :tags :remote
                                           :remuneration :role-type])
                             (assoc :company {:name (:company-name job)
                                              :logo (:logo job)}))]

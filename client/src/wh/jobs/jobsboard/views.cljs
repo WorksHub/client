@@ -187,7 +187,7 @@
         (into [:div.columns]
               (for [job part]
                 [:div.column.is-4
-                 [job-card job :public (<sub [::subs/show-public-only?])]]))))))
+                 [job-card job :public (<sub [:user/public-job-info-only?])]]))))))
 
 
 (defn skeleton-jobs []
@@ -210,7 +210,7 @@
                (doall
                  (for [job part]
                    [:div.column.is-4 {:key (str "col-" (:id job))}
-                    [job-card job :public (<sub [::subs/show-public-only?])]]))]))]))
+                    [job-card job :public (<sub [:user/public-job-info-only?])]]))]))]))
      (when (and (not (<sub [:wh.search/searching?]))
                 (seq jobs))
        [pagination/pagination
