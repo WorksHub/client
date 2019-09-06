@@ -301,25 +301,27 @@
    {:id :cancel-plan
     :codi? false
     :on-close #(dispatch [::events/show-cancel-plan-dialog false])}
-   (if (<sub [:user/admin?])
-     [:div
-      [:h1 "When would you like to cancel this subscription?"]
-      [:p "The company will be moved to the Unselected package and all jobs will be unpublished."]
-      [:button.button
-       {:on-click #(dispatch [::events/cancel-plan false])}
-       "At the end of the period"]
-      [:button.button.button--inverted
-       {:on-click #(dispatch [::events/cancel-plan true])}
-       "Immediately"]]
-     [:div
-      [:h1 "Are you sure you want to cancel your subscription?"]
-      [:p "Your active subscription will be cancelled and all your jobs will be taken offline."]
-      [:button.button.button--inverted
-       {:on-click #(dispatch [::events/cancel-plan true])}
-       "Cancel immediately"]
-      [:button.button
-       {:on-click #(dispatch [::events/show-cancel-plan-dialog false])}
-       "Don't cancel"]])])
+   (let [exp (<sub [::subs/payment-expires])]
+     (if (<sub [:user/admin?])
+       [:div
+        [:h1 "When would you like to cancel this subscription?"]
+        [:p "The company will be moved to the Unselected package and all jobs will be unpublished."]
+        [:button.button
+         {:disabled exp
+          :on-click #(dispatch [::events/cancel-plan false])}
+         "At the end of the period"]
+        [:button.button.button--inverted
+         {:on-click #(dispatch [::events/cancel-plan true])}
+         "Immediately"]]
+       [:div
+        [:h1 "Are you sure you want to cancel your subscription?"]
+        [:p "Your active subscription will be cancelled and all your jobs will be taken offline."]
+        [:button.button.button--inverted
+         {:on-click #(dispatch [::events/cancel-plan true])}
+         "Cancel immediately"]
+        [:button.button
+         {:on-click #(dispatch [::events/show-cancel-plan-dialog false])}
+         "Don't cancel"]]))])
 
 (defn card-data
   [{:keys [last-4-digits brand expiry] :as card}]
@@ -406,7 +408,8 @@
 (defn cancel-payment
   []
   (when (<sub [::subs/has-subscription?])
-    (let [exp (<sub [::subs/payment-expires])]
+    (let [exp (<sub [::subs/payment-expires])
+          admin? (<sub [:wh.user/super-admin?])]
       [:div.company-edit__payment-details.company-edit__payment-details__cancel-plan
        [:h2 "Cancel your plan"]
        [:p "We'll be very sorry to see you go \uD83D\uDE15"]
@@ -417,10 +420,10 @@
           [:p.is-error (str "This subscription is set to expire on " exp)])
         (if
             (or (<sub [::subs/can-cancel-sub?])
-                (<sub [:wh.user/super-admin?]))
+                admin?)
           [:button.button
            {:class (when (<sub [::subs/cancel-plan-loading?]) "button--loading button--inverted")
-            :disabled exp
+            :disabled (and exp (not admin?))
             :on-click #(dispatch [::events/show-cancel-plan-dialog true])}
            "Cancel plan"]
           [:a {:href (str "mailto:hello@works-hub.com?subject=[" (<sub [::subs/name]) "]+I+wish+to+cancel+my+plan")
