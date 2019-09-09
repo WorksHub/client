@@ -13,9 +13,6 @@
     border: 1px solid black
 
 .job-edit
-  margin: auto
-  max-width: 815px
-  min-width: 250px
   +mobile
     margin-bottom: 60px
   &> h1
@@ -29,14 +26,9 @@
       width: 100%
 
 .job-edit__side-pods
-  margin-top: 40px
   position: relative
   +mobile
-    margin-top: 0
     margin-bottom: 10px
-.job-edit__side-pods--container
-  &>div:last-of-type
-    margin-top: 30px
 
 .job-edit__remuneration__additional-options
   div
@@ -698,3 +690,49 @@ $description-height: 400px
     height: 48px
     margin-left: calc(50% - 24px)
     margin-top: calc(50% - 48px)
+
+.create-job__company-form
+  .quill
+    .ql-container
+      height: calc(#{$description-height} - 80px)
+
+.create-job__company-form__logo-field + div
+  margin-top: 18px
+
+.create-job__inline-loader
+  position: relative
+  margin-top: 12px
+  height: 32px
+  width: 100%
+  .is-loading-spinner
+    right: calc(50% - 16px)
+    width: 32px
+    height: 32px
+
+.job-edit__company-profile-pod
+  button
+    width: 100%
+    margin-top: 12px
+
+.job-edit__company-profile-pod__content
+  display: flex
+  +desktop
+    flex-direction: column
+
+.job-edit__company-profile-pod__content__img
+  display: flex
+  img
+    margin-bottom: 12px
+    max-height: 200px
+    +desktop
+      width: 60%
+    +mobile
+      width: 100%
+  +desktop
+    justify-content: center
+
+.job-edit__company-profile-pod__content__info
+  display: flex
+  flex-direction: column
+  +mobile
+    padding-left: 18px

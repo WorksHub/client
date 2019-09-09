@@ -10,8 +10,10 @@
     [wh.common.fx.google-maps :as google-maps]
     [wh.common.location :as location]
     [wh.company.create-job.db :as create-job]
+    [wh.components.tag :as tag]
     [wh.db :as db]
     [wh.graphql.company :refer [company-query create-job-mutation update-job-mutation update-company-mutation fetch-tags]]
+    [wh.graphql.tag :refer [tag-query]]
     [wh.jobs.job.db :as job]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
@@ -48,17 +50,16 @@
   [db]
   (let [sub-db (::create-job/sub-db db)]
     (as-> sub-db sub-db
-      (update sub-db ::create-job/manager get-manager-email) ;; at the top because it might be culled
-      (select-keys sub-db (create-job/relevant-fields db))
-      (util/unflatten-map sub-db)
-      (check-descriptions sub-db db)
-      (dissoc sub-db ::create-job/company)
-      (update sub-db ::create-job/tags (partial map :tag))
-      (update sub-db ::create-job/benefits (partial map :tag))
-      (update sub-db ::create-job/remuneration util/remove-nils)
-      (update sub-db ::create-job/location (fn [l] (util/dissoc-selected-keys-if-blank l (set (keys l)))))
-      (update sub-db ::create-job/verticals vec)
-      (ce/transform-keys c/->camelCaseString sub-db))))
+          (update sub-db ::create-job/manager get-manager-email) ;; at the top because it might be culled
+          (select-keys sub-db (create-job/relevant-fields db))
+          (util/unflatten-map sub-db)
+          (check-descriptions sub-db db)
+          (dissoc sub-db ::create-job/company)
+          (update sub-db ::create-job/tags (partial map :tag))
+          (update sub-db ::create-job/remuneration util/remove-nils)
+          (update sub-db ::create-job/location (fn [l] (util/dissoc-selected-keys-if-blank l (set (keys l)))))
+          (update sub-db ::create-job/verticals vec)
+          (ce/transform-keys c/->camelCaseString sub-db))))
 
 (defn variables
   [db]
@@ -70,14 +71,13 @@
 (defn graphql-job->sub-db
   [job]
   (as-> job job
-    (util/remove-nils job)
-    (cases/->kebab-case job)
-    (util/flatten-map job)
-    (util/namespace-map "wh.company.create-job.db" job)
-    (update job ::create-job/verticals set)
-    (update job ::create-job/manager get-manager-name)
-    (update job ::create-job/tags #(set (map (partial hash-map :selected true :tag) %)))
-    (update job ::create-job/benefits #(set (map (partial hash-map :selected true :tag) %)))))
+        (util/remove-nils job)
+        (cases/->kebab-case job)
+        (util/flatten-map job)
+        (util/namespace-map "wh.company.create-job.db" job)
+        (update job ::create-job/verticals set)
+        (update job ::create-job/manager get-manager-name)
+        (update job ::create-job/tags #(set (map (partial hash-map :selected true :tag) %)))))
 
 (defn company-by-id [db id]
   (->> db ::create-job/companies (filter #(= (:id %) id)) first))
@@ -91,15 +91,16 @@
                 (fn [db [new-value]]
                   (assoc db db-field new-value))))
 
-(reg-event-db
+(reg-event-fx
   ::select-company-suggestion
   create-job-interceptors
-  (fn [db [id]]
+  (fn [{db :db} [id]]
     (let [company (company-by-id db id)]
-      (-> db
-          (assoc ::create-job/company-id id)
-          (assoc ::create-job/company__name (:name company))
-          (assoc ::create-job/company__integrations (:integrations company))))))
+      {:db (-> db
+               (assoc ::create-job/company-id id)
+               (assoc ::create-job/company__name (:name company))
+               (assoc ::create-job/company__integrations (:integrations company)))
+       :dispatch [::fetch-company id]})))
 
 (reg-event-fx
   ::edit-company__name
@@ -129,10 +130,29 @@
     {:scroll-into-view id}))
 
 (reg-event-fx
+  ::save-company
+  db/default-interceptors
+  (fn [{db :db} [nav-path]]
+    (let [company (create-job/db->gql-company db)]
+      {:graphql {:query update-company-mutation
+                 :variables {:update_company company}
+                 :on-success [::save-company-success nav-path]
+                 :on-failure [::create-job-error]}})))
+
+(reg-event-fx
+  ::save-company-success
+  db/default-interceptors
+  (fn [{db :db} [nav-path resp]]
+    {:db       (assoc-in db [::create-job/sub-db ::create-job/saving?] false)
+     :navigate nav-path}))
+
+(reg-event-fx
   ::create-job
   db/default-interceptors
   (fn [{db :db} _]
-    (let [errors            (create-job/invalid-fields db)
+    (let [errors            (not-empty
+                              (concat (create-job/invalid-fields db)
+                                      (create-job/invalid-company-fields db)))
           include-location? (some #(when (str/starts-with? (name %) "location") %) errors)]
       (if errors
         (do
@@ -160,10 +180,8 @@
   db/default-interceptors
   (fn [{db :db} [{data :data}]]
     (let [slug (-> data vals first :slug)]
-      {:db       (-> db
-                     (assoc-in [::job/sub-db ::job/slug] "")  ;; force reload
-                     (assoc-in [::create-job/sub-db ::create-job/saving?] false))
-       :navigate [:job :params {:slug slug}]})))
+      {:db       (assoc-in db [::job/sub-db ::job/slug] "")
+       :dispatch [::save-company [:job :params {:slug slug}]]})))
 
 (reg-event-db
   ::create-job-error
@@ -239,10 +257,12 @@
     (let [new-db (merge (::create-job/sub-db db) (graphql-job->sub-db (:job data)))
           save? (get (::db/query-params db) "save")]
       {:db         (assoc db ::create-job/sub-db new-db)
-       :dispatch-n (concat [[::pages/unset-loader]
-                            [::close-search-location-form]]
-                           (when save?
-                             [[::create-job]]))})))
+       :dispatch-n (list [::pages/unset-loader]
+                         [::close-search-location-form]
+                         (when (user/admin? db)
+                           [::fetch-company (::create-job/company-id new-db)])
+                         (when save?
+                           [::create-job]))})))
 
 (reg-event-fx
   ::load-job-failure
@@ -272,16 +292,56 @@
   create-job-interceptors
   (fn [db _] db))
 
+(reg-event-db
+  ::fetch-company-success
+  create-job-interceptors
+  (fn [db [company-id {{company :company} :data}]]
+    (let [company (-> company
+                      (cases/->kebab-case)
+                      (update :tags (partial map tag/->tag)))]
+      (assoc db
+             ::create-job/company (dissoc company :slug)
+             ::create-job/company-id company-id
+             ::create-job/company-slug (:slug company)
+             ::create-job/company-loading? false
+             ;;
+             ::create-job/selected-benefit-tag-ids (->> (:tags company)
+                                                        (filter (fn [t] (= :benefit (:type t))))
+                                                        (map :id)
+                                                        (set))))))
+
+(reg-event-fx
+  ::fetch-company-failure
+  create-job-interceptors
+  (fn [{db :db} _]
+    {:db (assoc db ::create-job/company-loading? false)
+     :dispatch [:error/set-global "Failed to fetch the user's company"]}))
+
+(reg-event-fx
+  ::fetch-company
+  db/default-interceptors
+  (fn [{db :db} [company-id]]
+    {:db (assoc-in db [::create-job/sub-db ::create-job/company-loading?] true)
+     :graphql {:query (company-query company-id (conj create-job/company-required-fields :slug))
+               :on-success [::fetch-company-success company-id]
+               :on-failure [::fetch-company-failure]}}))
+
 (defmethod on-page-load :create-job [db]
-  [[::initialize-db]
-   [:google/load-maps]
-   [::fetch-tags]])
+  (list [::initialize-db]
+        [:google/load-maps]
+        [::fetch-tags]
+        [::fetch-benefit-tags]
+        (when (user/company? db)
+          [::fetch-company (user/company-id db)])))
 
 (defmethod on-page-load :edit-job [db]
-  (concat [[::initialize-db]
-           [:google/load-maps]
-           [::fetch-tags]
-           [::load-job (get-in db [::db/page-params :id])]]))
+  (list [::initialize-db]
+        [:google/load-maps]
+        [::fetch-tags]
+        [::load-job (get-in db [::db/page-params :id])]
+        [::fetch-benefit-tags]
+        (when (user/company? db)
+          [::fetch-company (user/company-id db)])))
 
 (reg-event-db
   ::set-location-suggestions
@@ -514,19 +574,6 @@
   (fn [db _]
     (update db ::create-job/benefits-collapsed? not)))
 
-(reg-event-fx
-  ::toggle-benefit
-  create-job-interceptors
-  (fn [{db :db} [tag]]
-    {:db (update db ::create-job/benefits util/toggle {:tag tag :selected true})
-     :dispatch [::set-benefit-search ""]}))
-
-(reg-event-db
-  ::set-benefit-search
-  create-job-interceptors
-  (fn [db [benefit-search]]
-    (assoc db ::create-job/benefit-search benefit-search)))
-
 ;; Tags
 
 (reg-event-db
@@ -571,3 +618,50 @@
   create-job-interceptors
   (fn [{db :db} [manager]]
     {:db (assoc db ::create-job/manager manager)}))
+
+;; Company
+
+(reg-event-db
+  ::logo-upload-start
+  create-job-interceptors
+  (fn [db _]
+    (assoc db ::create-job/logo-uploading? true)))
+
+(reg-event-fx
+  ::logo-upload-success
+  create-job-interceptors
+  (fn [{db :db} [_ {:keys [url]}]]
+    {:db (-> db
+             (assoc
+               ::create-job/pending-logo url
+               ::create-job/logo-uploading? false)
+             (update ::create-job/form-errors (fnil disj #{}) :wh.company.profile/logo))}))
+
+(reg-event-db
+  ::logo-upload-failure
+  create-job-interceptors
+  (fn [db _]
+    (assoc db ::create-job/logo-uploading? false)))
+
+(reg-event-db
+  ::set-benefits-search
+  create-job-interceptors
+  (fn [db [tag-search]]
+    (assoc db ::create-job/benefits-search tag-search)))
+
+(reg-event-fx
+  ::fetch-benefit-tags
+  (fn [{db :db} _]
+    {:dispatch (into [:graphql/query] (tag-query :benefit))}))
+
+(reg-event-db
+  ::toggle-selected-benefit-tag-id
+  create-job-interceptors
+  (fn [db [id]]
+    (update-in db [::create-job/selected-benefit-tag-ids] (fnil util/toggle #{}) id)))
+
+(reg-event-db
+  ::set-pending-company-description
+  create-job-interceptors
+  (fn [db [desc]]
+    (assoc db ::create-job/pending-company-description desc)))

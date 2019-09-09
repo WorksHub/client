@@ -73,8 +73,33 @@ h3
     width: 67%
     margin-right: 20px
     min-width: 505px
+  & > .split-content-section
+    background-color: white
+    padding: 18px
+    .title
+      font-size: 18px
+      color: $red
+      border-left: 6px solid $red
+      padding-left: 12px
+      font-weight: $font-semi-bold
+      margin-left: -18px /* to counteract padding */
+      letter-spacing: normal
+    .subtitle
+      font-weight: $font-medium
+      +mobile
+        font-size: 18px
+    .subtitle:not(first-of-type)
+      margin-top: 18px
 
 .split-content__side
+  & > .split-content-section
+    margin: 0px
+    background-color: white
+    padding: 18px
+    p
+      line-height: 18px
+  & > .split-content-section + section
+    margin-top: 18px
   section
     padding: 7%
   +mobile

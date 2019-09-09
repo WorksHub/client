@@ -1,21 +1,18 @@
 (ns wh.company.create-job.db
   (:require [cljs.spec.alpha :as s]
+            [clojure.set :as set]
             [clojure.string :as str]
             [re-frame.db :refer [app-db]]
             [wh.common.data :as data]
+            [wh.common.specs.company :as company-spec]
             [wh.common.specs.location]
             [wh.common.specs.primitives :as p]
             [wh.components.forms.db :as forms]
+            [wh.components.tag :as tag]
             [wh.db :as db]
+            [wh.graphql-cache :as cache]
             [wh.user.db :as user]
             [wh.verticals :as verticals]))
-
-(def default-benefits
-  (map (partial hash-map :tag)
-       ["flexible working"
-        "gym membership"
-        "pension"
-        "health care"]))
 
 (def tagline-max-length 110)
 
@@ -33,7 +30,6 @@
    ::remuneration__time-period {:order 13 :initial (first data/time-periods) :event? false}
    ::remuneration__equity      {:order 14 :initial false}
    ::remuneration__competitive {:order 15 :initial false :event? false}
-   ::benefits                  {:order 16 :initial #{} :validate ::selected-benefits}
 
    ::tags {:order 20 :initial #{}, :validate ::selected-tags}
 
@@ -60,20 +56,25 @@
    ::verticals (s/coll-of ::p/non-empty-string :distinct true :min-count 1)})
 
 (defn initial-db [db]
-  (-> (forms/initial-value fields)
-      (merge (::sub-db db)
-             {::verticals (if (not= "www" (::db/vertical db))
-                            #{(::db/vertical db)}
-                            #{verticals/default-vertical})
-              ::tag-search ""
-              ::tags-collapsed? true
-              ::benefit-search ""
-              ::benefits-collapsed? true
-              ::available-benefits default-benefits
-              ::editing-address? false}
-             (when-let [company (get-in db [::user/sub-db ::user/company])]
-               {::company-id (:id company)
-                ::company-package (keyword (:package company))}))))
+  (merge (::sub-db db)
+         {::verticals (if (not= "www" (::db/vertical db))
+                        #{(::db/vertical db)}
+                        #{verticals/default-vertical})
+          ::tag-search ""
+          ::tags-collapsed? true
+          ::benefits-search ""
+          ::benefits-collapsed? true
+          ::editing-address? false
+          ::company-loading? false
+          ::pending-logo nil
+          ::pending-company-description nil
+          ::logo-uploading? false
+          ::search-address ""
+          ::form-errors nil}
+         (when-let [company (get-in db [::user/sub-db ::user/company])]
+           {::company-id (:id company)
+            ::company-package (keyword (:package company))})
+         (forms/initial-value fields)))
 
 (defn relevant-fields
   [db & [exclude-descriptions?]]
@@ -154,7 +155,59 @@
                                :opt-un [::selected]))
 (s/def ::available-tags (s/coll-of ::tag-container :distinct true))
 (s/def ::selected-tags (s/coll-of ::tag-container :distinct true :kind set? :min-count 1))
-(s/def ::selected-benefits (s/coll-of ::tag-container :distinct true :kind set?))
 
 (s/def ::company-id ::p/non-empty-string)
 (s/def ::manager ::data/manager)
+
+
+(s/def :wh.company.profile/benefit-tags (s/and :wh/tags company-spec/includes-benefit?))
+(s/def ::company
+  (s/keys :req-un [:wh.company.profile/logo
+                   :wh.company.profile/description-html
+                   :wh.company.profile/benefit-tags]))
+
+(def company-required-fields
+  [:descriptionHtml :logo
+   [:tags [:slug :label :type :subtype :id :weight]]])
+
+(defn db->company
+  [db]
+  (let [selected-tag-ids (::selected-benefit-tag-ids (::sub-db db))]
+    {:logo (or (::pending-logo (::sub-db db))
+               (:logo (::company (::sub-db db))))
+     :description-html (or (::pending-company-description (::sub-db db))
+                           (:description-html (::company (::sub-db db))))
+     :tags (distinct
+             (concat
+               (->> (cache/result db :tags {:type :benefit})
+                    :list-tags
+                    :tags
+                    (filter #(contains? selected-tag-ids (:id %)))
+                    (map tag/->tag))
+               (->> (:tags (::company (::sub-db db)))
+                    (remove #(= :benefit (:type %))))))}))
+
+(defn db->gql-company
+  [db]
+  (let [selected-tag-ids (::selected-benefit-tag-ids (::sub-db db))]
+    {:id (::company-id (::sub-db db))
+     :logo (or (::pending-logo (::sub-db db))
+               (:logo (::company (::sub-db db))))
+     :descriptionHtml (or (::pending-company-description (::sub-db db))
+                          (:description-html (::company (::sub-db db))))
+     :tagIds (distinct
+               (concat
+                 selected-tag-ids
+                 (->> (:tags (::company (::sub-db db)))
+                      (remove #(= :benefit (:type %)))
+                      (map :id))))}))
+
+(defn invalid-company-fields
+  [db]
+  (some->> (set/rename-keys
+             (db->company db) {:tags :benefit-tags})
+           (s/explain-data ::company)
+           ::s/problems
+           (map (comp last :path))
+           (map (fn [t] (keyword "wh.company.profile" (name t))))
+           (set)))

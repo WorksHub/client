@@ -3,6 +3,20 @@
     [wh.components.icons :as icons]
     [wh.util :as util]))
 
+(defn ->tag
+  [m]
+  (-> m
+      (update :type keyword)
+      (util/update-in* [:subtype] keyword)
+      (cond-> (nil? (:subtype m)) (dissoc :subtype))))
+
+(defn tag->form-tag
+  [{:keys [id label type] :as tag}]
+  (merge tag {:tag label
+              :key id
+              :class (str "tag--type-" (name type))
+              :selected false}))
+
 (defn tag
   [element-type {:keys [label type subtype id icon] :as t}]
   [element-type

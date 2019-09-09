@@ -6,6 +6,7 @@
         :cljs cljs.spec.alpha) :as s]
     [wh.common.specs.company]
     [wh.common.specs.location]
+    [wh.components.tag :as tag]
     [wh.util :as util]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -70,14 +71,8 @@
                      (s/map-of keyword? fn?)
                      #(gen/return {:test identity})))
 
-(defn ->tag
-  [m]
-  (-> m
-      (update :type keyword)
-      (util/update-in* [:subtype] keyword)))
-
 (defn ->company
   [m]
   (-> m
-      (update :tags (partial map ->tag))
+      (update :tags (partial map tag/->tag))
       (update :size keyword)))

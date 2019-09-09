@@ -1049,7 +1049,6 @@
              [:div.company-profile__create-profile__logo
               [logo-field
                {:id logo-field-id
-                :on-change [::events/set-logo]
                 :error logo-error
                 :force-error? true
                 :value (or pending-logo

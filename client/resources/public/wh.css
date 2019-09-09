@@ -5578,7 +5578,6 @@ a.navbar-item,
   opacity: 0.4; }
 
 .wh-formx__layout {
-  max-width: 700px;
   margin: 0 auto; }
   @media screen and (max-width: 1007px) {
     .wh-formx__layout {
@@ -9383,6 +9382,35 @@ h3 {
     margin-right: 20px;
     min-width: 505px; } }
 
+.split-content__main > .split-content-section {
+  background-color: white;
+  padding: 18px; }
+  .split-content__main > .split-content-section .title {
+    font-size: 18px;
+    color: #ff7c6e;
+    border-left: 6px solid #ff7c6e;
+    padding-left: 12px;
+    font-weight: 600;
+    margin-left: -18px;
+    letter-spacing: normal; }
+  .split-content__main > .split-content-section .subtitle {
+    font-weight: 500; }
+    @media screen and (max-width: 1007px) {
+      .split-content__main > .split-content-section .subtitle {
+        font-size: 18px; } }
+  .split-content__main > .split-content-section .subtitle:not(first-of-type) {
+    margin-top: 18px; }
+
+.split-content__side > .split-content-section {
+  margin: 0px;
+  background-color: white;
+  padding: 18px; }
+  .split-content__side > .split-content-section p {
+    line-height: 18px; }
+
+.split-content__side > .split-content-section + section {
+  margin-top: 18px; }
+
 .split-content__side section {
   padding: 7%; }
 
@@ -9871,32 +9899,26 @@ h3 {
     fill: white;
     animation: rocket-1 1s ease-in-out 1; }
 
-.job-edit {
-  margin: auto;
-  max-width: 815px;
-  min-width: 250px; }
-  @media screen and (max-width: 1007px) {
-    .job-edit {
-      margin-bottom: 60px; } }
-  .job-edit > h1 {
-    font-size: 18px;
-    font-weight: 600; }
-  .job-edit .wh-formx h2 {
-    font-size: 18px; }
-  @media screen and (max-width: 1007px) {
-    .job-edit .button {
-      width: 100%; } }
+@media screen and (max-width: 1007px) {
+  .job-edit {
+    margin-bottom: 60px; } }
+
+.job-edit > h1 {
+  font-size: 18px;
+  font-weight: 600; }
+
+.job-edit .wh-formx h2 {
+  font-size: 18px; }
+
+@media screen and (max-width: 1007px) {
+  .job-edit .button {
+    width: 100%; } }
 
 .job-edit__side-pods {
-  margin-top: 40px;
   position: relative; }
   @media screen and (max-width: 1007px) {
     .job-edit__side-pods {
-      margin-top: 0;
       margin-bottom: 10px; } }
-
-.job-edit__side-pods--container > div:last-of-type {
-  margin-top: 30px; }
 
 .job-edit__remuneration__additional-options div {
   display: block;
@@ -10661,6 +10683,54 @@ h3 {
     height: 48px;
     margin-left: calc(50% - 24px);
     margin-top: calc(50% - 48px); }
+
+.create-job__company-form .quill .ql-container {
+  height: calc(400px - 80px); }
+
+.create-job__company-form__logo-field + div {
+  margin-top: 18px; }
+
+.create-job__inline-loader {
+  position: relative;
+  margin-top: 12px;
+  height: 32px;
+  width: 100%; }
+  .create-job__inline-loader .is-loading-spinner {
+    right: calc(50% - 16px);
+    width: 32px;
+    height: 32px; }
+
+.job-edit__company-profile-pod button {
+  width: 100%;
+  margin-top: 12px; }
+
+.job-edit__company-profile-pod__content {
+  display: flex; }
+  @media screen and (min-width: 1008px) {
+    .job-edit__company-profile-pod__content {
+      flex-direction: column; } }
+
+.job-edit__company-profile-pod__content__img {
+  display: flex; }
+  .job-edit__company-profile-pod__content__img img {
+    margin-bottom: 12px;
+    max-height: 200px; }
+    @media screen and (min-width: 1008px) {
+      .job-edit__company-profile-pod__content__img img {
+        width: 60%; } }
+    @media screen and (max-width: 1007px) {
+      .job-edit__company-profile-pod__content__img img {
+        width: 100%; } }
+  @media screen and (min-width: 1008px) {
+    .job-edit__company-profile-pod__content__img {
+      justify-content: center; } }
+
+.job-edit__company-profile-pod__content__info {
+  display: flex;
+  flex-direction: column; }
+  @media screen and (max-width: 1007px) {
+    .job-edit__company-profile-pod__content__info {
+      padding-left: 18px; } }
 
 .privacy {
   margin-left: auto;
@@ -14726,9 +14796,12 @@ h3 {
     background-color: #6E7F89;
     color: white; }
 
-.verticals-pod hr {
-  background-color: #f4f5f8;
-  margin-top: 10px; }
+.verticals-pod {
+  margin-top: 0 !important;
+  box-shadow: none; }
+  .verticals-pod hr {
+    background-color: #f4f5f8;
+    margin-top: 10px; }
 
 .verticals-pod__verticals {
   letter-spacing: 3px;

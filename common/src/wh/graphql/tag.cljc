@@ -1,4 +1,6 @@
 (ns wh.graphql.tag
+  (:require
+    [wh.graphql-cache :as cache :refer [reg-query]])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
@@ -33,3 +35,18 @@
                                    :type    :$type
                                    :subtype :$subtype}
                       [:id :slug :label :type :subtype :weight]]]})
+
+(defquery fetch-tags
+  {:venia/operation {:operation/type :query
+                     :operation/name "list_tags"}
+   :venia/variables [{:variable/name "type"
+                      :variable/type :tag_type}]
+   :venia/queries [[:list_tags {:type :$type}
+                    [[:tags [:id :label :type :slug :subtype :weight]]]]]})
+
+(reg-query :tags fetch-tags)
+
+(defn tag-query [type-filter]
+  (if type-filter
+    [:tags {:type type-filter}]
+    [:tags {}]))

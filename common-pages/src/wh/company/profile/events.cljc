@@ -12,9 +12,11 @@
     [re-frame.core :refer [path]]
     [wh.company.profile.db :as profile]
     [wh.db :as db]
+    [wh.components.tag :as tag]
     [wh.graphql-cache :as cache :refer [reg-query]]
     [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields publish-company-profile-mutation]]
     [wh.graphql.jobs]
+    [wh.graphql.tag :refer [tag-query]]
     [wh.graphql.tag :as tag-gql]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
@@ -98,16 +100,6 @@
 (reg-query :all-company-jobs fetch-all-company-jobs-query)
 (reg-query :company-stats analytics-query)
 
-(defquery fetch-tags
-  {:venia/operation {:operation/type :query
-                     :operation/name "list_tags"}
-   :venia/variables [{:variable/name "type"
-                      :variable/type :tag_type}]
-   :venia/queries [[:list_tags {:type :$type}
-                    [[:tags [:id :label :type :slug :subtype :weight]]]]]})
-
-(reg-query :tags fetch-tags)
-
 (defn company-slug
   [db]
   (get-in db [:wh.db/page-params :slug]))
@@ -124,11 +116,6 @@
 
 (defn company-stats-query [company-id]
   [:company-stats {:company_id company-id}])
-
-(defn tag-query [type-filter]
-  (if type-filter
-    [:tags {:type type-filter}]
-    [:tags {}]))
 
 (defn cached-company
   [db]
@@ -359,7 +346,7 @@
                                 :list-tags
                                 :tags
                                 (filter #(contains? (set (:tag-ids changes)) (:id %)))
-                                (map profile/->tag)))
+                                (map tag/->tag)))
               (dissoc :tag-ids))))
 
 (reg-event-fx
@@ -604,7 +591,7 @@
                               :list-tags
                               :tags
                               (filter #(contains? selected-tag-ids (:id %)))
-                              (map profile/->tag))]
+                              (map tag/->tag))]
     (-> form-data
         (assoc :industry-tag (or (some #(when (= industry-tag (:id %)) (dissoc % :subtype)) selected-tags)
                                  (some #(when (= :industry (:type %))  (dissoc % :subtype)) selected-tags))

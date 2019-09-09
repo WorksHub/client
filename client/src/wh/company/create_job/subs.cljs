@@ -1,19 +1,24 @@
 (ns wh.company.create-job.subs
   (:require [cljs.spec.alpha :as s]
             [clojure.set :refer [rename-keys]]
+            [clojure.set :as set]
             [clojure.string :as str]
             [goog.i18n.NumberFormat :as nf]
             [goog.string :as gstring]
             [goog.string.format]
-            [re-frame.core :refer [reg-sub]]
+            [re-frame.core :refer [reg-sub reg-sub-raw]]
             [wh.common.data :as data :refer [currency-symbols managers get-manager-email salary-ranges]]
             [wh.common.errors :as errors]
             [wh.common.specs.primitives :as p]
             [wh.company.create-job.db :as create-job]
+            [wh.components.tag :refer [->tag tag->form-tag]]
             [wh.db :as db]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.subs :refer [with-unspecified-option error-sub-key]]
             [wh.user.subs :as user])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+  (:require-macros
+    [clojure.core.strint :refer [<<]]
+    [wh.re-frame.subs :refer [reaction]]))
 
 (reg-sub ::sub-db (fn [db _] (::create-job/sub-db db)))
 
@@ -37,7 +42,7 @@
   (when spec
     (let [value (get db k)]
       (and (not (s/valid? spec value))
-        (get error-msgs spec (str "Failed to validate: " spec))))))
+           (get error-msgs spec (str "Failed to validate: " spec))))))
 
 (doseq [[k {spec :validate}] create-job/fields]
   (reg-sub
@@ -87,6 +92,12 @@
   :<- [::sub-db]
   (fn [db _]
     (::create-job/logo-uploading? db)))
+
+(reg-sub
+  ::company-loading?
+  :<- [::sub-db]
+  (fn [db _]
+    (::create-job/company-loading? db)))
 
 (reg-sub
   ::saving?
@@ -254,7 +265,7 @@
                        (take 5)
                        (vec))]
       (if (and (= 1 (count results))
-            (= m (some-> results (first) (:label) (str/lower-case))))
+               (= m (some-> results (first) (:label) (str/lower-case))))
         (vector)
         results))))
 
@@ -293,3 +304,115 @@
   :<- [::greenhouse-integration?]
   (fn [integration _]
     integration))
+
+(reg-sub
+  ::logo
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (:logo (::create-job/company sub-db))))
+
+(reg-sub
+  ::company-description
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (:description-html (::create-job/company sub-db))))
+
+(reg-sub
+  ::pending-company-description
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::create-job/pending-company-description sub-db)))
+
+(reg-sub
+  ::pending-logo
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::create-job/pending-logo sub-db)))
+
+(defn company-field->spec
+  [field]
+  (case field
+    :logo             :wh.company.profile/logo
+    :description-html :wh.company.profile/description-html
+    :tags             :wh.company.profile/benefit-tags))
+
+(reg-sub
+  ::validate-existing-company-field
+  :<- [::sub-db]
+  (fn [sub-db [_ field]]
+    (let [value (get-in sub-db [::create-job/company field])]
+      (s/valid? (company-field->spec field) value))))
+
+(reg-sub
+  ::validate-existing-company-fields
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (s/valid? ::create-job/company (set/rename-keys
+                                     (::create-job/company sub-db)
+                                     {:tags :benefit-tags}))))
+
+(reg-sub
+  :wh.company.profile/logo-error
+  :<- [::pending-logo]
+  :<- [::form-errors]
+  (fn [[logo form-errors] _]
+    {:message (when-not (s/valid? :wh.company.profile/logo logo)
+                "Please upload a logo for your company.")
+     :show-error? (contains? form-errors :wh.company.profile/logo)}))
+
+(reg-sub
+  :wh.company.profile/description-html-error
+  :<- [::pending-company-description]
+  :<- [::form-errors]
+  (fn [[desc form-errors] _]
+    {:message (when-not (s/valid? :wh.company.profile/description-html desc)
+                "Please provide a brief description for your company.")
+     :show-error? (contains? form-errors :wh.company.profile/description-html)}))
+
+(reg-sub
+  :wh.company.profile/benefit-tags-error
+  :<- [::selected-benefit-tag-ids]
+  :<- [::form-errors]
+  (fn [[tag-ids form-errors] _]
+    {:message (when (empty? tag-ids)
+                "Please provide at least one benefit tag.")
+     :show-error? (contains? form-errors :wh.company.profile/benefit-tags)}))
+
+(reg-sub
+  ::benefits-search
+  :<- [::sub-db]
+  (fn [db _]
+    (::create-job/benefits-search db)))
+
+(reg-sub
+  ::selected-benefit-tag-ids
+  :<- [::sub-db]
+  (fn [db _]
+    (::create-job/selected-benefit-tag-ids db)))
+
+(reg-sub-raw
+  ::benefit-tags
+  (fn [_ _]
+    (->> (get-in (<sub [:graphql/result :tags {:type :benefit}]) [:list-tags :tags])
+         (map ->tag)
+         (reaction))))
+
+(reg-sub
+  ::matching-benefit-tags
+  :<- [::benefit-tags]
+  :<- [::benefits-search]
+  (fn [[tags tag-search] [_ {:keys [include-ids size]}]]
+    (let [tag-search (str/lower-case tag-search)
+          matching-but-not-included (filter (fn [tag] (and (or (str/blank? tag-search)
+                                                               (str/includes? (str/lower-case (:label tag)) tag-search))
+                                                           (not (contains? include-ids (:id tag))))) tags)
+          included-tags (filter (fn [tag] (contains? include-ids (:id tag))) tags)]
+      (->> (concat included-tags matching-but-not-included)
+           (map tag->form-tag)
+           (take (+ (or size 20) (count include-ids)))))))
+
+(reg-sub
+  ::company-slug
+  :<- [::sub-db]
+  (fn [db _]
+    (::create-job/company-slug db)))

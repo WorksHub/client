@@ -6,6 +6,7 @@
     [wh.common.location :as location]
     [wh.company.profile.db :as profile]
     [wh.components.stats.db :as stats]
+    [wh.components.tag :refer [->tag tag->form-tag]]
     [wh.re-frame.subs :refer [<sub]])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
@@ -61,7 +62,7 @@
   ::all-tags
   (fn [_ _]
     (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
-         (map profile/->tag)
+         (map ->tag)
          (reaction))))
 
 (reg-sub-raw
@@ -69,7 +70,7 @@
   (fn [_ [_ tag-type]]
     (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
          (filter #(= (str/lower-case (name tag-type)) (str/lower-case (name (:type %)))))
-         (map profile/->tag)
+         (map ->tag)
          (reaction))))
 
 (reg-sub
@@ -308,13 +309,6 @@
   :<- [::sub-db]
   (fn [sub-db _]
     (::profile/tag-search sub-db)))
-
-(defn tag->form-tag
-  [{:keys [id label type] :as tag}]
-  (merge tag {:tag label
-              :key id
-              :class (str "tag--type-" (name type))
-              :selected false}))
 
 (reg-sub-raw
   ::current-tag-ids
