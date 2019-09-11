@@ -13,7 +13,7 @@ $tag-spacing: 6px
   line-height: $tag-height
   padding: $tag-padding
   font-weight: $font-semi-bold
-  display: inline-block
+  display: inline-flex
   background-color: $lighter-red
   color: $red
   border-radius: 2px
@@ -107,6 +107,10 @@ $tag-spacing: 6px
     background-color: $dark-red
 .tag
   position: relative
+  max-width: 240px
+  text-overflow: ellipsis
+  white-space: nowrap
+  overflow: hidden
   .icon + span
     margin-left: 18px
   .icon
@@ -181,6 +185,7 @@ $tag-spacing: 6px
   display: flex
   flex-direction: column
   ul
+    display: flex
     width: 23%
   li
     opacity: 1
@@ -189,8 +194,13 @@ $tag-spacing: 6px
 
 .edit-tags__tag-row__primary
   display: flex
-  align-items: center
   justify-content: space-between
+  &>div
+    display: flex
+    align-items: center
+    &>span
+      padding-left: 6px
+      line-height: 14px
 
 .edit-tags__tag-row--editing
   justify-content: flex-start

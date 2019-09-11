@@ -16906,7 +16906,7 @@ h3 {
   line-height: 14px;
   padding: 8px;
   font-weight: 600;
-  display: inline-block;
+  display: inline-flex;
   background-color: #ffe9e7;
   color: #ff7c6e;
   border-radius: 2px;
@@ -17021,7 +17021,11 @@ h3 {
     background-color: #c4000f; }
 
 .tag {
-  position: relative; }
+  position: relative;
+  max-width: 240px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden; }
   .tag .icon + span {
     margin-left: 18px; }
   .tag .icon {
@@ -17098,6 +17102,7 @@ h3 {
   display: flex;
   flex-direction: column; }
   .edit-tags__tag-row ul {
+    display: flex;
     width: 23%; }
   .edit-tags__tag-row li {
     opacity: 1; }
@@ -17106,8 +17111,13 @@ h3 {
 
 .edit-tags__tag-row__primary {
   display: flex;
-  align-items: center;
   justify-content: space-between; }
+  .edit-tags__tag-row__primary > div {
+    display: flex;
+    align-items: center; }
+    .edit-tags__tag-row__primary > div > span {
+      padding-left: 6px;
+      line-height: 14px; }
 
 .edit-tags__tag-row--editing {
   justify-content: flex-start; }

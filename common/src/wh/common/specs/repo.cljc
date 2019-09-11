@@ -43,7 +43,6 @@
                              :opt-un [:wh.repo.sync/time-finished]))
 
 (s/def :wh/repo #?(:clj  (s/keys :req-un [:wh.repo/github-id
-                                          :wh.repo/viewer-can-administer
                                           :wh.repo/name
                                           :wh.repo/owner
                                           :wh.repo/stargazers]
@@ -55,7 +54,8 @@
                                           :wh.repo/hook-secret
                                           :wh.repo/readme-url
                                           :wh.repo/contributing-url
-                                          :wh.repo/sync])
+                                          :wh.repo/sync
+                                          :wh.repo/viewer-can-administer])
                    :cljs (s/keys :opt-un [:wh.repo/github-id
                                           :wh.repo/viewer-can-administer
                                           :wh.repo/name

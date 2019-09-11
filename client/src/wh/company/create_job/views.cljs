@@ -250,6 +250,7 @@
   [:section.split-content-section
    [:h2.title "Role details"]
    [:form.wh-formx.wh-formx__layout
+    {:on-submit #(.preventDefault %)}
     [role-details admin?]
     [remuneration]
     [skills admin?]
@@ -267,6 +268,7 @@
          [:h2.title "Company details"]
          (when admin?
            [:form.wh-formx.wh-formx__layout
+            {:on-submit #(.preventDefault %)}
             [select-company]])
          (cond
            (<sub [::subs/company-loading?])
@@ -274,6 +276,7 @@
             [:div.is-loading-spinner]]
            (<sub [::subs/company-id])
            [:form.wh-formx.wh-formx__layout.create-job__company-form
+            {:on-submit #(.preventDefault %)}
             (when (not (<sub [::subs/validate-existing-company-field :logo]))
               (let [pending-logo                  (<sub [::subs/pending-logo])
                     {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/logo)])]
@@ -331,6 +334,7 @@
    [:div.pod.job-edit__settings-pod
     [:h1.is-hidden-mobile "Settings"]
     [:form.wh-formx.wh-formx__layout
+     {:on-submit #(.preventDefault %)}
      [text-field nil (field ::create-job/manager
                             :label "* Manager"
                             :placeholder "Type to search Managers"

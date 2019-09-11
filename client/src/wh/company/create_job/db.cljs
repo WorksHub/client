@@ -55,26 +55,30 @@
 
    ::verticals (s/coll-of ::p/non-empty-string :distinct true :min-count 1)})
 
-(defn initial-db [db]
-  (merge (::sub-db db)
-         {::verticals (if (not= "www" (::db/vertical db))
-                        #{(::db/vertical db)}
-                        #{verticals/default-vertical})
-          ::tag-search ""
-          ::tags-collapsed? true
-          ::benefits-search ""
-          ::benefits-collapsed? true
-          ::editing-address? false
-          ::company-loading? false
-          ::pending-logo nil
-          ::pending-company-description nil
-          ::logo-uploading? false
-          ::search-address ""
-          ::form-errors nil}
-         (when-let [company (get-in db [::user/sub-db ::user/company])]
-           {::company-id (:id company)
-            ::company-package (keyword (:package company))})
-         (forms/initial-value fields)))
+(defn initial-db [db editing?]
+  (let [clean-form (merge (forms/initial-value fields)
+                          {::verticals (if (not= "www" (::db/vertical db))
+                                         #{(::db/vertical db)}
+                                         #{verticals/default-vertical})})]
+    (merge (when editing? ;; if editing, we want expect values to be overwritten
+             clean-form)
+           (::sub-db db)
+           {::tag-search ""
+            ::tags-collapsed? true
+            ::benefits-search ""
+            ::benefits-collapsed? true
+            ::editing-address? false
+            ::company-loading? false
+            ::pending-logo nil
+            ::pending-company-description nil
+            ::logo-uploading? false
+            ::search-address ""
+            ::form-errors nil}
+           (when-let [company (get-in db [::user/sub-db ::user/company])]
+             {::company-id (:id company)
+              ::company-package (keyword (:package company))})
+           (when-not editing? ;; if not editing, we want to reset any previous values
+             clean-form))))
 
 (defn relevant-fields
   [db & [exclude-descriptions?]]
