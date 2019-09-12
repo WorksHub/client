@@ -5,6 +5,7 @@
     #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
     #?(:cljs [wh.components.conversation.views :refer [codi-message]])
     #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
+    #?(:cljs [wh.components.github :as github])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     #?(:cljs [wh.components.stats.views :refer [stats-item]])
     #?(:cljs [wh.user.subs])
@@ -19,7 +20,6 @@
     [wh.components.cards :refer [blog-card]]
     [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [link wrap-img img base-img]]
-    [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
     [wh.components.info-icon :refer [info-icon]]
     [wh.components.issue :refer [issue-card]]
@@ -263,7 +263,7 @@
    [:div.company-profile__banner-cta__copy
     [:h2 "Use Open Source Issues to find your next hire"]
     [:p "Connect your company Github account and add tasks to your job descriptions to get more qualified applications."]
-    [github/integrate-github-button {:class "company-profile__cta-button", :user-type :company}]]])
+    #?(:cljs [github/install-github-app {:class "company-profile__cta-button"}])]])
 
 (defn issues
   [admin-or-owner?]

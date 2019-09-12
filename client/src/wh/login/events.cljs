@@ -65,41 +65,33 @@
 ;; Github login
 
 (defn github-authorize-url
-  [client-id env vertical user-type]
-  (let [scope (if (= user-type :company)
-                "admin:org%20public_repo"
-                "user:email")
-        base (<< "https://github.com/login/oauth/authorize?client_id=~{client-id}&scope=~{scope}")
-        pr-number (re-find #"-\d+" js/window.location.href)
-        user-type-name (name user-type)]
+  [client-id env vertical]
+  (let [base (<< "https://github.com/login/oauth/authorize?client_id=~{client-id}&scope=user:email")
+        pr-number (re-find #"-\d+" js/window.location.href)]
     (case env
-      :prod  (<< "~{base}&redirect_uri=https://functional.works-hub.com/github-dispatch/~{user-type-name}/~{vertical}")
-      :stage (<< "~{base}&redirect_uri=https://works-hub-stage.herokuapp.com/github-dispatch/~{user-type-name}/~{vertical}~{pr-number}")
-      :dev   (<< "~{base}&redirect_uri=http://functional.localdomain:3449/github-dispatch/~{user-type-name}/~{vertical}"))))
+      :prod  (<< "~{base}&redirect_uri=https://functional.works-hub.com/github-dispatch/~{vertical}")
+      :stage (<< "~{base}&redirect_uri=https://works-hub-stage.herokuapp.com/github-dispatch/~{vertical}~{pr-number}")
+      :dev   (<< "~{base}&redirect_uri=http://functional.localdomain:3449/github-dispatch/~{vertical}"))))
 
 (reg-event-fx
   ::go-github
   db/default-interceptors
-  (fn [{db :db} [user-type]]
+  (fn [{db :db} _]
     {:set-url (github-authorize-url (:wh.settings/github-client-id db)
-                                    (:wh.settings/environment db)
-                                    (::db/vertical db)
-                                    user-type)}))
+                                   (:wh.settings/environment db)
+                                   (::db/vertical db))}))
 
 (reg-event-fx
   :github/call
   db/default-interceptors
-  (fn [{db :db} [track-context user-type]]
-    (let [user-type (or user-type :candidate)] ; it's called with nil second arg from most candidate contexts :see_no_evil:
-      (cond->
-        {:dispatch-n [[::pages/set-loader]
-                      [::go-github user-type]]}
-        (= user-type :candidate)
-        (assoc :persist-state (cond-> db
-                                      track-context (assoc :register/track-context track-context)
-                                      true (assoc ::db/loading? true
-                                                  :google/maps-loaded? false) ; reload google maps when we return here
-                                      true (dissoc ::db/page-mapping)))))))
+  (fn [{db :db} [track-context]]
+    {:dispatch-n [[::pages/set-loader]
+                  [::go-github]]
+     :persist-state (cond-> db
+                            track-context (assoc :register/track-context track-context)
+                            true (assoc ::db/loading? true
+                                        :google/maps-loaded? false) ; reload google maps when we return here
+                            true (dissoc ::db/page-mapping))}))
 
 (reg-event-fx
   ::login-as-success
@@ -152,5 +144,4 @@
     (when-let [query-redirect (get-in db [:wh.db/query-params "redirect"])]
       (vec (concat [:login/set-redirect] (query-redirect->path query-redirect))))
     (when (= :github (get-in db [::db/page-params :step]))
-      (let [user-type (get-in db [::db/query-params "user-type"] "candidate")]
-        [:github/call {:type :login-page} (keyword user-type)]))))
+      [:github/call {:type :login-page}])))

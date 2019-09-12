@@ -26,6 +26,11 @@
   :<- [::sub-db]
   (fn [db _]
     (::manage/syncing-repos? db)))
+(reg-sub
+  ::connect-github-app-error?
+  :<- [::sub-db]
+  (fn [db _]
+    (::manage/connect-github-app-error? db)))
 
 (reg-sub
   ::fetched-repo?
@@ -40,10 +45,10 @@
     (::manage/syncing-issues db)))
 
 (reg-sub
-  ::orgs
+  ::repos
   :<- [::sub-db]
   (fn [db _]
-    (::manage/orgs db)))
+    (::manage/repos db)))
 
 (reg-sub
   ::update-disabled?

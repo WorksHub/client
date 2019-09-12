@@ -1,26 +1,31 @@
 (ns wh.components.github
   (:require
     #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
-    [wh.routes :as routes]))
+    #?(:cljs [wh.subs :as subs :refer [<sub]])
+    #?(:clj [wh.config :as config])))
 
-(defn connect-github-button []
-  [:div
-   [:p "To import issues from GitHub, you need to set your "
-    [:a.a--underlined {:href "https://github.com/settings/organizations" :target "_blank" :rel "noopener"}
-     "organization membership"]
-    " status set to public."]
-   [:div.company-edit__integrations
-    [:button.button.button--black.button--github
-     {:id       "company-edit__integration--github"
-      :on-click #?(:cljs #(do (.preventDefault %)
-                              (load-and-dispatch [:login [:github/call nil :company]]))
-                   :clj nil)}
-     [:div]]]])
+(defn app-name []
+  #?(:clj (config/get-in [:github :app :name]))
+  #?(:cljs (<sub [::subs/github-app-name])))
 
-(defn integrate-github-button
-  [{:keys [class label track-context user-type]
+(defn state-query-param []
+  #?(:cljs (let [env (<sub [::subs/env])
+                 pr-number (some-> (re-find #"-\d+" js/window.location.href)
+                                   (subs 1))]
+             (when (and (= :stage env) pr-number)
+               (str "?state=" pr-number)))))
+
+(defn install-gh-app-url []
+  (str "https://github.com/apps/" (app-name) "/installations/new"
+       (state-query-param)))
+
+(defn install-github-app
+  [{:keys [class label id]
     :or {label "Integrate with"}}]
   [:a.button.button--black.button--public.button--github
-   {:class class
-    :href (routes/path :login :params {:step :github} :query-params {:user-type (name user-type)})}
+   (merge
+     {:class class
+      :href  (install-gh-app-url)}
+     (when id
+       {:id id}))
    [:span label] [:div]])

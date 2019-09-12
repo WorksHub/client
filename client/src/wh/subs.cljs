@@ -121,3 +121,7 @@
   :company/has-permission? ; needed to render menu
   (fn [db [_ permission]]
     (db/has-permission? db permission)))
+
+(reg-sub ::github-app-name
+         (fn [db _]
+           (:wh.settings/github-app-name db)))

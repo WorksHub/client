@@ -167,29 +167,38 @@
                   :on-failure [::failure [::sync-repo-issues repo]]}})))
 
 (reg-event-fx
-  ::fetch-orgs-success
+  ::fetch-repos-success
   manage-issues-interceptors
   (fn [{db :db} [{data :data}]]
-    (let [{:keys [github-organisations]} (cases/->kebab-case data)]
-      {:db (merge db {::manage/orgs           (:organisations github-organisations)
+    (let [{:keys [github-repositories]} (cases/->kebab-case data)]
+      {:db (merge db {::manage/repos          (:repositories github-repositories)
                       ::manage/syncing-repos? false})})))
-
 
 #?(:cljs
    (reg-event-fx
-     ::fetch-orgs-and-repos
+     ::fetch-repos
      db/default-interceptors
      (fn [{db :db} _]
        {:db      (assoc-in db [::manage/sub-db ::manage/syncing-repos?] true)
-        :graphql {:query      graphql-company/sync-orgs-and-repos
-                  :on-success [::fetch-orgs-success]
-                  :on-failure [::failure [::fetch-orgs-and-repos]]}})))
+        :graphql {:query      graphql-company/sync-repos
+                  :on-success [::fetch-repos-success]
+                  :on-failure [::failure [::fetch-repos]]}})))
 
 #?(:cljs
-   (defmethod on-page-load :manage-issues [_db]
-     [[:wh.events/scroll-to-top]
-      [::initialize-db]
-      [::fetch-orgs-and-repos]]))
+   (reg-event-fx
+     ::connect-github-app-failure
+     db/default-interceptors
+     (fn [{db :db} _]
+       {:db (assoc-in db [::manage/sub-db ::manage/connect-github-app-error?] true)})))
+
+#?(:cljs
+   (defmethod on-page-load :manage-issues [db]
+     (let [error (get-in db [::db/query-params "error"])]
+       (list [:wh.events/scroll-to-top]
+             [::initialize-db]
+             (if error
+               [::connect-github-app-failure]
+               [::fetch-repos])))))
 
 #?(:cljs
    (defmethod on-page-load :manage-repository-issues [db]

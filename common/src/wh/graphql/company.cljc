@@ -140,13 +140,11 @@
    :venia/queries   [[:sync {:name :$name :owner :$owner :force :$force}
                       [:id :time_started :total_issue_count :time_finished]]]})
 
-(defquery sync-orgs-and-repos
+(defquery sync-repos
   {:venia/queries
-   [[:github_organisations {:dummy true}
-     [[:organisations
-       [:name :avatar_url
-        [:repositories
-         [:name :owner :description :primary_language :stargazers]]]]]]]})
+   [[:github_repositories
+     [[:repositories
+       [:name :owner :owner_avatar :description :primary_language :stargazers]]]]]})
 
 (defquery publish-company-profile-mutation
   {:venia/operation {:operation/type :mutation

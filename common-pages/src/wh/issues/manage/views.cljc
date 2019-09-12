@@ -1,6 +1,7 @@
 (ns wh.issues.manage.views
   (:require
     #?(:cljs [wh.components.forms.views :as form])
+    #?(:cljs [wh.components.github :as github])
     [clojure.string :as str]
     [wh.common.time :as time]
     [wh.components.common :refer [link img wrap-img]]
@@ -47,10 +48,10 @@
        "Restart"]])])
 
 (defn repo-card
-  [org {:keys [owner description primary-language] :as repo}]
+  [{:keys [owner owner-avatar description primary-language] :as repo}]
   [:div.repository-card
    [:div.is-flex
-    [:div.logo (if-let [url (:avatar-url org)]
+    [:div.logo (if-let [url owner-avatar]
                  (wrap-img img url {})
                  [:div.empty-logo])]
     [:div.info
@@ -66,17 +67,25 @@
   #?(:cljs
      [:div
       (doall
-        (for [org (<sub [::subs/orgs])
-              repo (:repositories org)]
+        (for [repo (<sub [::subs/repos])]
           [:div {:key (:name repo)}
-           [repo-card org repo]]))]))
+           [repo-card repo]]))]))
+
+(defn connect-gh-app-error []
+  #?(:cljs [:div.manage-issues-syncing-repo
+            [:p "Failed to connect WorksHub Github App, please try again"]
+            [github/install-github-app {}]]))
 
 (defn page []
   [:div.main
-   [:h1 "GitHub Repositories"]
+   [:h1 "Connected Repositories"]
    [:h3 "Select a repository to manage individual issues"]
-   (if (<sub [::subs/syncing-repos?])
+   (cond
+     (<sub [::subs/connect-github-app-error?])
+     [connect-gh-app-error]
+     (<sub [::subs/syncing-repos?])
      [syncing-repos-overlay]
+     :else
      [repo-list])
    [:div.manage-issues-buttons
     [:a.button.button.button--inverted.back

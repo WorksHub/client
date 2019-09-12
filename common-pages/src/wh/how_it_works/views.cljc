@@ -1,22 +1,25 @@
 (ns wh.how-it-works.views
   (:require
     #?(:cljs [reagent.core :as r])
+    #?(:cljs [wh.components.github :as github])
     [wh.common.data :as data]
     [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [link]]
     [wh.components.faq :as faq]
-    [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
     [wh.how-it-works.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
+
+(defn github-button [class]
+  #?(:cljs [github/install-github-app (if class {:class class} {})]))
 
 (defn get-started-link
   [github? & [class]]
   (let [btn [:button.button.button--public "Get Started"]]
     (cond
       (or github? (<sub [::subs/show-github-buttons?]))
-      [github/integrate-github-button {:class class, :user-type :company}]
+      [github-button class]
       (<sub [::subs/show-candidate-buttons?])
       (link btn
             :issues
@@ -93,7 +96,7 @@
             "Use Open Source to hire or get hired")]
      [:p "Through open-source projects we help companies build communities of software engineers and hire better talent."]
      (if github?
-       [github/integrate-github-button {:user-type :company}]
+       [github-button nil]
        [slider selected-site])]]])
 
 (defn step-line

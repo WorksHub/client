@@ -7,13 +7,13 @@
     [wh.components.cards :refer [blog-card]]
     [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [companies-section link wrap-img img]]
-    [wh.components.github :refer [integrate-github-button]]
     [wh.components.www-homepage :as www :refer [animated-hr]]
     [wh.how-it-works.views :as hiw]
     [wh.interop :as interop]
     [wh.landing.subs :as subs]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
+    [wh.routes :as routes]
     [wh.util :as util]))
 
 (def issues-benefits
@@ -36,6 +36,11 @@
    {:img "/images/hiw/company/benefits/benefit1.svg"
     :title "We’re the future of tech work"
     :txt "With our Open Source issues, you can get paid, learn new languages and get noticed by employers. We’re leveraging the power of open source to help you further your career."}])
+
+(defn oauth-github-button []
+  [:a.button.button--black.button--public.button--github
+   {:href (routes/path :login :params {:step :github})}
+   [:span "Get Started with"] [:div]])
 
 (defn job-card
   [{:keys [company tagline title display-salary display-location role-type tags id slug] :as job}]
@@ -86,9 +91,7 @@
       [:h1 discover]
       [:p "We match your skills to great jobs using languages you love."]
       [:div.landing__header__buttons
-       [integrate-github-button
-        {:label "Get Started with"
-         :user-type :candidate}]
+       [oauth-github-button]
        (link [:button.button
               {:id "www-landing__hero"}
               "Get Started"] :get-started)]]]))
@@ -156,9 +159,7 @@
      [:h3 "How we’re different"]
      (hiw/benefits-list how-we-are-different-items {:class "homepage__benefits-list homepage__how-we-are-different"})
      [:div.homepage__feature-ctas
-      [integrate-github-button
-       {:label "Get Started with"
-        :user-type :candidate}]
+      [oauth-github-button]
       (link [:button.button
              {:id "www-landing__hero"}
              "Get Started"] :get-started)]]]

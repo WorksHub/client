@@ -52,14 +52,6 @@
         (complete-login db base-dispatch)))))
 
 (reg-event-fx
-  ::gh-connect-success
-  db/default-interceptors
-  (fn [{db :db} [_]]
-    {:db (assoc-in db [::user/sub-db ::user/company :connected-github] true)
-     :dispatch [::pages/unset-loader]
-     :navigate [:manage-issues]}))
-
-(reg-event-fx
   ::gh-auth-fail
   db/default-interceptors
   (fn [{db :db} [_]]
@@ -67,15 +59,6 @@
      :db       (-> db
                    (assoc-in [::github-callback/sub-db ::github-callback/github-error?] true)
                    (assoc ::db/page :github-callback))}))
-
-(reg-event-fx
-  ::gh-connect-fail
-  db/default-interceptors
-  (fn [{db :db} [_]]
-    {:dispatch [:error/set-global
-                "Something went wrong while we tried to connect your GitHub account 😢"
-                [:github/call nil :company]]
-     :navigate [:edit-company]}))
 
 (defquery github-auth-mutation
   {:venia/operation {:operation/type :mutation
@@ -93,30 +76,11 @@
                        [:applied [:jobId]]
                        [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]]})
 
-(defquery connect-github-mutation
-  {:venia/operation {:operation/type :mutation
-                     :operation/name "ConnectGithub"}
-   :venia/variables [{:variable/name "githubCode"
-                      :variable/type :String!}]
-   :venia/queries   [[:connectGithub {:githubCode :$githubCode}]]})
-
-(defn github-query [code user-type]
-  (case user-type
-    "company"   {:query      connect-github-mutation
-                 :variables  {:githubCode code}
-                 :on-success [::gh-connect-success]
-                 :on-failure [::gh-connect-fail]}
-    "candidate" {:query      github-auth-mutation
-                 :variables  {:githubCode code}
-                 :on-success [::gh-auth-success]
-                 :on-failure [::gh-auth-fail]}))
-
 (reg-event-fx
   ::github-callback
   [(inject-cofx :persistent-state)]
-  (fn [cofx [_ code user-type]]
-    (let [db (if (or (= user-type "company")
-                     (empty? (:persistent-state cofx)))
+  (fn [cofx [_ code]]
+    (let [db (if (empty? (:persistent-state cofx))
                ;; if persistent-state was empty, that means persisting
                ;; state didn't work (e.g. in incognito mode). Let's use
                ;; existing app-db – we lose pre-login context, but better
@@ -127,9 +91,12 @@
                (merge (select-keys (:db cofx) [::db/page-mapping])
                       (:persistent-state cofx)))]
       {:db            db
-       :graphql       (github-query code user-type)
+       :graphql       {:query      github-auth-mutation
+                       :variables  {:githubCode code}
+                       :on-success [::gh-auth-success]
+                       :on-failure [::gh-auth-fail]}
        :persist-state {}})))
 
 (defmethod on-page-load :github-callback [db]
   (let [qp (::db/query-params db)]
-    [[::github-callback (qp "code") (qp "user-type")]]))
+    [[::github-callback (qp "code")]]))

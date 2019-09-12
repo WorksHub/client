@@ -257,7 +257,8 @@
            [:img {:src "/images/company/greenhouse.svg"}]]])]
       (when (and (not (<sub [:user/admin?]))
                  (not (<sub [:user/company-connected-github?])))
-        [github/connect-github-button])])
+        [github/install-github-app
+         {:id "company-edit__integration--github"}])])
    (when (<sub [::subs/some-integrations-connected?])
      (let [deleting (<sub [::subs/deleting-integration?])]
        [:div

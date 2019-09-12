@@ -1,11 +1,11 @@
 (ns wh.issues.views
   (:require
     #?(:cljs [wh.components.forms.views :refer [radio-buttons select-field]])
+    #?(:cljs [wh.components.github :as github])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     [wh.common.data :as data]
     [wh.common.job :refer [format-job-location]]
     [wh.components.common :refer [link img wrap-img]]
-    [wh.components.github :as github]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :as issue]
     [wh.components.pagination :as pagination]
@@ -62,7 +62,7 @@
                (if (<sub [:user/company-connected-github?]) ;; TODO same as below
                  [link "Manage Issues" :manage-issues
                   :class "manage-issues button level-item"]
-                 [github/connect-github-button])])]))
+                 [github/install-github-app])])]))
 
 (defn stats-ball
   [[title para] colour]

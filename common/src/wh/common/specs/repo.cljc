@@ -10,14 +10,12 @@
 (s/def :wh.repo/id #?(:clj  sc/string-uuid
                       :cljs string?))
 (s/def :wh.repo/github-id string?)
-(s/def :wh.repo/viewer-can-administer boolean?)
 (s/def :wh.repo/name string?)
 (s/def :wh.repo/owner string?)
+(s/def :wh.repo/owner-avatar string?)
 (s/def :wh.repo/description (s/nilable string?))
 (s/def :wh.repo/primary-language (s/nilable string?))
 (s/def :wh.repo/stargazers nat-int?)
-(s/def :wh.repo/hook-id int?)
-(s/def :wh.repo/hook-secret string?)
 (s/def :wh.repo/readme-url string?)
 (s/def :wh.repo/contributing-url string?)
 (s/def :wh.repo/community (s/keys :opt-un [:wh.repo/readme-url
@@ -50,14 +48,11 @@
                                           :wh.repo/description
                                           :wh.repo/community
                                           :wh.repo/primary-language
-                                          :wh.repo/hook-id
-                                          :wh.repo/hook-secret
                                           :wh.repo/readme-url
                                           :wh.repo/contributing-url
                                           :wh.repo/sync
-                                          :wh.repo/viewer-can-administer])
+                                          :wh.repo/owner-avatar])
                    :cljs (s/keys :opt-un [:wh.repo/github-id
-                                          :wh.repo/viewer-can-administer
                                           :wh.repo/name
                                           :wh.repo/owner
                                           :wh.repo/description
@@ -65,9 +60,8 @@
                                           :wh.repo/id
                                           :wh.repo/community
                                           :wh.repo/primary-language
-                                          :wh.repo/hook-id
-                                          :wh.repo/hook-secret
                                           :wh.repo/readme-url
                                           :wh.repo/contributing-url
-                                          :wh.repo/sync])))
+                                          :wh.repo/sync
+                                          :wh.repo/owner-avatar])))
 (s/def :wh/repos (s/coll-of :wh/repo))

@@ -118,10 +118,3 @@
                         :cljs :wh/issue))
 
 (s/def :wh/issues (s/coll-of :wh/issue))
-
-(s/def :wh.issue.organisation/name string?)
-(s/def :wh.issue.organisation/avatar-url string?) ; FIXME: we need a leona-compatible, cljc-able URL spec
-(s/def :wh.issue.organisation/repositories (s/coll-of :wh/repo))
-(s/def :wh.issue/organisation (s/keys :req-un [:wh.issue.organisation/name
-                                               :wh.issue.organisation/repositories]
-                                      :opt-un [:wh.issue.organisation/avatar-url]))
