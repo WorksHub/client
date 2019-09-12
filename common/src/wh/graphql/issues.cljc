@@ -120,6 +120,10 @@
                       :variable/type :ID!}
                      {:variable/name "page_number"
                       :variable/type :Int}
+                     {:variable/name "repo_name"
+                      :variable/type :String}
+                     {:variable/name "repo_owner"
+                      :variable/type :String}
                      {:variable/name "page_size"
                       :variable/type :Int}
                      {:variable/name "published"
@@ -128,6 +132,8 @@
                       [:name :logo]]
                      [:query_issues
                       {:company_id :$id
+                       :repo_name :$repo_name
+                       :repo_owner :$repo_owner
                        :published :$published
                        :page_number :$page_number
                        :page_size :$page_size}

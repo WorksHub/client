@@ -55,7 +55,7 @@
      ::update-issues-success
      db/default-interceptors
      (fn [_ _]
-       {:navigate [:company-issues]})))
+       {:navigate [:manage-issues]})))
 
 (reg-event-fx
   ::save-changes
@@ -100,7 +100,9 @@
         :graphql {:query      graphql-issues/fetch-company-issues--logged-in
                   :variables  {:id company-id
                                :page_size      default-page-size
-                               :page_number    (or page-number 1)}
+                               :page_number    (or page-number 1)
+                               :repo_owner (:owner repo)
+                               :repo_name (:name repo)}
                   :on-success [::query-issues-success repo]
                   :on-failure [::failure [::query-issues company-id repo page-number]]}})))
 

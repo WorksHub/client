@@ -77,20 +77,25 @@
             [github/install-github-app {}]]))
 
 (defn page []
-  [:div.main
-   [:h1 "Connected Repositories"]
-   [:h3 "Select a repository to manage individual issues"]
-   (cond
-     (<sub [::subs/connect-github-app-error?])
-     [connect-gh-app-error]
-     (<sub [::subs/syncing-repos?])
-     [syncing-repos-overlay]
-     :else
-     [repo-list])
-   [:div.manage-issues-buttons
-    [:a.button.button.button--inverted.back
-     {:href (routes/path :company-issues)}
-     [icon "arrow-left"] "Back to Company Issues"]]])
+  #?(:cljs
+     [:div.main
+      [:h1 "Connected Repositories"]
+      [:div.spread-or-stack
+       [:h3 "Select a repository to manage individual issues"]
+       [:div.has-bottom-margin
+        [github/install-github-app {:label "Add repositories on"
+                                    :class "button--large"}]]]
+      (cond
+        (<sub [::subs/connect-github-app-error?])
+        [connect-gh-app-error]
+        (<sub [::subs/syncing-repos?])
+        [syncing-repos-overlay]
+        :else
+        [repo-list])
+      [:div.manage-issues-buttons
+       [:a.button.button.button--inverted.back
+        {:href (routes/path :company-issues)}
+        [icon "arrow-left"] "Back to Company Issues"]]]))
 
 (defn issues-list []
   #?(:cljs
