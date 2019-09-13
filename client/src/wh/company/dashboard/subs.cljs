@@ -257,5 +257,6 @@
 (reg-sub
   ::show-onboarding?
   :<- [:wh.user.subs/company-onboarding-msg-not-seen? :dashboard_welcome]
-  (fn [not-seen? _]
-    not-seen?))
+  :<- [:user/company?]
+  (fn [[not-seen? user-is-company?] _]
+    (and user-is-company? not-seen?)))
