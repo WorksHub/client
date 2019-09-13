@@ -1,0 +1,9 @@
+;; Edit this file carefully; order is important
+["wh-client/client/src-js/util.js"
+ "wh-client/client/src-js/public.js"
+ "wh-client/client/src-js/analytics.js"
+ "wh-client/client/src-js/auth.js"
+ "wh-client/client/src-js/video.js"
+ "wh-client/client/src-js/photo.js"
+ "wh-client/client/src-js/promo_banner.js"
+ "wh-client/client/src-js/init.js"]
