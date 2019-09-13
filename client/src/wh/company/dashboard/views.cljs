@@ -14,6 +14,7 @@
     [wh.components.conversation.views :as codi]
     [wh.components.ellipsis.views :refer [ellipsis]]
     [wh.components.icons :refer [icon]]
+    [wh.components.loader :refer [loader]]
     [wh.components.stats.views :refer [stats-item]]
     [wh.jobs.job.views :as job]
     [wh.subs :refer [<sub]]
@@ -59,7 +60,7 @@
      [:p "Welcome to your company dashboard! This is where you’ll see an overview of all the stats on your published roles. This will allow you to monitor the performance of your jobs and help you get more applications."]
      [:br]
      [:p "If you want to add new users to your company dashboard just head over to your company settings page."]]]
-   [codi/button "Thanks, got it!" [:wh.user.events/add-welcome-msg "your_company"]]])
+   [codi/button "Thanks, got it!" [:wh.user.events/add-onboarding-msg "your_company"]]])
 
 (defn intro-live-roles []
   [:div.intro-live-roles
@@ -68,7 +69,7 @@
      [:p "Your first role will be published as soon as a member of our team has verified it."]
      [:br]
      [:p "Now might be a good time to go and review it. Just click on the card in your unpublished roles below."]]]
-   [codi/button "OK, got it!" [:wh.user.events/add-welcome-msg "live_roles"]]])
+   [codi/button "OK, got it!" [:wh.user.events/add-onboarding-msg "live_roles"]]])
 
 (defn your-company []
   (let [package (<sub [::subs/package])]
@@ -228,7 +229,7 @@
     [:section {:class class-name}
      [:h2 title]]
     (let [cards (concat
-                  (when (and live-roles? (<sub [::user-subs/welcome-msg-not-seen? "live_roles"]))
+                  (when (and live-roles? (<sub [::user-subs/onboarding-msg-not-seen? "live_roles"]))
                     [[intro-live-roles]])
                   (for [job jobs] [job-card job])
                   (when live-roles?
@@ -289,7 +290,9 @@
         [:li [icon "cutout-tick"] "improve interest in your jobs and open source issues"]
         [:li [icon "cutout-tick"] "engage with more passive candidates"]
         [:li [icon "cutout-tick"] "tell our community all about your company culture and working environment"]]
-       [link [:button.button "Complete company profile now"] :company :slug (<sub [::subs/slug])]]
+       [link [:button.button
+              {:id "company-dashboard-profile-banner--complete-company-profile"}
+              "Complete company profile now"] :company :slug (<sub [::subs/slug])]]
       [:div.company-dashboard__profile-banner__img
        [:img {:src "/images/hiw/company/hiw/hiw4.svg"
               :alt ""}]]])])
@@ -383,21 +386,84 @@
        {:on-click #(dispatch [::events/show-more])}
        "Show more..."])]])
 
+(defn company-onboarding-action
+  [{:keys [number title sub-title time path id]}]
+  (let [[handler & {:as link-options}] path]
+    [:li.company-onboarding__action
+     [link {:text [:button.button
+                   {:id id}
+                   [:div.is-flex
+                    [:div.company-onboarding__action__content
+                     [:div (str number ". " title) [:i.is-hidden-mobile (str "(" time " minutes)")]]
+                     [:small sub-title]]
+                    [icon "arrow-right"]]]
+            :handler handler
+            :options (assoc link-options
+                            :on-click #(dispatch [::events/add-company-onboarding-msg :dashboard_welcome]))}]]))
+
+(defn company-onboarding
+  []
+  [:div.main.company-onboarding
+   [:div.company-onboarding__content
+    [:h1 (str "Hello " (<sub [:wh.user.subs/name]) ", welcome to WorksHub!") [:br]
+     "We'll source the best talent for your team"]
+    [:p "What would you like to do first?"]
+    [:ul.company-onboarding__actions
+     [company-onboarding-action
+      {:number 1
+       :id "company-onboarding--company-profile"
+       :time 2
+       :title "Complete your company profile"
+       :sub-title "Sell your company to our community. What are you building and how?"
+       :path [:company :slug (some-> (<sub [:wh.user.subs/company]) :slug)]}]
+     [company-onboarding-action
+      {:number 2
+       :id "company-onboarding--new-role"
+       :time 4
+       :title "Advertise a new role"
+       :sub-title "Tell us what you're looking for and we can start looking right away!"
+       :path [:create-job]}]
+     [company-onboarding-action
+      {:number 3
+       :id "company-onboarding--integrations"
+       :time 2
+       :title "Connect your integrations"
+       :sub-title "WorksHub can integrate with popular services such as Greenhouse and Slack"
+       :path [:edit-company]}]
+     [company-onboarding-action
+      {:number 4
+       :id "company-onboarding--issues"
+       :time 2
+       :title "Get started with Open Source Issues"
+       :sub-title "Scope talent by using issues from your open source projects"
+       :path [:company-issues]}]]]])
+
+(defn loading
+  []
+  [:div.loader-wrapper
+   [loader]])
+
 (defn page []
   [:div.main-container
-   [:div.main.company-dashboard
-    {:class (when (<sub [::user-subs/welcome-msg-not-seen? "your_company"])
-              "company-dashboard--with-intro-your-company")}
-    [:h1 "Dashboard"]
-    [:div.company-dashboard__grid
-     [intro-your-company]
-     [your-company]
-     [stats]]
-    [profile-banner]
-    [:div.company-dashboard__grid
-     [activity]
-     [live-roles]
-     [unpublished-roles]]]
+   (cond
+     (not (<sub [::subs/name])) ;; no name == loading
+     [loading]
+     (<sub [::subs/show-onboarding?])
+     [company-onboarding]
+     :else
+     [:div.main.company-dashboard
+      {:class (when (<sub [::user-subs/onboarding-msg-not-seen? "your_company"])
+                "company-dashboard--with-intro-your-company")}
+      [:h1 "Dashboard"]
+      [:div.company-dashboard__grid
+       [intro-your-company]
+       [your-company]
+       [stats]]
+      [profile-banner]
+      [:div.company-dashboard__grid
+       [activity]
+       [live-roles]
+       [unpublished-roles]]])
    (when (<sub [:wh.job/show-admin-publish-prompt?])
      [job/admin-publish-prompt
       (<sub [::subs/permissions])

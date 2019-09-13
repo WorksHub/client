@@ -4,4 +4,4 @@
 (s/def ::sub-db (s/keys))
 
 (def default-db
-  {::hidden-welcome-msgs #{}})
+  {::hidden-onboarding-msgs #{}})

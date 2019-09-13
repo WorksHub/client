@@ -139,7 +139,7 @@
                        :page_size :$page_size}
                       [[:issues [:fragment/issueListFields]]
                        [:pagination [:total :count :page_size :page_number]]]]
-                     [:me [:welcomeMsgs [:company [:connectedGithub]]]]]})
+                     [:me [:onboardingMsgs [:company [:connectedGithub]]]]]})
 
 (defquery fetch-company-jobs
   {:venia/operation {:operation/type :query

@@ -1,7 +1,5 @@
 (ns wh.user.subs
   (:require
-    [cljs-time.coerce :as tc]
-    [cljs-time.core :as t]
     [re-frame.core :refer [reg-sub]]
     [wh.common.data :refer [super-admins]]
     [wh.common.data :as data]
@@ -107,16 +105,10 @@
          (fn [company _]
            (contains? (:permissions company) :can_use_integrations)))
 
-(defn old-enough?
-  [user num-days]
-  (when-let [created (::user/created user)]
-    (let [created (tc/to-date-time created)
-          now (t/now)]
-      (t/before? created (t/minus now (t/days num-days))))))
+(reg-sub ::onboarding-msg-not-seen?
+         (fn [db [_ msg]]
+           (user/onboarding-msg-not-seen? db msg)))
 
-(reg-sub ::welcome-msg-not-seen?
-         :<- [::user]
-         (fn [user [_ msg]]
-           (let [num-days ({"your_company" 1, "jobs" 7, "blogs" 7} msg)]
-             (not (or (contains? (::user/welcome-msgs user) msg)
-                      (when num-days (old-enough? user num-days)))))))
+(reg-sub ::company-onboarding-msg-not-seen?
+         (fn [db [_ msg]]
+           (user/company-onboarding-msg-not-seen? db msg)))

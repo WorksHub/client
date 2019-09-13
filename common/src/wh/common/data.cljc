@@ -668,8 +668,8 @@
                 [:company-applications "applications" "Applications"]
                 [:create-job "add-new" "Add new role"]
                 [:company-issues "pr" "Your issues"]
-                [:edit-company "settings" "Company Settings"]
-                [:profile "profile" "Profile"]]}
+                [:edit-company "settings" "Settings"]
+                [:profile "profile" "Your Profile"]]}
      default-explore-section]))
 
 (def how-it-works-benefits

@@ -10,6 +10,7 @@
     [wh.common.job :as common-job]
     [wh.company.dashboard.db :as sub-db]
     [wh.db :as db]
+    [wh.graphql.company :refer [update-company-mutation]]
     [wh.jobs.job.events :refer [publish-job navigate-to-payment-setup process-publish-role-intention]]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
@@ -51,7 +52,7 @@
                      [:location [:city :state :country :countryCode]]
                      [:stats [:applications :views :likes]]
                      :matchingUsers]]
-                   [:me [:welcomeMsgs]]
+                   [:me [:onboardingMsgs]]
                    [:job_analytics {:company_id  id
                                     :end_date    (-> (t/now) date->str)
                                     :granularity 0
@@ -97,15 +98,18 @@
         max-height (- (* num-job-rows 413) 36)]
     (min 15 (count (take-while #(< % max-height) cumulative-heights)))))
 
+(defn company-id
+  [db]
+  (cond
+    (user/company? db) (get-in db [::user/sub-db ::user/company-id])
+    (user/admin? db) (get-in db [::db/page-params :id])))
+
 (reg-event-fx
   ::fetch-company
   db/default-interceptors
   (fn [{db :db} _]
-    (let [id (cond
-               (user/company? db) (get-in db [::user/sub-db ::user/company-id])
-               (user/admin? db) (get-in db [::db/page-params :id]))]
-      {:dispatch [::pages/set-loader]
-       :graphql {:query (dashboard-query id)
+    (let [id (company-id db)]
+      {:graphql {:query (dashboard-query id)
                  :on-success [::fetch-company-success]
                  :on-failure [::fetch-company-failure]}})))
 
@@ -154,21 +158,14 @@
                                 (if (user/company? db)
                                   #(merge % company)
                                   identity))
-               (assoc-in [:wh.user.db/sub-db :wh.user.db/welcome-msgs] (set (get-in resp [:data :me :welcomeMsgs])))))
-     :dispatch-n (let [events (or (some-> (get-in db [:wh.db/query-params "events"]) base64/decodeString reader/read-string) [])]
-                   ;; bit hacky - if we know we're going to candidate page, leave loader on
-                   (if (some (comp (partial = [:wh.events/nav :candidate])
-                                   (juxt first second)) events)
-                     events
-                     (into [[::pages/unset-loader]]
-                           events)))}))
+               (assoc-in [:wh.user.db/sub-db :wh.user.db/onboarding-msgs] (set (get-in resp [:data :me :onboardingMsgs])))))
+     :dispatch-n (or (some-> (get-in db [:wh.db/query-params "events"]) base64/decodeString reader/read-string) [])}))
 
 (reg-event-fx
   ::fetch-company-failure
   company-interceptors
   (fn [_ _]
-    {:dispatch-n [[::pages/unset-loader]
-                  [:error/set-global "Something went wrong while we tried to fetch your data 😢"
+    {:dispatch-n [[:error/set-global "Something went wrong while we tried to fetch your data 😢"
                    [::fetch-company]]]}))
 
 (reg-event-fx
@@ -227,3 +224,20 @@
   (fn [{db :db} [company]]
     (let [c (util/namespace-map (namespace `::sub-db/x) company)]
       {:db (merge db c)})))
+
+(reg-event-fx
+  ::add-company-onboarding-msg
+  db/default-interceptors
+  (fn [{db :db} [msg]]
+    (let [new-wms (set (conj (get-in db [:wh.user.db/sub-db ::wh.user.db/company :onboarding-msgs]) msg))]
+      {:graphql {:query update-company-mutation
+                 :variables {:update_company
+                             {:id (company-id db)
+                              :onboardingMsgs new-wms}}
+                 :on-success [::add-company-onboarding-msg-success new-wms]}})))
+
+(reg-event-db
+  ::add-company-onboarding-msg-success
+  db/default-interceptors
+  (fn [db [new-wms]]
+    (assoc-in db [:wh.user.db/sub-db ::wh.user.db/company :onboarding-msgs] new-wms)))

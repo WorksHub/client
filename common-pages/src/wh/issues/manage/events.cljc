@@ -78,9 +78,9 @@
                 (assoc-in [::manage/sub-db ::manage/syncing-issues] false)
                 (assoc-in [::manage/sub-db ::manage/loading?] false))
             query_issues (update ::manage/sub-db merge
-                                 {::manage/issues   (into {} (->> (map (comp (juxt :id identity)
-                                                                             gql-issue->issue)
-                                                                       (:issues query_issues))))
+                                 {::manage/issues              (into {} (->> (map (comp (juxt :id identity)
+                                                                                        gql-issue->issue)
+                                                                                  (:issues query_issues))))
                                   ::manage/page-size           default-page-size
                                   ::manage/count               (get-in query_issues [:pagination :total])
                                   ::manage/current-page-number (get-in query_issues [:pagination :page_number])
@@ -88,8 +88,8 @@
                                                                                            (get-in query_issues [:pagination :total]))})
 
             company (update ::manage/sub-db merge {::manage/company (into {} company)})
-            me (update :wh.user.db/sub-db merge
-                       {:wh.user.db/welcome-msgs              (set (:welcomeMsgs me))}))))
+            me      (update :wh.user.db/sub-db merge
+                            {:wh.user.db/onboarding-msgs (set (:onboardingMsgs me))}))))
 
 #?(:cljs
    (reg-event-fx

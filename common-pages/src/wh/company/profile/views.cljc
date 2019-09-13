@@ -41,7 +41,7 @@
   [editing-atom on-editing]
   #?(:cljs
      [:div.editable--edit-button
-     (if (not @editing-atom)
+      (if (not @editing-atom)
         [icon "edit"
          :on-click #(do (reset! editing-atom true)
                         (when on-editing
@@ -1106,7 +1106,8 @@
           [:form.wh-formx.wh-formx__layout
            [:div
             [select-field (or @new-industry-tag (:id (<sub [::subs/industry])))
-             {:options   (into [{:id nil, :label "--"}] ;; add unselected
+             {:id "company-profile-new-compay-info--industry"
+              :options   (into [{:id nil, :label "--"}] ;; add unselected
                                (sort-by :label (<sub [::subs/all-tags-of-type :industry])))
               :error     (<sub [::subs/error-message :industry-tag])
               :force-error? true
@@ -1115,7 +1116,8 @@
                             (reset! new-industry-tag %)
                             (dispatch [::events/check-field {:industry-tag @new-industry-tag}]))}]
             [select-field (or @new-funding-tag (:id (<sub [::subs/funding])))
-             {:options   (into [{:id nil, :label "--"}] ;; add unselected
+             {:id "company-profile-new-compay-info--funding"
+              :options   (into [{:id nil, :label "--"}] ;; add unselected
                                (sort-by :label (<sub [::subs/all-tags-of-type :funding])))
               :error     (<sub [::subs/error-message :funding-tag])
               :force-error? true
@@ -1124,14 +1126,16 @@
                             (reset! new-funding-tag %)
                             (dispatch [::events/check-field {:funding-tag @new-funding-tag}]))}]
             [radio-field (or @new-size (<sub [::subs/size]))
-             {:options   (map #(hash-map :id % :label (company-spec/size->range %)) (reverse company-spec/sizes))
+             {:id "company-profile-new-compay-info--size"
+              :options   (map #(hash-map :id % :label (company-spec/size->range %)) (reverse company-spec/sizes))
               :label     "* How many people work for your company?"
               :error     (<sub [::subs/error-message :size])
               :force-error? true
               :on-change #(do (reset! new-size %)
                               (dispatch [::events/check-field {:size @new-size}]))}]
             [text-field (or @new-founded-year (<sub [::subs/founded-year]) "")
-             {:type      :number
+             {:id "company-profile-new-compay-info--founded-year"
+              :type      :number
               :label     "* When was your company founded?"
               :error (<sub [::subs/error-message :founded-year])
               :force-error? true
@@ -1151,7 +1155,9 @@
          (let [selected-tag-ids (<sub [::subs/selected-tag-ids--all-of-type tag-type true])
                matching-tags    (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type})])
                tag-search       (<sub [::subs/tag-search tag-type])]
-           [:div.company-profile__create-profile-step.company-profile__create-profile__technology
+           [:div
+            {:class (util/merge-classes "company-profile__create-profile-step"
+                                        (str "company-profile__create-profile__" (name tag-type)))}
             (when-let [error (<sub [::subs/error-message error-field])]
               [:span.is-error error])
             [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
@@ -1237,7 +1243,8 @@
               [create-new-profile--benefits]]
              [:section.company-profile__section--create
               [:button.button.button--medium
-               {:class (when (<sub [::subs/updating?]) "button--loading button--inverted")
+               {:id "company-profile-new-create-profile--submit"
+                :class (when (<sub [::subs/updating?]) "button--loading button--inverted")
                 :on-click #(dispatch [::events/create-new-profile {:name         @new-name
                                                                    :description  @new-desc
                                                                    :industry-tag @new-industry-tag

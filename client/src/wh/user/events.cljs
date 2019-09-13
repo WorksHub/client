@@ -46,28 +46,28 @@
         (assoc-in [::user/sub-db ::user/saving-consent?] false)
         (assoc-in [::user/sub-db ::user/save-consent-error?] true))))
 
-(def add-welcome-msg
+(def add-onboarding-msg
   {:venia/operation {:operation/type :mutation
-                     :operation/name "add_welcome_msg"}
-   :venia/variables [{:variable/name "welcome_msg"
+                     :operation/name "add_onboarding_msg"}
+   :venia/variables [{:variable/name "onboarding_msg"
                       :variable/type :String!}]
-   :venia/queries [[:add_welcome_msg {:welcome_msg :$welcome_msg}]]})
+   :venia/queries [[:add_onboarding_msg {:onboarding_msg :$onboarding_msg}]]})
 
 (reg-event-fx
-  ::add-welcome-msg
+  ::add-onboarding-msg
   db/default-interceptors
   (fn [{db :db} [msg]]
     (if (db/logged-in? db)
-      {:graphql {:query      add-welcome-msg
-                 :variables  {:welcome_msg msg}
-                 :on-success [::add-welcome-msg-success msg]}}
-      {:dispatch [::add-welcome-msg-success msg]})))
+      {:graphql {:query      add-onboarding-msg
+                 :variables  {:onboarding_msg msg}
+                 :on-success [::add-onboarding-msg-success msg]}}
+      {:dispatch [::add-onboarding-msg-success msg]})))
 
 (reg-event-db
-  ::add-welcome-msg-success
+  ::add-onboarding-msg-success
   db/default-interceptors
   (fn [db [msg]]
-    (update-in db [::user/sub-db ::user/welcome-msgs] conj msg)))
+    (update-in db [::user/sub-db ::user/onboarding-msgs] conj msg)))
 
 (reg-event-fx
   :user/save-consent

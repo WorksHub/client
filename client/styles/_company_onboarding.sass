@@ -1,0 +1,76 @@
+$company-onboarding__animation-time: 0.3s
+$company-onboarding__action-height: 64px
+
+.company-onboarding
+  position: relative
+
+.company-onboarding__content
+  max-width: 620px
+  margin: 0 auto
+  h1
+    font-size: 24px
+    line-height: 32px
+  p
+    font-family: $family-secondary
+    font-size: 16px
+    line-height: $company-onboarding__action-height / 2
+    color: $grey-darker
+    margin-bottom: 18px
+
+.company-onboarding__action
+  overflow: hidden
+  &:hover
+    .company-onboarding__action__content
+      height: 40px
+      small
+        opacity: 1
+      +mobile
+        &>div
+          display: none
+  i
+    font-size: 12px
+    margin-left: 6px
+  .button
+    width: 100%
+    height: $company-onboarding__action-height
+    padding: 0 18px
+    border-radius: 4px
+    .is-flex
+      width: 100%
+      justify-content: space-between
+      align-items: center
+    .icon
+      margin-top: 2px
+      background-color: white
+      padding: 5px
+      width: 24px
+      height: 24px
+      min-width: 24px
+      border-radius: 12px
+      fill: $red
+      +mobile
+        width: 20px
+        height: 20px
+        min-width: 20px
+
+
+.company-onboarding__action + .company-onboarding__action
+  margin-top: 12px
+
+.company-onboarding__action__content
+  transition: height $company-onboarding__animation-time
+  height: 20px
+  text-align: left
+  font-size: 18px
+  line-height: 18px
+  text-transform: initial
+  +mobile
+    font-size: 13px
+  small
+    font-size: 12px
+    line-height: 12px
+    +mobile
+      font-size: 11px
+      line-height: 11px
+    opacity: 0
+    transition: opacity $company-onboarding__animation-time

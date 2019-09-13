@@ -21,7 +21,7 @@
        [:p "Click on the heart if you like what you see, close it if you don’t."])
      [:p "We’ve also listed some of your preferences below. These can be updated any time. Just click on Improve Recommendations or go to your profile in the menu."]]]
    [:div
-    [button "OK, got it!" [:wh.user.events/add-welcome-msg "jobs"]]]])
+    [button "OK, got it!" [:wh.user.events/add-onboarding-msg "jobs"]]]])
 
 (defn resources-intro []
   [:div
@@ -31,7 +31,7 @@
      [:p "You can also create a post ✏️ about a story, learning or interesting project from the contribute page."]
      [:p "Which we will then recommend to members, based on their interests and profile!"]]]
    [:div
-    [button "Thanks, got it!" [:wh.user.events/add-welcome-msg "blogs"]]]])
+    [button "Thanks, got it!" [:wh.user.events/add-onboarding-msg "blogs"]]]])
 
 (defn recommended-jobs []
   [:section.dashboard__jobs
@@ -46,7 +46,7 @@
             jobs-columns (map (fn [job] [:div.column [job-card job
                                                       :on-close :reload-dashboard
                                                       :public (<sub [:user/public-job-info-only?])]]) jobs)
-            columns (if (<sub [::user-subs/welcome-msg-not-seen? "jobs"])
+            columns (if (<sub [::user-subs/onboarding-msg-not-seen? "jobs"])
                       (into
                         [[:div.column.codi-column [jobs-intro]]]
                         (take 2 jobs-columns))
@@ -77,14 +77,14 @@
      [:h3 "Sorry, there seem to be no blogs matching your profile \uD83D\uDE25. Try to add/change skills in your profile to see some recommended blogs."]
      (let [blogs (<sub [::subs/blogs])
            blogs-columns (map (fn [blog] [:div.column [blog-card blog]]) blogs)
-           columns (if (<sub [::user-subs/welcome-msg-not-seen? "blogs"])
+           columns (if (<sub [::user-subs/onboarding-msg-not-seen? "blogs"])
                      (into
-                      [[:div.column.codi-column [resources-intro]]]
-                      (take 2 blogs-columns))
+                       [[:div.column.codi-column [resources-intro]]]
+                       (take 2 blogs-columns))
                      blogs-columns)]
-     (into
-      [:div.columns.is-mobile]
-      columns)))])
+       (into
+         [:div.columns.is-mobile]
+         columns)))])
 
 (defn applied-jobs []
   [:section

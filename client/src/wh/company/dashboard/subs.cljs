@@ -10,7 +10,6 @@
     [wh.company.dashboard.db :as sub-db]
     [wh.components.stats.db :as stats]
     [wh.routes :as routes]
-    [wh.user.subs :as user-subs]
     [wh.util :as util])
   (:require-macros
     [clojure.core.strint :refer [<<]]))
@@ -254,3 +253,9 @@
            (round-up-to 5)
            (max 0)
            (min 100)))))
+
+(reg-sub
+  ::show-onboarding?
+  :<- [:wh.user.subs/company-onboarding-msg-not-seen? :dashboard_welcome]
+  (fn [not-seen? _]
+    not-seen?))

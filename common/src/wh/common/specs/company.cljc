@@ -25,6 +25,9 @@
 (s/def :wh.company/how-we-work ::p/non-empty-string)
 (s/def :wh.company/additional-tech-info ::p/non-empty-string)
 
+(s/def :wh.company/onboarding-msg #{:dashboard_welcome})
+(s/def :wh.company/onboarding-msgs (s/coll-of :wh.company/onboarding-msg :distinct true))
+
 (s/def :wh.company.tech-scales/testing        (s/double-in :min 0.0 :max 1.0))
 (s/def :wh.company.tech-scales/ops            (s/double-in :min 0.0 :max 1.0))
 (s/def :wh.company.tech-scales/time-to-deploy (s/double-in :min 0.0 :max 1.0))

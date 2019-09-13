@@ -1,5 +1,7 @@
 (ns wh.user.db
   (:require
+    [cljs-time.coerce :as tc]
+    [cljs-time.core :as t]
     [cljs.spec.alpha :as s]
     [clojure.string :as str]
     [wh.common.cases :as cases]
@@ -59,6 +61,25 @@
 (defn user-name [db]
   (get-in db [::sub-db ::name]))
 
+(defn old-enough?
+  [user num-days]
+  (when-let [created (::user/created user)]
+    (let [created (tc/to-date-time created)
+          now (t/now)]
+      (t/before? created (t/minus now (t/days num-days))))))
+
+(defn onboarding-msg-not-seen?
+  [db msg]
+  (let [user (::sub-db db)
+        num-days ({"your_company" 1, "jobs" 7, "blogs" 7} msg)]
+    (not (or (contains? (::onboarding-msgs user) msg)
+             (when num-days (old-enough? user num-days))))))
+
+(defn company-onboarding-msg-not-seen?
+  [db msg]
+  (let [company (get-in db [::sub-db ::company])]
+    (not (contains? (:onboarding-msgs company) msg))))
+
 (s/def ::id string?)
 (s/def ::approved (s/nilable boolean?))
 (s/def ::name string?)
@@ -100,7 +121,7 @@
                                      :opt-un [::time
                                               ::source])))
 
-(s/def ::welcome-msgs (s/coll-of string? :kind set?))
+(s/def ::onboarding-msgs (s/coll-of string? :kind set?))
 
 (s/def ::sub-db
   (s/keys :opt-un [::id ::name ::visa-status ::visa-status-other
@@ -108,7 +129,7 @@
                    ::saving-consent?]))
 
 (def default-db
-  {:welcome-msgs #{}})
+  {:onboarding-msgs #{}})
 
 ;; This is reused between profile and admin/candidate pages.
 ;; TODO: Currently, profile namespaces all keys in this structure and

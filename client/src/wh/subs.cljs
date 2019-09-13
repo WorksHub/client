@@ -4,7 +4,8 @@
     [re-frame.registrar :as rf-registrar]
     [wh.common.subs] ;; required for inclusion
     [wh.db :as db]
-    [wh.routes :as routes])
+    [wh.routes :as routes]
+    [wh.user.db :as user])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 ;;; Functions useful in subscriptions
@@ -93,10 +94,17 @@
          (fn [db _]
            (not (contains? routes/no-menu-pages (::db/page db)))))
 
+(defn menu-hidden-due-to-special-circumstances?
+  [db]
+  (and (= :company-dashboard (::db/page db))
+       (user/company? db)
+       (user/company-onboarding-msg-not-seen? db :dashboard_welcome)))
+
 (reg-sub ::show-left-menu?
          (fn [db _]
            (and (db/logged-in? db)
-                (not (contains? routes/no-menu-pages (::db/page db))))))
+                (not (contains? routes/no-menu-pages (::db/page db)))
+                (not (menu-hidden-due-to-special-circumstances? db)))))
 
 (reg-sub ::show-footer?
          (fn [db _]

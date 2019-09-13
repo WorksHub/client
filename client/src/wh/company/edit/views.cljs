@@ -529,11 +529,18 @@
             #(dispatch [::events/set-page-selection %])])
          [:div.columns.is-variable.is-2
           [:div.column.is-7
-           (cond
-             (and (= page-selection :payment-details) payment?)
-             [payment-details edit? admin?]
-             :else
-             [company-details edit? admin?])]
+           (if (and (= page-selection :payment-details) payment?)
+             [:div
+              [payment-details edit? admin?]
+              (when edit?
+                [cancel-payment])]
+             [:div
+              (when (and admin? (not edit?))
+                [company-details edit? admin?])
+              (when edit?
+                [integrations])
+              (when edit?
+                [users admin?])])]
 
           [:div.column.is-4.is-offset-1.company-edit__side-pods
            [:div.company-edit__side-pods--container
@@ -551,26 +558,7 @@
             (when (and edit? admin?)
               [admin-pod])
             (when (= page-selection :payment-details)
-              [invoices-pod admin?])]]]
-         (cond
-           (= page-selection :company-details)
-           [:div
-            (when edit?
-              [:div.columns.is-variable.is-2
-               [:div.column.is-7
-                [users admin?]]])
-
-            (when edit?
-              [:div.columns.is-variable.is-2
-               [:div.column.is-7
-                [integrations]]])]
-
-           (and (= page-selection :payment-details) payment?)
-           [:div
-            (when edit?
-              [:div.columns.is-variable.is-2
-               [:div.column.is-7
-                [cancel-payment]]])])])]
+              [invoices-pod admin?])]]]])]
 
      (when (<sub [::subs/show-integration-popup?])
        (integration-popup))

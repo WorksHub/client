@@ -107,7 +107,7 @@
                                                      ::register/logo-uploading? (boolean logo))))
                  (update ::user/sub-db #(-> (get-in data [:data :create_company_and_user :user])
                                             user/translate-user
-                                            (update ::user/welcome-msgs set)
+                                            (update ::user/onboarding-msgs set)
                                             (assoc ::user/company-id (get-in data [:data :create_company_and_user :company :id])))))]
       {:db                        db
        :navigate                  [:homepage]

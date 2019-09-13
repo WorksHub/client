@@ -7706,6 +7706,9 @@ a.navbar-item,
   max-width: 815px;
   min-width: 250px; }
 
+.company-edit--edit .wh-formx + .wh-formx {
+  margin-top: 18px; }
+
 .company-edit--loading:after {
   animation: spinAround 500ms infinite linear;
   border: 2px solid #ff7c6e;
@@ -16741,6 +16744,81 @@ h3 {
   .company-profile__create-profile__company-info .radios {
     display: flex;
     flex-direction: column; } }
+
+.company-onboarding {
+  position: relative; }
+
+.company-onboarding__content {
+  max-width: 620px;
+  margin: 0 auto; }
+  .company-onboarding__content h1 {
+    font-size: 24px;
+    line-height: 32px; }
+  .company-onboarding__content p {
+    font-family: "Inconsolata", sans-serif;
+    font-size: 16px;
+    line-height: 32px;
+    color: #434E55;
+    margin-bottom: 18px; }
+
+.company-onboarding__action {
+  overflow: hidden; }
+  .company-onboarding__action:hover .company-onboarding__action__content {
+    height: 40px; }
+    .company-onboarding__action:hover .company-onboarding__action__content small {
+      opacity: 1; }
+    @media screen and (max-width: 1007px) {
+      .company-onboarding__action:hover .company-onboarding__action__content > div {
+        display: none; } }
+  .company-onboarding__action i {
+    font-size: 12px;
+    margin-left: 6px; }
+  .company-onboarding__action .button {
+    width: 100%;
+    height: 64px;
+    padding: 0 18px;
+    border-radius: 4px; }
+    .company-onboarding__action .button .is-flex {
+      width: 100%;
+      justify-content: space-between;
+      align-items: center; }
+    .company-onboarding__action .button .icon {
+      margin-top: 2px;
+      background-color: white;
+      padding: 5px;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 12px;
+      fill: #ff7c6e; }
+      @media screen and (max-width: 1007px) {
+        .company-onboarding__action .button .icon {
+          width: 20px;
+          height: 20px;
+          min-width: 20px; } }
+
+.company-onboarding__action + .company-onboarding__action {
+  margin-top: 12px; }
+
+.company-onboarding__action__content {
+  transition: height 0.3s;
+  height: 20px;
+  text-align: left;
+  font-size: 18px;
+  line-height: 18px;
+  text-transform: initial; }
+  @media screen and (max-width: 1007px) {
+    .company-onboarding__action__content {
+      font-size: 13px; } }
+  .company-onboarding__action__content small {
+    font-size: 12px;
+    line-height: 12px;
+    opacity: 0;
+    transition: opacity 0.3s; }
+    @media screen and (max-width: 1007px) {
+      .company-onboarding__action__content small {
+        font-size: 11px;
+        line-height: 11px; } }
 
 .auth-popup__content {
   display: none; }

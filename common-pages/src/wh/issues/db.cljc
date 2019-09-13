@@ -32,16 +32,20 @@
 
 (defn update-issues-db [initial-db {:keys [query_issues company me]}]
   (cond-> initial-db
-    query_issues (update ::sub-db merge
-                         {::issues              (into {} (map (comp (juxt :id identity)
-                                                                    gql-issue->issue)
-                                                              (:issues query_issues)))
-                          ::page-size           default-page-size
-                          ::count               (get-in query_issues [:pagination :total])
-                          ::current-page-number (get-in query_issues [:pagination :page_number])
-                          ::total-pages         (pagination/number-of-pages (get-in query_issues [:pagination :page_size])
-                                                                            (get-in query_issues [:pagination :total]))
-                          ::loading?            false})
-    company (update ::sub-db merge {::company (into {} company)})
-    me (update :wh.user.db/sub-db merge
-               {:wh.user.db/welcome-msgs (set (:welcomeMsgs me))})))
+          query_issues
+          (update ::sub-db merge
+                  {::issues              (into {} (map (comp (juxt :id identity)
+                                                             gql-issue->issue)
+                                                       (:issues query_issues)))
+                   ::page-size           default-page-size
+                   ::count               (get-in query_issues [:pagination :total])
+                   ::current-page-number (get-in query_issues [:pagination :page_number])
+                   ::total-pages         (pagination/number-of-pages (get-in query_issues [:pagination :page_size])
+                                                                     (get-in query_issues [:pagination :total]))
+                   ::loading?            false})
+          company
+          (update ::sub-db merge {::company (into {} (cond-> company
+                                                             (nil? (:logo company)) (dissoc :logo)))})
+          me
+          (update :wh.user.db/sub-db merge
+                  {:wh.user.db/onboarding-msgs (set (:onboardingMsgs me))})))

@@ -27,7 +27,7 @@
                 :venia/queries   [[:create_company_and_user {:create_company :$create_company
                                                              :create_user :$create_user}
                                    [[:company [:id]]
-                                    [:user [:id [:approval [:status]] :email :name :welcomeMsgs :consented :type [:company [:id :name]]]]]]]}
+                                    [:user [:id [:approval [:status]] :email :name :onboardingMsgs :consented :type [:company [:id :name]]]]]]]}
    :variables  {:create_company (register-db->graphql-create-company-input db)
                 :create_user (register-db->graphql-create-initial-company-user-input db)}
    :on-success [success]

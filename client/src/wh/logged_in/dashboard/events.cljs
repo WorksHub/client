@@ -42,7 +42,7 @@
                             :page_size 3
                             :page_number 1}
                     [[:blogs [:id :title :feature :tags :author :formattedCreationDate :score :readingTime :published :upvoteCount]]]]
-                   [:me [:welcomeMsgs]]
+                   [:me [:onboardingMsgs]]
                    [:candidate_applications [:jobId :state]]
                    {:query/data [:jobs {:filter_type "recommended" :entity_type "user" :page_size 3} (conj jobs/job-card-fields :score)]
                     :query/alias :jobs}
@@ -75,7 +75,7 @@
                             ::dashboard/applied-jobs (add-application-state (mapv job/translate-job appliedJobs)
                                                                             (mapv cases/->kebab-case candidate_applications))})
                    (update ::user/sub-db merge
-                           {::user/welcome-msgs (set (:welcomeMsgs me))}))
+                           {::user/onboarding-msgs (set (:onboardingMsgs me))}))
      :dispatch-n (into [[::pages/unset-loader]]
                        (when-let [events (get-in db [:wh.db/query-params "events"])]
                          (-> events base64/decodeString reader/read-string)))}))
