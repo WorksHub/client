@@ -395,8 +395,8 @@
                    [:div.is-flex
                     [:div.company-onboarding__action__content
                      [:div (str number ". " title) [:i.is-hidden-mobile (str "(" time " minutes)")]]
-                     [:small sub-title]]
-                    [icon "arrow-right"]]]
+                     [:small sub-title [:i.is-hidden-desktop (str "(" time " minutes)")]]]
+                    [icon "arrow-right" :class "is-hidden-mobile"]]]
             :handler handler
             :options (assoc link-options
                             :on-click #(dispatch [::events/add-company-onboarding-msg :dashboard_welcome]))}]]))

@@ -16754,6 +16754,10 @@ h3 {
   .company-onboarding__content h1 {
     font-size: 24px;
     line-height: 32px; }
+    @media screen and (max-width: 1007px) {
+      .company-onboarding__content h1 {
+        font-size: 18px;
+        line-height: 24px; } }
   .company-onboarding__content p {
     font-family: "Inconsolata", sans-serif;
     font-size: 16px;
@@ -16763,21 +16767,26 @@ h3 {
 
 .company-onboarding__action {
   overflow: hidden; }
-  .company-onboarding__action:hover .company-onboarding__action__content {
-    height: 40px; }
-    .company-onboarding__action:hover .company-onboarding__action__content small {
-      opacity: 1; }
-    @media screen and (max-width: 1007px) {
-      .company-onboarding__action:hover .company-onboarding__action__content > div {
-        display: none; } }
+  @media screen and (min-width: 1008px) {
+    .company-onboarding__action:hover .company-onboarding__action__content {
+      height: 40px; }
+      .company-onboarding__action:hover .company-onboarding__action__content small {
+        opacity: 1; } }
+  @media screen and (min-width: 1008px) and (max-width: 1007px) {
+    .company-onboarding__action:hover .company-onboarding__action__content > div {
+      display: none; } }
   .company-onboarding__action i {
     font-size: 12px;
     margin-left: 6px; }
   .company-onboarding__action .button {
     width: 100%;
-    height: 64px;
-    padding: 0 18px;
+    height: 100%;
+    padding: 12px;
     border-radius: 4px; }
+    @media screen and (min-width: 1008px) {
+      .company-onboarding__action .button {
+        height: 64px;
+        padding: 0 18px; } }
     .company-onboarding__action .button .is-flex {
       width: 100%;
       justify-content: space-between;
@@ -16802,23 +16811,28 @@ h3 {
 
 .company-onboarding__action__content {
   transition: height 0.3s;
-  height: 20px;
   text-align: left;
   font-size: 18px;
   line-height: 18px;
   text-transform: initial; }
-  @media screen and (max-width: 1007px) {
+  @media screen and (min-width: 1008px) {
     .company-onboarding__action__content {
-      font-size: 13px; } }
+      height: 20px; } }
+  @media screen and (max-width: 1007px) {
+    .company-onboarding__action__content > div {
+      margin-bottom: 6px;
+      line-height: 24px; } }
   .company-onboarding__action__content small {
     font-size: 12px;
     line-height: 12px;
-    opacity: 0;
     transition: opacity 0.3s; }
     @media screen and (max-width: 1007px) {
       .company-onboarding__action__content small {
         font-size: 11px;
         line-height: 11px; } }
+    @media screen and (min-width: 1008px) {
+      .company-onboarding__action__content small {
+        opacity: 0; } }
 
 .auth-popup__content {
   display: none; }
