@@ -52,25 +52,6 @@
    :step :select-package
    :class "a--underlined"])
 
-(defn intro-your-company []
-  [:section.intro-your-company
-   [:h2 "Your Company" [:span.slender " | " (<sub [::subs/today])]]
-   [codi/codi-message
-    [:div
-     [:p "Welcome to your company dashboard! This is where you’ll see an overview of all the stats on your published roles. This will allow you to monitor the performance of your jobs and help you get more applications."]
-     [:br]
-     [:p "If you want to add new users to your company dashboard just head over to your company settings page."]]]
-   [codi/button "Thanks, got it!" [:wh.user.events/add-onboarding-msg "your_company"]]])
-
-(defn intro-live-roles []
-  [:div.intro-live-roles
-   [codi/codi-message
-    [:div
-     [:p "Your first role will be published as soon as a member of our team has verified it."]
-     [:br]
-     [:p "Now might be a good time to go and review it. Just click on the card in your unpublished roles below."]]]
-   [codi/button "OK, got it!" [:wh.user.events/add-onboarding-msg "live_roles"]]])
-
 (defn your-company []
   (let [package (<sub [::subs/package])]
     [:section.your-company
@@ -229,8 +210,6 @@
     [:section {:class class-name}
      [:h2 title]]
     (let [cards (concat
-                  (when (and live-roles? (<sub [::user-subs/onboarding-msg-not-seen? "live_roles"]))
-                    [[intro-live-roles]])
                   (for [job jobs] [job-card job])
                   (when live-roles?
                     [[add-job-card]]))]
@@ -452,11 +431,8 @@
      [company-onboarding]
      :else
      [:div.main.company-dashboard
-      {:class (when (<sub [::user-subs/onboarding-msg-not-seen? "your_company"])
-                "company-dashboard--with-intro-your-company")}
       [:h1 "Dashboard"]
       [:div.company-dashboard__grid
-       [intro-your-company]
        [your-company]
        [stats]]
       [profile-banner]

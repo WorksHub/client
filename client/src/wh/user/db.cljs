@@ -71,7 +71,7 @@
 (defn onboarding-msg-not-seen?
   [db msg]
   (let [user (::sub-db db)
-        num-days ({"your_company" 1, "jobs" 7, "blogs" 7} msg)]
+        num-days ({"jobs" 7, "blogs" 7} msg)]
     (not (or (contains? (::onboarding-msgs user) msg)
              (when num-days (old-enough? user num-days))))))
 
