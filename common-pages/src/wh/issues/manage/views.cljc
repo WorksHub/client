@@ -61,7 +61,7 @@
     [:ul.tags
      (when-let [language primary-language]
        [:li.tag language])]
-    [link "Manage Issues" :manage-repository-issues :repo-name (:name repo) :owner owner :class "button button--inverted btn__manage-issues"]]])
+    [link "Publish Issues" :manage-repository-issues :repo-name (:name repo) :owner owner :class "button button--inverted btn__manage-issues"]]])
 
 (defn repo-list []
   #?(:cljs
@@ -81,7 +81,7 @@
      [:div.main
       [:h1 "Connected Repositories"]
       [:div.spread-or-stack
-       [:h3 "Select a repository to manage individual issues"]
+       [:h3 "Select a repository and choose which issues to publish"]
        [:div.has-bottom-margin
         [github/install-github-app {:label "Add repositories on"
                                     :class "button--large"}]]]
