@@ -246,12 +246,12 @@
 
 (defn issues-header
   [admin-or-owner?]
-  (let [issues (<sub [::subs/issues])]
-    (when (or admin-or-owner? (not-empty issues))
+  (let [repos (<sub [::subs/repos])]
+    (when (or admin-or-owner? (not-empty repos))
       [:section.company-profile__section--headed
        [:div
         [:h2.title.company-profile__issues-title "Open Source"]
-        (when (not-empty issues)
+        (when (not-empty repos)
           [github-details admin-or-owner?])]])))
 
 (defn integrate-issues-banner
@@ -267,7 +267,8 @@
 
 (defn issues
   [admin-or-owner?]
-  (let [issues (<sub [::subs/issues])]
+  (let [issues (<sub [::subs/issues])
+        repos  (<sub [::subs/repos])]
     (when (or admin-or-owner? (not-empty issues))
       [:section
        {:class (util/merge-classes "company-profile__issues"
@@ -284,7 +285,8 @@
              (for [issue issues]
                ^{:key (:id issue)}
                [issue-card issue]))]]
-         [integrate-issues-banner])])))
+         (when (empty? repos)
+           [integrate-issues-banner]))])))
 
 (defn job-header
   [admin-or-owner?]

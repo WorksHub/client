@@ -66,7 +66,7 @@
                          [:labels [:name]]
                          [:repo [:name :owner :primary_language]]]]
                        [:pagination [:total]]]]
-                     [:repos {:pageSize 10 :pageNumber 1}
+                     [:repos {:pageSize 10 :pageNumber 1 :hasIssues false}
                       [[:repos
                         [:github_id :name :description :primary_language :owner]]]]]]]})
 
