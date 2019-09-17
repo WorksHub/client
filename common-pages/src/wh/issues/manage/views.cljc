@@ -48,7 +48,7 @@
        "Restart"]])])
 
 (defn repo-card
-  [{:keys [owner owner-avatar description primary-language] :as repo}]
+  [{:keys [owner owner-avatar description primary-language open-issues-count] :as repo}]
   [:div.repository-card
    [:div.is-flex
     [:div.logo (if-let [url owner-avatar]
@@ -58,10 +58,19 @@
      [:div.title [link (str owner "/" (:name repo)) :manage-repository-issues :repo-name (:name repo) :owner owner :class "a--hover-red"]]]]
    [:div.description description]
    [:div.details
-    [:ul.tags
+    [:div.repo-props
+     [:ul.tags
      (when-let [language primary-language]
        [:li.tag language])]
-    [link "Publish Issues" :manage-repository-issues :repo-name (:name repo) :owner owner :class "button button--inverted btn__manage-issues"]]])
+     [:div.open-issues [icon "gh-issues" :tooltip "Open Issues"] open-issues-count]]
+    (if (pos? open-issues-count)
+      [link "Publish Issues" :manage-repository-issues :repo-name (:name repo) :owner owner
+       :class "button button--inverted btn__manage-issues"]
+      [:button.button.button--disabled
+       {:disabled true}
+       "Publish Issues"])
+
+    ]])
 
 (defn repo-list []
   #?(:cljs
@@ -81,7 +90,20 @@
      [:div.main
       [:h1 "Connected Repositories"]
       [:div.spread-or-stack
-       [:h3 "Select a repository and choose which issues to publish"]
+       (cond
+         (<sub [::subs/syncing-repos?])
+         [:h3 ""]
+
+         (pos? (<sub [::subs/open-issues-on-all-repos]))
+         [:h3.manage-issues__subheading "You have " [:span.bold-text (<sub [::subs/number-of-published-issues])]
+          " issues published on WorksHub."
+          (when (= 0 (<sub [::subs/number-of-published-issues]))
+            " Please select a repository and choose which issues to publish")]
+
+         :else
+         [:h3.manage-issues__subheading "There are no issues on selected repositories.
+               Please add other repositories with open issues so you can publish them on WorksHub."])
+
        [:div.has-bottom-margin
         [github/install-github-app {:label "Add repositories on"
                                     :class "button--large"}]]]

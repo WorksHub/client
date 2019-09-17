@@ -18,6 +18,8 @@
 (s/def :wh.repo/stargazers nat-int?)
 (s/def :wh.repo/readme-url string?)
 (s/def :wh.repo/contributing-url string?)
+(s/def :wh.repo/fork boolean?)
+(s/def :wh.repo/open-issues-count int?)
 (s/def :wh.repo/community (s/keys :opt-un [:wh.repo/readme-url
                                            :wh.repo/contributing-url]))
 
@@ -51,7 +53,9 @@
                                           :wh.repo/readme-url
                                           :wh.repo/contributing-url
                                           :wh.repo/sync
-                                          :wh.repo/owner-avatar])
+                                          :wh.repo/owner-avatar
+                                          :wh.repo/fork
+                                          :wh.repo/open-issues-count])
                    :cljs (s/keys :opt-un [:wh.repo/github-id
                                           :wh.repo/name
                                           :wh.repo/owner
@@ -63,5 +67,7 @@
                                           :wh.repo/readme-url
                                           :wh.repo/contributing-url
                                           :wh.repo/sync
-                                          :wh.repo/owner-avatar])))
+                                          :wh.repo/owner-avatar
+                                          :wh.repo/fork
+                                          :wh.repo/open-issues-count])))
 (s/def :wh/repos (s/coll-of :wh/repo))

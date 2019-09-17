@@ -141,10 +141,19 @@
                       [:id :time_started :total_issue_count :time_finished]]]})
 
 (defquery sync-repos
-  {:venia/queries
-   [[:github_repositories
-     [[:repositories
-       [:name :owner :owner_avatar :description :primary_language :stargazers]]]]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "issues"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID}
+                     {:variable/name "published"
+                      :variable/type :Boolean}]
+   :venia/queries   [[:github_repositories
+                      [[:repositories
+                        [:name :owner :owner_avatar :description :primary_language :stargazers :fork :open_issues_count]]]]
+                     [:query_issues
+                      {:company_id :$id
+                       :published  :$published}
+                      [[:pagination [:total]]]]]})
 
 (defquery publish-company-profile-mutation
   {:venia/operation {:operation/type :mutation

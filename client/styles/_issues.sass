@@ -1275,9 +1275,21 @@ $issue-sticky-hide-mobile-offset: 28px
     +desktop
       display: flex
       justify-content: space-between
-    .tags
-      li
-        margin-bottom: 0
+    .repo-props
+      display: flex
+      .open-issues
+        margin-left: 10px
+        font-size: 14px
+        //font-weight: $font-medium
+        color: $greyish
+        svg
+          fill: $greyish
+          height: 30px
+          vertical-align: bottom
+          margin-right: 6px
+      .tags
+        li
+          margin-bottom: 0
   .btn__manage-issues
     +mobile
       margin-top: 18px
@@ -1297,3 +1309,9 @@ $issue-sticky-hide-mobile-offset: 28px
   p
     line-height: 18px
     margin-bottom: 12px
+
+.bold-text
+  font-weight: $font-semi-bold
+
+.manage-issues__subheading
+  margin-right: 20px

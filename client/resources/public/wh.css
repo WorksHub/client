@@ -5186,6 +5186,10 @@ a.navbar-item,
   background-color: white;
   color: #adadad;
   border: solid 1px #adadad; }
+  .button--disabled:hover {
+    background: white !important;
+    color: #adadad !important;
+    cursor: pointer !important; }
 
 .button--github {
   text-align: left;
@@ -14261,8 +14265,19 @@ h3 {
     .repository-card .details {
       display: flex;
       justify-content: space-between; } }
-  .repository-card .details .tags li {
-    margin-bottom: 0; }
+  .repository-card .details .repo-props {
+    display: flex; }
+    .repository-card .details .repo-props .open-issues {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #adadad; }
+      .repository-card .details .repo-props .open-issues svg {
+        fill: #adadad;
+        height: 30px;
+        vertical-align: bottom;
+        margin-right: 6px; }
+    .repository-card .details .repo-props .tags li {
+      margin-bottom: 0; }
   @media screen and (max-width: 1007px) {
     .repository-card .btn__manage-issues {
       margin-top: 18px; } }
@@ -14281,6 +14296,12 @@ h3 {
 .manage-issues__sync-info p {
   line-height: 18px;
   margin-bottom: 12px; }
+
+.bold-text {
+  font-weight: 600; }
+
+.manage-issues__subheading {
+  margin-right: 20px; }
 
 .landing-page .homepage__middle-content__container:last-of-type {
   padding-bottom: 28px; }

@@ -172,8 +172,9 @@
   ::fetch-repos-success
   manage-issues-interceptors
   (fn [{db :db} [{data :data}]]
-    (let [{:keys [github-repositories]} (cases/->kebab-case data)]
+    (let [{:keys [github-repositories query-issues]} (cases/->kebab-case data)]
       {:db (merge db {::manage/repos          (:repositories github-repositories)
+                      ::manage/number-of-published-issues (-> query-issues :pagination :total)
                       ::manage/syncing-repos? false})})))
 
 #?(:cljs
@@ -183,6 +184,8 @@
      (fn [{db :db} _]
        {:db      (assoc-in db [::manage/sub-db ::manage/syncing-repos?] true)
         :graphql {:query      graphql-company/sync-repos
+                  :variables {:id (get-in db [:wh.user.db/sub-db :wh.user.db/company-id])
+                              :published true}
                   :on-success [::fetch-repos-success]
                   :on-failure [::failure [::fetch-repos]]}})))
 

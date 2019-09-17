@@ -51,6 +51,20 @@
     (::manage/repos db)))
 
 (reg-sub
+  ::number-of-published-issues
+  :<- [::sub-db]
+  (fn [db _]
+    (::manage/number-of-published-issues db)))
+
+(reg-sub
+  ::open-issues-on-all-repos
+  :<- [::repos]
+  (fn [repos _]
+    (->> repos
+         (map :open-issues-count)
+         (reduce +))))
+
+(reg-sub
   ::update-disabled?
   :<- [::sub-db]
   (fn [db _]
