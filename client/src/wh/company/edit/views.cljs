@@ -142,25 +142,27 @@
   [:form.wh-formx.wh-formx__layout
    [:h2 "Company details"]
    [:fieldset
-    [:div.columns.is-mobile.company-edit__name-and-logo
-     [:div.column.is-narrow
-      [logo-field (field ::edit/logo
-                         :loading? (<sub [::subs/logo-uploading?])
-                         :on-select-file (upload/handler
-                                           :launch [:wh.common.logo/logo-upload]
-                                           :on-upload-start [::events/logo-upload-start]
-                                           :on-success [::events/logo-upload-success]
-                                           :on-failure [::events/logo-upload-failure]))]]
-     [:div.column
-      [text-field nil (field ::edit/name
-                             :label [:span "* Company name"]
-                             :suggestions (<sub [::subs/suggestions])
-                             :on-select-suggestion [::events/select-suggestion])]]]
+    (when-not edit?
+      [:div.columns.is-mobile.company-edit__name-and-logo
+       [:div.column.is-narrow
+        [logo-field (field ::edit/logo
+                           :loading? (<sub [::subs/logo-uploading?])
+                           :on-select-file (upload/handler
+                                             :launch [:wh.common.logo/logo-upload]
+                                             :on-upload-start [::events/logo-upload-start]
+                                             :on-success [::events/logo-upload-success]
+                                             :on-failure [::events/logo-upload-failure]))]]
+       [:div.column
+        [text-field nil (field ::edit/name
+                               :label [:span "* Company name"]
+                               :suggestions (<sub [::subs/suggestions])
+                               :on-select-suggestion [::events/select-suggestion])]]])
 
-    [rich-text-field (field ::edit/description-html
-                            :placeholder "Tell our community all about your company and how great it is to work for you…"
-                            :class "company-edit__description"
-                            :label [:span "* Company introduction"])]
+    (when-not edit?
+      [rich-text-field (field ::edit/description-html
+                              :placeholder "Tell our community all about your company and how great it is to work for you…"
+                              :class "company-edit__description"
+                              :label [:span "* Company introduction"])])
     (when admin? [select-field nil (field ::edit/vertical
                                           :label [:span "Vertical"]
                                           :options verticals/future-job-verticals)])
@@ -535,7 +537,7 @@
               (when edit?
                 [cancel-payment])]
              [:div
-              (when (and admin? (not edit?))
+              (when admin?
                 [company-details edit? admin?])
               (when edit?
                 [integrations])
