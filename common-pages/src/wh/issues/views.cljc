@@ -180,7 +180,7 @@
 (defn page []
   (if (and (<sub [::subs/own-company?])
            (not (<sub [:user/company-connected-github?])))
-    (how-it-works/page {:github? true})
+    (how-it-works/page {:github? true :site-type :company})
     (let [logged-in? #?(:cljs    (<sub [:user/logged-in?])
                         :default false
                         :clj     false)]

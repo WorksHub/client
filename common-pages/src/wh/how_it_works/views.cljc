@@ -234,8 +234,8 @@
    [faq selected-site github?]])
 
 (defn page
-  [& [{:keys [github?] :or {github? false}}]]
-  [render (<sub [::subs/selected-site]) github?])
+  [& [{:keys [github? site-type] :or {github? false}}]]
+  [render (or site-type (<sub [::subs/selected-site])) github?])
 
 (defn pod--choice
   []
