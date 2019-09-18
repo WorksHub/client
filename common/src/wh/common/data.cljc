@@ -5,7 +5,7 @@
     [clojure.string :as str]
     [wh.common.text :as txt]))
 
-(def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD"])
+(def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN"])
 (def time-periods ["Yearly" "Daily"])
 
 (def visa-options #{"US Citizenship" "US Greencard" "US H1B" "EU Citizenship" "EU Visa" "Other"})
@@ -18,7 +18,8 @@
    "AUD" "A$"
    "SGD" "S$"
    "CAD" "C$"
-   "HKD" "HK$"})
+   "HKD" "HK$"
+   "PLN" "zł"})
 
 ;; TODO there are far too few cities on this list
 (def cities
@@ -345,19 +346,15 @@
 (def default-manager (->email "alex"))
 
 (def managers
-  (->> {"tom"             "Tom Leland"
-        "alex"            "Alex Mesropians"
+  (->> {"alex"            "Alex Mesropians"
         "charlie"         "Charlie Gower"
-        "edmund"          "Edmund Cuthbert"
         "josh"            "Josh Gretton"
         "nick"            "Nick Maraj"
         "nick.walker"     "Nick Walker"
         "patrick"         "Patrick Gubbey"
         "peter"           "Peter Forteath"
-        "ben"             "Ben Edwards"
         "miles"           "Miles Samuel"
         "ken.cadima"      "Ken Cadima"
-        "robert"          "Robert Nastro"
         "daniel.earnshaw" "Daniel Earnshaw"
         "quan"            "Quan Truc"
         "nicole"          "Nicole Sadozai"
@@ -388,7 +385,8 @@
    ["SEK" "Yearly"] {:min 420000, :max 960000},
    ["GBP" "Daily"]  {:min 350,    :max 850},
    ["GBP" "Yearly"] {:min 20000,  :max 175000},
-   ["SGD" "Yearly"] {:min 80000,  :max 180000}})
+   ["SGD" "Yearly"] {:min 80000,  :max 180000}
+   ["PLN" "Yearly"] {:min 10000,  :max 500000}})
 
 (defn get-min-salary
   [currency tp]
