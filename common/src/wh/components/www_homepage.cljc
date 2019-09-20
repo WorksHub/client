@@ -1,13 +1,14 @@
 (ns wh.components.www-homepage
   (:require
+    #?(:cljs [reagent.core :as r])
+    [clojure.string :as str]
+    [wh.common.data :as data]
+    [wh.common.text :as txt]
     [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [companies-section link]]
     [wh.components.icons :refer [icon]]
-    [wh.util :as util]
-    [wh.common.text :as txt]
-    [wh.common.data :as data]
-    [clojure.string :as str]
-    #?(:cljs [reagent.core :as r])))
+    [wh.how-it-works.views :as hiw]
+    [wh.util :as util]))
 
 (def num-clouds 23)
 
@@ -38,7 +39,7 @@
    {:description "Easy-to-use tools to track and share applicants"
     :img "/images/homepage/feature02.svg"
     :id :tools}
-   {:description "Real-time analytics on applicants and job viewers"
+   {:description "Connect with GitHub and get contributions to your open source code"
     :img "/images/homepage/feature03.svg"
     :id :analytics}
    {:description "Recommended candidates who are matched to your job"
@@ -70,8 +71,8 @@
      [:img {:src "/images/homepage/header.svg"
             :alt ""}]]]
    [:div.homepage__header__copy
-    [:h1 "Hire " market " based on their interests and experience"]
-    [:p "Through open-source contributions we generate objective ratings to help you hire the right engineers, faster."]
+    [:h1  (data/www-hero-title market)]
+    [:p data/www-hero-copy]
     (link [:button.button
            {:id "www-landing__hero"}
            "Get Started For Free"] :get-started)]])
@@ -96,10 +97,10 @@
    ;; one
    [:div.columns.homepage__step
     [:div.column.homepage__step__description
-     [:span "Create a new role and post to one or all of our technical hubs. Our " [:strong "matching algorithm"] " will instantly recommend your jobs to vetted suitable Software Engineers "]
+     [:span "Create a " [:strong "profile page"] " for your company. Use this space to sell your company to our community. Tell them all about what you’re building and how"]
      (link [:button.button.button--inverted
-            {:id "www-landing__walkthrough__jobsboard"}
-            "View jobsboard"] :jobsboard)]
+            {:id "www-landing__walkthrough__companies"}
+            "View company profiles"] :companies)]
     [:div.column.homepage__step__img.homepage__step__img--offset
      [:img {:src "/images/homepage/walkthrough01.svg"
             :alt ""}]]]
@@ -109,7 +110,7 @@
      [:span "Your " [:strong "real time dashboard"] " allows you to monitor the performance of each job, helping you get more applications and engage a wider community, building brand awareness"]
      (link [:button.button.button--inverted
             {:id "www-landing__walkthrough__features"}
-            "View all our features"] :pricing)]
+            "View all our packages"] :pricing)]
     [:div.column.homepage__step__img
      [:img {:src "/images/homepage/walkthrough02.svg"
             :alt ""}]]]
@@ -135,8 +136,10 @@
             :alt ""}]]]])
 
 (defn animated-hr
-  [img-src class]
-  [:div.homepage__animated-hr
+  [img-src img-class & [class]]
+  [:div
+   {:class (util/merge-classes "homepage__animated-hr"
+                               (when (txt/not-blank class) class))}
    [:div.homepage__animated-hr__bg
     (for [idx (range num-clouds)]
       [:img {:key (str "cloud" idx)
@@ -145,7 +148,7 @@
              :alt ""}])]
    [:div
     {:class (util/merge-classes "homepage__animated-hr__img"
-                                (when (txt/not-blank class) class))}
+                                (when (txt/not-blank img-class) img-class))}
     [:img {:src img-src
            :alt ""}]]])
 
@@ -211,7 +214,7 @@
       [:div.homepage__middle-content
        [:div.homepage__middle-content__container
         [:h2 "THE NEW STANDARD FOR TECHNICAL HIRING"]
-        [:h3 "We are breaking down the barriers of hiring software engineers"]
+        [:h3 "How it works"]
         (features)
         [:div.homepage__feature-ctas
          ;; TODO ABOUT US PAGE
@@ -220,10 +223,14 @@
          (link [:button.button
                 {:id "www-landing__barriers-try"}
                 "Get Started For Free"] :get-started)]]
-       [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
+       [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--start"]
+       [hiw/stats :company false]
+       [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--mid"]
+       [hiw/benefits :company false]
+       [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--end"]
        [:div.homepage__middle-content__container
         (walkthrough)]
-       [animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe"]
+       [animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe" "homepage__animated-hr__globe-wrapper"]
        [:div.homepage__middle-content__container
         [testimonials]]
        [animated-hr nil nil]]

@@ -1,7 +1,8 @@
 (ns wh.verticals
   (:require
     [clojure.set :as set]
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [wh.common.data :as data]))
 
 (def ordered-job-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python"])
 (def ordered-blog-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python" "www"])
@@ -139,7 +140,7 @@
    "www"
    {:platform-name         "WorksHub"
     :label-name            "WorksHub"
-    :description           "Through open-source contributions we generate objective ratings to help you hire the right engineers, faster"
+    :description           data/www-hero-copy
     :twitter               "@workshub"
     :linkedin              "https://www.linkedin.com/company/workshub"
     :default-technologies  ["Python" "Clojure" "Java" "Go" "Data Science" "AI" "JavaScript" "Blockchain" "Scala" "Haskell" "React"]

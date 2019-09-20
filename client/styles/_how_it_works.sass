@@ -297,7 +297,7 @@
 
 .how-it-works__stats__inner
   display: flex
-  padding: 0 40px
+  padding: 0 0 0 40px
   margin: 0 auto
   max-width: 1084px
   .button
@@ -335,6 +335,12 @@
   align-items: center
   background-repeat: no-repeat
   position: absolute
+  .icon
+    fill: #434e55
+    width: 48px
+    height: 48px
+    margin-bottom: 18px
+
   strong
     font-family: $family-secondary
     font-size: 36px
@@ -399,8 +405,9 @@
     margin-top: 24px
   +desktop
     width: 40%
-    padding-right: 40px
-    margin-left: 8px
+    margin-left: 28px
+    .button
+      margin-top: 18px
 
 .how-it-works__stats--candidate
   .how-it-works__stats__ball--orange

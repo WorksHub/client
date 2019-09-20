@@ -696,8 +696,8 @@
            "Developers are more likely to join a company if they already contributed to one of their open-source projects."
            "Companies of all sizes use GitHub for their software development process."]
     :blue ["89%" "of developers prefer companies with OSS"]
-    :grey ["25,000+" "software engineers on WorksHub"]
-    :orange ["2,100,000" "businesses on GitHub"]}
+    :grey ["90,000+" "software engineers in our network"]
+    :orange ["2,100,000" "businesses on GitHub" "github"]}
    :candidate
    {:info ["58% of companies have hired software engineers based on their open-source software contributions."
            "64% of developers are open to solving a company’s open-source issues as part of the technical hiring process."
@@ -751,3 +751,9 @@
    "small"  "10-49"
    "medium" "50-249"
    "large"  "250+"})
+
+(def www-hero-copy "We help you connect with and build a community of engineers through open-source contributions, removing the existing barriers to hiring")
+
+(defn www-hero-title
+  [market]
+  (str "Hire " market " using your open source code"))

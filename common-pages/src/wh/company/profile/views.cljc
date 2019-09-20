@@ -10,7 +10,8 @@
     #?(:cljs [wh.components.stats.views :refer [stats-item]])
     #?(:cljs [wh.user.subs])
     [clojure.string :as str]
-    [wh.common.data.company-profile :as data]
+    [wh.common.data :as data]
+    [wh.common.data.company-profile :as company-data]
     [wh.common.specs.company :as company-spec]
     [wh.common.specs.tags :as tag-spec]
     [wh.common.text :as text]
@@ -58,7 +59,7 @@
       [:div.editable--loading]]
      [:div.editable__buttons
       (when info-id
-        [info-icon info-id (get data/information-tooltips info-id)])
+        [info-icon info-id (get company-data/information-tooltips info-id)])
       [edit-button editing-atom on-editing]])))
 
 (defn editable
@@ -307,8 +308,8 @@
     {:src "/images/homepage/header.svg"
      :alt ""}]
    [:div.company-profile__banner-cta__copy
-    [:h2 "Hire software engineers based on their interests and experience"]
-    [:p "Through open-source contributions we generate objective ratings to help you hire the right engineers, faster."]
+    [:h2 (data/www-hero-title "software engineers")]
+    [:p data/www-hero-copy]
     (link [:button.button.button--medium
            {:id "company-profile__publish-job-btn"}
            "Publish a job"] :create-job)]])
@@ -670,9 +671,9 @@
           [:div
            [:h2.title "Technology"]
            (doall
-             (for [k (keys data/dev-setup-data)]
+             (for [k (keys company-data/dev-setup-data)]
                ^{:key k}
-               [tag-display tag-type k (get data/dev-setup-data k)]))
+               [tag-display tag-type k (get company-data/dev-setup-data k)]))
            [:div.company-profile__technology__additional
             (when ati
               [putil/html ati])]
@@ -682,12 +683,12 @@
           [:div
            [:h2.title "Technology"]
            (doall
-             (for [k (keys data/dev-setup-data)]
+             (for [k (keys company-data/dev-setup-data)]
                ^{:key k}
-               [edit-tag-display tag-type k (get data/dev-setup-data k)]))
+               [edit-tag-display tag-type k (get company-data/dev-setup-data k)]))
            [:div.company-profile__technology__additional-title
             [:h2.subtitle "Additional Information"]
-            [info-icon :additional-info (get data/information-tooltips :additional-info)]]
+            [info-icon :additional-info (get company-data/information-tooltips :additional-info)]]
            #?(:cljs
               [rich-text-field {:value       (or @new-ati ati "")
                                 :placeholder "Please enter any additional technical information..."
@@ -890,16 +891,16 @@
           [:div
            [:h2.title "Benefits"]
            (doall
-             (for [k (keys data/benefits-data)]
+             (for [k (keys company-data/benefits-data)]
                ^{:key k}
-               [tag-display tag-type k (get data/benefits-data k)]))]
+               [tag-display tag-type k (get company-data/benefits-data k)]))]
           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
           [:div
            [:h2.title "Benefits"]
            (doall
-             (for [k (keys data/benefits-data)]
+             (for [k (keys company-data/benefits-data)]
                ^{:key k}
-               [edit-tag-display tag-type k (get data/benefits-data k)]))]]]))))
+               [edit-tag-display tag-type k (get company-data/benefits-data k)]))]]]))))
 
 (defn publish-toggle
   [enabled?]

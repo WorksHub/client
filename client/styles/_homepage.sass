@@ -242,9 +242,8 @@ $homepage-max-width: 1084px
     margin-top: -120px
 
 .homepage__animated-hr
-  width: 100px
   height: 125px
-  margin: 60px 0 90px 0
+  margin: 60px 0 30px 0
   width: 100%
   position: relative
   +mobile
@@ -259,12 +258,22 @@ $homepage-max-width: 1084px
   position: absolute
   z-index: 2
 
+$rocket-width: 200px
 .homepage__animated-hr__rocket
-  left: 20px
   top: 40px
   img
-    width: 200px
+    width: $rocket-width
+    min-width: $rocket-width
 
+.homepage__animated-hr__rocket--start
+  left: 20px
+.homepage__animated-hr__rocket--mid
+  left: calc(50% - ((#{$rocket-width} / 2)) - 30px)
+.homepage__animated-hr__rocket--end
+  left: calc(100% - (#{$rocket-width} + 20px))
+
+.homepage__animated-hr__globe-wrapper
+  margin: 60px 0 90px 0
 
 .homepage__animated-hr__globe
   left: calc(50% - 75px)
@@ -444,3 +453,18 @@ $homepage-max-width: 1084px
   width: 68px; height: 34px; left: 3789px; top: 71px;
 .homepage__animated-hr__bg__cloud22
   width: 136px; height: 68px; left: 3982px; top: 41px;
+
+/* -----
+
+.homepage
+  .how-it-works__stats,
+  .how-it-works__benefits
+    padding: 0
+    p
+      font-family: $family-secondary
+      font-weight: $font-regular
+      font-size: 16px
+      letter-spacing: 0
+      color: $grey-darker
+      +mobile
+        line-height: 26px

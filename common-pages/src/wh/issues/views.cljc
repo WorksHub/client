@@ -158,7 +158,7 @@
              :alt "Hero graphic"}]]]
     [:div.issues__header--public__copy
      [:h1 "Use Open Source to hire or get hired"]
-     [:p "Through open-source projects we help companies build communities of software engineers and hire better talent."]
+     [:p data/www-hero-copy]
      [:div.issues__header__buttons
       [link [:button.button "Get Started"] :get-started :query-params {:redirect "issues"}]
       [link [:button.button.button--inverted.find-out-more "Find out more"] :how-it-works]]]]])

@@ -16,7 +16,7 @@
 
 (defn get-started-link
   [github? & [class]]
-  (let [btn [:button.button.button--public "Get Started"]]
+  (let [btn [:button.button.button--public "Get Started for free"]]
     (cond
       (or github? (<sub [::subs/show-github-buttons?]))
       [github-button class]
@@ -94,7 +94,7 @@
      [:h1 (if github?
             "Use Open Source Issues to find your next hire"
             "Use Open Source to hire or get hired")]
-     [:p "Through open-source projects we help companies build communities of software engineers and hire better talent."]
+     [:p data/www-hero-copy]
      (if github?
        [github-button nil]
        [slider selected-site])]]])
@@ -164,7 +164,7 @@
   [selected-site github?]
   [:div.how-it-works__benefits.how-it-works__benefits--company
    [:div.how-it-works__benefits__inner
-    [:h2 "THE BENEFITS"]
+    [:h2 "OPEN SOURCE ISSUES"]
     [:h3 "What's in it for you?"]
     (benefits-list (get data/how-it-works-benefits selected-site) {})
     [:div.how-it-works__benefits__buttons
@@ -175,11 +175,13 @@
      [get-started-link github?]]]])
 
 (defn stats-ball
-  [[title para] colour]
+  [[title para icon-logo] colour]
   [:div
    {:class (util/merge-classes
              "how-it-works__stats__ball"
              (str "how-it-works__stats__ball--" (name colour)))}
+   (when icon-logo
+     [icon icon-logo])
    [:strong title]
    [:p para]])
 
@@ -204,7 +206,7 @@
         (stats-ball grey :grey)]]
       [:div.how-it-works__stats__info
        [:h2 "THE POTENTIAL"]
-       [:h3 "Open Source software and developers"]
+       [:h3 "Why open source software is the future of hiring"]
        (for [i info]
          ^{:key i}
          [:p i])

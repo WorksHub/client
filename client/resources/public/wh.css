@@ -11052,9 +11052,8 @@ h3 {
     margin-top: -120px; } }
 
 .homepage__animated-hr {
-  width: 100px;
   height: 125px;
-  margin: 60px 0 90px 0;
+  margin: 60px 0 30px 0;
   width: 100%;
   position: relative; }
   @media screen and (max-width: 1007px) {
@@ -11071,10 +11070,22 @@ h3 {
   z-index: 2; }
 
 .homepage__animated-hr__rocket {
-  left: 20px;
   top: 40px; }
   .homepage__animated-hr__rocket img {
-    width: 200px; }
+    width: 200px;
+    min-width: 200px; }
+
+.homepage__animated-hr__rocket--start {
+  left: 20px; }
+
+.homepage__animated-hr__rocket--mid {
+  left: calc(50% - ((200px / 2)) - 30px); }
+
+.homepage__animated-hr__rocket--end {
+  left: calc(100% - (200px + 20px)); }
+
+.homepage__animated-hr__globe-wrapper {
+  margin: 60px 0 90px 0; }
 
 .homepage__animated-hr__globe {
   left: calc(50% - 75px);
@@ -11350,6 +11361,22 @@ h3 {
   height: 68px;
   left: 3982px;
   top: 41px; }
+
+/* ----- */
+.homepage .how-it-works__stats,
+.homepage .how-it-works__benefits {
+  padding: 0; }
+  .homepage .how-it-works__stats p,
+  .homepage .how-it-works__benefits p {
+    font-family: "Inconsolata", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 0;
+    color: #434E55; }
+    @media screen and (max-width: 1007px) {
+      .homepage .how-it-works__stats p,
+      .homepage .how-it-works__benefits p {
+        line-height: 26px; } }
 
 .embed-responsive {
   position: relative;
@@ -15195,7 +15222,7 @@ h3 {
 
 .how-it-works__stats__inner {
   display: flex;
-  padding: 0 40px;
+  padding: 0 0 0 40px;
   margin: 0 auto;
   max-width: 1084px; }
   .how-it-works__stats__inner .button.button--github {
@@ -15236,6 +15263,11 @@ h3 {
   align-items: center;
   background-repeat: no-repeat;
   position: absolute; }
+  .how-it-works__stats__ball .icon {
+    fill: #434e55;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 18px; }
   .how-it-works__stats__ball strong {
     font-family: "Inconsolata", sans-serif;
     font-size: 36px;
@@ -15307,8 +15339,9 @@ h3 {
 @media screen and (min-width: 1008px) {
   .how-it-works__stats__info {
     width: 40%;
-    padding-right: 40px;
-    margin-left: 8px; } }
+    margin-left: 28px; }
+    .how-it-works__stats__info .button {
+      margin-top: 18px; } }
 
 .how-it-works__stats--candidate .how-it-works__stats__ball--orange strong {
   font-size: 60px;
