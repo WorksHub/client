@@ -71,7 +71,7 @@
      [link [:button.button.button--large
             {:id "auth-popup__create-account"}
             [icon "profile" :class "button__icon"] "Create Account"]
-      :register :step :email
+      :get-started
       :on-click (interop/do
                   #_(interop/analytics-track)
                   (interop/hide-auth-popup))]

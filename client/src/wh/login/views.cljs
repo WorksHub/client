@@ -62,7 +62,7 @@
            [icon "magic-link" :class "button__icon button__icon--light"]
            "Login with email"] :login :step :email]]
    [:div.container
-    [link "Create Account" :register :step :email :class "a--underlined"]]
+    [link "Create Account" :get-started :class "a--underlined"]]
    [:img.sparkle {:src "/images/sparkle.svg"
                   :alt "Background sparkle"}]])
 
