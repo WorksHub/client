@@ -15,6 +15,7 @@
     [wh.company.edit.db :as edit-db]
     [wh.company.edit.events :as edit-events]
     [wh.company.edit.views :as edit]
+    [wh.company.events :as events]
     [wh.company.payment.db :as payment-db]
     [wh.company.payment.views :as payment]
     [wh.company.register.db :as register-db]

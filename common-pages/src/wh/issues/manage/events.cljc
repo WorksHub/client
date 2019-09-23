@@ -55,7 +55,8 @@
      ::update-issues-success
      db/default-interceptors
      (fn [_ _]
-       {:navigate [:manage-issues]})))
+       {:navigate [:manage-issues]
+        :dispatch [:company/refresh-tasks]})))
 
 (reg-event-fx
   ::save-changes

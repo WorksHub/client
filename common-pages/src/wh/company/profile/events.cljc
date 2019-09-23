@@ -380,8 +380,9 @@
   profile-interceptors
   (fn [{db :db} [resp]]
     (let [company (get-in resp [:data :update_company])]
-      {:dispatch [:graphql/update-entry :company {:slug (:slug company)}
-                  :merge {:company company}]
+      {:dispatch-n [[:graphql/update-entry :company {:slug (:slug company)}
+                     :merge {:company company}]
+                    [:company/refresh-tasks]]
        :db (assoc db ::profile/updating? false)})))
 
 (reg-event-db
@@ -557,8 +558,9 @@
   profile-interceptors
   (fn [{db :db} [slug resp]]
     (let [enabled? (get-in resp [:data :publish_profile :profile_enabled])]
-      {:dispatch [:graphql/update-entry :company {:slug slug}
-                  :merge {:company {:profile-enabled enabled?}}]
+      {:dispatch-n [[:graphql/update-entry :company {:slug slug}
+                     :merge {:company {:profile-enabled enabled?}}]
+                    [:company/refresh-tasks]]
        :db (assoc db ::profile/publishing? false)})))
 
 (reg-event-fx

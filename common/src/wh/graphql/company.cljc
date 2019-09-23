@@ -46,6 +46,14 @@
                       :variable/type :ID!}]
    :venia/queries [[:delete_integration {:integration :$integration :company_id :$company_id}]]})
 
+(def set-task-as-read-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "setTaskAsRead"}
+   :venia/variables [{:variable/name "task"
+                      :variable/type :company_onboarding_task_id!}]
+   :venia/queries [[:setTaskAsRead {:task :$task}
+                    [[:onboardingTasks [:id :state]]]]]})
+
 (def default-company-fields
   [:id :slug :name :manager :descriptionHtml
    :logo :package :vertical :autoApprove :permissions

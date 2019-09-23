@@ -5,6 +5,7 @@
     [clojure.set :refer [rename-keys]]
     [re-frame.core :refer [dispatch dispatch-sync]]
     [wh.common.data :as data]
+    [wh.common.data.company-profile :as company-data]
     [wh.common.text :refer [pluralize]]
     [wh.company.dashboard.events :as events]
     [wh.company.dashboard.subs :as subs]
@@ -135,7 +136,7 @@
 (defn job-stat [icon-name count & [hover-text]]
   [:div.company-job__stat
    (cond-> {:class (str "company-job__" icon-name)}
-     hover-text (assoc :title hover-text))
+           hover-text (assoc :title hover-text))
    [icon icon-name]
    [:div.company-job__stat-number count]])
 
@@ -174,8 +175,8 @@
        [:div.company-job__posted "Posted on " first-published]
        [:div.company-job__posted " "])
      (into
-      [:ul.company-job__tags.tags]
-      (map (fn [tag] [:li tag]) tags))
+       [:ul.company-job__tags.tags]
+       (map (fn [tag] [:li tag]) tags))
      (when (pos? matching-users)
        [:div.company-job__candidate-info
         "We have " matching-users " active " (pluralize matching-users "member") " with 75%+ match rates for this role. "
@@ -366,19 +367,22 @@
        "Show more..."])]])
 
 (defn company-onboarding-action
-  [{:keys [number title sub-title time path id]}]
-  (let [[handler & {:as link-options}] path]
+  [{:keys [number path id task]}]
+  (let [{:keys [title subtitle time]} (get company-data/company-onboarding-tasks task)
+        [handler & {:as link-options}] path]
     [:li.company-onboarding__action
      [link {:text [:button.button
                    {:id id}
                    [:div.is-flex
                     [:div.company-onboarding__action__content
                      [:div (str number ". " title) [:i.is-hidden-mobile (str "(" time " minutes)")]]
-                     [:small sub-title [:i.is-hidden-desktop (str "(" time " minutes)")]]]
+                     [:small subtitle [:i.is-hidden-desktop (str "(" time " minutes)")]]]
                     [icon "arrow-right" :class "is-hidden-mobile"]]]
             :handler handler
             :options (assoc link-options
-                            :on-click #(dispatch [::events/add-company-onboarding-msg :dashboard_welcome]))}]]))
+                            :on-click #(do
+                                         (dispatch [::events/add-company-onboarding-msg :dashboard_welcome])
+                                         (dispatch [:company/set-task-as-read task])))}]]))
 
 (defn company-onboarding
   []
@@ -391,30 +395,22 @@
      [company-onboarding-action
       {:number 1
        :id "company-onboarding--company-profile"
-       :time 2
-       :title "Complete your company profile"
-       :sub-title "Sell your company to our community. What are you building and how?"
+       :task :complete_profile
        :path [:company :slug (some-> (<sub [:wh.user.subs/company]) :slug)]}]
      [company-onboarding-action
       {:number 2
        :id "company-onboarding--new-role"
-       :time 4
-       :title "Advertise a new role"
-       :sub-title "Tell us what you're looking for and we can start looking right away!"
+       :task :add_job
        :path [:create-job]}]
      [company-onboarding-action
       {:number 3
        :id "company-onboarding--integrations"
-       :time 2
-       :title "Connect your integrations"
-       :sub-title "WorksHub can integrate with popular services such as Greenhouse and Slack"
+       :task :add_integration
        :path [:edit-company]}]
      [company-onboarding-action
       {:number 4
        :id "company-onboarding--issues"
-       :time 2
-       :title "Get started with Open Source Issues"
-       :sub-title "Scope talent by using issues from your open source projects"
+       :task :add_issue
        :path [:company-issues]}]]]])
 
 (defn loading

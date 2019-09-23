@@ -94,17 +94,29 @@
          (fn [db _]
            (not (contains? routes/no-menu-pages (::db/page db)))))
 
-(defn menu-hidden-due-to-special-circumstances?
+(defn showing-company-onboarding-dashboard-welcome?
   [db]
   (and (= :company-dashboard (::db/page db))
        (user/company? db)
        (user/company-onboarding-msg-not-seen? db :dashboard_welcome)))
+
+(defn menu-hidden-due-to-special-circumstances?
+  [db]
+  (showing-company-onboarding-dashboard-welcome? db))
 
 (reg-sub ::show-left-menu?
          (fn [db _]
            (and (db/logged-in? db)
                 (not (contains? routes/no-menu-pages (::db/page db)))
                 (not (menu-hidden-due-to-special-circumstances? db)))))
+
+(defn search-hidden-due-to-special-circumstances?
+  [db]
+  (showing-company-onboarding-dashboard-welcome? db))
+
+(reg-sub ::hide-navbar-search?
+         (fn [db _]
+           (search-hidden-due-to-special-circumstances? db)))
 
 (reg-sub ::show-footer?
          (fn [db _]

@@ -18,6 +18,7 @@
 (def available-blog-verticals (set ordered-blog-verticals))
 
 (def default-vertical "functional")
+(def company-vertical "www")
 
 (def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/take-off-demo")
 (def demo-link             "https://app.hubspot.com/meetings/workshub/product-demo")

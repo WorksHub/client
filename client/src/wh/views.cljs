@@ -44,35 +44,37 @@
 
     (if (<sub [::subs/version-mismatch])
       [version-mismatch]
-      [:div.main-panel
-       [navbar/top-bar
-        {:env               (<sub [::subs/env])
-         :vertical          (<sub [::subs/vertical])
-         :logged-in?        (<sub [:user/logged-in?])
-         :show-navbar-menu? (<sub [::subs/show-navbar-menu?])
-         :query-params      query-params
-         :page              page
-         :user-type         user-type
-         :restricted-links  restricted-links}]
-       (when (<sub [::subs/show-left-menu?])
-         [menu/menu
-          user-type
-          user-sub-db
-          page
-          restricted-links
-          (:menu query-params)])
-       [:div.page-container
-        {:class (when-not (<sub [::subs/show-left-menu?]) "page-container--no-menu")}
-        (when (<sub [::error-subs/message])
-          [global-status-box])
-        (if (<sub [::subs/loading?])
-          [:div.main-wrapper
-           [:div.loader-wrapper
-            [loader]]]
-          [current-page])
-        (when (<sub [::subs/show-footer?])
-          [footer/footer (<sub [::subs/vertical])])]
-       [overlays]])))
+      (do
+        [:div.main-panel
+         [navbar/top-bar
+          {:env               (<sub [::subs/env])
+           :vertical          (<sub [::subs/vertical])
+           :logged-in?        (<sub [:user/logged-in?])
+           :show-navbar-menu? (<sub [::subs/show-navbar-menu?])
+           :hide-search?      (<sub [::subs/hide-navbar-search?])
+           :query-params      query-params
+           :page              page
+           :user-type         user-type
+           :restricted-links  restricted-links}]
+         (when (<sub [::subs/show-left-menu?])
+           [menu/menu
+            user-type
+            user-sub-db
+            page
+            restricted-links
+            (:menu query-params)])
+         [:div.page-container
+          {:class (when-not (<sub [::subs/show-left-menu?]) "page-container--no-menu")}
+          (when (<sub [::error-subs/message])
+            [global-status-box])
+          (if (<sub [::subs/loading?])
+            [:div.main-wrapper
+             [:div.loader-wrapper
+              [loader]]]
+            [current-page])
+          (when (<sub [::subs/show-footer?])
+            [footer/footer (<sub [::subs/vertical])])]
+         [overlays]]))))
 
 (defonce remove-all-bsl-locks-when-app-loads
   (do

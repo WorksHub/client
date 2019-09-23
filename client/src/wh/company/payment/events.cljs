@@ -190,7 +190,8 @@
   ::publish-job-success
   db/default-interceptors
   (fn [{db :db} [_resp]]
-    {:navigate [:payment-setup
+    {:dispatch [:company/refresh-tasks]
+     :navigate [:payment-setup
                 :query-params (::db/query-params db)
                 :params {:step :pay-success}]}))
 

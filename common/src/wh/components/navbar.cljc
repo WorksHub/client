@@ -3,11 +3,15 @@
     #?(:cljs [re-frame.core :refer [dispatch dispatch-sync]])
     #?(:cljs [wh.pages.core :as pages])
     [clojure.string :as str]
+    [wh.common.data.company-profile :as company-data]
     [wh.common.url :as url]
     [wh.components.common :refer [link]]
     [wh.components.icons :refer [icon]]
     [wh.components.menu :as menu]
     [wh.interop :as interop]
+    [wh.re-frame :as r]
+    [wh.re-frame.events :refer [dispatch]]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
     [wh.util :as util]
     [wh.verticals :as verticals]))
@@ -121,7 +125,7 @@
      [id]
      (pages/navigate [:jobsboard :query-params {:search (.-value (.getElementById js/document id))}])))
 
-(defn search [default-value query-params]
+(defn search [default-value query-params tasks-open?]
   [:div.navbar__search
    [:form.navbar-item.is-hidden-mobile
     (merge {:method :get
@@ -129,20 +133,23 @@
            #?(:cljs {:on-submit (fn [e]
                                   (.preventDefault e)
                                   (submit-search "navbar__search-input"))} ))
-    [:input.search {:id "navbar__search-input"
-                    :name "search"
-                    :type "text"
-                    :autoComplete "off"
-                    :defaultValue default-value
-                    :placeholder "Search for jobs..."}]
+    [:input.search (merge {:id "navbar__search-input"
+                           :name "search"
+                           :type "text"
+                           :autoComplete "off"
+                           :defaultValue default-value
+                           :placeholder "Search for jobs..."}
+                          #?(:cljs {:on-change #(reset! tasks-open? false)}))]
     (when default-value
       [:a.a--underlined.clear-search
        (merge {:id "navbar__clear-search-link"
                :href (routes/path :jobsboard)}
               #?(:cljs {:on-click #(set! (.-value (.getElementById js/document "navbar__search-input")))}))
        "Clear search"])
-    [:button.search-button {:id "navbar__search-btn"
-                            :aria-label "Search button"} [icon "search"]]]
+    [:button.search-button (merge {:id "navbar__search-btn"
+                                   :aria-label "Search button"}
+                                  #?(:cljs {:on-click #(reset! tasks-open? false)}))
+     [icon "search"]]]
    [:div.navbar-item.is-hidden-desktop
     (interop/multiple-on-click (interop/set-is-open-on-click mobile-search-id true)
                                (interop/set-is-open-on-click menu/logged-in-menu-id false)
@@ -179,8 +186,64 @@
       :defaultValue default-value
       :placeholder "Tap here to type..."}]]])
 
+(defn task->path
+  [task]
+  (case task
+    :complete_profile [:company :slug (some-> (<sub [:user/company]) :slug)]
+    :add_job          [:create-job]
+    :add_integration  [:edit-company]
+    :add_issue        [:company-issues]))
+
+(defn task
+  [id {:keys [title subtitle] :as task} tasks-open?]
+  (let [state (<sub [:user/company-onboarding-task-state id])
+        [handler & {:as link-options}] (task->path id)]
+    [:div
+     {:key id
+      :class (util/merge-classes "navbar__task"
+                                 (when state (str "navbar__task--" (name state))))}
+     [link {:text [:div
+                   [:div.is-flex
+                    [icon (:icon task)]
+                    [:div.title title
+                     [icon "cutout-tick"]]]
+                   [:p subtitle]]
+            :handler handler
+            :options (assoc link-options
+                            :on-click #(do (reset! tasks-open? false)
+                                           (dispatch [:company/set-task-as-read id])))}]]))
+
+(defn task-notifications
+  [tasks-open?]
+  (let [unfinished-tasks-count (->> company-data/company-onboarding-tasks
+                                    (keys)
+                                    (remove #(= :complete (<sub [:user/company-onboarding-task-state %])))
+                                    (count))]
+    [:div.navbar__tasks
+     [icon "codi"
+      :class #?(:cljs "navbar__tasks--clickable")
+      :on-click #?(:cljs #(do
+                            (when (swap! tasks-open? not)
+                              (dispatch [:company/refresh-tasks]))))]
+     #?(:cljs (when (pos? unfinished-tasks-count)
+                [:small unfinished-tasks-count]))
+     (when @tasks-open?
+       [:div.navbar__tasks__inner
+        [:div.navbar-overlay__inner
+         [:div.navbar-overlay__bg]
+         [:div.navbar-overlay__content
+          [:div.navbar__tasks-header
+           "Get more out of WorksHub"]
+          (doall
+            (for [[id t] company-data/company-onboarding-tasks]
+              [:div.navbar__task-container
+               {:key id}
+               [task id t tasks-open?]]))]
+         [:img {:src "/images/homepage/triangle2.svg"
+                :alt ""}]]])]))
+
 (defn navbar-end
-  [{:keys [logged-in? query-params vertical show-navbar-menu?]}]
+  [{:keys [logged-in? query-params vertical show-navbar-menu? hide-search? tasks-open? show-tasks?]}]
   (let [el-id (if logged-in? menu/logged-in-menu-id logged-out-menu-id)
         menu-roll-down [:div.navbar-item.is-hidden-desktop.navbar-item--menu
                         (interop/multiple-on-click (interop/toggle-is-open-on-click el-id)
@@ -188,10 +251,13 @@
                         [:span "MENU"]]]
     (if logged-in?
       [:div.navbar-search-end-wrapper
-       [:div.navbar-search-end.is-hidden-mobile
-        [search (:search query-params) query-params]]
+       (when-not hide-search?
+         [:div.navbar-search-end.is-hidden-mobile
+          (when show-tasks?
+            [task-notifications tasks-open?])
+          [search (:search query-params) query-params tasks-open?]])
        [:div.navbar-end.is-hidden-desktop
-        [search (:search query-params) query-params]
+        (when-not hide-search? [search (:search query-params) query-params tasks-open?])
         (when show-navbar-menu? menu-roll-down)]]
       [:div.navbar-end
        [:a.navbar-item.navbar-item--login
@@ -249,32 +315,40 @@
       {:href routes/company-landing-page} "For Employers"]]))
 
 (defn top-bar
-  [{:keys [env vertical logged-in? query-params page] :as args}]
-  (let [content? (not (contains? routes/no-menu-pages page))
-        promo-banner? (and (show-promo-banner? page vertical)
-                           (not logged-in?))]
-    [:nav {:class (util/merge-classes "navbar"
-                                      (when promo-banner? "navbar--has-promo-banner"))
-           :id         "wh-navbar"
-           :role       "navigation"
-           :aria-label "main navigation"}
-     (when promo-banner?
-       [:div.navbar__promo-banner
-        {:id "promo-banner"}
-        [link [:div "Start hiring for free on our 10-day trial!"] :register-company]
-        [:script {:type "text/javascript"}
-         "initPromoBanner(\"promo-banner\")"]])
-     [:div.navbar__content
-      [:div.navbar-item.navbar__logo-container
-       [:svg.icon.navbar__logo [icon vertical]]
-       (logo-title vertical env)]
-      (when content?
-        [navbar-content args])
-      (when content?
-        [navbar-end args])
-      (when (and content? (not logged-in?))
-        [mobile-logged-out-menu args])
-      (when content?
-        [candidates-menu args])
-      (when content?
-        [mobile-search (:search query-params) query-params])]]))
+  [_args]
+  (let [tasks-open? (r/atom false)]
+    (fn [{:keys [env vertical logged-in? query-params page user-type] :as args}]
+      (let [args (assoc args
+                        :tasks-open? tasks-open?
+                        :show-tasks? (= user-type "company"))
+            content? (not (contains? routes/no-menu-pages page))
+            promo-banner? (and (show-promo-banner? page vertical)
+                               (not logged-in?))]
+        [:nav {:class (util/merge-classes "navbar"
+                                          (when promo-banner? "navbar--has-promo-banner"))
+               :id         "wh-navbar"
+               :role       "navigation"
+               :aria-label "main navigation"}
+         (when promo-banner?
+           [:div.navbar__promo-banner
+            {:id "promo-banner"}
+            [link [:div "Start hiring for free on our 10-day trial!"] :register-company]
+            [:script {:type "text/javascript"}
+             "initPromoBanner(\"promo-banner\")"]])
+         [:div.navbar__content
+          [:div.navbar-item.navbar__logo-container
+           [:svg.icon.navbar__logo [icon vertical]]
+           (logo-title vertical env)]
+          (when content?
+            [navbar-content args])
+          (when content?
+            [navbar-end args])
+          (when (and content? (not logged-in?))
+            [mobile-logged-out-menu args])
+          (when content?
+            [candidates-menu args])
+          (when content?
+            [mobile-search (:search query-params) query-params])
+          (when @tasks-open?
+            [:div.navbar__fullscreen-intercept.is-hidden-mobile
+             {:on-click #(reset! tasks-open? false)}])]]))))

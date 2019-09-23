@@ -28,6 +28,12 @@
 (s/def :wh.company/onboarding-msg #{:dashboard_welcome})
 (s/def :wh.company/onboarding-msgs (s/coll-of :wh.company/onboarding-msg :distinct true))
 
+(s/def :wh.company.onboarding-task/id #{:complete_profile :add_job :add_integration :add_issue})
+(s/def :wh.company.onboarding-task/state #{:read :complete})
+(s/def :wh.company/onboarding-task (s/keys :req-un [:wh.company.onboarding-task/id
+                                                    :wh.company.onboarding-task/state]))
+(s/def :wh.company/onboarding-tasks (s/coll-of :wh.company/onboarding-task))
+
 (s/def :wh.company.tech-scales/testing        (s/double-in :min 0.0 :max 1.0))
 (s/def :wh.company.tech-scales/ops            (s/double-in :min 0.0 :max 1.0))
 (s/def :wh.company.tech-scales/time-to-deploy (s/double-in :min 0.0 :max 1.0))

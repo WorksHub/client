@@ -73,6 +73,19 @@
   (fn [[logged-in? approved?] _]
     (not (and logged-in? approved?))))
 
+(reg-sub
+  :user/company
+  (fn [db _]
+    (get-in db [:wh.user.db/sub-db :wh.user.db/company])))
+
+(reg-sub
+  :user/company-onboarding-task-state
+  (fn [db [_ id]]
+    (some (fn [m] (when (= id (:id m)) (:state m)))
+          (get-in db [:wh.user.db/sub-db :wh.user.db/company :onboarding-tasks]))))
+
+
+
 ;; MISC
 
 (reg-sub

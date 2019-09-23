@@ -3,6 +3,7 @@
     [cljs.loader :as loader]
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
     [reagent.core :as reagent]
+    [wh.company.events :as _company_events]
     [wh.company.listing.db :as listing-db]
     [wh.company.listing.events :as listing-events]
     [wh.company.listing.views :as listing]

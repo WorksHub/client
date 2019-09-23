@@ -23,7 +23,7 @@
                    :depends-on [:common :user]}
  :issues          {:entries    #{wh.issues.core}
                    :output-to  "target/resources/public/js/issues.js"
-                   :depends-on [:common :user]}
+                   :depends-on [:common :user :venia]}
  :logged-in       {:entries    #{wh.logged-in.core}
                    :output-to  "target/resources/public/js/logged-in.js"
                    :depends-on [:common :user :venia]}

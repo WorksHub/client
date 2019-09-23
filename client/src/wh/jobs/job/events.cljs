@@ -226,9 +226,16 @@
              :variables  {:update_job
                           (cond-> {:id job-id
                                    :published true}
-                            (user/admin? db) (assoc :approved true))}
-             :on-success success
+                                  (user/admin? db) (assoc :approved true))}
+             :on-success [::publish-job-success-internal success]
              :on-failure [::publish-job-failure-internal job-id failure retry]}})
+
+(reg-event-fx
+  ::publish-job-success-internal
+  db/default-interceptors
+  (fn [{db :db} [success-event resp]]
+    {:dispatch-n [(conj success-event resp)
+                  [:company/refresh-tasks]]}))
 
 (reg-event-fx
   ::publish-job-failure-internal
