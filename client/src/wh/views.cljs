@@ -4,7 +4,6 @@
     [clojure.walk :as walk]
     [re-frame.core :refer [dispatch dispatch-sync]]
     [reagent.core :as r]
-    [wh.components.common :refer [link]]
     [wh.components.error.subs :as error-subs]
     [wh.components.error.views :refer [global-status-box]]
     [wh.components.footer :as footer]
@@ -12,7 +11,6 @@
     [wh.components.loader :refer [loader]]
     [wh.components.menu :as menu]
     [wh.components.navbar :as navbar]
-    [wh.events :as events]
     [wh.pages.router :refer [current-page]]
     [wh.subs :as subs :refer [<sub]]))
 
@@ -50,7 +48,8 @@
           {:env               (<sub [::subs/env])
            :vertical          (<sub [::subs/vertical])
            :logged-in?        (<sub [:user/logged-in?])
-           :show-navbar-menu? (<sub [::subs/show-navbar-menu?])
+           :show-navbar-menu? (and (<sub [::subs/show-navbar-menu?])
+                                   (<sub [::subs/show-left-menu?]))
            :hide-search?      (<sub [::subs/hide-navbar-search?])
            :query-params      query-params
            :page              page

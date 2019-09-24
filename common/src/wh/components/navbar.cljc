@@ -3,11 +3,11 @@
     #?(:cljs [re-frame.core :refer [dispatch dispatch-sync]])
     #?(:cljs [wh.pages.core :as pages])
     [clojure.string :as str]
+    [wh.common.data :as data]
     [wh.common.data.company-profile :as company-data]
     [wh.common.url :as url]
     [wh.components.common :refer [link]]
     [wh.components.icons :refer [icon]]
-    [wh.components.menu :as menu]
     [wh.interop :as interop]
     [wh.re-frame :as r]
     [wh.re-frame.events :refer [dispatch]]
@@ -152,7 +152,7 @@
      [icon "search"]]]
    [:div.navbar-item.is-hidden-desktop
     (interop/multiple-on-click (interop/set-is-open-on-click mobile-search-id true)
-                               (interop/set-is-open-on-click menu/logged-in-menu-id false)
+                               (interop/set-is-open-on-click data/logged-in-menu-id false)
                                (interop/set-no-scroll-on-click mobile-search-id true))
     [:button.search-button
      {:id "navbar__search-btn"
@@ -211,44 +211,58 @@
             :handler handler
             :options (assoc link-options
                             :on-click #(do (reset! tasks-open? false)
+                                           #?(:cljs (js/setClass data/logged-in-menu-id "is-open" false))
+                                           #?(:cljs (js/disableNoScroll))
                                            (dispatch [:company/set-task-as-read id])))}]]))
+
+(defn unfinished-task-count
+  []
+  (->> company-data/company-onboarding-tasks
+       (keys)
+       (remove #(= :complete (<sub [:user/company-onboarding-task-state %])))
+       (count)))
+
+(defn task-notifications-content
+  [tasks-open?]
+  [:div.navbar-overlay__content
+   [:div.navbar__tasks-header
+    "Get more out of WorksHub"]
+   (doall
+     (for [[id t] company-data/company-onboarding-tasks]
+       [:div.navbar__task-container
+        {:key id}
+        [task id t tasks-open?]]))])
 
 (defn task-notifications
   [tasks-open?]
-  (let [unfinished-tasks-count (->> company-data/company-onboarding-tasks
-                                    (keys)
-                                    (remove #(= :complete (<sub [:user/company-onboarding-task-state %])))
-                                    (count))]
+  (let [utc (unfinished-task-count)]
     [:div.navbar__tasks
      [icon "codi"
       :class #?(:cljs "navbar__tasks--clickable")
       :on-click #?(:cljs #(do
                             (when (swap! tasks-open? not)
                               (dispatch [:company/refresh-tasks]))))]
-     #?(:cljs (when (pos? unfinished-tasks-count)
-                [:small unfinished-tasks-count]))
+     #?(:cljs (when (pos? utc)
+                [:small.navbar__unfinished-task-count utc]))
      (when @tasks-open?
        [:div.navbar__tasks__inner
         [:div.navbar-overlay__inner
          [:div.navbar-overlay__bg]
-         [:div.navbar-overlay__content
-          [:div.navbar__tasks-header
-           "Get more out of WorksHub"]
-          (doall
-            (for [[id t] company-data/company-onboarding-tasks]
-              [:div.navbar__task-container
-               {:key id}
-               [task id t tasks-open?]]))]
+         [task-notifications-content tasks-open?]
          [:img {:src "/images/homepage/triangle2.svg"
                 :alt ""}]]])]))
 
 (defn navbar-end
   [{:keys [logged-in? query-params vertical show-navbar-menu? hide-search? tasks-open? show-tasks?]}]
-  (let [el-id (if logged-in? menu/logged-in-menu-id logged-out-menu-id)
+  (let [el-id (if logged-in? data/logged-in-menu-id logged-out-menu-id)
         menu-roll-down [:div.navbar-item.is-hidden-desktop.navbar-item--menu
                         (interop/multiple-on-click (interop/toggle-is-open-on-click el-id)
                                                    (interop/toggle-no-scroll-on-click el-id))
-                        [:span "MENU"]]]
+                        [:span "MENU"]
+                        (when show-tasks?
+                          (let [utc (unfinished-task-count)]
+                            (when (pos? utc)
+                              [:small.navbar__unfinished-task-count utc])))]]
     (if logged-in?
       [:div.navbar-search-end-wrapper
        (when-not hide-search?

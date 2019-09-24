@@ -205,6 +205,10 @@ $engineers-menu-offset: 654px
     margin: 12px 0 !important
     color: white
     line-height: 14px
+    .navbar__unfinished-task-count
+      position: absolute
+      top: -6px
+      right: -4px
     span
       line-height: 25px
     &:hover
@@ -440,21 +444,24 @@ $engineers-menu-offset: 654px
     width: 32px
     height: 32px
     margin-right: 8px
-  small
+  .navbar__unfinished-task-count
     position: absolute
     top: 1px
     right: 2px
-    background-color: $red
-    padding: 4px 4px
-    color: white
-    line-height: 0.9
-    border-radius: 9px
-    font-size: 10px
-    font-weight: $font-medium
-    height: 18px
-    width: 18px
-    border: 1px solid white
-    text-align: center
+
+.navbar__unfinished-task-count
+  background-color: $red
+  padding: 4px 4px
+  color: white
+  line-height: 0.9
+  border-radius: 9px
+  font-size: 10px
+  font-weight: $font-medium
+  height: 18px
+  width: 18px
+  border: 1px solid white
+  text-align: center
+  font-family: $family-primary
 
 .navbar__tasks--clickable
   cursor: pointer
@@ -504,6 +511,8 @@ $tasks-width-desktop: 320px
     justify-content: space-between
     align-items: center
     width: 100%
+    +mobile
+      line-height: 12px
     .icon
       display: none
   p
@@ -530,6 +539,8 @@ $tasks-width-desktop: 320px
 
 .navbar__task-container + .navbar__task-container
   border-top: 1px solid $red
+.navbar__task-container:last-child
+  border-bottom: 1px solid $red
 
 .navbar__fullscreen-intercept
   position: fixed

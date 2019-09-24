@@ -23,6 +23,19 @@ function setClass(id, cls, on){
     }
 }
 
+/* Sets class on or off for all elements of given class */
+function setClassOnClass(c, cls, on){
+    var ds = document.getElementsByClassName(c);
+    for (var i = 0; i < ds.length; i++) {
+        if(on) {
+            ds[i].classList.add(cls);
+        }
+        else {
+            ds[i].classList.remove(cls);
+        }
+    }
+}
+
 /*--------------------------------------------------------------------------*/
 
 /* Toggles global "no scroll" mode with reference element by ID */

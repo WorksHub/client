@@ -660,6 +660,7 @@
     "company"
     [{:section "For You"
       :class   "for-you"
+      :show-notifications? true
       :items   [[[:company-dashboard :homepage] "dashboard" "Dashboard"]
                 [[:company [:slug (get-in user [:wh.user.db/company :slug])]]
                  "company" "Company Profile"]
@@ -757,3 +758,5 @@
 (defn www-hero-title
   [market]
   (str "Hire " market " using your open source code"))
+
+(def logged-in-menu-id "logged-in-menu")

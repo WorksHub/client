@@ -39,6 +39,11 @@
   #?(:clj (->jsfn "setClass" id "is-open" on?)
      :cljs (fn [_] (js/setClass id "is-open" on?))))
 
+(defn set-is-open-class
+  [class on?]
+  #?(:clj (->jsfn "setClassOnClass" class "is-open" on?)
+     :cljs (fn [_] (js/setClassOnClass class "is-open" on?))))
+
 (defn analytics-track
   [evt prps]
   #?(:clj (->jsfn "submitAnalyticsTrack" evt prps)
@@ -81,6 +86,10 @@
 (defn set-is-open-on-click
   [id on?]
   (on-click-fn (set-is-open id on?)))
+
+(defn set-is-open-class-on-click
+  [class on?]
+  (on-click-fn (set-is-open-class class on?)))
 
 (defn disable-no-scroll-on-click
   []

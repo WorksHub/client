@@ -45,6 +45,10 @@
       width: 100%
       flex: 0
       padding-bottom: 12px
+      ul
+        display: none
+      ul.is-open
+        display: initial
   header
     font-size: 12px
     font-weight: $font-semi-bold
@@ -92,5 +96,25 @@
         color: $red
       .icon
         fill: $red
-  &
-  &
+
+.menu__split-header
+  display: flex
+  header
+    flex: 1
+  header + header
+    margin-left: 2px
+
+.menu__notifications-header
+  background-color: $hover-red !important
+  &:hover, &.is-open
+    background-color: $red !important
+
+.menu
+  .navbar__task
+    .icon:not(.icon--cutout-tick)
+      margin-right: 12px
+
+.menu__section
+  display: none
+  &.is-open
+    display: initial
