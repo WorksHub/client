@@ -14512,6 +14512,10 @@ h3 {
   .manage-issues__control-panel__cta--left .button img {
     margin: 0; }
 
+.manage-issues__faqs h2 {
+  font-size: 14px;
+  line-height: 18px; }
+
 .repository-card__buttons .button + .button {
   margin-left: 12px; }
 
@@ -15904,21 +15908,21 @@ h3 {
   font-weight: bold;
   line-height: 22px;
   margin-bottom: 12px; }
+  .faq__question__title .icon {
+    margin-top: -6px;
+    margin-right: -10px;
+    margin-left: 10px;
+    fill: #6E7F89;
+    min-width: 32px;
+    min-height: 32px;
+    transition: transform 0.2s;
+    transform: rotate(0deg); }
+    .faq__question__title .icon.collapsed {
+      transform: rotate(180deg); }
   @media screen and (max-width: 1007px) {
     .faq__question__title {
       display: flex;
-      justify-content: space-between; }
-      .faq__question__title .icon {
-        margin-top: -6px;
-        margin-right: -10px;
-        margin-left: 10px;
-        fill: #6E7F89;
-        min-width: 32px;
-        min-height: 32px;
-        transition: transform 0.2s;
-        transform: rotate(0deg); }
-        .faq__question__title .icon.collapsed {
-          transform: rotate(180deg); } }
+      justify-content: space-between; } }
 
 .faq__question__answer {
   font-family: "Inconsolata", sans-serif;
@@ -15935,6 +15939,45 @@ h3 {
 .faq__intro,
 .faq__question {
   margin-bottom: 20px; }
+
+@media screen and (min-width: 1008px) {
+  .faq__rolldown {
+    display: none; } }
+
+.faq--mini .faq__question {
+  border-top: 1px solid #f4f5f8;
+  background-color: white;
+  padding: 8px 0px 0px 0px;
+  margin-bottom: 6px; }
+  .faq--mini .faq__question:last-child {
+    margin-bottom: 0px;
+    border-bottom: 1px solid #f4f5f8; }
+
+.faq--mini .faq__question__answer {
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+  line-height: 18px;
+  color: #6E7F89;
+  margin: 6px 0px 12px 0px; }
+  .faq--mini .faq__question__answer.collapsed {
+    max-height: 0px; }
+
+.faq--mini .faq__question__title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.2; }
+
+.faq--mini .faq__column {
+  width: 100%; }
+
+.faq--mini .faq__rolldown {
+  display: inline-flex; }
+  .faq--mini .faq__rolldown .icon {
+    min-width: 24px;
+    min-height: 24px; }
 
 .get-started {
   padding-top: 108px;

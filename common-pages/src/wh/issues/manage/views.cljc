@@ -3,8 +3,10 @@
     #?(:cljs [wh.components.forms.views :as form])
     #?(:cljs [wh.components.github :as github])
     [clojure.string :as str]
+    [wh.common.data :as data]
     [wh.common.time :as time]
     [wh.components.common :refer [link img wrap-img]]
+    [wh.components.faq :as faq]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [issue->status]]
     [wh.components.pagination :as pagination]
@@ -120,6 +122,12 @@
         [:button.button.button--medium.button--inverted.button--lowercase.button--public
          "hello@works-hub.com"]]]]))
 
+(defn issues-faqs
+  []
+  [:section.split-content-section.manage-issues__faqs
+   [:h2 "FAQs"]
+   [faq/faq-mini (get data/how-it-works-questions :company)]])
+
 (defn page []
   #?(:cljs
      [:div.main.split-content
@@ -152,7 +160,8 @@
          {:href (routes/path :company-issues)}
          [icon "arrow-left"] "Back to Company Issues"]]]
       [:div.split-content__side
-       [control-panel]]]))
+       [control-panel]
+       [issues-faqs]]]))
 
 (defn issues-list []
   #?(:cljs

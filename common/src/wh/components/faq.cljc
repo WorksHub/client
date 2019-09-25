@@ -1,8 +1,8 @@
 (ns wh.components.faq
   (:require
     #?(:cljs [reagent.core :as r])
-    [wh.components.icons :refer [icon]]
-    [wh.components.common :refer [link]]))
+    [wh.components.common :refer [link]]
+    [wh.components.icons :refer [icon]]))
 
 (defn nth-question
   [questions n]
@@ -25,7 +25,7 @@
             [:div.faq__question__title
              {:on-click #(swap! collapsed? not)}
              (:title question)
-             [:div.is-hidden-desktop
+             [:div.faq__rolldown
               [icon "roll-down"
                :class (when @collapsed? "collapsed")]]]
             [:div.faq__question__answer
@@ -49,17 +49,26 @@
    [:div.faq__column.is-hidden-mobile
     [intro]
     (doall
-     (for [i (map (comp inc (partial * 2)) (range (/ (count questions) 2)))]
-       ^{:key (str key "question" i)}
-       [question i (nth-question questions i)]))]
+      (for [i (map (comp inc (partial * 2)) (range (/ (count questions) 2)))]
+        ^{:key (str key "question" i)}
+        [question i (nth-question questions i)]))]
    [:div.faq__column.is-hidden-mobile
     (doall
-     (for [i (map (partial * 2) (range (/ (count questions) 2)))]
-       ^{:key (str key "question" i)}
-       [question i (nth-question questions i)]))]
+      (for [i (map (partial * 2) (range (/ (count questions) 2)))]
+        ^{:key (str key "question" i)}
+        [question i (nth-question questions i)]))]
    [:div.faq__column.is-hidden-desktop
     [intro]
     (doall
-     (for [i (range (count questions))]
-       ^{:key (str key "question" i)}
-       [question i (nth-question questions i)]))]])
+      (for [i (range (count questions))]
+        ^{:key (str key "question" i)}
+        [question i (nth-question questions i)]))]])
+
+(defn faq-mini
+  [questions & [key]]
+  [:div.faq.faq--mini
+   [:div.faq__column
+    (doall
+      (for [i (range (count questions))]
+        ^{:key (str key "question" i)}
+        [question i (nth-question questions i)]))]])

@@ -53,20 +53,20 @@
   font-weight: bold
   line-height: 22px
   margin-bottom: 12px
+  .icon
+    margin-top: -6px
+    margin-right: -10px
+    margin-left: 10px
+    fill: $steel-gray
+    min-width: 32px
+    min-height: 32px
+    transition: transform 0.2s
+    transform: rotate(0deg)
+    &.collapsed
+      transform: rotate(180deg)
   +mobile
     display: flex
     justify-content: space-between
-    .icon
-      margin-top: -6px
-      margin-right: -10px
-      margin-left: 10px
-      fill: $steel-gray
-      min-width: 32px
-      min-height: 32px
-      transition: transform 0.2s
-      transform: rotate(0deg)
-      &.collapsed
-        transform: rotate(180deg)
 
 .faq__question__answer
   font-family: $family-secondary
@@ -83,3 +83,39 @@
 .faq__intro,
 .faq__question
   margin-bottom: 20px
+
+.faq__rolldown
+  +desktop
+    display: none
+
+.faq--mini
+  .faq__question
+    border-top: 1px solid $pale-gray
+    background-color: white
+    padding: 8px 0px 0px 0px
+    margin-bottom: 6px
+    &:last-child
+      margin-bottom: 0px
+      border-bottom: 1px solid $pale-gray
+  .faq__question__answer
+    font-size: 12px
+    font-family: $family-primary
+    line-height: 18px
+    color: $steel-gray
+    margin: 6px 0px 12px 0px
+    &.collapsed
+      max-height: 0px
+  .faq__question__title
+    display: flex
+    justify-content: space-between
+    font-size: 12px
+    font-weight: $font-medium
+    margin: 0
+    line-height: 1.2
+  .faq__column
+    width: 100%
+  .faq__rolldown
+    display: inline-flex
+    .icon
+      min-width: 24px
+      min-height: 24px
