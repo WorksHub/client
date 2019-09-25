@@ -46,22 +46,17 @@
 
 (defn admin-pod []
   (if (<sub [::subs/loading?])
-    [:div.admin-pod.skeleton.card
-     [:div.github-info
-      [:div.github-info__link
-       [:a.github-info__link__org]]]
+    [:div.admin-pod.skeleton.card.pod
      [:div
       [:div.manage-issues]]]
-    [:div.admin-pod.card
-     [:div.github-info
-      (for [org (<sub [::subs/github-orgs])]
-        [:div.github-info__link {:key org}
-         [:a.github-info__link__org.a--underlined {:href (str "https://www.github.com/" org)} org]
-         [icon "github"]])]
+    [:div.admin-pod.card.pod
+     [:h2 "Get started with Open Source Issues"]
+     [:p.is-flex "Your GitHub is integrated" [icon "cutout-tick"]]
+     [:p "All that’s left to do is select the repositories and issues you want to publish on WorksHub"]
      #?(:cljs [:div.github-info__manage
                (if (<sub [:user/company-connected-github?]) ;; TODO same as below
-                 [link "Manage Issues" :manage-issues
-                  :class "manage-issues button level-item"]
+                 [link [:button.button "Manage Issues"] :manage-issues
+                  :class "manage-issues level-item"]
                  [github/install-github-app])])]))
 
 (defn stats-ball
@@ -192,15 +187,15 @@
                                             (when (<sub [::subs/loading?]) "skeleton"))}
             (<sub [::subs/header])]
            [public-header]))
-       [:div.is-flex.issues__main__container
-        [:div.issues__main
+       [:div.is-flex.issues__main__container.split-content
+        [:div.issues__main.split-content__main
          (when (<sub [::subs/company-pod?])
            [company-pod "is-desktop"])
          [sorting-component]
          [issues-list]
          [pagination/pagination (<sub [::subs/current-page-number]) (<sub [::subs/pagination]) (<sub [::subs/page]) (<sub [::subs/query-params]) (<sub [::subs/page-params])]]
         [edit-issue/edit-issue]
-        [:div.issues__side
+        [:div.issues__side.split-content__side
          #?(:cljs
             (when (<sub [::subs/can-manage-issues?])
               [admin-pod]))

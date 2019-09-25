@@ -173,10 +173,11 @@
   ::fetch-repos-success
   manage-issues-interceptors
   (fn [{db :db} [{data :data}]]
-    (let [{:keys [github-repositories query-issues]} (cases/->kebab-case data)]
-      {:db (merge db {::manage/repos          (:repositories github-repositories)
+    (let [{:keys [github-repositories query-issues company]} (cases/->kebab-case data)]
+      {:db (merge db {::manage/repos                      (:repositories github-repositories)
                       ::manage/number-of-published-issues (-> query-issues :pagination :total)
-                      ::manage/syncing-repos? false})})))
+                      ::manage/syncing-repos?             false
+                      ::manage/company                    company})})))
 
 #?(:cljs
    (reg-event-fx

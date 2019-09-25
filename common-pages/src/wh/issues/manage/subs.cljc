@@ -152,3 +152,17 @@
   (fn [sync _]
     (when-let [tu (some->> (:time-updated sync) (tf/parse (tf/formatters :date-time)))]
       (< minutes-until-sync-stall (t/in-minutes (t/interval tu (t/now)))))))
+
+(reg-sub
+  ::slack-connected?
+  :<- [::company]
+  (fn [company [_]]
+    (when company
+      (get-in company [:integrations :slack :enabled] false))))
+
+;; TODO add 'publish all' button to repos page
+#_(reg-sub
+    ::has-unpublished-issues?
+    :<- [::sub-db]
+    (fn [sub-db [_ repo]]
+      true))

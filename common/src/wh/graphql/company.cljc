@@ -155,7 +155,9 @@
                       :variable/type :ID}
                      {:variable/name "published"
                       :variable/type :Boolean}]
-   :venia/queries   [[:github_repositories
+   :venia/queries   [[:company {:id :$id}
+                      [:id [:integrations [[:slack [:enabled]]]]]]
+                     [:github_repositories
                       [[:repositories
                         [:name :owner :owner_avatar :description :primary_language :stargazers :fork :open_issues_count]]]]
                      [:query_issues

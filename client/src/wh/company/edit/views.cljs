@@ -256,14 +256,14 @@
                         (not (<sub [:wh.user/can-use-integrations?])))
                {:on-click #(do (.preventDefault %)
                                (dispatch [::events/upgrade]))}))
-           [:img {:src "/images/company/greenhouse.svg"}]]])]
-      (when (and (not (<sub [:user/admin?]))
-                 (not (<sub [:user/company-connected-github?])))
-        [github/install-github-app
-         {:id "company-edit__integration--github"}])])
+           [:img {:src "/images/company/greenhouse.svg"}]]])
+       (when (and (not (<sub [:user/admin?]))
+                  (not (<sub [:user/company-connected-github?])))
+         [github/install-github-app
+          {:id "company-edit__integration--github"}])]])
    (when (<sub [::subs/some-integrations-connected?])
      (let [deleting (<sub [::subs/deleting-integration?])]
-       [:div
+       [:div.company-edit__connected-integrations
         [:h2 "Connected Integrations"]
         (when (<sub [::subs/slack-connected?])
           [:div.company-edit__connected-integration

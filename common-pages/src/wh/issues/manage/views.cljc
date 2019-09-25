@@ -60,17 +60,27 @@
    [:div.details
     [:div.repo-props
      [:ul.tags
-     (when-let [language primary-language]
-       [:li.tag language])]
+      (when-let [language primary-language]
+        [:li.tag language])]
      [:div.open-issues [icon "gh-issues" :tooltip "Open Issues"] open-issues-count]]
+    ;; TODO add 'publish all' button to repos page
     (if (pos? open-issues-count)
-      [link "Publish Issues" :manage-repository-issues :repo-name (:name repo) :owner owner
-       :class "button button--inverted btn__manage-issues"]
-      [:button.button.button--disabled
-       {:disabled true}
-       "Publish Issues"])
-
-    ]])
+      [:div.repository-card__buttons
+       [link "Manage" :manage-repository-issues :repo-name (:name repo) :owner owner
+        :class "button button--inverted btn__manage-issues"]
+       #_(let [can-publish-all? (<sub [::subs/has-unpublished-issues? repo])]
+           [:button.button
+            {:disabled (not can-publish-all?)
+             :on-click #(when can-publish-all?
+                          (dispatch [::events/publish-all repo]))}
+            "Publish All"])]
+      [:div.repository-card__buttons
+       [:button.button.button--disabled
+        {:disabled true}
+        "Manage"]
+       #_[:button.button.button--disabled
+          {:disabled true}
+          "Publish All"]])]])
 
 (defn repo-list []
   #?(:cljs
@@ -81,43 +91,68 @@
            [repo-card repo]]))]))
 
 (defn connect-gh-app-error []
-  #?(:cljs [:div.manage-issues-syncing-repo
-            [:p "Failed to connect WorksHub Github App, please try again"]
-            [github/install-github-app {}]]))
+  #?(:cljs
+     [:div.manage-issues-syncing-repo
+      [:p "Failed to connect WorksHub Github App, please try again"]
+      [github/install-github-app {}]]))
+
+(defn control-panel
+  []
+  #?(:cljs
+     [:section.split-content-section.manage-issues__control-panel
+      [:div.manage-issues__control-panel__cta
+       [:p "Can't see all your repositories?"]
+       [github/install-github-app {:label "Add repos on"
+                                   :class "button--large"}]]
+      (when (false? (<sub [::subs/slack-connected?]))
+        [:div.manage-issues__control-panel__cta.manage-issues__control-panel__cta--left
+         [:p "Would you like to get notifications?"]
+         [:a {:href (when-not (<sub [:user/admin?])
+                      (routes/path :oauth-slack))}
+          [:button.button.company-edit__integration
+           {:id "manage-issues__integration--slack"}
+           [:img {:src "/images/company/slack.svg"}]]]])
+      [:div.manage-issues__control-panel__cta
+       [:p "If you have any problems or questions along the way, please drop us an email"]
+       [:a {:href "mailto:hello@works-hub.com"
+            :target "_blank"
+            :rel "noopener"}
+        [:button.button.button--medium.button--inverted.button--lowercase.button--public
+         "hello@works-hub.com"]]]]))
 
 (defn page []
   #?(:cljs
-     [:div.main
-      [:h1 "Connected Repositories"]
-      [:div.spread-or-stack
+     [:div.main.split-content
+      [:div.split-content__main
+       [:h1 "Connected Repositories"]
+       [:div.spread-or-stack
+        (cond
+          (<sub [::subs/syncing-repos?])
+          [:h3 ""]
+
+          (pos? (<sub [::subs/open-issues-on-all-repos]))
+          [:h3.manage-issues__subheading "You have " [:span.bold-text (<sub [::subs/number-of-published-issues])]
+           " issues published on WorksHub."
+           (when (= 0 (<sub [::subs/number-of-published-issues]))
+             " Please select a repository and choose which issues to publish")]
+
+          :else
+          [:h3.manage-issues__subheading "There are no issues on selected repositories.
+               Please add other repositories with open issues so you can publish them on WorksHub."])]
        (cond
+         (<sub [::subs/connect-github-app-error?])
+         [connect-gh-app-error]
          (<sub [::subs/syncing-repos?])
-         [:h3 ""]
-
-         (pos? (<sub [::subs/open-issues-on-all-repos]))
-         [:h3.manage-issues__subheading "You have " [:span.bold-text (<sub [::subs/number-of-published-issues])]
-          " issues published on WorksHub."
-          (when (= 0 (<sub [::subs/number-of-published-issues]))
-            " Please select a repository and choose which issues to publish")]
-
+         [syncing-repos-overlay]
          :else
-         [:h3.manage-issues__subheading "There are no issues on selected repositories.
-               Please add other repositories with open issues so you can publish them on WorksHub."])
-
-       [:div.has-bottom-margin
-        [github/install-github-app {:label "Add repositories on"
-                                    :class "button--large"}]]]
-      (cond
-        (<sub [::subs/connect-github-app-error?])
-        [connect-gh-app-error]
-        (<sub [::subs/syncing-repos?])
-        [syncing-repos-overlay]
-        :else
-        [repo-list])
-      [:div.manage-issues-buttons
-       [:a.button.button.button--inverted.back
-        {:href (routes/path :company-issues)}
-        [icon "arrow-left"] "Back to Company Issues"]]]))
+         [repo-list])
+       "All done here?"
+       [:div.manage-issues-buttons
+        [:a.button.button.button--inverted.back
+         {:href (routes/path :company-issues)}
+         [icon "arrow-left"] "Back to Company Issues"]]]
+      [:div.split-content__side
+       [control-panel]]]))
 
 (defn issues-list []
   #?(:cljs

@@ -5301,6 +5301,10 @@ a.navbar-item,
   .button--black:hover {
     background-color: #3e3e3e !important; }
 
+.button--lowercase {
+  text-transform: lowercase;
+  font-size: 14px; }
+
 .button--disabled {
   background-color: white;
   color: #adadad;
@@ -5314,7 +5318,8 @@ a.navbar-item,
   text-align: left;
   min-width: 210px;
   height: 40px;
-  padding: 0 !important; }
+  padding: 0 !important;
+  display: flex !important; }
   .button--github span {
     padding-top: 1px; }
   .button--github div {
@@ -7946,7 +7951,7 @@ a.navbar-item,
   margin-top: 18px;
   margin-bottom: 20px; }
   .company-edit__integrations .button--github {
-    min-width: 123px; }
+    max-width: 300px; }
 
 .company-edit__integration {
   background-color: transparent;
@@ -7963,6 +7968,9 @@ a.navbar-item,
     height: 40px; }
   .company-edit__integration:hover {
     background-color: transparent !important; }
+
+.company-edit__connected-integrations {
+  margin-top: 12px; }
 
 .company-edit__connected-integration {
   margin-bottom: 12px; }
@@ -13013,12 +13021,10 @@ h3 {
       margin: 0 10%; } }
 
 @media screen and (max-width: 1007px) {
-  .issues__main,
   .issue__main {
     width: 100%; } }
 
 @media screen and (min-width: 1008px) {
-  .issues__main,
   .issue__main {
     width: 67%;
     margin-right: 12px;
@@ -13028,32 +13034,26 @@ h3 {
   .issues__main__container {
     flex-direction: column-reverse; } }
 
-.issues__side section,
 .issue__side section {
   padding: 7%; }
 
 @media screen and (max-width: 1007px) {
-  .issues__side,
   .issue__side {
     width: 100%; }
-    .issues__side .how-it-works-pod,
     .issue__side .how-it-works-pod {
       margin-bottom: 18px; } }
 
 @media screen and (min-width: 1008px) {
-  .issues__side,
   .issue__side {
     width: 33%;
     min-width: 246px;
     max-width: 350px; } }
 
 @media screen and (min-width: 1008px) {
-  .issues__side .card,
   .issue__side .card {
     padding: 7%; } }
 
 @media screen and (max-width: 1007px) {
-  .issues__side .card,
   .issue__side .card {
     padding: 18px; } }
 
@@ -13235,14 +13235,27 @@ h3 {
   margin-top: 5px; }
 
 .admin-pod {
-  display: flex; }
+  display: flex;
+  box-shadow: none; }
+  .admin-pod .icon {
+    width: 12px;
+    height: 12px; }
+  .admin-pod .is-flex {
+    align-items: center;
+    justify-content: space-between; }
+    @media screen and (max-width: 1007px) {
+      .admin-pod .is-flex {
+        flex-direction: row-reverse;
+        min-width: 180px; } }
+  .admin-pod p {
+    margin-top: 12px; }
   @media screen and (min-width: 1008px) {
     .admin-pod {
       flex-direction: column; } }
   @media screen and (max-width: 1007px) {
     .admin-pod {
-      flex-direction: row;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
       justify-content: space-between; } }
   .admin-pod.skeleton .github-info__link .icon {
     display: none; }
@@ -13260,9 +13273,8 @@ h3 {
     height: 30px;
     text-indent: -9999px; }
 
-@media screen and (max-width: 1007px) {
-  .manage-issues {
-    width: 100%; } }
+.manage-issues .button {
+  width: 100%; }
 
 @media screen and (min-width: 1008px) {
   .github-info {
@@ -13295,9 +13307,11 @@ h3 {
   .github-info__link .icon {
     margin-left: 12px; }
 
-@media screen and (min-width: 1008px) {
-  .github-info__manage {
-    margin-top: 18px; } }
+.github-info__manage {
+  margin-top: 18px; }
+  @media screen and (max-width: 1007px) {
+    .github-info__manage {
+      width: 100%; } }
 
 /* These were modelled on _job.sass. FIXME: factor out common patterns to a mixin? */
 .issue__main section {
@@ -13973,6 +13987,7 @@ h3 {
   background: white;
   display: flex;
   flex-direction: column;
+  margin-bottom: 18px;
   padding: 12px; }
   .manage-issues-syncing-issues .is-flex {
     align-items: center; }
@@ -14014,8 +14029,10 @@ h3 {
     text-align: right; }
 
 .manage-issues-buttons {
-  display: flex;
-  margin-top: 20px; }
+  display: flex; }
+  @media screen and (max-width: 1007px) {
+    .manage-issues-buttons {
+      margin-bottom: 18px; } }
   .manage-issues-buttons .button {
     flex-grow: 1; }
     .manage-issues-buttons .button.back {
@@ -14473,6 +14490,31 @@ h3 {
 .manage-issues__subheading {
   margin-right: 20px; }
 
+.manage-issues__control-panel__cta a {
+  display: block;
+  height: 40px; }
+
+@media screen and (max-width: 1007px) {
+  .manage-issues__control-panel__cta a + a {
+    margin-left: 12px; } }
+
+.manage-issues__control-panel__cta .button {
+  width: 100%; }
+
+.manage-issues__control-panel__cta p {
+  margin-bottom: 8px; }
+
+.manage-issues__control-panel__cta + .manage-issues__control-panel__cta {
+  margin-top: 18px; }
+
+.manage-issues__control-panel__cta--left .button {
+  width: unset; }
+  .manage-issues__control-panel__cta--left .button img {
+    margin: 0; }
+
+.repository-card__buttons .button + .button {
+  margin-left: 12px; }
+
 .landing-page .homepage__middle-content__container:last-of-type {
   padding-bottom: 28px; }
 
@@ -14490,10 +14532,12 @@ h3 {
       .landing-page .homepage__feature-ctas .button {
         margin: 0 10px; } }
 
-.landing__header__buttons .button {
-  width: 240px;
-  margin-right: 9px;
-  margin-bottom: 12px; }
+.landing__header__buttons {
+  display: flex; }
+  .landing__header__buttons .button {
+    width: 240px;
+    margin-right: 9px;
+    margin-bottom: 12px; }
 
 .homepage__benefits-list {
   display: grid;

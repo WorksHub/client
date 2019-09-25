@@ -1,5 +1,5 @@
 // TODO This is modeled after job page, extract into a common class main and side?
-.issues__main,
+//.issues__main,
 .issue__main
   +mobile
     width: 100%
@@ -12,7 +12,7 @@
   +mobile
     flex-direction: column-reverse
 
-.issues__side,
+//.issues__side,
 .issue__side
   section
     padding: 7%
@@ -29,7 +29,6 @@
       padding: 7%
     +mobile
       padding: 18px
-
 
 .issues__list__head
   margin-bottom: 6px
@@ -196,11 +195,23 @@
 
 .admin-pod
   display: flex
+  box-shadow: none
+  .icon
+    width: 12px
+    height: 12px
+  .is-flex
+    align-items: center
+    justify-content: space-between
+    +mobile
+      flex-direction: row-reverse
+      min-width: 180px
+  p
+     margin-top: 12px
   +desktop
     flex-direction: column
   +mobile
-    flex-direction: row
-    align-items: center
+    flex-direction: column
+    align-items: flex-start
     justify-content: space-between
   &.skeleton
     .github-info__link
@@ -218,7 +229,7 @@
       text-indent: -9999px
 
 .manage-issues
-  +mobile
+  .button
     width: 100%
 
 .github-info
@@ -250,8 +261,9 @@
     margin-left: 12px
 
 .github-info__manage
-  +desktop
-    margin-top: 18px
+  margin-top: 18px
+  +mobile
+    width: 100%
 
 /* These were modelled on _job.sass. FIXME: factor out common patterns to a mixin? */
 
@@ -849,6 +861,7 @@ $issue-sticky-hide-mobile-offset: 28px
   background: $white
   display: flex
   flex-direction: column
+  margin-bottom: 18px
   .is-flex
     align-items: center
     +mobile
@@ -889,7 +902,8 @@ $issue-sticky-hide-mobile-offset: 28px
 
 .manage-issues-buttons
   display: flex
-  margin-top: 20px
+  +mobile
+    margin-bottom: 18px
   .button
     flex-grow: 1
     &.back
@@ -1315,3 +1329,28 @@ $issue-sticky-hide-mobile-offset: 28px
 
 .manage-issues__subheading
   margin-right: 20px
+
+.manage-issues__control-panel__cta
+  a
+    display: block
+    height: 40px
+  +mobile
+    a + a
+      margin-left: 12px
+  .button
+    width: 100%
+  p
+    margin-bottom: 8px
+
+.manage-issues__control-panel__cta + .manage-issues__control-panel__cta
+  margin-top: 18px
+
+.manage-issues__control-panel__cta--left
+  .button
+    width: unset
+    img
+      margin: 0
+
+.repository-card__buttons
+  .button + .button
+    margin-left: 12px
