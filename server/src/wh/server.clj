@@ -8,13 +8,51 @@
     [ring.middleware.content-type :refer [wrap-content-type]]
     [ring.middleware.resource :refer [wrap-resource]]
     [ring.util.response :as resp]
+    [wh.components.auth-popup :as auth]
+    [wh.components.tracking-popup :as tracking]
     [wh.routes :as routes]
-    [wh.verticals :refer [vertical-config]]))
+    [wh.verticals :as verticals]))
 
 (def config
   {:api-server "https://works-hub-api.herokuapp.com"
    :vertical "functional"
    :google-maps-key "AIzaSyD7Ko7E0XrtzUzf0CxLv3xQcAxlbwqmu1E"})
+
+(defn inline-js
+  [page]
+  (cond-> []
+          (= :company page)
+          (conj "public/pswp/photoswipe.js"
+                "public/pswp/photoswipe-ui-default.js")
+          true
+          (conj "body-scroll-lock/bodyScrollLock.js")))
+
+(defn external-css
+  []
+  ["/pswp/photoswipe.css"
+   "/pswp/default-skin/default-skin.css"])
+
+(defn icons-to-load
+  [page]
+  (cond-> ["symbols/common.svg"]
+          (or (= :company page)
+              (= :companies page))
+          (conj "symbols/company_profile.svg")
+          (= :issues page)
+          (conj "symbols/issues.svg")))
+
+(defn ->html
+  [d]
+  (html/html
+    (clojure.walk/prewalk
+      (fn [x]
+        (if (and (vector? x) (fn? (first x)))
+          (let [component (apply (first x) (rest x))]
+            (if (fn? component)
+              (->html (apply component (rest x))) ; form-2
+              (->html component)))                ; form-1
+          x))
+      d)))
 
 (defn- load-public-js
   []
@@ -22,16 +60,28 @@
     (reduce #(str %1 (slurp (io/resource (.getName (clojure.java.io/file %2))))) "" files)))
 
 (html/deftemplate wh-index-template "index.html"
-                  [{:keys [app-db] :as ctx}]
+                  [{:keys [app-db page vertical] :as ctx}]
                   [:script#data-init] (html/content (pr-str app-db))
-                  [:script#google-maps] (html/content (format "window.googleMapsURL = 'https://maps.googleapis.com/maps/api/js?key=%s&libraries=places';"
-                                                              (:google-maps-key config)))
-                  [:script#body-scroll-lock] (html/content (slurp (io/resource "body-scroll-lock/bodyScrollLock.js")))
+                  [:script#google-maps] (html/content (format "window.googleMapsURL = 'https://maps.googleapis.com/maps/api/js?key=%s&libraries=places';" (:google-maps-key config)))
+                  [:script.inline-js]  (html/clone-for [filename (inline-js page)]
+                                                       (html/do->
+                                                         (html/content (slurp (io/resource filename)))
+                                                         (html/set-attr :id filename)))
+                  [:script.load-icons] (html/clone-for [filename (icons-to-load page)]
+                                                       (html/do->
+                                                         (html/content (format "loadSymbols(\"%s\");" filename))
+                                                         (html/set-attr :id (str "load-icons-" filename))))
                   [:script#public] (html/content (load-public-js))
                   [:script#public] (html/transform-content (html/replace-vars {:prefix ""}))
                   [:script#load-symbols-file-fn] (html/transform-content (html/replace-vars {:prefix ""}))
                   [:div#app-js] (html/content {:tag :script, :attrs {:type "text/javascript", :src "/js/wh.js"}})
-                  [:style#main-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href "/wh.css"}}))
+                  [:div#tracking-popup-container] (html/content (->html (tracking/popup)))
+                  [:div#auth-popup-container] (html/content (->html (auth/popup (verticals/config vertical :platform-name))))
+                  [:style#main-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href "/wh.css"}})
+                  [:link.external-css]  (html/clone-for [filename (external-css)]
+                                                        (html/set-attr :href filename
+                                                                       :rel "stylesheet"
+                                                                       :type "text/css")))
 
 (defn html-response
   [^String s]
