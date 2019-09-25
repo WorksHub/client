@@ -118,6 +118,14 @@
   (fn [{db :db} [_res]]))
 
 (reg-event-fx
+  ::fetch-company
+  (fn [{db :db} _]
+    {:graphql {:query      company-query
+               :variables  {:id (get-in db [::job/sub-db ::job/company-id])}
+               :on-success [::fetch-company-success]
+               :on-failure [::fetch-company-failure]}}))
+
+(reg-event-fx
   ::fetch-job-success
   db/default-interceptors
   (fn [{db :db} [res]]
@@ -128,12 +136,9 @@
                       ::job/preset-slug (::job/slug job)})] ;; the current job is now the preset one
       (merge
         {:db       db
-         :dispatch [::fetch-issues-and-analytics]}
-        (when (admin-or-job-owner? db)
-          {:graphql {:query      company-query
-                     :variables  {:id (::job/company-id job)}
-                     :on-success [::fetch-company-success]
-                     :on-failure [::fetch-company-failure]}})))))
+         :dispatch-n [[::fetch-issues-and-analytics]
+                      (when (admin-or-job-owner? db)
+                        [::fetch-company])]}))))
 
 (reg-event-fx
   ::fetch-company-success
@@ -550,6 +555,9 @@
      (if (not= requested-slug slug-in-db)
        [::fetch-job requested-slug]
        [::fetch-issues-and-analytics])
+     (when (and (= requested-slug slug-in-db)
+                (admin-or-job-owner? db))
+       [::fetch-company])
      (when (get-in db [::db/query-params "apply"])
        [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
      [::fetch-recommended-jobs requested-slug]
