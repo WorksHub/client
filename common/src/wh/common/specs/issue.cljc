@@ -10,7 +10,7 @@
     #?(:clj [wh.spec.user :as user])
     #?(:clj [wh.url :as url])
     [wh.common.specs.date]
-    [wh.common.specs.primitives :as p]
+    [wh.common.specs.primitives]
     [wh.common.specs.repo]
     [wh.components.pagination :as pagination]))
 
