@@ -149,8 +149,7 @@
                              "process"    :oauth-process}]
                   ["api/" [["graphql" :graphql]
                            ["graphql-schema" :graphql-schema]
-                           ["webhook/" {"mailchimp" :mailchimp-webhook
-                                        "github-app" :github-app-webhook}]
+                           ["webhook/" {"github-app" :github-app-webhook}]
                            ["analytics" :analytics]
                            ["login-as" :login-as]
                            ["logout" :logout]
