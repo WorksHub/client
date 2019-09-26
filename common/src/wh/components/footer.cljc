@@ -167,20 +167,8 @@
             :href   href
             :target "_blank"
             :rel    "noopener"}
-        (icon logo)])
-     [:a.footer__social-icon.is-hidden-desktop
-      {:href   "https://heapanalytics.com/?utm_source=badge"
-       :target "_blank"
-       :rel    "noopener"}
-      [:img {:src "/images/heap.png"
-             :alt "Heap | Mobile and Web Analytics"}]]]
+        (icon logo)])]
     [:div.footer__legal
      [:div.footer__legal__item "© 2019 WorksHub"]
      [:div.footer__legal__item [:a {:href (routes/path :privacy-policy)} [:span "Privacy Policy"]]]
-     [:div.footer__legal__item [:a {:href "https://www.works-hub.com"} [:span "Developed by WorksHub"]]]
-     [:div.footer__legal__item.is-hidden-mobile
-      [:a {:href   "https://heapanalytics.com/?utm_source=badge"
-           :target "_blank"
-           :rel    "noopener"}
-       [:img {:src "/images/heap.png"
-              :alt "Heap | Mobile and Web Analytics"}]]]]]])
+     [:div.footer__legal__item [:a {:href "https://www.works-hub.com"} [:span "Developed by WorksHub"]]]]]])

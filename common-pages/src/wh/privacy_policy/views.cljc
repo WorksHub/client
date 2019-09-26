@@ -35,9 +35,9 @@
          [:li "Amazon Web Services"]
          [:li "Clearbit"]
          [:li "Google"]
-         [:li "Heap Analytics"]
          [:li "Heroku"]
          [:li "Hubspot"]
+         [:li "Mixpanel"]
          [:li "MLab"]
          [:li "Neverbounce"]
          [:li "Segment"]
@@ -99,7 +99,6 @@
          [:td
           [:p "Google AdWords Conversion"]
           [:p "Google Analytics"]
-          [:p "Heap"]
           [:p "HubSpot"]
           [:p "Pingdom"]
           [:p "Segment"]]
@@ -111,9 +110,6 @@
            [:li [:a {:href "https://tools.google.com/dlpage/gaoptout"
                      :target "_blank"
                      :rel "noopener"} "Google Analytics"]]
-           [:li "Heap does not provide an opt-out link for its cookies. For more information about Heap cookies, please see " [:a {:href "https://heapanalytics.com/privacy"
-                                                                                                                                   :target "_blank"
-                                                                                                                                   :rel "noopener"} "this page"]]
            [:li "Hubspot does not provide an opt-out link for its cookies. For more information about Hubspot cookies, please see " [:a {:href "https://knowledge.hubspot.com/articles/kcs_article/reports/what-cookies-does-hubspot-set-in-a-visitor-s-browser"
                                                                                                                                          :target "_blank"
                                                                                                                                          :rel "noopener"} "this page"]]
@@ -127,7 +123,7 @@
      [:li
       [:span.heading "Changes to the Policy"]
       [:ol
-       [:li "This Policy was last updated on 5 June, 2019. A notice will be posted on our Websites' home pages for [30 days] whenever this Policy is changed in a material way. By continuing to use our Website you confirm your continuing acceptance of this Policy."]]]
+       [:li "This Policy was last updated on 26 September, 2019. A notice will be posted on our Websites' home pages for [30 days] whenever this Policy is changed in a material way. By continuing to use our Website you confirm your continuing acceptance of this Policy."]]]
 
      [:li
       [:span.heading "Questions about this Policy"]
