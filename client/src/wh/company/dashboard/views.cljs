@@ -109,7 +109,7 @@
                        (mailto-link "talk to us")
                        " about what we can do for you?"]
             :launch_pad "It’s great to start out with this, but if you have more ambitious hiring plans you should upgrade to our Take-Off Package."
-            "Once you have had time to explore upgrade with a 10-day free trial and start hiring.")]])]]))
+            (str "Once you have had time to explore upgrade with a " data/launch-pad-trial-days "-day free trial and start hiring."))]])]]))
 
 (defn stats-codi-item []
   [:div.stats__item.stats__codi

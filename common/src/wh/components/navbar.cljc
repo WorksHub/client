@@ -346,7 +346,7 @@
          (when promo-banner?
            [:div.navbar__promo-banner
             {:id "promo-banner"}
-            [link [:div "Start hiring for free on our 10-day trial!"] :register-company]
+            [link [:div (str "Start hiring for free on our " data/launch-pad-trial-days "-day trial!")] :register-company]
             [:script {:type "text/javascript"}
              "initPromoBanner(\"promo-banner\")"]])
          [:div.navbar__content
