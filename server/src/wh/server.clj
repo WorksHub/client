@@ -98,7 +98,7 @@
    :wh.db/page-params {}
    :wh.db/uri (:uri request)
    :wh.db/initial-load? true
-   :wh.db/default-technologies (get-in vertical-config [vertical :default-technologies])})
+   :wh.db/default-technologies (verticals/config vertical :default-technologies)})
 
 (defn index-handler [request]
   (-> {:app-db (initial-app-db config request)}
