@@ -491,6 +491,12 @@
     {}))
 
 (reg-event-fx
+  ::remove-preferred-location
+  profile-interceptors
+  (fn [{profile :db} [i]]
+    {:db (update profile ::profile/preferred-locations #(util/drop-ith i %))}))
+
+(reg-event-fx
   ::edit-current-location
   profile-interceptors
   (fn [{profile :db} [loc]]
