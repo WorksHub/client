@@ -9344,6 +9344,8 @@ a.navbar-item,
     border: solid 1px #6E7F89;
     /* &:focus, &:focus-within, &:hover */
     /*   @include hover-focus-state */ }
+    .contribute__body .textarea p {
+      margin-bottom: 1.5em; }
 
 .contribute__body__controls {
   display: flex;
