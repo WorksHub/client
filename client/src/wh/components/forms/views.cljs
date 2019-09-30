@@ -159,7 +159,7 @@
       (let [value (or value (:value options))
             suggestable? (and (or (seq suggestions) on-select-suggestion) (not hide-icon?))
             show-suggestion? (and (seq suggestions) @focused (not read-only))
-            removable? (and value (not @focused))]
+            removable? (and on-remove value (not @focused))]
         (field-container (merge options
                                 {:error (if (and (string? error) force-error?)
                                           error
