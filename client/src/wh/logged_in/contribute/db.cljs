@@ -35,6 +35,7 @@
 (s/def ::image-article-upload-status ::upload-status)
 (s/def ::hero-upload-status ::upload-status)
 
+(s/def ::body-cursor-position (s/and int? #(>= % 0)))
 (s/def ::body-editing? boolean?)
 (s/def ::body-rows int?)
 
@@ -60,6 +61,7 @@
           ::hero-upload-status :not-started
           ::body-editing? true
           ::published false
+          ::body-cursor-position 0
           ::body-rows 10
           ::hide-codi? false
           ::verticals #{(::db/vertical db)}
