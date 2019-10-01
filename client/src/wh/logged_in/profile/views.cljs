@@ -305,6 +305,7 @@
     :suggestions (<sub [::subs/suggestions i])
     :on-change [::events/edit-preferred-location i]
     :on-select-suggestion [::events/select-suggestion i]
+    :on-remove [::events/remove-preferred-location i]
     :placeholder "Type to search location..."}])
 
 (defn private-section-edit []

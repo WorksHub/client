@@ -152,24 +152,28 @@
   [value options]
   (let [dirty (reagent/atom false)
         focused (reagent/atom false)]
-    (fn [value {:keys [suggestions dirty? error force-error? read-only on-select-suggestion hide-icon?] :as options}]
+    (fn [value {:keys [suggestions dirty? error force-error? read-only on-select-suggestion on-remove hide-icon?] :as options}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
       (let [value (or value (:value options))
             suggestable? (and (or (seq suggestions) on-select-suggestion) (not hide-icon?))
-            show-suggestion? (and (seq suggestions) @focused (not read-only))]
+            show-suggestion? (and (seq suggestions) @focused (not read-only))
+            removable? (and on-remove value (not @focused))]
         (field-container (merge options
                                 {:error (if (and (string? error) force-error?)
                                           error
                                           (text-field-error value options dirty focused))})
                          [:div.text-field-control
                           {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
-                                       (when suggestable? " text-field-control--suggestable"))}
+                                       (when suggestable? " text-field-control--suggestable")
+                                       (when removable? " text-field-control--removable"))}
                           (text-input value (merge options (text-field-input-options dirty focused options)))
                           (when suggestable? [icon "search-new" :class "search-icon"])
                           (when show-suggestion?
-                            [suggestions-list suggestions options])])))))
+                            [suggestions-list suggestions options])
+                          (when removable?
+                            [icon "close" :class "remove-text-field-btn" :on-click #(dispatch-sync on-remove)])])))))
 
 (defn checkbox
   "A bare checkbox. Value should be a boolean."

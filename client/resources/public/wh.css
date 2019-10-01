@@ -5331,6 +5331,23 @@ a.navbar-item,
     background-size: 66px 18px;
     background-image: url("/images/company/github-logo.svg"); }
 
+.remove-text-field-btn {
+  fill: white;
+  background: #ff7c6e;
+  border-radius: 10px;
+  cursor: pointer; }
+  @media screen and (max-width: 1007px) {
+    .remove-text-field-btn {
+      margin-left: 8px;
+      min-width: 18px; } }
+  @media screen and (min-width: 1008px) {
+    .remove-text-field-btn {
+      position: absolute;
+      right: -32px;
+      top: 6px;
+      margin-right: 5px;
+      margin-top: 6px; } }
+
 .dropdown-menu {
   width: 270px;
   padding-top: 0;
@@ -5825,6 +5842,12 @@ a.navbar-item,
   padding-left: 40px; }
   .wh-formx .text-field-control--suggestable input:hover, .wh-formx .text-field-control--suggestable input:focus {
     padding-left: 39px !important; }
+
+@media screen and (max-width: 1007px) {
+  .wh-formx .text-field-control--removable {
+    display: flex;
+    align-items: center;
+    background-color: transparent; } }
 
 .wh-formx .text-field-control--showing-suggestions input {
   border-bottom: 0;

@@ -241,3 +241,10 @@
   (if (empty? (get m k))
     (dissoc m k)
     m))
+
+(defn drop-ith
+  [i coll]
+  (->> coll
+       (map vector (iterate inc 0))
+       (remove #(= (first %) i))
+       (map second)))
