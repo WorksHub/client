@@ -128,12 +128,6 @@
     (::contribute/body db)))
 
 (reg-sub
-  ::body-cursor-position
-  :<- [::contribute]
-  (fn [db _]
-    (::contribute/body-cursor-position db)))
-
-(reg-sub
   ::primary-vertical
   :<- [::contribute]
   (fn [db _]
