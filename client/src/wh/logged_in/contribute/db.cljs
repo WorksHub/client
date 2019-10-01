@@ -35,7 +35,7 @@
 (s/def ::image-article-upload-status ::upload-status)
 (s/def ::hero-upload-status ::upload-status)
 
-(s/def ::body-cursor-position (s/and int? #(>= % 0)))
+(s/def ::body-cursor-position nat-int?)
 (s/def ::body-editing? boolean?)
 (s/def ::body-rows int?)
 
