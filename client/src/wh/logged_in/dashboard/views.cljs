@@ -86,14 +86,6 @@
          [:div.columns.is-mobile]
          columns)))])
 
-(defn applied-jobs []
-  [:section
-   [:h2 "Applied Jobs"]
-   (into
-     [:div.columns.is-mobile]
-     (for [job (<sub [::subs/applied-jobs])]
-       [:div.column [job-card job :public (<sub [:user/public-job-info-only?])]]))])
-
 (defn page []
   (cond (= (<sub [::subs/loading-error]) :unavailable)
         [:div.main [loading-error]]
@@ -103,6 +95,5 @@
          [:h1 "Dashboard"]
          [recommended-jobs]
          [user-preferences]
-         [blogs]
-         (when (<sub [::subs/display-applied-jobs?])
-           [applied-jobs])]))
+         [blogs]]))
+

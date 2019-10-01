@@ -102,6 +102,7 @@
                                  [:id "/offer"] :create-company-offer}]
                   ["liked" :liked]
                   ["recommended" :recommended]
+                  ["applied" :applied]
                   [#{[:tag "-jobs-in-" :location]
                      [:tag "-jobs"]
                      ["jobs-in-" :location]} :pre-set-search]

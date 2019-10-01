@@ -58,6 +58,7 @@
    :register :register
    :liked :logged-in
    :recommended :logged-in
+   :applied :logged-in
    :tags-edit :admin})
 
 (defn module-for

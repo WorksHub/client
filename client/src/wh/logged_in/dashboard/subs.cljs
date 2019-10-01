@@ -22,21 +22,6 @@
          (jobs/add-interactions liked-jobs applied-jobs))))
 
 (reg-sub
-  ::applied-jobs
-  :<- [::dashboard]
-  :<- [:wh.user/liked-jobs]
-  :<- [:wh.user/applied-jobs]
-  (fn [[dashboard liked-jobs applied-jobs] _]
-    (->> (::dashboard/applied-jobs dashboard)
-         (jobs/add-interactions liked-jobs applied-jobs))))
-
-(reg-sub
-  ::display-applied-jobs?
-  :<- [::applied-jobs]
-  (fn [applied-jobs _]
-    (boolean (seq applied-jobs))))
-
-(reg-sub
   ::blogs
   (fn [db _]
     (get-in db [::dashboard/sub-db ::dashboard/blogs])))
