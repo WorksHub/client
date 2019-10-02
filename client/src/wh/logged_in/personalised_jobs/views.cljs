@@ -23,9 +23,9 @@
                                  (into [:div.columns]
                                        (for [job part]
                                          [:div.column.is-4
-                                          (if (= type-of-jobs :liked)
-                                            [job-card job :public (<sub [:user/public-job-info-only?])]
-                                            [job-card job :on-close :reload-recommended :public (<sub [:user/public-job-info-only?])])]))))
+                                          (if (= type-of-jobs :recommended)
+                                            [job-card job :on-close :reload-recommended :public (<sub [:user/public-job-info-only?])]
+                                            [job-card job :public (<sub [:user/public-job-info-only?])])]))))
                           [:div.columns.is-centered.load-more-section
                            [:div.column.is-4.has-text-centered
                             (when (<sub [::subs/show-load-more?])
