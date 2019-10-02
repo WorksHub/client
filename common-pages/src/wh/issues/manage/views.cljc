@@ -50,7 +50,7 @@
        "Restart"]])])
 
 (defn repo-card
-  [{:keys [owner owner-avatar description primary-language open-issues-count] :as repo}]
+  [{:keys [owner owner-avatar description primary-language open-issues-count has-unpublished-issues] :as repo}]
   [:div.repository-card
    [:div.is-flex
     [:div.logo (if-let [url owner-avatar]
@@ -70,19 +70,18 @@
       [:div.repository-card__buttons
        [link "Manage" :manage-repository-issues :repo-name (:name repo) :owner owner
         :class "button button--inverted btn__manage-issues"]
-       #_(let [can-publish-all? (<sub [::subs/has-unpublished-issues? repo])]
-           [:button.button
-            {:disabled (not can-publish-all?)
-             :on-click #(when can-publish-all?
-                          (dispatch [::events/publish-all repo]))}
-            "Publish All"])]
+       [:button.button
+        {:disabled true #_(not has-unpublished-issues)
+         :on-click #(when has-unpublished-issues
+                      #_(dispatch [::events/publish-all repo]))}
+        "Publish All"]]
       [:div.repository-card__buttons
        [:button.button.button--disabled
         {:disabled true}
         "Manage"]
-       #_[:button.button.button--disabled
-          {:disabled true}
-          "Publish All"]])]])
+       [:button.button.button--disabled
+        {:disabled true}
+        "Publish All"]])]])
 
 (defn repo-list []
   #?(:cljs

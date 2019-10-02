@@ -159,10 +159,3 @@
   (fn [company [_]]
     (when company
       (get-in company [:integrations :slack :enabled] false))))
-
-;; TODO add 'publish all' button to repos page
-#_(reg-sub
-    ::has-unpublished-issues?
-    :<- [::sub-db]
-    (fn [sub-db [_ repo]]
-      true))

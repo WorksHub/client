@@ -22,6 +22,8 @@
 (s/def :wh.repo/open-issues-count int?)
 (s/def :wh.repo/community (s/keys :opt-un [:wh.repo/readme-url
                                            :wh.repo/contributing-url]))
+(s/def :wh.repo/has-unpublished-issues boolean?)
+
 
 (s/def :wh.repo.sync/id #?(:clj  sc/string-uuid
                            :cljs string?))
@@ -55,7 +57,8 @@
                                           :wh.repo/sync
                                           :wh.repo/owner-avatar
                                           :wh.repo/fork
-                                          :wh.repo/open-issues-count])
+                                          :wh.repo/open-issues-count
+                                          :wh.repo/has-unpublished-issues])
                    :cljs (s/keys :opt-un [:wh.repo/github-id
                                           :wh.repo/name
                                           :wh.repo/owner
@@ -69,5 +72,6 @@
                                           :wh.repo/sync
                                           :wh.repo/owner-avatar
                                           :wh.repo/fork
-                                          :wh.repo/open-issues-count])))
+                                          :wh.repo/open-issues-count
+                                          :wh.repo/has-unpublished-issues])))
 (s/def :wh/repos (s/coll-of :wh/repo))

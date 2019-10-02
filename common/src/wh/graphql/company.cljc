@@ -159,7 +159,8 @@
                       [:id [:integrations [[:slack [:enabled]]]]]]
                      [:github_repositories
                       [[:repositories
-                        [:name :owner :owner_avatar :description :primary_language :stargazers :fork :open_issues_count]]]]
+                        [:name :owner :owner_avatar :description :primary_language :stargazers :fork :open_issues_count
+                         :has_unpublished_issues]]]]
                      [:query_issues
                       {:company_id :$id
                        :published  :$published}
