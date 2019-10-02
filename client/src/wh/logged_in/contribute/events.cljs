@@ -105,6 +105,12 @@
   (simple-edit-fn ::contribute/body))
 
 (reg-event-db
+  ::set-body-cursor-position
+  contribute-interceptors
+  (fn [db [position]]
+    (assoc db ::contribute/body-cursor-position position)))
+
+(reg-event-db
   ::set-primary-vertical
   contribute-interceptors
   (simple-edit-fn ::contribute/primary-vertical))
@@ -139,9 +145,12 @@
 (reg-event-db
   ::image-article-upload-success
   contribute-interceptors
-  (fn [db [filename {url :url}]]
-    (assoc db ::contribute/image-article-upload-status :success
-           ::contribute/body (str (::contribute/body db) "\n" (markdown-image url filename)))))
+  (fn [{::contribute/keys [body body-cursor-position] :as db} [filename {url :url}]]
+    (let [[before-cursor after-cursor] (split-at body-cursor-position body)]
+      (assoc db ::contribute/image-article-upload-status :success
+                ::contribute/body (str (apply str before-cursor)
+                                       (markdown-image url filename)
+                                       (apply str after-cursor))))))
 
 (reg-event-db
   ::image-article-upload-failure

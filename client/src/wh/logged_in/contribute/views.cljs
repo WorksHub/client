@@ -17,16 +17,16 @@
 (defn hero []
   [:div.contribute__hero
    {:id (contribute/form-field-id ::contribute/feature)}
-   [logo-field {:value (<sub [::subs/hero-url])
-                :loading? (<sub [::subs/hero-uploading?])
-                :text "add hero image"
-                :error (<sub [::subs/hero-validation-error?])
-                :dirty? (<sub [::subs/validation-error?])
+   [logo-field {:value          (<sub [::subs/hero-url])
+                :loading?       (<sub [::subs/hero-uploading?])
+                :text           "add hero image"
+                :error          (<sub [::subs/hero-validation-error?])
+                :dirty?         (<sub [::subs/validation-error?])
                 :on-select-file (upload/handler
-                                 :launch [::events/hero-upload]
-                                 :on-upload-start [::events/hero-upload-start]
-                                 :on-success [::events/hero-upload-success]
-                                 :on-failure [::events/hero-upload-failure])}]
+                                  :launch [::events/hero-upload]
+                                  :on-upload-start [::events/hero-upload-start]
+                                  :on-success [::events/hero-upload-success]
+                                  :on-failure [::events/hero-upload-failure])}]
    (case (<sub [::subs/hero-upload-status])
      :failure [:span.field__error.field--invalid "Failed to upload the hero image."]
      :failure-too-big [:span.field__error.field--invalid "The image was too large (max. 5MB)"]
@@ -34,8 +34,8 @@
 
 (defn body []
   (let [editing? (<sub [::subs/body-editing?])
-        error    (when (<sub [::subs/validation-error?])
-                   (<sub [::subs/body-validation-error]))]
+        error (when (<sub [::subs/validation-error?])
+                (<sub [::subs/body-validation-error]))]
     [:div.contribute__body
      (merge {:id (contribute/form-field-id ::contribute/body)}
             (when error {:class "contribute__body--error"}))
@@ -53,10 +53,10 @@
         [:input.file-input {:type      "file"
                             :name      "article-image"
                             :on-change (upload/handler
-                                        :launch [::events/image-article-upload]
-                                        :on-upload-start [::events/image-article-upload-start]
-                                        :on-success [::events/image-article-upload-success]
-                                        :on-failure [::events/image-article-upload-failure])}]
+                                         :launch [::events/image-article-upload]
+                                         :on-upload-start [::events/image-article-upload-start]
+                                         :on-success [::events/image-article-upload-success]
+                                         :on-failure [::events/image-article-upload-failure])}]
         [:span.file-cta.button.button--inverted
          {:class (when (<sub [::subs/image-article-uploading?])
                    "button--loading")}
@@ -66,8 +66,9 @@
                                "appear")}]]]
      (if editing?
        [text-input (<sub [::subs/body])
-        {:type         :textarea
-         :on-change    [::events/set-body]}]
+        {:type      :textarea
+         :on-change [::events/set-body]
+         :on-blur   #(dispatch [::events/set-body-cursor-position (-> % .-target .-selectionStart)])}]
        [:div.textarea
         {:dangerouslySetInnerHTML {:__html (<sub [::subs/body-html])}}])
 
@@ -102,7 +103,7 @@
   (let [admin? (<sub [:user/admin?])]
     [:div.columns.contribute__main
      [:div.column.is-7.contribute__form
-      (when (and (= :success(<sub [::subs/save-status]))
+      (when (and (= :success (<sub [::subs/save-status]))
                  (not admin?))
         [:div.contribute__saved
          "Your article has been saved and sent to our team. We will make sure it is in good shape before publishing it to our members dashboards. In the meantime, you can edit the post via the link in your profile anytime before it goes live."])
@@ -172,16 +173,16 @@
         (<sub [::subs/show-vertical-selector?])
         [:div.vertical-selector
          [vertical-views/verticals-pod
-          {:toggleable? true
-           :on-verticals (<sub [::subs/verticals])
+          {:toggleable?   true
+           :on-verticals  (<sub [::subs/verticals])
            :off-verticals (<sub [::subs/off-verticals])
-           :toggle-event [::events/toggle-vertical]
-           :class-prefix "contribute"}]
+           :toggle-event  [::events/toggle-vertical]
+           :class-prefix  "contribute"}]
          (when (<sub [:wh.user/super-admin?])
            [:div.wh-formx
             [select-field (<sub [::subs/primary-vertical])
-             {:options (<sub [::subs/verticals])
-              :label "* Primary Vertical"
+             {:options   (<sub [::subs/verticals])
+              :label     "* Primary Vertical"
               :on-change [::events/set-primary-vertical]}]])]
         (<sub [::subs/contribute-page?])
         [:div.contribute__codi.is-hidden-mobile
