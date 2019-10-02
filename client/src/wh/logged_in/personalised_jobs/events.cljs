@@ -1,9 +1,9 @@
 (ns wh.logged-in.personalised-jobs.events
   (:require
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
+    [wh.common.cases :as cases]
     [wh.common.job :as job]
     [wh.db :as db]
-    [wh.common.cases :as cases]
     [wh.graphql.jobs :as jobs]
     [wh.logged-in.personalised-jobs.db :as personalised-jobs]
     [wh.pages.core :refer [on-page-load] :as pages]))
