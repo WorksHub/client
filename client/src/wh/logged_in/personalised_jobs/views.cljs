@@ -33,5 +33,5 @@
         :else (case type-of-jobs
                 :recommended [[:p "Add some skills and preffered locations to your profile to see recommendations."]]
                 :liked [[:p "Click on some " [icon "like" :class "like red-fill"] " to save jobs you like."]]
-                :applied [[:p "Applied for some jobs in our " [link "job board" :jobsboard :class "a--underlined"] "."]]
+                :applied [[:p "You haven't applied for any jobs yet... " [link "What are you waiting for?" :jobsboard :class "a--underlined"] "."]]
                 [[:p "No jobs found."]])))))
