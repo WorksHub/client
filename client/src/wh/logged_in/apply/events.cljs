@@ -1,14 +1,14 @@
 (ns wh.logged-in.apply.events
   (:require
+    [camel-snake-kebab.core :as csk]
     [re-frame.core :refer [reg-event-db reg-event-fx dispatch path]]
+    [wh.common.cases :as cases]
     [wh.common.graphql-queries :as graphql]
-    [wh.logged-in.profile.location-events :as location-events]
     [wh.db :as db]
     [wh.logged-in.apply.db :as apply]
+    [wh.logged-in.profile.location-events :as location-events]
     [wh.user.db :as user]
-    [wh.util :as util]
-    [camel-snake-kebab.core :as csk]
-    [wh.common.cases :as cases])
+    [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
 (def apply-interceptors (into db/default-interceptors
@@ -245,22 +245,30 @@
   {:venia/operation {:operation/type :mutation
                      :operation/name "Apply"}
    :venia/variables [{:variable/name "id"
-                      :variable/type :String!}]
-   :venia/queries   [[:apply {:id :$id}]]})
+                      :variable/type :String}
+                     {:variable/name "slug"
+                      :variable/type :String}]
+   :venia/queries   [[:apply {:id :$id
+                              :slug :$slug}]]})
 
 (defquery check-application-query
   {:venia/operation {:operation/type :query
                      :operation/name "check_application"}
    :venia/variables [{:variable/name "id"
-                      :variable/type :String!}]
-   :venia/queries   [[:check_application {:id :$id} [:check_status :reason]]]})
+                      :variable/type :String}
+                     {:variable/name "slug"
+                      :variable/type :String}]
+   :venia/queries   [[:check_application {:id :$id
+                                          :slug :$slug}
+                      [:check_status :reason]]]})
 
 (reg-event-fx
   ::check-application
   apply-interceptors
   (fn [{db :db} _]
     {:graphql {:query      check-application-query
-               :variables  {:id (get-in db [::apply/job :id])}
+               :variables  (or (some->> (get-in db [::apply/job :id]) (hash-map :id))
+                               (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
                :on-success [::check-application-success]
                :on-failure []}
      :db      (assoc db ::apply/updating? true)}))
@@ -288,9 +296,8 @@
   apply-interceptors
   (fn [{db :db} _]
     {:graphql {:query      apply-mutation
-               :variables  {:id (get-in db [::apply/job :id])}
+               :variables (or (some->> (get-in db [::apply/job :id])   (hash-map :id))
+                              (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
                :on-success [::handle-apply true]
                :on-failure [::handle-apply false]}
      :db      (assoc db ::apply/updating? true)}))
-
-

@@ -7,11 +7,13 @@
 (s/def ::steps-taken (s/coll-of steps))
 (s/def ::current-step steps)
 (s/def ::id string?)
+(s/def ::slug string?)
 (s/def ::submit-success? boolean?)
 (s/def ::updating? boolean?)
 (s/def ::cv-upload-failed? boolean?)
 (s/def ::name-update-failed? boolean?)
-(s/def ::job (s/keys :req-un [::id]))
+(s/def ::job (s/or :id   (s/keys :req-un [::id])
+                   :slug (s/keys :req-un [::slug])))
 
 (s/def ::sub-db (s/keys :opt-un [::job
                                  ::submit-success?
