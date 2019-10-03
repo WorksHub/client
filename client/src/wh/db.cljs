@@ -13,6 +13,7 @@
                 :admin-companies
                 :admin-company-applications
                 :admin-edit-company
+                :applied
                 :blog
                 :candidate
                 :candidate-edit-cv

@@ -43,11 +43,8 @@
                             :page_number 1}
                     [[:blogs [:id :title :feature :tags :author :formattedCreationDate :score :readingTime :published :upvoteCount]]]]
                    [:me [:onboardingMsgs]]
-                   [:candidate_applications [:jobId :state]]
                    {:query/data [:jobs {:filter_type "recommended" :entity_type "user" :page_size 3} (conj jobs/job-card-fields :score)]
-                    :query/alias :jobs}
-                   {:query/data [:jobs {:filter_type "applied" :page_size 24} (remove #(= % :userScore) jobs/job-card-fields )]
-                    :query/alias :appliedJobs}]})
+                    :query/alias :jobs}]})
 
 (reg-event-fx
   ::fetch-initial-data
@@ -57,23 +54,14 @@
                :on-success [::fetch-initial-data-success]
                :on-failure [::fetch-initial-data-failure]}}))
 
-(defn add-application-state
-  [jobs applications]
-  (mapv (fn [{:keys [id] :as job}]
-          (if-let [application (some #(when (= id (:job-id %)) %) applications)]
-            (assoc job :state (keyword (:state application)))
-            job)) jobs))
-
 (reg-event-fx
   ::fetch-initial-data-success
   db/default-interceptors
-  (fn [{db :db} [{{:keys [blogs jobs appliedJobs me candidate_applications]} :data}]]
+  (fn [{db :db} [{{:keys [blogs jobs me]} :data}]]
     {:db       (-> db
                    (update ::dashboard/sub-db merge
                            {::dashboard/blogs (mapv cases/->kebab-case (:blogs blogs))
-                            ::dashboard/jobs (mapv job/translate-job jobs)
-                            ::dashboard/applied-jobs (add-application-state (mapv job/translate-job appliedJobs)
-                                                                            (mapv cases/->kebab-case candidate_applications))})
+                            ::dashboard/jobs (mapv job/translate-job jobs)})
                    (update ::user/sub-db merge
                            {::user/onboarding-msgs (set (:onboardingMsgs me))}))
      :dispatch-n (into [[::pages/unset-loader]]

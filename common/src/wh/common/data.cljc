@@ -628,6 +628,7 @@
    :items   [[:homepage               "dashboard"  "Dashboard"]
              [:recommended            "recommend"  "Recommended"]
              [:liked                  "like"       "Liked"]
+             [:applied                "applications" "Applied"]
              [:notifications-settings "resources"  "Notifications"]
              [:contribute             "contribute" "Contribute"]
              [:profile                "profile"    "Profile & Preferences"]]})

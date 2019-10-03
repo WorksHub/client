@@ -22,6 +22,7 @@
   {:homepage-dashboard dashboard/page
    :liked (partial personalised-jobs/page :liked)
    :recommended (partial personalised-jobs/page :recommended)
+   :applied (partial personalised-jobs/page :applied)
    :contribute {:page contribute/page :can-access? db/logged-in?}
    :contribute-edit {:page contribute/page :can-access? db/logged-in?}
    :candidate-edit-header {:page profile/header-edit-page :can-access? user/admin?}
