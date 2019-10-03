@@ -24,6 +24,7 @@
 (s/def :wh.issue/body-html string?)
 (s/def :wh.issue.label/name string?)
 (s/def :wh.issue/pr-count nat-int?)
+(s/def :wh.issue/prs (s/coll-of #?(:cljs string? :clj :http/url) :distinct true))
 (s/def :wh.issue/label (s/keys :req-un [:wh.issue.label/name]))
 (s/def :wh.issue/labels (s/coll-of :wh.issue/label))
 (s/def :wh.issue/created-at :wh/date)
@@ -75,7 +76,6 @@
                                            :wh.issue/created-at
                                            :wh.issue/level
                                            :wh.issue/number
-                                           :wh.issue/pr-count
                                            :wh.issue/title
                                            :wh.issue/url
                                            :wh.issue/github-id
@@ -89,7 +89,9 @@
                                            :wh.issue/labels
                                            :wh.issue/published
                                            :wh.issue/repo
-                                           :wh.issue/viewer-contributed])
+                                           :wh.issue/viewer-contributed
+                                           :wh.issue/pr-count
+                                           :wh.issue/prs])
                     :cljs (s/keys :opt-un [:wh.issue/author
                                            :wh.issue/body
                                            :wh.issue/body-html
@@ -103,6 +105,7 @@
                                            :wh.issue/level
                                            :wh.issue/number
                                            :wh.issue/pr-count
+                                           :wh.issue/prs
                                            :wh.issue/published
                                            :wh.issue/repo
                                            :wh.issue/repo-id
