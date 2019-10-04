@@ -324,10 +324,9 @@
   #?(:clj (render-page)
      :cljs
      (r/create-class
-      {:component-did-mount
-       (fn [this]
-         (putil/attach-on-scroll-event
-          (fn [el-or-window]
-            (dispatch [::events/set-show-cta-sticky? (> (or (.-scrollTop el-or-window)
-                                                            (.-scrollY el-or-window)) 300)]))))
-       :reagent-render render-page})))
+       {:component-did-mount
+        (fn [this]
+          (putil/attach-on-scroll-event
+            (fn [y]
+              (dispatch [::events/set-show-cta-sticky? (> y 300)]))))
+        :reagent-render render-page})))

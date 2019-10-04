@@ -37,8 +37,8 @@
        (when-let [el (.getElementById js/document "app")]
          (.addEventListener el "scroll"
                             (fn [_]
-                              (f el))))
+                              (f (.-scrollTop el)))))
        ;; mobile
        (.addEventListener js/window "scroll"
                           (fn [_]
-                            (f js/window))))))
+                            (f (.-scrollY js/window)))))))

@@ -447,8 +447,8 @@
     {:component-did-mount
      (fn [this]
        (putil/attach-on-scroll-event
-         (fn [_]
-           (dispatch [::events/set-show-apply-sticky? (> (.-scrollY js/window) 160)]))))
+         (fn [y]
+           (dispatch [::events/set-show-apply-sticky? (> y 160)]))))
      :reagent-render
      (fn []
        (let [admin? (<sub [:user/admin?])

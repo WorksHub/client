@@ -108,10 +108,9 @@
 (defn page []
   (let [last-y (reagent/atom 0)
         _      (putil/attach-on-scroll-event
-                (fn [_]
-                  (let [y (.-scrollY js/window)]
-                    (dispatch [::events/show-share-links (< y @last-y)])
-                    (reset! last-y y))))]
+                 (fn [y]
+                   (dispatch [::events/show-share-links (< y @last-y)])
+                   (reset! last-y y)))]
     (fn []
       (case (<sub [:graphql/error-key :blog {:id (<sub [:wh.subs/page-param :id])}])
         :blog-not-found [:div.main [not-found/not-found]]
