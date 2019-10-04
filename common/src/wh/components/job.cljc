@@ -1,6 +1,7 @@
 (ns wh.components.job
   (:require
     #?(:clj [wh.pages.util :refer [html->hiccup]])
+    [clojure.string :as str]
     [wh.common.job :as jobc]
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
@@ -92,8 +93,12 @@
    [:div.job__highlight_icon
     (when title [icon icon-name])]])
 
-(defn job-highlights [{:wh.jobs.job.db/keys [remuneration role-type sponsorship-offered remote tags benefits] :as _job}]
-  (let [salary (jobc/format-job-remuneration remuneration)]
+(defn job-highlights [{:wh.jobs.job.db/keys [remuneration role-type sponsorship-offered remote tags company] :as _job}]
+  (let [salary (jobc/format-job-remuneration remuneration)
+        benefits (some->> (:tags company)
+                          (filter #(= :benefit (some-> % :type keyword)))
+                          (seq)
+                          (map (comp str/capitalize :label)))]
     [:section.job__job-highlights
      [highlight
       (when salary "Salary") "job-money"
