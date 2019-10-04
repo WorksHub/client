@@ -215,7 +215,8 @@
      [error-box]
      (when cv-url
        [:p (if (owner? user-type) "You uploaded " "Uploaded CV: ")
-        [:a.a--underlined {:href cv-url, :target "_blank", :rel "noopener"} cv-filename]])
+        [:a.a--underlined {:href cv-url, :target "_blank", :rel "noopener"}
+         (if (owner? user-type) cv-filename "Click here to download")]])
      (when cv-link
        [:p (if (owner? user-type) "Your external resume: " "External resume: ")
         [:a.a--underlined {:href cv-link, :target "_blank", :rel "noopener"} cv-link]])
