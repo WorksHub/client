@@ -1,7 +1,6 @@
 (ns wh.verticals
   (:require
     [clojure.set :as set]
-    [clojure.string :as str]
     [wh.common.data :as data]))
 
 (def ordered-job-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python"])
@@ -9,8 +8,8 @@
 
 ;;This should be used to allow admins to publish job for future verticals.
 ;; You also need to make sure that the vertical is added to grapql spec
-(def future-job-verticals (set ordered-job-verticals))
-(def future-blog-verticals (set ordered-blog-verticals))
+(def future-job-verticals (set (conj ordered-job-verticals "remote")))
+(def future-blog-verticals (set (conj ordered-blog-verticals "remote")))
 
 (def all-verticals (set/union future-job-verticals future-blog-verticals))
 
@@ -129,7 +128,7 @@
     :description           "Browse Python programming jobs, salaries, blogs and learning resources! Python jobs, Flask jobs, Ansible jobs and more."
     :blog-description      "A curated blog on the Python programming language. Read news, posts and opinions from the community - we have Python covered."
     :twitter               "@python_works"
-    :linkedin              "https://www.linkedin.com/showcase/python-works/"
+    :linkedin              "https://www.linkedin.com/company/python-workshub/"
     :default-technologies  ["Python" "Django" "Ansible" "Numpy" "SciPy" "Scikit-Learn" "Pandas"]
     :footer-job-links      ["Python" "Django" "Ansible"]
     :footer-article-links  ["Python"]
@@ -137,6 +136,21 @@
                             :subtitle    "Browse jobs for software engineers and developers"
                             :description "Look for full-stack and backend roles working with Python"}
     :jobsboard-tag-desc    {"django"  "Look for backend and full-stack roles working with Django"
+                            "ansible" "Look for DevOps roles working with Ansible"}}
+   "remote"
+   {:platform-name         "Remote Works"
+    :label-name            "Remote"
+    :description           "Browse remote programming jobs, salaries, blogs and learning resources!"
+    :blog-description      "A curated blog on the remote working. Read news, posts and opinions from the community - we have remote covered."
+    :twitter               "@Remote_Works_"
+    :linkedin              "https://www.linkedin.com/company/workshub"
+    :default-technologies  ["Python" "Java" "JavaScript" "Go" "SQL" "React" "Scala" "Node.js"]
+    :footer-job-links      ["Python" "Django" "Ansible"]    ;TODO
+    :footer-article-links  ["Python"]                       ;Todo
+    :jobsboard-header      {:title       "Remote Developer Jobs"
+                            :subtitle    "Browse remote jobs for software engineers and developers"
+                            :description "Look for full-stack, frontend and backend remote roles"}
+    :jobsboard-tag-desc    {"django"  "Look for backend and full-stack roles working with Django" ;TODO
                             "ansible" "Look for DevOps roles working with Ansible"}}
    "www"
    {:platform-name         "WorksHub"
