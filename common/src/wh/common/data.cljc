@@ -420,8 +420,10 @@
    "Screened applicants"
    "Guaranteed hires"])
 
-(def free-trial-days 14)
-(def launch-pad-trial-days 7)
+(def get-started-cta-string "Get Started")
+(def free-trial-days 0)
+(def launch-pad-trial-days 0)
+(def free-week-code "FREEWEEK")
 
 (def package-data
   {:free {:name "Trial"
@@ -467,8 +469,8 @@
    :launch_pad {:name "Launch Pad"
                 :cost 1500
                 :per "month"
-                :trial launch-pad-trial-days
                 :button "Start Hiring"
+                :extra "1st week free!"
                 :button-alt "Get Started"
                 :live-jobs "Unlimited"
                 :img {:src "/images/employers/launch_pad.svg"
@@ -608,8 +610,8 @@
 (def pricing-questions
   [{:title "Why should I sign up?"
     :answer "Signing up to WorksHub is really easy. Just click “Get Started”, and we’ll get your dashboard set up with just a couple of clicks. From here if you select our Launch Pad or Take-Off plans you will be able to create as many jobs as you like across all of our hubs. You can also manage all of your applications and add colleagues to your account. Once signed up your jobs will be seen by a highly qualified pool of candidates — both full-time and contract — that are ready to interview now."}
-   {:title "How does the trial work?"
-    :answer (str "We offer a " launch-pad-trial-days "-day trial so you can get to know how our platform works and see some great candidates apply to your jobs. If you decide to interview a candidate you will be required to upgrade to one of our plans. If you hire a candidate before you upgrade to one of our plans or after you have cancelled you will be subject to our standard terms of service. This includes a 20% fee calculated on the hired candidates first year earnings.")}
+   {:title "How does the 'free week' work?"
+    :answer (str "When you first sign up you will automatically be put on our Explore package, so you can get to know how our platform works and create a company profile. Once you're ready to start hiring, use the code '" free-week-code"' to get a whole week for free on our Launch Pad package. Once upgraded you can post unlimited jobs and talk directly to candidates.")}
    {:title "How much does Take-Off cost?"
     :answer "Depending on your company size and headcount goals, our Take-Off package is built to be flexible for you. Whether you're hiring two or two hundred, combining a subscription plan with a success fee will help give you access to our direct sourcing team to ensure you hit your hiring goals. Your account manager who you can find in your settings page will discuss the best option with you and create a custom pricing plan."}
    {:title "Are there discounts?"

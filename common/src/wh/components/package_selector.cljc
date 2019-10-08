@@ -25,7 +25,7 @@
      [:p info-message]]]])
 
 (defn package
-  [{:keys [id package style restricted? coupon current? show-trials?
+  [{:keys [id package style restricted? coupon current? show-trials? show-extras?
            billing-period signup-button contact-button]}]
   (let [billing-data (get billing-data billing-period)]
     [:div
@@ -74,15 +74,19 @@
           [icon (if (contains? (:perks package) perk) "cutout-tick" "cross")]])]
       (when show-trials?
         (when-let [trial (:trial package)]
-          [:div.package-selector__trial (str trial "-day free trial")]))]]))
+          [:div.package-selector__trial (str trial "-day free trial")]))
+      (when show-extras?
+        (when-let [extra (:extra package)]
+          [:div.package-selector__trial extra]))]]))
 
 (defn- package-selector-render
   [selected-billing-period mobile-selected-idx mobile-view-width info-message-collapsed?]
-  (fn [{:keys [signup-button contact-button mobile-fullscreen? show-billing-period-selector? show-trials?
+  (fn [{:keys [signup-button contact-button mobile-fullscreen? show-billing-period-selector? show-trials? show-extras?
                exclude-packages restrict-packages billing-period current-package coupon info-message package-data]
         :or   {mobile-fullscreen?            false
                show-billing-period-selector? true
                show-trials?                  true
+               show-extras?                  true
                exclude-packages              #{}
                restrict-packages             #{}
                package-data                  data/package-data}}]
@@ -113,6 +117,7 @@
                        :signup-button  signup-button
                        :contact-button contact-button
                        :show-trials?   show-trials?
+                       :show-extras?   show-extras?
                        :current?       (= k current-package)
                        :restricted?    (contains? (set restrict-packages) k)
                        :coupon         coupon

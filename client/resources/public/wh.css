@@ -4467,7 +4467,7 @@ a.navbar-item,
     color: #ff7c6e; }
   @media screen and (max-width: 1007px) {
     .navbar__promo-banner {
-      font-size: 12px; } }
+      font-size: 11px; } }
 
 .navbar__promo-banner.scrolled + .navbar__content .navbar-overlay--candidates {
   top: 76px; }
@@ -9002,9 +9002,11 @@ a.navbar-item,
   100% {
     margin-top: 0px; } }
 
-@media screen and (min-width: 1008px) {
-  .company-edit__payment-details__cancel-plan {
-    margin-bottom: 400px; } }
+.company-edit__payment-details__cancel-plan {
+  margin-top: 48px; }
+  @media screen and (min-width: 1008px) {
+    .company-edit__payment-details__cancel-plan {
+      margin-bottom: 400px; } }
 
 .company-edit__invoices-pod > span:first-of-type {
   margin-bottom: 12px;

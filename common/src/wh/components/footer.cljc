@@ -33,7 +33,7 @@
                   :route [:sitemap]}]
                 (vertical-links))
    :employers [(if (= "www" vertical)
-                 {:title "Start your trial"
+                 {:title "Get Started"
                   :route [:register-company]}
                  {:title "Employers"
                   :href  (str routes/company-landing-page

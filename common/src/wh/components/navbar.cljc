@@ -346,7 +346,10 @@
          (when promo-banner?
            [:div.navbar__promo-banner
             {:id "promo-banner"}
-            [link [:div (str "Start hiring for free on our " data/launch-pad-trial-days "-day trial!")] :register-company]
+            [link [:div.is-hidden-mobile
+                   (str "Use '" data/free-week-code "' at checkout to get a week of hiring on us ")] :register-company]
+            [link [:div.is-hidden-desktop
+                   (str "Start hiring & get a week free! ('" data/free-week-code "')")] :register-company]
             [:script {:type "text/javascript"}
              "initPromoBanner(\"promo-banner\")"]])
          [:div.navbar__content

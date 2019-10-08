@@ -79,6 +79,7 @@
         :show-billing-period-selector? false
         :billing-period billing-period
         :mobile-fullscreen? true
+        :show-trials? false
         :contact-button (demo-button)}]]
      [:div.pricing-content.has-text-centered
       [:div.pricing__request-demo

@@ -16,7 +16,7 @@
 
 (defn get-started-link
   [github? & [class]]
-  (let [btn [:button.button.button--public "Get Started for free"]]
+  (let [btn [:button.button.button--public data/get-started-cta-string]]
     (cond
       (or github? (<sub [::subs/show-github-buttons?]))
       [github-button class]

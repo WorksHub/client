@@ -345,10 +345,10 @@
 (defn status-button [{:keys [prefix] :as args}]
   (let [make-sub #(keyword (namespace ::subs/here) (str (name prefix) "-" %))]
     (f/status-button
-     (assoc args
-            :enabled? (<sub [(make-sub "button-enabled?")])
-            :waiting? (<sub [(make-sub "button-waiting?")])
-            :status   (<sub [(make-sub "status")])))))
+      (assoc args
+             :enabled? (<sub [(make-sub "button-enabled?")])
+             :waiting? (<sub [(make-sub "button-waiting?")])
+             :status   (<sub [(make-sub "status")])))))
 
 (defmulti billing-paragraph identity)
 (defmethod billing-paragraph :default [_]
@@ -360,62 +360,12 @@
 (defmethod billing-paragraph :six [_]
   "You're on the most cost-effective billing plan!")
 
-(defn payment-details
-  [edit? admin?]
-  (let [{:keys [card billing-period] :as payment} (<sub [::subs/payment])
-        package (<sub [::subs/package-kw])
-        event [::events/update-card-details]]
-    [:div.company-edit__payment-details
-     (when card
-       [:div.company-edit__payment-details__card-details
-        [:h2 "Payment Details"]
-        [card-data card]
-        (when payment
-          [:div
-           [:p "If you'd like to update your card details, please re-enter them below:"]
-           [payment/card-form {:id :company-settings-update
-                               :terms? false
-                               :event event}]
-           [status-button
-            {:id "update-card-details"
-             :prefix ::update-card-details
-             :on-click #(when-let [el (.getElementById js/document "stripe-card-form")]
-                          (payment/submit-stripe-form! :company-settings-update event))
-             :class "button--inverted"
-             :text "Update Payment Details"}]])])
-     (when (<sub [::subs/has-subscription?])
-       [:div
-        [:div.company-edit__payment-details__billing-and-pricing
-         [:h2 "Change billing period"]
-         [:div
-          [:p (billing-paragraph billing-period)]
-          [link
-           [:button.button "Change billing period"]
-           :payment-setup
-           :step :pay-confirm
-           :query-params {:billing billing-period
-                          :package package
-                          :existing-billing billing-period
-                          :breakdown false}]]]
-        [:div.company-edit__payment-details__coupons
-         [:h2 "Discounts"]
-         [:div
-          [:p "Details of any existing discounts will be listed here. You can also apply new discount by entering your code and pressing Apply."]
-          [:p.company-edit__payment-details__coupons__description
-           (if-let [coupon (<sub [::subs/coupon])]
-             [:span "Currently applied: " [:span (str (:description coupon) ", " (name (:duration coupon)))]]
-             [:i "You don't currently have an active discount."])]
-          (when (<sub [::subs/coupon-apply-success?])
-            [:p.company-edit__payment-details__coupons__new-coupon
-             [:i "Success! A new coupon has been applied to your subscription."]])
-          [payment/coupon-field true [::events/apply-coupon]]]]])]))
-
 (defn cancel-payment
   []
   (when (<sub [::subs/has-subscription?])
     (let [exp (<sub [::subs/payment-expires])
           admin? (<sub [:wh.user/super-admin?])]
-      [:div.company-edit__payment-details.company-edit__payment-details__cancel-plan
+      [:div.company-edit__payment-details__cancel-plan
        [:h2 "Cancel your plan"]
        [:p "We'll be very sorry to see you go \uD83D\uDE15"]
        [:p "Please drop us an email to let us know why you’d like to cancel and then we’ll get it sorted for you."]
@@ -436,6 +386,59 @@
                :rel    "noopener"}
            [:button.button
             "Contact WorksHub"]])]])))
+
+(defn payment-details
+  [edit? admin?]
+  (let [{:keys [card billing-period] :as payment} (<sub [::subs/payment])
+        package                                   (<sub [::subs/package-kw])
+        event                                     [::events/update-card-details]
+        has-sub?                                  (<sub [::subs/has-subscription?])]
+    [:div.company-edit__payment-details
+     (when card
+       [:div.company-edit__payment-details__card-details
+        [:h2 "Payment Details"]
+        [card-data card]
+        (when payment
+          [:div
+           [:p "If you'd like to update your card details, please re-enter them below:"]
+           [payment/card-form {:id     :company-settings-update
+                               :terms? false
+                               :event  event}]
+           [status-button
+            {:id       "update-card-details"
+             :prefix   ::update-card-details
+             :on-click #(when-let [el (.getElementById js/document "stripe-card-form")]
+                          (payment/submit-stripe-form! :company-settings-update event))
+             :class    "button--inverted"
+             :text     "Update Payment Details"}]])])
+     (when has-sub?
+       [:div.company-edit__payment-details__billing-and-pricing
+        [:h2 "Change billing period"]
+        [:div
+         [:p (billing-paragraph billing-period)]
+         [link
+          [:button.button "Change billing period"]
+          :payment-setup
+          :step :pay-confirm
+          :query-params {:billing          billing-period
+                         :package          package
+                         :existing-billing billing-period
+                         :breakdown        false}]]])
+     (when has-sub?
+       [:div.company-edit__payment-details__coupons
+        [:h2 "Discounts"]
+        [:div
+         [:p "Details of any existing discounts will be listed here. You can also apply new discount by entering your code and pressing Apply."]
+         [:p.company-edit__payment-details__coupons__description
+          (if-let [coupon (<sub [::subs/coupon])]
+            [:span "Currently applied: " [:span (str (:description coupon) ", " (name (:duration coupon)))]]
+            [:i "You don't currently have an active discount."])]
+         (when (<sub [::subs/coupon-apply-success?])
+           [:p.company-edit__payment-details__coupons__new-coupon
+            [:i "Success! A new coupon has been applied to your subscription."]])
+         [payment/coupon-field true [::events/apply-coupon]]]])
+     (when edit?
+       [cancel-payment])]))
 
 (defmulti error->message identity)
 (defmethod error->message :default [_]
@@ -535,9 +538,7 @@
           [:div.column.is-7
            (if (and (= page-selection :payment-details) payment?)
              [:div
-              [payment-details edit? admin?]
-              (when edit?
-                [cancel-payment])]
+              [payment-details edit? admin?]]
              [:div
               (when admin?
                 [company-details edit? admin?])
