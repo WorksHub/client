@@ -353,7 +353,6 @@
         "nick.walker"     "Nick Walker"
         "patrick"         "Patrick Gubbey"
         "peter"           "Peter Forteath"
-        "miles"           "Miles Samuel"
         "ken.cadima"      "Ken Cadima"
         "daniel.earnshaw" "Daniel Earnshaw"
         "quan"            "Quan Truc"
