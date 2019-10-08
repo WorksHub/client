@@ -142,6 +142,12 @@
     {:analytics/track ["Register Button Clicked" context]}))
 
 (reg-event-fx
+  :company/track-install-gh-clicked
+  db/default-interceptors
+  (fn [_ _]
+    {:analytics/track ["Install GitHub App Button Clicked"]}))
+
+(reg-event-fx
   :register/track-account-created
   db/default-interceptors
   (fn [{db :db} [data]]

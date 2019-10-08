@@ -657,6 +657,12 @@
         (assoc-in [::edit/sub-db ::edit/coupon-apply-success?] true)
         (util/update-in* [::payment/sub-db ::payment/company] dissoc :id)))) ;; this causes payment screen to re-fetch company
 
+(reg-event-fx
+  :company/track-install-integration-clicked
+  db/default-interceptors
+  (fn [_ [integration]]
+    {:analytics/track [(str "Connect " integration " Button Clicked")]}))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; THIS WILL MOVE TO COMPANY PROFILE
 

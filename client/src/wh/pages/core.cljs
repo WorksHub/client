@@ -68,6 +68,11 @@
       (= can-access? db/logged-in?) :login
       :otherwise :not-found)))
 
+(defn handler->name [handler]
+  (->> (str/split (name handler) #"-")
+       (map str/capitalize)
+       (str/join " ")))
+
 ;; Set current page and page params, if any.
 ;; NOTE: this is an internal event, meant to be dispatched by
 ;; pushy only. To programmatically navigate through the app,
@@ -95,17 +100,17 @@
                                          (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
                                          (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
                       (cond-> {:db                 new-db
-                               :analytics/pageview [(str/capitalize  (name handler)) (merge query-params route-params)]
-                               :dispatch-n [[:error/close-global]
-                                            [::disable-no-scroll]
-                                            [:wh.events/show-chat? true]]}
+                               :analytics/pageview [(handler->name handler) (merge query-params route-params)]
+                               :analytics/track    [(str (handler->name handler) " Viewed") (merge query-params route-params) true]
+                               :dispatch-n         [[:error/close-global]
+                                                    [::disable-no-scroll]
+                                                    [:wh.events/show-chat? true]]}
                               ;; We only fire on-page-load events when we didn't receive a back-button
                               ;; navigation (i.e. history-state is nil). See pushy/core.cljs.
                               (nil? history-state) (update :dispatch-n (fn [dispatch-events]
                                                                          (concat dispatch-events
                                                                                  (cond-> (on-page-load new-db)
-                                                                                         (::db/initial-load? db) (conj [:wh.events/set-initial-load false])))))
-                              (contains? #{:job :blog} handler) (assoc :analytics/track [(str (str/capitalize  (name handler)) " Viewed") route-params true])))))))
+                                                                                         (::db/initial-load? db) (conj [:wh.events/set-initial-load false])))))))))))
 
 ;; Internal event meant to be triggered by :navigate only.
 

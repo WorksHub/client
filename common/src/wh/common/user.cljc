@@ -40,28 +40,30 @@
            board job-seeking-status remote platform-url
            hubspot-profile-url other-urls current-location
            preferred-locations type company]}]
-  (->
-    {:id                  id
-     :email               email
-     :name                name
-     :type                type
-     :vertical            board
-     :platform-url        platform-url
-     :hubspot-url         hubspot-profile-url
-     :skills              (mapv :name skills)
-     :visa                (str (str/join ", " visa-status) (when visa-status-other (str " " visa-status-other)))
-     :approval            approval
-     :salary              salary
-     :avatar              image-url
-     :description         summary
-     :created-at          created
-     :job-seeking-status  job-seeking-status
-     :remote              remote
-     :urls                (mapv :url other-urls)
-     :address             (when current-location
-                            {:city    (:city current-location)
-                             :country (:country current-location)})
-     :preferred-locations (mapv #(str (:city %) ", " (:country %)) (map util/strip-ns-from-map-keys preferred-locations))
-     :company             (when company
-                            (select-keys company [:name :id :package :vertical]))}
-    util/remove-nil-blank-or-empty))
+  (cond-> {:id                  id
+           :email               email
+           :name                name
+           :type                type
+           :vertical            board
+           :platform-url        platform-url
+           :hubspot-url         hubspot-profile-url
+           :skills              (mapv :name skills)
+           :visa                (str (str/join ", " visa-status) (when visa-status-other (str " " visa-status-other)))
+           :salary              salary
+           :avatar              image-url
+           :description         summary
+           :created-at          created
+           :job-seeking-status  job-seeking-status
+           :remote              remote
+           :urls                (mapv :url other-urls)
+           :address             (when current-location
+                                  {:city    (:city current-location)
+                                   :country (:country current-location)})
+           :preferred-locations (mapv #(str (:city %) ", " (:country %)) (map util/strip-ns-from-map-keys preferred-locations))}
+          approval (assoc :approval-status (:status approval)
+                          :approval-source (:source approval))
+          company (assoc :company-name (:name company)
+                         :company-id (:id company)
+                         :company-vertical (:vertical company)
+                         :package (:package company))
+          true util/remove-nil-blank-or-empty))

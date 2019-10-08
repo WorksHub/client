@@ -238,9 +238,10 @@
           [:button.button.company-edit__integration
            (merge
              {:id "company-edit__integration--slack"}
-             (when (<sub [:user/admin?])
+             (if (<sub [:user/admin?])
                {:on-click #(do (.preventDefault %)
-                               (dispatch [::events/toggle-integration-popup true]))}))
+                               (dispatch [::events/toggle-integration-popup true]))}
+               {:on-click #(dispatch [:company/track-install-integration-clicked "Slack"])}))
            [:img {:src "/images/company/slack.svg"}]]])
        (when-not (<sub [::subs/greenhouse-connected?])
          [:a {:href (when (and (not (<sub [:user/admin?]))
@@ -249,9 +250,10 @@
           [:button.button.company-edit__integration
            (merge
              {:id "company-edit__integration--greenhouse"}
-             (when (<sub [:user/admin?])
+             (if (<sub [:user/admin?])
                {:on-click #(do (.preventDefault %)
-                               (dispatch [::events/toggle-integration-popup true]))})
+                               (dispatch [::events/toggle-integration-popup true]))}
+               {:on-click #(dispatch [:company/track-install-integration-clicked "Greenhouse"])})
              (when (and (not (<sub [:user/admin?]))
                         (not (<sub [:wh.user/can-use-integrations?])))
                {:on-click #(do (.preventDefault %)
