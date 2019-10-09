@@ -1,60 +1,59 @@
-(ns wh.jobs.job.views
+(ns wh.job.views
   (:require
+    #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
+    #?(:cljs [wh.components.forms.views :refer [text-field error-component]])
+    #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+    #?(:cljs [wh.components.stats.views :refer [stats-item]])
     [clojure.string :as str]
-    [re-frame.core :refer [dispatch dispatch-sync]]
-    [reagent.core :as r]
     [wh.common.data :refer [get-manager-name]]
-    [wh.common.re-frame-helpers :refer [merge-classes]]
+    [wh.common.job :as jobc]
     [wh.common.text :refer [pluralize]]
-    [wh.components.cards.views :refer [match-circle job-card]]
-    [wh.components.common :refer [link img wrap-img]]
-    [wh.components.ellipsis.views :refer [ellipsis]]
-    [wh.components.footer :as footer]
-    [wh.components.forms.views :refer [text-field error-component]]
+    [wh.components.cards :refer [match-circle]]
+    [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
-    [wh.components.issue :refer [issue-card level->str level->icon]]
-    [wh.components.job :refer [highlight]]
-    [wh.components.overlay.views :refer [popup-wrapper]]
-    [wh.components.stats.views :refer [stats-item]]
-    [wh.events :as common-events]
+    [wh.components.issue :refer [level->str level->icon issue-card]]
+    [wh.components.job :refer [job-card highlight]]
     [wh.interop :as interop]
-    [wh.jobs.job.events :as events]
-    [wh.jobs.job.subs :as subs]
+    [wh.job.events :as events]
+    [wh.job.subs :as subs]
     [wh.pages.util :as putil]
+    [wh.re-frame :as r]
+    [wh.re-frame.events :refer [dispatch dispatch-sync]]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
-    [wh.subs :as subs-common :refer [<sub]]
-    [wh.user.subs :as user-subs]))
+    [wh.util :as util]
+    [wh.verticals :as verticals]))
 
-(def content-height-offset 320)
+#?(:cljs
+   (defn- latlng [{:keys [latitude longitude]}]
+     (js/google.maps.LatLng. latitude longitude)))
 
-(defn- latlng [{:keys [latitude longitude]}]
-  (js/google.maps.LatLng. latitude longitude))
-
-(defn google-map [props class]
-  (let [gmap (r/atom nil)
-        marker (r/atom nil)]
-    (r/create-class
-     {:reagent-render (fn [props] [:div {:class class}])
-      :component-did-mount (fn [this]
-                             (let [{:keys [zoom position title]} (r/props this)
-                                   map-canvas (r/dom-node this)
-                                   js-position (latlng position)
-                                   map-options (clj->js {"center" js-position
-                                                         "zoom"   (or zoom 16)})
-                                   gmap-object (js/google.maps.Map. map-canvas map-options)
-                                   marker-options (clj->js {"position" js-position
-                                                            "map" gmap-object
-                                                            "title" title})
-                                   gmap-marker (js/google.maps.Marker. marker-options)]
-                               (reset! gmap gmap-object)
-                               (reset! marker gmap-marker)))
-      :component-did-update (fn [this]
-                              (let [{:keys [zoom position title]} (r/props this)
-                                    js-position (latlng position)]
-                                (.setCenter @gmap js-position)
-                                (.setPosition @marker js-position)
-                                (.setZoom @gmap zoom)
-                                (.setTitle @marker title)))})))
+#?(:cljs
+   (defn google-map [props class]
+     (let [gmap (r/atom nil)
+           marker (r/atom nil)]
+       (r/create-class
+         {:reagent-render (fn [props] [:div {:class class}])
+          :component-did-mount (fn [this]
+                                 (let [{:keys [zoom position title]} (r/props this)
+                                       map-canvas (r/dom-node this)
+                                       js-position (latlng position)
+                                       map-options (clj->js {"center" js-position
+                                                             "zoom"   (or zoom 16)})
+                                       gmap-object (js/google.maps.Map. map-canvas map-options)
+                                       marker-options (clj->js {"position" js-position
+                                                                "map" gmap-object
+                                                                "title" title})
+                                       gmap-marker (js/google.maps.Marker. marker-options)]
+                                   (reset! gmap gmap-object)
+                                   (reset! marker gmap-marker)))
+          :component-did-update (fn [this]
+                                  (let [{:keys [zoom position title]} (r/props this)
+                                        js-position (latlng position)]
+                                    (.setCenter @gmap js-position)
+                                    (.setPosition @marker js-position)
+                                    (.setZoom @gmap zoom)
+                                    (.setTitle @marker title)))}))))
 
 
 
@@ -72,9 +71,10 @@
            (concat []
                    (when (<sub [::subs/show-unpublished?])
                      [[:button.button.button--medium
-                       {:id "job-view__publish-button"
-                        :class (when (<sub [::subs/publishing?]) "button--inverted button--loading")
-                        :on-click #(dispatch [::events/publish-role])} "Publish"]])
+                       (merge {:id "job-view__publish-button"
+                               :class (when (<sub [::subs/publishing?]) "button--inverted button--loading")}
+                              #?(:cljs
+                                 {:on-click #(dispatch [::events/publish-role])})) "Publish"]])
                    (when (or (not (<sub [::subs/show-unpublished?]))
                              force-view-applications?)
                      [[:a.button.button--medium
@@ -90,19 +90,19 @@
       [:button.button.button--medium
        (merge {:id (str "job-view__logged-out-apply-button" (when id (str "__" id)))}
               (interop/on-click-fn
-               (interop/show-auth-popup :jobpage-apply
-                                        [:job
-                                         :params {:slug (:slug (<sub [::subs/apply-job]))}
-                                         :query-params {:apply "true"}])))
-       (if (some? (<sub [:wh.user/applied-jobs]))
+                (interop/show-auth-popup :jobpage-apply
+                                         [:job
+                                          :params {:slug (:slug (<sub [::subs/apply-job]))}
+                                          :query-params {:apply "true"}])))
+       (if (some? (<sub [:user/applied-jobs]))
          "1-Click Apply"
          "Easy Apply")]
       [:button.button.button--medium.button--inverted
        (merge {:id (str "job-view__see-more-button" (when id (str "__" id)))}
               (interop/on-click-fn
-               (interop/show-auth-popup :jobpage-apply
-                                        [:job
-                                         :params {:slug (:slug (<sub [::subs/apply-job]))}])))
+                (interop/show-auth-popup :jobpage-apply
+                                         [:job
+                                          :params {:slug (:slug (<sub [::subs/apply-job]))}])))
        "See More"]]
 
      :else
@@ -110,15 +110,15 @@
       {:id (str "job-view__apply-button" (when id (str "__" id)))
        :disabled (<sub [:user/company?])
        :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job])])}
-      (if (some? (<sub [:wh.user/applied-jobs]))
+      (if (some? (<sub [:user/applied-jobs]))
         "1-Click Apply"
         "Easy Apply")])))
 
 (defn like-icon [class]
   [icon "job-heart"
-   :class (merge-classes class
-                         (when (<sub [::subs/liked?]) (str class "--liked")))
-   :on-click #(dispatch [::common-events/toggle-job-like
+   :class (util/merge-classes class
+                              (when (<sub [::subs/liked?]) (str class "--liked")))
+   :on-click #(dispatch [:wh.events/toggle-job-like
                          {:id    (<sub [::subs/id])
                           :company-name (<sub [::subs/company-name])
                           :title (<sub [::subs/title])}])])
@@ -126,17 +126,18 @@
 ;; XXX: move dupe to wh.components.overlays?
 (defn notes-overlay
   [& {:keys [user-id value on-ok on-close on-change]}]
-  (popup-wrapper
-   {:id :notes
-    :on-ok on-ok
-    :on-close on-close
-    :button-label "Add Note"}
-   [:form.wh-formx.wh-formx__layout
-    [text-field
-     value
-     {:type :textarea
-      :label [:span "Notes on this applicant that are relevant to this role"]
-      :on-change on-change}]]))
+  #?(:cljs
+     [popup-wrapper
+      {:id :notes
+       :on-ok on-ok
+       :on-close on-close
+       :button-label "Add Note"}
+      [:form.wh-formx.wh-formx__layout
+       [text-field
+        value
+        {:type :textarea
+         :label [:span "Notes on this applicant that are relevant to this role"]
+         :on-change on-change}]]]))
 
 (defn apply-on-behalf-note [class-prefix]
   (let [note (<sub [::subs/note])]
@@ -146,38 +147,40 @@
       [icon "edit"]]
      [:div.clickable
       {:on-click #(dispatch [::events/show-notes-overlay])}
-      [ellipsis (if (str/blank? note)
-                  "Add applicant notes"
-                  note)]]]))
+      #?(:cljs
+         [ellipsis (if (str/blank? note)
+                     "Add applicant notes"
+                     note)])]]))
 
 (defn apply-on-behalf [class-prefix]
-  [:div.wh-formx
-   {:class (str class-prefix "__apply-on-behalf")}
-   [:h2 "Admin applications"]
-   [text-field nil
-    {:label "Apply on behalf of"
-     :value (<sub [::subs/apply-on-behalf])
-     :on-change [::events/edit-apply-on-behalf]
-     :suggestions (<sub [::subs/apply-on-behalf-suggestions])
-     :on-select-suggestion [::events/select-apply-on-behalf]}]
-   (when (<sub [::subs/apply-on-behalf-id])
-     [apply-on-behalf-note class-prefix])
-   [:button.button.button--medium
-    {:class (when (<sub [::subs/applying?]) " button--loading button--inverted")
-     :disabled (not (<sub [::subs/apply-on-behalf-button-active?]))
-     :on-click #(dispatch [::events/apply-on-behalf])}
-    "Send"]
-   (when (<sub [::subs/applied-on-behalf])
-     [:span
-      {:class (str class-prefix "__apply-on-behalf-confirmation")}
-      "\uD83D\uDC4D Candidate was approved and sent to the company."])
-   (when-let [error (<sub [::subs/apply-on-behalf-error])]
-     (error-component error {:id "error-on-behalf-of"}))])
+  #?(:cljs
+     [:div.wh-formx
+      {:class (str class-prefix "__apply-on-behalf")}
+      [:h2 "Admin applications"]
+      [text-field nil
+       {:label "Apply on behalf of"
+        :value (<sub [::subs/apply-on-behalf])
+        :on-change [::events/edit-apply-on-behalf]
+        :suggestions (<sub [::subs/apply-on-behalf-suggestions])
+        :on-select-suggestion [::events/select-apply-on-behalf]}]
+      (when (<sub [::subs/apply-on-behalf-id])
+        [apply-on-behalf-note class-prefix])
+      [:button.button.button--medium
+       {:class (when (<sub [::subs/applying?]) " button--loading button--inverted")
+        :disabled (not (<sub [::subs/apply-on-behalf-button-active?]))
+        :on-click #(dispatch [::events/apply-on-behalf])}
+       "Send"]
+      (when (<sub [::subs/applied-on-behalf])
+        [:span
+         {:class (str class-prefix "__apply-on-behalf-confirmation")}
+         "\uD83D\uDC4D Candidate was approved and sent to the company."])
+      (when-let [error (<sub [::subs/apply-on-behalf-error])]
+        (error-component error {:id "error-on-behalf-of"}))]))
 
 (defn company-header
   []
   [:section.is-flex.job__company-header
-   (when (<sub [::user-subs/approved?])
+   (when (<sub [:user/approved?])
      [:div.job__company-header__logo
       (let [logo (<sub [::subs/logo])]
         (if (or logo (<sub [::subs/loaded?]))
@@ -187,7 +190,7 @@
               logo-img))
           [:div.logo--skeleton]))])
    [:div.job__company-header__info
-    (when (<sub [::user-subs/approved?])
+    (when (<sub [:user/approved?])
       (cond
         (<sub [::subs/profile-enabled?])
         [link [:h2.is-underlined (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
@@ -214,17 +217,18 @@
 
 (defn job-stats
   []
-  [:section.sidebar__stats.stats
-   [:h2 (<sub [::subs/stats-title])]
-   [stats-item (merge {:icon-name "views"
-                       :caption "Views"}
-                      (<sub [::subs/stats-item :views]))]
-   [stats-item (merge {:icon-name "like"
-                       :caption "Likes"}
-                      (<sub [::subs/stats-item :likes]))]
-   [stats-item (merge {:icon-name "applications"
-                       :caption "Applications"}
-                      (<sub [::subs/stats-item :applications]))]])
+  #?(:cljs
+     [:section.sidebar__stats.stats
+      [:h2 (<sub [::subs/stats-title])]
+      [stats-item (merge {:icon-name "views"
+                          :caption "Views"}
+                         (<sub [::subs/stats-item :views]))]
+      [stats-item (merge {:icon-name "like"
+                          :caption "Likes"}
+                         (<sub [::subs/stats-item :likes]))]
+      [stats-item (merge {:icon-name "applications"
+                          :caption "Applications"}
+                         (<sub [::subs/stats-item :applications]))]]))
 
 (defn company-action
   []
@@ -309,7 +313,7 @@
   []
   [:section.job__company-issues
    (let [logo (<sub [::subs/logo])]
-     (if (or logo (<sub [::subs/loaded?]))
+     (if (and logo (<sub [::subs/loaded?]))
        (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 40 :h 40 :class "logo"})
        [:div.logo--skeleton]))
    [:p.cta
@@ -319,37 +323,13 @@
      [issue item])
    [link "View All Issues" :issues-for-company-id :company-id (<sub [::subs/company-id]) :class "button"]])
 
-(defn show-more
-  [event]
-  [:div.is-full-width.job__show-more-button
-   [:div.is-full-width
-    (if (<sub [:user/logged-in?])
-      {:on-click #(dispatch [event])}
-      (interop/on-click-fn
-       (interop/show-auth-popup :jobpage-see-more
-                                [:job
-                                 :params {:id (:id (<sub [::subs/apply-job]))}])))
-    [icon "plus"] "Show More"]])
-
 (defn content
-  [expanded-sub expanded-event body]
-  (let [id (name (gensym))
-        show-button? (r/atom false)
-        check-height #(when-let [el (.getElementById  js/document id)]
-                        (when (< content-height-offset (.-offsetHeight el))
-                          (reset! show-button? true)))]
-    (r/create-class
-     {:component-did-mount  (fn [this] (check-height))
-      :component-did-update (fn [this] (check-height))
-      :reagent-render
-      (fn [expanded-sub expanded-event body]
-        (let [description-expanded? (<sub [expanded-sub])]
-          [:div.job__content
-           {:id id
-            :class (when description-expanded? "job__content--expanded")}
-           body
-           (when (and @show-button? (not description-expanded?))
-             [show-more expanded-event])]))})))
+  [_body]
+  (let [id (name (gensym))]
+    (fn [body]
+      [:div.job__content
+       {:id id}
+       body])))
 
 ;; taken from taoensso.encore; we're not using it to avoid increasing
 ;; compiled file size (see README)
@@ -361,15 +341,11 @@
    (let [description (<sub [::subs/description])]
      [:div.job__job-description
       [:h2 (when description "Role overview")]
-      [content ::subs/job-description-expanded?
-       ::events/expand-job-description
-       [putil/html description]]])
+      [content [putil/html description]]])
    (when-let [company-description (<sub [::subs/company-description])]
      [:div.job__company-description
       [:h2 "About the company"]
-      [content ::subs/company-description-expanded?
-       ::events/expand-company-description
-       [putil/html (<sub [::subs/company-description])]]])
+      [content [putil/html (<sub [::subs/company-description])]]])
    (let [description  (<sub [::subs/location-description])
          position     (<sub [::subs/location-position])
          address      (<sub [::subs/location-address-parts])
@@ -378,15 +354,14 @@
      (when (or description? address?)
        [:div.job__location
         [:h2 "Location"]
-        [content ::subs/location-description-expanded?
-         ::events/expand-location-description
+        [content
          [:div
           (when description?
             [putil/html description])
           (when address?
             [:div.is-flex
-             (when (and (<sub [:google/maps-loaded?]) position (<sub [::subs/show-address?]))
-               [google-map {:position position, :title (<sub [::subs/company-name])} "job__map"])
+             #?(:cljs (when (and (<sub [:google/maps-loaded?]) position (<sub [::subs/show-address?]))
+                        [google-map {:position position, :title (<sub [::subs/company-name])} "job__map"]))
              (when (and (seq address) (<sub [::subs/show-address?]))
                [:div.job__location__address
                 [:h3 "Address"]
@@ -405,7 +380,7 @@
                            {:id "1-make-sure-to-update-your-profile"
                             :message "Make sure to update your profile with the most relevant skills to maximize your chances of getting this job!"})
                          {:id "2-engineers-who-find-new-job-through-site"
-                          :message (str "Engineers who find a new job through " (<sub [:wh.subs/platform-name]) " average a 15% increase in salary.")}]))
+                          :message (str "Engineers who find a new job through " (<sub [:wh/platform-name]) " average a 15% increase in salary.")}]))
         loaded? (<sub [::subs/loaded?])]
     [:section.is-flex.job__lower-cta.is-hidden-mobile
      {:class (when-not loaded? "job__lower-cta--skeleton")}
@@ -423,12 +398,12 @@
      [:div.columns
       (doall (for [job jobs]
                ^{:key (:id job)}
-               [:div.column [job-card job :public (<sub [:user/public-job-info-only?])]]))]]))
+               [:div.column [job-card job {:public (<sub [:user/public-job-info-only?])}]]))]]))
 
 (defn apply-sticky
   []
   [:div.job__apply-sticky.is-hidden-desktop.is-flex.sticky
-   {:class (when (<sub [::subs/show-apply-sticky?]) "sticky--shown")}
+   {:id "job__apply-sticky"}
    [:div.job__apply-sticky__logo
     (if-let [logo (<sub [::subs/logo])]
       (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :class "logo"})
@@ -437,88 +412,80 @@
    [:button.button
     {:id "job-apply-sticky__apply-button"
      :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])}
-    (if (some? (<sub [:wh.user/applied-jobs]))
+    (if (some? (<sub [:user/applied-jobs]))
       "1-Click Apply"
       "Easy Apply")]])
 
 (defn job-details
   []
-  (r/create-class
-    {:component-did-mount
-     (fn [this]
-       (putil/attach-on-scroll-event
-         (fn [y]
-           (dispatch [::events/set-show-apply-sticky? (> y 160)]))))
-     :reagent-render
-     (fn []
-       (let [admin? (<sub [:user/admin?])
-             company? (<sub [:user/company?])
-             actions (cond (<sub [::subs/owner?])
-                           [:div.section-container
-                            [company-action]
-                            [job-stats]]
-                           admin?
-                           [:div.section-container
-                            [admin-action]
-                            [job-stats]]
-                           company? ;; but not owner
-                           [:div]
-                           :else
-                           [candidate-action])]
-         [:div.main-container
-          [:div.main.job
-           [:div.is-flex
-            [:div.job__main
-             [company-header]
-             [:div.is-hidden-desktop
-              actions
-              [job-highlights]]
-             [tagline]
-             [information]
-             (when (<sub [::subs/show-issues?])
-               [:div.is-hidden-desktop
-                [company-issues]])
-             (when-not (or admin? company? (<sub [::subs/applied?]))
-               [lower-cta])]
-            [:div.job__side.is-hidden-mobile
-             actions
-             [job-highlights]
-             (when (<sub [::subs/show-issues?])
-               [company-issues])]]
-           [other-roles]
-           (when (<sub [::subs/show-notes-overlay?])
-             [notes-overlay
-              :value     (<sub [::subs/note])
-              :on-change [::events/edit-note]
-              :on-ok     #(dispatch [::events/hide-notes-overlay])
-              :on-close  #(dispatch [::events/hide-notes-overlay])])]
-          [apply-sticky]]))}))
+  (let [admin?   (<sub [:user/admin?])
+        company? (<sub [:user/company?])
+        actions  (cond (<sub [::subs/owner?])
+                       [:div.section-container
+                        [company-action]
+                        [job-stats]]
+                       admin?
+                       [:div.section-container
+                        [admin-action]
+                        [job-stats]]
+                       company? ;; but not owner
+                       [:div]
+                       :else
+                       [candidate-action])]
+    [:div.main-container
+     [:div.main.job
+      [:div.is-flex
+       [:div.job__main
+        [company-header]
+        [:div.is-hidden-desktop
+         actions
+         [job-highlights]]
+        [tagline]
+        [information]
+        (when (<sub [::subs/show-issues?])
+          [:div.is-hidden-desktop
+           [company-issues]])
+        (when-not (or admin? company? (<sub [::subs/applied?]))
+          [lower-cta])]
+       [:div.job__side.is-hidden-mobile
+        actions
+        [job-highlights]
+        (when (<sub [::subs/show-issues?])
+          [company-issues])]]
+      [other-roles]
+      (when (<sub [::subs/show-notes-overlay?])
+        [notes-overlay
+         :value     (<sub [::subs/note])
+         :on-change [::events/edit-note]
+         :on-ok     #(dispatch [::events/hide-notes-overlay])
+         :on-close  #(dispatch [::events/hide-notes-overlay])])]
+     (if true #_(<sub [::subs/show-apply-sticky?])
+         [apply-sticky]
+         [:span "nope"])]))
 
 (defn admin-publish-prompt
   [permissions company-id success-event]
-  (popup-wrapper
-    {:id :admin-publish-prompt
-     :codi? false}
-    [:div.job__admin-publish-prompt
-     [:div.job__admin-publish-prompt__content
-      [:h1 "Company requires upgrade in order to publish role:"]
-      [:hr]
-      [:h1 "Here are the options:"]
-      [:div.buttons
-       [:a
-        {:href (routes/path :create-company-offer :params {:id company-id})}
-        [:button.button
-         [:span "Create Take-off Offer"]]]]
-      [:hr]
-      [:p "Always speak to the company and inform them of your intentions. If you're unsure, please seek assistance from your manager or the dev team. "]
-      [:button.button.button--inverted
-       {:on-click #(dispatch [::events/show-admin-publish-prompt? false])}
-       "Cancel"]]
-     (when (<sub [::subs/admin-publish-prompt-loading?])
-       [:div.job__admin-publish-prompt__loader])]))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+  #?(:cljs
+     (popup-wrapper
+       {:id :admin-publish-prompt
+        :codi? false}
+       [:div.job__admin-publish-prompt
+        [:div.job__admin-publish-prompt__content
+         [:h1 "Company requires upgrade in order to publish role:"]
+         [:hr]
+         [:h1 "Here are the options:"]
+         [:div.buttons
+          [:a
+           {:href (routes/path :create-company-offer :params {:id company-id})}
+           [:button.button
+            [:span "Create Take-off Offer"]]]]
+         [:hr]
+         [:p "Always speak to the company and inform them of your intentions. If you're unsure, please seek assistance from your manager or the dev team. "]
+         [:button.button.button--inverted
+          {:on-click #(dispatch [::events/show-admin-publish-prompt? false])}
+          "Cancel"]]
+        (when (<sub [::subs/admin-publish-prompt-loading?])
+          [:div.job__admin-publish-prompt__loader])])))
 
 (defn page []
   [:div
@@ -538,9 +505,9 @@
       [:div.main
        [:h2 "You don't have the right permissions to see this page."]]]
      [job-details])
-   [footer/footer (<sub [::subs-common/vertical]) "footer--job"]
    (when (<sub [:wh.job/show-admin-publish-prompt?])
      [admin-publish-prompt
       (<sub [::subs/company-permissions])
       (<sub [::subs/company-id])
-      nil])])
+      nil])
+   [:script (interop/set-class-on-scroll "job__apply-sticky" "sticky--shown" 160)]])

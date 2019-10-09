@@ -30,11 +30,11 @@
   ::recommended-jobs
   (fn [_ _]
     (reaction
-     (let [id           (<sub [:wh.subs/page-param :id])
-           results      (<sub [:graphql/result :recommended-jobs-for-blog {:id id}])
-           liked-jobs   (<sub [:wh.user/liked-jobs])
-           applied-jobs (<sub [:wh.user/applied-jobs])]
-       (jobs/add-interactions liked-jobs applied-jobs (:jobs results))))))
+      (let [id           (<sub [:wh.subs/page-param :id])
+            results      (<sub [:graphql/result :recommended-jobs-for-blog {:id id}])
+            liked-jobs   (<sub [:user/liked-jobs])
+            applied-jobs (<sub [:user/applied-jobs])]
+        (jobs/add-interactions liked-jobs applied-jobs (:jobs results))))))
 
 ;; These subscriptions extract various bits from ::blog and ::recommended-jobs.
 

@@ -14,7 +14,7 @@
   (fn [db [_ published? company-id]]
     (let [admin? (user-db/admin? db)
           owner? (and company-id (= company-id (get-in db [::user-db/sub-db ::user-db/company-id])))]
-      ;; we can't use wh.jobs.job.db/show-unpublished? since it may not be loaded
+      ;; we can't use wh.job.db/show-unpublished? since it may not be loaded
       (and (false? published?) (or admin? owner?)))))
 
 (defn show-blog-unpublished? [admin? creator user-email published?]

@@ -1,18 +1,19 @@
-(ns wh.jobs.job.subs
+(ns wh.job.subs
   (:require
-    [cljs-time.coerce :as tc]
-    [cljs-time.format :as tf]
+    #?(:cljs [wh.common.http :refer [url-encode]]
+       :clj [bidi.bidi :refer [url-encode]])
+    [#?(:cljs cljs-time.coerce :clj clj-time.coerce) :as tc]
+    [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub]]
-    [wh.common.http :refer [url-encode]]
     [wh.common.job :as jobc]
     [wh.components.stats.db :as stats]
     [wh.db :as db]
     [wh.graphql.jobs :as jobs]
-    [wh.jobs.job.db :as job]
-    [wh.routes :as routes]
-    [wh.user.db :as user])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+    [wh.job.db :as job]
+    [wh.routes :as routes])
+  (#?(:cljs :require-macros :clj :require)
+    [clojure.core.strint :refer [<<]]))
 
 (reg-sub ::db (fn [db _] db))
 
@@ -38,7 +39,7 @@
 (reg-sub
   ::liked?
   :<- [::id]
-  :<- [:wh.user/liked-jobs]
+  :<- [:user/liked-jobs]
   (fn [[id liked-jobs] _]
     (contains? liked-jobs id)))
 
@@ -50,7 +51,7 @@
 (reg-sub
   ::logo
   :<- [::sub-db]
-  (fn [{:keys [::job/company]} _]
+  (fn [{:keys [::job/company] :as sub-db} _]
     (:logo company)))
 
 (reg-sub
@@ -198,7 +199,7 @@
 (reg-sub
   ::applied?
   :<- [::sub-db]
-  :<- [:wh.user/applied-jobs]
+  :<- [:user/applied-jobs]
   (fn [[sub-db applied-jobs] _]
     (contains? applied-jobs (::job/id sub-db))))
 
@@ -214,10 +215,10 @@
 
 (reg-sub
   ::like-icon-shown?
-  :<- [::db]
   :<- [::loaded?]
-  (fn [[db loaded?] _]
-    (and (user/candidate? db)
+  :<- [:user/candidate?]
+  (fn [[loaded? candidate?] _]
+    (and candidate?
          loaded?)))
 
 (reg-sub
@@ -230,7 +231,7 @@
   ::owner?
   (fn [db _]
     (if-let [job-company-id (get-in db [::job/sub-db ::job/company-id])]
-      (= job-company-id (get-in db [::user/sub-db ::user/company-id]))
+      (= job-company-id (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]))
       false)))
 
 (reg-sub
@@ -336,24 +337,6 @@
         "An unexpected error occurred."))))
 
 (reg-sub
-  ::job-description-expanded?
-  :<- [::sub-db]
-  (fn [db _]
-    (::job/job-description-expanded? db)))
-
-(reg-sub
-  ::company-description-expanded?
-  :<- [::sub-db]
-  (fn [db _]
-    (::job/company-description-expanded? db)))
-
-(reg-sub
-  ::location-description-expanded?
-  :<- [::sub-db]
-  (fn [db _]
-    (::job/location-description-expanded? db)))
-
-(reg-sub
   ::matching-users
   :<- [::sub-db]
   (fn [db _]
@@ -368,8 +351,8 @@
 (reg-sub
   ::recommended-jobs
   :<- [::sub-db]
-  :<- [:wh.user/liked-jobs]
-  :<- [:wh.user/applied-jobs]
+  :<- [:user/liked-jobs]
+  :<- [:user/applied-jobs]
   (fn [[sub-db liked-jobs applied-jobs] _]
     (if (::job/recommended-jobs sub-db)
       (->> (::job/recommended-jobs sub-db)
@@ -385,8 +368,7 @@
   :<- [:user/company?]
   :<- [:user/admin?]
   (fn [[sub-db applied? company? admin?] _]
-    (and (::job/show-apply-sticky? sub-db)
-         (not (or applied? company? admin?)))))
+    (not (or applied? company? admin?))))
 
 (reg-sub
   ::candidate-message

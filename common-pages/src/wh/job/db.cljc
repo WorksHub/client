@@ -1,13 +1,12 @@
-(ns wh.jobs.job.db
+(ns wh.job.db
   (:require
-    [cljs.spec.alpha :as s]
-    [wh.common.data :as data]
-    [wh.user.db :as user]))
+    [#?(:cljs cljs.spec.alpha :clj clojure.spec.alpha) :as s]
+    [wh.common.data :as data]))
 
 (defn company-permissions
   [db]
   (or (get-in db [::sub-db ::company :permissions])
-      (get-in db [::user/sub-db ::user/company :permissions])))
+      (get-in db [:wh.user.db/sub-db :wh.user.db/company :permissions])))
 
 ;; The :no-matching-job is also used in wh.response.handler.job
 (s/def ::error (s/nilable #{:no-matching-job :unknown-error :unauthorised}))
@@ -41,7 +40,7 @@
 (s/def ::city (s/nilable string?))
 (s/def ::state (s/nilable string?))
 (s/def ::country string?)
-(s/def ::country-code (s/nilable (s/and string? #(= (count %) 2))))
+(s/def ::country-code (s/nilable (set (map first data/country-code-and-country))))
 (s/def ::sub-region (s/nilable string?))
 (s/def ::region (s/nilable string?))
 
@@ -83,9 +82,6 @@
                                    :opt-un [::min]))
         :competitive (s/nilable (s/keys :req-un [::competitive]))))
 
-(s/def ::job-description-expanded? boolean?)
-(s/def ::company-description-expanded? boolean?)
-(s/def ::location-description-expanded? boolean?)
 (s/def ::show-apply-sticky? boolean?)
 (s/def ::show-admin-publish-prompt? boolean?)
 (s/def ::admin-publish-prompt-loading? boolean?)
@@ -110,9 +106,6 @@
                               ::remuneration
                               ;;
                               ::publishing?
-                              ::job-description-expanded?
-                              ::company-description-expanded?
-                              ::location-description-expanded?
                               ::show-apply-sticky?
                               ::show-admin-publish-prompt?
                               ::admin-publish-prompt-loading?
@@ -121,9 +114,6 @@
 
 (def default-db {::error nil
                  ::publishing? false
-                 ::job-description-expanded? false
-                 ::company-description-expanded? false
-                 ::location-description-expanded? false
                  ::show-apply-sticky? false
                  ::show-admin-publish-prompt? false
                  ::admin-publish-prompt-loading? false})

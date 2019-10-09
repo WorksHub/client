@@ -345,9 +345,9 @@
                    ^{:key (:id job)}
                    [job-card job (merge {:public? false}
                                         #?(:cljs
-                                           {:liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
+                                           {:liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
                                             :user-is-owner?    admin-or-owner?
-                                            :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}))]))]]))
+                                            :user-has-applied? (some? (<sub [:user/applied-jobs]))}))]))]]))
      (when (<sub [::subs/show-fetch-all?])
        [:button.button.button--inverted.company-profile__all-jobs-button
         {:on-click #(dispatch [::events/fetch-all-jobs])}

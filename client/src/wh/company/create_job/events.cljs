@@ -14,7 +14,7 @@
     [wh.db :as db]
     [wh.graphql.company :refer [company-query create-job-mutation update-job-mutation update-company-mutation fetch-tags]]
     [wh.graphql.tag :refer [tag-query]]
-    [wh.jobs.job.db :as job]
+    [wh.job.db :as job]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
     [wh.util :as util]))
@@ -121,7 +121,17 @@
   ::toggle-vertical
   create-job-interceptors
   (fn [db [new-value]]
-    (update db ::create-job/verticals util/toggle-unless-empty new-value)))
+    (let  [new-db (update db ::create-job/verticals util/toggle-unless-empty new-value)
+          remote-vertical? (contains? (::create-job/verticals new-db) "remote")]
+      (assoc new-db ::create-job/remote remote-vertical?))))
+
+(reg-event-db
+  ::edit-remote
+  create-job-interceptors
+  (fn [db [new-value]]
+    (-> db
+        (update ::create-job/verticals (if new-value conj disj) "remote")
+        (assoc ::create-job/remote new-value))))
 
 (reg-event-fx
   ::scroll-into-view

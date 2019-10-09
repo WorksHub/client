@@ -10,16 +10,6 @@
          (fn [db _]
            (get-in db [::user/sub-db])))
 
-(reg-sub :wh.user/liked-jobs
-         :<- [::user]
-         (fn [user _]
-           (::user/liked-jobs user)))
-
-(reg-sub :wh.user/applied-jobs
-         :<- [::user]
-         (fn [user _]
-           (::user/applied-jobs user)))
-
 (reg-sub ::all-visa-statuses
          (constantly data/visa-options))
 
@@ -48,10 +38,6 @@
          :<- [::type]
          (fn [type]
            (user/candidate-type? type)))
-
-(reg-sub ::approved?
-         (fn [db _]
-           (user/approved? db)))
 
 (reg-sub ::show-consent-popup?
          :<- [::user]

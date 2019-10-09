@@ -584,7 +584,13 @@
                  :discover     "Discover the best Python opportunities"
                  :description  "Developers working with Python, Django, Flask, Ansible, Numpy and more."
                  :href         "/hire-python-developers"
-                 :description2 "Whether you're looking to hire full stack or backend Python developers, Data Scientists or Engineers, we've got you covered"}})
+                 :description2 "Whether you're looking to hire full stack or backend Python developers, Data Scientists or Engineers, we've got you covered"}
+   "remote"     {:title        "Remote Developers"
+                 :logo         "remote"
+                 :discover     "Discover the best remote opportunities"
+                 :description  "Remote developers working with JavaScript, Go, Scala, Java, Python and more."
+                 :href         "/hire-remote-developers"
+                 :description2 "Whether you're looking to hire full stack, frontend or backend remote developers, Data Scientists or Engineers, we've got you covered"}})
 
 (def in-demand-location-data
   ;; TODO Dedupe with location as below

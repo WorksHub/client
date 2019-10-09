@@ -4,8 +4,8 @@
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
     [reagent.core :as reagent]
     [wh.db :as db]
-    [wh.jobs.job.events :as job-events]
-    [wh.jobs.job.views :as job]
+    [wh.job.events :as job-events]
+    [wh.job.views :as job]
     [wh.jobs.jobsboard.events :as jobsboard-events]
     [wh.jobs.jobsboard.views :as jobsboard]))
 

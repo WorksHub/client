@@ -11,7 +11,7 @@
 (def company-landing-page "https://www.works-hub.com")
 (def pages-with-loader #{:homepage :learn :blog :github-callback :liked :recommended :profile :pre-set-search :jobsboard :contribute-edit})
 (def no-menu-pages #{:register :register-company :payment-setup :get-started})
-(def no-footer-pages (set (concat no-menu-pages #{:blog :job})))
+(def no-footer-pages (set (concat no-menu-pages #{:blog})))
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation

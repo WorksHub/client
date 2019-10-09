@@ -1,20 +1,20 @@
-(ns wh.jobs.job.events
+(ns wh.job.events
   (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
+    [#?(:cljs cljs-time.core :clj clj-time.core) :as t]
+    [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
     [clojure.string :as str]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
-    [wh.common.fx.google-maps]
+    #?(:cljs [wh.common.fx.google-maps])
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.common.job :as common-job]
     [wh.db :as db]
     [wh.graphql.jobs :as graphql-jobs]
-    [wh.jobs.job.db :as job]
-    [wh.pages.core :refer [on-page-load]]
-    [wh.user.db :as user]
+    [wh.job.db :as job]
+    #?(:cljs [wh.pages.core :refer [on-page-load]])
+    #?(:cljs [wh.user.db :as user])
     [wh.util :as util])
-  (:require-macros
+  (#?(:cljs :require-macros :clj :require)
     [clojure.core.strint :refer [<<]]
     [wh.graphql-macros :refer [defquery]]))
 
@@ -30,10 +30,11 @@
                       [:id :slug :published]]]})
 
 (defn job-query [db]
-  (cond
-    (user/company? db) graphql-jobs/job-query--company
-    (user/candidate? db) graphql-jobs/job-query--candidate
-    :otherwise graphql-jobs/job-query--default))
+  #?(:cljs
+     (cond
+       (user/company? db) graphql-jobs/job-query--company
+       (user/candidate? db) graphql-jobs/job-query--candidate
+       :otherwise graphql-jobs/job-query--default)))
 
 (defquery company-query
   {:venia/operation {:operation/name "jobCompany"
@@ -46,12 +47,13 @@
 (defn translate-job [job]
   (as-> job job
         (cases/->kebab-case job)
-        (util/namespace-map "wh.jobs.job.db" job)))
+        (util/namespace-map "wh.job.db" job)))
 
 (defn admin-or-job-owner? [db]
-  (or (user/admin? db)
-      (and (user/company? db)
-           (= (get-in db [::job/sub-db ::job/company-id]) (user/company-id db)))))
+  #?(:cljs
+     (or (user/admin? db)
+         (and (user/company? db)
+              (= (get-in db [::job/sub-db ::job/company-id]) (user/company-id db))))))
 
 (reg-event-fx
   ::fetch-company-issues
@@ -183,7 +185,7 @@
   db/default-interceptors
   (fn [db _]
     (let [job-id (get-in db [:wh.logged-in.apply.db/sub-db :wh.logged-in.apply.db/job :id])]
-      (update-in db [::user/sub-db ::user/applied-jobs] conj job-id))))
+      (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] conj job-id))))
 
 (reg-event-db
   ::set-applications-sort
@@ -231,7 +233,8 @@
              :variables  {:update_job
                           (cond-> {:id job-id
                                    :published true}
-                                  (user/admin? db) (assoc :approved true))}
+                                  #?(:cljs (user/admin? db)
+                                     :clj false) (assoc :approved true))}
              :on-success [::publish-job-success-internal success]
              :on-failure [::publish-job-failure-internal job-id failure retry]}})
 
@@ -246,21 +249,22 @@
   ::publish-job-failure-internal
   db/default-interceptors
   (fn [{db :db} [job-id failure-event retry-event resp]]
-    (let [reason (some-> resp :errors first :message keyword)
-          redirect-to-job {:navigate [:edit-job :params {:id job-id} :query-params {:save 1}]
-                           :dispatch failure-event}]
-      (case reason
-        :invalid-job     redirect-to-job
-        :invalid-company redirect-to-job
-        :missing-permission
-        (if (user/admin? db)
-          ;; TODO admin popup could go here instead...
-          (do (js/alert "Company does not have permission to publish this role. Check their package.")
-              {:dispatch failure-event})
-          (navigate-to-payment-setup job-id))
-        {:dispatch-n [[:error/set-global "There was an error publishing the role."
-                       retry-event]
-                      failure-event]}))))
+    #?(:cljs
+       (let [reason (some-> resp :errors first :message keyword)
+             redirect-to-job {:navigate [:edit-job :params {:id job-id} :query-params {:save 1}]
+                              :dispatch failure-event}]
+         (case reason
+           :invalid-job     redirect-to-job
+           :invalid-company redirect-to-job
+           :missing-permission
+           (if (user/admin? db)
+             ;; TODO admin popup could go here instead...
+             (do (js/alert "Company does not have permission to publish this role. Check their package.")
+                 {:dispatch failure-event})
+             (navigate-to-payment-setup job-id))
+           {:dispatch-n [[:error/set-global "There was an error publishing the role."
+                          retry-event]
+                         failure-event]})))))
 
 (reg-event-db
   ::show-admin-publish-prompt?
@@ -274,17 +278,18 @@
 
 (defn process-publish-role-intention
   [{:keys [db job-id permissions publish-events on-publish pending-offer]}]
-  (cond
-    (or (contains? permissions :can_publish)
-        (and (user/admin? db) pending-offer))
-    (merge (publish-job db job-id publish-events)
-           {:db (on-publish db)})
+  #?(:cljs
+     (cond
+       (or (contains? permissions :can_publish)
+           (and (user/admin? db) pending-offer))
+       (merge (publish-job db job-id publish-events)
+              {:db (on-publish db)})
 
-    (user/admin? db)
-    (show-admin-publish-prompt!)
+       (user/admin? db)
+       (show-admin-publish-prompt!)
 
-    :else
-    (navigate-to-payment-setup job-id)))
+       :else
+       (navigate-to-payment-setup job-id))))
 
 (reg-event-fx
   ::publish-role
@@ -294,14 +299,14 @@
           job-id (or job-id (get-in db [::job/sub-db ::job/id]))
           pending-offer (get-in db [::job/sub-db ::job/company :pending-offer])]
       (process-publish-role-intention
-       {:db db
-        :job-id job-id
-        :permissions perms
-        :pending-offer pending-offer
-        :publish-events {:success [::publish-job-success]
-                         :failure [::publish-job-failure]
-                         :retry   [::publish-role]}
-        :on-publish #(assoc-in % [::job/sub-db ::job/publishing?] true)}))))
+        {:db db
+         :job-id job-id
+         :permissions perms
+         :pending-offer pending-offer
+         :publish-events {:success [::publish-job-success]
+                          :failure [::publish-job-failure]
+                          :retry   [::publish-role]}
+         :on-publish #(assoc-in % [::job/sub-db ::job/publishing?] true)}))))
 
 (defquery update-company
   {:venia/operation {:operation/type :mutation
@@ -354,7 +359,7 @@
     {:db                (cond-> (assoc db ::job/apply-on-behalf value
                                        ::job/applied-on-behalf false
                                        ::job/apply-on-behalf-error nil)
-                          (str/blank? value) (assoc ::job/apply-on-behalf-id nil))
+                                (str/blank? value) (assoc ::job/apply-on-behalf-id nil))
      :dispatch-debounce {:id       :search-candidates-for-apply-on-behalf
                          :dispatch [::search-candidates]
                          :timeout  100}}))
@@ -457,24 +462,6 @@
            ::job/applying? false
            ::job/apply-on-behalf-error (util/gql-errors->error-key resp))))
 
-(reg-event-db
-  ::expand-job-description
-  job-interceptors
-  (fn [db _]
-    (assoc db ::job/job-description-expanded? true)))
-
-(reg-event-db
-  ::expand-company-description
-  job-interceptors
-  (fn [db _]
-    (assoc db ::job/company-description-expanded? true)))
-
-(reg-event-db
-  ::expand-location-description
-  job-interceptors
-  (fn [db _]
-    (assoc db ::job/location-description-expanded? true)))
-
 (reg-event-fx
   ::fetch-recommended-jobs
   job-interceptors
@@ -495,12 +482,6 @@
   job-interceptors
   (fn [{db :db} _] {:db (assoc db ::job/recommended-jobs [])}))
 
-(reg-event-fx
-  ::set-show-apply-sticky?
-  job-interceptors
-  (fn [{db :db} [show?]]
-    {:db (assoc db ::job/show-apply-sticky? show?)}))
-
 
 ;; We do this so that as we're fetching the job there are
 ;; some fields we already have and therefore can "prefill"
@@ -517,7 +498,7 @@
                db
                job/default-db)
              {::job/preset-slug slug}
-             (util/namespace-map "wh.jobs.job.db" preset-fields)))))
+             (util/namespace-map "wh.job.db" preset-fields)))))
 
 (reg-event-fx
   ::fetch-issues-and-analytics
@@ -539,26 +520,28 @@
   ::load-company-module-if-needed
   db/default-interceptors
   (fn [{db :db} _]
-    (if (or (user/admin? db) (user/company? db))
-      {:load-and-dispatch [:company]}
-      {})))
+    #?(:cljs
+       (if (or (user/admin? db) (user/company? db))
+         {:load-and-dispatch [:company]}
+         {}))))
 
-(defmethod on-page-load :job [db]
-  (let [requested-slug (get-in db [::db/page-params :slug])
-        slug-in-db (get-in db [::job/sub-db ::job/slug])
-        preset-slug (get-in db [::job/sub-db ::job/preset-slug])]
-    ;; If you are changing below logic make sure that wh.response.handler.job is also updated
-    [[::load-company-module-if-needed]
-     (when (or (and preset-slug (not= requested-slug preset-slug))
-               (and (not preset-slug) (not (::db/initial-load? db))))
-       [::initialize-db])
-     (if (not= requested-slug slug-in-db)
-       [::fetch-job requested-slug]
-       [::fetch-issues-and-analytics])
-     (when (and (= requested-slug slug-in-db)
-                (admin-or-job-owner? db))
-       [::fetch-company])
-     (when (get-in db [::db/query-params "apply"])
-       [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
-     [::fetch-recommended-jobs requested-slug]
-     [:google/load-maps]]))
+#?(:cljs
+   (defmethod on-page-load :job [db]
+     (let [requested-slug (get-in db [::db/page-params :slug])
+           slug-in-db (get-in db [::job/sub-db ::job/slug])
+           preset-slug (get-in db [::job/sub-db ::job/preset-slug])]
+       ;; If you are changing below logic make sure that wh.response.handler.job is also updated
+       [[::load-company-module-if-needed]
+        (when (or (and preset-slug (not= requested-slug preset-slug))
+                  (and (not preset-slug) (not (::db/initial-load? db))))
+          [::initialize-db])
+        (if (not= requested-slug slug-in-db)
+          [::fetch-job requested-slug]
+          [::fetch-issues-and-analytics])
+        (when (and (= requested-slug slug-in-db)
+                   (admin-or-job-owner? db))
+          [::fetch-company])
+        (when (get-in db [::db/query-params "apply"])
+          [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
+        [::fetch-recommended-jobs requested-slug]
+        [:google/load-maps]])))

@@ -231,8 +231,8 @@
             (for [job jobs]
               ^{:key (:id job)}
               [job-card job {:public?           false
-                             :liked?            (contains? (<sub [:wh.user/liked-jobs]) (:id job))
-                             :user-has-applied? (some? (<sub [:wh.user/applied-jobs]))}]))
+                             :liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
+                             :user-has-applied? (some? (<sub [:user/applied-jobs]))}]))
           (doall
             (for [i (range (<sub [::subs/num-related-jobs-to-show]))]
               ^{:key i}

@@ -17,7 +17,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.loader :refer [loader]]
     [wh.components.stats.views :refer [stats-item]]
-    [wh.jobs.job.views :as job]
+    [wh.job.views :as job]
     [wh.subs :refer [<sub]]
     [wh.user.subs :as user-subs]))
 

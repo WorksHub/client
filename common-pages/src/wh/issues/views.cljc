@@ -27,7 +27,7 @@
        [:h1 "We were unable to set up a GitHub webhook for this repository"]
        [:h2 "What this means"]
        [:p "Every time you connect a repository to "
-        (<sub [:wh.subs/platform-name])
+        (<sub [:wh/platform-name])
         ", we try to instruct GitHub on your behalf that it should notify our platform whenever there's a new pull request. This is called a "
         [:a.a--underlined {:target "_blank" :rel "noopener" :href "https://developer.github.com/webhooks/"} "webhook"]
         ". We do this to change the issue's status when it's interacted with on GitHub."]

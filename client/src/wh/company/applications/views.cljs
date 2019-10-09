@@ -7,7 +7,7 @@
     [wh.company.applications.db :as db]
     [wh.company.applications.events :as events]
     [wh.company.applications.subs :as subs]
-    [wh.components.cards.views :refer [match-circle]]
+    [wh.components.cards :refer [match-circle]]
     [wh.components.common :refer [link]]
     [wh.components.ellipsis.views :refer [ellipsis]]
     [wh.components.forms.views :as forms]

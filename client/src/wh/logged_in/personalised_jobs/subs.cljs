@@ -13,8 +13,8 @@
 (reg-sub
   ::jobs
   :<- [::personalised-jobs]
-  :<- [:wh.user/liked-jobs]
-  :<- [:wh.user/applied-jobs]
+  :<- [:user/liked-jobs]
+  :<- [:user/applied-jobs]
   (fn [[sub-db liked-jobs applied-jobs] _]
     (->> (::personalised-jobs/jobs sub-db)
          (jobs/add-interactions liked-jobs applied-jobs))))

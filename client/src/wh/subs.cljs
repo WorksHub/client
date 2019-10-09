@@ -67,10 +67,6 @@
          (fn [db _]
            (::db/loading? db)))
 
-(reg-sub ::platform-name
-         (fn [db _]
-           (::db/platform-name db)))
-
 (reg-sub ::twitter
          (fn [db _]
            (::db/twitter db)))

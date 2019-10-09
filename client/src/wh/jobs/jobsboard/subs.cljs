@@ -71,8 +71,8 @@
 (reg-sub
   ::jobs
   :<- [::jobsboard]
-  :<- [:wh.user/liked-jobs]
-  :<- [:wh.user/applied-jobs]
+  :<- [:user/liked-jobs]
+  :<- [:user/applied-jobs]
   (fn [[jobsboard liked-jobs applied-jobs] _]
     (->> (::jobsboard/jobs jobsboard)
          (jobs/add-interactions liked-jobs applied-jobs))))
@@ -80,8 +80,8 @@
 (reg-sub
   ::promoted-jobs
   :<- [::jobsboard]
-  :<- [:wh.user/liked-jobs]
-  :<- [:wh.user/applied-jobs]
+  :<- [:user/liked-jobs]
+  :<- [:user/applied-jobs]
   (fn [[jobsboard liked-jobs applied-jobs] _]
     (->> (::jobsboard/promoted-jobs jobsboard)
          (jobs/add-interactions liked-jobs applied-jobs))))

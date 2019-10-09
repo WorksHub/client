@@ -4,9 +4,9 @@
     [wh.components.conversation.views :refer [codi-message error-message button]]
     [wh.components.forms.views :refer [target-checked]]
     [wh.components.icons :refer [icon]]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.register.events :as events]
     [wh.register.subs :as subs]
-    [wh.subs :as subs-common :refer [<sub]]
     [wh.user.subs :as user-subs]))
 
 (defn email-box []
@@ -48,7 +48,7 @@
 
 (defn panel []
   [:div
-   [codi-message "Hi, I am Codi. Welcome to " (<sub [::subs-common/platform-name]) "!"]
+   [codi-message "Hi, I am Codi. Welcome to " (<sub [:wh/platform-name]) "!"]
    [codi-message (if (<sub [:user/email])
                    "Is this the best email for your account?"
                    "Please enter your email.")]

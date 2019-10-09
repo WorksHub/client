@@ -4532,7 +4532,7 @@ a.navbar-item,
     .navbar .navbar-menu--candidates div:first-child {
       padding: 20px 0px 0px 26px; }
     .navbar .navbar-menu--candidates.is-open {
-      height: 360px; }
+      height: 404px; }
   .navbar .navbar__search {
     padding: 18px 0px 14px 0px;
     display: flex;
@@ -4817,7 +4817,7 @@ a.navbar-item,
       border: 2px solid #ff7c6e;
       background-color: white;
       width: 260px;
-      height: 392px;
+      height: 436px;
       top: -12px;
       left: calc(654px - 129px);
       font-size: 14px;
@@ -10429,35 +10429,13 @@ h3 {
 
 .job__content {
   position: relative;
-  max-height: 360px;
   overflow-y: hidden;
   font-size: 14px;
-  line-height: 24px;
-  margin-bottom: 16px; }
+  line-height: 24px; }
 
-.job__content--expanded {
-  max-height: unset;
-  margin-bottom: 0; }
-
-.job__show-more-button {
-  color: #ff7c6e;
-  text-transform: uppercase;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  position: absolute;
-  bottom: 0;
-  background: linear-gradient(rgba(255, 255, 255, 0.001), white, white);
-  height: 50px; }
-  .job__show-more-button > div {
-    position: absolute;
-    bottom: 0;
-    cursor: pointer; }
-  .job__show-more-button svg {
-    width: 10px;
-    height: 10px;
-    margin-right: 6px; }
+.job__company-description,
+.job__location {
+  margin-top: 18px; }
 
 @media screen and (min-width: 1008px) {
   .job__location .is-flex {

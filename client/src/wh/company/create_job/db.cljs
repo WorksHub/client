@@ -33,7 +33,7 @@
 
    ::tags {:order 20 :initial #{}, :validate ::selected-tags}
 
-   ::remote                 {:order 30 :initial false}
+   ::remote                 {:order 30 :initial false :event? false}
    ::location__street       {:order 31 :initial "" :validate (s/nilable :wh.location/street)}
    ::location__city         {:order 32 :initial "" :validate ::city :event? false}
    ::location__post-code    {:order 33 :initial "" :validate (s/nilable :wh.location/post-code)}
@@ -59,7 +59,9 @@
   (let [clean-form (merge (forms/initial-value fields)
                           {::verticals (if (not= "www" (::db/vertical db))
                                          #{(::db/vertical db)}
-                                         #{verticals/default-vertical})})]
+                                         #{verticals/default-vertical})}
+                          (when (= "remote" (::db/vertical db))
+                            {::remote true}))]
     (merge (when editing? ;; if editing, we want expect values to be overwritten
              clean-form)
            (::sub-db db)

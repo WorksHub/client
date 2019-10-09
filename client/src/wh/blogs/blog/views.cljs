@@ -49,7 +49,7 @@
 
 (defn share-buttons []
   (let [message-prefix "Check out this blog on "
-        normal-message (str message-prefix (<sub [::subs-common/platform-name]))
+        normal-message (str message-prefix (<sub [:wh/platform-name]))
         twitter-message (str message-prefix (<sub [::subs-common/twitter]))
         link (-> js/window.location.href uri/parse (.setQueryData "utm_campaign=sharebutton&utm_source=blog") .toString)
         enc-link (url-encode link)

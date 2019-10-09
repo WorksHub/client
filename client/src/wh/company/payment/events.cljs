@@ -6,8 +6,8 @@
     [wh.company.payment.subs :as subs]
     [wh.db :as db]
     [wh.graphql.company :refer [company-query job-query update-company-mutation update-job-mutation]]
-    [wh.jobs.job.db :as job]
-    [wh.jobs.job.events :refer [process-publish-role-intention]]
+    [wh.job.db :as job]
+    [wh.job.events :refer [process-publish-role-intention]]
     [wh.pages.core :as pages :refer [on-page-load force-scroll-to-top!]]
     [wh.user.db :as user]
     [wh.util :as util])

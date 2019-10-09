@@ -84,9 +84,24 @@
     (some (fn [m] (when (= id (:id m)) (:state m)))
           (get-in db [:wh.user.db/sub-db :wh.user.db/company :onboarding-tasks]))))
 
+(reg-sub
+  :user/applied-jobs
+  (fn [db _]
+    (get-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs])))
+
+(reg-sub
+  :user/liked-jobs
+  (fn [db _]
+    (get-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs])))
+
 
 
 ;; MISC
+
+(reg-sub
+  :wh/platform-name
+  (fn [db _]
+    (:wh.db/platform-name db)))
 
 (reg-sub
   :wh/vertical

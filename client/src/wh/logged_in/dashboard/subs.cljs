@@ -15,8 +15,8 @@
 (reg-sub
   ::jobs
   :<- [::dashboard]
-  :<- [:wh.user/liked-jobs]
-  :<- [:wh.user/applied-jobs]
+  :<- [:user/liked-jobs]
+  :<- [:user/applied-jobs]
   (fn [[dashboard liked-jobs applied-jobs] _]
     (->> (::dashboard/jobs dashboard)
          (jobs/add-interactions liked-jobs applied-jobs))))

@@ -5,6 +5,7 @@
     [goog.string.format]
     [re-frame.core :refer [dispatch dispatch-sync]]
     [wh.common.text :refer [pluralize]]
+    [wh.components.cards :refer [match-circle]]
     [wh.components.cards.subs]
     [wh.components.common :refer [link img wrap-img]]
     [wh.components.ellipsis.views :refer [ellipsis]]
@@ -20,45 +21,6 @@
         (or (= s :pass)
             (= s :rejected)) "Rejected \uD83D\uDE41"
         (= s :hired)         "Hired"))
-
-(defn polar->cartesian [center-x center-y radius angle-in-degrees]
-  (let [angle-in-radians (/ (* (- angle-in-degrees 90)
-                               js/Math.PI)
-                            180)]
-    {:x (+ center-x (* radius (js/Math.cos angle-in-radians)))
-     :y (+ center-y (* radius (js/Math.sin angle-in-radians)))}))
-
-(defn draw-shape [score]
-  (let [x 9
-        y 9
-        radius 9
-        start-angle 0
-        end-angle (* 360 score)
-        start (polar->cartesian x y radius end-angle)
-        end (polar->cartesian x y radius start-angle)
-        arc-sweep (if (<= (- end-angle start-angle) 180)
-                    "0"
-                    "1")]
-    (->> ["M" (:x start) (:y start)
-         "A" radius radius 0 arc-sweep 0 (:x end) (:y end)
-         "L" x y
-         "L" (:x start) (:y start)]
-         (str/join " "))))
-
-(defn match-circle
-  ([score]
-   (match-circle score false))
-  ([score text?]
-   [:div.match-circle-container
-    (if (= score 1.0)
-      [:div.match-circle
-       [:div.foreground]]
-      [:div.match-circle
-       [:svg.circle-value
-        [:path.circle {:d (draw-shape score)}]]
-       [:div.background]])
-    (when text?
-      [:div.text (gstring/format "%d%% Match" (* score 100))])]))
 
 (defn closed-job
   [{:keys [company tagline title liked display-salary tags sponsorship-offered remote role-type display-location score state] :as job}
@@ -178,7 +140,7 @@
          {:id (str "job-card__apply-button_job-" id)
           :disabled (if user-loaded? (<sub [:user/company?]) false)
           :on-click #(dispatch [:apply/try-apply job :jobcard-apply])}
-         (if (and user-loaded? (some? (<sub [:wh.user/applied-jobs])))
+         (if (and user-loaded? (some? (<sub [:user/applied-jobs])))
            "1-Click Apply"
            "Easy Apply")]))]])
 

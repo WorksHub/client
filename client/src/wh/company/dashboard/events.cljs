@@ -11,7 +11,7 @@
     [wh.company.dashboard.db :as sub-db]
     [wh.db :as db]
     [wh.graphql.company :refer [update-company-mutation]]
-    [wh.jobs.job.events :refer [publish-job navigate-to-payment-setup process-publish-role-intention]]
+    [wh.job.events :refer [publish-job navigate-to-payment-setup process-publish-role-intention]]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
     [wh.util :as util]))

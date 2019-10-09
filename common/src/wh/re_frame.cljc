@@ -12,8 +12,22 @@
   #?(:cljs r/atom
      :clj clojure.core/atom))
 
+(def props
+  #?(:cljs r/props
+     :clj identity))
+
+(def dom-node
+  #?(:cljs r/dom-node
+     :clj identity))
+
 #?(:clj
    (defn next-tick
      [f] (f))
    :cljs
    (def next-tick r/next-tick))
+
+#?(:clj
+   (defn create-class
+     [m] (:reagent-render m))
+   :cljs
+   (def create-class r/create-class))

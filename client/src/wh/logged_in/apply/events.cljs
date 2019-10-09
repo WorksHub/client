@@ -234,11 +234,11 @@
   apply-interceptors
   (fn [{db :db} [success? resp]]
     (cond-> {:db (assoc db ::apply/submit-success? success?
-                           ::apply/updating? false
-                           ::apply/error (when-not success?
-                                           (util/gql-errors->error-key resp)))}
+                        ::apply/updating? false
+                        ::apply/error (when-not success?
+                                        (util/gql-errors->error-key resp)))}
             success? (assoc :dispatch-n [[::check-visa]
-                                         [:wh.jobs.job.events/set-applied]]
+                                         [:wh.job.events/set-applied]]
                             :analytics/track ["Job Applied" (::apply/job db)]))))
 
 (defquery apply-mutation
