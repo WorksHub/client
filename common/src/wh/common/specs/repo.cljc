@@ -35,6 +35,7 @@
 (s/def :wh.repo.sync/time-finished :wh/date)
 (s/def :wh.repo.sync/started-by #?(:clj  :wh.user/id
                                    :cljs string?))
+(s/def :wh.repo.sync/publish-all boolean?)
 (s/def :wh.repo/sync (s/keys :req-un [:wh.repo.sync/id
                                       :wh.repo.sync/total-issue-count
                                       :wh.repo.sync/running-issue-count
@@ -42,7 +43,8 @@
                                       :wh.repo.sync/time-started
                                       :wh.repo.sync/started-by
                                       :wh.repo.sync/time-updated]
-                             :opt-un [:wh.repo.sync/time-finished]))
+                             :opt-un [:wh.repo.sync/time-finished
+                                      :wh.repo.sync/publish-all]))
 
 (s/def :wh/repo #?(:clj  (s/keys :req-un [:wh.repo/github-id
                                           :wh.repo/name

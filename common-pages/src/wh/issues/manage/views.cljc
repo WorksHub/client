@@ -46,7 +46,7 @@
      [:div.manage-issues-syncing-issues__restart
       [:span "Synchronisation appears to be taking longer than usual"]
       [:button.button.button--inverted
-       {:on-click #(dispatch [::events/sync-repo-issues (<sub [::subs/repo]) true])}
+       {:on-click #(dispatch [::events/sync-repo-issues (<sub [::subs/repo]) {:force? true}])}
        "Restart"]])])
 
 (defn repo-card
@@ -70,11 +70,16 @@
       [:div.repository-card__buttons
        [link "Manage" :manage-repository-issues :repo-name (:name repo) :owner owner
         :class "button button--inverted btn__manage-issues"]
-       [:button.button
-        {:disabled true #_(not has-unpublished-issues)
-         :on-click #(when has-unpublished-issues
-                      #_(dispatch [::events/publish-all repo]))}
-        "Publish All"]]
+       [:a
+        #?(:cljs
+           {:on-click #(when (js/confirm "Please confirm you wish to publish all open issues?")
+                         (set! js/window.location
+                               (routes/path :manage-repository-issues
+                                            :params {:repo-name (:name repo) :owner owner}
+                                            :query-params {:publish-all true})))})
+        [:button.button
+         {:disabled (not has-unpublished-issues)}
+         "Publish All"]]]
       [:div.repository-card__buttons
        [:button.button.button--disabled
         {:disabled true}
@@ -172,7 +177,7 @@
           [:div.manage-issues__sync-info
            [:p "Last GitHub sync: " (time/human-time (:time-finished sync))]
            [:button.button.button--inverted
-            {:on-click #(dispatch [::events/sync-repo-issues (<sub [::subs/repo]) true])}
+            {:on-click #(dispatch [::events/sync-repo-issues (<sub [::subs/repo]) {:force? true}])}
             "Re-sync now"]]
           [:div
            [:div.publish-container

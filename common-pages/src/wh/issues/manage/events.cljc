@@ -159,13 +159,16 @@
    (reg-event-fx
      ::sync-repo-issues
      db/default-interceptors
-     (fn [{db :db} [{:keys [name owner] :as repo} force?]]
+     (fn [{db :db} [{:keys [name owner] :as repo}
+                    {:keys [force? publish-all?]}]]
        {:db      (assoc-in db [::manage/sub-db ::manage/syncing-issues] true)
         :graphql {:query      graphql-company/sync-issues-mutation
                   :variables  (merge {:name  name
                                       :owner owner}
                                      (when force?
-                                       {:force true}))
+                                       {:force true})
+                                     (when publish-all?
+                                       {:publish_all publish-all?}))
                   :on-success [::sync-repo-success repo]
                   :on-failure [::failure [::sync-repo-issues repo]]}})))
 
@@ -210,9 +213,10 @@
 #?(:cljs
    (defmethod on-page-load :manage-repository-issues [db]
      (let [repo {:name (get-in db [::db/page-params :repo-name]) :owner (get-in db [::db/page-params :owner])}
-           sync? (nil? (get-in db [::manage/sub-db ::manage/repo-syncs repo]))]
+           sync? (nil? (get-in db [::manage/sub-db ::manage/repo-syncs repo]))
+           publish-all? (= (get-in db [::db/query-params "publish-all"]) "true")]
        (list [:wh.events/scroll-to-top]
              [::initialize-db]
-             (if sync?
-               [::sync-repo-issues repo]
+             (if (or sync? publish-all?)
+               [::sync-repo-issues repo {:publish-all? publish-all?}]
                [::query-issues (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) repo (page db)])))))

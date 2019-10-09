@@ -141,11 +141,12 @@
 
 (defquery sync-issues-mutation
   {:venia/operation {:operation/type :mutation
-                     :operation/name "fetch_issues_for_repository"}
+                     :operation/name "sync_issues"}
    :venia/variables [{:variable/name "name" :variable/type :String!}
                      {:variable/name "owner" :variable/type :String!}
-                     {:variable/name "force" :variable/type :Boolean}]
-   :venia/queries   [[:sync {:name :$name :owner :$owner :force :$force}
+                     {:variable/name "force" :variable/type :Boolean}
+                     {:variable/name "publish_all" :variable/type :Boolean}]
+   :venia/queries   [[:sync {:name :$name :owner :$owner :force :$force :publish_all :$publish_all}
                       [:id :time_started :total_issue_count :time_finished]]]})
 
 (defquery sync-repos

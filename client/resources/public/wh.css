@@ -14546,7 +14546,7 @@ h3 {
   font-size: 14px;
   line-height: 18px; }
 
-.repository-card__buttons .button + .button {
+.repository-card__buttons .button + a {
   margin-left: 12px; }
 
 .landing-page .homepage__middle-content__container:last-of-type {
