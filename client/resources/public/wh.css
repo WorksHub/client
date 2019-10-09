@@ -12452,6 +12452,9 @@ h3 {
   position: absolute;
   top: 12px;
   right: 12px; }
+  @media screen and (max-width: 1007px) {
+    .payment-publish-celebration__close {
+      top: 58px; } }
   .payment-publish-celebration__close svg {
     fill: white;
     width: 32px;
