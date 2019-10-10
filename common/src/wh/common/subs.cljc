@@ -34,6 +34,11 @@
     (= (get-in db [:wh.user.db/sub-db :wh.user.db/type]) "company")))
 
 (reg-sub
+  :user/company-id
+  (fn [db _]
+    (get-in db [:wh.user.db/sub-db :wh.user.db/company-id])))
+
+(reg-sub
   :user/candidate?
   (fn [db _]
     (= (get-in db [:wh.user.db/sub-db :wh.user.db/type]) "candidate")))
@@ -65,13 +70,6 @@
   :user/name
   (fn [db _]
     (get-in db [:wh.user.db/sub-db :wh.user.db/name])))
-
-(reg-sub
-  :user/public-job-info-only?
-  :<- [:user/logged-in?]
-  :<- [:user/approved?]
-  (fn [[logged-in? approved?] _]
-    (not (and logged-in? approved?))))
 
 (reg-sub
   :user/company

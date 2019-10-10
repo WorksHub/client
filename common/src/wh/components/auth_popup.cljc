@@ -20,7 +20,7 @@
   []
   [:div.auth-popup__content
    {:id (build-sub-id "see-more")}
-   [:h1 "Login or register" [:br] "to see the full job description!"]])
+   [:h1 "Login or register" [:br] "to see more jobs from this company!"]])
 
 (defn overlay-content-blog
   []

@@ -294,9 +294,7 @@
   (let [jobs (<sub [::subs/jobs])
         total-jobs (when (<sub [:user/logged-in?])
                      (<sub [::subs/total-number-of-jobs]))]
-    (when (or admin-or-owner?
-              (not (<sub [:user/logged-in?]))
-              (and (<sub [:user/candidate?]) (not-empty jobs)))
+    (when (or admin-or-owner? (not-empty jobs))
       [:section.company-profile__section--headed
        [:div
         [:h2.title.company-profile__jobs-title (str "Jobs" (when total-jobs (str " (" total-jobs ")")))]]])))
@@ -314,40 +312,29 @@
            {:id "company-profile__publish-job-btn"}
            "Publish a job"] :create-job)]])
 
-(defn login-to-see-jobs-banner
-  []
-  [:div.company-profile__banner-cta
-   [:img.company-profile__banner-cta__login-img
-    {:src "/images/homepage/header.svg"
-     :alt ""}]
-   [:div.company-profile__banner-cta__copy
-    [:h2 "Sign up and see " (<sub [::subs/name]) " roles!"]
-    [:p "Discover the best opportunities in tech. We match your skills to great jobs using languages you love."]
-    (link [:button.button.button--medium
-           {:id "company-profile__get-started-btn"}
-           "Get Started"] :get-started)]])
-
 (defn jobs
   [admin-or-owner?]
-  (let [jobs       (<sub [::subs/jobs])
-        total-jobs (<sub [::subs/total-number-of-jobs])]
+  (let [jobs         (<sub [::subs/jobs])
+        total-jobs   (<sub [::subs/total-number-of-jobs])
+        company-id   (<sub [:user/company-id])
+        has-applied? (some? (<sub [:user/applied-jobs]))
+        logged-in?   (<sub [:user/logged-in?])]
     [:section.company-profile__jobs
      (cond (and admin-or-owner? (empty? jobs))
            [publish-job-banner]
-           (not (<sub [:user/logged-in?]))
-           [login-to-see-jobs-banner]
            :else
-           (when (or admin-or-owner? (and (<sub [:user/candidate?]) (not-empty jobs)))
+           (when (not-empty jobs)
              [:div.company-profile__jobs-list
               [:div.company-jobs__list
                (doall
                  (for [job jobs]
                    ^{:key (:id job)}
-                   [job-card job (merge {:public? false}
+                   [job-card job (merge {:logged-in? logged-in?}
                                         #?(:cljs
                                            {:liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
                                             :user-is-owner?    admin-or-owner?
-                                            :user-has-applied? (some? (<sub [:user/applied-jobs]))}))]))]]))
+                                            :user-is-company?  (not (nil? company-id))
+                                            :user-has-applied? has-applied?}))]))]]))
      (when (<sub [::subs/show-fetch-all?])
        [:button.button.button--inverted.company-profile__all-jobs-button
         {:on-click #(dispatch [::events/fetch-all-jobs])}

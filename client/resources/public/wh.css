@@ -6354,10 +6354,11 @@ a.navbar-item,
   .card--job .salary {
     margin-top: 6px; }
   .card--job .tagline {
-    margin: 11px 0 0 0;
+    margin: 11px 0 2px 0;
     font-size: 12px;
     line-height: 18px;
-    height: 60px; }
+    height: 58px;
+    overflow-y: hidden; }
   .card--job .apply {
     width: 100%;
     display: flex;
@@ -6414,13 +6415,6 @@ a.navbar-item,
     display: inline-block; }
   .card__perks > .icon:not(:first-child) {
     margin-left: 10px; }
-
-.job-card--public {
-  height: 330px !important; }
-  .job-card--public .info {
-    height: 70px; }
-  .job-card--public .basic-info {
-    margin-top: 0 !important; }
 
 .blog-card--skeleton {
   pointer-events: none; }
@@ -16884,9 +16878,6 @@ h3 {
     flex: 1 0 210px;
     height: 100%;
     max-height: 400px; }
-    .company-profile__banner-cta img.company-profile__banner-cta__login-img {
-      margin-right: -30px;
-      margin-left: -12px; }
   .company-profile__banner-cta > div {
     flex: 1 1 50%;
     padding-left: 12px; }

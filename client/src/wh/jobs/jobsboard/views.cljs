@@ -4,9 +4,9 @@
     [re-frame.core :refer [dispatch]]
     [reagent.core :as r]
     [wh.common.emoji :as emoji]
-    [wh.components.cards.views :refer [job-card]]
     [wh.components.forms.views :refer [labelled-checkbox multiple-checkboxes select-field text-input text-field radio-buttons]]
     [wh.components.icons :refer [icon]]
+    [wh.components.job :refer [job-card]]
     [wh.components.pagination :as pagination]
     [wh.jobs.jobsboard.events :as events]
     [wh.jobs.jobsboard.subs :as subs]
@@ -182,12 +182,18 @@
   (into
     [:section.promoted-jobs
      [:h2 "Promoted Jobs"]]
-    (let [parts (partition-all 3 (<sub [::subs/promoted-jobs]))]
+    (let [parts        (partition-all 3 (<sub [::subs/promoted-jobs]))
+          logged-in?   (<sub [:user/logged-in?])
+          has-applied? (some? (<sub [:user/applied-jobs]))
+          company-id   (<sub [:user/company-id])]
       (for [part parts]
         (into [:div.columns]
               (for [job part]
                 [:div.column.is-4
-                 [job-card job :public (<sub [:user/public-job-info-only?])]]))))))
+                 [job-card job {:logged-in?        logged-in?
+                                :user-has-applied? has-applied?
+                                :user-is-company?  (not (nil? company-id))
+                                :user-is-owner?    (= company-id (:company-id job))}]]))))))
 
 
 (defn skeleton-jobs []
@@ -198,7 +204,10 @@
     [:div.column.is-4 [job-card {:id (str "skeleton-job-" 3)}]]]])
 
 (defn jobs-board []
-  (let [jobs (<sub [::subs/jobs])]
+  (let [jobs         (<sub [::subs/jobs])
+        logged-in?   (<sub [:user/logged-in?])
+        has-applied? (some? (<sub [:user/applied-jobs]))
+        company-id   (<sub [:user/company-id])]
     [:section
      (if (<sub [:wh.search/searching?])
        [skeleton-jobs]
@@ -210,7 +219,10 @@
                (doall
                  (for [job part]
                    [:div.column.is-4 {:key (str "col-" (:id job))}
-                    [job-card job :public (<sub [:user/public-job-info-only?])]]))]))]))
+                    [job-card job {:logged-in?        logged-in?
+                                   :user-has-applied? has-applied?
+                                   :user-is-company?  (not (nil? company-id))
+                                   :user-is-owner?    (= company-id (:company-id job))}]]))]))]))
      (when (and (not (<sub [:wh.search/searching?]))
                 (seq jobs))
        [pagination/pagination

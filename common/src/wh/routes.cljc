@@ -6,7 +6,8 @@
     #?(:cljs [cljs.spec.alpha :as s])
     #?(:cljs [goog.Uri.QueryData :as query-data])
     [bidi.bidi :as bidi]
-    [wh.common.specs.primitives]))
+    [wh.common.specs.primitives]
+    [wh.common.text :as text]))
 
 (def company-landing-page "https://www.works-hub.com")
 (def pages-with-loader #{:homepage :learn :blog :github-callback :liked :recommended :profile :pre-set-search :jobsboard :contribute-edit})
@@ -177,16 +178,17 @@
   :args (s/cat :m :http/query-params)
   :ret string?)
 
-(defn path [handler & {:keys [params query-params]}]
+(defn path [handler & {:keys [params query-params anchor]}]
   (try
     (cond->
       (apply bidi/path-for routes handler (flatten (seq params)))
-      (seq query-params) (str "?" (serialize-query-params query-params)))
+      (seq query-params) (str "?" (serialize-query-params query-params))
+      (text/not-blank anchor) (str "#" anchor))
     (catch #?(:clj Exception) #?(:cljs js/Object) _
-      (let [message (str "Unable to construct link: " (pr-str (assoc params :handler handler)))]
-        #?(:clj (warn message))
-        #?(:cljs (js/console.warn message)))
-        "")))
+           (let [message (str "Unable to construct link: " (pr-str (assoc params :handler handler)))]
+             #?(:clj (warn message))
+             #?(:cljs (js/console.warn message)))
+           "")))
 
 (s/fdef path
   :args (s/cat :handler keyword?

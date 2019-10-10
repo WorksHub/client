@@ -100,9 +100,10 @@
       [:button.button.button--medium.button--inverted
        (merge {:id (str "job-view__see-more-button" (when id (str "__" id)))}
               (interop/on-click-fn
-                (interop/show-auth-popup :jobpage-apply
-                                         [:job
-                                          :params {:slug (:slug (<sub [::subs/apply-job]))}])))
+                (interop/show-auth-popup :jobpage-see-more
+                                         [:company
+                                          :params {:slug (<sub [::subs/company-slug])}
+                                          :anchor "company-profile__jobs"])))
        "See More"]]
 
      :else
@@ -180,26 +181,24 @@
 (defn company-header
   []
   [:section.is-flex.job__company-header
-   (when (<sub [:user/approved?])
-     [:div.job__company-header__logo
-      (let [logo (<sub [::subs/logo])]
-        (if (or logo (<sub [::subs/loaded?]))
-          (let [logo-img (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 80 :h 80 :class "logo"})]
-            (if (<sub [::subs/profile-enabled?])
-              [link logo-img :company :slug (<sub [::subs/company-slug])]
-              logo-img))
-          [:div.logo--skeleton]))])
+   [:div.job__company-header__logo
+    (let [logo (<sub [::subs/logo])]
+      (if (or logo (<sub [::subs/loaded?]))
+        (let [logo-img (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 80 :h 80 :class "logo"})]
+          (if (<sub [::subs/profile-enabled?])
+            [link logo-img :company :slug (<sub [::subs/company-slug])]
+            logo-img))
+        [:div.logo--skeleton]))]
    [:div.job__company-header__info
-    (when (<sub [:user/approved?])
-      (cond
-        (<sub [::subs/profile-enabled?])
-        [link [:h2.is-underlined (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
+    (cond
+      (<sub [::subs/profile-enabled?])
+      [link [:h2.is-underlined (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
 
-        (<sub [:user/admin?])
-        [link [:h2 (<sub [::subs/company-name])] :company-dashboard :id (<sub [::subs/company-id])]
+      (<sub [:user/admin?])
+      [link [:h2 (<sub [::subs/company-name])] :company-dashboard :id (<sub [::subs/company-id])]
 
-        :else
-        [:h2 (<sub [::subs/company-name])]))
+      :else
+      [:h2 (<sub [::subs/company-name])])
     [:h1 (<sub [::subs/title])]
     [:h3 (if (<sub [::subs/remote?])
            [:div "Remote 🙌" ]
@@ -392,13 +391,19 @@
 
 (defn other-roles
   []
-  (let [jobs (<sub [::subs/recommended-jobs])]
+  (let [jobs         (<sub [::subs/recommended-jobs])
+        logged-in?   (<sub [:user/logged-in?])
+        has-applied? (some? (<sub [:user/applied-jobs]))
+        company-id   (<sub [:user/company-id])]
     [:div.job__other-roles
      [:h2 "Other roles that might interest you"]
      [:div.columns
       (doall (for [job jobs]
                ^{:key (:id job)}
-               [:div.column [job-card job {:public (<sub [:user/public-job-info-only?])}]]))]]))
+               [:div.column [job-card job {:logged-in?        logged-in?
+                                           :user-has-applied? has-applied?
+                                           :user-is-company?  (not (nil? company-id))
+                                           :user-is-owner?    (= company-id (:company-id job))}]]))]]))
 
 (defn apply-sticky
   []
@@ -510,4 +515,5 @@
       (<sub [::subs/company-permissions])
       (<sub [::subs/company-id])
       nil])
+   ;; TODO add script for SSR version to detect `apply=true` and trigger auth popup
    [:script (interop/set-class-on-scroll "job__apply-sticky" "sticky--shown" 160)]])

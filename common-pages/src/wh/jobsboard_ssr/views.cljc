@@ -26,7 +26,9 @@
         current-page (<sub [::subs/current-page])
         total-pages  (<sub [::subs/total-pages])
         query-params (<sub [:wh/query-params])
-        public?      (<sub [:user/public-job-info-only?])]
+        logged-in?   (<sub [:user/logged-in?])
+        company-id   (<sub [:user/company-id])
+        has-applied? (some? (<sub [:user/applied-jobs]))]
     [:section
      (when-let [parts (seq (partition-all 3 jobs))]
        [:div
@@ -36,7 +38,10 @@
              (doall
                (for [job part]
                  [:div.column.is-4 {:key (str "col-" (:id job))}
-                  [job/job-card job {:public? public?}]]))]))])
+                  [job/job-card job {:logged-in?        logged-in?
+                                     :user-has-applied? has-applied?
+                                     :user-is-company?  (not (nil? company-id))
+                                     :user-is-owner?    (= company-id (:company-id job))}]]))]))])
      (when (seq jobs)
        [pagination/pagination current-page (pagination/generate-pagination current-page total-pages) route query-params])]))
 

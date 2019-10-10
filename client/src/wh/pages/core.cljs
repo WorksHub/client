@@ -192,8 +192,8 @@
 (defn navigate
   "Construct a URL from handler/params and set it as current via pushy.
   This will trigger setting ::db/page and ::db/page-params as appropriate."
-  [[handler & {:keys [params query-params]}]]
-  (when-let [token (routes/path handler :params params :query-params query-params)]
+  [[handler & {:keys [params query-params anchor]}]]
+  (when-let [token (routes/path handler :params params :query-params query-params :anchor anchor)]
     (pushy/set-token! pushy-instance token "")))
 
 (reg-fx :navigate navigate)

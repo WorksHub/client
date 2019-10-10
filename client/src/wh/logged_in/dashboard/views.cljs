@@ -1,11 +1,11 @@
 (ns wh.logged-in.dashboard.views
   (:require
     [wh.components.cards :refer [blog-card]]
-    [wh.components.cards.views :refer [job-card]]
     [wh.components.common :refer [link]]
     [wh.components.conversation.views :refer [button codi-message]]
     [wh.components.error.views :refer [loading-error]]
     [wh.components.icons :refer [icon]]
+    [wh.components.job :refer [job-card]]
     [wh.components.loader :refer [loader-cover]]
     [wh.logged-in.dashboard.events :as events]
     [wh.logged-in.dashboard.subs :as subs]
@@ -42,15 +42,17 @@
     (<sub [::subs/loading-recommended?])
     (if-not (seq (<sub [::subs/jobs]))
       [:h3 "Sorry, there seem to be no jobs matching your profile \uD83D\uDE25. Try to add/change skills in your profile to see some recommended jobs."]
-      (let [jobs (<sub [::subs/jobs])
+      (let [jobs         (<sub [::subs/jobs])
+            has-applied? (some? (<sub [:user/applied-jobs]))
             jobs-columns (map (fn [job] [:div.column [job-card job
-                                                      :on-close :reload-dashboard
-                                                      :public (<sub [:user/public-job-info-only?])]]) jobs)
-            columns (if (<sub [::user-subs/onboarding-msg-not-seen? "jobs"])
-                      (into
-                        [[:div.column.codi-column [jobs-intro]]]
-                        (take 2 jobs-columns))
-                      jobs-columns)]
+                                                      {:on-close          :reload-dashboard
+                                                       :user-has-applied? has-applied?
+                                                       :logged-in?        true}]]) jobs)
+            columns      (if (<sub [::user-subs/onboarding-msg-not-seen? "jobs"])
+                           (into
+                             [[:div.column.codi-column [jobs-intro]]]
+                             (take 2 jobs-columns))
+                           jobs-columns)]
         (into
           [:div.columns.is-mobile]
           columns)))]])
@@ -64,9 +66,9 @@
       [:div.preferences
        [:span.caption.is-hidden-mobile user-name "'s Preferences:"]
        (into
-        [:ul.tags]
-        (for [item preferences]
-          [:li item]))
+         [:ul.tags]
+         (for [item preferences]
+           [:li item]))
        [:span.clamped
         [link [:button.button "Improve Recommendations"] :improve-recommendations]]]]]))
 

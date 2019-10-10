@@ -8,11 +8,11 @@
     [wh.blogs.blog.subs :as subs]
     [wh.common.http :refer [url-encode]]
     [wh.common.re-frame-helpers :as reframe-helpers]
-    [wh.components.cards.views :refer [job-card]]
     [wh.components.common :refer [link]]
     [wh.components.error.views :refer [loading-error]]
     [wh.components.footer :as footer]
     [wh.components.icons :refer [icon url-icons]]
+    [wh.components.job :refer [job-card]]
     [wh.components.not-found :as not-found]
     [wh.pages.util :as putil]
     [wh.routes :as routes]
@@ -39,13 +39,13 @@
                                                           (if (<sub [:user/logged-in?]) "upvote--logged-in" "upvote--logged-out"))}
        [:div.upvote__counter (<sub [::subs/upvote-count])]
        (into
-        ^{:key (str "upvote" @keypart)}
-        [:div.upvote__circle {:class (if (pos? @keypart) "upvote__circle--animated" "upvote__circle--pulsing")
-                              :on-click #(do
-                                           (dispatch [::events/upvote])
-                                           (swap! keypart (fn [i] (if (= i 2) 1 2))))}]
-        (for [i (range 1 7) :let [name (str "upvote-rocket-" i)]]
-          [icon "upvote-rocket" :class name]))])))
+         ^{:key (str "upvote" @keypart)}
+         [:div.upvote__circle {:class (if (pos? @keypart) "upvote__circle--animated" "upvote__circle--pulsing")
+                               :on-click #(do
+                                            (dispatch [::events/upvote])
+                                            (swap! keypart (fn [i] (if (= i 2) 1 2))))}]
+         (for [i (range 1 7) :let [name (str "upvote-rocket-" i)]]
+           [icon "upvote-rocket" :class name]))])))
 
 (defn share-buttons []
   (let [message-prefix "Check out this blog on "
@@ -93,17 +93,23 @@
 (defn recommended-jobs []
   (when-let [jobs (<sub [::subs/recommended-jobs])]
     (when (seq jobs)
-      [:section.recommended-jobs
-       (let [title        (<sub [::subs/recommendations-heading])
-             company-name (<sub [::subs/company-name])]
+      (let [logged-in?   (<sub [:user/logged-in?])
+            company-id   (<sub [:user/company-id])
+            has-applied? (some? (<sub [:user/applied-jobs]))
+            title        (<sub [::subs/recommendations-heading])
+            company-name (<sub [::subs/company-name])]
+        [:section.recommended-jobs
          [:h2 (cond (and (<sub [::subs/recommendations-from-company?])
                          (not (str/blank? company-name))) (str "Check out these jobs from " company-name)
                     (not (str/blank? title))              (str "Check out these jobs using " title)
-                    :else                                 "Check out these recommended jobs")])
-       (into
-         [:div.columns.is-mobile]
-         (for [job jobs]
-           [:div.column [job-card job :public (<sub [:user/public-job-info-only?])]]))])))
+                    :else                                 "Check out these recommended jobs")]
+         (into
+           [:div.columns.is-mobile]
+           (for [job jobs]
+             [:div.column [job-card job {:logged-in?        logged-in?
+                                         :user-has-applied? has-applied?
+                                         :user-is-company?  (not (nil? company-id))
+                                         :user-is-owner?    (= company-id (:company-id job))}]]))]))))
 
 (defn page []
   (let [last-y (reagent/atom 0)

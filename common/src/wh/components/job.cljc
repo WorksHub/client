@@ -1,6 +1,8 @@
 (ns wh.components.job
   (:require
+    #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
     [wh.common.job :as jobc]
+    [wh.components.cards :refer [match-circle]]
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
     [wh.interop :as interop]
@@ -9,65 +11,113 @@
     [wh.slug :as slug]
     [wh.util :as util]))
 
+(defn state->candidate-status
+  [s]
+  (cond (or (= s :approved)
+            (= s :pending))  "Pending"
+        (= s :get_in_touch)  "Interviewing \u2728"
+        (or (= s :pass)
+            (= s :rejected)) "Rejected \uD83D\uDE41"
+        (= s :hired)         "Hired"))
+
+(defn job-card--header
+  [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary] :as job}
+   {logo :logo company-name :name}
+   {:keys [logged-in? skeleton? liked? on-close]}]
+  [:span
+   (when (and logged-in? (not skeleton?))
+     [icon "like"
+      :id (str "job-card__like-button_job-" id)
+      :class (util/merge-classes "job__icon" "like" (when liked? "selected"))
+      :on-click #(dispatch [:wh.events/toggle-job-like job])])
+   (when (and logged-in? (not skeleton?) on-close)
+     [icon "close"
+      :id (str "job-card__blacklist-button_job-" id)
+      :class "job__icon blacklist"
+      :on-click #(dispatch [:wh.events/blacklist-job job on-close])])
+   [:a {:href (routes/path :job :params {:slug slug})}
+    [:div.info
+     [:div.logo
+      (if (or skeleton? (not logo))
+        [:div]
+        (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]
+     [:div.basic-info
+      [:div.job-title title]
+      [:div.company-name company-name]
+      [:div.location display-location]
+      (cond-> [:div.card__perks]
+              remote                       (conj [icon "job-remote" :class "job__icon--small"] "Remote")
+              (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
+              sponsorship-offered          (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
+      [:div.salary salary]]]]])
+
+(defn job-card--tags
+  [job-tags]
+  (into [:ul.tags.tags__job]
+        (map (fn [tag] [:li [:a {:href (routes/path :pre-set-search :params {:tag (slug/slug tag)})} tag]])
+             job-tags)))
+
+(defn job-card--buttons
+  [{:keys [slug id state]}
+   {:keys [user-has-applied? user-is-owner? user-is-company? applied? logged-in?]}]
+  [:div.apply
+   (when state
+     [:div.state
+      [:span.applied-state "Status: " (state->candidate-status state)]])
+   [:div.buttons
+    [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
+     (if user-is-owner? "View" "More Info")]
+    (let [apply-id (str "job-card__apply-button_job-" id)
+          button-opts (merge {:id apply-id}
+                             (when (or applied?
+                                       (and user-is-company?
+                                            (not user-is-owner?)))
+                               {:disabled true}))]
+      (if (not user-is-owner?)
+        (let [job-page-path [:job :params {:slug slug} :query-params {:apply true}]]
+          [:a (if logged-in?
+                {:href (apply routes/path job-page-path)}
+                (interop/on-click-fn
+                  (interop/show-auth-popup :jobcard-apply job-page-path)))
+           [:button.button button-opts
+            (cond applied?
+                  "Applied"
+                  user-has-applied?
+                  "1-Click Apply"
+                  :else
+                  "Easy Apply")]])
+        [:a {:href (routes/path :edit-job :params {:id id})}
+         [:button.button "Edit"]]))]])
+
 (defn job-card
-  [{:keys [company tagline title display-salary remuneration remote sponsorship-offered display-location role-type tags slug id published]
+  [{:keys [company tagline tags published score user-score applied liked display-salary remuneration]
     :or   {published true}
     :as   job}
-   {:keys [public? liked? user-has-applied? user-is-owner?]
-    :or   {public?           true
-           liked?            false
-           user-has-applied? false
-           user-is-owner?    false}}]
-  (let [{company-name :name logo :logo} company
-        skeleton? (and job (empty? (dissoc job :id :slug)))
+   {:keys [liked? applied?]
+    :or   {liked?            (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
+           applied?          (or applied false) ;; old style job handlers added 'applied' bool to the job itself
+           } :as opts}]
+  (let [skeleton? (and job (empty? (dissoc job :id :slug)))
         salary    (or display-salary (jobc/format-job-remuneration remuneration))
         job-tags  (if skeleton?
                     (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " "))) (range 6))
-                    tags)]
+                    tags)
+        score     (or (:user-score job) score)
+        opts      (assoc opts
+                         :liked?            liked?
+                         :applied?          applied?)]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
-                                      (str "card-border-color-" (rand-int 9))
+                                      (str "card-border-color-" (rand-int 8))
                                       (str "i-cur-" (rand-int 9))
-                                      (when public? "job-card--public")
                                       (when skeleton? "job-card--skeleton"))}
-     [:span
-      (when (not public?)
-        [icon "like"
-         :class (util/merge-classes "job__icon" "like" (when liked? "se
-lected"))
-         :on-click #(dispatch [:wh.events/toggle-job-like job])])
-      [:a {:href (routes/path :job :params {:slug slug})}
-       [:div.info
-        [:div.logo
-         (if (or skeleton? (not logo) public?)
-           [:div]
-           (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]
-        [:div.basic-info
-         [:div.job-title title]
-         (when (not public?)
-           [:div.company-name company-name])
-         [:div.location display-location]
-         (cond-> [:div.card__perks]
-                 remote                       (conj [icon "job-remote" :class "job__icon--small"] "Remote")
-                 (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
-                 sponsorship-offered          (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
-         [:div.salary salary]]]]]
-     (into [:ul.tags.tags__job]
-           (map (fn [tag] [:li [:a {:href (routes/path :pre-set-search :params {:tag (slug/slug tag)})} tag]])
-                job-tags))
-     [:div.tagline tagline]
-     [:div.apply
-      [:div.buttons
-       [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
-        (if user-is-owner? "View" "More Info")]
-       (when (not user-is-owner?)
-         [:button.button (if public?
-                           (interop/on-click-fn
-                             (interop/show-auth-popup :jobcard-apply [:job :params {:slug slug} :query-params {:apply true}])) ;; TODO upate with slug
-                           {:href (routes/path :job :params {:slug slug} :query-params {:apply true})})
-          (if user-has-applied?
-            "1-Click Apply"
-            "Easy Apply")])]]
+     [job-card--header (assoc job :salary salary) company opts]
+     [job-card--tags job-tags]
+     [:div.tagline #?(:cljs [ellipsis tagline]
+                      :clj tagline)]
+     (when score
+       [match-circle score true])
+     [job-card--buttons job opts]
      (when (not published)
        [:div.card__label.card__label--unpublished.card__label--job
         "Unpublished"])]))

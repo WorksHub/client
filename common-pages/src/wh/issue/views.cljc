@@ -216,8 +216,10 @@
          [show-popup-button])]]]))
 
 (defn company-jobs
-  []
-  (let [jobs (<sub [::subs/company-jobs])]
+  [logged-in?]
+  (let [jobs         (<sub [::subs/company-jobs])
+        company-id   (<sub [:user/company-id])
+        has-applied? (some? (<sub [:user/applied-jobs]))]
     (when-not (and jobs (zero? (count jobs)))
       [:section.issue__company-jobs
        [:div.is-flex
@@ -230,13 +232,15 @@
           (doall
             (for [job jobs]
               ^{:key (:id job)}
-              [job-card job {:public?           false
-                             :liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
-                             :user-has-applied? (some? (<sub [:user/applied-jobs]))}]))
+              [job-card job {:liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
+                             :user-has-applied? has-applied?
+                             :logged-in?        logged-in?
+                             :user-is-owner?    (= company-id (:company-id job))
+                             :user-is-company?  (not (nil? company-id))}]))
           (doall
             (for [i (range (<sub [::subs/num-related-jobs-to-show]))]
               ^{:key i}
-              [job-card {:id (str "skeleton-job-" (inc i)) :slug "#"} {:public? false}])))]])))
+              [job-card {:id (str "skeleton-job-" (inc i)) :slug "#"} {:logged-in? false}])))]])))
 
 (defn other-issues
   []
@@ -307,8 +311,7 @@
          hiw-pod
          [activity]]
         [other-issues]
-        (when logged-in?
-          [company-jobs])]
+        [company-jobs logged-in?]]
        [:div.issue__side.is-hidden-mobile
         [author]
         hiw-pod
