@@ -1,4 +1,7 @@
 (ns wh.graphql.jobs
+  (:require
+    [wh.graphql.company :as company] ;; included for fragment reference :fragment/companyCardFields
+    )
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery deffragment def-query-template def-query-from-template]]))
 
@@ -37,8 +40,7 @@
 (deffragment jobFields :Job
   [:id :slug :title :companyId :tagline :descriptionHtml :tags :roleType :manager
    ;; [:company [[:issues [:id :title [:labels [:name]]]]]] ; commented out until company is leonaized
-   [:company [:logo :name :descriptionHtml :profileEnabled :slug
-              [:tags [:label :type :subtype :slug]]]]
+   [:company :fragment/companyCardFields]
    [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
    :locationDescription :remote :sponsorshipOffered :applied :published])

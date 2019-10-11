@@ -8,13 +8,15 @@
 (def templates (atom {}))
 
 (defn- find-fragments [query]
-  (->> query
-       (tree-seq coll? seq)
-       (filter #(and (keyword? %) (= (namespace %) "fragment")))
-       distinct
-       (map name)
-       (select-keys @fragments)
-       vals))
+  (when-let [fragments (->> query
+                            (tree-seq coll? seq)
+                            (filter #(and (keyword? %) (= (namespace %) "fragment")))
+                            distinct
+                            (map name)
+                            (select-keys @fragments)
+                            vals)]
+    (let [nested-fragments (concat fragments (find-fragments fragments))]
+      nested-fragments)))
 
 (defmacro deffragment
   "Define a set of fields reusable across precompiled queries as a fragment."

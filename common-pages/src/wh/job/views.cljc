@@ -8,6 +8,7 @@
     [wh.common.data :refer [get-manager-name]]
     [wh.common.job :as jobc]
     [wh.common.text :refer [pluralize]]
+    [wh.company.listing.views :refer [company-card]]
     [wh.components.cards :refer [match-circle]]
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
@@ -233,7 +234,7 @@
   []
   (let [matching-users (<sub [::subs/matching-users])]
     [:section.job__company-action
-     (if (> matching-users 0)
+     (if (and matching-users (> matching-users 0))
        [:p "We have " matching-users " active " (pluralize matching-users "member") " with 75%+ match rates for this role. What are you waiting for?"]
        [:p "Calculating your matches..."])
      [apply-button]]))
@@ -341,10 +342,6 @@
      [:div.job__job-description
       [:h2 (when description "Role overview")]
       [content [putil/html description]]])
-   (when-let [company-description (<sub [::subs/company-description])]
-     [:div.job__company-description
-      [:h2 "About the company"]
-      [content [putil/html (<sub [::subs/company-description])]]])
    (let [description  (<sub [::subs/location-description])
          position     (<sub [::subs/location-position])
          address      (<sub [::subs/location-address-parts])
@@ -447,6 +444,7 @@
          [job-highlights]]
         [tagline]
         [information]
+        [company-card (<sub [::subs/company-card])]
         (when (<sub [::subs/show-issues?])
           [:div.is-hidden-desktop
            [company-issues]])

@@ -21,19 +21,24 @@
     [wh.util :as util]))
 
 (defn company-card
-  [{:keys [logo id name slug tags size location description-html
-           total-published-job-count total-published-issue-count]}]
-  [:section.companies__company
+  [{:keys [logo id name slug tags size location description-html profile-enabled
+           total-published-job-count total-published-issue-count] :as _company}]
+  [:section.companies__company.company-card
    [:div.companies__company__container
     [:div.company-profile__logo.is-hidden-mobile
-     (wrap-img img logo {:w 60 :h 60})]
+     (let [wrapped-logo (wrap-img img logo {:w 60 :h 60})]
+       (if profile-enabled
+         [link wrapped-logo  :company :slug slug]
+         wrapped-logo))]
     [:div.companies__company__info-container
      [:div.company-profile__name
-      [link [:div.is-flex
-             [:div.company-profile__logo.is-hidden-desktop
-              (wrap-img img logo {:w 36 :h 36})]
-             [:h2 {:class (when (pos? total-published-job-count) "truncate")} name]]
-       :company :slug slug]]
+      (let [header [:div.is-flex
+                    [:div.company-profile__logo.is-hidden-desktop
+                     (wrap-img img logo {:w 36 :h 36})]
+                    [:h2 {:class (when (and total-published-job-count (pos? total-published-job-count)) "truncate")} name]]]
+        (if profile-enabled
+          [link header :company :slug slug]
+          header))]
      [:ul.companies__company__info-strip
       (when size
         [:li [:div [icon "people"] size]])
@@ -43,9 +48,10 @@
       [putil/html description-html]]
      [:div.companies__company__tags
       [tag/tag-list (cond-> (vec tags)
-                            (pos? total-published-issue-count)
+                            (and total-published-issue-count (pos? total-published-issue-count))
                             (conj {:icon "pr" :id id :type :icon :label total-published-issue-count}))]]]]
-   (when (pos? total-published-job-count)
+   ;; TODO we disable this (for now) when profile disabled because we have no where to send users!
+   (when (and total-published-job-count (pos? total-published-job-count) profile-enabled)
      [link
       [:div.companies__company__job-count
        [:img {:src "/cursors/cursor-2.svg"}]

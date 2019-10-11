@@ -1,10 +1,22 @@
 .companies__main
   .companies__company
     margin-bottom: 12px
+
+.company-card
+  .company-profile__logo
+    +mobile
+      flex: 0 0 40px
+      height: 32px
+      img
+        width: 32px
+        height: 32px
   .company-profile__name
     +desktop
       max-height: 21px
+    +mobile
+      margin-bottom: 12px
     a
+      width: calc(100% - 8px)
       .is-flex
         align-items: center
         +mobile
@@ -19,7 +31,7 @@
 
 .companies__company
   background: white
-  padding: 18px
+  padding: 3.5%
   display: flex
   position: relative
 

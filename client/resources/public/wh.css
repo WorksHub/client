@@ -7371,27 +7371,41 @@ a.navbar-item,
 .companies__main .companies__company {
   margin-bottom: 12px; }
 
+@media screen and (max-width: 1007px) {
+  .company-card .company-profile__logo {
+    flex: 0 0 40px;
+    height: 32px; }
+    .company-card .company-profile__logo img {
+      width: 32px;
+      height: 32px; } }
+
 @media screen and (min-width: 1008px) {
-  .companies__main .company-profile__name {
+  .company-card .company-profile__name {
     max-height: 21px; } }
 
-.companies__main .company-profile__name a .is-flex {
-  align-items: center; }
-  @media screen and (max-width: 1007px) {
-    .companies__main .company-profile__name a .is-flex h2 {
-      margin-left: 12px; }
-      .companies__main .company-profile__name a .is-flex h2.truncate {
-        padding-right: 65px; } }
+@media screen and (max-width: 1007px) {
+  .company-card .company-profile__name {
+    margin-bottom: 12px; } }
 
-.companies__main .company-profile__name h2 {
+.company-card .company-profile__name a {
+  width: calc(100% - 8px); }
+  .company-card .company-profile__name a .is-flex {
+    align-items: center; }
+    @media screen and (max-width: 1007px) {
+      .company-card .company-profile__name a .is-flex h2 {
+        margin-left: 12px; }
+        .company-card .company-profile__name a .is-flex h2.truncate {
+          padding-right: 65px; } }
+
+.company-card .company-profile__name h2 {
   margin: 0; }
   @media screen and (max-width: 1007px) {
-    .companies__main .company-profile__name h2 {
+    .company-card .company-profile__name h2 {
       font-size: 18px; } }
 
 .companies__company {
   background: white;
-  padding: 18px;
+  padding: 3.5%;
   display: flex;
   position: relative; }
 
@@ -16323,6 +16337,10 @@ h3 {
     margin-left: 18px;
     font-weight: 600;
     line-height: 60px; }
+  .company-profile__name h2 {
+    font-weight: 600;
+    margin-bottom: 0;
+    line-height: 22px; }
 
 .company-profile__photos__add {
   position: relative;

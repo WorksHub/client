@@ -11,7 +11,8 @@
     [wh.db :as db]
     [wh.graphql.jobs :as jobs]
     [wh.job.db :as job]
-    [wh.routes :as routes])
+    [wh.routes :as routes]
+    [wh.company.listing.db :as listing])
   (#?(:cljs :require-macros :clj :require)
     [clojure.core.strint :refer [<<]]))
 
@@ -49,9 +50,21 @@
     (get-in db [::job/sub-db ::job/sponsorship-offered])))
 
 (reg-sub
-  ::logo
+  ::company
   :<- [::sub-db]
-  (fn [{:keys [::job/company] :as sub-db} _]
+  (fn [{:keys [::job/company]} _]
+    company))
+
+(reg-sub
+  ::company-card
+  :<- [::company]
+  (fn [company _]
+    (listing/->company company)))
+
+(reg-sub
+  ::logo
+  :<- [::company]
+  (fn [company _]
     (:logo company)))
 
 (reg-sub
@@ -71,8 +84,8 @@
 
 (reg-sub
   ::company-name
-  :<- [::sub-db]
-  (fn [{:keys [::job/company]} _]
+  :<- [::company]
+  (fn [company _]
     (:name company)))
 
 (reg-sub
@@ -86,16 +99,10 @@
     (get-in db [::job/sub-db ::job/description-html])))
 
 (reg-sub
-  ::company-description
-  :<- [::sub-db]
-  (fn [{:keys [::job/company]} _]
-    (:description-html company)))
-
-(reg-sub
   ::issues
-  :<- [::sub-db]
-  (fn [db _]
-    (take 2 (get-in db [::job/company :issues]))))
+  :<- [::company]
+  (fn [company _]
+    (take 2 (:issues company))))
 
 (reg-sub
   ::location
@@ -169,8 +176,9 @@
 
 (reg-sub
   ::benefits
-  (fn [db _]
-    (some->> (get-in db [::job/sub-db ::job/company :tags])
+  :<- [::company]
+  (fn [company _]
+    (some->> (:tags company)
              (filter #(= :benefit (some-> % :type keyword)))
              (seq)
              (map (comp str/capitalize :label)))))
@@ -433,12 +441,12 @@
 
 (reg-sub
   ::profile-enabled?
-  :<- [::sub-db]
-  (fn [{:keys [::job/company]} _]
+  :<- [::company]
+  (fn [company _]
     (:profile-enabled company)))
 
 (reg-sub
   ::company-slug
-  :<- [::sub-db]
-  (fn [{:keys [::job/company]} _]
+  :<- [::company]
+  (fn [company _]
     (:slug company)))

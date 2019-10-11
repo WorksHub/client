@@ -1,7 +1,12 @@
 (ns wh.graphql.company
   (#?(:clj :require :cljs :require-macros)
-   [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
+    [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
+(deffragment companyCardFields :Company
+  [:id :slug :name :logo :size :descriptionHtml :profileEnabled
+   :totalPublishedJobCount :totalPublishedIssueCount
+   [:tags [:id :label :slug :type :subtype :weight]]
+   [:locations [:city :country :countryCode :region :subRegion :state]]])
 
 (def create-company-mutation
   {:venia/operation {:operation/type :mutation
