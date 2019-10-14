@@ -48,8 +48,7 @@
           {:env               (<sub [::subs/env])
            :vertical          (<sub [::subs/vertical])
            :logged-in?        (<sub [:user/logged-in?])
-           :show-navbar-menu? (and (<sub [::subs/show-navbar-menu?])
-                                   (<sub [::subs/show-left-menu?]))
+           :show-navbar-menu? (<sub [::subs/show-navbar-menu?])
            :hide-search?      (<sub [::subs/hide-navbar-search?])
            :query-params      query-params
            :page              page

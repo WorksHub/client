@@ -84,12 +84,6 @@
          (fn [db _]
            (not (::db/tracking-consent? db))))
 
-;; a second subscription with same logic, but different name –
-;; for semantic clarity
-(reg-sub ::show-navbar-menu?
-         (fn [db _]
-           (not (contains? routes/no-menu-pages (::db/page db)))))
-
 (defn showing-company-onboarding-dashboard-welcome?
   [db]
   (and (= :company-dashboard (::db/page db))
@@ -99,6 +93,13 @@
 (defn menu-hidden-due-to-special-circumstances?
   [db]
   (showing-company-onboarding-dashboard-welcome? db))
+
+;; a second subscription with same logic, but different name –
+;; for semantic clarity
+(reg-sub ::show-navbar-menu?
+         (fn [db _]
+           (and (not (contains? routes/no-menu-pages (::db/page db)))
+                (not (menu-hidden-due-to-special-circumstances? db)))))
 
 (reg-sub ::show-left-menu?
          (fn [db _]
