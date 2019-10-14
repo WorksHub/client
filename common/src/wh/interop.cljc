@@ -113,9 +113,10 @@
 
 (defn multiple-on-click
   [& fns]
-  #?(:clj
-     (let [fstrs (str (str/join ";" (map :onClick fns)) ";")]
-       {:onClick (str "(function() {"fstrs"})();")})
-     :cljs
-     (let [ffns (map :on-click fns)]
-       {:on-click (fn [_] (run! (fn [f] (f)) ffns))})))
+  (let [fns (remove nil? fns)]
+    #?(:clj
+       (let [fstrs (str (str/join ";" (map :onClick fns)) ";")]
+         {:onClick (str "(function() {"fstrs"})();")})
+       :cljs
+       (let [ffns (map :on-click fns)]
+         {:on-click (fn [_] (run! (fn [f] (f)) ffns))}))))

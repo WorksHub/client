@@ -4691,7 +4691,8 @@ a.navbar-item,
   @media screen and (min-width: 1008px) {
     .navbar .navbar-item--login:hover:before {
       content: '😎'; } }
-  .navbar .navbar-item--resources {
+  .navbar .navbar-item--resources,
+  .navbar .navbar-item--looking-to-hire {
     padding-right: 2px; }
   .navbar .logo-title-container {
     color: #6E7F89;
@@ -4821,19 +4822,23 @@ a.navbar-item,
     position: absolute;
     z-index: 1; }
   .navbar .navbar-overlay--candidates,
-  .navbar .navbar-overlay--resources {
+  .navbar .navbar-overlay--resources,
+  .navbar .navbar-overlay--looking-to-hire {
     margin-top: -6px;
     transition: opacity 0.3s, margin 0.2s ease-out; }
     .navbar .navbar-overlay--candidates.is-open,
-    .navbar .navbar-overlay--resources.is-open {
+    .navbar .navbar-overlay--resources.is-open,
+    .navbar .navbar-overlay--looking-to-hire.is-open {
       margin-top: 0px; }
     .navbar .navbar-overlay--candidates img,
-    .navbar .navbar-overlay--resources img {
+    .navbar .navbar-overlay--resources img,
+    .navbar .navbar-overlay--looking-to-hire img {
       position: absolute;
       top: -24px;
       z-index: 2; }
     .navbar .navbar-overlay--candidates .navbar-overlay__content,
-    .navbar .navbar-overlay--resources .navbar-overlay__content {
+    .navbar .navbar-overlay--resources .navbar-overlay__content,
+    .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content {
       border: 2px solid #ff7c6e;
       background-color: white;
       width: 260px;
@@ -4841,38 +4846,58 @@ a.navbar-item,
       font-size: 14px;
       color: #6E7F89;
       box-shadow: 0 2px 4px 0 #adadad; }
-      .navbar .navbar-overlay--candidates .navbar-overlay__content div:first-child,
-      .navbar .navbar-overlay--resources .navbar-overlay__content div:first-child {
-        padding: 18px 23px 12px 23px; }
-  .navbar .navbar-overlay--candidates {
-    top: 124px; }
-    .navbar .navbar-overlay--candidates img {
-      left: 633px; }
-    .navbar .navbar-overlay--candidates .navbar-overlay__content {
-      left: 516px; }
-  .navbar .navbar-overlay--resources .navbar-overlay__content {
+  .navbar .navbar-overlay--resources .navbar-overlay__content,
+  .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content {
     padding: 26px; }
-    .navbar .navbar-overlay--resources .navbar-overlay__content a + a {
+    .navbar .navbar-overlay--resources .navbar-overlay__content a + a,
+    .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content a + a {
       margin-top: 24px; }
-    .navbar .navbar-overlay--resources .navbar-overlay__content a {
+    .navbar .navbar-overlay--resources .navbar-overlay__content a,
+    .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content a {
       display: block; }
-      .navbar .navbar-overlay--resources .navbar-overlay__content a h3, .navbar .navbar-overlay--resources .navbar-overlay__content a p {
+      .navbar .navbar-overlay--resources .navbar-overlay__content a h3, .navbar .navbar-overlay--resources .navbar-overlay__content a p,
+      .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content a h3,
+      .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content a p {
         transition: color 0.3s; }
-      .navbar .navbar-overlay--resources .navbar-overlay__content a:hover h3, .navbar .navbar-overlay--resources .navbar-overlay__content a:hover p {
+      .navbar .navbar-overlay--resources .navbar-overlay__content a:hover h3, .navbar .navbar-overlay--resources .navbar-overlay__content a:hover p,
+      .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content a:hover h3,
+      .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content a:hover p {
         color: #ff7c6e; }
-    .navbar .navbar-overlay--resources .navbar-overlay__content h3 {
+    .navbar .navbar-overlay--resources .navbar-overlay__content h3,
+    .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content h3 {
       font-weight: 600;
       line-height: 1;
       margin-bottom: 6px; }
-    .navbar .navbar-overlay--resources .navbar-overlay__content p {
+    .navbar .navbar-overlay--resources .navbar-overlay__content p,
+    .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content p {
       color: #6E7F89;
       line-height: 20px;
       font-size: 13px;
       margin: 0; }
+  .navbar .navbar-overlay--candidates img {
+    left: 533px; }
+  .navbar .navbar-overlay--candidates .navbar-overlay__content {
+    left: 416px; }
+  .navbar .navbar-overlay--candidates .navbar-overlay__content div:first-child {
+    padding: 18px 23px 12px 23px; }
   .navbar .navbar-overlay--resources img {
     left: 447px; }
   .navbar .navbar-overlay--resources .navbar-overlay__content {
     left: 330px; }
+  .navbar .navbar-overlay--looking-to-hire img {
+    left: 332px; }
+  .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content {
+    left: 215px; }
+  .navbar .navbar-overlay--looking-to-hire .navbar-overlay__content {
+    width: 488px;
+    left: 101px; }
+  .navbar .navbar-overlay--looking-to-hire-inner {
+    display: flex; }
+    .navbar .navbar-overlay--looking-to-hire-inner div:first-child {
+      padding-right: 26px; }
+    .navbar .navbar-overlay--looking-to-hire-inner > div {
+      flex: 1;
+      padding-top: 18px; }
   .navbar .navbar-overlay--candidates__vertical-link,
   .navbar .navbar-menu--candidates__vertical-link {
     display: block;

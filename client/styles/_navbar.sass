@@ -1,6 +1,7 @@
 $logo-width: 324px
-$engineers-menu-offset: 646px
+$engineers-menu-offset: 546px
 $resoures-menu-offset: 460px
+$looking-to-hire-menu-offset: 345px
 $overlay-triangle-width: 26px
 $navbar-overlay-content-width: 260px
 
@@ -256,7 +257,8 @@ $navbar-overlay-content-width: 260px
       &:before
         content: '😎'
 
-  .navbar-item--resources
+  .navbar-item--resources,
+  .navbar-item--looking-to-hire
     padding-right: 2px
 
   .logo-title-container
@@ -392,7 +394,8 @@ $navbar-overlay-content-width: 260px
     position: absolute
     z-index: 1
   .navbar-overlay--candidates,
-  .navbar-overlay--resources
+  .navbar-overlay--resources,
+  .navbar-overlay--looking-to-hire,
     margin-top: -6px
     transition: opacity 0.3s, margin 0.2s ease-out
     &.is-open
@@ -409,8 +412,6 @@ $navbar-overlay-content-width: 260px
       font-size: 14px
       color: $steel-gray
       box-shadow: 0 2px 4px 0 $greyish
-      div:first-child
-        padding: 18px 23px 12px 23px
 
   @mixin overlay-offset($amount)
     img
@@ -418,11 +419,8 @@ $navbar-overlay-content-width: 260px
     .navbar-overlay__content
       left: $amount - ($navbar-overlay-content-width / 2)
 
-  .navbar-overlay--candidates
-    top: $navbar-height + $promo-banner-height
-    @include overlay-offset($engineers-menu-offset)
-
-  .navbar-overlay--resources
+  .navbar-overlay--resources,
+  .navbar-overlay--looking-to-hire
     .navbar-overlay__content
       padding: 26px
       a + a
@@ -443,7 +441,31 @@ $navbar-overlay-content-width: 260px
         line-height: 20px
         font-size: 13px
         margin: 0
+
+  .navbar-overlay--candidates
+    @include overlay-offset($engineers-menu-offset)
+    .navbar-overlay__content
+      div:first-child
+        padding: 18px 23px 12px 23px
+
+  .navbar-overlay--resources
     @include overlay-offset($resoures-menu-offset)
+
+  .navbar-overlay--looking-to-hire
+    @include overlay-offset($looking-to-hire-menu-offset)
+    .navbar-overlay__content
+      width: 488px
+      left: $looking-to-hire-menu-offset - 244px
+
+  .navbar-overlay--looking-to-hire-inner
+    display: flex
+    div:first-child
+      padding-right: 26px
+    & > div
+      flex: 1
+      padding-top: 18px
+
+
 
   .navbar-overlay--candidates__vertical-link,
   .navbar-menu--candidates__vertical-link
