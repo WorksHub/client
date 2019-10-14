@@ -9,6 +9,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.issue :as issue :refer [issue-card level->str level->icon]]
     [wh.components.job :refer [job-card]]
+    [wh.components.not-found :as not-found]
     [wh.how-it-works.views :as how-it-works]
     [wh.issue.edit.views :as edit-issue]
     [wh.issue.events :as events]
@@ -297,30 +298,33 @@
                   (<sub [:user/company?]) [how-it-works/pod--company]
                   logged-in?              [how-it-works/pod--candidate]
                   :else                   [how-it-works/pod--basic])]
-    [:div.main-container
-     [:div.main.issue
-      [:div.is-flex
-       [:div.issue__main
-        [header {:show-like-or-edit? logged-in?}] ;; TODO implement likes
-        [:div.is-hidden-desktop
-         [author]]
-        [description]
-        (when (<sub [::subs/show-contributors?])
-          [contributors])
-        [:div.is-hidden-desktop
-         hiw-pod
-         [activity]]
-        [other-issues]
-        [company-jobs logged-in?]]
-       [:div.issue__side.is-hidden-mobile
-        [author]
-        hiw-pod
-        [activity]]]]
-     (when (<sub [::subs/start-work-popup-shown?])
-       [start-work])
-     #?(:cljs
-        [edit-issue/edit-issue])
-     [start-work-sticky logged-in?]]))
+    (if-not (<sub [::subs/issue])
+      [:div.main.main--center-content
+       [not-found/not-found]]
+      [:div.main-container
+       [:div.main.issue
+        [:div.is-flex
+         [:div.issue__main
+          [header {:show-like-or-edit? logged-in?}]         ;; TODO implement likes
+          [:div.is-hidden-desktop
+           [author]]
+          [description]
+          (when (<sub [::subs/show-contributors?])
+            [contributors])
+          [:div.is-hidden-desktop
+           hiw-pod
+           [activity]]
+          [other-issues]
+          [company-jobs logged-in?]]
+         [:div.issue__side.is-hidden-mobile
+          [author]
+          hiw-pod
+          [activity]]]]
+       (when (<sub [::subs/start-work-popup-shown?])
+         [start-work])
+       #?(:cljs
+          [edit-issue/edit-issue])
+       [start-work-sticky logged-in?]])))
 
 (defn page
   []

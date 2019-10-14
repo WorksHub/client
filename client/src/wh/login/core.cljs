@@ -8,12 +8,10 @@
     [wh.login.get-started.views :as get-started]
     [wh.login.github-callback.events]
     [wh.login.github-callback.views :as github-callback]
-    [wh.login.invalid-magic-link.views :as invalid-magic-link]
     [wh.login.views :as login]))
 
 (def page-mapping
   {:github-callback github-callback/page
-   :invalid-magic-link invalid-magic-link/page
    :login login/page
    :get-started get-started/page})
 

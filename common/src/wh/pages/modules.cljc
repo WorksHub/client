@@ -33,7 +33,6 @@
               "admin" :company}
    :homepage-dashboard :logged-in
    :improve-recommendations :logged-in
-   :invalid-magic-link :login
    :issue :issues
    :issues :issues
    :job :jobs
@@ -46,7 +45,6 @@
    :notifications-settings :logged-in
    :pre-set-search :jobs
    :pricing :pricing
-   :privacy-policy :login
    :profile :logged-in
    :profile-edit-header :logged-in
    :profile-edit-cv :logged-in
@@ -54,7 +52,6 @@
    :profile-edit-company-user :logged-in
    :register-company :company
    :payment-setup :company
-   :terms-of-service :company
    :register :register
    :liked :logged-in
    :recommended :logged-in

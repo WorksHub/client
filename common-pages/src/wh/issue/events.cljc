@@ -151,11 +151,13 @@
      ::fetch-company-jobs
      db/default-interceptors
      (fn [{db :db} _]
-       {:graphql {:query queries/fetch-company-jobs
-                  :variables {:id (get-in db [::issue/sub-db ::issue/issue :company :id])}
-                  :on-success [::fetch-company-jobs-success]
-                  :on-failure [:error/set-global "Something went wrong while we tried to fetch the company's jobs"
-                               [::fetch-company-jobs]]}})))
+       (if-let [id (get-in db [::issue/sub-db ::issue/issue :company :id])]
+         {:graphql {:query      queries/fetch-company-jobs
+                    :variables  {:id id}
+                    :on-success [::fetch-company-jobs-success]
+                    :on-failure [:error/set-global "Something went wrong while we tried to fetch the company's jobs"
+                                 [::fetch-company-jobs]]}}
+         {}))))
 
 (reg-event-db
   ::fetch-company-jobs-success

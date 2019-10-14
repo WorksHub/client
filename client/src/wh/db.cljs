@@ -41,7 +41,6 @@
                 :homepage-not-logged-in
                 :how-it-works
                 :improve-recommendations
-                :invalid-magic-link
                 :issue
                 :issues
                 :job
@@ -57,7 +56,6 @@
                 :payment-setup
                 :pre-set-search
                 :pricing
-                :privacy-policy
                 :profile
                 :profile-edit-company-user
                 :profile-edit-cv
@@ -66,8 +64,7 @@
                 :recommended
                 :register
                 :register-company
-                :tags-edit
-                :terms-of-service})
+                :tags-edit})
 
 ;; A mapping of routes to page components. The values can
 ;; optionally be of the form {:page page, :can-access? boolean-fn},
