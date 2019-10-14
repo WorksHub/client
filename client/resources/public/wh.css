@@ -4445,6 +4445,12 @@ a.navbar-item,
   align-items: stretch;
   border-bottom: #dedede 1px solid;
   background-color: white; }
+  @media screen and (min-width: 1008px) {
+    .navbar__content {
+      height: 76px; } }
+  @media screen and (max-width: 1007px) {
+    .navbar__content {
+      height: 46px; } }
 
 @media screen and (min-width: 1008px) {
   .navbar.navbar--has-promo-banner {
@@ -4630,11 +4636,21 @@ a.navbar-item,
       height: 40px; }
       .navbar .navbar-item--register .button:hover {
         background-color: #ff9f95 !important; }
-  .navbar .navbar-item--candidates {
+  .navbar .navbar-item--dropdown {
     cursor: pointer;
     transition: color 0.3s; }
-    .navbar .navbar-item--candidates:hover {
+    .navbar .navbar-item--dropdown .icon {
+      fill: #6E7F89;
+      width: 24px;
+      height: 24px;
+      margin: 3px 0px 0px 0px;
+      transition: fill 0.3s, transform 0.3s; }
+      .navbar .navbar-item--dropdown .icon.is-open {
+        transform: rotate(180deg); }
+    .navbar .navbar-item--dropdown:hover {
       color: #ff7c6e; }
+      .navbar .navbar-item--dropdown:hover .icon {
+        fill: #ff7c6e; }
   .navbar .navbar-item--menu {
     font-size: 10px;
     font-weight: bold;
@@ -4675,6 +4691,8 @@ a.navbar-item,
   @media screen and (min-width: 1008px) {
     .navbar .navbar-item--login:hover:before {
       content: '😎'; } }
+  .navbar .navbar-item--resources {
+    padding-right: 2px; }
   .navbar .logo-title-container {
     color: #6E7F89;
     line-height: 1em; }
@@ -4781,7 +4799,7 @@ a.navbar-item,
     opacity: 0;
     pointer-events: none;
     position: fixed;
-    top: 0;
+    top: 76px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -4802,29 +4820,59 @@ a.navbar-item,
   .navbar .navbar-overlay__content {
     position: absolute;
     z-index: 1; }
-  .navbar .navbar-overlay--candidates {
-    top: 124px;
+  .navbar .navbar-overlay--candidates,
+  .navbar .navbar-overlay--resources {
     margin-top: -6px;
     transition: opacity 0.3s, margin 0.2s ease-out; }
-    .navbar .navbar-overlay--candidates.is-open {
+    .navbar .navbar-overlay--candidates.is-open,
+    .navbar .navbar-overlay--resources.is-open {
       margin-top: 0px; }
-    .navbar .navbar-overlay--candidates img {
+    .navbar .navbar-overlay--candidates img,
+    .navbar .navbar-overlay--resources img {
       position: absolute;
-      left: calc(654px - 13px);
       top: -24px;
       z-index: 2; }
-    .navbar .navbar-overlay--candidates .navbar-overlay__content {
+    .navbar .navbar-overlay--candidates .navbar-overlay__content,
+    .navbar .navbar-overlay--resources .navbar-overlay__content {
       border: 2px solid #ff7c6e;
       background-color: white;
       width: 260px;
-      height: 436px;
       top: -12px;
-      left: calc(654px - 129px);
       font-size: 14px;
       color: #6E7F89;
       box-shadow: 0 2px 4px 0 #adadad; }
-      .navbar .navbar-overlay--candidates .navbar-overlay__content div:first-child {
+      .navbar .navbar-overlay--candidates .navbar-overlay__content div:first-child,
+      .navbar .navbar-overlay--resources .navbar-overlay__content div:first-child {
         padding: 18px 23px 12px 23px; }
+  .navbar .navbar-overlay--candidates {
+    top: 124px; }
+    .navbar .navbar-overlay--candidates img {
+      left: 633px; }
+    .navbar .navbar-overlay--candidates .navbar-overlay__content {
+      left: 516px; }
+  .navbar .navbar-overlay--resources .navbar-overlay__content {
+    padding: 26px; }
+    .navbar .navbar-overlay--resources .navbar-overlay__content a + a {
+      margin-top: 24px; }
+    .navbar .navbar-overlay--resources .navbar-overlay__content a {
+      display: block; }
+      .navbar .navbar-overlay--resources .navbar-overlay__content a h3, .navbar .navbar-overlay--resources .navbar-overlay__content a p {
+        transition: color 0.3s; }
+      .navbar .navbar-overlay--resources .navbar-overlay__content a:hover h3, .navbar .navbar-overlay--resources .navbar-overlay__content a:hover p {
+        color: #ff7c6e; }
+    .navbar .navbar-overlay--resources .navbar-overlay__content h3 {
+      font-weight: 600;
+      line-height: 1;
+      margin-bottom: 6px; }
+    .navbar .navbar-overlay--resources .navbar-overlay__content p {
+      color: #6E7F89;
+      line-height: 20px;
+      font-size: 13px;
+      margin: 0; }
+  .navbar .navbar-overlay--resources img {
+    left: 447px; }
+  .navbar .navbar-overlay--resources .navbar-overlay__content {
+    left: 330px; }
   .navbar .navbar-overlay--candidates__vertical-link,
   .navbar .navbar-menu--candidates__vertical-link {
     display: block;
@@ -4990,6 +5038,13 @@ a.navbar-item,
 
 .navbar--reset-z-index {
   z-index: 0; }
+
+/* apply promo banner height to various places */
+/* NOTE this is necessary because the overlay parent is FIXED, as it also acts as an interceptor */
+/* for clicks. In an ideal world we'd have two things; an interceptor AND the overlay, separately. */
+/* Then, the navbar-overlay position could track the navbar-content, rather than needing this workaround. */
+.navbar--has-promo-banner:not(.child-promo-has-scrolled) .navbar-overlay {
+  top: 124px; }
 
 .is-full-panel-overlay {
   bottom: 0;

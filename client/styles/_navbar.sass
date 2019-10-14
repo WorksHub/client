@@ -1,12 +1,19 @@
 $logo-width: 324px
-$engineers-menu-offset: 654px
+$engineers-menu-offset: 646px
+$resoures-menu-offset: 460px
+$overlay-triangle-width: 26px
+$navbar-overlay-content-width: 260px
 
 .navbar__content
-  width: 100%;
-  display: flex;
-  align-items: stretch;
+  width: 100%
+  display: flex
+  align-items: stretch
   border-bottom: #dedede 1px solid
   background-color: white
+  +desktop
+    height: $navbar-height
+  +mobile
+    height: $navbar-mobile-height
 
 .navbar.navbar--has-promo-banner
   +desktop
@@ -189,11 +196,22 @@ $engineers-menu-offset: 654px
       height: 40px
       &:hover
         background-color: $button-hover !important
-  .navbar-item--candidates
+
+  .navbar-item--dropdown
     cursor: pointer
     transition: color 0.3s
+    .icon
+      fill: $steel-gray
+      width: 24px
+      height: 24px
+      margin: 3px 0px 0px 0px
+      transition: fill 0.3s, transform 0.3s
+      &.is-open
+        transform: rotate(180deg)
     &:hover
       color: $red
+      .icon
+        fill: $red
 
   .navbar-item--menu
     font-size: 10px
@@ -237,6 +255,9 @@ $engineers-menu-offset: 654px
     +desktop
       &:before
         content: '😎'
+
+  .navbar-item--resources
+    padding-right: 2px
 
   .logo-title-container
     color: $steel-gray
@@ -349,7 +370,7 @@ $engineers-menu-offset: 654px
     opacity: 0
     pointer-events: none
     position: fixed
-    top: 0
+    top: $navbar-height
     bottom: 0
     left: 0
     right: 0
@@ -370,29 +391,59 @@ $engineers-menu-offset: 654px
   .navbar-overlay__content
     position: absolute
     z-index: 1
-  .navbar-overlay--candidates
-    top: $navbar-height + $promo-banner-height
+  .navbar-overlay--candidates,
+  .navbar-overlay--resources
     margin-top: -6px
     transition: opacity 0.3s, margin 0.2s ease-out
     &.is-open
       margin-top: 0px
     img
       position: absolute
-      left: calc(#{$engineers-menu-offset} - 13px)
       top: -24px
       z-index: 2
     .navbar-overlay__content
       border: 2px solid $red
       background-color: white
-      width: 260px
-      height: 436px
+      width: $navbar-overlay-content-width
       top: -12px
-      left: calc(#{$engineers-menu-offset} - 129px)
       font-size: 14px
       color: $steel-gray
       box-shadow: 0 2px 4px 0 $greyish
       div:first-child
         padding: 18px 23px 12px 23px
+
+  @mixin overlay-offset($amount)
+    img
+      left: $amount - ($overlay-triangle-width / 2)
+    .navbar-overlay__content
+      left: $amount - ($navbar-overlay-content-width / 2)
+
+  .navbar-overlay--candidates
+    top: $navbar-height + $promo-banner-height
+    @include overlay-offset($engineers-menu-offset)
+
+  .navbar-overlay--resources
+    .navbar-overlay__content
+      padding: 26px
+      a + a
+        margin-top: 24px
+      a
+        display: block
+        h3,p
+          transition: color 0.3s
+        &:hover
+          h3,p
+            color: $red
+      h3
+        font-weight: $font-semi-bold
+        line-height: 1
+        margin-bottom: 6px
+      p
+        color: $steel-gray
+        line-height: 20px
+        font-size: 13px
+        margin: 0
+    @include overlay-offset($resoures-menu-offset)
 
   .navbar-overlay--candidates__vertical-link,
   .navbar-menu--candidates__vertical-link
@@ -555,3 +606,11 @@ $tasks-width-desktop: 320px
 
 .navbar--reset-z-index
   z-index: 0
+
+/* apply promo banner height to various places
+/* NOTE this is necessary because the overlay parent is FIXED, as it also acts as an interceptor
+/* for clicks. In an ideal world we'd have two things; an interceptor AND the overlay, separately.
+/* Then, the navbar-overlay position could track the navbar-content, rather than needing this workaround.
+.navbar--has-promo-banner:not(.child-promo-has-scrolled)
+  .navbar-overlay
+    top: $navbar-height + $promo-banner-height

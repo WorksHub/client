@@ -21,10 +21,13 @@
   (or (contains? #{:pricing :how-it-works :issues} page)
       (= "www" vertical)))
 
-(def candidates-overlay-menu-id "candidates-overlay-menu")
-(def candidates-menu-id         "candidates-menu")
-(def logged-out-menu-id         "logged-out-menu")
-(def mobile-search-id           "mobile-search")
+(def candidates-overlay-menu-id     "candidates-overlay-menu")
+(def candidates-menu-id             "candidates-menu")
+(def resources-overlay-menu-id      "resources-overlay-menu")
+(def resources-overlay-roll-down-id "resources-overlay-menu-roll-down")
+(def resources-menu-id              "resources-menu")
+(def logged-out-menu-id             "logged-out-menu")
+(def mobile-search-id               "mobile-search")
 
 (def learn-link     (routes/path :learn))
 (def pricing-link   (routes/path :pricing))
@@ -59,6 +62,24 @@
                  vertical)}
         (icon vertical)
         [:span (verticals/config vertical :platform-name)]]))])
+
+(defn resources-menu-content
+  [env id class]
+  (let [base-opts (interop/multiple-on-click
+                    (interop/set-is-open-on-click resources-overlay-menu-id false)
+                    (interop/set-is-open-on-click resources-overlay-roll-down-id false))]
+    [:div
+     {:id id
+      :class class}
+     [:a (merge {:href issues-link} base-opts)
+      [:h3 "Open Source Issues"]
+      [:p "Improve your skillset and get paid to contribute to projects you find interesting"]]
+     [:a (merge {:href companies-link} base-opts)
+      [:h3 "Company Profiles"]
+      [:p "Discover products and startups that you want to work for"]]
+     [:a (merge {:href learn-link} base-opts)
+      [:h3 "Blogs"]
+      [:p "Fresh thinking and unique perspectives from the most talented engineers"]]]))
 
 (defn mobile-logged-out-menu
   [{:keys [vertical  env query-params]}]
@@ -117,6 +138,20 @@
     (candidates-menu-content env nil
                              "navbar-overlay__content"
                              "navbar-overlay--candidates__vertical-link")
+    [:img {:src "/images/homepage/triangle.svg"
+           :alt ""}]]])
+
+(defn resources-menu
+  [{:keys [env query-params]}]
+  [:div.navbar-overlay.navbar-overlay--resources.is-hidden-mobile
+   {:id resources-overlay-menu-id}
+   [:div.navbar-overlay__inner
+    [:div.navbar-overlay__bg
+     (interop/multiple-on-click
+       (interop/set-is-open-on-click resources-overlay-menu-id false)
+       (interop/set-is-open-on-click resources-overlay-roll-down-id false))]
+    (resources-menu-content env nil
+                            "navbar-overlay__content")
     [:img {:src "/images/homepage/triangle.svg"
            :alt ""}]]])
 
@@ -262,7 +297,12 @@
                         (when show-tasks?
                           (let [utc (unfinished-task-count)]
                             (when (pos? utc)
-                              [:small.navbar__unfinished-task-count utc])))]]
+                              [:small.navbar__unfinished-task-count utc])))]
+        base-opts (interop/multiple-on-click (interop/set-is-open-on-click logged-out-menu-id false)
+                                             (interop/set-is-open-on-click candidates-overlay-menu-id false)
+                                             (interop/set-is-open-on-click resources-overlay-menu-id false)
+                                             (interop/set-is-open-on-click resources-overlay-roll-down-id false)
+                                             (interop/disable-no-scroll-on-click))]
     (if logged-in?
       [:div.navbar-search-end-wrapper
        (when-not hide-search?
@@ -277,16 +317,12 @@
        [:a.navbar-item.navbar-item--login
         (merge
           {:href (routes/path :login :params {:step (if (= "www" vertical) :email :root)})}
-          (interop/multiple-on-click (interop/set-is-open-on-click logged-out-menu-id false)
-                                     (interop/set-is-open-on-click candidates-overlay-menu-id false)
-                                     (interop/disable-no-scroll-on-click)))
+          base-opts)
         "Login"]
        [:a.navbar-item.is-hidden-mobile.navbar-item--register
         (merge
           {:href (routes/path :get-started)}
-          (interop/multiple-on-click (interop/set-is-open-on-click logged-out-menu-id false)
-                                     (interop/set-is-open-on-click candidates-overlay-menu-id false)
-                                     (interop/disable-no-scroll-on-click)))
+          base-opts)
         [:button.button
          "Get Started"]]
        (when show-navbar-menu? menu-roll-down)])))
@@ -296,37 +332,42 @@
   (cond
     logged-in? nil
     (= "www" vertical)
-    [:div.navbar-items
-     [:a.navbar-item.is-hidden-mobile.navbar-item--jobs
-      (merge {:href jobsboard-link}
-             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Jobs"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--companies
-      (merge {:href companies-link}
-             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Companies"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--issues
-      (merge {:href issues-link}
-             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Issues"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--learn
-      (merge {:href learn-link}
-             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Blog"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--pricing
-      (merge {:href pricing-link}
-             (interop/set-is-open-on-click candidates-overlay-menu-id false)) "Pricing"]
-     [:div.navbar-item.is-hidden-mobile.navbar-item--candidates
-      (interop/toggle-is-open-on-click candidates-overlay-menu-id)
-      "Get Hired"]]
+    (let [base-opts (interop/set-is-open-on-click candidates-overlay-menu-id false)]
+      [:div.navbar-items
+       [:a.navbar-item.is-hidden-mobile.navbar-item--jobs
+        (merge {:href jobsboard-link}
+               base-opts) "Jobs"]
+       [:a.navbar-item.is-hidden-mobile.navbar-item--companies
+        (merge {:href companies-link}
+               base-opts) "Companies"]
+       [:a.navbar-item.is-hidden-mobile.navbar-item--issues
+        (merge {:href issues-link}
+               base-opts) "Issues"]
+       [:a.navbar-item.is-hidden-mobile.navbar-item--learn
+        (merge {:href learn-link}
+               base-opts) "Blog"]
+       [:a.navbar-item.is-hidden-mobile.navbar-item--pricing
+        (merge {:href pricing-link}
+               base-opts) "Pricing"]
+       [:div.navbar-item.is-hidden-mobile.navbar-item--dropdown.navbar-item--candidates
+        (interop/toggle-is-open-on-click candidates-overlay-menu-id) "Get Hired"]])
     :else
-    [:div.navbar-items
-     [:a.navbar-item.is-hidden-mobile.navbar-item--jobs
-      {:href jobsboard-link} "Jobs"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--companies
-      {:href companies-link} "Companies"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--issues
-      {:href issues-link} "Issues"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--learn
-      {:href learn-link} "Learn"]
-     [:a.navbar-item.is-hidden-mobile.navbar-item--hiring
-      {:href routes/company-landing-page} "For Employers"]]))
+    (let [base-opts (interop/multiple-on-click
+                      (interop/set-is-open-on-click resources-overlay-menu-id false)
+                      (interop/set-is-open-on-click resources-overlay-roll-down-id false))]
+      [:div.navbar-items
+       [:a.navbar-item.is-hidden-mobile.navbar-item--jobs
+        (merge {:href jobsboard-link}
+               base-opts) "Jobs"]
+       [:div.navbar-item.is-hidden-mobile.navbar-item--dropdown.navbar-item--resources
+        (interop/multiple-on-click
+          (interop/toggle-is-open-on-click resources-overlay-menu-id)
+          (interop/toggle-is-open-on-click resources-overlay-roll-down-id)) "Resources"
+        [icon "roll-down" :id resources-overlay-roll-down-id]]
+       [:a.navbar-item.is-hidden-mobile.navbar-item--hiring
+        (merge {:href routes/company-landing-page}
+               base-opts)
+        "For Employers"]])))
 
 (defn top-bar
   [_args]
@@ -351,7 +392,7 @@
             [link [:div.is-hidden-desktop
                    (str "Start hiring & get a week free! ('" data/free-week-code "')")] :register-company]
             [:script {:type "text/javascript"}
-             "initPromoBanner(\"promo-banner\")"]])
+             "initPromoBanner(\"promo-banner\", \"wh-navbar\")"]])
          [:div.navbar__content
           [:div.navbar-item.navbar__logo-container
            [:svg.icon.navbar__logo [icon vertical]]
@@ -364,6 +405,8 @@
             [mobile-logged-out-menu args])
           (when content?
             [candidates-menu args])
+          (when content?
+            [resources-menu args])
           (when content?
             [mobile-search (:search query-params) query-params])
           (when @tasks-open?
