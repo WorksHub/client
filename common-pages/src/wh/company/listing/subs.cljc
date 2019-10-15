@@ -2,7 +2,9 @@
   (:require
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.re-frame.subs :refer [<sub]]
-    [wh.company.listing.db :as listing])
+    [wh.company.listing.db :as listing]
+    [wh.components.pagination :as pagination]
+    [wh.util :as util])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
 
@@ -10,9 +12,9 @@
 
 (defn page-number
   [qps]
-  (let [p (get qps "page" "1")]
-    #?(:cljs (js/parseInt p)
-       :clj (Integer. p))))
+  (-> qps
+      (get "page" "1")
+      (util/parse-int)))
 
 (reg-sub-raw
   ::companies
@@ -27,6 +29,25 @@
 
 (reg-sub
   ::current-page
-  :<- [:wh.subs/query-params]
+  :<- [:wh/query-params]
   (fn [qps _]
     (page-number qps)))
+
+(reg-sub
+  ::total-number-of-results
+  :<- [::companies]
+  (fn [companies _]
+    (-> companies :pagination :total)))
+
+(reg-sub
+  ::total-pages
+  :<- [::total-number-of-results]
+  (fn [total _]
+    (int (#?(:cljs js/Math.ceil :clj Math/ceil) (/ total listing/page-limit)))))
+
+(reg-sub
+  ::pagination
+  :<- [::current-page]
+  :<- [::total-pages]
+  (fn [[current-page total-pages] _]
+    (pagination/generate-pagination current-page total-pages)))

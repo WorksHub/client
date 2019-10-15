@@ -60,10 +60,7 @@
 
 (defn page
   []
-  (let [admin?          (<sub [:user/admin?])
-        current-page    (<sub [::subs/current-page])
-        result          (<sub [::subs/companies])
-        {:keys [total]} (:pagination result)
+  (let [result          (<sub [::subs/companies])
         companies       (or (:companies result)
                             (map (partial hash-map :id) (range 10)))
         query-params (<sub [:wh/query-params])]
@@ -76,12 +73,11 @@
           (for [company companies]
             ^{:key (:id company)}
             [company-card company]))
-        (when (and (not-empty companies) (> total companies/page-limit))
+        (when (and (not-empty companies) (> (<sub [::subs/total-number-of-results]) companies/page-limit))
           [pagination/pagination
-           current-page
-           (pagination/generate-pagination
-             current-page
-             (int (#?(:cljs js/Math.ceil :clj Math/ceil) (/ total companies/page-limit))))
-           :companies query-params])]
+           (<sub [::subs/current-page])
+           (<sub [::subs/pagination])
+           :companies
+           query-params])]
        [:div.companies__side.split-content__side.is-hidden-mobile
         [company/company-cta false]]]]]))
