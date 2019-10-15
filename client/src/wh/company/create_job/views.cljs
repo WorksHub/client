@@ -190,14 +190,10 @@
   [admin?]
   [:fieldset
    [:h2 "Description"]
-   [rich-text-field (field ::create-job/private-description-html
-                           :class "job-edit__private-description"
-                           :label (if admin? "* Private description"
-                                      "* Responsibilities, duties and detailed tech requirements"))]
-   (when admin?
-     [rich-text-field (field ::create-job/public-description-html
-                             :class "job-edit__public-description"
-                             :label "* Public description (for clients on 'Essential' package, this field will be overridden by the private description whenever they edit it)")])])
+   [rich-text-field (field ::create-job/description-html
+                           :class "job-edit__description"
+                           :label (if admin? "* Description"
+                                      "* Responsibilities, duties and detailed tech requirements"))]])
 
 (defn integrations
   []

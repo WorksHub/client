@@ -43,8 +43,7 @@
    ::location__latitude     {:order 37 :initial nil :validate (s/nilable :wh.location/latitude)}
    ::location__longitude    {:order 38 :initial nil :validate (s/nilable :wh.location/longitude)}
 
-   ::public-description-html  {:order 40 :initial "", :validate ::p/non-empty-string}
-   ::private-description-html {:order 41 :initial "", :validate ::p/non-empty-string}
+   ::description-html  {:order 40 :initial "", :validate ::p/non-empty-string}
 
    ::ats-job-id         {:order 50 :initial "" :event? false}
 
@@ -83,7 +82,7 @@
              clean-form))))
 
 (defn relevant-fields
-  [db & [exclude-descriptions?]]
+  [db]
   (letfn [(remove-admin-fields [f]
             (if-not (user/admin? db)
               (disj f ::manager
@@ -95,21 +94,16 @@
               (disj f ::remuneration__currency
                     ::remuneration__min
                     ::remuneration__max)
-              f))
-          (remove-extras [f]
-            (if exclude-descriptions?
-              (disj f ::public-description-html)
               f))]
     (-> (keys fields)
         (set)
         (remove-admin-fields)
-        (remove-currency-fields)
-        (remove-extras))))
+        (remove-currency-fields))))
 
 (defn invalid-fields
   [db]
   (let [sub-db (::sub-db db)]
-    (when-let [keys (forms/invalid-fields (select-keys fields (relevant-fields db (not (user/admin? db)))) sub-db)]
+    (when-let [keys (forms/invalid-fields (select-keys fields (relevant-fields db)) sub-db)]
       (->> keys
            (map #(vector % (get-in fields [% :order])))
            (sort-by second)

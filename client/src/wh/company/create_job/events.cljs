@@ -33,19 +33,6 @@
                     [[:pagination [:total :count :pageNumber]]
                      [:companies [:id :name [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]]]]]]]]})
 
-(defn check-descriptions
-  ;; TODO PACKAGES what do we do about this?
-  [job db]
-  (if (user/admin? db)
-    job
-    (let [private-description-html (::create-job/private-description-html job)
-          take-off? (= (get-in db [::user/sub-db ::user/company :package]) "take_off")]
-      (assoc job
-             :public-description-html
-             (if take-off?
-               (or (::create-job/public-description-html job) private-description-html)
-               private-description-html)))))
-
 (defn db->graphql-job
   [db]
   (let [sub-db (::create-job/sub-db db)]
@@ -53,7 +40,6 @@
           (update sub-db ::create-job/manager get-manager-email) ;; at the top because it might be culled
           (select-keys sub-db (create-job/relevant-fields db))
           (util/unflatten-map sub-db)
-          (check-descriptions sub-db db)
           (dissoc sub-db ::create-job/company)
           (update sub-db ::create-job/tags (partial map :tag))
           (update sub-db ::create-job/remuneration util/remove-nils)

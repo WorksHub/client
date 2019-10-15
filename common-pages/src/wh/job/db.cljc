@@ -12,8 +12,7 @@
 (s/def ::error (s/nilable #{:no-matching-job :unknown-error :unauthorised}))
 
 (s/def ::title string?)
-(s/def ::public-description-html string?)
-(s/def ::private-description-html string?)
+;;
 (s/def ::description-html (s/nilable string?))
 (s/def ::name (s/nilable string?))
 (s/def ::logo (s/nilable string?))
@@ -89,8 +88,7 @@
 (s/def ::preset-slug ::slug)
 
 (s/def ::sub-db (s/keys :opt [::company
-                              ::public-description-html
-                              ::private-description-html
+                              ::description-html
                               ::location-description
                               ::manager
                               ::title

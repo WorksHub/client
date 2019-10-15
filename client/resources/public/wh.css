@@ -10228,9 +10228,9 @@ h3 {
 .job-edit__remuneration__salary__time-period .field__error {
   display: none; }
 
-.job-edit__public-description, .job-edit__private-description {
+.job-edit__description {
   height: 400px; }
-  .job-edit__public-description .ql-container, .job-edit__private-description .ql-container {
+  .job-edit__description .ql-container {
     height: calc(400px - 80px); }
 
 .job-edit__location__latlon {
