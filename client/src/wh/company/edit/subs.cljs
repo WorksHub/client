@@ -170,6 +170,12 @@
     (get-in db [::edit/integrations :greenhouse :enabled])))
 
 (reg-sub
+  ::workable-connected?
+  :<- [::sub-db]
+  (fn [db [_]]
+    (get-in db [::edit/integrations :workable :enabled])))
+
+(reg-sub
   ::slack-connected?
   :<- [::sub-db]
   (fn [db [_]]
@@ -179,6 +185,7 @@
   ::some-integrations-connected?
   :<- [::greenhouse-connected?]
   :<- [::slack-connected?]
+  :<- [::workable-connected?]
   :<- [:user/company-connected-github?]
   (fn [integrations [_]]
     (some true? integrations)))
@@ -186,6 +193,7 @@
 (reg-sub
   ::some-integrations-not-connected?
   :<- [::greenhouse-connected?]
+  :<- [::workable-connected?]
   :<- [::slack-connected?]
   :<- [:user/company-connected-github?]
   (fn [integrations [_]]

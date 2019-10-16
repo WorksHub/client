@@ -259,6 +259,23 @@
                {:on-click #(do (.preventDefault %)
                                (dispatch [::events/upgrade]))}))
            [:img {:src "/images/company/greenhouse.svg"}]]])
+       (when (and (not (<sub [::subs/workable-connected?]))
+                  (<sub [:wh.user/workshub?]))
+         [:a {:href (when (and (not (<sub [:user/admin?]))
+                               (<sub [:wh.user/can-use-integrations?]))
+                      (routes/path :oauth-workable))}
+          [:button.button.company-edit__integration
+           (merge
+             {:id "company-edit__integration--workable"}
+             (if (<sub [:user/admin?])
+               {:on-click #(do (.preventDefault %)
+                               (dispatch [::events/toggle-integration-popup true]))}
+               {:on-click #(dispatch [:company/track-install-integration-clicked "Workable"])})
+             (when (and (not (<sub [:user/admin?]))
+                        (not (<sub [:wh.user/can-use-integrations?])))
+               {:on-click #(do (.preventDefault %)
+                               (dispatch [::events/upgrade]))}))
+           [:img {:src "/images/company/workable.png"}]]])  ;TODO get assets from Jill when she is back
        (when (and (not (<sub [:user/admin?]))
                   (not (<sub [:user/company-connected-github?])))
          [github/install-github-app
@@ -285,6 +302,14 @@
             (when-not deleting "Delete Integration")]
            (when (<sub [:user/admin?])
              [:span "Company manager will be set as referrer/source for each candidate."])])
+        (when (<sub [::subs/workable-connected?])
+          [:div.company-edit__connected-integration
+           [:img {:alt "Workable" :title "Workable" :src "/images/company/workable-icon.png"}] ;TODO update with assets from Jill
+           [:button.button.button--small.button--inverted.company-edit__add-user
+            {:on-click #(do (.preventDefault %)
+                            (dispatch [::events/delete-integration :workable]))
+             :class    (str (when deleting "button--inverted button--loading"))}
+            (when-not deleting "Delete Integration")]])
         (when (<sub [:user/company-connected-github?])
           [:div.company-edit__connected-integration
            [:img {:alt "GitHub" :title "GitHub" :src "/images/company/github-icon.svg"}]

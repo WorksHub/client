@@ -156,6 +156,8 @@
               ["github-app-connect" :connect-github-app]
               ["oauth/" {"greenhouse"          :oauth-greenhouse
                          "greenhouse-callback" :oauth-greenhouse-callback
+                         "workable"            :oauth-workable
+                         "workable-callback"   :oauth-workable-callback
                          "slack"               :oauth-slack
                          "slack-callback"      :oauth-slack-callback
                          "process"             :oauth-process}]
@@ -179,7 +181,8 @@
                               :sitemap
                               :terms-of-service
                               :oauth-greenhouse
-                              :oauth-slack})
+                              :oauth-slack
+                              :oauth-workable})
 ;;TODO this config should be added to wh.response.ssr/page-content map
 (def pages-without-app-js-when-not-logged-in #{:company
                                                :companies

@@ -28,7 +28,7 @@
            (and admin?
                 (some (partial = email) super-admins))))
 
-(reg-sub ::workshub?
+(reg-sub :wh.user/workshub?
          :<- [::user]
          :<- [:user/admin?]
          (fn [[user admin?]]

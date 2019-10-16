@@ -159,7 +159,7 @@
    [:videos [:youtubeId :thumbnail :description]]
    [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]]]
    [:users [:name :email :id]]
-   [:integrations [:email [:greenhouse [:enabled]] [:slack [:enabled]]]]])
+   [:integrations [:email [:greenhouse [:enabled]] [:slack [:enabled]] [:workable [:enabled]]]]])
 
 (defn company-query
   ([id fields]
