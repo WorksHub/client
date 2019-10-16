@@ -148,7 +148,7 @@ function submitAnalyticsPage() {
 function submitAnalyticsTrack(evt, prps) {
     var i = setInterval(function() {
         if(typeof analytics != "undefined") {
-            analytics.page(evt, prps);
+            analytics.track(evt, prps);
             clearInterval(i);
         }
     }, 100);
