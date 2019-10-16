@@ -6381,7 +6381,10 @@ a.navbar-item,
 .card__label--unpublished {
   background-color: #ffae71;
   border: none;
-  color: white; }
+  color: white;
+  position: absolute;
+  top: 4px;
+  right: 0; }
 
 .card--blog {
   height: 395px;
@@ -7575,6 +7578,43 @@ a.navbar-item,
 
 .companies__side > section {
   background-color: white; }
+
+.company-jobs__list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; }
+  @media screen and (max-width: 1007px) {
+    .company-jobs__list .card {
+      max-width: unset;
+      margin-bottom: 8px; } }
+
+.company-jobs__list--twos {
+  justify-content: space-between; }
+  @media screen and (min-width: 1008px) {
+    .company-jobs__list--twos .card {
+      flex: 1 0 247px;
+      max-width: calc(50% - 4px); }
+      .company-jobs__list--twos .card:nth-of-type(even) {
+        margin-left: 8px; }
+      .company-jobs__list--twos .card:nth-of-type(n+3) {
+        margin-top: 8px; } }
+
+@media screen and (min-width: 1008px) {
+  .company-jobs__grid-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 0.9vw 0.9vw; } }
+
+@media screen and (max-width: 1007px) {
+  .company-jobs__grid-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -16px; }
+    .company-jobs__grid-list .card {
+      max-width: 100%;
+      flex: 1 0 47.3%;
+      margin-bottom: 16px;
+      margin-right: 16px; } }
 
 .company-signup,
 .payment-setup {
@@ -9697,24 +9737,6 @@ h3 {
   .split-content__side {
     width: 33%;
     max-width: 350px; } }
-
-.company-jobs__list {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between; }
-  @media screen and (min-width: 1008px) {
-    .company-jobs__list .card {
-      flex: 1 0 247px;
-      max-width: calc(50% - 4px); }
-      .company-jobs__list .card:nth-of-type(even) {
-        margin-left: 8px; }
-      .company-jobs__list .card:nth-of-type(n+3) {
-        margin-top: 8px; } }
-  @media screen and (max-width: 1007px) {
-    .company-jobs__list .card {
-      max-width: unset;
-      margin-bottom: 8px; } }
 
 .blog {
   box-sizing: border-box;

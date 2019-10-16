@@ -4,6 +4,9 @@
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
     [reagent.core :as reagent]
     [wh.company.events :as _company_events]
+    [wh.company.jobs.db :as jobs-db]
+    [wh.company.jobs.events :as jobs-events]
+    [wh.company.jobs.views :as jobs]
     [wh.company.listing.db :as listing-db]
     [wh.company.listing.events :as listing-events]
     [wh.company.listing.views :as listing]
@@ -14,7 +17,8 @@
 
 (def page-mapping
   {:company profile/page
-   :companies listing/page})
+   :companies listing/page
+   :company-jobs jobs/page})
 
 (reg-event-db
   ::initialize-page-mapping

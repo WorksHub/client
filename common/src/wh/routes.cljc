@@ -87,10 +87,11 @@
                          "create"      :contribute
                          [:id]         :blog                ;;Public yet to be SSR CH2655
                          [:id "/edit"] :contribute-edit}]
-              ["companies/" {""                    :companies ;;Public SSR
+              ["companies/" {""                    :companies    ;;Public SSR
                              "new"                 :create-company
                              "applications"        :company-applications
-                             [:slug]               :company   ;;Public SSR
+                             [:slug]               :company      ;;Public SSR
+                             [:slug "/jobs"]       :company-jobs ;;Public SSR
                              [:id "/edit"]         :admin-edit-company
                              [:id "/dashboard"]    :company-dashboard
                              [:id "/applications"] :admin-company-applications
@@ -182,16 +183,17 @@
 ;;TODO this config should be added to wh.response.ssr/page-content map
 (def pages-without-app-js-when-not-logged-in #{:company
                                                :companies
+                                               :company-jobs
                                                :homepage
                                                :how-it-works
-                                               ;:issue CH3610
-                                               ;:issues CH3615
+                                               ;;:issue CH3610
+                                               ;;:issues CH3615
                                                :job
                                                :jobsboard
                                                :learn
                                                :learn-by-tag
                                                :pre-set-search
-                                               ;:pricing CH3618
+                                               ;;:pricing CH3618
                                                })
 (def server-side-only-paths (set (map #(bidi/path-for routes %) server-side-only-pages)))
 

@@ -22,7 +22,9 @@
 
 (defn company-card
   [{:keys [logo id name slug tags size location description-html profile-enabled
-           total-published-job-count total-published-issue-count] :as _company}]
+           total-published-job-count total-published-issue-count] :as _company}
+   & [{:keys [view-jobs-link?]
+       :or {view-jobs-link? true}}]]
   [:section.companies__company.company-card
    [:div.companies__company__container
     [:div.company-profile__logo.is-hidden-mobile
@@ -51,12 +53,12 @@
                             (and total-published-issue-count (pos? total-published-issue-count))
                             (conj {:icon "pr" :id id :type :icon :label total-published-issue-count}))]]]]
    ;; TODO we disable this (for now) when profile disabled because we have no where to send users!
-   (when (and total-published-job-count (pos? total-published-job-count) profile-enabled)
+   (when (and view-jobs-link? total-published-job-count (pos? total-published-job-count) profile-enabled)
      [link
       [:div.companies__company__job-count
        [:img {:src "/cursors/cursor-2.svg"}]
        [:span (str "View " total-published-job-count " " (text/pluralize total-published-job-count "job"))]]
-      :company :slug slug])]) ;; TODO link to jobs?
+      :company-jobs :slug slug])])
 
 (defn page
   []

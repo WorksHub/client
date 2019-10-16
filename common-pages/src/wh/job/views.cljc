@@ -391,7 +391,8 @@
   (let [jobs         (<sub [::subs/recommended-jobs])
         logged-in?   (<sub [:user/logged-in?])
         has-applied? (some? (<sub [:user/applied-jobs]))
-        company-id   (<sub [:user/company-id])]
+        company-id   (<sub [:user/company-id])
+        admin?       (<sub [:user/admin?])]
     [:div.job__other-roles
      [:h2 "Other roles that might interest you"]
      [:div.columns
@@ -399,7 +400,7 @@
                ^{:key (:id job)}
                [:div.column [job-card job {:logged-in?        logged-in?
                                            :user-has-applied? has-applied?
-                                           :user-is-company?  (not (nil? company-id))
+                                           :user-is-company?  (or admin? (= company-id (:company-id job)))
                                            :user-is-owner?    (= company-id (:company-id job))}]]))]]))
 
 (defn apply-sticky

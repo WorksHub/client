@@ -220,6 +220,7 @@
   [logged-in?]
   (let [jobs         (<sub [::subs/company-jobs])
         company-id   (<sub [:user/company-id])
+        admin?       (<sub [:user/admin?])
         has-applied? (some? (<sub [:user/applied-jobs]))]
     (when-not (and jobs (zero? (count jobs)))
       [:section.issue__company-jobs
@@ -228,7 +229,7 @@
         #_[link "View all"
            :jobs :company-id (<sub [::subs/company-id])
            :class "a--underlined"]] ;; TODO this route doesn't exist yet
-       [:div.company-jobs__list
+       [:div.company-jobs__list.company-jobs__list--twos
         (if jobs
           (doall
             (for [job jobs]
@@ -236,7 +237,7 @@
               [job-card job {:liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
                              :user-has-applied? has-applied?
                              :logged-in?        logged-in?
-                             :user-is-owner?    (= company-id (:company-id job))
+                             :user-is-owner?    (or admin? (= company-id (:company-id job)))
                              :user-is-company?  (not (nil? company-id))}]))
           (doall
             (for [i (range (<sub [::subs/num-related-jobs-to-show]))]

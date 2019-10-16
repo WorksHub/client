@@ -95,6 +95,7 @@
     (when (seq jobs)
       (let [logged-in?   (<sub [:user/logged-in?])
             company-id   (<sub [:user/company-id])
+            admin?       (<sub [:user/admin?])
             has-applied? (some? (<sub [:user/applied-jobs]))
             title        (<sub [::subs/recommendations-heading])
             company-name (<sub [::subs/company-name])]
@@ -109,7 +110,7 @@
              [:div.column [job-card job {:logged-in?        logged-in?
                                          :user-has-applied? has-applied?
                                          :user-is-company?  (not (nil? company-id))
-                                         :user-is-owner?    (= company-id (:company-id job))}]]))]))))
+                                         :user-is-owner?    (or admin? (= company-id (:company-id job)))}]]))]))))
 
 (defn page []
   (let [last-y (reagent/atom 0)

@@ -121,3 +121,38 @@ $cc-desc-lines-to-show-mobile: 3
 .companies__side
   &>section
     background-color: white
+
+.company-jobs__list
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  .card
+    +mobile
+      max-width: unset
+      margin-bottom: 8px
+
+.company-jobs__list--twos
+  justify-content: space-between
+  .card
+    +desktop
+      flex: 1 0 247px
+      max-width: calc(50% - 4px)
+      &:nth-of-type(even)
+        margin-left: 8px
+      &:nth-of-type(n+3)
+        margin-top: 8px
+
+.company-jobs__grid-list
+  +desktop
+    display: grid
+    grid-template-columns: 1fr 1fr 1fr
+    grid-gap: 0.9vw 0.9vw
+  +mobile
+    display: flex
+    flex-wrap: wrap
+    margin-right: -16px
+    .card
+      max-width: 100%
+      flex: 1 0 47.3%
+      margin-bottom: 16px
+      margin-right: 16px

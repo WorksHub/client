@@ -185,7 +185,8 @@
     (let [parts        (partition-all 3 (<sub [::subs/promoted-jobs]))
           logged-in?   (<sub [:user/logged-in?])
           has-applied? (some? (<sub [:user/applied-jobs]))
-          company-id   (<sub [:user/company-id])]
+          company-id   (<sub [:user/company-id])
+          admin?       (<sub [:user/admin?])]
       (for [part parts]
         (into [:div.columns]
               (for [job part]
@@ -193,7 +194,7 @@
                  [job-card job {:logged-in?        logged-in?
                                 :user-has-applied? has-applied?
                                 :user-is-company?  (not (nil? company-id))
-                                :user-is-owner?    (= company-id (:company-id job))}]]))))))
+                                :user-is-owner?    (or admin? (= company-id (:company-id job)))}]]))))))
 
 
 (defn skeleton-jobs []
@@ -207,7 +208,8 @@
   (let [jobs         (<sub [::subs/jobs])
         logged-in?   (<sub [:user/logged-in?])
         has-applied? (some? (<sub [:user/applied-jobs]))
-        company-id   (<sub [:user/company-id])]
+        company-id   (<sub [:user/company-id])
+        admin?       (<sub [:user/admin?])]
     [:section
      (if (<sub [:wh.search/searching?])
        [skeleton-jobs]
@@ -222,7 +224,7 @@
                     [job-card job {:logged-in?        logged-in?
                                    :user-has-applied? has-applied?
                                    :user-is-company?  (not (nil? company-id))
-                                   :user-is-owner?    (= company-id (:company-id job))}]]))]))]))
+                                   :user-is-owner?    (or admin? (= company-id (:company-id job)))}]]))]))]))
      (when (and (not (<sub [:wh.search/searching?]))
                 (seq jobs))
        [pagination/pagination

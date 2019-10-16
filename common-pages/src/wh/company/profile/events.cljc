@@ -16,8 +16,7 @@
     [wh.graphql-cache :as cache :refer [reg-query]]
     [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields publish-company-profile-mutation]]
     [wh.graphql.jobs]
-    [wh.graphql.tag :refer [tag-query]]
-    [wh.graphql.tag :as tag-gql]
+    [wh.graphql.tag :as tag-gql :refer [tag-query]]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
     [wh.common.errors :as errors]
@@ -28,77 +27,6 @@
 
 (def profile-interceptors (into db/default-interceptors
                                 [(path ::profile/sub-db)]))
-
-(defquery fetch-company-query
-  {:venia/operation {:operation/type :query
-                     :operation/name "company"}
-   :venia/variables [{:variable/name "slug"
-                      :variable/type :String!}]
-   :venia/queries [[:company {:slug :$slug}
-                    [:id :slug :name :logo :profileEnabled :descriptionHtml :size
-                     :foundedYear :howWeWork :additionalTechInfo :hasPublishedProfile
-                     [:techScales [:testing :ops :timeToDeploy]]
-                     [:locations [:city :country :countryCode :region :subRegion :state]]
-                     [:tags [:id :type :label :slug :subtype]]
-                     [:videos [:youtubeId :thumbnail :description]]
-                     [:images [:url :width :height]]]]]})
-
-(defquery fetch-company-blogs-and-issues-query
-  {:venia/operation {:operation/type :query
-                     :operation/name "company"}
-   :venia/variables [{:variable/name "slug"
-                      :variable/type :String!}]
-   :venia/queries [[:company {:slug :$slug}
-                    [[:blogs {:pageSize 2 :pageNumber 1}
-                      [[:blogs
-                        [:id :title :feature :author :formattedCreationDate :readingTime
-                         :upvoteCount :tags :creator :published]]
-                       [:pagination [:total]]]]
-                     [:jobs {:pageSize 2 :pageNumber 1}
-                      [[:jobs
-                        [:fragment/jobCardFields]]
-                       [:pagination [:total]]]]
-                     [:issues {:pageSize 2 :pageNumber 1 :published true}
-                      [[:issues
-                        [:id :url :number :body :title :pr_count :level :status :published :created_at
-                         [:compensation [:amount :currency]]
-                         [:contributors [:id]]
-                         [:labels [:name]]
-                         [:repo [:name :owner :primary_language]]]]
-                       [:pagination [:total]]]]
-                     [:repos {:pageSize 10 :pageNumber 1 :hasIssues false}
-                      [[:repos
-                        [:github_id :name :description :primary_language :owner]]]]]]]})
-
-(defquery fetch-all-company-jobs-query
-  {:venia/operation {:operation/type :query
-                     :operation/name "company"}
-   :venia/variables [{:variable/name "slug"
-                      :variable/type :String!}
-                     {:variable/name "total"
-                      :variable/type :Int!}]
-   :venia/queries [[:company {:slug :$slug}
-                    [[:jobs {:pageSize :$total :pageNumber 1}
-                      [[:jobs
-                        [:fragment/jobCardFields]]
-                       [:pagination [:total]]]]]]]})
-
-(defquery analytics-query
-  {:venia/operation {:operation/name "jobAnalytics"
-                     :operation/type :query}
-   :venia/variables [{:variable/name "company_id"
-                      :variable/type :ID}]
-   :venia/queries [[:job_analytics {:company_id :$company_id
-                                    :granularity 0
-                                    :num_periods 0}
-                    [:granularity
-                     [:applications [:date :count]]
-                     [:profileViews [:date :count]]]]]})
-
-(reg-query :company fetch-company-query)
-(reg-query :company-issues-and-blogs fetch-company-blogs-and-issues-query)
-(reg-query :all-company-jobs fetch-all-company-jobs-query)
-(reg-query :company-stats analytics-query)
 
 (defn company-slug
   [db]
@@ -112,7 +40,8 @@
 
 (defn all-jobs-query [db total-jobs]
   [:all-company-jobs {:slug (get-in db [:wh.db/page-params :slug])
-                      :total total-jobs}])
+                      :page_size total-jobs
+                      :page_number 1}])
 
 (defn company-stats-query [company-id]
   [:company-stats {:company_id company-id}])

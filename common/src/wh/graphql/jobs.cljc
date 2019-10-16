@@ -1,18 +1,10 @@
 (ns wh.graphql.jobs
   (:require
-    [wh.graphql.company :as company] ;; included for fragment reference :fragment/companyCardFields
-    )
+    [wh.graphql.fragments])
   (#?(:clj :require :cljs :require-macros)
-    [wh.graphql-macros :refer [defquery deffragment def-query-template def-query-from-template]]))
+    [wh.graphql-macros :refer [defquery def-query-template def-query-from-template]]))
 
 (def job-card-fields
-  [:id :slug :title :tagline :tags :published :userScore
-   :roleType :sponsorshipOffered :remote :companyId
-   [:company [:name :slug :logo]]
-   [:location [:city :state :country :countryCode]]
-   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
-
-(deffragment jobCardFields :Job
   [:id :slug :title :tagline :tags :published :userScore
    :roleType :sponsorshipOffered :remote :companyId
    [:company [:name :slug :logo]]
@@ -37,24 +29,16 @@
                 :applied (contains? applied-jobs (:id %)))
         jobs))
 
-(deffragment jobFields :Job
-  [:id :slug :title :companyId :tagline :descriptionHtml :tags :roleType :manager
-   ;; [:company [[:issues [:id :title [:labels [:name]]]]]] ; commented out until company is leonaized
-   [:company :fragment/companyCardFields]
-   [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
-   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-   :locationDescription :remote :sponsorshipOffered :applied :published])
-
 (def-query-template job-query
-                    {:venia/operation {:operation/type :query
-                                       :operation/name "job"}
-                     :venia/variables [{:variable/name "id"
-                                        :variable/type :ID}
-                                       {:variable/name "slug"
-                                        :variable/type :String}]
-                     :venia/queries [[:job {:id :$id
-                                            :slug :$slug}
-                                      $fields]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "job"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID}
+                     {:variable/name "slug"
+                      :variable/type :String}]
+   :venia/queries [[:job {:id :$id
+                          :slug :$slug}
+                    $fields]]})
 
 (def-query-from-template job-query--default job-query
                          {:fields :fragment/jobFields})

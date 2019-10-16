@@ -325,7 +325,7 @@
            :else
            (when (not-empty jobs)
              [:div.company-profile__jobs-list
-              [:div.company-jobs__list
+              [:div.company-jobs__list.company-jobs__list--twos
                (doall
                  (for [job jobs]
                    ^{:key (:id job)}

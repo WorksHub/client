@@ -21,7 +21,7 @@
         (= s :hired)         "Hired"))
 
 (defn job-card--header
-  [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary] :as job}
+  [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary published] :as job}
    {logo :logo company-name :name}
    {:keys [logged-in? skeleton? liked? on-close]}]
   [:span
@@ -35,7 +35,7 @@
       :id (str "job-card__blacklist-button_job-" id)
       :class "job__icon blacklist"
       :on-click #(dispatch [:wh.events/blacklist-job job on-close])])
-   [:a {:href (routes/path :job :params {:slug slug})}
+   [:a {:href (when published (routes/path :job :params {:slug slug}))}
     [:div.info
      [:div.logo
       (if (or skeleton? (not logo))
@@ -58,7 +58,7 @@
              job-tags)))
 
 (defn job-card--buttons
-  [{:keys [slug id state]}
+  [{:keys [slug id state published]}
    {:keys [user-has-applied? user-is-owner? user-is-company? applied? logged-in?]}]
   [:div.apply
    (when state
@@ -74,18 +74,19 @@
                                             (not user-is-owner?)))
                                {:disabled true}))]
       (if (not user-is-owner?)
-        (let [job-page-path [:job :params {:slug slug} :query-params {:apply true}]]
-          [:a (if logged-in?
-                {:href (apply routes/path job-page-path)}
-                (interop/on-click-fn
-                  (interop/show-auth-popup :jobcard-apply job-page-path)))
-           [:button.button button-opts
-            (cond applied?
-                  "Applied"
-                  user-has-applied?
-                  "1-Click Apply"
-                  :else
-                  "Easy Apply")]])
+        (when published
+          (let [job-page-path [:job :params {:slug slug} :query-params {:apply true}]]
+            [:a (if logged-in?
+                  {:href (apply routes/path job-page-path)}
+                  (interop/on-click-fn
+                    (interop/show-auth-popup :jobcard-apply job-page-path)))
+             [:button.button button-opts
+              (cond applied?
+                    "Applied"
+                    user-has-applied?
+                    "1-Click Apply"
+                    :else
+                    "Easy Apply")]]))
         [:a {:href (routes/path :edit-job :params {:id id})}
          [:button.button "Edit"]]))]])
 
@@ -93,10 +94,11 @@
   [{:keys [company tagline tags published score user-score applied liked display-salary remuneration]
     :or   {published true}
     :as   job}
-   {:keys [liked? applied?]
+   {:keys [liked? applied? user-is-owner?]
     :or   {liked?            (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
            applied?          (or applied false) ;; old style job handlers added 'applied' bool to the job itself
-           } :as opts}]
+           user-is-owner?    false}
+    :as opts}]
   (let [skeleton? (and job (empty? (dissoc job :id :slug)))
         salary    (or display-salary (jobc/format-job-remuneration remuneration))
         job-tags  (if skeleton?
@@ -118,7 +120,7 @@
      (when score
        [match-circle score true])
      [job-card--buttons job opts]
-     (when (not published)
+     (when (and (not published) user-is-owner?)
        [:div.card__label.card__label--unpublished.card__label--job
         "Unpublished"])]))
 

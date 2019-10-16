@@ -5,6 +5,12 @@
 
 ;; TODO merge with pagination.clj
 
+(defn qps->page-number
+  [qps]
+  (-> qps
+      (get "page" "1")
+      (util/parse-int)))
+
 (defn pagination [current-page-number page-numbers route query-params & [params]]
   [:nav.pagination.is-centered {:role "pagination" :aria-label "pagination"}
    [:ul.pagination-list

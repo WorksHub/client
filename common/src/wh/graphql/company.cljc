@@ -1,12 +1,105 @@
 (ns wh.graphql.company
+  (:require
+    [wh.graphql.fragments]
+    [wh.graphql-cache :refer [reg-query]])
   (#?(:clj :require :cljs :require-macros)
-    [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
+    [wh.graphql-macros :refer [defquery def-query-template def-query-from-template]]))
 
-(deffragment companyCardFields :Company
-  [:id :slug :name :logo :size :descriptionHtml :profileEnabled
-   :totalPublishedJobCount :totalPublishedIssueCount
-   [:tags [:id :label :slug :type :subtype :weight]]
-   [:locations [:city :country :countryCode :region :subRegion :state]]])
+(defquery fetch-company-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}]
+   :venia/queries [[:company {:slug :$slug}
+                    [:id :slug :name :logo :profileEnabled :descriptionHtml :size
+                     :foundedYear :howWeWork :additionalTechInfo :hasPublishedProfile
+                     [:techScales [:testing :ops :timeToDeploy]]
+                     [:locations [:city :country :countryCode :region :subRegion :state]]
+                     [:tags [:id :type :label :slug :subtype]]
+                     [:videos [:youtubeId :thumbnail :description]]
+                     [:images [:url :width :height]]]]]})
+
+(defquery fetch-company-query--card
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}]
+   :venia/queries [[:company {:slug :$slug}
+                    :fragment/companyCardFields]]})
+
+(defquery fetch-company-blogs-and-issues-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}]
+   :venia/queries [[:company {:slug :$slug}
+                    [[:blogs {:pageSize 2 :pageNumber 1}
+                      [[:blogs
+                        [:id :title :feature :author :formattedCreationDate :readingTime
+                         :upvoteCount :tags :creator :published]]
+                       [:pagination [:total]]]]
+                     [:jobs {:pageSize 2 :pageNumber 1}
+                      [[:jobs
+                        [:fragment/jobCardFields]]
+                       [:pagination [:total]]]]
+                     [:issues {:pageSize 2 :pageNumber 1 :published true}
+                      [[:issues
+                        [:id :url :number :body :title :pr_count :level :status :published :created_at
+                         [:compensation [:amount :currency]]
+                         [:contributors [:id]]
+                         [:labels [:name]]
+                         [:repo [:name :owner :primary_language]]]]
+                       [:pagination [:total]]]]
+                     [:repos {:pageSize 10 :pageNumber 1 :hasIssues false}
+                      [[:repos
+                        [:github_id :name :description :primary_language :owner]]]]]]]})
+
+(defquery fetch-all-company-jobs-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}
+                     {:variable/name "total"
+                      :variable/type :Int!}]
+   :venia/queries [[:company {:slug :$slug}
+                    [[:jobs {:pageSize :$total}
+                      [[:jobs
+                        [:fragment/jobCardFields]]
+                       [:pagination [:total]]]]]]]})
+
+(defquery fetch-company-jobs-page-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}
+                     {:variable/name "page_size"
+                      :variable/type :Int!}
+                     {:variable/name "page_number"
+                      :variable/type :Int!}]
+   :venia/queries [[:company {:slug :$slug}
+                    [[:jobs {:pageSize :$page_size :pageNumber :$page_number}
+                      [[:jobs
+                        [:fragment/jobCardFields]]
+                       [:pagination [:total]]]]]]]})
+
+(defquery analytics-query
+  {:venia/operation {:operation/name "jobAnalytics"
+                     :operation/type :query}
+   :venia/variables [{:variable/name "company_id"
+                      :variable/type :ID}]
+   :venia/queries [[:job_analytics {:company_id :$company_id
+                                    :granularity 0
+                                    :num_periods 0}
+                    [:granularity
+                     [:applications [:date :count]]
+                     [:profileViews [:date :count]]]]]})
+
+(reg-query :company fetch-company-query)
+(reg-query :company-card fetch-company-query--card)
+(reg-query :company-issues-and-blogs fetch-company-blogs-and-issues-query)
+(reg-query :company-jobs-page fetch-company-jobs-page-query)
+(reg-query :all-company-jobs fetch-all-company-jobs-query)
+(reg-query :company-stats analytics-query)
 
 (def create-company-mutation
   {:venia/operation {:operation/type :mutation

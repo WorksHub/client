@@ -36,13 +36,18 @@
         (>= (- (util/now) timestamp)
             cache-validity-ms))))
 
+;; options:
+;; - :on-success  - event to be fired when graphql query succeeds
+;; - :on-complete - event to be fired when results are available (either new or cached)
 (reg-event-fx
   :graphql/query
   db/default-interceptors
   (fn [{db :db} [query-id variables options]]
     (let [options (or options {})]
       (if-not (do-query? db query-id variables options)
-        {}
+        (if (:on-complete options)
+          {:dispatch (:on-complete options)}
+          {})
         {:db (update-in db [::cache [query-id variables]] merge {:state :executing})
          :graphql {:query (get-handler :graphql-query query-id true)
                    :variables variables
@@ -93,9 +98,13 @@
 (reg-event-fx
   ::success
   db/default-interceptors
-  (fn [{db :db} [query-id variables {:keys [on-success]} response]]
-    (cond-> {:db (store-result db query-id variables response)}
-            on-success (assoc :dispatch on-success))))
+  (fn [{db :db} [query-id variables {:keys [on-success on-complete]} response]]
+    (let [follow-up-events (cond-> []
+                                   on-success  (conj on-success)
+                                   on-complete (conj on-complete)
+                                   :always     not-empty)]
+      (cond-> {:db (store-result db query-id variables response)}
+              follow-up-events (assoc :dispatch-n follow-up-events)))))
 
 (reg-event-db
   ::failure

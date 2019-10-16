@@ -25,6 +25,7 @@
                 :company-applications
                 :company-dashboard
                 :company-issues
+                :company-jobs
                 :contribute
                 :contribute-edit
                 :create-candidate
