@@ -107,11 +107,11 @@
      [:div.navbar-overlay--looking-to-hire-inner
       [:div
        [:a (merge {:href jobsboard-link} base-opts)
-        [:h3 "Jobsboard"]
+        [:h3 "Jobs Board"]
         [:p "Advertise your role on here and reach over 90,000 engineers"]]
        [:a (merge {:href companies-link} base-opts)
         [:h3 "Company Profiles"]
-        [:p "Market your company to our community for free! Tell them what your building and how"]]]
+        [:p "Market your company to our community for free! Tell them what you're building and how"]]]
       [:div
        [:a (merge {:href issues-link} base-opts)
         [:h3 "Open Source Issues"]
