@@ -61,9 +61,9 @@
       (= (get-in db [:wh.user.db/sub-db :wh.user.db/company-id]) id))))
 
 (reg-sub
-  :user/approved?
+  :user/rejected?
   (fn [db _]
-    (= "approved"
+    (= "rejected"
        (get-in db [:wh.user.db/sub-db :wh.user.db/approval :status]))))
 
 (reg-sub

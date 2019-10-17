@@ -17,8 +17,7 @@
    [codi-message
     [:div
      [:p "These have been chosen based on your selected preferences during sign up."]
-     (when (<sub [:user/approved?])
-       [:p "Click on the heart if you like what you see, close it if you don’t."])
+     [:p "Click on the heart if you like what you see, close it if you don’t."]
      [:p "We’ve also listed some of your preferences below. These can be updated any time. Just click on Improve Recommendations or go to your profile in the menu."]]]
    [:div
     [button "OK, got it!" [:wh.user.events/add-onboarding-msg "jobs"]]]])

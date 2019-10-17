@@ -2,6 +2,7 @@
   (:require
     [re-frame.core :refer [dispatch dispatch-sync]]
     [reagent.core :as r]
+    [wh.common.data :as data]
     [wh.common.upload :as upload]
     [wh.common.user :as user]
     [wh.components.common :refer [link]]
@@ -13,9 +14,8 @@
     [wh.logged-in.profile.events :as profile-events]
     [wh.subs :refer [<sub]]
     [wh.user.subs :as user-subs]
-    [wh.views]
-    [wh.common.data :as data]
-    [wh.util :as util]))
+    [wh.util :as util]
+    [wh.views]))
 
 (defn add-full-name-step []
   (let [full-name (r/atom (<sub [::user-subs/name]))
@@ -116,15 +116,19 @@
      [button "Re-try submit" [::events/apply]]]))
 
 (defn pre-application []
-  [:div.multiple-conversations
-   [:div
-    [codi-message "Oh, snap! \uD83E\uDD14 We need a few more details about you"]]
-   (when (<sub [::subs/step-taken? :name])
-     [add-full-name-step])
-   (when (<sub [::subs/step-taken? :current-location])
-     [current-location-step])
-   (when (<sub [::subs/step-taken? :cv-upload])
-     [cv-upload-step])])
+  (if (<sub [:user/rejected?])
+    [:div.multiple-conversations
+     [:div
+      [codi-message "Unfortunately you're unable to apply for this role until your profile has been approved \uD83D\uDE41"]]]
+    [:div.multiple-conversations
+     [:div
+      [codi-message "Oh, snap! \uD83E\uDD14 We need a few more details about you"]]
+     (when (<sub [::subs/step-taken? :name])
+       [add-full-name-step])
+     (when (<sub [::subs/step-taken? :current-location])
+       [current-location-step])
+     (when (<sub [::subs/step-taken? :cv-upload])
+       [cv-upload-step])]))
 
 (defn visa-step []
   (let [selected-options (r/atom #{})
