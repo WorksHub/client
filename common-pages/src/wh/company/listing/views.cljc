@@ -52,8 +52,7 @@
       [tag/tag-list (cond-> (vec tags)
                             (and total-published-issue-count (pos? total-published-issue-count))
                             (conj {:icon "pr" :id id :type :icon :label total-published-issue-count}))]]]]
-   ;; TODO we disable this (for now) when profile disabled because we have no where to send users!
-   (when (and view-jobs-link? total-published-job-count (pos? total-published-job-count) profile-enabled)
+   (when (and view-jobs-link? total-published-job-count (pos? total-published-job-count))
      [link
       [:div.companies__company__job-count
        [:img {:src "/cursors/cursor-2.svg"}]

@@ -292,12 +292,14 @@
 (defn job-header
   [admin-or-owner?]
   (let [jobs (<sub [::subs/jobs])
-        total-jobs (when (<sub [:user/logged-in?])
-                     (<sub [::subs/total-number-of-jobs]))]
+        total-jobs (<sub [::subs/total-number-of-jobs])]
     (when (or admin-or-owner? (not-empty jobs))
       [:section.company-profile__section--headed
-       [:div
-        [:h2.title.company-profile__jobs-title (str "Jobs" (when total-jobs (str " (" total-jobs ")")))]]])))
+       [:div.is-flex
+        [:h2.title.company-profile__jobs-title (str "Jobs (" total-jobs ")")]
+        [link "View all"
+         :company-jobs :slug (<sub [::subs/slug])
+         :class "a--underlined"]]])))
 
 (defn publish-job-banner
   []
@@ -334,11 +336,7 @@
                                            {:liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
                                             :user-is-owner?    admin-or-owner?
                                             :user-is-company?  (not (nil? company-id))
-                                            :user-has-applied? has-applied?}))]))]]))
-     (when (<sub [::subs/show-fetch-all?])
-       [:button.button.button--inverted.company-profile__all-jobs-button
-        {:on-click #(dispatch [::events/fetch-all-jobs])}
-        [icon "plus"] (str "Show all " total-jobs " jobs")])]))
+                                            :user-has-applied? has-applied?}))]))]]))]))
 
 (defn pswp-element
   []

@@ -38,11 +38,6 @@
 (defn extra-data-query [db]
   [:company-issues-and-blogs {:slug (get-in db [:wh.db/page-params :slug])}])
 
-(defn all-jobs-query [db total-jobs]
-  [:all-company-jobs {:slug (get-in db [:wh.db/page-params :slug])
-                      :page_size total-jobs
-                      :page_number 1}])
-
 (defn company-stats-query [company-id]
   [:company-stats {:company_id company-id}])
 
@@ -491,13 +486,6 @@
                      :merge {:company {:profile-enabled enabled?}}]
                     [:company/refresh-tasks]]
        :db (assoc db ::profile/publishing? false)})))
-
-(reg-event-fx
-  ::fetch-all-jobs
-  db/default-interceptors
-  (fn [{db :db} _]
-    (let [total (-> db (cached-company-extra-data) :jobs :pagination :total )]
-      {:dispatch (into [:graphql/query] (all-jobs-query db total))})))
 
 (reg-event-db
   ::set-show-sticky?

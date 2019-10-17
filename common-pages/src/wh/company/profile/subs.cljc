@@ -50,15 +50,6 @@
         (:job-analytics result)))))
 
 (reg-sub-raw
-  ::all-jobs
-  (fn [_ _]
-    (reaction
-      (let [slug   (<sub [:wh/page-param :slug])
-            total  (<sub [::total-number-of-jobs])
-            result (<sub [:graphql/result :all-company-jobs {:slug slug :total total}])]
-        (-> result :company :jobs :jobs)))))
-
-(reg-sub-raw
   ::all-tags
   (fn [_ _]
     (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
@@ -72,6 +63,12 @@
          (filter #(= (str/lower-case (name tag-type)) (str/lower-case (name (:type %)))))
          (map ->tag)
          (reaction))))
+
+(reg-sub
+  ::slug
+  :<- [::company]
+  (fn [company _]
+    (:slug company)))
 
 (reg-sub
   ::profile-enabled?
@@ -202,27 +199,15 @@
 (reg-sub
   ::jobs
   :<- [::company-extra-data]
-  :<- [::all-jobs]
-  (fn [[company-extra-data all-jobs] _]
+  (fn [company-extra-data _]
     (not-empty
-      (or all-jobs
-          (-> company-extra-data :jobs :jobs)))))
+      (-> company-extra-data :jobs :jobs))))
 
 (reg-sub
   ::total-number-of-jobs
   :<- [::company-extra-data]
   (fn [company-extra-data _]
     (or (-> company-extra-data :jobs :pagination :total) 0)))
-
-(reg-sub
-  ::show-fetch-all?
-  :<- [:user/logged-in?]
-  :<- [::all-jobs]
-  :<- [::total-number-of-jobs]
-  (fn [[logged-in? all-jobs total] _]
-    (and logged-in?
-         (> total 2)
-         (not (boolean (seq all-jobs))))))
 
 (reg-sub
   ::issues

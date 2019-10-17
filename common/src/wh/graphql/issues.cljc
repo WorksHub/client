@@ -1,25 +1,9 @@
 (ns wh.graphql.issues
   (:require
-    [wh.graphql.jobs])
+    [wh.graphql.jobs]
+    [wh.graphql.fragments])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
-
-(deffragment issueFields :issue
-  [:id :pr_count :url :number :body_html :title :viewer_contributed :published :status :level :created_at
-   [:compensation [:amount :currency]]
-   [:contributors [:id :name [:other_urls [:url]] [:github_info [:login]]]]
-   [:repo [:owner :name :description :primary_language [:community [:readme_url :contributing_url]]]]
-   [:company [:id :name :logo]]
-   [:author [:login :name]]
-   [:labels [:name]]])
-
-(deffragment issueListFields :issue
-  [:id :url :number :body :title :pr_count :level :status :published :created_at
-   [:compensation [:amount :currency]]
-   [:contributors [:id]]
-   [:labels [:name]]
-   [:company [:id :name :logo]]
-   [:repo [:name :owner :primary_language]]])
 
 (defquery fetch-issue
   {:venia/operation {:operation/type :query

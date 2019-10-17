@@ -138,6 +138,12 @@
     (get-in issue [:company :id])))
 
 (reg-sub
+  ::company-slug
+  :<- [::issue]
+  (fn [issue _]
+    (get-in issue [:company :slug])))
+
+(reg-sub
   ::company-name
   :<- [::issue]
   (fn [issue _]

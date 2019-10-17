@@ -40,9 +40,11 @@
 #?(:cljs (s/def :wh.company/id string?))
 #?(:cljs (s/def :wh.company/name string?))
 #?(:cljs (s/def :wh.company/logo string?))
+#?(:cljs (s/def :wh.company/slug string?))
 
 (s/def :wh.issue/company (s/keys :req-un [:wh.company/id
-                                          :wh.company/name]
+                                          :wh.company/name
+                                          :wh.company/slug]
                                  :opt-un [:wh.company/logo]))
 
 (s/def :wh.issue.author/login string?)

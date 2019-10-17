@@ -226,9 +226,9 @@
       [:section.issue__company-jobs
        [:div.is-flex
         [:h2 "Jobs with this company"]
-        #_[link "View all"
-           :jobs :company-id (<sub [::subs/company-id])
-           :class "a--underlined"]] ;; TODO this route doesn't exist yet
+        [link "View all"
+         :company-jobs :slug (<sub [::subs/company-slug])
+         :class "a--underlined"]]
        [:div.company-jobs__list.company-jobs__list--twos
         (if jobs
           (doall
