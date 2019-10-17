@@ -2,6 +2,7 @@
   (:require
     [#?(:clj clojure.spec.alpha
         :cljs cljs.spec.alpha) :as s]
+    [wh.common.specs.date]
     [wh.common.specs.primitives :as p]
     [wh.common.specs.tags]))
 
@@ -15,7 +16,19 @@
    :medium "50-249"
    :large  "250+"})
 
+(s/def :wh.company/auto-approve boolean?)
+(s/def :wh.company/connected-github boolean?)
+(s/def :wh.company/description ::p/non-empty-string)
+(s/def :wh.company/description-html ::p/non-empty-string)
+(s/def :wh.company/disabled boolean?)
+(s/def :wh.company/domain ::p/non-empty-string)
+(s/def :wh.company/free-trial-ended :wh/date)
+(s/def :wh.company/free-trial-started :wh/date)
+(s/def :wh.company/github-installation-id string?)
+(s/def :wh.company/logo ::p/non-empty-string)
 (s/def :wh.company/name ::p/non-empty-string)
+(s/def :wh.company/paid-offline-until :wh/date)
+(s/def :wh.company/profile-enabled boolean?)
 
 (s/def :wh.company/tags (s/coll-of :wh/tag))
 (s/def :wh.company/tag-ids (s/coll-of :wh.tag/id))
