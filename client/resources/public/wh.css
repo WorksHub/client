@@ -7549,7 +7549,7 @@ a.navbar-item,
 /* https://codepen.io/martinwolf/pen/qlFdp */
 .companies__company__description {
   margin-top: 12px; }
-  .companies__company__description .html-content {
+  .companies__company__description p {
     font-style: italic;
     display: block;
     display: -webkit-box;
@@ -7561,16 +7561,16 @@ a.navbar-item,
     color: #6E7F89;
     position: relative; }
     @media screen and (min-width: 1008px) {
-      .companies__company__description .html-content {
+      .companies__company__description p {
         max-height: 36px; } }
     @media screen and (max-width: 1007px) {
-      .companies__company__description .html-content {
+      .companies__company__description p {
         max-height: 54px; } }
     @media screen and (min-width: 1008px) {
-      .companies__company__description .html-content {
+      .companies__company__description p {
         -webkit-line-clamp: 2; } }
     @media screen and (max-width: 1007px) {
-      .companies__company__description .html-content {
+      .companies__company__description p {
         -webkit-line-clamp: 3; } }
 
 .companies__company__tags {

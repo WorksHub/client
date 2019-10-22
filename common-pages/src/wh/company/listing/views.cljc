@@ -14,14 +14,13 @@
     [wh.components.icons :refer [icon]]
     [wh.components.pagination :as pagination]
     [wh.components.tag :as tag]
-    [wh.pages.util :as putil]
     [wh.re-frame :as r]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
 
 (defn company-card
-  [{:keys [logo id name slug tags size location description-html profile-enabled
+  [{:keys [logo id name slug tags size location description profile-enabled
            total-published-job-count total-published-issue-count] :as _company}
    & [{:keys [view-jobs-link?]
        :or {view-jobs-link? true}}]]
@@ -47,7 +46,7 @@
       (when location
         [:li [:div [icon "location"] location]])]
      [:div.companies__company__description
-      [putil/html description-html]]
+      [:p description]]
      [:div.companies__company__tags
       [tag/tag-list (cond-> (vec tags)
                             (and total-published-issue-count (pos? total-published-issue-count))

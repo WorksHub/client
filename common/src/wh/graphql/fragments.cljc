@@ -22,8 +22,7 @@
 ;; Company
 
 (deffragment companyCardFields :Company
-  [:id :slug :name :logo :size :descriptionHtml :profileEnabled
-
+  [:id :slug :name :logo :size :description :profileEnabled
    :totalPublishedJobCount :totalPublishedIssueCount
    [:tags [:id :label :slug :type :subtype :weight]]
    [:locations [:city :country :countryCode :region :subRegion :state]]])

@@ -1,3 +1,5 @@
+var whTags = [];
+
 function init() {
     /* tracking */
     var consent = getCookie("wh_tracking_consent");
@@ -11,6 +13,11 @@ function init() {
             initServerTracking();
         }
     }
+    /* tags */
+    var tagList = document.getElementById("tag-list");
+    if(tagList && tagList.innerText && tagList.innerText != "") {
+        whTags = JSON.parse(tagList.innerText);
+    };
 }
 
 /*--------------------------------------------------------------------------*/
