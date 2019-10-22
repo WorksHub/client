@@ -1,11 +1,12 @@
 (ns wh.company.listing.events
   (:require
     #?(:cljs [wh.pages.core :refer [on-page-load] :as pages])
-    [wh.graphql-cache :as cache :refer [reg-query]]
-    [wh.company.listing.subs :as subs]
     [wh.company.listing.db :as listing]
+    [wh.company.listing.subs :as subs]
+    [wh.components.pagination :as pagination]
+    [wh.graphql-cache :as cache :refer [reg-query]]
     [wh.graphql.company] ;; included for fragments
-    )
+    [wh.re-frame.events :refer [reg-event-fx]])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
@@ -18,7 +19,7 @@
                      {:variable/name "sort" :variable/type :companies_sort}]
    :venia/queries   [[:companies
                       {:page_number :$page_number
-                       :page_size   20 ;; listing/page-limit TODO causes compiler error??
+                       :page_size   :$page_size
                        :search_term :$search_term
                        :sort        :$sort}
                       [[:pagination [:total :count]]
@@ -29,7 +30,8 @@
 (defn initial-query [db]
   (let [qps (:wh.db/query-params db)]
     ;; TODO search term from URL?
-    [:companies {:page_number (subs/page-number qps)
+    [:companies {:page_number (pagination/qps->page-number qps)
+                 :page_size   listing/page-size
                  :sort        (listing/company-sort qps)}]))
 
 #?(:cljs

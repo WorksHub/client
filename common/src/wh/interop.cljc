@@ -118,5 +118,5 @@
        (let [fstrs (str (str/join ";" (map :onClick fns)) ";")]
          {:onClick (str "(function() {"fstrs"})();")})
        :cljs
-       (let [ffns (map :on-click fns)]
+       (let [ffns (remove nil? (map :on-click fns))]
          {:on-click (fn [_] (run! (fn [f] (f)) ffns))}))))

@@ -37,7 +37,16 @@
 (defn generate-pagination [current total]
   (when (and current total)
     (cond-> [1]
-      (<= current 3) (concat (range 2 (if (< total 5) (inc total) 5)))
-      (> current 3) (concat [:space] (range (- current 1) (if (< total (+ current 2)) (inc total) (+ current 2))))
-      (and (> total 5) (> (- total current) 2)) (concat [:space])
-      (and (> total 4) (>= (- total current) 2)) (concat [total]))))
+            (<= current 3) (concat (range 2 (if (< total 5) (inc total) 5)))
+            (> current 3) (concat [:space] (range (- current 1) (if (< total (+ current 2)) (inc total) (+ current 2))))
+            (and (> total 5) (> (- total current) 2)) (concat [:space])
+            (and (> total 4) (>= (- total current) 2)) (concat [total]))))
+
+(defn results-label
+  [element-plural total-count current-page-number page-size]
+  (when (and total-count page-size current-page-number)
+    (let [start (inc (* page-size (dec current-page-number)))
+          end (min (* page-size current-page-number) total-count)]
+      (if (< total-count page-size)
+        (str "Showing " 1 "-" total-count " of " total-count " " element-plural)
+        (str "Showing " start "-" end " of " total-count " " element-plural)))))

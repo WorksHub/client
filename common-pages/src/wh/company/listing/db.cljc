@@ -4,7 +4,7 @@
     [wh.common.specs.company :as company-specs]
     [wh.company.profile.db :as profile]))
 
-(def page-limit 20)
+(def page-size 20)
 
 (defn company-sort
   [qps]

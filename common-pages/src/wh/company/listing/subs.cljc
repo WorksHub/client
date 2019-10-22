@@ -10,19 +10,14 @@
 
 (reg-sub ::db (fn [db _] db))
 
-(defn page-number
-  [qps]
-  (-> qps
-      (get "page" "1")
-      (util/parse-int)))
-
 (reg-sub-raw
   ::companies
   (fn [_ _]
     (reaction
       (let [qps (<sub [:wh/query-params])
             {:keys [companies pagination] :as result}
-            (:companies (<sub [:graphql/result :companies {:page_number (page-number qps)
+            (:companies (<sub [:graphql/result :companies {:page_number (pagination/qps->page-number qps)
+                                                           :page_size   listing/page-size
                                                            :sort        (listing/company-sort qps)}]))]
         {:pagination pagination
          :companies (map listing/->company companies)}))))
@@ -31,7 +26,7 @@
   ::current-page
   :<- [:wh/query-params]
   (fn [qps _]
-    (page-number qps)))
+    (pagination/qps->page-number qps)))
 
 (reg-sub
   ::total-number-of-results
@@ -43,7 +38,7 @@
   ::total-pages
   :<- [::total-number-of-results]
   (fn [total _]
-    (int (#?(:cljs js/Math.ceil :clj Math/ceil) (/ total listing/page-limit)))))
+    (pagination/number-of-pages listing/page-size total)))
 
 (reg-sub
   ::pagination
@@ -51,3 +46,30 @@
   :<- [::total-pages]
   (fn [[current-page total-pages] _]
     (pagination/generate-pagination current-page total-pages)))
+
+(reg-sub
+  ::companies-count-str
+  :<- [::total-number-of-results]
+  :<- [::current-page]
+  (fn [[total-count current-page-number] _]
+    (or (pagination/results-label "companies" total-count current-page-number listing/page-size)
+        "Loading...")))
+
+(reg-sub
+  ::loading?
+  :<- [::companies]
+  (fn [companies _]
+    (nil? (:companies companies))))
+
+(reg-sub
+  ::sorting-by
+  :<- [:wh/query-params]
+  (fn [qps _]
+    (keyword (listing/company-sort qps))))
+
+(reg-sub
+  ::sorting-options
+  (fn [db _]
+    [#_{:id :popular   :label  "Popular"} ;; TODO put this back when we get to Company sort story
+     {:id :published :label  "Most Recent"}
+     {:id :alpha     :label  "Name"}]))

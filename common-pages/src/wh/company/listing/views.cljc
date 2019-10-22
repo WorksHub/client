@@ -11,9 +11,13 @@
     [wh.company.listing.subs :as subs]
     [wh.company.profile.views :as company]
     [wh.components.common :refer [link wrap-img img base-img]]
+    [wh.components.forms :as forms]
     [wh.components.icons :refer [icon]]
     [wh.components.pagination :as pagination]
     [wh.components.tag :as tag]
+    [wh.interop :as interop]
+    [wh.interop.forms :as interop-forms]
+    [wh.pages.util :as putil]
     [wh.re-frame :as r]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
     [wh.re-frame.subs :refer [<sub]]
@@ -60,20 +64,34 @@
 
 (defn page
   []
-  (let [result          (<sub [::subs/companies])
-        companies       (or (:companies result)
-                            (map (partial hash-map :id) (range 10)))
-        query-params (<sub [:wh/query-params])]
+  (let [result       (<sub [::subs/companies])
+        companies    (or (:companies result)
+                         (map (partial hash-map :id) (range 10)))
+        query-params (<sub [:wh/query-params])
+        loading?     (<sub [::subs/loading?])]
     [:div
      [:div.main.companies
       [:h1 "Companies using WorksHub"]
       [:div.split-content
        [:div.companies__main.split-content__main
+        [:div.companies__sorting
+         [:div {:class (util/merge-classes
+                         "companies__count"
+                         (when loading? "skeleton"))}
+          [:span (<sub [::subs/companies-count-str])]]
+         [:div.companies__sorting__dropdown-container
+          [:span.companies__sorting__dropdown-label "Sort by:"]
+          [forms/select-field
+           {:solo?     true
+            :value     (<sub [::subs/sorting-by])
+            :class     "companies__sorting__dropdown"
+            :options   (<sub [::subs/sorting-options])
+            :on-change (interop-forms/add-select-value-to-url "sort" (<sub [::subs/sorting-options]))}]]]
         (doall
           (for [company companies]
             ^{:key (:id company)}
             [company-card company]))
-        (when (and (not-empty companies) (> (<sub [::subs/total-number-of-results]) companies/page-limit))
+        (when (and (not-empty companies) (> (<sub [::subs/total-number-of-results]) companies/page-size))
           [pagination/pagination
            (<sub [::subs/current-page])
            (<sub [::subs/pagination])
