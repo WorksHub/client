@@ -199,12 +199,11 @@
   []
   [:fieldset.job-edit__integrations
    [:h2 "Integrations"]
-   (when (<sub [::subs/greenhouse-integration?])
-     [text-field nil (field ::create-job/ats-job-id
-                            :label "Greenhouse Job ID"
-                            :suggestions (<sub [::subs/greenhouse-jobs])
-                            :hide-icon? true
-                            :on-select-suggestion [::events/edit-ats-job-id])])])
+   [text-field nil (field ::create-job/ats-job-id
+                          :label (str (<sub [::subs/ats-name]) " Job ID")
+                          :suggestions (<sub [::subs/ats-jobs])
+                          :hide-icon? true
+                          :on-select-suggestion [::events/edit-ats-job-id])]])
 
 (defn select-company
   []

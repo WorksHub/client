@@ -12,7 +12,7 @@
     [wh.company.create-job.db :as create-job]
     [wh.components.tag :as tag]
     [wh.db :as db]
-    [wh.graphql.company :refer [company-query create-job-mutation update-job-mutation update-company-mutation fetch-tags]]
+    [wh.graphql.company :refer [company-query create-job-mutation update-job-mutation update-company-mutation fetch-tags] :as company-queries]
     [wh.graphql.tag :refer [tag-query]]
     [wh.job.db :as job]
     [wh.pages.core :as pages :refer [on-page-load]]
@@ -31,7 +31,8 @@
                      :page_number 1
                      :page_size companies-query-page-size}
                     [[:pagination [:total :count :pageNumber]]
-                     [:companies [:id :name [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]]]]]]]]})
+                     [:companies [:id :name [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]
+                                                            [:workable [:enabled [:jobs [:id :name]]]]]]]]]]]})
 
 (defn db->graphql-job
   [db]
@@ -236,7 +237,7 @@
     (concat (map keyword top-fields) nst-fields)))
 
 (defn job-query [id]
-  {:venia/queries [[:job {:id id} (concat job-fields [[:company [[:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]]]]]])]]})
+  {:venia/queries [[:job {:id id} job-fields]]})
 
 (reg-event-fx
   ::load-job
@@ -256,8 +257,7 @@
       {:db         (assoc db ::create-job/sub-db new-db)
        :dispatch-n (list [::pages/unset-loader]
                          [::close-search-location-form]
-                         (when (user/admin? db)
-                           [::fetch-company (::create-job/company-id new-db)])
+                         [::fetch-company (::create-job/company-id new-db)]
                          (when save?
                            [::create-job]))})))
 
@@ -301,6 +301,7 @@
              ::create-job/company-id company-id
              ::create-job/company-slug (:slug company)
              ::create-job/company-loading? false
+             ::create-job/company__integrations (:integrations company)
              ;;
              ::create-job/selected-benefit-tag-ids (->> (:tags company)
                                                         (filter (fn [t] (= :benefit (:type t))))
@@ -319,7 +320,8 @@
   db/default-interceptors
   (fn [{db :db} [company-id]]
     {:db (assoc-in db [::create-job/sub-db ::create-job/company-loading?] true)
-     :graphql {:query (company-query company-id (conj create-job/company-required-fields :slug))
+     :graphql {:query company-queries/edit-job-company-query
+               :variables {:company_id company-id}
                :on-success [::fetch-company-success company-id]
                :on-failure [::fetch-company-failure]}}))
 
@@ -336,9 +338,7 @@
         [:google/load-maps]
         [::fetch-tags]
         [::load-job (get-in db [::db/page-params :id])]
-        [::fetch-benefit-tags]
-        (when (user/company? db)
-          [::fetch-company (user/company-id db)])))
+        [::fetch-benefit-tags]))
 
 (reg-event-db
   ::set-location-suggestions

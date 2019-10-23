@@ -161,6 +161,17 @@
    [:users [:name :email :id]]
    [:integrations [:email [:greenhouse [:enabled]] [:slack [:enabled]] [:workable [:enabled]]]]])
 
+(def edit-job-company-query
+  {:venia/operation {:operation/name "company"
+                     :operation/type :query}
+   :venia/variables [{:variable/name "company_id"
+                      :variable/type :ID}]
+   :venia/queries   [[:company {:id :$company_id}
+                      [:descriptionHtml :logo :slug
+                       [:tags [:slug :label :type :subtype :id :weight]]
+                       [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]
+                                       [:workable [:enabled [:jobs [:id :name]]]]]]]]]})
+
 (defn company-query
   ([id fields]
    {:venia/queries [[:company {:id id} fields]]})

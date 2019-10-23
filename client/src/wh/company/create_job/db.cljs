@@ -166,10 +166,6 @@
                    :wh.company.profile/description-html
                    :wh.company.profile/benefit-tags]))
 
-(def company-required-fields
-  [:descriptionHtml :logo
-   [:tags [:slug :label :type :subtype :id :weight]]])
-
 (defn db->company
   [db]
   (let [selected-tag-ids (::selected-benefit-tag-ids (::sub-db db))]

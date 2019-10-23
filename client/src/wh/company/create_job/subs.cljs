@@ -289,10 +289,27 @@
     (get-in db [::create-job/company__integrations :greenhouse :enabled])))
 
 (reg-sub
-  ::greenhouse-jobs
+  ::workable-integration?
   :<- [::sub-db]
   (fn [db _]
-    (->> (get-in db [::create-job/company__integrations :greenhouse :jobs])
+    (get-in db [::create-job/company__integrations :workable :enabled])))
+
+(reg-sub
+  ::ats-name
+  :<- [::greenhouse-integration?]
+  :<- [::workable-integration?]
+  (fn [[greenhouse? workable?] _]
+    (cond
+      greenhouse? "Greenhouse"
+      workable? "Workable"
+      :esle "")))
+
+(reg-sub
+  ::ats-jobs
+  :<- [::sub-db]
+  :<- [::ats-name]
+  (fn [[db ats-name ] _]
+    (->> (get-in db [::create-job/company__integrations (-> ats-name str/lower-case keyword) :jobs])
          (mapv (fn [{:keys [id name] :as job}]
                  (assoc job :label (str name " (" id ")"))))
          (filter #(str/includes?
@@ -302,8 +319,9 @@
 (reg-sub
   ::show-integrations?
   :<- [::greenhouse-integration?]
-  (fn [integration _]
-    integration))
+  :<- [::workable-integration?]
+  (fn [[greenhouse? workable?] _]
+    (or greenhouse? workable?)))
 
 (reg-sub
   ::logo
