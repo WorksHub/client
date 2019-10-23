@@ -3,6 +3,7 @@
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.components.pagination :as pagination]
     [wh.company.listing.db :as listing]
+    [wh.common.job :refer [format-job-location]]
     [wh.company.profile.db :as profile]
     [wh.re-frame.subs :refer [<sub]]
     [wh.company.jobs.db :as jobs])
@@ -40,7 +41,8 @@
   ::jobs
   :<- [::jobs-raw]
   (fn [jobs-raw _]
-    (get-in jobs-raw [:jobs :jobs])))
+    (->> (get-in jobs-raw [:jobs :jobs])
+         (map #(assoc % :display-location (format-job-location (:location %) (:remote %)))))))
 
 (reg-sub
   ::total-number-of-jobs
