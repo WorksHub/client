@@ -225,15 +225,12 @@ $card-job-padding: 15px
     .card-border-color-#{$i - 1}
       &:hover
         border: $card-border solid nth($hover-colors, $i)
-        transition: border 400ms ease-in-out
         .button
           background: nth($hover-colors, $i)
-          transition: background 400ms ease-in-out
         .button--inverted
           background: inherit
           color: nth($hover-colors, $i)
           border-color: nth($hover-colors, $i)
-          transition: color 400ms ease-in-out, border-color 400ms ease-in-out
 
 @include card-hover-list
 
