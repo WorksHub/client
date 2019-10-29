@@ -281,24 +281,28 @@ $logo-dimension: 62px
 .checkbox
   color: $steel-gray
   input[type=checkbox]
-    visibility: hidden
-    width: 0
-    &:checked + label
-      background-repeat: no-repeat
-      background-position: 3px 4px
-      background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiNmZjdjNmUiLz48L3N2Zz4=")
-      border-color: $red
+    .checkbox__box
+      visibility: hidden
+      width: 0
+      &:checked + label
+        background-repeat: no-repeat
+        background-position: 3px 4px
+        background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiNmZjdjNmUiLz48L3N2Zz4=")
+        border-color: $red
   label
-    @include checkbox-and-radio
-    border: 1px solid $steel-gray
+    cursor: pointer
+    .checkbox__box
+      @include checkbox-and-radio
+      border: 1px solid $steel-gray
 
 .checkbox--indeterminate
   label
-    background-repeat: no-repeat
-    background-position: 3px -1px
-    background-size: 70%
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 9 h-9 h-6 h-9 v6 h9 h6 h9 z' fill='%236e7f89'/%3E%3C/svg%3E");
-    border-color: $steel-gray
+    .checkbox__box
+      background-repeat: no-repeat
+      background-position: 3px -1px
+      background-size: 70%
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 9 h-9 h-6 h-9 v6 h9 h6 h9 z' fill='%236e7f89'/%3E%3C/svg%3E");
+      border-color: $steel-gray
 
 .radios
   display: inline-block
