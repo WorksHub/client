@@ -5298,8 +5298,7 @@ a.navbar-item,
 .button--inverted {
   background: white;
   color: #ff7c6e;
-  border: solid 1px #ff7c6e;
-  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+  border: solid 1px #ff7c6e; }
   .button--inverted:hover {
     background: #ffdedb !important;
     color: #ff7c6e !important; }
@@ -6581,6 +6580,9 @@ a.navbar-item,
 .i-cur-8 {
   cursor: url(/cursors/cursor-8.svg), auto; }
 
+.card-border-color-0 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+
 .card-border-color-0:hover {
   border: 8px solid #ffdedb; }
   .card-border-color-0:hover .button {
@@ -6589,6 +6591,9 @@ a.navbar-item,
     background: inherit;
     color: #ffdedb;
     border-color: #ffdedb; }
+
+.card-border-color-1 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-1:hover {
   border: 8px solid #ffae71; }
@@ -6599,6 +6604,9 @@ a.navbar-item,
     color: #ffae71;
     border-color: #ffae71; }
 
+.card-border-color-2 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+
 .card-border-color-2:hover {
   border: 8px solid #ff7c6e; }
   .card-border-color-2:hover .button {
@@ -6607,6 +6615,9 @@ a.navbar-item,
     background: inherit;
     color: #ff7c6e;
     border-color: #ff7c6e; }
+
+.card-border-color-3 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-3:hover {
   border: 8px solid #7eb5bd; }
@@ -6617,6 +6628,9 @@ a.navbar-item,
     color: #7eb5bd;
     border-color: #7eb5bd; }
 
+.card-border-color-4 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+
 .card-border-color-4:hover {
   border: 8px solid #f9e3d4; }
   .card-border-color-4:hover .button {
@@ -6625,6 +6639,9 @@ a.navbar-item,
     background: inherit;
     color: #f9e3d4;
     border-color: #f9e3d4; }
+
+.card-border-color-5 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-5:hover {
   border: 8px solid #97bac9; }
@@ -6635,6 +6652,9 @@ a.navbar-item,
     color: #97bac9;
     border-color: #97bac9; }
 
+.card-border-color-6 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+
 .card-border-color-6:hover {
   border: 8px solid #c4d4dd; }
   .card-border-color-6:hover .button {
@@ -6643,6 +6663,9 @@ a.navbar-item,
     background: inherit;
     color: #c4d4dd;
     border-color: #c4d4dd; }
+
+.card-border-color-7 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-7:hover {
   border: 8px solid #6E7F89; }
