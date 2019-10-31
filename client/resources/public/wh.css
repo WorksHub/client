@@ -5791,19 +5791,21 @@ a.navbar-item,
 
 .checkbox input[type=checkbox] {
   visibility: hidden; }
-  .checkbox input[type=checkbox]:checked + label {
+  .checkbox input[type=checkbox]:checked + label .checkbox__box {
     background-repeat: no-repeat;
     background-position: 2px 3px;
     background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiM3ZWI1YmQiLz48L3N2Zz4="); }
 
 .checkbox label {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 5px;
-  cursor: pointer;
-  border: 2px solid #7eb5bd; }
+  cursor: pointer; }
+  .checkbox label .checkbox__box {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    cursor: pointer;
+    border: 2px solid #7eb5bd; }
 
 .radios {
   display: inline-block; }
@@ -6137,22 +6139,24 @@ a.navbar-item,
   .checkbox input[type=checkbox] {
     visibility: hidden;
     width: 0; }
-    .checkbox input[type=checkbox]:checked + label {
+    .checkbox input[type=checkbox]:checked + label .checkbox__box {
       background-repeat: no-repeat;
       background-position: 3px 4px;
       background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiNmZjdjNmUiLz48L3N2Zz4=");
       border-color: #ff7c6e; }
   .checkbox label {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 5px;
-    cursor: pointer;
-    background: white;
-    border: 1px solid #6E7F89; }
+    cursor: pointer; }
+    .checkbox label .checkbox__box {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 5px;
+      cursor: pointer;
+      background: white;
+      border: 1px solid #6E7F89; }
 
-.checkbox--indeterminate label {
+.checkbox--indeterminate label .checkbox__box {
   background-repeat: no-repeat;
   background-position: 3px -1px;
   background-size: 70%;

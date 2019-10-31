@@ -129,8 +129,8 @@
                   (reset! focused true)
                   (when on-focus (on-focus %)))
    :on-blur #(do (reset! focused false)
-                 (when on-blur (on-blur %)))}
-  )
+                 (when on-blur (on-blur %)))})
+  
 
 (defn text-field-error [value {:keys [validate error]} dirty focused]
   (when (and @dirty (not @focused))
@@ -208,8 +208,9 @@
           {:on-change #(when (not disabled)
                          (dispatch-sync (conj on-change (target-checked %))))}))]
      [:label {:for id
-              :class label-class}]
-     label]))
+              :class label-class}
+       [:div {:class "checkbox__box"}]
+       label]]))
 
 (defn- sanitize-select-options
   [vals]
@@ -343,8 +344,8 @@
             collapsed? (cond
                          (not (str/blank? text)) false ;; can't be collapsed if we have text
                          (not (contains? opts :collapsed?)) @-collapsed? ;; use internal state if we're controlling it
-                         :otherwise collapsed?
-                         )
+                         :otherwise collapsed?)
+                         
             on-toggle-collapse (or on-toggle-collapse #(swap! -collapsed? not))]
         [:div
          {:class (merge-classes

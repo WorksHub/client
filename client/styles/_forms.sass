@@ -132,12 +132,15 @@ $field-padding: 13px
   input[type=checkbox]
     visibility: hidden
     &:checked + label
-      background-repeat: no-repeat
-      background-position: 2px 3px
-      background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiM3ZWI1YmQiLz48L3N2Zz4=")
+      .checkbox__box
+        background-repeat: no-repeat
+        background-position: 2px 3px
+        background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiM3ZWI1YmQiLz48L3N2Zz4=")
   label
-    @include checkbox-and-radio
-    border: 2px solid $metal-blue
+    cursor: pointer
+    .checkbox__box
+      @include checkbox-and-radio
+      border: 2px solid $metal-blue
 
 .radios
   display: inline-block
