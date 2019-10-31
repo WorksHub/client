@@ -223,6 +223,8 @@ $card-job-padding: 15px
 @mixin card-hover-list
   @for $i from 1 through length($hover-colors)
     .card-border-color-#{$i - 1}
+      .button--inverted
+        transition: color 400ms ease-in-out, border-color 400ms ease-in-out
       &:hover
         border: $card-border solid nth($hover-colors, $i)
         .button
