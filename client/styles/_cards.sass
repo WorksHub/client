@@ -76,8 +76,8 @@ $card-job-padding: 15px
   height: 436px
   border: $card-border solid white
   max-width: $max-job-card-width
-  //This is hover off transition
-  transition : border 400ms ease-in-out
+  // This is hover off transition
+  transition: border 400ms ease-in-out
   .info
     height: 162px
   .logo
@@ -223,17 +223,16 @@ $card-job-padding: 15px
 @mixin card-hover-list
   @for $i from 1 through length($hover-colors)
     .card-border-color-#{$i - 1}
+      .button--inverted
+        transition: color 400ms ease-in-out, border-color 400ms ease-in-out
       &:hover
         border: $card-border solid nth($hover-colors, $i)
-        transition: border 400ms ease-in-out
         .button
           background: nth($hover-colors, $i)
-          transition: background 400ms ease-in-out
         .button--inverted
           background: inherit
           color: nth($hover-colors, $i)
           border-color: nth($hover-colors, $i)
-          transition: color 400ms ease-in-out, border-color 400ms ease-in-out
 
 @include card-hover-list
 

@@ -6584,101 +6584,101 @@ a.navbar-item,
 .i-cur-8 {
   cursor: url(/cursors/cursor-8.svg), auto; }
 
+.card-border-color-0 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+
 .card-border-color-0:hover {
-  border: 8px solid #ffdedb;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #ffdedb; }
   .card-border-color-0:hover .button {
-    background: #ffdedb;
-    transition: background 400ms ease-in-out; }
+    background: #ffdedb; }
   .card-border-color-0:hover .button--inverted {
     background: inherit;
     color: #ffdedb;
-    border-color: #ffdedb;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #ffdedb; }
+
+.card-border-color-1 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-1:hover {
-  border: 8px solid #ffae71;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #ffae71; }
   .card-border-color-1:hover .button {
-    background: #ffae71;
-    transition: background 400ms ease-in-out; }
+    background: #ffae71; }
   .card-border-color-1:hover .button--inverted {
     background: inherit;
     color: #ffae71;
-    border-color: #ffae71;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #ffae71; }
+
+.card-border-color-2 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-2:hover {
-  border: 8px solid #ff7c6e;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #ff7c6e; }
   .card-border-color-2:hover .button {
-    background: #ff7c6e;
-    transition: background 400ms ease-in-out; }
+    background: #ff7c6e; }
   .card-border-color-2:hover .button--inverted {
     background: inherit;
     color: #ff7c6e;
-    border-color: #ff7c6e;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #ff7c6e; }
+
+.card-border-color-3 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-3:hover {
-  border: 8px solid #7eb5bd;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #7eb5bd; }
   .card-border-color-3:hover .button {
-    background: #7eb5bd;
-    transition: background 400ms ease-in-out; }
+    background: #7eb5bd; }
   .card-border-color-3:hover .button--inverted {
     background: inherit;
     color: #7eb5bd;
-    border-color: #7eb5bd;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #7eb5bd; }
+
+.card-border-color-4 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-4:hover {
-  border: 8px solid #f9e3d4;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #f9e3d4; }
   .card-border-color-4:hover .button {
-    background: #f9e3d4;
-    transition: background 400ms ease-in-out; }
+    background: #f9e3d4; }
   .card-border-color-4:hover .button--inverted {
     background: inherit;
     color: #f9e3d4;
-    border-color: #f9e3d4;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #f9e3d4; }
+
+.card-border-color-5 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-5:hover {
-  border: 8px solid #97bac9;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #97bac9; }
   .card-border-color-5:hover .button {
-    background: #97bac9;
-    transition: background 400ms ease-in-out; }
+    background: #97bac9; }
   .card-border-color-5:hover .button--inverted {
     background: inherit;
     color: #97bac9;
-    border-color: #97bac9;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #97bac9; }
+
+.card-border-color-6 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-6:hover {
-  border: 8px solid #c4d4dd;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #c4d4dd; }
   .card-border-color-6:hover .button {
-    background: #c4d4dd;
-    transition: background 400ms ease-in-out; }
+    background: #c4d4dd; }
   .card-border-color-6:hover .button--inverted {
     background: inherit;
     color: #c4d4dd;
-    border-color: #c4d4dd;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #c4d4dd; }
+
+.card-border-color-7 .button--inverted {
+  transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
 
 .card-border-color-7:hover {
-  border: 8px solid #6E7F89;
-  transition: border 400ms ease-in-out; }
+  border: 8px solid #6E7F89; }
   .card-border-color-7:hover .button {
-    background: #6E7F89;
-    transition: background 400ms ease-in-out; }
+    background: #6E7F89; }
   .card-border-color-7:hover .button--inverted {
     background: inherit;
     color: #6E7F89;
-    border-color: #6E7F89;
-    transition: color 400ms ease-in-out, border-color 400ms ease-in-out; }
+    border-color: #6E7F89; }
 
 .border-color-0 {
   border: 8px solid #ffdedb;
