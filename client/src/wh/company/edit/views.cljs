@@ -275,7 +275,7 @@
                         (not (<sub [:wh.user/can-use-integrations?])))
                {:on-click #(do (.preventDefault %)
                                (dispatch [::events/upgrade]))}))
-           [:img {:src "/images/company/workable.png"}]]])  ;TODO get assets from Jill when she is back
+           [:img {:src "/images/company/workable.svg"}]]])
        (when (and (not (<sub [:user/admin?]))
                   (not (<sub [:user/company-connected-github?])))
          [github/install-github-app
@@ -304,7 +304,7 @@
              [:span "Company manager will be set as referrer/source for each candidate."])])
         (when (<sub [::subs/workable-connected?])
           [:div.company-edit__connected-integration
-           [:img {:alt "Workable" :title "Workable" :src "/images/company/workable-icon.png"}] ;TODO update with assets from Jill
+           [:img {:alt "Workable" :title "Workable" :src "/images/company/workable-icon.svg"}]
            [:button.button.button--small.button--inverted.company-edit__add-user
             {:on-click #(do (.preventDefault %)
                             (dispatch [::events/delete-integration :workable]))
