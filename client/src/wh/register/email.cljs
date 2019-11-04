@@ -29,13 +29,14 @@
        :id        "consent"
        :checked   (<sub [::subs/consented?])
        :on-change #(dispatch-sync [::events/set-consent (target-checked %)])}]
-     [:label#consent-label {:for "consent"}]
-     [:span
-      "By submitting this form, you agree to opt-in to the "
-      [:a.a--underlined {:href   "/privacy-policy"
-                         :target "_blank"
-                         :rel    "noopener"}
-       "Privacy Policy"] " of this website and the processing of your data."]]
+     [:label#consent-label.is-flex {:for "consent"}
+      [:div {:class "checkbox__box"}]
+      [:span
+       "By submitting this form, you agree to opt-in to the "
+       [:a.a--underlined {:href   "/privacy-policy"
+                          :target "_blank"
+                          :rel    "noopener"}
+        "Privacy Policy"] " of this website and the processing of your data."]]]
     [:div.newsletter-section
 
      [:input
@@ -43,8 +44,9 @@
        :id        "newsletter"
        :checked   (<sub [::subs/subscribed?])
        :on-change #(dispatch-sync [::events/set-subscribed (target-checked %)])}]
-     [:label#newsletter-label {:for "newsletter"}]
-     [:span "Don't get FOMO \uD83D\uDE40 and subscribe to our newsletter"]]]])
+     [:label#newsletter-label {:for "newsletter"}
+      [:div {:class "checkbox__box"}]
+      [:span "Don't get FOMO \uD83D\uDE40 and subscribe to our newsletter"]]]]])
 
 (defn panel []
   [:div

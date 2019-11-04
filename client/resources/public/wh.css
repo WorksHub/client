@@ -6136,10 +6136,10 @@ a.navbar-item,
 
 .checkbox {
   color: #6E7F89; }
-  .checkbox input[type=checkbox] {
+  .checkbox input[type=checkbox] .checkbox__box {
     visibility: hidden;
     width: 0; }
-    .checkbox input[type=checkbox]:checked + label .checkbox__box {
+    .checkbox input[type=checkbox] .checkbox__box:checked + label {
       background-repeat: no-repeat;
       background-position: 3px 4px;
       background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiNmZjdjNmUiLz48L3N2Zz4=");
@@ -6147,6 +6147,7 @@ a.navbar-item,
   .checkbox label {
     cursor: pointer; }
     .checkbox label .checkbox__box {
+      flex: 0 0 20px;
       width: 20px;
       height: 20px;
       display: inline-block;
@@ -6181,6 +6182,7 @@ a.navbar-item,
         top: 2px;
         left: 2px; }
   .radios label {
+    flex: 0 0 20px;
     width: 20px;
     height: 20px;
     display: inline-block;
