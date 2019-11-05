@@ -7,7 +7,7 @@
   [m]
   (-> m
       (update :type keyword)
-      (util/update-in* [:subtype] keyword)
+      (util/update* :subtype keyword)
       (cond-> (nil? (:subtype m)) (dissoc :subtype))))
 
 (defn tag->form-tag
@@ -21,6 +21,7 @@
   [element-type {:keys [label type subtype id icon] :as t}]
   [element-type
    {:key id
+    :data-label label
     :class (util/merge-classes "tag"
                                (str "tag--type-" (if t (name type) "skeleton"))
                                (when subtype (str "tag--subtype-" (name subtype))))}

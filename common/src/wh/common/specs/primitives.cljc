@@ -35,7 +35,8 @@
 
 (s/def :http.path/params (s/nilable (s/map-of keyword? string?)))
 (s/def :http/query-params (s/nilable (s/map-of (s/or :keyword keyword?
-                                                     :string string?)
-                                               string?)))
+                                                     :string  string?)
+                                               (s/or :string  string?
+                                                     :strings (s/coll-of string?)))))
 
 (s/def ::percentage (s/double-in :min 0 :max 100))

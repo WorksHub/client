@@ -5,6 +5,7 @@
     [wh.company.profile.db :as profile]))
 
 (def page-size 20)
+(def tag-field-id "companies-listing-tag-field")
 
 (defn company-sort
   [qps]

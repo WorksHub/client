@@ -14,13 +14,16 @@ $tag-spacing: 6px
   padding: $tag-padding
   font-weight: $font-semi-bold
   display: inline-flex
-  background-color: $lighter-red
-  color: $red
   border-radius: 2px
   text-transform: uppercase
   height: 30px
   &:last-child
     margin-right: 0
+.tags li:not(.tag)
+  margin-right: $tag-spacing
+  margin-bottom: $tag-spacing
+  background-color: $lighter-red
+  color: $red
 .tags li
   margin-right: $tag-spacing
   margin-bottom: $tag-spacing
@@ -93,11 +96,15 @@ $tag-spacing: 6px
     transform: none
   .tags--unselected
     display: none
+.tags-container--collapsed.tags-container--alternative
+  .tags--no-selected
+    max-height: 40px
+.tags-container--collapsed:not(.tags-container--alternative)
   .tags--no-selected
     max-height: 46px
-.tags-loading, .tags-empty
-  text-indent: 15px
-  line-height: 51px
+  .tags-loading, .tags-empty
+    text-indent: 15px
+    line-height: 51px
 .tags-container--errored
   color: $dark-red
   .tags-selection
@@ -111,7 +118,9 @@ $tag-spacing: 6px
   text-overflow: ellipsis
   white-space: nowrap
   overflow: hidden
-  .icon + span
+  background-color: $lighter-red
+  color: $red
+  .icon:not(.icon--close) + span
     margin-left: 18px
   .icon
     position: absolute
@@ -126,6 +135,12 @@ $tag-spacing: 6px
     right: 4px
     width: 14px
     height: 14px
+  &.tag--hidden,
+  &.tag--filtered
+    display: none
+  &.tag--skeleton
+    @include skeleton(60px)
+    @include skeleton--text
 .tag-add
   position: absolute
   top: 0px
@@ -142,28 +157,28 @@ $tag-spacing: 6px
   top: 18px
 
 .tag--type-benefit
-  background-color: $pale-blue !important
-  color: $green !important
+  background-color: $pale-blue
+  color: $green
   .icon
-    fill: $green !important
+    fill: $green
 
 .tag--type-company
-  background-color: $disabled-gray !important
-  color: $steel-gray !important
+  background-color: $disabled-gray
+  color: $steel-gray
   .icon
-    fill: $steel-gray !important
+    fill: $steel-gray
 
 .tag--type-industry
-  background-color: $tag-bg-orange !important
-  color: $light-orange !important
+  background-color: $tag-bg-orange
+  color: $light-orange
   .icon
-    fill: $light-orange !important
+    fill: $light-orange
 
 .tag--type-funding
-  background-color: $tag-bg-blue !important
-  color: $tag-col-blue !important
+  background-color: $tag-bg-blue
+  color: $tag-col-blue
   .icon
-    fill: $tag-col-blue !important
+    fill: $tag-col-blue
 
 .edit-tags
   section
@@ -236,3 +251,51 @@ $tag-spacing: 6px
     fill: $greyish
     margin-right: 6px
     cursor: pointer
+
+/* New tag field classes
+
+.tag-group
+  &.tag-group--empty
+    display: none
+  .tags
+    padding: 0
+
+.tag-group + .tag-group
+  border-top: 1px solid $light-gray
+  margin-top: 12px
+  padding-top: 18px
+
+.tags-selection--tags-container
+  min-height: 46px
+  .tags
+    padding-right: 16px
+  .tags--selected:not(.tags--has-selected-tags)
+    padding: 0
+  .tags--selected
+    .tag-group
+      border: 0
+      margin: 0
+      padding: 0
+    .tag:not(.tag--selected)
+      display: none
+  .tags--unselected
+    display: block
+    padding-top: 10px
+    max-height: unset
+    .tag.tag--selected
+      display: none
+
+.tags-container--collapsed
+  .tags-selection--tags-container
+    .tags--unselected:not(.tags--has-selected-tags)
+      max-height: 46px
+    .tags--unselected.tags--has-selected-tags
+      max-height: 0px
+      padding-top: 0px
+      padding-bottom: 0px
+
+.tags--unselected
+  .tag-group:not(.tag-group--empty) ~ span
+    display: none !important
+  .tag-group.tag-group--empty ~ span
+    display: inline

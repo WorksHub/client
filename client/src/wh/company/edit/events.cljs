@@ -436,9 +436,9 @@
     (if (= :admin-edit-company (::db/page db))
       {:navigate [:admin-edit-company
                   :params {:id (get-in db [::db/page-params :id])}
-                  :query-params {:page page}]}
+                  :query-params {:page (name page)}]}
       {:navigate [(::db/page db)
-                  :query-params {:page page}]})))
+                  :query-params {:page (name page)}]})))
 
 (reg-event-fx
   ::update-card-details

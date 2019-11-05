@@ -44,6 +44,15 @@
                               :opt-un [:wh.tag.db/subtype]))
 (s/def :wh/tags (s/coll-of :wh/tag))
 
+(s/def :wh.gql/tag (s/keys :opt-un [:wh.tag/id
+                                    :wh.tag/label
+                                    :wh.tag/slug
+                                    :wh.tag/weight
+                                    :wh.tag/type
+                                    :wh.tag/subtype]))
+
+(s/def :wh.gql/tags (s/coll-of :wh.gql/tag))
+
 (s/def :wh/update-tag (s/keys :req-un [:wh.tag/id]
                               :opt-un [:wh.tag/label
                                        :wh.tag/slug

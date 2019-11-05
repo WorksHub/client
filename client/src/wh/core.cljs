@@ -28,3 +28,4 @@
 (re-frame/dispatch-sync [:init])
 
 (loader/set-loaded! :cljs-base)
+(js/console.log "ok")

@@ -81,7 +81,8 @@
                                       :page-map (s/keys :opt-un [:page-mapping/page :page-mapping/can-access? :page-mapping/redirect-fn]))))
 
 (s/def ::page-params map?) ; arbitrary page parameters, see routes.cljc
-(s/def ::query-params (s/map-of string? string?))
+(s/def ::query-params (s/map-of string? (s/or :str string?
+                                              :coll (s/coll-of string?))))
 (s/def ::search-term (s/nilable string?))        ; pre-set search only
 (s/def ::loading? boolean?)
 (s/def ::tracking-consent? boolean?)

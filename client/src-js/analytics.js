@@ -40,11 +40,11 @@ function extractUtmFields(qps) {
 function storeReferralData() {
     // get existing
     const existingQps = localStorage.getItem("wh_analytics_utms");
-    const existingUtms = extractUtmFields(getQueryParams(existingQps));
+    const existingUtms = extractUtmFields(extractQueryParams(existingQps));
     const existingRef  = localStorage.getItem("wh_analytics_referrer");
     // get current
     const currentQps  = window.location.search.substring(1);
-    const currentUtms = extractUtmFields(getQueryParams(currentQps));
+    const currentUtms = extractUtmFields(extractQueryParams(currentQps));
     const currentRef  = document.referrer;
     // combined
     wh_analytics.utms     = new Map([...existingUtms, ...currentUtms])

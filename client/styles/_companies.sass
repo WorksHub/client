@@ -29,6 +29,31 @@
       +mobile
         font-size: 18px
 
+.company-card.skeleton
+  .companies__company__info-strip,
+  .companies__company__job-count
+    visibility: hidden
+  .company-profile__name
+    @include skeleton(50%)
+    @include skeleton--text
+  .companies__company__description
+    margin-top: 16px
+    p
+      @include skeleton(100%, 12px)
+      @include skeleton--text
+    &:after
+      display: block
+      content: " "
+      height: 18px
+      margin-top: 6px
+      @include skeleton(70%, 12px)
+  .company-profile__logo
+    a
+      @include skeleton()
+    img
+      display: none
+
+
 .companies__company
   background: white
   padding: 3.5%

@@ -7,6 +7,7 @@
     [wh.common.specs.tags :as tag-spec]
     [wh.common.text :as text]
     [wh.company.listing.db :as companies]
+    [wh.company.listing.db :as listing]
     [wh.company.listing.events :as events]
     [wh.company.listing.subs :as subs]
     [wh.company.profile.views :as company]
@@ -74,6 +75,13 @@
       [:h1 "Companies using WorksHub"]
       [:div.split-content
        [:div.companies__main.split-content__main
+        [:div.companies__filtering
+         [forms/tags-field
+          {:id    listing/tag-field-id
+           :solo? true
+           :placeholder "Search company tags, such as technologies (java, scala, etc) or benefits (remote, pension, etc)"
+           :init-from-js-tags? true
+           :on-change (interop-forms/add-tag-value-to-url "tag" ::events/on-tag-change)}]]
         [:div.companies__sorting
          [:div {:class (util/merge-classes
                          "companies__count"

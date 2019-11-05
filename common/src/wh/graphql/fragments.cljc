@@ -45,3 +45,6 @@
    [:labels [:name]]
    [:company [:id :name :logo :slug]]
    [:repo [:name :owner :primary_language]]])
+
+(deffragment tagFields :tag
+  [:slug :type :subtype :label :weight])

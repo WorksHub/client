@@ -225,6 +225,11 @@
     (apply (partial update-in m ks f) args)
     m))
 
+(defn update*
+  "Only calls `update` if key exists"
+  [m k f & args]
+  (apply update-in* m [k] f args))
+
 
 (defn merge-classes
   [& classes]

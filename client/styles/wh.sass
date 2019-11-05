@@ -100,12 +100,15 @@ $navbar-z-index: 900
 $loader-z-index: 800
 
 @mixin skeleton($w:"", $h:"")
-  background-color: $skeleton-background-color
-  border-radius: 5px
+  background-color: $skeleton-background-color !important
+  border-radius: 5px !important
   @if $w != ""
     width: $w
   @if $h != ""
     height: $h
+
+@mixin skeleton--text()
+  text-indent: -9999px;
 
 @import "../vendor/bulma/sass/utilities/_all"
 @import "../vendor/bulma/sass/base/_all"

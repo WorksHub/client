@@ -78,10 +78,14 @@
   #?(:clj {:onClick jsf}
      :cljs {:on-click jsf}))
 
+(defn toggle-class-on-click
+  [id cls]
+  #?(:clj {:onClick (->jsfn "toggleClass" id cls)}
+     :cljs {:on-click (fn [_] (js/toggleClass id cls))}))
+
 (defn toggle-is-open-on-click
   [id]
-  #?(:clj {:onClick (->jsfn "toggleClass" id "is-open")}
-     :cljs {:on-click (fn [_] (js/toggleClass id "is-open"))}))
+  (toggle-class-on-click id "is-open"))
 
 (defn set-is-open-on-click
   [id on?]

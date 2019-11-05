@@ -236,7 +236,7 @@
                                                       (nil? (:subtype tag))
                                                       (dissoc :subtype)
                                                       :always
-                                                      (util/update-in* [:subtype] keyword))) tags)))))
+                                                      (util/update* :subtype keyword))) tags)))))
 
 (defn round-up-to
   [base x]

@@ -149,11 +149,12 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
 
 .company-profile__logo
   flex: 0 0 60px
-  img
+  img, a
     width: 60px
     height: 60px
-    &:not([src])
-      background-color: $skeleton-background-color
+    display: block
+  img:not([src])
+    background-color: $skeleton-background-color
 
 .company-profile__sticky_logo
   flex: 1 0 32px

@@ -17,5 +17,5 @@
   [issue]
   (-> issue
       (cases/->kebab-case)
-      (util/update-in* [:level] keyword)
-      (util/update-in* [:status] keyword)))
+      (util/update* :level keyword)
+      (util/update* :status keyword)))

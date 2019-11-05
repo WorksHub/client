@@ -4,7 +4,8 @@
     [wh.re-frame.subs :refer [<sub]]
     [wh.company.listing.db :as listing]
     [wh.components.pagination :as pagination]
-    [wh.util :as util])
+    [wh.util :as util]
+    [clojure.string :as str])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
 
@@ -16,9 +17,13 @@
     (reaction
       (let [qps (<sub [:wh/query-params])
             {:keys [companies pagination] :as result}
-            (:companies (<sub [:graphql/result :companies {:page_number (pagination/qps->page-number qps)
-                                                           :page_size   listing/page-size
-                                                           :sort        (listing/company-sort qps)}]))]
+            (:companies (<sub [:graphql/result
+                               :companies
+                               (merge {:page_number (pagination/qps->page-number qps)
+                                       :page_size   listing/page-size
+                                       :sort        (listing/company-sort qps)}
+                                      (when-let [tag-or-tags (get qps "tag")]
+                                        {:tag_string (str/join "," (util/->vec tag-or-tags))}))]))]
         {:pagination pagination
          :companies (map listing/->company companies)}))))
 

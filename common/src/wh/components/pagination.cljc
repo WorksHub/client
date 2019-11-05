@@ -47,6 +47,10 @@
   (when (and total-count page-size current-page-number)
     (let [start (inc (* page-size (dec current-page-number)))
           end (min (* page-size current-page-number) total-count)]
-      (if (< total-count page-size)
+      (cond
+        (zero? total-count)
+        "No results match your search"
+        (< total-count page-size)
         (str "Showing " 1 "-" total-count " of " total-count " " element-plural)
+        :else
         (str "Showing " start "-" end " of " total-count " " element-plural)))))

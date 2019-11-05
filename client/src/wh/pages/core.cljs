@@ -41,7 +41,13 @@
   ([] (parse-query-params js/window.location))
   ([uri]
    (let [params (-> uri uri/parse .getQueryData)]
-     (zipmap (.getKeys params) (.getValues params)))))
+     (->> (interleave (.getKeys params) (.getValues params))
+          (partition 2)
+          (reduce (fn [a [k v]]
+                    (if (contains? a k)
+                      (update a k #(if (coll? %) (conj % v) [% v]))
+                      (assoc  a k v)))
+                  {})))))
 
 (defn- module-for [handler]
   (modules/module-for handler (get-in @app-db [:wh.user.db/sub-db :wh.user.db/type])))

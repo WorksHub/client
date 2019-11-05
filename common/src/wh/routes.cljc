@@ -206,8 +206,13 @@
   #?(:clj
      (codec/form-encode m))
   #?(:cljs
-     (query-data/createFromKeysValues (clj->js (keys m))
-                                      (clj->js (vals m)))))
+     (let [usp (js/URLSearchParams.)]
+       (run! (fn [[k v]]
+               (if (coll? v)
+                 (run! (fn [v'] (.append usp (name k) v')) v)
+                 (.append usp (name k) v))) m)
+       (.toString usp))))
+
 (s/fdef serialize-query-params
   :args (s/cat :m :http/query-params)
   :ret string?)

@@ -1,5 +1,3 @@
-var whTags = [];
-
 function init() {
     /* tracking */
     var consent = getCookie("wh_tracking_consent");
@@ -14,9 +12,13 @@ function init() {
         }
     }
     /* tags */
-    var tagList = document.getElementById("tag-list");
-    if(tagList && tagList.innerText && tagList.innerText != "") {
-        whTags = JSON.parse(tagList.innerText);
+    let tagList = document.getElementById("tag-list");
+    let tagBoxes = document.getElementsByClassName("tags-container--wants-js-tags");
+    if(tagList && tagList.innerText && tagList.innerText != "" && tagBoxes && tagBoxes.length > 0) {
+        initTagList(tagList.innerText);
+        for(var i = (tagBoxes.length  -1); i >= 0; i--) {
+            initTags(tagBoxes[i]);
+        }
     };
 }
 

@@ -144,7 +144,7 @@
         (cases/->kebab-case user)
         (update user :current-location #(when % (util/namespace-map "location" %)))
         (update user :preferred-locations (partial mapv #(util/namespace-map "location" %)))
-        (util/update-in* user [:visa-status] set)
+        (util/update* user :visa-status set)
         (update user :role-types set)))
 
 (defn translate-user [user]

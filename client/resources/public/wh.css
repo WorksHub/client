@@ -6510,8 +6510,8 @@ a.navbar-item,
   .blog-card--skeleton .hero {
     background-color: #ddd; }
   .blog-card--skeleton .title {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 200px;
     height: 21px; }
   .blog-card--skeleton .tags li {
@@ -6524,15 +6524,15 @@ a.navbar-item,
   .job-card--skeleton .logo {
     height: 48px;
     width: 48px;
-    background-color: #ddd;
-    border-radius: 5px; }
+    background-color: #ddd !important;
+    border-radius: 5px !important; }
     .job-card--skeleton .logo .logo--empty {
       display: none; }
   .job-card--skeleton .basic-info > div {
     margin-top: 2px;
     height: 20px;
-    background-color: #ddd;
-    border-radius: 5px; }
+    background-color: #ddd !important;
+    border-radius: 5px !important; }
   .job-card--skeleton .job-title {
     width: 200px; }
   .job-card--skeleton .company-name {
@@ -6544,11 +6544,11 @@ a.navbar-item,
   .job-card--skeleton .salary {
     width: 80px; }
   .job-card--skeleton .tags__job li {
-    background-color: #ddd;
-    border-radius: 5px; }
+    background-color: #ddd !important;
+    border-radius: 5px !important; }
   .job-card--skeleton .button {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     font-size: 0;
     border: 0; }
 
@@ -7492,6 +7492,41 @@ a.navbar-item,
     .company-card .company-profile__name h2 {
       font-size: 18px; } }
 
+.company-card.skeleton .companies__company__info-strip,
+.company-card.skeleton .companies__company__job-count {
+  visibility: hidden; }
+
+.company-card.skeleton .company-profile__name {
+  background-color: #ddd !important;
+  border-radius: 5px !important;
+  width: 50%;
+  text-indent: -9999px; }
+
+.company-card.skeleton .companies__company__description {
+  margin-top: 16px; }
+  .company-card.skeleton .companies__company__description p {
+    background-color: #ddd !important;
+    border-radius: 5px !important;
+    width: 100%;
+    height: 12px;
+    text-indent: -9999px; }
+  .company-card.skeleton .companies__company__description:after {
+    display: block;
+    content: " ";
+    height: 18px;
+    margin-top: 6px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
+    width: 70%;
+    height: 12px; }
+
+.company-card.skeleton .company-profile__logo a {
+  background-color: #ddd !important;
+  border-radius: 5px !important; }
+
+.company-card.skeleton .company-profile__logo img {
+  display: none; }
+
 .companies__company {
   background: white;
   padding: 3.5%;
@@ -7640,8 +7675,8 @@ a.navbar-item,
   font-weight: 500;
   flex-grow: 1; }
   .companies__count.skeleton span {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 163px;
     height: 20px;
     display: block;
@@ -8602,26 +8637,26 @@ a.navbar-item,
       display: none; } }
 
 .company-application__job.skeleton .company-application__job-logo {
-  background-color: #ddd;
-  border-radius: 5px; }
+  background-color: #ddd !important;
+  border-radius: 5px !important; }
 
 @media screen and (min-width: 1008px) {
   .company-application__job.skeleton .company-application__job-title {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     height: 22px;
     width: 200px; } }
 
 @media screen and (max-width: 1007px) {
   .company-application__job.skeleton .company-application__job-title > a {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     height: 22px;
     width: 200px; } }
 
 .company-application__job.skeleton .company-application__job-location {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   height: 16px;
   width: 140px; }
 
@@ -8636,25 +8671,25 @@ a.navbar-item,
   border-bottom: 3px solid #ddd; }
 
 .company-application.skeleton .tags li {
-  background-color: #ddd;
-  border-radius: 5px; }
+  background-color: #ddd !important;
+  border-radius: 5px !important; }
 
 .company-application.skeleton .company-application__name {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   height: 19px;
   width: 160px;
   margin-bottom: 2px; }
 
 .company-application.skeleton .company-application__applied-on {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   height: 18px;
   width: 100px; }
 
 .company-application.skeleton .company-application__view-cv {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   height: 19px;
   width: 30px; }
 
@@ -8665,8 +8700,8 @@ a.navbar-item,
   fill: #ddd; }
 
 .company-application.skeleton .company-application__match span, .company-application.skeleton .company-application__notes span {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   vertical-align: super;
   display: inline-block;
   margin-left: 10px;
@@ -8949,21 +8984,21 @@ a.navbar-item,
         right: unset; } }
 
 .companies__company-card.skeleton .logo {
-  background-color: #ddd;
-  border-radius: 5px; }
+  background-color: #ddd !important;
+  border-radius: 5px !important; }
 
 .companies__company-card.skeleton .empty-logo {
   border: 0; }
 
 .companies__company-card.skeleton .title {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   height: 22px;
   width: 200px; }
 
 .companies__company-card.skeleton .company-details span {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   color: #ddd;
   height: 12px;
   width: 100px;
@@ -9237,8 +9272,8 @@ a.navbar-item,
     display: block;
     width: 50px;
     height: 20px;
-    background-color: #ddd;
-    border-radius: 5px; }
+    background-color: #ddd !important;
+    border-radius: 5px !important; }
 
 .company-edit__invoices-pod__contact > span {
   display: block;
@@ -9970,14 +10005,14 @@ h3 {
 
 .blog--skeleton .blog-header {
   margin-top: 24px;
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 70%;
   height: 48px; }
 
 .blog--skeleton .blog-body p {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 100%;
   height: 60px; }
 
@@ -10483,26 +10518,26 @@ h3 {
         width: 52px;
         height: 52px; } }
   .job__company-header__logo .logo--skeleton {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 80px;
     height: 80px; }
 
 .job__company-header__info {
   flex: 1; }
   .job__company-header__info h1:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 250px;
     height: 30px; }
   .job__company-header__info h2:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 150px;
     height: 22px; }
   .job__company-header__info h3:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 200px;
     height: 18px; }
   .job__company-header__info h3 {
@@ -10538,8 +10573,8 @@ h3 {
   line-height: 18px;
   margin-bottom: 10px; }
   .job__tagline h2:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 200px;
     height: 24px; }
 
@@ -10549,8 +10584,8 @@ h3 {
   font-style: italic;
   line-height: normal; }
   .job__tagline div:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 100%;
     height: 22px; }
 
@@ -10589,8 +10624,8 @@ h3 {
   margin-bottom: 18px;
   margin-top: 0; }
   .job__information h2:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 50%;
     height: 22px; }
 
@@ -10640,8 +10675,8 @@ h3 {
     line-height: 18px;
     margin-bottom: 12px; }
     .job__highlight h2:empty {
-      background-color: #ddd;
-      border-radius: 5px;
+      background-color: #ddd !important;
+      border-radius: 5px !important;
       width: 75%;
       height: 22px; }
 
@@ -10650,8 +10685,8 @@ h3 {
   font-size: 18px;
   font-style: italic; }
   .job__salary:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 50%;
     height: 30px; }
 
@@ -10663,8 +10698,8 @@ h3 {
     height: 28px;
     width: 28px; }
   .job__highlight_icon:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 28px;
     height: 28px; }
 
@@ -10684,8 +10719,8 @@ h3 {
   font-size: 14px;
   line-height: 20px; }
   .job__contract-type div:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 40%;
     height: 20px; }
 
@@ -12154,37 +12189,37 @@ h3 {
   .jobs-board__header .skeleton {
     text-indent: -9999px; }
     .jobs-board__header .skeleton h1 {
-      background-color: #ddd;
-      border-radius: 5px;
+      background-color: #ddd !important;
+      border-radius: 5px !important;
       width: 200px;
       height: 24px; }
     .jobs-board__header .skeleton h2 {
-      background-color: #ddd;
-      border-radius: 5px;
+      background-color: #ddd !important;
+      border-radius: 5px !important;
       width: 550px;
       height: 24px; }
     .jobs-board__header .skeleton h3 {
-      background-color: #ddd;
-      border-radius: 5px;
+      background-color: #ddd !important;
+      border-radius: 5px !important;
       width: 650px;
       height: 24px; }
     .jobs-board__header .skeleton .jobs-board__header__filter-toggle {
       display: block;
-      background-color: #ddd;
-      border-radius: 5px;
+      background-color: #ddd !important;
+      border-radius: 5px !important;
       width: 130px;
       height: 24px; }
 
 .job-list-header.skeleton {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   text-indent: -9999px;
   width: 170px;
   height: 22px; }
 
 .search-result-count.skeleton {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   text-indent: -9999px;
   width: 400px;
   height: 22px; }
@@ -12500,16 +12535,16 @@ h3 {
     width: 48px; }
   .card-data__brand div.empty {
     height: 48px;
-    background-color: #ddd;
-    border-radius: 5px; }
+    background-color: #ddd !important;
+    border-radius: 5px !important; }
 
 .card-data__info {
   line-height: 22px;
   font-size: 14px; }
 
 .card-data.skeleton .card-data__info div {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   font-size: 0px;
   height: 22px;
   width: 200px; }
@@ -13348,21 +13383,21 @@ h3 {
   margin-top: 15px; }
 
 .issue-card.skeleton .logo {
-  background-color: #ddd;
-  border-radius: 5px; }
+  background-color: #ddd !important;
+  border-radius: 5px !important; }
 
 .issue-card.skeleton .empty-logo {
   border: 0; }
 
 .issue-card.skeleton .title {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   height: 22px;
   width: 200px; }
 
 .issue-card.skeleton .header {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   height: 10px;
   width: 200px;
   text-indent: -9999px; }
@@ -13372,8 +13407,8 @@ h3 {
   fill: #ddd !important; }
 
 .issue-card.skeleton .issue-details li span {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 40px;
   height: 20px;
   display: inline-block;
@@ -13437,14 +13472,14 @@ h3 {
   .admin-pod.skeleton .github-info__link__org {
     margin-top: 24px;
     display: block;
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 160px;
     height: 25px;
     text-indent: -9999px; }
   .admin-pod.skeleton .manage-issues {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     height: 30px;
     text-indent: -9999px; }
 
@@ -13644,34 +13679,34 @@ h3 {
   .issue__author.skeleton .icon {
     display: none; }
   .issue__author.skeleton .github-info__link {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 140px;
     height: 15px;
     text-indent: -9999px; }
   .issue__author.skeleton .issue__posted-by {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 150px;
     height: 15px;
     text-indent: -9999px; }
   .issue__author.skeleton .issue__author__github-avatar--skeleton {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 36px;
     height: 36px;
     margin-right: 18px; }
   .issue__author.skeleton .issue__author__name {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 90px;
     height: 18px;
     text-indent: -9999px;
     margin-top: 0; }
   .issue__author.skeleton .issue__author__github-username {
     margin-top: 2px;
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 70px;
     height: 15px;
     text-indent: -9999px; }
@@ -13683,15 +13718,15 @@ h3 {
   margin-top: 6px; }
 
 .issue__logo--skeleton {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 64px;
   height: 64px;
   min-width: 64px; }
 
 .issue__title.skeleton {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 100%;
   height: 32px;
   text-indent: -9999px; }
@@ -13701,27 +13736,27 @@ h3 {
 
 .issue__infobox-row.skeleton span {
   margin-top: 4px;
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 90px;
   height: 12px; }
 
 .issue__top-info.skeleton div {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 80%;
   height: 12px; }
 
 .issue__author-details img {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 36px;
   height: 36px;
   border: 0; }
 
 .issue__description--skeleton {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 100%;
   height: 200px; }
 
@@ -14308,8 +14343,8 @@ h3 {
     flex: 0; }
 
 .issues__header.skeleton {
-  background-color: #ddd;
-  border-radius: 5px;
+  background-color: #ddd !important;
+  border-radius: 5px !important;
   width: 350px;
   height: 20px;
   text-indent: -9999px; }
@@ -14414,8 +14449,8 @@ h3 {
   font-weight: 500;
   flex-grow: 1; }
   .issues__count.skeleton span {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 163px;
     height: 20px;
     display: block;
@@ -16457,11 +16492,12 @@ h3 {
 
 .company-profile__logo {
   flex: 0 0 60px; }
-  .company-profile__logo img {
+  .company-profile__logo img, .company-profile__logo a {
     width: 60px;
-    height: 60px; }
-    .company-profile__logo img:not([src]) {
-      background-color: #ddd; }
+    height: 60px;
+    display: block; }
+  .company-profile__logo img:not([src]) {
+    background-color: #ddd; }
 
 .company-profile__sticky_logo {
   flex: 1 0 32px; }
@@ -16475,8 +16511,8 @@ h3 {
   flex: 1;
   min-width: 0; }
   .company-profile__name:empty::after {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 50%;
     height: 24px;
     position: absolute;
@@ -16973,13 +17009,13 @@ h3 {
   line-height: 18px;
   margin-right: 4.6em; }
   .company-profile__company-info__prompt:empty {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 50%;
     height: 24px; }
   .company-profile__company-info__prompt:empty::after {
-    background-color: #ddd;
-    border-radius: 5px;
+    background-color: #ddd !important;
+    border-radius: 5px !important;
     width: 70%;
     height: 24px; }
 
@@ -17459,13 +17495,17 @@ h3 {
   padding: 8px;
   font-weight: 600;
   display: inline-flex;
-  background-color: #ffe9e7;
-  color: #ff7c6e;
   border-radius: 2px;
   text-transform: uppercase;
   height: 30px; }
   .tags li:last-child, .tag:last-child {
     margin-right: 0; }
+
+.tags li:not(.tag) {
+  margin-right: 6px;
+  margin-bottom: 6px;
+  background-color: #ffe9e7;
+  color: #ff7c6e; }
 
 .tags li {
   margin-right: 6px;
@@ -17557,10 +17597,13 @@ h3 {
 .tags-container--collapsed .tags--unselected {
   display: none; }
 
-.tags-container--collapsed .tags--no-selected {
+.tags-container--collapsed.tags-container--alternative .tags--no-selected {
+  max-height: 40px; }
+
+.tags-container--collapsed:not(.tags-container--alternative) .tags--no-selected {
   max-height: 46px; }
 
-.tags-loading, .tags-empty {
+.tags-container--collapsed:not(.tags-container--alternative) .tags-loading, .tags-container--collapsed:not(.tags-container--alternative) .tags-empty {
   text-indent: 15px;
   line-height: 51px; }
 
@@ -17577,8 +17620,10 @@ h3 {
   max-width: 240px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden; }
-  .tag .icon + span {
+  overflow: hidden;
+  background-color: #ffe9e7;
+  color: #ff7c6e; }
+  .tag .icon:not(.icon--close) + span {
     margin-left: 18px; }
   .tag .icon {
     position: absolute;
@@ -17593,6 +17638,13 @@ h3 {
     right: 4px;
     width: 14px;
     height: 14px; }
+  .tag.tag--hidden, .tag.tag--filtered {
+    display: none; }
+  .tag.tag--skeleton {
+    background-color: #ddd !important;
+    border-radius: 5px !important;
+    width: 60px;
+    text-indent: -9999px; }
 
 .tag-add {
   position: absolute;
@@ -17611,28 +17663,28 @@ h3 {
   top: 18px; }
 
 .tag--type-benefit {
-  background-color: #f2f7f8 !important;
-  color: #80b5bc !important; }
+  background-color: #f2f7f8;
+  color: #80b5bc; }
   .tag--type-benefit .icon {
-    fill: #80b5bc !important; }
+    fill: #80b5bc; }
 
 .tag--type-company {
-  background-color: #e8e8e8 !important;
-  color: #6E7F89 !important; }
+  background-color: #e8e8e8;
+  color: #6E7F89; }
   .tag--type-company .icon {
-    fill: #6E7F89 !important; }
+    fill: #6E7F89; }
 
 .tag--type-industry {
-  background-color: #fff1e7 !important;
-  color: #ffae71 !important; }
+  background-color: #fff1e7;
+  color: #ffae71; }
   .tag--type-industry .icon {
-    fill: #ffae71 !important; }
+    fill: #ffae71; }
 
 .tag--type-funding {
-  background-color: #f4f8f9 !important;
-  color: #87a7b4 !important; }
+  background-color: #f4f8f9;
+  color: #87a7b4; }
   .tag--type-funding .icon {
-    fill: #87a7b4 !important; }
+    fill: #87a7b4; }
 
 .edit-tags section {
   margin-bottom: 0px; }
@@ -17705,6 +17757,51 @@ h3 {
     fill: #adadad;
     margin-right: 6px;
     cursor: pointer; }
+
+/* New tag field classes */
+.tag-group.tag-group--empty {
+  display: none; }
+
+.tag-group .tags {
+  padding: 0; }
+
+.tag-group + .tag-group {
+  border-top: 1px solid #e6edf2;
+  margin-top: 12px;
+  padding-top: 18px; }
+
+.tags-selection--tags-container {
+  min-height: 46px; }
+  .tags-selection--tags-container .tags {
+    padding-right: 16px; }
+  .tags-selection--tags-container .tags--selected:not(.tags--has-selected-tags) {
+    padding: 0; }
+  .tags-selection--tags-container .tags--selected .tag-group {
+    border: 0;
+    margin: 0;
+    padding: 0; }
+  .tags-selection--tags-container .tags--selected .tag:not(.tag--selected) {
+    display: none; }
+  .tags-selection--tags-container .tags--unselected {
+    display: block;
+    padding-top: 10px;
+    max-height: unset; }
+    .tags-selection--tags-container .tags--unselected .tag.tag--selected {
+      display: none; }
+
+.tags-container--collapsed .tags-selection--tags-container .tags--unselected:not(.tags--has-selected-tags) {
+  max-height: 46px; }
+
+.tags-container--collapsed .tags-selection--tags-container .tags--unselected.tags--has-selected-tags {
+  max-height: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px; }
+
+.tags--unselected .tag-group:not(.tag-group--empty) ~ span {
+  display: none !important; }
+
+.tags--unselected .tag-group.tag-group--empty ~ span {
+  display: inline; }
 
 .has-tooltip {
   position: relative;
