@@ -29,7 +29,7 @@
      [icon "like"
       :id (str "job-card__like-button_job-" id)
       :class (util/merge-classes "job__icon" "like" (when liked? "selected"))
-      :on-click #(dispatch [:wh.events/toggle-job-like job])])
+      :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])
    (when (and logged-in? (not skeleton?) on-close)
      [icon "close"
       :id (str "job-card__blacklist-button_job-" id)
