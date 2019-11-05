@@ -27,7 +27,9 @@
                                           [job-card job (merge {:user-has-applied? has-applied?
                                                                 :logged-in? true}
                                                                (when (= type-of-jobs :recommended)
-                                                                 {:on-close :reload-recommended}))]]))))
+                                                                 {:on-close :reload-recommended})
+                                                               (when (= type-of-jobs :liked)
+                                                                 {:on-close :reload-liked}))]]))))
                           [:div.columns.is-centered.load-more-section
                            [:div.column.is-4.has-text-centered
                             (when (<sub [::subs/show-load-more?])
