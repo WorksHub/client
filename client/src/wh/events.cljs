@@ -74,21 +74,25 @@
    :venia/queries [[:mark_job {:job_id :$id, :add :$add, :job_mark_action :like}
                     [:marked]]]})
 
-(reg-event-db
+(reg-event-fx
   ::toggle-job-like-success
   db/default-interceptors
-  (fn [db [id]]
-    (update-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs] util/toggle id)))
+  (fn [{db :db} [id action]]
+    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs] util/toggle id)
+     :dispatch (case action
+                     :reload-recommended [:personalised-jobs/fetch-jobs-by-type :recommended 1]
+                     :reload-dashboard [:wh.logged-in.dashboard.events/fetch-recommended-jobs]
+                     :reload-liked [:personalised-jobs/fetch-jobs-by-type :liked 1])}))
 
 (reg-event-fx
-  ::toggle-job-like
+ ::toggle-job-like
   db/default-interceptors
-  (fn [{db :db} [{:keys [id] :as job}]]
+  (fn [{db :db} [{:keys [id] :as job} action]]
     (let [liked (contains? (get-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs]) id)
           event-name (str "Job " (if liked "Removed Like" "Liked"))]
       {:graphql         {:query      like-job-mutation
                          :variables  {:id id, :add (not liked)}
-                         :on-success [::toggle-job-like-success id]}
+                         :on-success [::toggle-job-like-success id action]}
        :analytics/track [event-name job]})))
 
 (defquery blacklist-job-mutation
