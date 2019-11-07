@@ -42,18 +42,20 @@
 
 (defn current-page []
   (r/create-class
-   {:component-did-update
-    #(let [scroll (<sub [::subs/scroll])]
-       (r/next-tick
-        (fn [] (pages/force-scroll-to-x! scroll))))
+    {:component-did-update
+     #(let [scroll (<sub [::subs/scroll])]
+        (r/next-tick
+          (fn []
+            (when-not (<sub [::subs/initial-page?])
+              (pages/force-scroll-to-x! scroll)))))
 
-    :reagent-render
-    (fn []
-      (let [_ (<sub [::wh.subs/page-params])
-            page (<sub [::pages/page])] ;; this sub causes re-render when page-params changes
-        (when-let [page-handler (<sub [::current-page])]
-          (if (contains? #{:blog :job :register} (<sub [::pages/page])) ;; TODO :see_no_evil:
-            [page-handler]
-            [:div.main-wrapper
-             {:class (str "main-wrapper--" (name page))}
-             [page-handler]]))))}))
+     :reagent-render
+     (fn []
+       (let [_ (<sub [::wh.subs/page-params])
+             page (<sub [::pages/page])] ;; this sub causes re-render when page-params changes
+         (when-let [page-handler (<sub [::current-page])]
+           (if (contains? #{:blog :job :register} (<sub [::pages/page])) ;; TODO :see_no_evil:
+             [page-handler]
+             [:div.main-wrapper
+              {:class (str "main-wrapper--" (name page))}
+              [page-handler]]))))}))

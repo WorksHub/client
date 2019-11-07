@@ -53,6 +53,12 @@
          :<- [::query-params]
          (fn [params [_ param]]
            (get params param)))
+
+(reg-sub
+  ::initial-page?
+  (fn [db _]
+    (<= (:wh.db/page-moves db) 1)))
+
 (reg-sub
   ::page
   (fn [db _]

@@ -4305,32 +4305,34 @@ a.navbar-item,
     align-items: center;
     justify-content: center; }
 
-#app {
+#app, #app-ssr {
   background-color: #f4f5f8;
   overflow-x: hidden;
   overflow-y: auto; }
   @media screen and (min-width: 1008px) {
-    #app {
+    #app, #app-ssr {
       margin-top: 76px;
       height: 100%; } }
   @media screen and (max-width: 1007px) {
-    #app {
+    #app, #app-ssr {
       margin-top: 46px; } }
-  #app .main-panel {
+  #app.app--hidden, #app-ssr.app--hidden {
+    display: none; }
+  #app .main-panel, #app-ssr .main-panel {
     height: 100%; }
-    #app .main-panel .navbar {
+    #app .main-panel .navbar, #app-ssr .main-panel .navbar {
       position: fixed;
       top: 0; }
-    #app .main-panel .page-container {
+    #app .main-panel .page-container, #app-ssr .main-panel .page-container {
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch; }
       @media screen and (min-width: 1008px) {
-        #app .main-panel .page-container {
+        #app .main-panel .page-container, #app-ssr .main-panel .page-container {
           margin-left: 210px; } }
-    #app .main-panel .navbar--has-promo-banner + .page-container {
+    #app .main-panel .navbar--has-promo-banner + .page-container, #app-ssr .main-panel .navbar--has-promo-banner + .page-container {
       margin-top: 48px; }
-    #app .main-panel .page-container--no-menu {
+    #app .main-panel .page-container--no-menu, #app-ssr .main-panel .page-container--no-menu {
       margin-left: 0; }
 
 .consent-popup {

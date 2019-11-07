@@ -88,10 +88,11 @@ function handleTagChange(tagBox, queryParamKey) {
 
         let tagElement = tagBox.focusedTag;
         let tagQueryId = tagBox.focusedTagQueryId;
+        let url = addQueryParam(null, "interaction", 1);
         if(tagElement.classList.contains("tag--selected")) {
-            return addQueryParam(null, queryParamKey, tagQueryId);
+            return addQueryParam(url, queryParamKey, tagQueryId);
         } else {
-            return removeQueryParam(null, queryParamKey, tagQueryId);
+            return removeQueryParam(url, queryParamKey, tagQueryId);
         };
     }
 }

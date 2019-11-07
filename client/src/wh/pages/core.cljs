@@ -98,11 +98,12 @@
                       {:navigate [:login :params {:step login-step} :query-params {:redirect current-path}]})
                     ;; otherwise
                     (let [new-db (cond-> db
-                                         true (assoc ::db/page handler
-                                                     ::db/page-params (merge params route-params {})
-                                                     ::db/query-params (or query-params {})
-                                                     ::db/uri uri
-                                                     ::db/scroll (if history-state (aget history-state "scroll-position") 0))
+                                         true (-> (assoc ::db/page handler
+                                                         ::db/page-params (merge params route-params {})
+                                                         ::db/query-params (or query-params {})
+                                                         ::db/uri uri
+                                                         ::db/scroll (if history-state (aget history-state "scroll-position") 0))
+                                                  (update ::db/page-moves inc))
                                          (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
                                          (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
                       (cond-> {:db                 new-db
@@ -130,14 +131,17 @@
 
 (defn- parse-url [url]
   (assoc
-   (or (bidi/match-route routes/routes url)
-       default-route)
-   :query-params (parse-query-params url)
-   :uri url))
+    (or (bidi/match-route routes/routes url)
+        default-route)
+    :query-params (parse-query-params url)
+    :uri url))
 
 (defn load-and-dispatch [[module event]]
-  (let [skip-loader? (or (= (first event) :github/call) ; this is to avoid loader flickering when logging in via GitHub
-                         (= (:wh.db/page @re-frame.db/app-db) :github-callback))] ; hacky, but we're not in an event
+  (let [db @re-frame.db/app-db
+        skip-loader? (or (= (first event) :github/call) ;; this is to avoid loader flickering when logging in via GitHub
+                         (= (:wh.db/page db) :github-callback) ;; hacky, but we're not in an event
+                         (and (zero? (:wh.db/page-moves db))
+                              (:wh.db/server-side-rendered? db)))]
     (when (and (not skip-loader?) (not (loader/loaded? module)))
       (dispatch [::set-loader]))
     ;; If we don't wrap the loader/load call in setTimeout and happen to
@@ -145,14 +149,31 @@
     ;; by the time we're here.
     ;; See David Nolen's comment in https://dev.clojure.org/jira/browse/CLJS-2264.
     (js/window.setTimeout
-     (fn [] (loader/load module
-                         #(do
-                            (when event
-                              (dispatch-sync event))
-                            (when-not skip-loader?
-                              (dispatch [::unset-loader]))))))))
+      (fn [] (loader/load module
+                          #(do
+                             (when event
+                               (dispatch-sync event))
+                             (when-not skip-loader?
+                               (dispatch [::unset-loader]))))))))
 
 (reg-fx :load-and-dispatch load-and-dispatch)
+
+(defn get-app-ssr-scroll-value
+  []
+  (if-let [app-ssr (js/document.getElementById "app-ssr")]
+    (max (.-scrollY js/window) (.-scrollTop app-ssr))
+    (max (.-scrollY js/window) 0)))
+
+(defn show-app!
+  []
+  (when-let [app-ssr (js/document.getElementById "app-ssr")]
+    (let [scroll-value (get-app-ssr-scroll-value)
+          app          (js/document.getElementById "app")]
+      (.remove (.-classList app) "app--hidden")
+      (force-scroll-to-x! scroll-value)
+      (js/document.body.removeChild app-ssr))))
+
+(reg-fx :show-app? show-app!)
 
 (defn- set-page [route history-state]
   (let [set-page-event [::set-page route history-state]]
@@ -213,11 +234,12 @@
   (fn [db _]
     (assoc db ::db/loading? true)))
 
-(reg-event-db
+(reg-event-fx
   ::unset-loader
   db/default-interceptors
-  (fn [db _]
-    (assoc db ::db/loading? false)))
+  (fn [{db :db} _]
+    {:db (assoc db ::db/loading? false)
+     :show-app? true}))
 
 ;;; Do not use - superseeded by global error box
 (reg-event-db

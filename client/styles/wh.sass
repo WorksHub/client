@@ -182,7 +182,7 @@ $loader-z-index: 800
     align-items: center
     justify-content: center
 
-#app
+#app, #app-ssr
   background-color: $pale-gray
   overflow-x: hidden
   overflow-y: auto
@@ -191,6 +191,8 @@ $loader-z-index: 800
     height: 100%
   +mobile
     margin-top: $navbar-mobile-height
+  &.app--hidden
+    display: none
 
   .main-panel
     height: 100%
