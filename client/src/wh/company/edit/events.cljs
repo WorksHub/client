@@ -607,7 +607,7 @@
   ::upgrade
   company-interceptors
   (fn [{db :db} _]
-    {:navigate [:payment-setup :params {:step :select-package} :query-params {:action :integrations}]}))
+    {:navigate [:payment-setup :params {:step :select-package} :query-params {:action "integrations"}]}))
 
 (reg-event-fx
   ::apply-coupon

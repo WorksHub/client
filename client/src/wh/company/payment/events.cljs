@@ -93,7 +93,7 @@
   db/default-interceptors
   (fn [{db :db} [billing-period]]
     {:navigate [:payment-setup
-                :query-params (assoc (::db/query-params db) "billing" billing-period)
+                :query-params (assoc (::db/query-params db) "billing" (name billing-period))
                 :params {:step (subs/payment-step db)} ]}))
 
 (reg-event-fx

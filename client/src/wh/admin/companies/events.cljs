@@ -146,7 +146,7 @@
   (fn [{db :db} [sort]]
     (let [sort-key (some #(when (= sort (second %)) (first %)) companies/sorts)]
       {:navigate [:admin-companies :query-params
-                  (merge (get db ::db/query-params) {"sort" sort-key})]})))
+                  (merge (get db ::db/query-params) {"sort" (name sort-key)})]})))
 
 (reg-event-fx
   ::initialize-db

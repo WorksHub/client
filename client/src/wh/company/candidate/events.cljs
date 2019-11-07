@@ -192,7 +192,7 @@
   (fn [_ [_ candidate-id]]
     {:navigate [:payment-setup
                 :params {:step :select-package}
-                :query-params {:action :applications
+                :query-params {:action "applications"
                                :candidate candidate-id}]}))
 
 (defmethod on-page-load :candidate [db]

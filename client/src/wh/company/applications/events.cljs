@@ -140,7 +140,7 @@
                                   ::sub-db/logo (:logo company)
                                   ::sub-db/company-name (:name company)))}
              (when-not has-permission? ;; if no permission, send back to payment flow
-               {:navigate [:payment-setup :params {:step :select-package} :query-params {:action :applications}]})))))
+               {:navigate [:payment-setup :params {:step :select-package} :query-params {:action "applications"}]})))))
 
 (reg-event-fx
   ::fetch-company-failure
@@ -356,7 +356,7 @@
   (fn [{db :db} [tab]]
     (let [job-id (get-in db [::db/query-params "job-id"])
           company-id (sub-db/company-id db)
-          qps (merge {:tab tab}
+          qps (merge {:tab (name tab)}
                      (when job-id {:job-id job-id}))
           page (sub-db/get-current-page db)]
       {:navigate (if (= page :admin-company-applications)
