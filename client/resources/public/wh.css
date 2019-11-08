@@ -17647,6 +17647,8 @@ h3 {
     border-radius: 5px !important;
     width: 60px;
     text-indent: -9999px; }
+    .tag.tag--skeleton .icon {
+      display: none; }
 
 .tag-add {
   position: absolute;

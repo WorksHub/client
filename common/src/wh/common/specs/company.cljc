@@ -25,10 +25,16 @@
 (s/def :wh.company/free-trial-ended :wh/date)
 (s/def :wh.company/free-trial-started :wh/date)
 (s/def :wh.company/github-installation-id string?)
+(s/def :wh.company/has-jobs boolean?)
+(s/def :wh.company/has-published-profile boolean?)
+(s/def :wh.company/job-last-modified :wh/date)
 (s/def :wh.company/logo ::p/non-empty-string)
 (s/def :wh.company/name ::p/non-empty-string)
 (s/def :wh.company/paid-offline-until :wh/date)
 (s/def :wh.company/profile-enabled boolean?)
+(s/def :wh.company/profile-last-modified :wh/date)
+(s/def :wh.company/total-published-issue-count nat-int?)
+(s/def :wh.company/total-published-job-count nat-int?)
 
 (s/def :wh.company/tags (s/coll-of :wh/tag))
 (s/def :wh.company/tag-ids (s/coll-of :wh.tag/id))
@@ -53,8 +59,6 @@
 (s/def :wh.company/tech-scales (s/keys :opt-un [:wh.company.tech-scales/testing
                                                 :wh.company.tech-scales/ops
                                                 :wh.company.tech-scales/time-to-deploy]))
-
-(s/def :wh.company/has-published-profile boolean?)
 
 ;; these 'profile' keys exist because creating a company without these
 ;; fields is fine, but publishing a profile is not

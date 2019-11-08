@@ -1,8 +1,10 @@
 (ns wh.company.listing.db
   (:require
+    [clojure.string :as str]
     [wh.common.location :as location]
     [wh.common.specs.company :as company-specs]
-    [wh.company.profile.db :as profile]))
+    [wh.company.profile.db :as profile]
+    [wh.util :as util]))
 
 (def page-size 20)
 (def tag-field-id "companies-listing-tag-field")
@@ -10,6 +12,11 @@
 (defn company-sort
   [qps]
   (get qps "sort" "published"))
+
+(defn qps->tag-string
+  [qps]
+  (when-let [tag-or-tags (get qps "tag")]
+    (str/join ";" (util/->vec tag-or-tags))))
 
 (def tag-sort
   {:industry 1

@@ -30,9 +30,11 @@
         page-numbers))]])
 
 (defn number-of-pages [page-size total]
-  (if (zero? (rem total page-size))
-    (quot total page-size)
-    (inc (quot total page-size))))
+  (if (and total page-size)
+    (if (zero? (rem total page-size))
+      (quot total page-size)
+      (inc (quot total page-size)))
+    0))
 
 (defn generate-pagination [current total]
   (when (and current total)

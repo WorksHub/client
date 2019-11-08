@@ -27,10 +27,11 @@
 (reg-event-fx
   :company/refresh-tasks
   (fn [{db :db} _]
-    {:graphql {:query (gql/company-query
-                        (get-in db [:wh.user.db/sub-db :wh.user.db/company-id])
-                        [[:onboardingTasks [:id :state]]])
-               :on-success [::refresh-tasks-success]}}))
+    (when (= "company" (get-in db [:wh.user.db/sub-db :wh.user.db/type]))
+      {:graphql {:query (gql/company-query
+                          (get-in db [:wh.user.db/sub-db :wh.user.db/company-id])
+                          [[:onboardingTasks [:id :state]]])
+                 :on-success [::refresh-tasks-success]}})))
 
 (reg-event-db
   ::refresh-tasks-success

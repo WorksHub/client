@@ -17,16 +17,14 @@
 
 (defquery fetch-companies-query
   {:venia/operation {:operation/type :query
-                     :operation/name "companies"}
+                     :operation/name "search_companies"}
    :venia/variables [{:variable/name "page_number" :variable/type :Int}
                      {:variable/name "page_size" :variable/type :Int}
-                     {:variable/name "search_term" :variable/type :String}
                      {:variable/name "sort" :variable/type :companies_sort}
                      {:variable/name "tag_string" :variable/type :String}]
-   :venia/queries   [[:companies
+   :venia/queries   [[:search_companies
                       {:page_number :$page_number
                        :page_size   :$page_size
-                       :search_term :$search_term
                        :sort        :$sort
                        :tag_string  :$tag_string}
                       [[:pagination [:total :count]]
@@ -38,17 +36,17 @@
    :venia/queries   [[:company_filter_tags_list
                       [[:tags :fragment/tagFields]]]]})
 
-(reg-query :companies fetch-companies-query)
+(reg-query :search_companies fetch-companies-query)
 (reg-query :company-filter-tags-list fetch-company-filter-tags-list)
 
 (defn initial-query [db]
   (let [qps (:wh.db/query-params db)]
     ;; TODO search term from URL?
-    [:companies (merge {:page_number (pagination/qps->page-number qps)
-                        :page_size   listing/page-size
-                        :sort        (listing/company-sort qps)}
-                       (when-let [tag-or-tags (get qps "tag")]
-                         {:tag_string (str/join "," (util/->vec tag-or-tags))}))]))
+    [:search_companies (merge {:page_number (pagination/qps->page-number qps)
+                               :page_size   listing/page-size
+                               :sort        (listing/company-sort qps)}
+                              (when-let [tag-string (listing/qps->tag-string qps)]
+                                {:tag_string tag-string}))]))
 
 (defn company-filter-tags-list-query []
   [:company-filter-tags-list {}])

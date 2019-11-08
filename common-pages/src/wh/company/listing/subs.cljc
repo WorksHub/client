@@ -16,14 +16,14 @@
   (fn [_ _]
     (reaction
       (let [qps (<sub [:wh/query-params])
-            {:keys [companies pagination] :as result}
-            (:companies (<sub [:graphql/result
-                               :companies
-                               (merge {:page_number (pagination/qps->page-number qps)
-                                       :page_size   listing/page-size
-                                       :sort        (listing/company-sort qps)}
-                                      (when-let [tag-or-tags (get qps "tag")]
-                                        {:tag_string (str/join "," (util/->vec tag-or-tags))}))]))]
+            {:keys [companies pagination]}
+            (:search-companies (<sub [:graphql/result
+                                      :search_companies
+                                      (merge {:page_number (pagination/qps->page-number qps)
+                                              :page_size   listing/page-size
+                                              :sort        (listing/company-sort qps)}
+                                             (when-let [tag-string (listing/qps->tag-string qps)]
+                                               {:tag_string tag-string}))]))]
         {:pagination pagination
          :companies (map listing/->company companies)}))))
 
