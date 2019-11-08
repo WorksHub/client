@@ -15,8 +15,8 @@
   #?(:cljs [github/install-github-app (if class {:class class} {})]))
 
 (defn get-started-link
-  [github? & [class]]
-  (let [btn [:button.button.button--public data/get-started-cta-string]]
+  [github? & [{:keys [class label] :or {label data/get-started-cta-string}}]]
+  (let [btn [:button.button.button--public label]]
     (cond
       (or github? (<sub [::subs/show-github-buttons?]))
       [github-button class]
@@ -172,7 +172,7 @@
       [:button.button.button--inverted.button--public
        "View all open source issues"]
       :issues]
-     [get-started-link github?]]]])
+     [get-started-link github? {:label "Get Started for Free"}]]]])
 
 (defn stats-ball
   [[title para icon-logo] colour]
@@ -193,7 +193,7 @@
                "how-it-works__stats"
                (str "how-it-works__stats--" (name selected-site)))}
      [:div.how-it-works__stats__inner
-      [get-started-link github? "is-hidden-desktop"]
+      [get-started-link github? {:class "is-hidden-desktop"}]
       [:div.how-it-works__stats__balls.is-hidden-mobile
        [:div.how-it-works__stats__balls-container
         (stats-ball blue :blue)
@@ -210,7 +210,7 @@
        (for [i info]
          ^{:key i}
          [:p i])
-       [get-started-link github? "is-hidden-mobile"]]]]))
+       [get-started-link github? {:class "is-hidden-mobile" :label "Get Started for Free"}]]]]))
 
 (defn faq
   [selected-site github?]

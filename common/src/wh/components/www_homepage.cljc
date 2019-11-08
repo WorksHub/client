@@ -11,6 +11,7 @@
     [wh.util :as util]))
 
 (def num-clouds 23)
+(def get-started-cta-string "Get Started for Free")
 
 (comment
   "Used to generate the SASS for clouds"
@@ -75,7 +76,7 @@
     [:p data/www-hero-copy]
     (link [:button.button
            {:id "www-landing__hero"}
-           data/get-started-cta-string] :get-started)]])
+           get-started-cta-string] :get-started)]])
 
 (defn features
   []
@@ -130,7 +131,7 @@
      [:span "Have a question along the way? We have a " [:strong "team of experts"] " that can help at every step of the process helping you make the best possible hire."]
      (link [:button.button
             {:id "www-landing__walkthrough__experts"}
-            data/get-started-cta-string] :get-started)]
+            get-started-cta-string] :get-started)]
     [:div.column.homepage__step__img
      [:img {:src "/images/homepage/walkthrough04.svg"
             :alt ""}]]]])
@@ -170,7 +171,7 @@
    [:h3 "Join our satisfied worldwide clients"]
    (link [:button.button
           {:id "www-landing__testimonials"}
-          data/get-started-cta-string] :get-started)
+          get-started-cta-string] :get-started)
    [carousel
     (for [item testimonials-data]
       [testimonial item])]])
@@ -195,7 +196,7 @@
           (icon logo)]])])
    (link [:button.button
           {:id "www-landing__looking-to-hire"}
-          data/get-started-cta-string] :get-started)])
+          get-started-cta-string] :get-started)])
 
 (defn homepage
   ([]
@@ -222,7 +223,7 @@
                   "Discover how we're different"] :pricing)
          (link [:button.button
                 {:id "www-landing__barriers-try"}
-                data/get-started-cta-string] :get-started)]]
+                get-started-cta-string] :get-started)]]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--start"]
        [hiw/stats :company false]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--mid"]
