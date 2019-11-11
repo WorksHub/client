@@ -58,6 +58,10 @@
   (-> (js/Image.)
       (aset "src" "https://alb.reddit.com/snoo.gif?q=CAAHAAABAAoACQAAAAbiHMscAA==&s=Mdk07HNJof2V4iYvOG7Xjze3WPvvGToIlqHu8uuIhLY=")))
 
+(defn track-linkedin []
+  (-> (js/Image.)
+      (aset "src" "https://px.ads.linkedin.com/collect/?pid=1684137&conversionId=1620346&fmt=gif")))
+
 (reg-fx
   :analytics/account-created
   (fn [[data db]]
@@ -66,4 +70,5 @@
     (alias db)
     (identify db)
     (track ["Account Created" data])
+    (track-linkedin)
     (track-reddit)))
