@@ -39,6 +39,12 @@ function removeQueryParam(url, key, value) {
     return url;
 }
 
+function deleteQueryParam(url, key) {
+    var url = url || new URL(location.href);
+    url.searchParams.delete(key);
+    return url;
+}
+
 function setQueryParams(url, params) {
     var url = url || new URL([location.protocol, '//', location.host, location.pathname].join(''));
     for(key in params) {

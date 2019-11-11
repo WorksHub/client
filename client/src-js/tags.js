@@ -88,7 +88,8 @@ function handleTagChange(tagBox, queryParamKey) {
 
         let tagElement = tagBox.focusedTag;
         let tagQueryId = tagBox.focusedTagQueryId;
-        let url = addQueryParam(null, "interaction", 1);
+        var url = setQueryParam(null, "interaction", 1);
+        url = deleteQueryParam(url, "page");
         if(tagElement.classList.contains("tag--selected")) {
             return addQueryParam(url, queryParamKey, tagQueryId);
         } else {

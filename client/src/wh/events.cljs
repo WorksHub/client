@@ -129,6 +129,12 @@
     {:navigate [(:wh.db/page db) :params (:wh.db/page-params db) :query-params query-params]}))
 
 (reg-event-fx
+  ::nav--set-query-param
+  db/default-interceptors
+  (fn [{db :db} [key value]]
+    {:navigate [(:wh.db/page db) :params (:wh.db/page-params db) :query-params (assoc (:wh.db/query-params db) key value)]}))
+
+(reg-event-fx
   ::contribute
   db/default-interceptors
   (fn [_ _]

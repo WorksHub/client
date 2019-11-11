@@ -97,12 +97,14 @@
                           login-step (if (= :company (module-for handler)) :email :root)] ;; if company, show email login
                       {:navigate [:login :params {:step login-step} :query-params {:redirect current-path}]})
                     ;; otherwise
-                    (let [new-db (cond-> db
+                    (let [new-page? (not= (::db/page db) handler)
+                          scroll (if history-state (aget history-state "scroll-position") 0)
+                          new-db (cond-> db
                                          true (-> (assoc ::db/page handler
                                                          ::db/page-params (merge params route-params {})
                                                          ::db/query-params (or query-params {})
                                                          ::db/uri uri
-                                                         ::db/scroll (if history-state (aget history-state "scroll-position") 0))
+                                                         ::db/scroll scroll)
                                                   (update ::db/page-moves inc))
                                          (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
                                          (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
@@ -112,6 +114,13 @@
                                :dispatch-n         [[:error/close-global]
                                                     [::disable-no-scroll]
                                                     [:wh.events/show-chat? true]]}
+                              ;; this forces scrolling to top when moving forward to a new page
+                              ;; but does nothing when moving backward
+                              ;; TODO is this something we want to support? (:scroll-to-x fx?)
+                              ;; at the moment the `:component-did-update` in `pages.router/current-page`
+                              ;; only seems to fire once and never again
+                              (and new-page? (zero? scroll))
+                              (assoc :scroll-to-top true)
                               ;; We only fire on-page-load events when we didn't receive a back-button
                               ;; navigation (i.e. history-state is nil). See pushy/core.cljs.
                               (nil? history-state) (update :dispatch-n (fn [dispatch-events]

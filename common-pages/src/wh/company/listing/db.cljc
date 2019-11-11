@@ -11,7 +11,7 @@
 
 (defn company-sort
   [qps]
-  (get qps "sort" "published"))
+  (get qps "sort" "popular"))
 
 (defn qps->tag-string
   [qps]

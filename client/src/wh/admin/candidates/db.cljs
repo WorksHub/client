@@ -26,7 +26,7 @@
                          (str/join query-param-separator))
    :approval-status (->> (::approval-statuses db)
                          (str/join query-param-separator))
-   :page            (name (::page db))})
+   :page            (::page db)})
 
 (defn default-db [db]
   (let [query-params (::db/query-params db)

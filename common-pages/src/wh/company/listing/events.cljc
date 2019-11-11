@@ -57,7 +57,7 @@
   (fn [{db :db} [tag-query-value tag-element]]
     (when tag-element
       (let [add? (.contains (.-classList tag-element) "tag--selected")
-            qps (:wh.db/query-params db)
+            qps (dissoc (:wh.db/query-params db) "page")
             qps (cond (and (not add?) (or (= 1 (count (get qps "tag")))
                                           (not (coll? (get qps "tag")))))
                       (dissoc qps "tag")
@@ -108,4 +108,6 @@
 #?(:cljs
    (defmethod on-page-load :companies [db]
      (list (into [:graphql/query] (initial-query db))
-           [::init-tags])))
+           [::init-tags]
+           (when (> (:wh.db/page-moves db) 1)
+             [:wh.events/scroll-to-top]))))

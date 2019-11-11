@@ -75,6 +75,6 @@
 (reg-sub
   ::sorting-options
   (fn [db _]
-    [#_{:id :popular   :label  "Popular"} ;; TODO put this back when we get to Company sort story
-     {:id :published :label  "Most Recent"}
-     {:id :alpha     :label  "Name"}]))
+    [{:id :popular  :label  "Popular"}
+     {:id :updated  :label  "Most Recent"}
+     {:id :alpha    :label  "Name"}]))

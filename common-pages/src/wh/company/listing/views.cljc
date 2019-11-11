@@ -87,15 +87,14 @@
                          "companies__count"
                          (when loading? "skeleton"))}
           [:span (<sub [::subs/companies-count-str])]]
-         ;; TODO FIX THIS IN NEXT PR
-         #_[:div.companies__sorting__dropdown-container
-            [:span.companies__sorting__dropdown-label "Sort by:"]
-            [forms/select-field
-             {:solo?     true
-              :value     (<sub [::subs/sorting-by])
-              :class     "companies__sorting__dropdown"
-              :options   (<sub [::subs/sorting-options])
-              :on-change (interop-forms/add-select-value-to-url "sort" (<sub [::subs/sorting-options]))}]]]
+         [:div.companies__sorting__dropdown-container
+          [:span.companies__sorting__dropdown-label "Sort by:"]
+          [forms/select-field
+           {:solo?     true
+            :value     (<sub [::subs/sorting-by])
+            :class     "companies__sorting__dropdown"
+            :options   (<sub [::subs/sorting-options])
+            :on-change (interop-forms/add-select-value-to-url "sort" (<sub [::subs/sorting-options]))}]]]
         (doall
           (for [company companies]
             ^{:key (:id company)}

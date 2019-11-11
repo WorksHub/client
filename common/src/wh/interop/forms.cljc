@@ -30,10 +30,10 @@
 (defn add-select-value-to-url
   [query-param-name options]
   #?(:clj (str "let v=" (str (unparse-arg (map (comp name :id) options)) "[this.value];")
-               (str "window.location = " (->jsfn "setQueryParams" false (hash-map (name query-param-name) 'v)) ".href"))
+               (str "window.location = " (->jsfn "setQueryParam" false (name query-param-name) 'v) ".href"))
      :cljs (fn [e]
              (let [v (nth (map (comp name :id) options) (js/parseInt (.-value (.-target e))))]
-               (dispatch [:wh.events/nav--query-params (hash-map query-param-name v)])))))
+               (dispatch [:wh.events/nav--set-query-param query-param-name v])))))
 
 (defn add-tag-value-to-url
   [query-param-name on-change-event]
