@@ -81,8 +81,9 @@
     {:db (update-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs] util/toggle id)
      :dispatch (case action
                      :reload-recommended [:personalised-jobs/fetch-jobs-by-type :recommended 1]
+                     :reload-liked [:personalised-jobs/fetch-jobs-by-type :liked 1]
                      :reload-dashboard [:wh.logged-in.dashboard.events/fetch-recommended-jobs]
-                     :reload-liked [:personalised-jobs/fetch-jobs-by-type :liked 1])}))
+                     [])}))
 
 (reg-event-fx
  ::toggle-job-like
