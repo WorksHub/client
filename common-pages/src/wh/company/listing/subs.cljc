@@ -17,13 +17,7 @@
     (reaction
       (let [qps (<sub [:wh/query-params])
             {:keys [companies pagination]}
-            (:search-companies (<sub [:graphql/result
-                                      :search_companies
-                                      (merge {:page_number (pagination/qps->page-number qps)
-                                              :page_size   listing/page-size
-                                              :sort        (listing/company-sort qps)}
-                                             (when-let [tag-string (listing/qps->tag-string qps)]
-                                               {:tag_string tag-string}))]))]
+            (:search-companies (<sub [:graphql/result :search_companies (listing/qps->query-body qps)]))]
         {:pagination pagination
          :companies (map listing/->company companies)}))))
 
@@ -71,6 +65,12 @@
   :<- [:wh/query-params]
   (fn [qps _]
     (keyword (listing/company-sort qps))))
+
+(reg-sub
+  ::live-jobs-only?
+  :<- [:wh/query-params]
+  (fn [qps _]
+    (listing/live-jobs-only qps)))
 
 (reg-sub
   ::sorting-options

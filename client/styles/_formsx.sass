@@ -80,6 +80,8 @@ $logo-dimension: 62px
     height: $field-height
     width: 100%
     line-height: $field-height
+    &:after
+      border-color: $steel-gray !important
   .text-field-control
     @include form-fieldx
     &:focus-within
@@ -282,10 +284,10 @@ $logo-dimension: 62px
 .checkbox
   color: $steel-gray
   input[type=checkbox]
-    .checkbox__box
-      visibility: hidden
-      width: 0
-      &:checked + label
+    visibility: hidden
+    width: 0
+    &:checked + label
+      .checkbox__box
         background-repeat: no-repeat
         background-position: 3px 4px
         background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiNmZjdjNmUiLz48L3N2Zz4=")
