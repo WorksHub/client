@@ -36,9 +36,9 @@
 
 (reg-sub
  ::recommended-jobs
- :<- [::jobs]
- (fn [all-jobs]
-   (::personalised-jobs/jobs all-jobs)))
+ :<- [::personalised-jobs]
+ (fn [personalised-jobs]
+   (::personalised-jobs/jobs personalised-jobs)))
 
 (reg-sub
   ::show-load-more?
