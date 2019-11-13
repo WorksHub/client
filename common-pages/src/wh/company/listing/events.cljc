@@ -20,13 +20,15 @@
                      :operation/name "search_companies"}
    :venia/variables [{:variable/name "page_number" :variable/type :Int}
                      {:variable/name "page_size" :variable/type :Int}
+                     {:variable/name "tag_string" :variable/type :String}
                      {:variable/name "sort" :variable/type :companies_sort}
-                     {:variable/name "tag_string" :variable/type :String}]
+                     {:variable/name "live_jobs" :variable/type :live_job_query_type}]
    :venia/queries   [[:search_companies
                       {:page_number :$page_number
                        :page_size   :$page_size
+                       :tag_string  :$tag_string
                        :sort        :$sort
-                       :tag_string  :$tag_string}
+                       :live_jobs   :$live_jobs}
                       [[:pagination [:total :count]]
                        [:companies :fragment/companyCardFields]]]]})
 
@@ -42,11 +44,7 @@
 (defn initial-query [db]
   (let [qps (:wh.db/query-params db)]
     ;; TODO search term from URL?
-    [:search_companies (merge {:page_number (pagination/qps->page-number qps)
-                               :page_size   listing/page-size
-                               :sort        (listing/company-sort qps)}
-                              (when-let [tag-string (listing/qps->tag-string qps)]
-                                {:tag_string tag-string}))]))
+    [:search_companies (listing/qps->query-body qps)]))
 
 (defn company-filter-tags-list-query []
   [:company-filter-tags-list {}])
@@ -54,19 +52,19 @@
 (reg-event-fx
   ::on-tag-change
   db/default-interceptors
-  (fn [{db :db} [tag-query-value tag-element]]
+  (fn [{db :db} [qps-key tag-query-value tag-element]]
     (when tag-element
       (let [add? (.contains (.-classList tag-element) "tag--selected")
             qps (dissoc (:wh.db/query-params db) "page")
-            qps (cond (and (not add?) (or (= 1 (count (get qps "tag")))
-                                          (not (coll? (get qps "tag")))))
-                      (dissoc qps "tag")
+            qps (cond (and (not add?) (or (= 1 (count (get qps qps-key)))
+                                          (not (coll? (get qps qps-key)))))
+                      (dissoc qps qps-key)
                       (and (not add?))
-                      (update qps "tag" #(disj (set (util/->vec %)) tag-query-value))
+                      (update qps qps-key #(disj (set (util/->vec %)) tag-query-value))
                       add?
-                      (update qps "tag" #(if %
-                                           (conj (set (util/->vec %)) tag-query-value)
-                                           tag-query-value)))]
+                      (update qps qps-key #(if %
+                                             (conj (set (util/->vec %)) tag-query-value)
+                                             tag-query-value)))]
         #?(:cljs
            (js/resetTagsElementVisibility (js/document.getElementById listing/tag-field-id)))
         {:dispatch [:wh.events/nav--query-params qps]}))))

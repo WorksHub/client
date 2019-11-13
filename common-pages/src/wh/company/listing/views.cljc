@@ -77,11 +77,19 @@
        [:div.companies__main.split-content__main
         [:div.companies__filtering
          [forms/tags-field
-          {:id    listing/tag-field-id
-           :solo? true
-           :placeholder "Search company tags, such as technologies (java, scala, etc) or benefits (remote, pension, etc)"
+          {:id                 listing/tag-field-id
+           :solo?              true
+           :hide-error?        true
+           :placeholder        "Search company tags, such as technologies (java, scala, etc) or benefits (remote, pension, etc)"
            :init-from-js-tags? true
-           :on-change (interop-forms/add-tag-value-to-url "tag" ::events/on-tag-change)}]]
+           :on-change          (interop-forms/add-tag-value-to-url :tag ::events/on-tag-change)}]
+         [forms/labelled-checkbox
+          {:id          (str listing/tag-field-id "__live-jobs")
+           :value       (<sub [::subs/live-jobs-only?])
+           :solo?       true
+           :hide-error? true
+           :label       "Only show hiring companies"
+           :on-change   (interop-forms/add-check-value-to-url :jobs)}]]
         [:div.companies__sorting
          [:div {:class (util/merge-classes
                          "companies__count"
@@ -94,7 +102,7 @@
             :value     (<sub [::subs/sorting-by])
             :class     "companies__sorting__dropdown"
             :options   (<sub [::subs/sorting-options])
-            :on-change (interop-forms/add-select-value-to-url "sort" (<sub [::subs/sorting-options]))}]]]
+            :on-change (interop-forms/add-select-value-to-url :sort (<sub [::subs/sorting-options]))}]]]
         (doall
           (for [company companies]
             ^{:key (:id company)}

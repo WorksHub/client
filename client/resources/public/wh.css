@@ -5899,6 +5899,8 @@ a.navbar-item,
     height: 44px;
     width: 100%;
     padding: 12px; }
+  .wh-formx .select:after {
+    border-color: #6E7F89 !important; }
 
 .wh-formx .text-field-control {
   border-radius: 0;
@@ -6138,10 +6140,10 @@ a.navbar-item,
 
 .checkbox {
   color: #6E7F89; }
-  .checkbox input[type=checkbox] .checkbox__box {
+  .checkbox input[type=checkbox] {
     visibility: hidden;
     width: 0; }
-    .checkbox input[type=checkbox] .checkbox__box:checked + label {
+    .checkbox input[type=checkbox]:checked + label .checkbox__box {
       background-repeat: no-repeat;
       background-position: 3px 4px;
       background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTIgMTAiIHdpZHRoPSIxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTIgMi4xNDc0Mi03LjMzMTg4IDcuODUyNTgtNC42NjgxMi00Ljk5OTkzNiAyLjAwNDg0LTIuMTQ3MjkxIDIuNjYzMjggMi44NTI3NzMgNS4zMjcwNC01LjcwNTU0NnoiIGZpbGw9IiNmZjdjNmUiLz48L3N2Zz4=");
@@ -7709,6 +7711,9 @@ a.navbar-item,
   font-size: 9px;
   font-weight: 500;
   text-transform: uppercase; }
+
+.companies__filtering {
+  margin-bottom: 12px; }
 
 .company-signup,
 .payment-setup {

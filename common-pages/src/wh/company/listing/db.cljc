@@ -4,6 +4,7 @@
     [wh.common.location :as location]
     [wh.common.specs.company :as company-specs]
     [wh.company.profile.db :as profile]
+    [wh.components.pagination :as pagination]
     [wh.util :as util]))
 
 (def page-size 20)
@@ -13,10 +14,24 @@
   [qps]
   (get qps "sort" "popular"))
 
+(defn live-jobs-only
+  [qps]
+  (boolean (get qps "jobs")))
+
 (defn qps->tag-string
   [qps]
   (when-let [tag-or-tags (get qps "tag")]
     (str/join ";" (util/->vec tag-or-tags))))
+
+(defn qps->query-body
+  [qps]
+  (merge {:page_number (pagination/qps->page-number qps)
+          :page_size page-size
+          :sort        (company-sort qps)}
+         (when-let [tag-string (qps->tag-string qps)]
+           {:tag_string tag-string})
+         (when (live-jobs-only qps)
+           {:live_jobs :some})))
 
 (def tag-sort
   {:industry 1

@@ -78,12 +78,12 @@
   ::toggle-job-like-success
   db/default-interceptors
   (fn [{db :db} [id action]]
-    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs] util/toggle id)
-     :dispatch (case action
-                     :reload-recommended [:personalised-jobs/fetch-jobs-by-type :recommended 1]
-                     :reload-liked [:personalised-jobs/fetch-jobs-by-type :liked 1]
-                     :reload-dashboard [:wh.logged-in.dashboard.events/fetch-recommended-jobs]
-                     [])}))
+    (merge {:db (update-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs] util/toggle id)}
+           (when action
+             {:dispatch (case action
+                          :reload-recommended [:personalised-jobs/fetch-jobs-by-type :recommended 1]
+                          :reload-dashboard [:wh.logged-in.dashboard.events/fetch-recommended-jobs]
+                          :reload-liked [:personalised-jobs/fetch-jobs-by-type :liked 1])}))))
 
 (reg-event-fx
  ::toggle-job-like
@@ -133,7 +133,9 @@
   ::nav--set-query-param
   db/default-interceptors
   (fn [{db :db} [key value]]
-    {:navigate [(:wh.db/page db) :params (:wh.db/page-params db) :query-params (assoc (:wh.db/query-params db) key value)]}))
+    {:navigate [(:wh.db/page db) :params (:wh.db/page-params db) :query-params (if (nil? value)
+                                                                                 (dissoc (:wh.db/query-params db) key)
+                                                                                 (assoc (:wh.db/query-params db) key value))]}))
 
 (reg-event-fx
   ::contribute

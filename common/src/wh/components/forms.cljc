@@ -15,7 +15,7 @@
 (defn field-container
   "A generic container for a field. Wraps one or more controls in a
   container widget. Provides support for labels and help messages."
-  [{:keys [label class error help id inline? solo?]} & controls]
+  [{:keys [label class error help id inline? solo? hide-error?]} & controls]
   (vec
     (concat
       [:div
@@ -34,9 +34,10 @@
       (when help
         [[:div.help help]])
       (conj (mapv (fn [control] [:div.control control]) controls)
-            (if (string? error)
-              [:div.field__error.field--invalid error]
-              [:div.field__error.field--invalid.is-invisible "errors go here"])))))
+            (when-not hide-error?
+              (if (string? error)
+                [:div.field__error.field--invalid error]
+                [:div.field__error.field--invalid.is-invisible "errors go here"]))))))
 
 (defn text-input
   "A bare text input. Typically not used standalone, but wrapped as
@@ -111,7 +112,7 @@
         text    (r/atom "")
         id      (or (:id opts) (str (gensym "tags-field")))
         render  (fn [{:keys [collapsed? error label placeholder dirty? read-only empty-label solo? tags
-                             on-change on-tag-click on-toggle-collapse on-add-tag init-from-js-tags?]}]
+                             on-change on-tag-click on-toggle-collapse on-add-tag init-from-js-tags? hide-error?]}]
                   (when (and (not (nil? dirty?))
                              (boolean? dirty?))
                     (reset! dirty dirty?))
@@ -131,6 +132,7 @@
                          :solo?        solo?
                          :class        "tags-text-input"
                          :placeholder  placeholder
+                         :hide-error?  true
                          :on-key-press (when (and on-add-tag (not (str/blank? @text)))
                                          #(if (= (.-key %) "Enter")
                                             (on-add-tag @text)))
@@ -153,9 +155,10 @@
                        [:ul.tags.tags--top-level.tags--selected]
                        [:ul.tags.tags--top-level.tags--unselected
                         [:div.tags-loading "Loading..."]]]]
-                     (if (string? error)
-                       [:div.field__error.field--invalid error]
-                       [:div.field__error.field--invalid.is-invisible "errors go here"])]))]
+                     (when-not hide-error?
+                       (if (string? error)
+                         [:div.field__error.field--invalid error]
+                         [:div.field__error.field--invalid.is-invisible "errors go here"]))]))]
     #?(:cljs (r/create-class
                {:component-did-mount (fn [this]
                                        (js/initTags (js/document.getElementById id))
@@ -196,3 +199,26 @@
                      options
                      (dissoc options :error))
                    (select-input value options)))
+
+(defn labelled-checkbox
+  "Like checkbox-field, but with a different markup."
+  [{:keys [value label disabled? indeterminate? on-change class label-class] :as options}]
+  (let [id (or (:id options) (name (gensym)))]
+    [:div.checkbox {:class (util/merge-classes
+                             class
+                             (when disabled? "checkbox--disabled")
+                             (when indeterminate? "checkbox--indeterminate"))}
+     [:input
+      (merge
+        {:type "checkbox"
+         :id id}
+        (when disabled?
+          {:disabled true})
+        (when #?(:clj value :cljs true)
+          {:checked value})
+        (when on-change
+          (interop-forms/on-change-fn on-change)))]
+     [:label {:for id
+              :class label-class}
+      [:div {:class "checkbox__box"}]
+      label]]))
