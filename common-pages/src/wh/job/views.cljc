@@ -123,7 +123,7 @@
    :on-click #(dispatch [:wh.events/toggle-job-like
                          {:id    (<sub [::subs/id])
                           :company-name (<sub [::subs/company-name])
-                          :title (<sub [::subs/title])} :none])])
+                          :title (<sub [::subs/title])}])])
 
 ;; XXX: move dupe to wh.components.overlays?
 (defn notes-overlay
