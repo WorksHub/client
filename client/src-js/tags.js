@@ -180,7 +180,7 @@ function initTagList(tagJson) {
 }
 
 function initTags(tagBox) {
-    if(whTags && whTags.length > 0) {
+    if(tagBox && whTags && whTags.length > 0) {
         let selectedTags = parseSelectedTags();
         let tagParents = [{parent:   tagBox.querySelector("ul.tags.tags--unselected"),
                            groups:   true,
