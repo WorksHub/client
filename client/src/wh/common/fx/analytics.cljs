@@ -70,5 +70,6 @@
     (alias db)
     (identify db)
     (track ["Account Created" data])
-    (track-linkedin)
-    (track-reddit)))
+    (track-reddit)
+    (when (= "company" (:type data))
+      (track-linkedin))))

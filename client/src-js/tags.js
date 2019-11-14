@@ -88,13 +88,22 @@ function handleTagChange(tagBox, queryParamKey) {
 
         let tagElement = tagBox.focusedTag;
         let tagQueryId = tagBox.focusedTagQueryId;
+        let adding = tagElement.classList.contains("tag--selected");
         var url = setQueryParam(null, "interaction", 1);
         url = deleteQueryParam(url, "page");
-        if(tagElement.classList.contains("tag--selected")) {
-            return addQueryParam(url, queryParamKey, tagQueryId);
+        if(tagQueryId.endsWith(":size")) {
+            if(adding) {
+                return setQueryParam(url, "size", tagQueryId.split(":")[0]);
+            } else {
+                return deleteQueryParam(url, "size");
+            }
         } else {
-            return removeQueryParam(url, queryParamKey, tagQueryId);
-        };
+            if(adding) {
+                return addQueryParam(url, queryParamKey, tagQueryId);
+            } else {
+                return removeQueryParam(url, queryParamKey, tagQueryId);
+            }
+        }
     }
 }
 
@@ -105,6 +114,11 @@ function createTagQueryId(slug, type) {
 function parseSelectedTags() {
     var currentUrl = new URL(location.href);
     return currentUrl.searchParams.getAll("tag");
+}
+
+function parseSize() {
+    var currentUrl = new URL(location.href);
+    return currentUrl.searchParams.get("size");
 }
 
 function createIcon(icon) {
@@ -182,6 +196,7 @@ function initTagList(tagJson) {
 function initTags(tagBox) {
     if(tagBox && whTags && whTags.length > 0) {
         let selectedTags = parseSelectedTags();
+        let sizeValue = parseSize();
         let tagParents = [{parent:   tagBox.querySelector("ul.tags.tags--unselected"),
                            groups:   true,
                            icon:     false,
@@ -212,7 +227,8 @@ function initTags(tagBox) {
                 createTag({tag:         tag,
                            parent:      currentGroup,
                            grandParent: tagBox,
-                           isSelected:  (-1 != selectedTags.indexOf(createTagQueryId(tag.slug, tag.type))),
+                           isSelected:  ((-1 != selectedTags.indexOf(createTagQueryId(tag.slug, tag.type))) ||
+                                         (tag.type==="size" && tag.slug===sizeValue)),
                            hasIcon:     tagParents[k].icon});
             }
             for(let j = (tagGroups.length - 1); j >= 0; j--) {

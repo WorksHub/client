@@ -114,7 +114,7 @@
        :dispatch-n                (concat []
                                           (when logo [[:wh.common.logo/fetch-clearbit-logo logo
                                                        ::logo-upload-success ::logo-upload-failure]]))
-       :analytics/account-created [{:source :email :email email} db]
+       :analytics/account-created [{:source :email :email email :type "company"} db]
        :analytics/track           ["Company Created" {:id   company-id
                                                       :name (::register/company-name register-db)
                                                       :user {:id (get-in data [:data :create_company_and_user :user :id])}}]})))

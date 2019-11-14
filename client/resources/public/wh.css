@@ -17695,6 +17695,12 @@ h3 {
   .tag--type-funding .icon {
     fill: #87a7b4; }
 
+.tag--type-size {
+  background-color: #ecf2f9;
+  color: #437fcc; }
+  .tag--type-size .icon {
+    fill: #437fcc; }
+
 .edit-tags section {
   margin-bottom: 0px; }
 
