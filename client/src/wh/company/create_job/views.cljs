@@ -4,20 +4,16 @@
     [rcslider :as slider]
     [re-frame.core :refer [dispatch]]
     [reagent.core :as r]
-    [wh.common.data :as data]
-    [wh.common.text :as txt]
     [wh.common.upload :as upload]
     [wh.company.components.forms.views :refer [rich-text-field]]
     [wh.company.create-job.db :as create-job]
     [wh.company.create-job.events :as events]
     [wh.company.create-job.subs :as subs]
-    [wh.company.edit.subs :as edit-subs]
     [wh.components.common :refer [link]]
     [wh.components.forms.views :as f
      :refer [labelled-checkbox field-container
              select-field text-field radio-buttons tags-field logo-field]]
     [wh.components.icons :refer [icon]]
-    [wh.components.navbar :as nav-common]
     [wh.components.verticals :as vertical-views]
     [wh.db :as db]
     [wh.subs :refer [<sub error-sub-key]]
@@ -195,16 +191,6 @@
                            :label (if admin? "* Description"
                                       "* Responsibilities, duties and detailed tech requirements"))]])
 
-(defn integrations
-  []
-  [:fieldset.job-edit__integrations
-   [:h2 "Integrations"]
-   [text-field nil (field ::create-job/ats-job-id
-                          :label (str (<sub [::subs/ats-name]) " Job ID")
-                          :suggestions (<sub [::subs/ats-jobs])
-                          :hide-icon? true
-                          :on-select-suggestion [::events/edit-ats-job-id])]])
-
 (defn select-company
   []
   ;; we have to do some work to make this validate as 'company-id' but display as 'company__name'
@@ -250,9 +236,7 @@
     [remuneration]
     [skills admin?]
     [location]
-    [description admin?]
-    (when (<sub [::subs/show-integrations?])
-      [integrations])]])
+    [description admin?]]])
 
 (defn company-form
   [_admin?]
@@ -342,6 +326,34 @@
      [labelled-checkbox nil (field ::create-job/approved
                                    :label "Approved")]]]])
 
+(defn ats-pod
+  []
+  (let [heading (str (<sub [::subs/ats-name]) " Integration")]
+    [:div
+     [:div
+      [:h2.is-hidden-desktop heading]]
+     [:div.pod.job-edit__settings-pod.pod__ats
+      [:h1.is-hidden-mobile heading]
+      [:form.wh-formx.wh-formx__layout
+       {:on-submit #(.preventDefault %)}
+       (if (<sub [::subs/need-to-select-account?])
+         [:div
+          [select-field (<sub [::subs/workable-subdomain])
+           {:label     [:span "Workable Account"]
+            :on-change [::events/edit-workable-subdomain]
+            :options   (<sub [::subs/workable-accounts])}]
+          [:button.button.button--medium.is-pulled-right
+           {:id "save-workable-account"
+            :on-click #(dispatch [::events/save-workable-account])
+            :class    (when (<sub [::subs/saving-workable-account?])
+                        "button--inverted button--loading")}
+           (when-not (<sub [::subs/saving-workable-account?])
+             "Save")]]
+         [text-field nil (field ::create-job/ats-job-id
+                                :label (str (<sub [::subs/ats-name]) " Job ID")
+                                :suggestions (<sub [::subs/ats-jobs])
+                                :on-select-suggestion [::events/edit-ats-job-id])])]]]))
+
 (defn company-profile-pod
   []
   (let [slug (<sub [::subs/company-slug])]
@@ -366,7 +378,6 @@
 
 (defn page []
   (let [admin? (<sub [:user/admin?])
-        package (<sub [::subs/package])
         published? (<sub [::subs/published])]
     [:div.main.job-edit
      [:h1 (<sub [::subs/page-title])]
@@ -381,6 +392,8 @@
          :off-verticals (set/difference (set verticals/future-job-verticals) (<sub [::subs/verticals]))
          :toggle-event [::events/toggle-vertical]
          :class-prefix "job-edit"}]
+       (when (<sub [::subs/show-integrations?])
+         [ats-pod])
        (if admin?
          [settings-pod]
          [company-profile-pod])]]

@@ -283,6 +283,12 @@
             (get-server-error-string))))
 
 (reg-sub
+  ::integrations
+  :<- [::sub-db]
+  (fn [db _]
+    (::create-job/company__integrations db)))
+
+(reg-sub
   ::greenhouse-integration?
   :<- [::sub-db]
   (fn [db _]
@@ -293,6 +299,15 @@
   :<- [::sub-db]
   (fn [db _]
     (get-in db [::create-job/company__integrations :workable :enabled])))
+
+(reg-sub
+  ::need-to-select-account?
+  :<- [::integrations]
+  :<- [::workable-integration?]
+  (fn [[integrations workable?] _]
+    (and workable?
+         (not (get-in integrations [:workable :account-subdomain]))
+         (< 1 (count (get-in integrations [:workable :accounts]))))))
 
 (reg-sub
   ::ats-name
@@ -315,6 +330,17 @@
          (filter #(str/includes?
                     (str/lower-case (:label %))
                     (str/lower-case (or (::create-job/ats-job-id db) "")))))))
+
+(reg-sub
+  ::workable-accounts
+  :<- [::sub-db]
+  :<- [::integrations]
+  (fn [[db integrations] _]
+    (->> (get-in integrations [:workable :accounts])
+         (mapv (fn [{:keys [name subdomain] :as account}]
+                 {:label (str name " (" subdomain ")")
+                  :id subdomain}))
+         (concat [{:label "Select an account"}]))))
 
 (reg-sub
   ::show-integrations?
@@ -434,3 +460,18 @@
   :<- [::sub-db]
   (fn [db _]
     (::create-job/company-slug db)))
+
+(reg-sub
+  ::workable-subdomain
+  :<-[::sub-db]
+  (fn [db _]
+    (::create-job/workable-subdomain db)))
+
+(reg-sub
+  ::saving-workable-account?
+  :<- [::sub-db]
+  (fn [db _]
+    (::create-job/saving-workable-account? db)))
+
+
+

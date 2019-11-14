@@ -10401,6 +10401,9 @@ h3 {
   .job-edit__settings-pod .wh-formx {
     padding-top: 18px; } }
 
+.pod__ats {
+  min-height: 210px; }
+
 .job-edit__footer {
   flex-direction: row-reverse; }
   @media screen and (max-width: 1007px) {
