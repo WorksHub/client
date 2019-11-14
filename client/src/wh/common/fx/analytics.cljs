@@ -58,9 +58,12 @@
   (-> (js/Image.)
       (aset "src" "https://alb.reddit.com/snoo.gif?q=CAAHAAABAAoACQAAAAbiHMscAA==&s=Mdk07HNJof2V4iYvOG7Xjze3WPvvGToIlqHu8uuIhLY=")))
 
-(defn track-linkedin []
-  (-> (js/Image.)
-      (aset "src" "https://px.ads.linkedin.com/collect/?pid=1684137&conversionId=1620346&fmt=gif")))
+(defn track-linkedin [registration-type]
+  (let [img (if (= "company" registration-type)
+              "https://px.ads.linkedin.com/collect/?pid=1684137&conversionId=1620346&fmt=gif"
+              "https://px.ads.linkedin.com/collect/?pid=1684137&conversionId=1587249&fmt=gif")]
+    (-> (js/Image.)
+        (aset "src" img))))
 
 (reg-fx
   :analytics/account-created
@@ -71,5 +74,4 @@
     (identify db)
     (track ["Account Created" data])
     (track-reddit)
-    (when (= "company" (:type data))
-      (track-linkedin))))
+    (track-linkedin (:type data))))
