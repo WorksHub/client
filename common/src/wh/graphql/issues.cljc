@@ -67,12 +67,15 @@
                      {:variable/name "page_size"
                       :variable/type :Int}
                      {:variable/name "published"
-                      :variable/type :Boolean}]
+                      :variable/type :Boolean}
+                     {:variable/name "sort"
+                      :variable/type :issues_sort}]
    :venia/queries   [[:query_issues
-                      {:company_id :$id
-                       :published :$published
+                      {:company_id  :$id
+                       :published   :$published
                        :page_number :$page_number
-                       :page_size :$page_size}
+                       :page_size   :$page_size
+                       :sort        :$sort}
                       [[:issues [:fragment/issueListFields]]
                        [:pagination [:total :count :page_size :page_number]]]]]})
 
@@ -86,14 +89,17 @@
                      {:variable/name "page_size"
                       :variable/type :Int}
                      {:variable/name "published"
-                      :variable/type :Boolean}]
+                      :variable/type :Boolean}
+                     {:variable/name "sort"
+                      :variable/type :issues_sort}]
    :venia/queries   [[:company {:id :$id}
                       [:name :logo]]
                      [:query_issues
-                      {:company_id :$id
-                       :published :$published
+                      {:company_id  :$id
+                       :published   :$published
                        :page_number :$page_number
-                       :page_size :$page_size}
+                       :page_size   :$page_size
+                       :sort        :$sort}
                       [[:issues [:fragment/issueListFields]]
                        [:pagination [:total :count :page_size :page_number]]]]]})
 
@@ -111,16 +117,19 @@
                      {:variable/name "page_size"
                       :variable/type :Int}
                      {:variable/name "published"
-                      :variable/type :Boolean}]
+                      :variable/type :Boolean}
+                     {:variable/name "sort"
+                      :variable/type :issues_sort}]
    :venia/queries   [[:company {:id :$id}
                       [:name :logo]]
                      [:query_issues
-                      {:company_id :$id
-                       :repo_name :$repo_name
-                       :repo_owner :$repo_owner
-                       :published :$published
+                      {:company_id  :$id
+                       :repo_name   :$repo_name
+                       :repo_owner  :$repo_owner
+                       :published   :$published
                        :page_number :$page_number
-                       :page_size :$page_size}
+                       :page_size   :$page_size
+                       :sort        :$sort}
                       [[:issues [:fragment/issueListFields]]
                        [:pagination [:total :count :page_size :page_number]]]]
                      [:me [:onboardingMsgs [:company [:connectedGithub]]]]]})

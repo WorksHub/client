@@ -5,6 +5,10 @@
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.components.pagination :as pagination]))
 
+(defn issues-sort
+  [qps]
+  (get qps "sort" "published"))
+
 #?(:cljs (s/def :wh.company/name string?)) ; FIXME: share this between client and server
 #?(:cljs (s/def :wh.company/logo string?))
 
@@ -24,7 +28,6 @@
 
 (def default-db
   {::loading?            false
-   ::sorting-by          :created-at
    ::current-page-number 1
    ::issues              {}})
 
@@ -34,9 +37,7 @@
   (cond-> initial-db
           query_issues
           (update ::sub-db merge
-                  {::issues              (into {} (map (comp (juxt :id identity)
-                                                             gql-issue->issue)
-                                                       (:issues query_issues)))
+                  {::issues (map gql-issue->issue (:issues query_issues))
                    ::page-size           default-page-size
                    ::count               (get-in query_issues [:pagination :total])
                    ::current-page-number (get-in query_issues [:pagination :page_number])

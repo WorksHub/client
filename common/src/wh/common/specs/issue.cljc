@@ -28,6 +28,7 @@
 (s/def :wh.issue/label (s/keys :req-un [:wh.issue.label/name]))
 (s/def :wh.issue/labels (s/coll-of :wh.issue/label))
 (s/def :wh.issue/created-at :wh/date)
+(s/def :wh.issue/added-at :wh/date)
 (s/def :wh.issue/company-id #?(:clj  (s/with-gen
                                        :leona.id/string
                                        (fn [] (gen/fmap
@@ -83,7 +84,8 @@
                                            :wh.issue/github-id
                                            :wh.issue/repo-id
                                            :wh.issue/status]
-                                  :opt-un [:wh.issue/author
+                                  :opt-un [:wh.issue/added-at
+                                           :wh.issue/author
                                            :wh.issue/company
                                            :wh.issue/compensation
                                            :wh.issue/contributors
@@ -123,3 +125,5 @@
                         :cljs :wh/issue))
 
 (s/def :wh/issues (s/coll-of :wh/issue))
+
+(s/def :wh.issues/sort #{:published :compensation})

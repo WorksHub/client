@@ -15,19 +15,15 @@
 
 (reg-sub
   ::sorting-by
-  :<- [::sub-db]
-  (fn [db _]
-    (::issues/sorting-by db)))
+  :<- [:wh/query-params]
+  (fn [qps _]
+    (keyword (issues/issues-sort qps))))
 
 (reg-sub
   ::issues
   :<- [::sub-db]
-  :<- [::sorting-by]
-  (fn [[db sorting-by] _]
-    (let [sort-fn (get common-issue/issue-sorting-fns
-                       sorting-by
-                       :created-at)]
-      (sort-by sort-fn (vals (::issues/issues db))))))
+  (fn [db _]
+    (::issues/issues db)))
 
 (reg-sub
   ::issues-count
@@ -38,9 +34,8 @@
 (reg-sub
   ::sorting-options
   (fn [_ _]
-    [{:id :title      :label "Title"}
-     {:id :repository :label "Repository"}
-     {:id :created-at :label "Created At"}]))
+    [{:id :published :label "Most Recent"}
+     {:id :compensation :label "Reward"}]))
 
 (reg-sub
   ::company

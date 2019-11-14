@@ -1,15 +1,16 @@
 (ns wh.issues.views
   (:require
-    #?(:cljs [wh.components.forms.views :refer [radio-buttons select-field]])
     #?(:cljs [wh.components.github :as github])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     [wh.common.data :as data]
     [wh.common.job :refer [format-job-location]]
     [wh.components.common :refer [link img wrap-img]]
+    [wh.components.forms :as forms]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :as issue]
     [wh.components.pagination :as pagination]
     [wh.how-it-works.views :as how-it-works]
+    [wh.interop.forms :as interop-forms]
     [wh.issue.edit.views :as edit-issue]
     [wh.issues.events :as events]
     [wh.issues.subs :as subs]
@@ -161,16 +162,17 @@
 (defn sorting-component []
   [:div.issues__sorting
    [:div {:class (util/merge-classes
-                    "issues__count"
-                    (when (<sub [::subs/loading?]) "skeleton"))}
+                   "issues__count"
+                   (when (<sub [::subs/loading?]) "skeleton"))}
     [:span (<sub [::subs/issues-count-str])]]
-   #?(:cljs
-      [:div.issues__sorting__dropdown__container.wh-formx
-       [:span.issues__sorting__dropdown__label "Sort by:"]
-       [select-field (<sub [::subs/sorting-by])
-        {:class     "issues__sorting__dropdown"
-         :options   (<sub [::subs/sorting-options])
-         :on-change [::events/sort-by]}]])])
+   [:div.issues__sorting__dropdown__container.wh-formx
+    [:span.issues__sorting__dropdown__label "Sort by:"]
+    [forms/select-field
+     {:solo?     true
+      :value     (<sub [::subs/sorting-by])
+      :class     "issues__sorting__dropdown"
+      :options   (<sub [::subs/sorting-options])
+      :on-change (interop-forms/add-select-value-to-url :sort (<sub [::subs/sorting-options]))}]]])
 
 (defn page []
   (if (and (<sub [::subs/own-company?])
