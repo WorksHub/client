@@ -528,7 +528,8 @@
 
 (def super-admins
   ["charlie@functionalworks.com"
-   "laco@functionalworks.com"
+   "alex@functionalworks.com"
+   "antony@functionalworks.com"
    "nick@functionalworks.com"])
 
 (def default-notification-settings
