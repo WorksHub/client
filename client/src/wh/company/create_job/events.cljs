@@ -105,6 +105,12 @@
     (assoc db ::create-job/ats-job-id new-value)))
 
 (reg-event-db
+  ::edit-workable-subdomain
+  create-job-interceptors
+  (fn [db [new-value]]
+    (assoc db ::create-job/workable-subdomain new-value)))
+
+(reg-event-db
   ::toggle-vertical
   create-job-interceptors
   (fn [db [new-value]]
@@ -171,6 +177,34 @@
                    :variables  (variables db)
                    :on-success [::create-job-success]
                    :on-failure [::create-job-error]}}))))
+
+(reg-event-fx
+  ::save-workable-account
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [sub-db (::create-job/sub-db db)
+          company {:id (::create-job/company-id sub-db)
+                   :integrations {:workable {:accountSubdomain (::create-job/workable-subdomain sub-db)}}}]
+      {:db      (assoc-in db [::create-job/sub-db ::create-job/saving-workable-account?] true)
+       :graphql {:query update-company-mutation
+                 :variables {:update_company company}
+                 :on-success [::save-workable-account-success]
+                 :on-failure [::save-workable-account-error]}})))
+
+(reg-event-db
+  ::save-workable-account-success
+  create-job-interceptors
+  (fn [db _]
+    (-> db
+        (assoc ::create-job/saving? false)
+        (assoc-in [::create-job/company__integrations :workable :account-subdomain] (::create-job/workable-subdomain db)))))
+
+(reg-event-db
+  ::save-workable-account-error
+  create-job-interceptors
+  (fn [db [resp]]
+    (assoc db ::create-job/saving? false
+              ::create-job/error (util/gql-errors->error-key resp))))
 
 (reg-event-fx
   ::create-job-success

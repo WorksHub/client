@@ -22,13 +22,15 @@
                      {:variable/name "page_size" :variable/type :Int}
                      {:variable/name "tag_string" :variable/type :String}
                      {:variable/name "sort" :variable/type :companies_sort}
-                     {:variable/name "live_jobs" :variable/type :live_job_query_type}]
+                     {:variable/name "live_jobs" :variable/type :live_job_query_type}
+                     {:variable/name "size" :variable/type :company_size}]
    :venia/queries   [[:search_companies
                       {:page_number :$page_number
                        :page_size   :$page_size
                        :tag_string  :$tag_string
                        :sort        :$sort
-                       :live_jobs   :$live_jobs}
+                       :live_jobs   :$live_jobs
+                       :size        :$size}
                       [[:pagination [:total :count]]
                        [:companies :fragment/companyCardFields]]]]})
 
@@ -55,10 +57,17 @@
   (fn [{db :db} [qps-key tag-query-value tag-element]]
     (when tag-element
       (let [add? (.contains (.-classList tag-element) "tag--selected")
+            size? (str/ends-with? tag-query-value ":size")
             qps (dissoc (:wh.db/query-params db) "page")
-            qps (cond (and (not add?) (or (= 1 (count (get qps qps-key)))
-                                          (not (coll? (get qps qps-key)))))
+            qps (cond (and (not size?)
+                           (not add?)
+                           (or (= 1 (count (get qps qps-key)))
+                               (not (coll? (get qps qps-key)))))
                       (dissoc qps qps-key)
+                      (and size? add?)
+                      (assoc qps "size" (first (str/split tag-query-value #":")))
+                      (and size? (not add?))
+                      (dissoc qps "size")
                       (and (not add?))
                       (update qps qps-key #(disj (set (util/->vec %)) tag-query-value))
                       add?
@@ -66,7 +75,14 @@
                                              (conj (set (util/->vec %)) tag-query-value)
                                              tag-query-value)))]
         #?(:cljs
-           (js/resetTagsElementVisibility (js/document.getElementById listing/tag-field-id)))
+           (let [tagbox (js/document.getElementById listing/tag-field-id)]
+             (when size?
+               (let [size-value (first (str/split tag-query-value #":"))]
+                 (run! (fn [e]
+                         (when (and e (not (str/includes? (.toString e.classList) (str "tag--slug-" size-value))))
+                           (.remove e.classList "tag--selected")))
+                       (array-seq (.getElementsByClassName tagbox "tag--type-size tag--selected")))))
+             (js/resetTagsElementVisibility tagbox)))
         {:dispatch [:wh.events/nav--query-params qps]}))))
 
 (defn tags

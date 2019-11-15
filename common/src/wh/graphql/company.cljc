@@ -170,7 +170,9 @@
                       [:descriptionHtml :logo :slug
                        [:tags [:slug :label :type :subtype :id :weight]]
                        [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]
-                                       [:workable [:enabled [:jobs [:id :name]]]]]]]]]})
+                                       [:workable [:enabled :accountSubdomain
+                                                   [:jobs [:id :name]]
+                                                   [:accounts [:subdomain :name]]]]]]]]]})
 
 (defn company-query
   ([id fields]

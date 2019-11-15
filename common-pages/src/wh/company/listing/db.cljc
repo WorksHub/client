@@ -14,6 +14,10 @@
   [qps]
   (get qps "sort" "popular"))
 
+(defn company-size
+  [qps]
+  (get qps "size"))
+
 (defn live-jobs-only
   [qps]
   (boolean (get qps "jobs")))
@@ -31,7 +35,9 @@
          (when-let [tag-string (qps->tag-string qps)]
            {:tag_string tag-string})
          (when (live-jobs-only qps)
-           {:live_jobs :some})))
+           {:live_jobs :some})
+         (when-let [size (company-size qps)]
+           {:size size})))
 
 (def tag-sort
   {:industry 1

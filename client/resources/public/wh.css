@@ -10401,6 +10401,9 @@ h3 {
   .job-edit__settings-pod .wh-formx {
     padding-top: 18px; } }
 
+.pod__ats {
+  min-height: 210px; }
+
 .job-edit__footer {
   flex-direction: row-reverse; }
   @media screen and (max-width: 1007px) {
@@ -17694,6 +17697,12 @@ h3 {
   color: #87a7b4; }
   .tag--type-funding .icon {
     fill: #87a7b4; }
+
+.tag--type-size {
+  background-color: #ecf2f9;
+  color: #437fcc; }
+  .tag--type-size .icon {
+    fill: #437fcc; }
 
 .edit-tags section {
   margin-bottom: 0px; }

@@ -67,13 +67,17 @@
                                                        (html/do->
                                                          (html/content (slurp (io/resource filename)))
                                                          (html/set-attr :id filename)))
+                  ;;TODO is this needed?
                   [:script.load-icons] (html/clone-for [filename (icons-to-load page)]
                                                        (html/do->
                                                          (html/content (format "loadSymbols(\"%s\");" filename))
                                                          (html/set-attr :id (str "load-icons-" filename))))
                   [:script#public] (html/content (load-public-js))
                   [:script#public] (html/transform-content (html/replace-vars {:prefix ""}))
+                  ;;TODO is this needed?
                   [:script#load-symbols-file-fn] (html/transform-content (html/replace-vars {:prefix ""}))
+                  [:div#app] (html/set-attr :class "")
+                  [:div#app-ssr] (html/set-attr :class "app--hidden")
                   [:div#app-js] (html/content {:tag :script, :attrs {:type "text/javascript", :src "/js/wh.js"}})
                   [:div#tracking-popup-container] (html/content (->html (tracking/popup)))
                   [:div#auth-popup-container] (html/content (->html (auth/popup (verticals/config vertical :platform-name))))

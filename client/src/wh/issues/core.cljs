@@ -23,6 +23,7 @@
 
 (dispatch-sync [::edit-issue/initialize-db])
 (dispatch-sync [::initialize-page-mapping])
+(dispatch-sync [:wh.pages.core/unset-loader])
 
 ;; load extra symbols
 (let [symbol-filename "symbols/issues.svg"]

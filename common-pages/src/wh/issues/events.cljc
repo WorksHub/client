@@ -31,12 +31,6 @@
   (fn [db [{:keys [data]}]]
     (issues/update-issues-db db data)))
 
-(reg-event-db
-  ::sort-by
-  issues-interceptors
-  (fn [db [sort-key]]
-    (assoc db ::issues/sorting-by sort-key)))
-
 #?(:cljs
    (defn fetch-issues-query
      [db company-id]
@@ -55,10 +49,11 @@
                          {::issues/loading?   true
                           ::issues/company-id company-id})
         :graphql {:query      (fetch-issues-query db company-id)
-                  :variables  {:id             company-id
-                               :page_size      issues/default-page-size
-                               :published true
-                               :page_number    (or page-number 1)}
+                  :variables  {:id          company-id
+                               :page_size   issues/default-page-size
+                               :published   true
+                               :page_number (or page-number 1)
+                               :sort        (issues/issues-sort (::db/query-params db))}
                   :on-success [::fetch-issues-success]
                   :on-failure [::failure ::fetch-issues]}})))
 

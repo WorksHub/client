@@ -74,6 +74,7 @@
             ::pending-company-description nil
             ::logo-uploading? false
             ::search-address ""
+            ::workable-subdomain ""
             ::form-errors nil}
            (when-let [company (get-in db [::user/sub-db ::user/company])]
              {::company-id (:id company)
