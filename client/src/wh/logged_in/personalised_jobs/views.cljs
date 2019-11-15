@@ -13,7 +13,7 @@
   [type-of-jobs]
   (case type-of-jobs
     :recommended {:on-close :reload-recommended
-                  :sub [::subs/recommended/jobs]
+                  :sub [::subs/recommended-jobs]
                   :message [[:p "Add some skills and preferred locations to your profile to see recommendations."]]}
     :liked       {:on-close :reload-liked
                   :sub [::subs/liked-jobs]
@@ -29,11 +29,8 @@
       (when (= type-of-jobs :recommended)
         [:div.has-bottom-margin
          [link [:button.button "Improve recommendations"] :improve-recommendations :class "level-item"]])]]
-    (let [{on-close :on-close
-           subscription :sub
-           message :message
-           :or {:on-close nil}} (job-type-data type-of-jobs)
-          parts (partition-all 3 (<sub subscription))
+    (let [{:keys [on-close sub message] :or {on-close nil}} (job-type-data type-of-jobs)
+          parts (partition-all 3 (<sub sub))
           has-applied? (some? (<sub [:user/applied-jobs]))]
       (cond
         (seq parts) (conj (vec (for [part parts]
