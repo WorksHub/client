@@ -29,7 +29,7 @@
       (when (= type-of-jobs :recommended)
         [:div.has-bottom-margin
          [link [:button.button "Improve recommendations"] :improve-recommendations :class "level-item"]])]]
-    (let [{:keys [on-close sub message] :or {on-close nil}} (job-type-data type-of-jobs)
+    (let [{:keys [on-close sub message]} (job-type-data type-of-jobs)
           parts (partition-all 3 (<sub sub))
           has-applied? (some? (<sub [:user/applied-jobs]))]
       (cond
