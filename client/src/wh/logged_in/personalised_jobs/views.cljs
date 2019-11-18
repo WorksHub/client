@@ -9,6 +9,18 @@
     [wh.logged-in.personalised-jobs.subs :as subs]
     [wh.subs :refer [<sub]]))
 
+(defn job-type-data
+  [type-of-jobs]
+  (case type-of-jobs
+    :recommended {:on-close :reload-recommended
+                  :sub [::subs/recommended-jobs]
+                  :message [[:p "Add some skills and preferred locations to your profile to see recommendations."]]}
+    :liked       {:on-close :reload-liked
+                  :sub [::subs/liked-jobs]
+                  :message [[:p "Click on some " [icon "like" :class "like red-fill"] " to save jobs you like."]]}
+    :applied     {:sub [::subs/applied-jobs]
+                  :message [[:p "You haven't applied for any jobs yet... " [link "What are you waiting for?" :jobsboard :class "a--underlined"] "."]]}))
+
 (defn page [type-of-jobs]
   (into
     [:div.main
@@ -17,7 +29,8 @@
       (when (= type-of-jobs :recommended)
         [:div.has-bottom-margin
          [link [:button.button "Improve recommendations"] :improve-recommendations :class "level-item"]])]]
-    (let [parts (partition-all 3 (<sub [::subs/jobs]))
+    (let [{:keys [on-close sub message]} (job-type-data type-of-jobs)
+          parts (partition-all 3 (<sub sub))
           has-applied? (some? (<sub [:user/applied-jobs]))]
       (cond
         (seq parts) (conj (vec (for [part parts]
@@ -26,16 +39,10 @@
                                          [:div.column.is-4
                                           [job-card job (merge {:user-has-applied? has-applied?
                                                                 :logged-in? true}
-                                                               (when (= type-of-jobs :recommended)
-                                                                 {:on-close :reload-recommended})
-                                                               (when (= type-of-jobs :liked)
-                                                                 {:on-close :reload-liked}))]]))))
+                                                               (when on-close
+                                                                 {:on-close on-close}))]]))))
                           [:div.columns.is-centered.load-more-section
                            [:div.column.is-4.has-text-centered
                             (when (<sub [::subs/show-load-more?])
                               [:button.button {:on-click #(dispatch [::events/load-more type-of-jobs])} "Load more Jobs"])]])
-        :else (case type-of-jobs
-                :recommended [[:p "Add some skills and preffered locations to your profile to see recommendations."]]
-                :liked [[:p "Click on some " [icon "like" :class "like red-fill"] " to save jobs you like."]]
-                :applied [[:p "You haven't applied for any jobs yet... " [link "What are you waiting for?" :jobsboard :class "a--underlined"] "."]]
-                [[:p "No jobs found."]])))))
+        :else (or message [[:p "No jobs found."]])))))
