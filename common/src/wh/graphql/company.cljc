@@ -24,8 +24,7 @@
                      :operation/name "company"}
    :venia/variables [{:variable/name "slug"
                       :variable/type :String!}]
-   :venia/queries [[:company {:slug :$slug}
-                    :fragment/companyCardFields]]})
+   :venia/queries [[:company {:slug :$slug}]]})
 
 (defquery fetch-company-blogs-and-issues-query
   {:venia/operation {:operation/type :query

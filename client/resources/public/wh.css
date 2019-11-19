@@ -599,7 +599,7 @@ table th {
   color: white !important; }
 
 a.has-text-white:hover, a.has-text-white:focus {
-  color: #e6e6e6 !important; }
+  color: #e6e5e5 !important; }
 
 .has-background-white {
   background-color: white !important; }
@@ -1119,14 +1119,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
     margin-left: 80%; }
   .columns.is-mobile > .column.is-1 {
     flex: none;
-    width: 8.33333%; }
+    width: 8.3333333333%; }
   .columns.is-mobile > .column.is-offset-1 {
-    margin-left: 8.33333%; }
+    margin-left: 8.3333333333%; }
   .columns.is-mobile > .column.is-2 {
     flex: none;
-    width: 16.66667%; }
+    width: 16.6666666667%; }
   .columns.is-mobile > .column.is-offset-2 {
-    margin-left: 16.66667%; }
+    margin-left: 16.6666666667%; }
   .columns.is-mobile > .column.is-3 {
     flex: none;
     width: 25%; }
@@ -1134,14 +1134,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
     margin-left: 25%; }
   .columns.is-mobile > .column.is-4 {
     flex: none;
-    width: 33.33333%; }
+    width: 33.3333333333%; }
   .columns.is-mobile > .column.is-offset-4 {
-    margin-left: 33.33333%; }
+    margin-left: 33.3333333333%; }
   .columns.is-mobile > .column.is-5 {
     flex: none;
-    width: 41.66667%; }
+    width: 41.6666666667%; }
   .columns.is-mobile > .column.is-offset-5 {
-    margin-left: 41.66667%; }
+    margin-left: 41.6666666667%; }
   .columns.is-mobile > .column.is-6 {
     flex: none;
     width: 50%; }
@@ -1149,14 +1149,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
     margin-left: 50%; }
   .columns.is-mobile > .column.is-7 {
     flex: none;
-    width: 58.33333%; }
+    width: 58.3333333333%; }
   .columns.is-mobile > .column.is-offset-7 {
-    margin-left: 58.33333%; }
+    margin-left: 58.3333333333%; }
   .columns.is-mobile > .column.is-8 {
     flex: none;
-    width: 66.66667%; }
+    width: 66.6666666667%; }
   .columns.is-mobile > .column.is-offset-8 {
-    margin-left: 66.66667%; }
+    margin-left: 66.6666666667%; }
   .columns.is-mobile > .column.is-9 {
     flex: none;
     width: 75%; }
@@ -1164,14 +1164,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
     margin-left: 75%; }
   .columns.is-mobile > .column.is-10 {
     flex: none;
-    width: 83.33333%; }
+    width: 83.3333333333%; }
   .columns.is-mobile > .column.is-offset-10 {
-    margin-left: 83.33333%; }
+    margin-left: 83.3333333333%; }
   .columns.is-mobile > .column.is-11 {
     flex: none;
-    width: 91.66667%; }
+    width: 91.6666666667%; }
   .columns.is-mobile > .column.is-offset-11 {
-    margin-left: 91.66667%; }
+    margin-left: 91.6666666667%; }
   .columns.is-mobile > .column.is-12 {
     flex: none;
     width: 100%; }
@@ -1230,14 +1230,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 80%; }
     .column.is-1-mobile {
       flex: none;
-      width: 8.33333%; }
+      width: 8.3333333333%; }
     .column.is-offset-1-mobile {
-      margin-left: 8.33333%; }
+      margin-left: 8.3333333333%; }
     .column.is-2-mobile {
       flex: none;
-      width: 16.66667%; }
+      width: 16.6666666667%; }
     .column.is-offset-2-mobile {
-      margin-left: 16.66667%; }
+      margin-left: 16.6666666667%; }
     .column.is-3-mobile {
       flex: none;
       width: 25%; }
@@ -1245,14 +1245,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 25%; }
     .column.is-4-mobile {
       flex: none;
-      width: 33.33333%; }
+      width: 33.3333333333%; }
     .column.is-offset-4-mobile {
-      margin-left: 33.33333%; }
+      margin-left: 33.3333333333%; }
     .column.is-5-mobile {
       flex: none;
-      width: 41.66667%; }
+      width: 41.6666666667%; }
     .column.is-offset-5-mobile {
-      margin-left: 41.66667%; }
+      margin-left: 41.6666666667%; }
     .column.is-6-mobile {
       flex: none;
       width: 50%; }
@@ -1260,14 +1260,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 50%; }
     .column.is-7-mobile {
       flex: none;
-      width: 58.33333%; }
+      width: 58.3333333333%; }
     .column.is-offset-7-mobile {
-      margin-left: 58.33333%; }
+      margin-left: 58.3333333333%; }
     .column.is-8-mobile {
       flex: none;
-      width: 66.66667%; }
+      width: 66.6666666667%; }
     .column.is-offset-8-mobile {
-      margin-left: 66.66667%; }
+      margin-left: 66.6666666667%; }
     .column.is-9-mobile {
       flex: none;
       width: 75%; }
@@ -1275,14 +1275,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 75%; }
     .column.is-10-mobile {
       flex: none;
-      width: 83.33333%; }
+      width: 83.3333333333%; }
     .column.is-offset-10-mobile {
-      margin-left: 83.33333%; }
+      margin-left: 83.3333333333%; }
     .column.is-11-mobile {
       flex: none;
-      width: 91.66667%; }
+      width: 91.6666666667%; }
     .column.is-offset-11-mobile {
-      margin-left: 91.66667%; }
+      margin-left: 91.6666666667%; }
     .column.is-12-mobile {
       flex: none;
       width: 100%; }
@@ -1341,14 +1341,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 80%; }
     .column.is-1, .column.is-1-tablet {
       flex: none;
-      width: 8.33333%; }
+      width: 8.3333333333%; }
     .column.is-offset-1, .column.is-offset-1-tablet {
-      margin-left: 8.33333%; }
+      margin-left: 8.3333333333%; }
     .column.is-2, .column.is-2-tablet {
       flex: none;
-      width: 16.66667%; }
+      width: 16.6666666667%; }
     .column.is-offset-2, .column.is-offset-2-tablet {
-      margin-left: 16.66667%; }
+      margin-left: 16.6666666667%; }
     .column.is-3, .column.is-3-tablet {
       flex: none;
       width: 25%; }
@@ -1356,14 +1356,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 25%; }
     .column.is-4, .column.is-4-tablet {
       flex: none;
-      width: 33.33333%; }
+      width: 33.3333333333%; }
     .column.is-offset-4, .column.is-offset-4-tablet {
-      margin-left: 33.33333%; }
+      margin-left: 33.3333333333%; }
     .column.is-5, .column.is-5-tablet {
       flex: none;
-      width: 41.66667%; }
+      width: 41.6666666667%; }
     .column.is-offset-5, .column.is-offset-5-tablet {
-      margin-left: 41.66667%; }
+      margin-left: 41.6666666667%; }
     .column.is-6, .column.is-6-tablet {
       flex: none;
       width: 50%; }
@@ -1371,14 +1371,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 50%; }
     .column.is-7, .column.is-7-tablet {
       flex: none;
-      width: 58.33333%; }
+      width: 58.3333333333%; }
     .column.is-offset-7, .column.is-offset-7-tablet {
-      margin-left: 58.33333%; }
+      margin-left: 58.3333333333%; }
     .column.is-8, .column.is-8-tablet {
       flex: none;
-      width: 66.66667%; }
+      width: 66.6666666667%; }
     .column.is-offset-8, .column.is-offset-8-tablet {
-      margin-left: 66.66667%; }
+      margin-left: 66.6666666667%; }
     .column.is-9, .column.is-9-tablet {
       flex: none;
       width: 75%; }
@@ -1386,14 +1386,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 75%; }
     .column.is-10, .column.is-10-tablet {
       flex: none;
-      width: 83.33333%; }
+      width: 83.3333333333%; }
     .column.is-offset-10, .column.is-offset-10-tablet {
-      margin-left: 83.33333%; }
+      margin-left: 83.3333333333%; }
     .column.is-11, .column.is-11-tablet {
       flex: none;
-      width: 91.66667%; }
+      width: 91.6666666667%; }
     .column.is-offset-11, .column.is-offset-11-tablet {
-      margin-left: 91.66667%; }
+      margin-left: 91.6666666667%; }
     .column.is-12, .column.is-12-tablet {
       flex: none;
       width: 100%; }
@@ -1452,14 +1452,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 80%; }
     .column.is-1-touch {
       flex: none;
-      width: 8.33333%; }
+      width: 8.3333333333%; }
     .column.is-offset-1-touch {
-      margin-left: 8.33333%; }
+      margin-left: 8.3333333333%; }
     .column.is-2-touch {
       flex: none;
-      width: 16.66667%; }
+      width: 16.6666666667%; }
     .column.is-offset-2-touch {
-      margin-left: 16.66667%; }
+      margin-left: 16.6666666667%; }
     .column.is-3-touch {
       flex: none;
       width: 25%; }
@@ -1467,14 +1467,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 25%; }
     .column.is-4-touch {
       flex: none;
-      width: 33.33333%; }
+      width: 33.3333333333%; }
     .column.is-offset-4-touch {
-      margin-left: 33.33333%; }
+      margin-left: 33.3333333333%; }
     .column.is-5-touch {
       flex: none;
-      width: 41.66667%; }
+      width: 41.6666666667%; }
     .column.is-offset-5-touch {
-      margin-left: 41.66667%; }
+      margin-left: 41.6666666667%; }
     .column.is-6-touch {
       flex: none;
       width: 50%; }
@@ -1482,14 +1482,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 50%; }
     .column.is-7-touch {
       flex: none;
-      width: 58.33333%; }
+      width: 58.3333333333%; }
     .column.is-offset-7-touch {
-      margin-left: 58.33333%; }
+      margin-left: 58.3333333333%; }
     .column.is-8-touch {
       flex: none;
-      width: 66.66667%; }
+      width: 66.6666666667%; }
     .column.is-offset-8-touch {
-      margin-left: 66.66667%; }
+      margin-left: 66.6666666667%; }
     .column.is-9-touch {
       flex: none;
       width: 75%; }
@@ -1497,14 +1497,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 75%; }
     .column.is-10-touch {
       flex: none;
-      width: 83.33333%; }
+      width: 83.3333333333%; }
     .column.is-offset-10-touch {
-      margin-left: 83.33333%; }
+      margin-left: 83.3333333333%; }
     .column.is-11-touch {
       flex: none;
-      width: 91.66667%; }
+      width: 91.6666666667%; }
     .column.is-offset-11-touch {
-      margin-left: 91.66667%; }
+      margin-left: 91.6666666667%; }
     .column.is-12-touch {
       flex: none;
       width: 100%; }
@@ -1563,14 +1563,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 80%; }
     .column.is-1-desktop {
       flex: none;
-      width: 8.33333%; }
+      width: 8.3333333333%; }
     .column.is-offset-1-desktop {
-      margin-left: 8.33333%; }
+      margin-left: 8.3333333333%; }
     .column.is-2-desktop {
       flex: none;
-      width: 16.66667%; }
+      width: 16.6666666667%; }
     .column.is-offset-2-desktop {
-      margin-left: 16.66667%; }
+      margin-left: 16.6666666667%; }
     .column.is-3-desktop {
       flex: none;
       width: 25%; }
@@ -1578,14 +1578,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 25%; }
     .column.is-4-desktop {
       flex: none;
-      width: 33.33333%; }
+      width: 33.3333333333%; }
     .column.is-offset-4-desktop {
-      margin-left: 33.33333%; }
+      margin-left: 33.3333333333%; }
     .column.is-5-desktop {
       flex: none;
-      width: 41.66667%; }
+      width: 41.6666666667%; }
     .column.is-offset-5-desktop {
-      margin-left: 41.66667%; }
+      margin-left: 41.6666666667%; }
     .column.is-6-desktop {
       flex: none;
       width: 50%; }
@@ -1593,14 +1593,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 50%; }
     .column.is-7-desktop {
       flex: none;
-      width: 58.33333%; }
+      width: 58.3333333333%; }
     .column.is-offset-7-desktop {
-      margin-left: 58.33333%; }
+      margin-left: 58.3333333333%; }
     .column.is-8-desktop {
       flex: none;
-      width: 66.66667%; }
+      width: 66.6666666667%; }
     .column.is-offset-8-desktop {
-      margin-left: 66.66667%; }
+      margin-left: 66.6666666667%; }
     .column.is-9-desktop {
       flex: none;
       width: 75%; }
@@ -1608,14 +1608,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 75%; }
     .column.is-10-desktop {
       flex: none;
-      width: 83.33333%; }
+      width: 83.3333333333%; }
     .column.is-offset-10-desktop {
-      margin-left: 83.33333%; }
+      margin-left: 83.3333333333%; }
     .column.is-11-desktop {
       flex: none;
-      width: 91.66667%; }
+      width: 91.6666666667%; }
     .column.is-offset-11-desktop {
-      margin-left: 91.66667%; }
+      margin-left: 91.6666666667%; }
     .column.is-12-desktop {
       flex: none;
       width: 100%; }
@@ -1674,14 +1674,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 80%; }
     .column.is-1-widescreen {
       flex: none;
-      width: 8.33333%; }
+      width: 8.3333333333%; }
     .column.is-offset-1-widescreen {
-      margin-left: 8.33333%; }
+      margin-left: 8.3333333333%; }
     .column.is-2-widescreen {
       flex: none;
-      width: 16.66667%; }
+      width: 16.6666666667%; }
     .column.is-offset-2-widescreen {
-      margin-left: 16.66667%; }
+      margin-left: 16.6666666667%; }
     .column.is-3-widescreen {
       flex: none;
       width: 25%; }
@@ -1689,14 +1689,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 25%; }
     .column.is-4-widescreen {
       flex: none;
-      width: 33.33333%; }
+      width: 33.3333333333%; }
     .column.is-offset-4-widescreen {
-      margin-left: 33.33333%; }
+      margin-left: 33.3333333333%; }
     .column.is-5-widescreen {
       flex: none;
-      width: 41.66667%; }
+      width: 41.6666666667%; }
     .column.is-offset-5-widescreen {
-      margin-left: 41.66667%; }
+      margin-left: 41.6666666667%; }
     .column.is-6-widescreen {
       flex: none;
       width: 50%; }
@@ -1704,14 +1704,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 50%; }
     .column.is-7-widescreen {
       flex: none;
-      width: 58.33333%; }
+      width: 58.3333333333%; }
     .column.is-offset-7-widescreen {
-      margin-left: 58.33333%; }
+      margin-left: 58.3333333333%; }
     .column.is-8-widescreen {
       flex: none;
-      width: 66.66667%; }
+      width: 66.6666666667%; }
     .column.is-offset-8-widescreen {
-      margin-left: 66.66667%; }
+      margin-left: 66.6666666667%; }
     .column.is-9-widescreen {
       flex: none;
       width: 75%; }
@@ -1719,14 +1719,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 75%; }
     .column.is-10-widescreen {
       flex: none;
-      width: 83.33333%; }
+      width: 83.3333333333%; }
     .column.is-offset-10-widescreen {
-      margin-left: 83.33333%; }
+      margin-left: 83.3333333333%; }
     .column.is-11-widescreen {
       flex: none;
-      width: 91.66667%; }
+      width: 91.6666666667%; }
     .column.is-offset-11-widescreen {
-      margin-left: 91.66667%; }
+      margin-left: 91.6666666667%; }
     .column.is-12-widescreen {
       flex: none;
       width: 100%; }
@@ -1785,14 +1785,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 80%; }
     .column.is-1-fullhd {
       flex: none;
-      width: 8.33333%; }
+      width: 8.3333333333%; }
     .column.is-offset-1-fullhd {
-      margin-left: 8.33333%; }
+      margin-left: 8.3333333333%; }
     .column.is-2-fullhd {
       flex: none;
-      width: 16.66667%; }
+      width: 16.6666666667%; }
     .column.is-offset-2-fullhd {
-      margin-left: 16.66667%; }
+      margin-left: 16.6666666667%; }
     .column.is-3-fullhd {
       flex: none;
       width: 25%; }
@@ -1800,14 +1800,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 25%; }
     .column.is-4-fullhd {
       flex: none;
-      width: 33.33333%; }
+      width: 33.3333333333%; }
     .column.is-offset-4-fullhd {
-      margin-left: 33.33333%; }
+      margin-left: 33.3333333333%; }
     .column.is-5-fullhd {
       flex: none;
-      width: 41.66667%; }
+      width: 41.6666666667%; }
     .column.is-offset-5-fullhd {
-      margin-left: 41.66667%; }
+      margin-left: 41.6666666667%; }
     .column.is-6-fullhd {
       flex: none;
       width: 50%; }
@@ -1815,14 +1815,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 50%; }
     .column.is-7-fullhd {
       flex: none;
-      width: 58.33333%; }
+      width: 58.3333333333%; }
     .column.is-offset-7-fullhd {
-      margin-left: 58.33333%; }
+      margin-left: 58.3333333333%; }
     .column.is-8-fullhd {
       flex: none;
-      width: 66.66667%; }
+      width: 66.6666666667%; }
     .column.is-offset-8-fullhd {
-      margin-left: 66.66667%; }
+      margin-left: 66.6666666667%; }
     .column.is-9-fullhd {
       flex: none;
       width: 75%; }
@@ -1830,14 +1830,14 @@ a.has-text-danger:hover, a.has-text-danger:focus {
       margin-left: 75%; }
     .column.is-10-fullhd {
       flex: none;
-      width: 83.33333%; }
+      width: 83.3333333333%; }
     .column.is-offset-10-fullhd {
-      margin-left: 83.33333%; }
+      margin-left: 83.3333333333%; }
     .column.is-11-fullhd {
       flex: none;
-      width: 91.66667%; }
+      width: 91.6666666667%; }
     .column.is-offset-11-fullhd {
-      margin-left: 91.66667%; }
+      margin-left: 91.6666666667%; }
     .column.is-12-fullhd {
       flex: none;
       width: 100%; }
@@ -2878,27 +2878,27 @@ a.has-text-danger:hover, a.has-text-danger:focus {
   justify-content: flex-start; }
   .field.has-addons .control:not(:last-child) {
     margin-right: -1px; }
-  .field.has-addons .control:not(:first-child):not(:last-child) .button,
+  .field.has-addons .control:not(:first-child):not(:last-child) .button, .field.has-addons .control:not(:first-child):not(:last-child) .button--feeling-lucky,
   .field.has-addons .control:not(:first-child):not(:last-child) .input,
   .field.has-addons .control:not(:first-child):not(:last-child) .select select {
     border-radius: 0; }
-  .field.has-addons .control:first-child:not(:only-child) .button,
+  .field.has-addons .control:first-child:not(:only-child) .button, .field.has-addons .control:first-child:not(:only-child) .button--feeling-lucky,
   .field.has-addons .control:first-child:not(:only-child) .input,
   .field.has-addons .control:first-child:not(:only-child) .select select {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0; }
-  .field.has-addons .control:last-child:not(:only-child) .button,
+  .field.has-addons .control:last-child:not(:only-child) .button, .field.has-addons .control:last-child:not(:only-child) .button--feeling-lucky,
   .field.has-addons .control:last-child:not(:only-child) .input,
   .field.has-addons .control:last-child:not(:only-child) .select select {
     border-bottom-left-radius: 0;
     border-top-left-radius: 0; }
-  .field.has-addons .control .button:not([disabled]):hover, .field.has-addons .control .button:not([disabled]).is-hovered,
+  .field.has-addons .control .button:not([disabled]):hover, .field.has-addons .control .button--feeling-lucky:not([disabled]):hover, .field.has-addons .control .button:not([disabled]).is-hovered, .field.has-addons .control .button--feeling-lucky:not([disabled]).is-hovered,
   .field.has-addons .control .input:not([disabled]):hover,
   .field.has-addons .control .input:not([disabled]).is-hovered,
   .field.has-addons .control .select select:not([disabled]):hover,
   .field.has-addons .control .select select:not([disabled]).is-hovered {
     z-index: 2; }
-  .field.has-addons .control .button:not([disabled]):focus, .field.has-addons .control .button:not([disabled]).is-focused, .field.has-addons .control .button:not([disabled]):active, .field.has-addons .control .button:not([disabled]).is-active,
+  .field.has-addons .control .button:not([disabled]):focus, .field.has-addons .control .button--feeling-lucky:not([disabled]):focus, .field.has-addons .control .button:not([disabled]).is-focused, .field.has-addons .control .button--feeling-lucky:not([disabled]).is-focused, .field.has-addons .control .button:not([disabled]):active, .field.has-addons .control .button--feeling-lucky:not([disabled]):active, .field.has-addons .control .button:not([disabled]).is-active, .field.has-addons .control .button--feeling-lucky:not([disabled]).is-active,
   .field.has-addons .control .input:not([disabled]):focus,
   .field.has-addons .control .input:not([disabled]).is-focused,
   .field.has-addons .control .input:not([disabled]):active,
@@ -2908,7 +2908,7 @@ a.has-text-danger:hover, a.has-text-danger:focus {
   .field.has-addons .control .select select:not([disabled]):active,
   .field.has-addons .control .select select:not([disabled]).is-active {
     z-index: 3; }
-    .field.has-addons .control .button:not([disabled]):focus:hover, .field.has-addons .control .button:not([disabled]).is-focused:hover, .field.has-addons .control .button:not([disabled]):active:hover, .field.has-addons .control .button:not([disabled]).is-active:hover,
+    .field.has-addons .control .button:not([disabled]):focus:hover, .field.has-addons .control .button--feeling-lucky:not([disabled]):focus:hover, .field.has-addons .control .button:not([disabled]).is-focused:hover, .field.has-addons .control .button--feeling-lucky:not([disabled]).is-focused:hover, .field.has-addons .control .button:not([disabled]):active:hover, .field.has-addons .control .button--feeling-lucky:not([disabled]):active:hover, .field.has-addons .control .button:not([disabled]).is-active:hover, .field.has-addons .control .button--feeling-lucky:not([disabled]).is-active:hover,
     .field.has-addons .control .input:not([disabled]):focus:hover,
     .field.has-addons .control .input:not([disabled]).is-focused:hover,
     .field.has-addons .control .input:not([disabled]):active:hover,
@@ -3263,7 +3263,7 @@ button.dropdown-item {
   font-size: 1rem; }
   .message strong {
     color: currentColor; }
-  .message a:not(.button):not(.tag):not(.dropdown-item) {
+  .message a:not(.button):not(.button--feeling-lucky):not(.tag):not(.dropdown-item) {
     color: currentColor;
     text-decoration: underline; }
   .message.is-small {
@@ -3279,7 +3279,7 @@ button.dropdown-item {
       color: #0a0a0a; }
     .message.is-white .message-body {
       border-color: white;
-      color: #4d4d4d; }
+      color: #4d4c4c; }
   .message.is-black {
     background-color: #fafafa; }
     .message.is-black .message-header {
@@ -4343,7 +4343,7 @@ a.navbar-item,
   color: #171717;
   line-height: 27px;
   padding: 15px 15px 0 25px; }
-  .consent-popup .button {
+  .consent-popup .button, .consent-popup .button--feeling-lucky {
     position: absolute;
     bottom: 20px;
     left: 30px; }
@@ -4633,10 +4633,10 @@ a.navbar-item,
         font-size: 12px; } }
   .navbar .navbar-item--register {
     margin-right: 4px; }
-    .navbar .navbar-item--register .button {
+    .navbar .navbar-item--register .button, .navbar .navbar-item--register .button--feeling-lucky {
       width: 135px;
       height: 40px; }
-      .navbar .navbar-item--register .button:hover {
+      .navbar .navbar-item--register .button:hover, .navbar .navbar-item--register .button--feeling-lucky:hover {
         background-color: #ff9f95 !important; }
   .navbar .navbar-item--dropdown {
     cursor: pointer;
@@ -5153,7 +5153,7 @@ a.navbar-item,
   display: flex;
   flex-direction: column;
   align-items: start; }
-  .overlay__buttons .button {
+  .overlay__buttons .button, .overlay__buttons .button--feeling-lucky {
     margin: 5px 0; }
 
 .overlay__close .icon {
@@ -5235,7 +5235,7 @@ a.navbar-item,
   width: 100px;
   animation: spinAround 3s linear infinite; }
 
-.button {
+.button, .button--feeling-lucky {
   background: #ff7c6e;
   display: inline-flex;
   justify-content: center;
@@ -5253,22 +5253,27 @@ a.navbar-item,
   line-height: normal;
   color: white;
   position: relative; }
-  .button:hover {
+  .button:hover, .button--feeling-lucky:hover {
     background: #ff9f95 !important;
     color: white !important;
     cursor: pointer; }
-  .button:focus {
+  .button:focus, .button--feeling-lucky:focus {
     outline: none; }
-  .button[disabled] {
+  .button[disabled], .button--feeling-lucky[disabled] {
     cursor: default;
     opacity: 0.3; }
-  .button img {
+  .button img, .button--feeling-lucky img {
     margin-left: 20px;
     vertical-align: top; }
-  .button .icon {
+  .button .icon, .button--feeling-lucky .icon {
     margin-bottom: 2px;
     width: 18px;
     height: 18px; }
+  .button--feeling-lucky {
+    background: #7eb5bd; }
+    .button--feeling-lucky:hover {
+      background: #a0c8ce !important;
+      color: white !important; }
 
 .button--large {
   height: 50px;
@@ -5747,7 +5752,7 @@ a.navbar-item,
   .wh-form .label__markdown-right a {
     font-weight: 600; }
 
-.wh-form .multiple-buttons .button {
+.wh-form .multiple-buttons .button, .wh-form .multiple-buttons .button--feeling-lucky {
   margin: 4px; }
 
 .wh-form .help--medium {
@@ -6032,7 +6037,7 @@ a.navbar-item,
   .wh-formx .label__markdown-right a {
     font-weight: 600; }
 
-.wh-formx .multiple-buttons .button {
+.wh-formx .multiple-buttons .button, .wh-formx .multiple-buttons .button--feeling-lucky {
   margin: 4px; }
 
 .wh-formx .help--medium {
@@ -6047,13 +6052,13 @@ a.navbar-item,
 .wh-formx .buttons-container {
   display: flex;
   justify-content: flex-end; }
-  .wh-formx .buttons-container .button:not(:last-child) {
+  .wh-formx .buttons-container .button:not(:last-child), .wh-formx .buttons-container .button--feeling-lucky:not(:last-child) {
     margin-right: 12px; }
 
 .wh-formx .help--medium {
   font-size: 1em; }
 
-.wh-formx .button {
+.wh-formx .button, .wh-formx .button--feeling-lucky {
   border-radius: 2px; }
 
 .wh-formx .logo {
@@ -6550,7 +6555,7 @@ a.navbar-item,
   .job-card--skeleton .tags__job li {
     background-color: #ddd !important;
     border-radius: 5px !important; }
-  .job-card--skeleton .button {
+  .job-card--skeleton .button, .job-card--skeleton .button--feeling-lucky {
     background-color: #ddd !important;
     border-radius: 5px !important;
     font-size: 0;
@@ -6595,7 +6600,7 @@ a.navbar-item,
 
 .card-border-color-0:hover {
   border: 8px solid #ffdedb; }
-  .card-border-color-0:hover .button {
+  .card-border-color-0:hover .button, .card-border-color-0:hover .button--feeling-lucky {
     background: #ffdedb; }
   .card-border-color-0:hover .button--inverted {
     background: inherit;
@@ -6607,7 +6612,7 @@ a.navbar-item,
 
 .card-border-color-1:hover {
   border: 8px solid #ffae71; }
-  .card-border-color-1:hover .button {
+  .card-border-color-1:hover .button, .card-border-color-1:hover .button--feeling-lucky {
     background: #ffae71; }
   .card-border-color-1:hover .button--inverted {
     background: inherit;
@@ -6619,7 +6624,7 @@ a.navbar-item,
 
 .card-border-color-2:hover {
   border: 8px solid #ff7c6e; }
-  .card-border-color-2:hover .button {
+  .card-border-color-2:hover .button, .card-border-color-2:hover .button--feeling-lucky {
     background: #ff7c6e; }
   .card-border-color-2:hover .button--inverted {
     background: inherit;
@@ -6631,7 +6636,7 @@ a.navbar-item,
 
 .card-border-color-3:hover {
   border: 8px solid #7eb5bd; }
-  .card-border-color-3:hover .button {
+  .card-border-color-3:hover .button, .card-border-color-3:hover .button--feeling-lucky {
     background: #7eb5bd; }
   .card-border-color-3:hover .button--inverted {
     background: inherit;
@@ -6643,7 +6648,7 @@ a.navbar-item,
 
 .card-border-color-4:hover {
   border: 8px solid #f9e3d4; }
-  .card-border-color-4:hover .button {
+  .card-border-color-4:hover .button, .card-border-color-4:hover .button--feeling-lucky {
     background: #f9e3d4; }
   .card-border-color-4:hover .button--inverted {
     background: inherit;
@@ -6655,7 +6660,7 @@ a.navbar-item,
 
 .card-border-color-5:hover {
   border: 8px solid #97bac9; }
-  .card-border-color-5:hover .button {
+  .card-border-color-5:hover .button, .card-border-color-5:hover .button--feeling-lucky {
     background: #97bac9; }
   .card-border-color-5:hover .button--inverted {
     background: inherit;
@@ -6667,7 +6672,7 @@ a.navbar-item,
 
 .card-border-color-6:hover {
   border: 8px solid #c4d4dd; }
-  .card-border-color-6:hover .button {
+  .card-border-color-6:hover .button, .card-border-color-6:hover .button--feeling-lucky {
     background: #c4d4dd; }
   .card-border-color-6:hover .button--inverted {
     background: inherit;
@@ -6679,7 +6684,7 @@ a.navbar-item,
 
 .card-border-color-7:hover {
   border: 8px solid #6E7F89; }
-  .card-border-color-7:hover .button {
+  .card-border-color-7:hover .button, .card-border-color-7:hover .button--feeling-lucky {
     background: #6E7F89; }
   .card-border-color-7:hover .button--inverted {
     background: inherit;
@@ -7373,7 +7378,7 @@ a.navbar-item,
       flex-direction: column;
       align-items: center; } }
 
-.profile .cv .button {
+.profile .cv .button, .profile .cv .button--feeling-lucky {
   margin: 10px; }
 
 .profile-section__applications__job {
@@ -7435,7 +7440,7 @@ a.navbar-item,
 
 .profile-section__applications__buttons {
   text-align: center; }
-  .profile-section__applications__buttons .button {
+  .profile-section__applications__buttons .button, .profile-section__applications__buttons .button--feeling-lucky {
     width: 120px;
     margin: 6px; }
 
@@ -7447,7 +7452,7 @@ a.navbar-item,
 .login-buttons {
   margin-top: 15vh;
   position: relative; }
-  .login-buttons .button {
+  .login-buttons .button, .login-buttons .button--feeling-lucky {
     margin: 8px 0; }
   .login-buttons .sparkle {
     position: absolute;
@@ -7732,12 +7737,14 @@ a.navbar-item,
     .company-signup .form-error,
     .payment-setup .form-error {
       margin-top: 60px; } }
-  .company-signup .button,
-  .payment-setup .button {
+  .company-signup .button, .company-signup .button--feeling-lucky,
+  .payment-setup .button,
+  .payment-setup .button--feeling-lucky {
     font-weight: 600; }
     @media screen and (max-width: 1007px) {
-      .company-signup .button,
-      .payment-setup .button {
+      .company-signup .button, .company-signup .button--feeling-lucky,
+      .payment-setup .button,
+      .payment-setup .button--feeling-lucky {
         width: 100%;
         margin-top: 20px; } }
 
@@ -8226,7 +8233,7 @@ a.navbar-item,
   margin-bottom: 12px; }
   .company-edit__connected-integration img {
     vertical-align: middle; }
-  .company-edit__connected-integration .button, .company-edit__connected-integration span {
+  .company-edit__connected-integration .button, .company-edit__connected-integration .button--feeling-lucky, .company-edit__connected-integration span {
     vertical-align: middle;
     margin-left: 18px;
     height: 30px;
@@ -8286,7 +8293,7 @@ a.navbar-item,
 .company-edit__admin-pod span.is-error {
   margin: 5px 0; }
 
-.company-edit__admin-pod .button {
+.company-edit__admin-pod .button, .company-edit__admin-pod .button--feeling-lucky {
   margin-top: 5px; }
 
 .activity__container {
@@ -8403,7 +8410,7 @@ a.navbar-item,
 .company-job__buttons {
   position: absolute;
   bottom: 18px; }
-  .company-job__buttons .button {
+  .company-job__buttons .button, .company-job__buttons .button--feeling-lucky {
     margin-right: 12px; }
 
 .add-job {
@@ -8442,11 +8449,11 @@ a.navbar-item,
       .company-applications__title .select {
         margin-bottom: 20px;
         width: 100%; } }
-  .company-applications__title .button {
+  .company-applications__title .button, .company-applications__title .button--feeling-lucky {
     margin-top: 0;
     padding: 0px 100px; }
     @media screen and (max-width: 1007px) {
-      .company-applications__title .button {
+      .company-applications__title .button, .company-applications__title .button--feeling-lucky {
         padding: 0;
         margin-bottom: 20px; } }
   .company-applications__title .icon {
@@ -8727,7 +8734,7 @@ a.navbar-item,
 .company-application.skeleton .tag {
   height: 30px; }
 
-.company-application.skeleton .company-application__cta-buttons .button {
+.company-application.skeleton .company-application__cta-buttons .button, .company-application.skeleton .company-application__cta-buttons .button--feeling-lucky {
   width: 120px; }
 
 .company-application.skeleton .company-application__cta-buttons .button--inverted {
@@ -8764,10 +8771,10 @@ a.navbar-item,
   position: absolute;
   bottom: 20px;
   width: calc(100% - 40px); }
-  .company-application__cta-buttons .button {
+  .company-application__cta-buttons .button, .company-application__cta-buttons .button--feeling-lucky {
     height: 30px; }
 
-.company-application__cta-buttons__application-buttons .button:first-child, .company-application__cta-buttons__admin-buttons .button:first-child {
+.company-application__cta-buttons__application-buttons .button:first-child, .company-application__cta-buttons__application-buttons .button--feeling-lucky:first-child, .company-application__cta-buttons__admin-buttons .button:first-child, .company-application__cta-buttons__admin-buttons .button--feeling-lucky:first-child {
   width: 120px;
   margin-right: 18px; }
 
@@ -8852,9 +8859,9 @@ a.navbar-item,
     margin-bottom: 24px; }
   .company-applications__application-summary .company-applications__tabs {
     margin-bottom: 18px; }
-  .company-applications__application-summary .company-applications__view-applicants .button {
+  .company-applications__application-summary .company-applications__view-applicants .button, .company-applications__application-summary .company-applications__view-applicants .button--feeling-lucky {
     width: 250px; }
-    .company-applications__application-summary .company-applications__view-applicants .button .icon {
+    .company-applications__application-summary .company-applications__view-applicants .button .icon, .company-applications__application-summary .company-applications__view-applicants .button--feeling-lucky .icon {
       width: 12px;
       margin-left: 10px;
       fill: #ff7c6e; }
@@ -9021,11 +9028,11 @@ a.navbar-item,
       margin-bottom: 60px; } }
   .company-edit__payment-details .payment__card-form {
     margin-bottom: 4px; }
-  .company-edit__payment-details .button {
+  .company-edit__payment-details .button, .company-edit__payment-details .button--feeling-lucky {
     width: 200px;
     float: right; }
     @media screen and (max-width: 1007px) {
-      .company-edit__payment-details .button {
+      .company-edit__payment-details .button, .company-edit__payment-details .button--feeling-lucky {
         width: 100%; } }
 
 @-webkit-keyframes status-button-good {
@@ -9137,7 +9144,7 @@ a.navbar-item,
   display: flex;
   justify-content: space-between;
   align-items: flex-end; }
-  .status-button .button {
+  .status-button .button, .status-button .button--feeling-lucky {
     min-width: 200px; }
 
 .status {
@@ -9352,7 +9359,7 @@ a.navbar-item,
 .generic-popup__popup--cancel-plan h1 {
   margin-top: 16px; }
 
-.generic-popup__popup--cancel-plan .button {
+.generic-popup__popup--cancel-plan .button, .generic-popup__popup--cancel-plan .button--feeling-lucky {
   display: block;
   margin: 5px auto;
   width: 260px; }
@@ -10305,7 +10312,7 @@ h3 {
   font-size: 18px; }
 
 @media screen and (max-width: 1007px) {
-  .job-edit .button {
+  .job-edit .button, .job-edit .button--feeling-lucky {
     width: 100%; } }
 
 .job-edit__side-pods {
@@ -10410,10 +10417,10 @@ h3 {
     .job-edit__footer {
       flex-direction: column; } }
   @media screen and (min-width: 1008px) {
-    .job-edit__footer .button {
+    .job-edit__footer .button, .job-edit__footer .button--feeling-lucky {
       margin-left: 10px; } }
   @media screen and (max-width: 1007px) {
-    .job-edit__footer .button {
+    .job-edit__footer .button, .job-edit__footer .button--feeling-lucky {
       margin-top: 10px; } }
 
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
@@ -10485,10 +10492,10 @@ h3 {
     min-width: 246px;
     max-width: 350px; } }
 
-.job__admin-buttons .button {
+.job__admin-buttons .button, .job__admin-buttons .button--feeling-lucky {
   margin-right: 18px; }
   @media screen and (max-width: 1007px) {
-    .job__admin-buttons .button:not(:last-child) {
+    .job__admin-buttons .button:not(:last-child), .job__admin-buttons .button--feeling-lucky:not(:last-child) {
       margin-bottom: 18px; } }
 
 .job__company-header h1, .job__company-header h2, .job__company-header h3 {
@@ -10604,25 +10611,31 @@ h3 {
 .job__candidate-action {
   font-size: 14px;
   line-height: 20px; }
-  .job__company-action .button, .job__company-action .button--skeleton,
+  .job__company-action .button, .job__company-action .button--feeling-lucky, .job__company-action .button--skeleton,
   .job__admin-action .button,
+  .job__admin-action .button--feeling-lucky,
   .job__admin-action .button--skeleton,
   .job__candidate-action .button,
+  .job__candidate-action .button--feeling-lucky,
   .job__candidate-action .button--skeleton {
     width: 100%;
     margin-right: 0;
     margin-bottom: 12px; }
     @media screen and (max-width: 1007px) {
-      .job__company-action .button, .job__company-action .button--skeleton,
+      .job__company-action .button, .job__company-action .button--feeling-lucky, .job__company-action .button--skeleton,
       .job__admin-action .button,
+      .job__admin-action .button--feeling-lucky,
       .job__admin-action .button--skeleton,
       .job__candidate-action .button,
+      .job__candidate-action .button--feeling-lucky,
       .job__candidate-action .button--skeleton {
         margin-bottom: 12px !important; } }
-    .job__company-action .button:last-child, .job__company-action .button--skeleton:last-child,
+    .job__company-action .button:last-child, .job__company-action .button--feeling-lucky:last-child, .job__company-action .button--skeleton:last-child,
     .job__admin-action .button:last-child,
+    .job__admin-action .button--feeling-lucky:last-child,
     .job__admin-action .button--skeleton:last-child,
     .job__candidate-action .button:last-child,
+    .job__candidate-action .button--feeling-lucky:last-child,
     .job__candidate-action .button--skeleton:last-child {
       margin-bottom: 0 !important; }
   .job__company-action .button--skeleton,
@@ -10752,7 +10765,7 @@ h3 {
   .job__apply-on-behalf .candidate .email {
     flex-basis: 70%; }
 
-.job__apply-on-behalf .button {
+.job__apply-on-behalf .button, .job__apply-on-behalf .button--feeling-lucky {
   float: none;
   margin-bottom: 0px !important; }
 
@@ -10870,9 +10883,9 @@ h3 {
     margin-right: 18px;
     min-width: 32px;
     height: 32px; }
-  .job__lower-cta .button {
+  .job__lower-cta .button, .job__lower-cta .button--feeling-lucky {
     min-width: 145px; }
-    .job__lower-cta .button:first-of-type {
+    .job__lower-cta .button:first-of-type, .job__lower-cta .button--feeling-lucky:first-of-type {
       margin-right: 5px; }
   .job__lower-cta div:nth-of-type(2) {
     min-width: 305px; }
@@ -10899,7 +10912,7 @@ h3 {
   height: 54px;
   width: 100%;
   top: -10px; }
-  .job__apply-sticky .button {
+  .job__apply-sticky .button, .job__apply-sticky .button--feeling-lucky {
     height: 30px; }
 
 .job__apply-sticky__title {
@@ -11017,23 +11030,24 @@ h3 {
   .job__company-issues .issue .tags {
     margin-bottom: -6px; }
 
-.job__company-issues .button {
+.job__company-issues .button, .job__company-issues .button--feeling-lucky {
   width: 100%; }
 
 .job__admin-publish-prompt {
   position: relative; }
-  .job__admin-publish-prompt .buttons .button, .job__admin-publish-prompt .buttons a {
+  .job__admin-publish-prompt .buttons .button, .job__admin-publish-prompt .buttons .button--feeling-lucky, .job__admin-publish-prompt .buttons a {
     height: 40px;
     width: 100%;
     display: block; }
-    .job__admin-publish-prompt .buttons .button span, .job__admin-publish-prompt .buttons a span {
+    .job__admin-publish-prompt .buttons .button span, .job__admin-publish-prompt .buttons .button--feeling-lucky span, .job__admin-publish-prompt .buttons a span {
       display: block; }
-    .job__admin-publish-prompt .buttons .button span + span, .job__admin-publish-prompt .buttons a span + span {
+    .job__admin-publish-prompt .buttons .button span + span, .job__admin-publish-prompt .buttons .button--feeling-lucky span + span, .job__admin-publish-prompt .buttons a span + span {
       margin-top: 4px; }
-    .job__admin-publish-prompt .buttons .button span:first-child, .job__admin-publish-prompt .buttons a span:first-child {
+    .job__admin-publish-prompt .buttons .button span:first-child, .job__admin-publish-prompt .buttons .button--feeling-lucky span:first-child, .job__admin-publish-prompt .buttons a span:first-child {
       font-size: 14px; }
-  .job__admin-publish-prompt .buttons .button + .button,
-  .job__admin-publish-prompt .buttons .button + a {
+  .job__admin-publish-prompt .buttons .button + .button, .job__admin-publish-prompt .buttons .button--feeling-lucky + .button, .job__admin-publish-prompt .buttons .button + .button--feeling-lucky, .job__admin-publish-prompt .buttons .button--feeling-lucky + .button--feeling-lucky,
+  .job__admin-publish-prompt .buttons .button + a,
+  .job__admin-publish-prompt .buttons .button--feeling-lucky + a {
     margin-top: 10px; }
 
 .job__admin-publish-prompt__loader {
@@ -11173,7 +11187,7 @@ h3 {
             min-width: 140px;
             padding-left: 20px; } }
 
-.homepage .button {
+.homepage .button, .homepage .button--feeling-lucky {
   border-radius: 4px;
   font-size: 12px;
   height: 40px;
@@ -11352,12 +11366,12 @@ h3 {
   @media screen and (max-width: 1007px) {
     .homepage__feature-ctas {
       flex-direction: column; } }
-  .homepage__feature-ctas .button {
+  .homepage__feature-ctas .button, .homepage__feature-ctas .button--feeling-lucky {
     max-width: 100%;
     width: 280px;
     margin: 10px; }
     @media screen and (max-width: 1007px) {
-      .homepage__feature-ctas .button {
+      .homepage__feature-ctas .button, .homepage__feature-ctas .button--feeling-lucky {
         margin: 8px 0px; } }
 
 .homepage__walkthrough {
@@ -11765,7 +11779,7 @@ h3 {
     border: 0; }
 
 .embed-responsive-21by9::before {
-  padding-top: 42.85714%; }
+  padding-top: 42.8571428571%; }
 
 .embed-responsive-16by9::before {
   padding-top: 56.25%; }
@@ -12459,8 +12473,9 @@ h3 {
   bottom: 48px;
   right: 48px;
   left: 48px; }
-  .payment-flow-overlay__card-payment .button-container .button,
-  .payment__card-form .button-container .button {
+  .payment-flow-overlay__card-payment .button-container .button, .payment-flow-overlay__card-payment .button-container .button--feeling-lucky,
+  .payment__card-form .button-container .button,
+  .payment__card-form .button-container .button--feeling-lucky {
     width: 100%; }
 
 .payment__card-form__terms {
@@ -12515,9 +12530,9 @@ h3 {
     font-size: 18px; }
   .payment-setup__pay-success p {
     margin-bottom: 24px; }
-  .payment-setup__pay-success .columns .button {
+  .payment-setup__pay-success .columns .button, .payment-setup__pay-success .columns .button--feeling-lucky {
     margin-top: 0px; }
-  .payment-setup__pay-success .columns a + a .button {
+  .payment-setup__pay-success .columns a + a .button, .payment-setup__pay-success .columns a + a .button--feeling-lucky {
     margin-top: 12px; }
   @media screen and (min-width: 1008px) {
     .payment-setup__pay-success .columns {
@@ -12688,7 +12703,7 @@ h3 {
     color: #adadad;
     width: 60%;
     margin-top: 10px; }
-  .payment-setup__pay-confirm-container .button.is-full-width {
+  .payment-setup__pay-confirm-container .button.is-full-width, .payment-setup__pay-confirm-container .is-full-width.button--feeling-lucky {
     margin-top: 5px; }
   .payment-setup__pay-confirm-container hr {
     background-color: #f4f5f8;
@@ -12808,7 +12823,7 @@ h3 {
     fill: #6E7F89; }
   .payment__coupon-form form {
     display: flex; }
-    .payment__coupon-form form .button {
+    .payment__coupon-form form .button, .payment__coupon-form form .button--feeling-lucky {
       width: 55px;
       margin-left: 10px;
       margin-top: 8px; }
@@ -12845,11 +12860,11 @@ h3 {
     display: inline-block;
     width: 180px; }
 
-.payment-setup--error .button, .payment-setup--error a {
+.payment-setup--error .button, .payment-setup--error .button--feeling-lucky, .payment-setup--error a {
   display: block;
   margin: 0 auto; }
 
-.payment-setup--error .button + a {
+.payment-setup--error .button + a, .payment-setup--error .button--feeling-lucky + a {
   margin-top: 4px; }
 
 .payment-setup--error__message {
@@ -12885,7 +12900,7 @@ h3 {
       overflow: hidden;
       text-overflow: ellipsis;
       min-width: 0; }
-    .payment-setup__pay-success__jobs li a, .payment-setup__pay-success__jobs li .button {
+    .payment-setup__pay-success__jobs li a, .payment-setup__pay-success__jobs li .button, .payment-setup__pay-success__jobs li .button--feeling-lucky {
       flex: 1 0 120px;
       max-width: 120px;
       min-width: 120px; }
@@ -13024,8 +13039,9 @@ h3 {
 .package-selector__button,
 .package-selector__current-plan {
   margin-top: 20px; }
-  .package-selector__button .button,
-  .package-selector__current-plan .button {
+  .package-selector__button .button, .package-selector__button .button--feeling-lucky,
+  .package-selector__current-plan .button,
+  .package-selector__current-plan .button--feeling-lucky {
     width: 100%;
     height: 40px;
     border-radius: 4px; }
@@ -13493,7 +13509,7 @@ h3 {
     height: 30px;
     text-indent: -9999px; }
 
-.manage-issues .button {
+.manage-issues .button, .manage-issues .button--feeling-lucky {
   width: 100%; }
 
 @media screen and (min-width: 1008px) {
@@ -13599,7 +13615,7 @@ h3 {
   width: 200px;
   margin: 0 auto;
   margin-top: 18px; }
-  .issue__description__view-button .button {
+  .issue__description__view-button .button, .issue__description__view-button .button--feeling-lucky {
     width: 100%; }
 
 .issue__logo {
@@ -13614,7 +13630,7 @@ h3 {
 .issue__header-buttons {
   flex: 0;
   min-height: 55px; }
-  .issue__header-buttons .button {
+  .issue__header-buttons .button, .issue__header-buttons .button--feeling-lucky {
     width: 100%;
     height: 35px; }
 
@@ -13844,7 +13860,7 @@ h3 {
       top: calc(18px - 63px);
       width: 100%;
       height: 63px; } }
-  .issue__start-work-sticky .button {
+  .issue__start-work-sticky .button, .issue__start-work-sticky .button--feeling-lucky {
     height: 30px;
     border-radius: 2px; }
 
@@ -13993,13 +14009,13 @@ h3 {
     .issue__edit__buttons {
       padding: 0; } }
   @media screen and (max-width: 1007px) {
-    .issue__edit__buttons .button {
+    .issue__edit__buttons .button, .issue__edit__buttons .button--feeling-lucky {
       width: 100%; } }
   @media screen and (min-width: 1008px) {
-    .issue__edit__buttons .button + .button {
+    .issue__edit__buttons .button + .button, .issue__edit__buttons .button--feeling-lucky + .button, .issue__edit__buttons .button + .button--feeling-lucky, .issue__edit__buttons .button--feeling-lucky + .button--feeling-lucky {
       margin-left: 15px; } }
   @media screen and (max-width: 1007px) {
-    .issue__edit__buttons .button + .button {
+    .issue__edit__buttons .button + .button, .issue__edit__buttons .button--feeling-lucky + .button, .issue__edit__buttons .button + .button--feeling-lucky, .issue__edit__buttons .button--feeling-lucky + .button--feeling-lucky {
       margin-top: 15px; } }
 
 .issue__edit__level {
@@ -14014,7 +14030,7 @@ h3 {
         line-height: 30px; }
       .issue__edit__level .radio-item {
         display: block; } }
-  .issue__edit__level .button {
+  .issue__edit__level .button, .issue__edit__level .button--feeling-lucky {
     width: 120px; }
   .issue__edit__level .wh-formx {
     flex: 1; }
@@ -14116,7 +14132,7 @@ h3 {
       width: 505px;
       left: calc(50% - (505px / 2));
       padding: 0; } }
-  .generic-popup__popup--edit-issue .button {
+  .generic-popup__popup--edit-issue .button, .generic-popup__popup--edit-issue .button--feeling-lucky {
     border-radius: 2px; }
   .generic-popup__popup--edit-issue .radios .radio-item label {
     margin-left: 0px;
@@ -14253,19 +14269,19 @@ h3 {
   @media screen and (max-width: 1007px) {
     .manage-issues-buttons {
       margin-bottom: 18px; } }
-  .manage-issues-buttons .button {
+  .manage-issues-buttons .button, .manage-issues-buttons .button--feeling-lucky {
     flex-grow: 1; }
-    .manage-issues-buttons .button.back {
+    .manage-issues-buttons .button.back, .manage-issues-buttons .back.button--feeling-lucky {
       margin-right: 9px; }
-    .manage-issues-buttons .button.update {
+    .manage-issues-buttons .button.update, .manage-issues-buttons .update.button--feeling-lucky {
       margin-left: 9px; }
-    .manage-issues-buttons .button .icon {
+    .manage-issues-buttons .button .icon, .manage-issues-buttons .button--feeling-lucky .icon {
       margin-right: 10px;
       width: 11px;
       height: 13px;
       fill: #ff7c6e; }
     @media screen and (max-width: 1007px) {
-      .manage-issues-buttons .button {
+      .manage-issues-buttons .button, .manage-issues-buttons .button--feeling-lucky {
         width: 100%; } }
 
 .publish-container {
@@ -14295,11 +14311,11 @@ h3 {
     font-size: 14px;
     line-height: 21px !important;
     margin-bottom: 18px; }
-  .issues__hiring-pod__sign-up a, .issues__hiring-pod__sign-up .button {
+  .issues__hiring-pod__sign-up a, .issues__hiring-pod__sign-up .button, .issues__hiring-pod__sign-up .button--feeling-lucky {
     display: block;
     width: 100%; }
 
-.issues__hiring-pod__jobs .button {
+.issues__hiring-pod__jobs .button, .issues__hiring-pod__jobs .button--feeling-lucky {
   margin-top: 24px; }
 
 .issues__hiring-pod__job {
@@ -14427,18 +14443,18 @@ h3 {
     @media screen and (max-width: 1007px) {
       .issues__header--public__copy p {
         line-height: 26px; } }
-  .issues__header--public__copy .button {
+  .issues__header--public__copy .button, .issues__header--public__copy .button--feeling-lucky {
     width: 150px;
     height: 40px;
     font-weight: bold; }
     @media screen and (min-width: 1008px) {
-      .issues__header--public__copy .button.find-out-more {
+      .issues__header--public__copy .button.find-out-more, .issues__header--public__copy .find-out-more.button--feeling-lucky {
         margin-left: 32px; } }
     @media screen and (max-width: 1007px) {
-      .issues__header--public__copy .button.find-out-more {
+      .issues__header--public__copy .button.find-out-more, .issues__header--public__copy .find-out-more.button--feeling-lucky {
         margin-top: 18px; } }
     @media screen and (max-width: 1007px) {
-      .issues__header--public__copy .button {
+      .issues__header--public__copy .button, .issues__header--public__copy .button--feeling-lucky {
         width: 100%; } }
 
 .issues__sorting {
@@ -14718,7 +14734,7 @@ h3 {
   .manage-issues__control-panel__cta a + a {
     margin-left: 12px; } }
 
-.manage-issues__control-panel__cta .button {
+.manage-issues__control-panel__cta .button, .manage-issues__control-panel__cta .button--feeling-lucky {
   width: 100%; }
 
 .manage-issues__control-panel__cta p {
@@ -14727,16 +14743,16 @@ h3 {
 .manage-issues__control-panel__cta + .manage-issues__control-panel__cta {
   margin-top: 18px; }
 
-.manage-issues__control-panel__cta--left .button {
+.manage-issues__control-panel__cta--left .button, .manage-issues__control-panel__cta--left .button--feeling-lucky {
   width: unset; }
-  .manage-issues__control-panel__cta--left .button img {
+  .manage-issues__control-panel__cta--left .button img, .manage-issues__control-panel__cta--left .button--feeling-lucky img {
     margin: 0; }
 
 .manage-issues__faqs h2 {
   font-size: 14px;
   line-height: 18px; }
 
-.repository-card__buttons .button + a {
+.repository-card__buttons .button + a, .repository-card__buttons .button--feeling-lucky + a {
   margin-left: 12px; }
 
 .landing-page .homepage__middle-content__container:last-of-type {
@@ -14747,18 +14763,18 @@ h3 {
 
 .landing-page .homepage__feature-ctas {
   margin-top: 24px; }
-  .landing-page .homepage__feature-ctas .button {
+  .landing-page .homepage__feature-ctas .button, .landing-page .homepage__feature-ctas .button--feeling-lucky {
     font-family: "Montserrat", sans-serif; }
     @media screen and (max-width: 1007px) {
-      .landing-page .homepage__feature-ctas .button {
+      .landing-page .homepage__feature-ctas .button, .landing-page .homepage__feature-ctas .button--feeling-lucky {
         margin: 10px auto; } }
     @media screen and (min-width: 1008px) {
-      .landing-page .homepage__feature-ctas .button {
+      .landing-page .homepage__feature-ctas .button, .landing-page .homepage__feature-ctas .button--feeling-lucky {
         margin: 0 10px; } }
 
 .landing__header__buttons {
   display: flex; }
-  .landing__header__buttons .button {
+  .landing__header__buttons .button, .landing__header__buttons .button--feeling-lucky {
     width: 240px;
     margin-right: 9px;
     margin-bottom: 12px; }
@@ -14815,13 +14831,13 @@ h3 {
 .homepage__looking-to-hire--candidate .homepage__feature-ctas, .homepage__learn .homepage__feature-ctas {
   margin-top: 24px;
   justify-content: flex-start; }
-  .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button {
+  .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__looking-to-hire--candidate .homepage__feature-ctas .button--feeling-lucky, .homepage__learn .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button--feeling-lucky {
     font-family: "Montserrat", sans-serif; }
     @media screen and (min-width: 1008px) {
-      .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button {
+      .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__looking-to-hire--candidate .homepage__feature-ctas .button--feeling-lucky, .homepage__learn .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button--feeling-lucky {
         margin: 0; } }
     @media screen and (max-width: 1007px) {
-      .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button {
+      .homepage__looking-to-hire--candidate .homepage__feature-ctas .button, .homepage__looking-to-hire--candidate .homepage__feature-ctas .button--feeling-lucky, .homepage__learn .homepage__feature-ctas .button, .homepage__learn .homepage__feature-ctas .button--feeling-lucky {
         margin: 0 auto; } }
 
 @media screen and (max-width: 1007px) {
@@ -14889,7 +14905,7 @@ h3 {
     justify-content: space-between; }
   .homepage__jobs-container .card .tagline {
     height: 72px; }
-  .homepage__jobs-container .card .button {
+  .homepage__jobs-container .card .button, .homepage__jobs-container .card .button--feeling-lucky {
     font-size: 11px;
     width: 99px;
     height: 30px;
@@ -15170,7 +15186,7 @@ h3 {
 
 .pricing__faqs__intro {
   padding: 0px 0 40px 0; }
-  .pricing__faqs__intro .button {
+  .pricing__faqs__intro .button, .pricing__faqs__intro .button--feeling-lucky {
     border-radius: 4px;
     height: 40px;
     text-transform: lowercase;
@@ -15224,14 +15240,14 @@ h3 {
 .pricing__faqs__question {
   margin-bottom: 20px; }
 
-.pricing__request-demo .button {
+.pricing__request-demo .button, .pricing__request-demo .button--feeling-lucky {
   height: 40px;
   border-radius: 4px; }
   @media screen and (min-width: 1008px) {
-    .pricing__request-demo .button {
+    .pricing__request-demo .button, .pricing__request-demo .button--feeling-lucky {
       width: 220px; } }
   @media screen and (max-width: 1007px) {
-    .pricing__request-demo .button {
+    .pricing__request-demo .button, .pricing__request-demo .button--feeling-lucky {
       width: 100%; } }
 
 .pagination {
@@ -15294,13 +15310,13 @@ h3 {
   display: flex;
   margin: 5px 0; }
 
-.how-it-works .button {
+.how-it-works .button, .how-it-works .button--feeling-lucky {
   font-size: 12px;
   height: 40px;
   padding: 6px 12px;
   width: 100%; }
   @media screen and (min-width: 1008px) {
-    .how-it-works .button {
+    .how-it-works .button, .how-it-works .button--feeling-lucky {
       max-width: 267px; } }
 
 .how-it-works p {
@@ -15399,7 +15415,7 @@ h3 {
   .how-it-works__header__copy p {
     margin-bottom: 24px; }
   @media screen and (max-width: 1007px) {
-    .how-it-works__header__copy .button {
+    .how-it-works__header__copy .button, .how-it-works__header__copy .button--feeling-lucky {
       width: 100%; } }
 
 .how-it-works__explanation {
@@ -15451,7 +15467,7 @@ h3 {
       padding-top: 20px;
       padding-bottom: 60px; } }
   @media screen and (max-width: 1007px) {
-    .how-it-works__explanation__inner .button {
+    .how-it-works__explanation__inner .button, .how-it-works__explanation__inner .button--feeling-lucky {
       margin-bottom: 12px; } }
 
 @media screen and (min-width: 1008px) {
@@ -15462,7 +15478,7 @@ h3 {
 .how-it-works__explanation__copy a {
   display: block;
   margin-top: 14px; }
-  .how-it-works__explanation__copy a .button {
+  .how-it-works__explanation__copy a .button, .how-it-works__explanation__copy a .button--feeling-lucky {
     max-width: 267px;
     width: 100%; }
 
@@ -15599,12 +15615,14 @@ h3 {
 .how-it-works__faq__buttons {
   margin-top: 32px; }
   @media screen and (min-width: 1008px) {
-    .how-it-works__benefits__buttons .button,
-    .how-it-works__faq__buttons .button {
+    .how-it-works__benefits__buttons .button, .how-it-works__benefits__buttons .button--feeling-lucky,
+    .how-it-works__faq__buttons .button,
+    .how-it-works__faq__buttons .button--feeling-lucky {
       width: 267px; } }
   @media screen and (max-width: 1007px) {
-    .how-it-works__benefits__buttons .button,
-    .how-it-works__faq__buttons .button {
+    .how-it-works__benefits__buttons .button, .how-it-works__benefits__buttons .button--feeling-lucky,
+    .how-it-works__faq__buttons .button,
+    .how-it-works__faq__buttons .button--feeling-lucky {
       width: 100%; } }
   @media screen and (min-width: 1008px) {
     .how-it-works__benefits__buttons a + a, .how-it-works__benefits__buttons a + button,
@@ -15636,10 +15654,10 @@ h3 {
   padding: 0 0 0 40px;
   margin: 0 auto;
   max-width: 1084px; }
-  .how-it-works__stats__inner .button.button--github {
+  .how-it-works__stats__inner .button.button--github, .how-it-works__stats__inner .button--github.button--feeling-lucky {
     margin-top: 24px; }
   @media screen and (max-width: 1007px) {
-    .how-it-works__stats__inner .button {
+    .how-it-works__stats__inner .button, .how-it-works__stats__inner .button--feeling-lucky {
       margin-top: 24px;
       width: 100%; } }
   @media screen and (max-width: 1007px) {
@@ -15751,7 +15769,7 @@ h3 {
   .how-it-works__stats__info {
     width: 40%;
     margin-left: 28px; }
-    .how-it-works__stats__info .button {
+    .how-it-works__stats__info .button, .how-it-works__stats__info .button--feeling-lucky {
       margin-top: 18px; } }
 
 .how-it-works__stats--candidate .how-it-works__stats__ball--orange strong {
@@ -15790,7 +15808,7 @@ h3 {
     .how-it-works__faq__inner .faq__intro {
       margin-top: 12px; } }
   @media screen and (min-width: 1008px) {
-    .how-it-works__faq__inner .faq__intro .button {
+    .how-it-works__faq__inner .faq__intro .button, .how-it-works__faq__inner .faq__intro .button--feeling-lucky {
       width: auto; } }
   .how-it-works__faq__inner .faq__intro h2 {
     line-height: 26px; }
@@ -15821,11 +15839,11 @@ h3 {
     width: 62px;
     height: 62px;
     margin-right: -10px; }
-  .how-it-works__type-slider__option .button {
+  .how-it-works__type-slider__option .button, .how-it-works__type-slider__option .button--feeling-lucky {
     height: 40px !important;
     width: 160px !important; }
     @media screen and (max-width: 1007px) {
-      .how-it-works__type-slider__option .button {
+      .how-it-works__type-slider__option .button, .how-it-works__type-slider__option .button--feeling-lucky {
         font-size: 11px;
         width: 100px !important; } }
   .how-it-works__type-slider__option .button--disabled {
@@ -15938,9 +15956,9 @@ h3 {
   box-shadow: unset; }
   .how-it-works-pod h2:first-of-type {
     margin-bottom: 18px; }
-  .how-it-works-pod .button {
+  .how-it-works-pod .button, .how-it-works-pod .button--feeling-lucky {
     padding: 0; }
-  .how-it-works-pod a, .how-it-works-pod .button {
+  .how-it-works-pod a, .how-it-works-pod .button, .how-it-works-pod .button--feeling-lucky {
     width: 100%;
     display: block;
     text-decoration: none; }
@@ -16102,7 +16120,7 @@ h3 {
       .faq__intro h2 {
         font-size: 14px;
         margin-bottom: 18px; } }
-  .faq__intro .button {
+  .faq__intro .button, .faq__intro .button--feeling-lucky {
     border-radius: 4px;
     height: 40px;
     text-transform: lowercase;
@@ -16215,12 +16233,12 @@ h3 {
   flex-direction: column;
   justify-content: space-between;
   height: 160px; }
-  .get-started__choice:hover .button {
+  .get-started__choice:hover .button, .get-started__choice:hover .button--feeling-lucky {
     background-color: #ff9f95; }
   .get-started__choice img {
     height: 80px;
     margin-top: 10px; }
-  .get-started__choice .button {
+  .get-started__choice .button, .get-started__choice .button--feeling-lucky {
     width: 135px;
     height: 40px;
     font-size: 12px;
@@ -16313,7 +16331,7 @@ h3 {
   padding: 15px 15px 15px 25px;
   bottom: 0;
   border: 10px solid #c4d4dd; }
-  .tracking-popup .button {
+  .tracking-popup .button, .tracking-popup .button--feeling-lucky {
     margin-top: 15px; }
   @media screen and (min-width: 1008px) {
     .tracking-popup {
@@ -16332,7 +16350,7 @@ h3 {
   align-items: center; }
   .tracking-popup--collapsed.is-open {
     display: flex; }
-  .tracking-popup--collapsed .button {
+  .tracking-popup--collapsed .button, .tracking-popup--collapsed .button--feeling-lucky {
     margin: 0;
     width: 120px; }
 
@@ -16705,9 +16723,9 @@ h3 {
 .editable--save-cancel-buttons {
   display: flex;
   justify-content: flex-end; }
-  .editable--save-cancel-buttons .button {
+  .editable--save-cancel-buttons .button, .editable--save-cancel-buttons .button--feeling-lucky {
     padding: 0px 16px; }
-  .editable--save-cancel-buttons .button + .button {
+  .editable--save-cancel-buttons .button + .button, .editable--save-cancel-buttons .button--feeling-lucky + .button, .editable--save-cancel-buttons .button + .button--feeling-lucky, .editable--save-cancel-buttons .button--feeling-lucky + .button--feeling-lucky {
     margin-left: 6px; }
 
 .editable--loading {
@@ -17086,7 +17104,7 @@ h3 {
   flex-wrap: wrap;
   padding: 0px 18px 24px 18px; }
   @media screen and (max-width: 1007px) {
-    .company-profile__banner-cta .button {
+    .company-profile__banner-cta .button, .company-profile__banner-cta .button--feeling-lucky {
       width: 100%; } }
   .company-profile__banner-cta h2 {
     font-size: 24px;
@@ -17150,11 +17168,11 @@ h3 {
 .company-profile__section--create {
   padding-right: 24px; }
   @media screen and (min-width: 1008px) {
-    .company-profile__section--create > .button {
+    .company-profile__section--create > .button, .company-profile__section--create > .button--feeling-lucky {
       width: 50%;
       float: right; } }
   @media screen and (max-width: 1007px) {
-    .company-profile__section--create > .button {
+    .company-profile__section--create > .button, .company-profile__section--create > .button--feeling-lucky {
       width: 100%; } }
 
 .company-profile__create-profile-step-header {
@@ -17182,7 +17200,7 @@ h3 {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start; }
-  .company-profile__create-profile__logo-and-name .company-profile__create-profile__logo .button {
+  .company-profile__create-profile__logo-and-name .company-profile__create-profile__logo .button, .company-profile__create-profile__logo-and-name .company-profile__create-profile__logo .button--feeling-lucky {
     margin-top: 16px; }
   .company-profile__create-profile__logo-and-name .company-profile__create-profile__logo > .logo {
     margin-right: 18px; }
@@ -17284,20 +17302,20 @@ h3 {
   .company-onboarding__action i {
     font-size: 12px;
     margin-left: 6px; }
-  .company-onboarding__action .button {
+  .company-onboarding__action .button, .company-onboarding__action .button--feeling-lucky {
     width: 100%;
     height: 100%;
     padding: 12px;
     border-radius: 4px; }
     @media screen and (min-width: 1008px) {
-      .company-onboarding__action .button {
+      .company-onboarding__action .button, .company-onboarding__action .button--feeling-lucky {
         height: 64px;
         padding: 0 18px; } }
-    .company-onboarding__action .button .is-flex {
+    .company-onboarding__action .button .is-flex, .company-onboarding__action .button--feeling-lucky .is-flex {
       width: 100%;
       justify-content: space-between;
       align-items: center; }
-    .company-onboarding__action .button .icon {
+    .company-onboarding__action .button .icon, .company-onboarding__action .button--feeling-lucky .icon {
       margin-top: 2px;
       background-color: white;
       padding: 5px;
@@ -17307,7 +17325,7 @@ h3 {
       border-radius: 12px;
       fill: #ff7c6e; }
       @media screen and (max-width: 1007px) {
-        .company-onboarding__action .button .icon {
+        .company-onboarding__action .button .icon, .company-onboarding__action .button--feeling-lucky .icon {
           width: 20px;
           height: 20px;
           min-width: 20px; } }
@@ -17473,7 +17491,7 @@ h3 {
 .videos__add-video .field {
   flex: 1; }
 
-.videos__add-video .field + .button {
+.videos__add-video .field + .button, .videos__add-video .field + .button--feeling-lucky {
   margin-left: 12px;
   height: 44px; }
 

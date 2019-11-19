@@ -29,6 +29,15 @@
                       [jobs-query])}))
 
 (reg-event-fx
+ ::start-feeling-lucky-application
+ personalised-jobs-interceptors
+ (fn [{db :db} _]
+   ;; initially there isn't an algorithm to shuffle or identify a particular job, just pluck one randomly
+   (let [rand-job (rand-nth (::personalised-jobs/jobs db))]
+     ;; name should probably be changed to show it is part of the button's application process...
+     {:dispatch [:apply/try-random-application rand-job]})))
+
+(reg-event-fx
   ::load-more
   personalised-jobs-interceptors
   (fn [{db :db} [type-of-jobs]]
@@ -76,3 +85,4 @@
 (defmethod on-page-load :applied [db]
   [[::pages/set-loader]
    [:personalised-jobs/fetch-jobs-by-type :applied 1]])
+

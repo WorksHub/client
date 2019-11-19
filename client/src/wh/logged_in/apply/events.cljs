@@ -237,8 +237,7 @@
                         ::apply/updating? false
                         ::apply/error (when-not success?
                                         (util/gql-errors->error-key resp)))}
-            success? (assoc :dispatch-n [[::check-visa]
-                                         [:wh.job.events/set-applied]]
+      success? (assoc :dispatch [::check-visa]
                             :analytics/track ["Job Applied" (::apply/job db)]))))
 
 (defquery apply-mutation
@@ -262,6 +261,19 @@
                                           :slug :$slug}
                       [:check_status :reason]]]})
 
+;; have feeling-lucky event here, as it shows why ::check-application-success is checking for that kw
+(reg-event-fx
+ :apply/try-random-application
+ apply-interceptors
+ (fn [{db :db} [job]]
+   ;; job needs to be in form : {:id id :company-name company-name :location location}
+   (let [id (:id job)
+         company-name (:name (:company job))
+         location (:location job)]
+     {:db (assoc db ::apply/feeling-lucky? true)
+      ;; we add this kw to denote that we want the recommended page to re-render after a job is picked out.
+      :dispatch [:apply/try-apply {:id id :company-name company-name :location location} :feeling-lucky]})))
+
 (reg-event-fx
   ::check-application
   apply-interceptors
@@ -271,7 +283,8 @@
                                (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
                :on-success [::check-application-success]
                :on-failure []}
-     :db      (assoc db ::apply/updating? true)}))
+     :db      (assoc db ::apply/updating? true)
+     :dispatch [:wh.job.events/set-applied]}))
 
 (defn gql-check-application->check-application [data]
   (-> data
@@ -279,17 +292,22 @@
       (update :check-status keyword)
       (update :reason keyword)))
 
-(reg-event-db
+(reg-event-fx
   ::check-application-success
   apply-interceptors
-  (fn [db [{:keys [data]}]]
+  (fn [{db :db} [{:keys [data]}]]
     (let [result (gql-check-application->check-application (:check_application data))]
       (if (= :rejected (:check-status result))
-        (cond-> (assoc db ::apply/current-step :rejection)
+        (cond-> {:db (-> db
+                         (assoc ::apply/current-step :rejection)
+                         (assoc ::feeling-lucky? false))}
                 (:reason result) (assoc-in [::apply/rejection :reason] (:reason result)))
-        (-> db
-            (assoc ::apply/updating? true)
-            (assoc ::apply/current-step :thanks))))))
+        (merge {:db (-> db
+                        (assoc ::apply/updating? true)
+                        (assoc ::apply/current-step :thanks)
+                        (assoc ::apply/feeling-lucky? false))}
+               (when (::apply/feeling-lucky? db)
+                 {:dispatch [:personalised-jobs/fetch-jobs-by-type :recommended 1]}))))))
 
 (reg-event-fx
   ::apply

@@ -181,7 +181,7 @@
     (assoc-in db [::db/sub-db ::job/error] nil)))
 
 (reg-event-db
-  ::set-applied
+  :wh.job.events/set-applied
   db/default-interceptors
   (fn [db _]
     (let [job-id (get-in db [:wh.logged-in.apply.db/sub-db :wh.logged-in.apply.db/job :id])]

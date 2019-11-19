@@ -38,6 +38,13 @@ $button-font-size: 11px
     width: 18px
     height: 18px
 
+  &--feeling-lucky
+    @extend .button
+    background: $metal-blue
+    &:hover
+      background: lighten($metal-blue, 10%) !important
+      color: white !important
+
 .button--large
   height: 50px
   width: 270px

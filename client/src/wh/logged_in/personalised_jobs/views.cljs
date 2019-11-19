@@ -28,7 +28,9 @@
       [:h1 (str (-> type-of-jobs name str/capitalize)) " Jobs"]
       (when (= type-of-jobs :recommended)
         [:div.has-bottom-margin
-         [link [:button.button "Improve recommendations"] :improve-recommendations :class "level-item"]])]]
+         [link [:button.button "Improve recommendations"] :improve-recommendations :class "level-item"]])
+      (when (= type-of-jobs :recommended)
+        [:button.button--feeling-lucky {:on-click #(dispatch [::events/start-feeling-lucky-application])} "Feeling Lucky"])]]
     (let [{:keys [on-close sub message]} (job-type-data type-of-jobs)
           parts (partition-all 3 (<sub sub))
           has-applied? (some? (<sub [:user/applied-jobs]))]
