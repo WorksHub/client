@@ -122,7 +122,7 @@
            result (try
                     (graphql/execute-query query variables ctx)
                     (catch Exception e
-                      (errorf "An exception was thrown whilst pre-executing %s (%s) - %s %s"
+                      (errorf e "An exception was thrown whilst pre-executing %s (%s) - %s %s"
                               query variables (graphql/error-map e query variables) (.getMessage e))
                       {:errors [(graphql/error-map e query variables)]}))]
        (when (:errors result)
