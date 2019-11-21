@@ -5430,6 +5430,9 @@ a.navbar-item,
       margin-right: 5px;
       margin-top: 6px; } }
 
+.button--inline {
+  margin-right: 10px; }
+
 .dropdown-menu {
   width: 270px;
   padding-top: 0;
@@ -17968,6 +17971,10 @@ h3 {
     max-width: 145px;
     min-height: 50px;
     max-height: 50px; }
+
+.main-wrapper--metrics {
+  padding-top: 50px;
+  background-color: white; }
 
 @media screen and (min-width: 1008px) {
   html, body {

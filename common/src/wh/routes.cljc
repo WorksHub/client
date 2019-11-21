@@ -81,6 +81,7 @@
               ["pricing" :pricing]
               ["sitemap" :sitemap]
               ["invalid-magic-link" :invalid-magic-link]
+              ["metrics" :metrics]
 
               ;; Mixed routes
               ["learn/" {""            :learn               ;;Public SSR
@@ -146,7 +147,6 @@
                            "confirm"  (with-params :payment-setup :step :pay-confirm)
                            "complete" (with-params :payment-setup :step :pay-success)}]
               ["tags" {"/edit" :tags-edit}]
-              ["data" :data-page]                           ;; Does not require app.js, separate template - fully SSR
 
               ;; Non UI routes - redirects, webhooks, API, xml
               ["sitemap.xml" :sitemapxml]
@@ -180,6 +180,7 @@
                               :privacy-policy
                               :sitemap
                               :terms-of-service
+                              :metrics
                               :oauth-greenhouse
                               :oauth-slack
                               :oauth-workable})
