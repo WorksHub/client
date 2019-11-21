@@ -31,7 +31,7 @@
   ::total-number-of-results
   :<- [::companies]
   (fn [companies _]
-    (or (-> companies :pagination :total) 0)))
+    (-> companies :pagination :total)))
 
 (reg-sub
   ::total-pages

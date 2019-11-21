@@ -107,7 +107,7 @@
           (for [company companies]
             ^{:key (:id company)}
             [company-card company]))
-        (when (and (not-empty companies) (> (<sub [::subs/total-number-of-results]) companies/page-size))
+        (when (and (not-empty companies) (> (or (<sub [::subs/total-number-of-results]) 0) companies/page-size))
           [pagination/pagination
            (<sub [::subs/current-page])
            (<sub [::subs/pagination])
