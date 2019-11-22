@@ -15076,85 +15076,6 @@ h3 {
 .pricing .package-selector__column-inner {
   background-color: #f4f5f8; }
 
-.pricing__title {
-  color: #6E7F89;
-  font-size: 44px;
-  font-weight: bold;
-  line-height: 58px;
-  letter-spacing: 0; }
-
-.pricing__subtitle {
-  font-family: "Inconsolata", sans-serif;
-  font-size: 16px;
-  font-weight: normal;
-  line-height: 22px;
-  letter-spacing: 0.9px;
-  margin-bottom: 12px; }
-
-.pricing-content {
-  max-width: 834px;
-  margin: 0 auto;
-  padding-bottom: 18px; }
-  @media screen and (max-width: 1007px) {
-    .pricing-content {
-      padding: 0px 18px 18px 18px; } }
-
-.pricing-content:not(:first-of-type) .pricing__title {
-  color: #ff7c6e;
-  font-size: 36px;
-  line-height: 48px; }
-  @media screen and (min-width: 1008px) {
-    .pricing-content:not(:first-of-type) .pricing__title {
-      width: 50%; } }
-
-.pricing-content:last-of-type {
-  padding-bottom: 100px; }
-
-.pricing__billing-period-selector-wrapper {
-  display: flex;
-  justify-content: space-between; }
-  @media screen and (min-width: 1008px) {
-    .pricing__billing-period-selector-wrapper h1 {
-      margin-right: 10px; } }
-  @media screen and (max-width: 1007px) {
-    .pricing__billing-period-selector-wrapper {
-      flex-direction: column; } }
-
-.pricing__billing-period-selector {
-  min-width: 180px;
-  padding-top: 12px;
-  font-family: "Inconsolata", sans-serif;
-  font-size: 16px;
-  line-height: 26px; }
-  @media screen and (max-width: 1007px) {
-    .pricing__billing-period-selector {
-      margin-bottom: 30px; } }
-  .pricing__billing-period-selector .radios {
-    display: flex;
-    flex-direction: column; }
-    .pricing__billing-period-selector .radios label {
-      margin: unset !important; }
-  .pricing__billing-period-selector .radio {
-    border-color: #ffd4cf;
-    white-space: nowrap;
-    margin: 6px 0 !important; }
-  .pricing__billing-period-selector .radio__checked {
-    position: absolute;
-    background-color: #ff7c6e;
-    width: 12px;
-    height: 12px;
-    top: 3px;
-    left: 3px;
-    border-radius: 6px; }
-  .pricing__billing-period-selector .radio__label {
-    margin-left: 36px;
-    margin-top: -1px; }
-    .pricing__billing-period-selector .radio__label small {
-      margin-left: 4px;
-      font-size: 11px; }
-  .pricing__billing-period-selector .radio--checked {
-    border-color: #ff7c6e; }
-
 .pricing__faqs {
   display: flex; }
   @media screen and (max-width: 1007px) {
@@ -15179,7 +15100,7 @@ h3 {
     text-transform: lowercase;
     font-size: 14px;
     padding: 0 16px; }
-  .pricing__faqs__intro .pricing__subtitle {
+  .pricing__faqs__intro .public__subtitle {
     font-size: 16px;
     line-height: 32px;
     margin-bottom: 32px; }
@@ -15226,16 +15147,6 @@ h3 {
 .pricing__faqs__intro,
 .pricing__faqs__question {
   margin-bottom: 20px; }
-
-.pricing__request-demo .button {
-  height: 40px;
-  border-radius: 4px; }
-  @media screen and (min-width: 1008px) {
-    .pricing__request-demo .button {
-      width: 220px; } }
-  @media screen and (max-width: 1007px) {
-    .pricing__request-demo .button {
-      width: 100%; } }
 
 .pagination {
   margin-top: 25px; }
@@ -17975,6 +17886,102 @@ h3 {
 .main-wrapper--metrics {
   padding-top: 50px;
   background-color: white; }
+  .main-wrapper--metrics table {
+    font-family: "Inconsolata", sans-serif; }
+  .main-wrapper--metrics canvas {
+    margin-bottom: 48px; }
+  @media screen and (min-width: 1008px) {
+    .main-wrapper--metrics .public__title {
+      width: 100% !important; } }
+
+.public__title {
+  color: #6E7F89;
+  font-size: 44px;
+  font-weight: bold;
+  line-height: 58px;
+  letter-spacing: 0; }
+
+.public__subtitle {
+  font-family: "Inconsolata", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 22px;
+  letter-spacing: 0.9px;
+  margin-bottom: 12px; }
+
+.public-content {
+  max-width: 834px;
+  margin: 0 auto;
+  padding-bottom: 18px; }
+  @media screen and (max-width: 1007px) {
+    .public-content {
+      padding: 0px 18px 18px 18px; } }
+
+.public-content:not(:first-of-type) .public__title {
+  color: #ff7c6e;
+  font-size: 36px;
+  line-height: 48px; }
+  @media screen and (min-width: 1008px) {
+    .public-content:not(:first-of-type) .public__title {
+      width: 50%; } }
+
+.public-content:last-of-type {
+  padding-bottom: 100px; }
+
+.public__header-selector-wrapper {
+  display: flex;
+  justify-content: space-between; }
+  @media screen and (min-width: 1008px) {
+    .public__header-selector-wrapper h1 {
+      margin-right: 10px; } }
+  @media screen and (max-width: 1007px) {
+    .public__header-selector-wrapper {
+      flex-direction: column; } }
+
+.public__header-selector {
+  min-width: 180px;
+  padding-top: 12px;
+  font-family: "Inconsolata", sans-serif;
+  font-size: 16px;
+  line-height: 26px; }
+  @media screen and (max-width: 1007px) {
+    .public__header-selector {
+      margin-bottom: 30px; } }
+  .public__header-selector .radios {
+    display: flex;
+    flex-direction: column; }
+    .public__header-selector .radios label {
+      margin: unset !important; }
+  .public__header-selector .radio {
+    border-color: #ffd4cf;
+    white-space: nowrap;
+    margin: 6px 0 !important; }
+  .public__header-selector .radio__checked {
+    position: absolute;
+    background-color: #ff7c6e;
+    width: 12px;
+    height: 12px;
+    top: 3px;
+    left: 3px;
+    border-radius: 6px; }
+  .public__header-selector .radio__label {
+    margin-left: 36px;
+    margin-top: -1px; }
+    .public__header-selector .radio__label small {
+      margin-left: 4px;
+      font-size: 11px; }
+  .public__header-selector .radio--checked {
+    border-color: #ff7c6e; }
+
+.button__public {
+  height: 40px;
+  border-radius: 4px; }
+  @media screen and (min-width: 1008px) {
+    .button__public {
+      width: 220px; } }
+  @media screen and (max-width: 1007px) {
+    .button__public {
+      width: 100%; } }
 
 @media screen and (min-width: 1008px) {
   html, body {

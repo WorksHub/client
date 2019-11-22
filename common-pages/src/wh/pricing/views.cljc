@@ -8,6 +8,7 @@
     [wh.components.faq :as faq]
     [wh.components.icons :refer [icon]]
     [wh.components.package-selector :refer [package-selector]]
+    [wh.components.forms :refer [fake-radio-buttons]]
     [wh.components.www-homepage :as www]
     [wh.pricing.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]
@@ -23,7 +24,7 @@
          :target "_blank"
          :rel    "noopener"}
      [:button#employers_demo-btn
-      {:class (util/merge-classes "button"
+      {:class (util/merge-classes "button button__public"
                                   (when secondary? "button--inverted"))}
       label]]))
 
@@ -40,31 +41,15 @@
      [:button.button "Start Free Trial"]
      [:button.button label])])
 
-(defn fake-radio-buttons
-  [value options]
-  [:div.radios
-   (for [[i {:keys [id label href]}] (map-indexed vector options)]
-     ^{:key id}
-     [:a
-      {:class
-       (util/merge-classes "radio"
-                           (when (= id value)
-                             "radio--checked"))
-       :href href
-       :id id}
-      (when (= id value)
-        [:div.radio__checked])
-      [:div.radio__label label]])])
-
 (defn page []
   (let [vertical (<sub [:wh/vertical])
         billing-period (keyword (or (<sub [:wh/query-param "billing-period"]) (name data/default-billing-period)))]
     [:div.pricing
-     [:div.pricing-content
-      [:h2.pricing__subtitle "STRAIGHTFORWARD PRICING"]
-      [:div.pricing__billing-period-selector-wrapper
-       [:h1.pricing__title "Select a plan for your hiring needs"]
-       [:div.pricing__billing-period-selector
+     [:div.public-content
+      [:h2.public__subtitle "STRAIGHTFORWARD PRICING"]
+      [:div.public__header-selector-wrapper
+       [:h1.public__title "Select a plan for your hiring needs"]
+       [:div.public__header-selector
         [fake-radio-buttons
          billing-period
          (->> data/billing-data
@@ -81,14 +66,14 @@
         :mobile-fullscreen? true
         :show-trials? false
         :contact-button (demo-button)}]]
-     [:div.pricing-content.has-text-centered
+     [:div.public-content.has-text-centered
       [:div.pricing__request-demo
        [(demo-button) false "Request Demo" nil nil]]]
      [www/animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket"]
-     [:div.pricing-content
-      [:h2.pricing__subtitle "FAQS"]
-      [:h1.pricing__title "What else would you like to know?"]
+     [:div.public-content
+      [:h2.public__subtitle "FAQS"]
+      [:h1.public__title "What else would you like to know?"]
       [faq/faq-component data/pricing-questions]]
      [www/animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe"]
-     [:div.pricing-content.has-text-centered
+     [:div.public-content.has-text-centered
       [www/testimonials]]]))

@@ -6,80 +6,6 @@
   .package-selector__column-inner
     background-color: $pale-gray
 
-.pricing__title
-  color: $steel-gray
-  font-size: 44px
-  font-weight: bold
-  line-height: 58px
-  letter-spacing: 0
-.pricing__subtitle
-  font-family: $family-secondary
-  font-size: 16px
-  font-weight: normal
-  line-height: 22px
-  letter-spacing: 0.9px
-  margin-bottom: 12px
-
-.pricing-content
-  max-width: 834px
-  margin: 0 auto
-  padding-bottom: 18px
-  +mobile
-    padding: 0px 18px 18px 18px
-.pricing-content:not(:first-of-type)
-  .pricing__title
-    color: $red
-    +desktop
-      width: 50%
-    font-size: 36px
-    line-height: 48px
-.pricing-content:last-of-type
-  padding-bottom: 100px
-
-.pricing__billing-period-selector-wrapper
-  h1
-    +desktop
-      margin-right: 10px
-  display: flex
-  justify-content: space-between
-  +mobile
-    flex-direction: column
-
-.pricing__billing-period-selector
-  min-width: 180px
-  padding-top: 12px
-  font-family: $family-secondary
-  font-size: 16px
-  line-height: 26px
-  +mobile
-    margin-bottom: 30px
-  .radios
-    display: flex
-    flex-direction: column
-    label
-      margin: unset !important
-  .radio
-    border-color: $pale-red
-    white-space: nowrap
-    margin: 6px 0 !important
-  .radio__checked
-    position: absolute
-    background-color: $red
-    width: 12px
-    height: 12px
-    top: 3px
-    left: 3px
-    border-radius: 6px
-  .radio__label
-    margin-left: 36px
-    margin-top: -1px
-    small
-      margin-left: 4px
-      font-size: 11px
-
-  .radio--checked
-    border-color: $red
-
 .pricing__faqs
   display: flex
   +mobile
@@ -102,7 +28,7 @@
     text-transform: lowercase
     font-size: 14px
     padding: 0 16px
-  .pricing__subtitle
+  .public__subtitle
     font-size: 16px
     line-height: 32px
     margin-bottom: 32px
@@ -148,12 +74,3 @@
 .pricing__faqs__intro,
 .pricing__faqs__question
   margin-bottom: 20px
-
-.pricing__request-demo
-  .button
-    +desktop
-      width: 220px
-    +mobile
-      width: 100%
-    height: 40px
-    border-radius: 4px

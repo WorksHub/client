@@ -222,3 +222,19 @@
               :class label-class}
       [:div {:class "checkbox__box"}]
       label]]))
+
+(defn fake-radio-buttons
+  [value options]
+  [:div.radios
+   (for [[i {:keys [id label href]}] (map-indexed vector options)]
+     ^{:key id}
+     [:a
+      {:class
+             (util/merge-classes "radio"
+                                 (when (= id value)
+                                   "radio--checked"))
+       :href href
+       :id id}
+      (when (= id value)
+        [:div.radio__checked])
+      [:div.radio__label label]])])

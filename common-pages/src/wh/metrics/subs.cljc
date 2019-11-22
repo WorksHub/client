@@ -1,6 +1,8 @@
 (ns wh.metrics.subs
   (:require
-    [re-frame.core :refer [reg-sub]]))
+    #?(:clj [wh.url :as url])
+    [re-frame.core :refer [reg-sub]]
+    [wh.verticals :as verticals]))
 
 (reg-sub
   ::data
@@ -30,3 +32,10 @@
   :<- [::data]
   (fn [data _]
     (-> data :data :base)))
+
+(reg-sub
+  ::vertical-options
+  (fn [db _]
+    (mapv (fn [vertical]
+           {:id (keyword vertical) :label vertical :url (url/get-url vertical :metrics)})
+         (concat ["www"] verticals/ordered-job-verticals))))

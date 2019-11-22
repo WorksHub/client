@@ -169,7 +169,7 @@
   []
   [:div.homepage__testimonials
    [:h3 "Join our satisfied worldwide clients"]
-   (link [:button.button
+   (link [:button.button.button__public
           {:id "www-landing__testimonials"}
           get-started-cta-string] :get-started)
    [carousel
