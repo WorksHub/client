@@ -148,6 +148,9 @@
                            "complete" (with-params :payment-setup :step :pay-success)}]
               ["tags" {"/edit" :tags-edit}]
 
+              ;; Non UI routes - form submissions
+              ["create-company" :create-company-form]
+
               ;; Non UI routes - redirects, webhooks, API, xml
               ["sitemap.xml" :sitemapxml]
               ["rss.xml" :rss]

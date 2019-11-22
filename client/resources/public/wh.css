@@ -17136,15 +17136,39 @@ h3 {
   .company-profile__company-cta .is-flex {
     flex-direction: column; } }
 
+.company-profile__company-cta .field__error:not(.is-invisible) {
+  margin-top: 12px; }
+
+.company-profile__company-cta .field--errored + .button {
+  margin-top: 18px; }
+
 .company-profile__company-cta h3 {
-  line-height: 18px; }
+  line-height: 18px;
+  font-weight: 600; }
 
 .company-profile__company-cta p {
+  font-size: 14px;
   line-height: 21px;
-  flex: 1; }
-  @media screen and (min-width: 1008px) {
-    .company-profile__company-cta p {
-      margin-bottom: 18px; } }
+  flex: 1;
+  font-family: "Inconsolata", sans-serif; }
+  .company-profile__company-cta p + a {
+    margin-top: 18px; }
+
+@media screen and (min-width: 1008px) {
+  .company-profile__company-cta__img + div.is-flex {
+    margin: 12px 0px 0px 0px; } }
+
+@media screen and (max-width: 1007px) {
+  .company-profile__company-cta__img + div.is-flex {
+    margin: 0px 0px 12px 0px; } }
+
+@media screen and (min-width: 1008px) {
+  a + .company-profile__company-cta__img img {
+    margin: 18px 0px 0px 0px; } }
+
+@media screen and (max-width: 1007px) {
+  a + .company-profile__company-cta__img img {
+    margin: 0px 0px 18px 0px; } }
 
 .company-profile__company-cta__img {
   flex: 1;
@@ -17153,12 +17177,6 @@ h3 {
   align-items: flex-end; }
   .company-profile__company-cta__img img {
     max-height: 150px; }
-    @media screen and (min-width: 1008px) {
-      .company-profile__company-cta__img img {
-        margin: 18px 0px 0px 0px; } }
-    @media screen and (max-width: 1007px) {
-      .company-profile__company-cta__img img {
-        margin: 0px 0px 18px 0px; } }
 
 @media screen and (max-width: 1007px) {
   .company-profile__create-profile__company-info .radios {

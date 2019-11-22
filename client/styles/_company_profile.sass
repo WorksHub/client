@@ -794,13 +794,33 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
   .is-flex
     +desktop
       flex-direction: column
+  .field__error:not(.is-invisible)
+    margin-top: 12px
+  .field--errored + .button
+    margin-top: 18px
   h3
     line-height: 18px
+    font-weight: $font-semi-bold
   p
+    font-size: 14px
     line-height: 21px
     flex: 1
+    font-family: $family-secondary
+    & + a
+      margin-top: 18px
+
+.company-profile__company-cta__img + div.is-flex
+  +desktop
+      margin: 12px 0px 0px 0px
+  +mobile
+      margin: 0px 0px 12px 0px
+
+a + .company-profile__company-cta__img
+  img
     +desktop
-      margin-bottom: 18px
+      margin: 18px 0px 0px 0px
+    +mobile
+      margin: 0px 0px 18px 0px
 
 .company-profile__company-cta__img
   flex: 1
@@ -808,10 +828,6 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
   justify-content: center
   align-items: flex-end
   img
-    +desktop
-      margin: 18px 0px 0px 0px
-    +mobile
-      margin: 0px 0px 18px 0px
     max-height: 150px
 
 .company-profile__create-profile__company-info

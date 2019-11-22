@@ -27,7 +27,7 @@
                  (when error "field--errored")
                  class)}
        (when label
-         [(if (string? error)
+         [(if error
             :label.label.field--invalid
             :label.label)
           {:class (when inline? "is-pulled-left")} label])]
@@ -61,13 +61,17 @@
             (merge (when on-change
                      (interop-forms/on-change-fn on-change))
                    (when on-change-events
-                     (interop-forms/dispatch-events-on-change on-change-events))))
+                     (interop-forms/dispatch-events-on-change on-change-events))
+                   (when (and (not on-change) (not on-change-events))
+                     ;; in cljs we must provide on-change
+                     #?(:cljs
+                        {:on-change identity}))))
           (when on-input
             (interop-forms/on-input-fn on-input))
           (when on-scroll
             {:on-scroll #(events/dispatch on-scroll)})
           (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press
-                                :step])
+                                :step :name])
           (when (and rows (= type :textarea))
             {:rows rows}))])
 
@@ -87,15 +91,15 @@
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
-      (let [value            value
+      (let [value            (or value "") ;; nil value not allowed
             suggestable?     (and (or (seq suggestions) on-select-suggestion) (not hide-icon?))
-            show-suggestion? (and (seq suggestions) @focused (not read-only))
+
             removable?       (and on-remove value (not @focused))]
         (field-container (merge options
-                                {:error (when (and (string? error) force-error?)
-                                          error)})
+                                {:error (when (or (string? error) force-error?)
+                                          (or error true))})
                          [:div.text-field-control
-                          {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
+                          {:class (str #_(when show-suggestion? "text-field-control--showing-suggestions")
                                        (when suggestable? " text-field-control--suggestable")
                                        (when removable? " text-field-control--removable"))}
                           (text-input value options)

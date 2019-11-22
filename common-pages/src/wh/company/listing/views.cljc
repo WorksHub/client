@@ -107,4 +107,4 @@
            :companies
            query-params])]
        [:div.companies__side.split-content__side.is-hidden-mobile
-        [company/company-cta false]]]]]))
+        [company/company-cta-with-registration :companies]]]]]))
