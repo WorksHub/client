@@ -7,6 +7,8 @@
     [wh.logged-in.apply.db :as apply-db]
     [wh.logged-in.apply.events :as apply-events]
     [wh.logged-in.apply.views :as apply]
+    [wh.logged-in.apply.cancel-apply.db :as cancel-db]
+    [wh.logged-in.apply.cancel-apply.events :as cancel-events]
     [wh.logged-in.contribute.views :as contribute]
     [wh.logged-in.dashboard.db :as dashboard-db]
     [wh.logged-in.dashboard.events :as dashboard-events]
@@ -41,9 +43,10 @@
   (fn [db _]
     (update db ::db/page-mapping merge page-mapping)))
 
-(swap! db/sub-dbs conj ::dashboard-db/sub-db ::apply-db/sub-db ::profile-db/sub-db)
+(swap! db/sub-dbs conj ::dashboard-db/sub-db ::apply-db/sub-db ::cancel-db/sub-db ::profile-db/sub-db)
 
 (dispatch-sync [::apply-events/initialize-db])
+(dispatch-sync [::cancel-events/initialize-db])
 (dispatch-sync [::dashboard-events/initialize-db])
 (dispatch-sync [::profile-events/initialize-db])
 (dispatch-sync [::initialize-page-mapping])
