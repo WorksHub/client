@@ -103,7 +103,7 @@
   ::remove-application
   db/default-interceptors
   (fn [{db :db} [id slug]]
-    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] s/difference (dissoc-applied-jobs db id slug)
+    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] s/difference (dissoc-applied-jobs db id slug))
      :dispatch [:personalised-jobs/fetch-jobs-by-type :applied 1]}))
 
 
