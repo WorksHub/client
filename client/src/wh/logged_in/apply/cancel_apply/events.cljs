@@ -1,5 +1,6 @@
 (ns wh.logged-in.apply.cancel-apply.events
-  (:require [re-frame.core :refer [reg-event-fx reg-event-db path]]
+  (:require [clojure.set :as s]
+            [re-frame.core :refer [reg-event-fx reg-event-db path]]
             [wh.logged-in.apply.events :as apply-events]
             [wh.logged-in.apply.cancel-apply.db :as cancel]
             [wh.db :as db])
@@ -102,7 +103,7 @@
   ::remove-application
   db/default-interceptors
   (fn [{db :db} [id slug]]
-    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] identity (dissoc-applied-jobs db id slug)
+    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] s/difference (dissoc-applied-jobs db id slug)
      :dispatch [:personalised-jobs/fetch-jobs-by-type :applied 1]}))
 
 
