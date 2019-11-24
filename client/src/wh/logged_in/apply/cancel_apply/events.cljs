@@ -66,28 +66,45 @@
 
 ;; this is triggered by the conversation button
 (reg-event-fx
-  ::cancel-application
-  cancel-interceptors
-  (fn [{db :db} _]
-    {:graphql {:query :cancel-application-mutation
-               :variables (or (some->> (get-in db [::cancel/job :id]) (hash-map :id))
-                              (some->> (get-in db [::cancel/job :slug]) (hash-map :slug)))
-               :on-success [::cancel-application-success]}}))
+ ::cancel-application
+ cancel-interceptors
+ (fn [{db :db} _]
+   (let [job (get db ::cancel/job)
+         id (some ->> (get job :id) (hash-map :id))
+         slug (some->> (get job :slug) (hash-map :slug))]
+     {:graphql {:query :cancel-application-mutation
+                :variables (or id slug)
+                :on-success [::cancel-application-success id slug]}})))
 
 ;; if failed, assoc :cancellation-failure, which should prompt codi-message of trying again.
 (reg-event-fx
   ::cancel-application-success
   db/default-interceptors
-  (fn [{db :db} [{:keys [data]}]]
+  (fn [{db :db} [{:keys [data]} id slug]]
     (let [result (apply-events/gql-check-application->check-application data)]
       (if (= :failed (:check-status result))
         (cond-> (assoc db ::cancel/reason-failed? :failed)
           (:reason result) (assoc-in [::cancel/reason] (:reason result)))
         {:db (-> db
                  (assoc ::cancel/updating? true)
-                 ;; could have a cancel-apply sub-db , as there will be different codi messages and different steps...
-                 (assoc ::cancel/current-step :thanks))
-         :dispatch [:personalised-jobs/fetch-jobs-by-type :applied 1]}))))
+                 (assoc ::cancel/current-step :thanks)
+                 (dissoc ::cancel/job))
+         :dispatch [::remove-application id slug]}))))
+
+(defn dissoc-applied-jobs
+  [db id slug]
+  (let [applied-jobs (get-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs])]
+    (or
+     (disj applied-jobs id)
+     (disj applied-jobs slug))))
+
+(reg-event-fx
+  ::remove-application
+  db/default-interceptors
+  (fn [{db :db} [id slug]]
+    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] identity (dissoc-applied-jobs db id slug)
+     :dispatch [:personalised-jobs/fetch-jobs-by-type :applied 1]}))
+
 
 (reg-event-db
   ::close-chatbot
