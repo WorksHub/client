@@ -6,6 +6,7 @@
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
     [wh.interop :as interop]
+    [wh.logged-in.apply.cancel-apply.events :as cancel]
     [wh.re-frame.events :refer [dispatch]]
     [wh.routes :as routes]
     [wh.slug :as slug]
@@ -35,6 +36,13 @@
       :id (str "job-card__blacklist-button_job-" id)
       :class "job__icon blacklist"
       :on-click #(dispatch [:wh.events/blacklist-job job on-close])])
+   ;; check if on-close is nil , as this separates it from other pages, and check they have applied for the job.
+   (when (and logged-in? (not on-close) applied?)
+     [icon "close"
+      ;; keep same class names for now...
+      :id (str "job-card__blacklist-button_job-" id)
+      :class "job__icon blacklist"
+      :on-click #(dispatch [::cancel/start-cancellation job])])
    [:a {:href (when published (routes/path :job :params {:slug slug}))}
     [:div.info
      [:div.logo
