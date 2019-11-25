@@ -377,7 +377,7 @@
 (def salary-ranges
   {["CAD" "Yearly"] {:min 70000,  :max 165000},
    ["USD" "Yearly"] {:min 30000,  :max 300000},
-   ["CHF" "Yearly"] {:min 100000, :max 150000},
+   ["CHF" "Yearly"] {:min 100000, :max 200000},
    ["USD" "Daily"]  {:min 600,    :max 1000},
    ["NOK" "Yearly"] {:min 550000, :max 650000},
    ["EUR" "Yearly"] {:min 20000,  :max 180000},
