@@ -109,13 +109,16 @@
                                     :remote               (boolean (get-in search-params [:filters :remote]))
                                     :sponsorship          (boolean (get-in search-params [:filters :sponsorshipOffered]))
                                     :only-mine            (boolean (and user-email (= user-email (get-in search-params [:filters :manager]))))
-                                    :role-types           (if role-type (set [role-type]) ;; TODO now we only pass one, should we get more?
-                                                                        (:role-types jobsboard/default-db))
-                                    :published            (if published (set [published])
-                                                                        (:published jobsboard/default-db))
+                                    :role-types           (if role-type
+                                                            (set [role-type]) ;; TODO now we only pass one, should we get more?
+                                                            (get-in jobsboard/default-db [::jobsboard/search :wh.search/role-types]))
+                                    :published            (if published
+                                                            (set [published])
+                                                            (get-in jobsboard/default-db [::jobsboard/search :wh.search/published]))
                                     :currency             (or (get-in search-params [:filters :remuneration :currency])
-                                                              (:wh.search/currency jobsboard/default-db))
-                                    :salary-type          (get salary-type-mapping (get-in search-params [:filters :remuneration :timePeriod]))
+                                                              (get-in jobsboard/default-db [::jobsboard/search :wh.search/currency]))
+                                    :salary-type          (or (get salary-type-mapping (get-in search-params [:filters :remuneration :timePeriod]))
+                                                              (get-in jobsboard/default-db [::jobsboard/search :wh.search/salary-type]))
                                     :salary-range         (when (and min-salary max-salary) [min-salary max-salary])
                                     :query                (:query search-params)
                                     :available-tags       (facets "tags")
@@ -274,7 +277,7 @@
   [criteria query-only? app-db]
   (let [criteria (cond-> criteria query-only? (select-keys [:wh.search/query]))
         {:keys [:wh.search/query :wh.search/tags :wh.search/role-types
-                :wh.search/remote :wh.search/sponsorship
+                :wh.search/remote :wh.search/sponsorship :wh.search/currency
                 :wh.search/wh-regions :wh.search/cities :wh.search/countries
                 :wh.search/salary-type :wh.search/only-mine :wh.search/published]} criteria]
     [:jobsboard
@@ -287,7 +290,7 @@
                            (seq cities) (assoc :location.city (str/join ";" cities))
                            (seq countries) (assoc :location.country-code (str/join ";" countries))
                            (seq role-types) (assoc :role-type (str/join ";" role-types))
-                           salary-type (merge (salary-params criteria))
+                           (and (not= "*" currency) salary-type) (merge (salary-params criteria))
                            only-mine (assoc :manager (get-in app-db [:wh.user.db/sub-db :wh.user.db/email]))
                            (and published (= (count published) 1)) (assoc :published (first published)))]))
 

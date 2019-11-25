@@ -391,7 +391,8 @@
   :wh.search/currencies
   :<- [::search]
   (fn [search _]
-    (distinct (map :currency (:wh.search/salary-ranges search)))))
+    (conj (distinct (map :currency (:wh.search/salary-ranges search)))
+          "*")))
 
 (reg-sub
   :wh.search/salary-type

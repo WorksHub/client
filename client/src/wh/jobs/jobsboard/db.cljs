@@ -9,11 +9,12 @@
                                       :tags #{}
                                       :cities #{}
                                       :countries #{}
-                                      :wh-regions #{} ; :us, :europe, or :rest-of-world
-                                                      ; thusly called to distinguish it from location regions
+                                      ;; :wh-regions thusly called to distinguish it from location regions
+                                      ;; :us, :europe, or :rest-of-world
+                                      :wh-regions #{}
                                       :salary-type nil
                                       :salary-range nil
-                                      :currency "GBP"
+                                      :currency nil
                                       :sponsorship false
                                       :remote false
                                       :only-mine false
