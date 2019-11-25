@@ -24,7 +24,7 @@
 (defn job-card--header
   [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary published] :as job}
    {logo :logo company-name :name}
-   {:keys [logged-in? skeleton? liked? on-close]}]
+   {:keys [logged-in? skeleton? applied? liked? on-close]}]
   [:span
    (when (and logged-in? (not skeleton?))
      [icon "like"
