@@ -71,8 +71,8 @@
  cancel-interceptors
  (fn [{db :db} _]
    (let [job (get db ::cancel/job)
-         id (some->> (get job :id) (hash-map :id))
-         slug (some->> (get job :slug) (hash-map :slug))]
+         id (some->> (get-in db [::cancel/job :id]) (hash-map :id))
+         slug (some->> (get-in db [::cancel/job :slug]) (hash-map :slug))]
      {:graphql {:query :cancel-application-mutation
                 :variables (or id slug)
                 :on-success [::cancel-application-success id slug]}})))
