@@ -10,6 +10,7 @@
       (s/conform ::other-reasons reason))))
 
 (def steps #{:reason :thanks})
+(def default-reasons #{"found work" "changed mind"})
 
 (s/def ::steps-taken (s/coll-of steps))
 (s/def ::current-step steps)
@@ -18,7 +19,7 @@
 (s/def ::submit-success? boolean?)
 (s/def ::updating? boolean?)
 (s/def ::other-reasons string?)
-(s/def ::reason (partial check-reason #{"found work" "changed mind"}))
+(s/def ::reason (partial check-reason default-reasons))
 (s/def ::reason-failed? boolean?)
 (s/def ::job (s/or :id   (s/keys :req-un [::id])
                    :slug (s/keys :req-un [::slug])))
