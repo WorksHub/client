@@ -1,5 +1,5 @@
 (ns wh.logged-in.apply.cancel-apply.events
-  (:require [clojure.set :as s]
+  (:require [clojure.set :refer [difference]]
             [re-frame.core :refer [reg-event-fx reg-event-db path]]
             [wh.logged-in.apply.events :as apply-events]
             [wh.logged-in.apply.cancel-apply.db :as cancel]
@@ -71,7 +71,7 @@
  cancel-interceptors
  (fn [{db :db} _]
    (let [job (get db ::cancel/job)
-         id (some ->> (get job :id) (hash-map :id))
+         id (some->> (get job :id) (hash-map :id))
          slug (some->> (get job :slug) (hash-map :slug))]
      {:graphql {:query :cancel-application-mutation
                 :variables (or id slug)
@@ -103,7 +103,7 @@
   ::remove-application
   db/default-interceptors
   (fn [{db :db} [id slug]]
-    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] s/difference (dissoc-applied-jobs db id slug))
+    {:db (update-in db [:wh.user.db/sub-db :wh.user.db/applied-jobs] difference (dissoc-applied-jobs db id slug))
      :dispatch [:personalised-jobs/fetch-jobs-by-type :applied 1]}))
 
 
