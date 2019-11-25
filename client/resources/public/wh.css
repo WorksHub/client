@@ -17139,6 +17139,10 @@ h3 {
     background-color: white;
     padding: 18px; } }
 
+@media screen and (min-width: 1008px) {
+  .company-profile__company-cta .is-flex {
+    flex-direction: column; } }
+
 .company-profile__company-cta .field__error:not(.is-invisible) {
   margin-top: 12px; }
 
@@ -17180,9 +17184,6 @@ h3 {
   align-items: flex-end; }
   .company-profile__company-cta__img img {
     max-height: 150px; }
-
-.company-profile__company-cta__form-container.is-flex {
-  flex-direction: column; }
 
 @media screen and (max-width: 1007px) {
   .company-profile__create-profile__company-info .radios {
