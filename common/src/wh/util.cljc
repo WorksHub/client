@@ -58,12 +58,12 @@
          (and (coll? %) (empty? %)))))
 
 (s/fdef remove-nils
-        :args (s/cat :m map?)
-        :ret map?
-        :fn (fn [{ret :ret}]
-              (letfn [(all-values [m]
-                        (reduce-kv (fn [a k v] (if (map? v) (concat a (all-values v)) (conj a v))) [] m))]
-                (not (some nil? (all-values ret))))))
+  :args (s/cat :m map?)
+  :ret map?
+  :fn (fn [{ret :ret}]
+        (letfn [(all-values [m]
+                  (reduce-kv (fn [a k v] (if (map? v) (concat a (all-values v)) (conj a v))) [] m))]
+          (not (some nil? (all-values ret))))))
 
 (defn namespace-map
   "Namespace all keys in m with ns, unless they are already namespaced."
@@ -140,11 +140,11 @@
    (unflatten-map m "__"))
   ([m nest-indicator]
    (reduce
-    (fn [a [k v]]
-      (let [parts (str/split (name k) (re-pattern nest-indicator))]
-        (if (= 1 (count parts))
-          (assoc a k v)
-          (update a (keyword (namespace k) (first parts)) assoc (keyword (last parts)) v)))) {} m)))
+     (fn [a [k v]]
+       (let [parts (str/split (name k) (re-pattern nest-indicator))]
+         (if (= 1 (count parts))
+           (assoc a k v)
+           (update a (keyword (namespace k) (first parts)) assoc (keyword (last parts)) v)))) {} m)))
 
 (defn flatten-map
   "Takes a map and deflates any nested maps keys using nested indicator.
@@ -153,13 +153,13 @@
    (flatten-map m "__"))
   ([m nest-indicator]
    (reduce
-    (fn [a [k v]]
-      (if (map? v)
-        (apply assoc
-               (dissoc a k)
-               (mapcat (fn [[k' v']]
-                         [(keyword (str (name k) nest-indicator (name k') )) v']) v))
-        a)) m m)))
+     (fn [a [k v]]
+       (if (map? v)
+         (apply assoc
+                (dissoc a k)
+                (mapcat (fn [[k' v']]
+                          [(keyword (str (name k) nest-indicator (name k') )) v']) v))
+         a)) m m)))
 
 (defn ->vec
   "Takes a value and either converts it to a vector or puts it into a vector
@@ -253,6 +253,10 @@
        (map vector (iterate inc 0))
        (remove #(= (first %) i))
        (map second)))
+
+(defn insert-at
+  [coll el idx]
+  (apply concat (interpose [el] (split-at idx coll))))
 
 ;;;;
 

@@ -954,10 +954,10 @@
            {:class (util/merge-classes "company-profile__company-cta"
                                        cls)}
            [:h3 "Get involved - create a free profile page for your company"]
-           [:div.company-profile__company-cta__img
+           [:div.company-profile__company-cta__img.is-hidden-mobile
             [:img {:src "/images/hiw/company/hiw/hiw4.svg"
                    :alt ""}]]
-           [:div.is-flex
+           [:div.company-profile__company-cta__form-container.is-flex
             [:p "Use this space to connect with our community. Companies with profiles typically get 20% more applications!"]
             [:form.wh-formx
              {:action (routes/path :create-company-form :query-params {:redirect (name redirect)})

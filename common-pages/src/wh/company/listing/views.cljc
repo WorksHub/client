@@ -56,10 +56,14 @@
        [:span (str "View " total-published-job-count " " (text/pluralize total-published-job-count "job"))]]
       :company-jobs :slug slug])])
 
+(defn insert-registration-prompt
+  [companies]
+  (util/insert-at companies :registration-prompt 2))
+
 (defn page
   []
   (let [result       (<sub [::subs/companies])
-        companies    (or (:companies result)
+        companies    (or (some-> (:companies result) insert-registration-prompt)
                          (map (partial hash-map :id) (range 10)))
         query-params (<sub [:wh/query-params])
         loading?     (<sub [::subs/loading?])]
@@ -98,8 +102,14 @@
             :on-change (interop-forms/add-select-value-to-url :sort (<sub [::subs/sorting-options]))}]]]
         (doall
           (for [company companies]
-            ^{:key (:id company)}
-            [company-card company]))
+            (if (= company :registration-prompt)
+              [:div.companies_interposed-cta.is-hidden-desktop
+               {:key company}
+               [:a {:name "create-company-form"}]
+               [company/company-cta-with-registration :companies]]
+              [:div.companies__company-container
+               {:key (:id company)}
+               [company-card company]])))
         (when (and (not-empty companies) (> (or (<sub [::subs/total-number-of-results]) 0) companies/page-size))
           [pagination/pagination
            (<sub [::subs/current-page])

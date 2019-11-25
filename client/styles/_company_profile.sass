@@ -791,9 +791,6 @@ $company-profile-anchor-offset-mobile: $company-profile-sticky-height + $navbar-
   +mobile
     background-color: white
     padding: 18px
-  .is-flex
-    +desktop
-      flex-direction: column
   .field__error:not(.is-invisible)
     margin-top: 12px
   .field--errored + .button
@@ -829,6 +826,9 @@ a + .company-profile__company-cta__img
   align-items: flex-end
   img
     max-height: 150px
+
+.company-profile__company-cta__form-container.is-flex
+  flex-direction: column
 
 .company-profile__create-profile__company-info
   +mobile
