@@ -17185,6 +17185,9 @@ h3 {
   .company-profile__company-cta__img img {
     max-height: 150px; }
 
+.company-profile__company-cta__form-container.is-flex {
+  flex-direction: column; }
+
 @media screen and (max-width: 1007px) {
   .company-profile__create-profile__company-info .radios {
     display: flex;
