@@ -14,20 +14,20 @@
     [wh.common.data.company-profile :as company-data]
     [wh.common.specs.company :as company-spec]
     [wh.common.specs.tags :as tag-spec]
-    [wh.common.text :as text]
+    [wh.common.text :as txt]
     [wh.company.profile.db :as profile]
     [wh.company.profile.events :as events]
     [wh.company.profile.subs :as subs]
     [wh.components.cards :refer [blog-card]]
     [wh.components.carousel :refer [carousel]]
     [wh.components.common :refer [link wrap-img img base-img]]
-    [wh.components.forms :as forms]
     [wh.components.icons :refer [icon]]
     [wh.components.info-icon :refer [info-icon]]
     [wh.components.issue :refer [issue-card]]
     [wh.components.job :refer [job-card]]
     [wh.components.loader :refer [loader]]
     [wh.components.not-found :as not-found]
+    [wh.components.pods.companies :as company-pods]
     [wh.components.stats.impl :refer #?(:clj [stats-item] :cljs [])]
     [wh.components.tag :as tag]
     [wh.components.videos :as videos]
@@ -150,7 +150,7 @@
               (when-let [changes
                          (not-empty
                            (merge {}
-                                  (when (text/not-blank @new-company-name)
+                                  (when (txt/not-blank @new-company-name)
                                     {:name @new-company-name})
                                   (when pending-logo
                                     {:logo pending-logo})))]
@@ -161,7 +161,7 @@
            [:div.company-profile__logo
             (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
            [:div.company-profile__name
-            (when-let [n (text/not-blank (<sub [::subs/name]))]
+            (when-let [n (txt/not-blank (<sub [::subs/name]))]
               (if (<sub [:user/admin?])
                 [link [:h1 n]
                  :company-dashboard :id (<sub [::subs/id]) :class "a--underlined"]
@@ -628,7 +628,7 @@
                    "company-profile__technology")}
          [editable {:editable?             admin-or-owner?
                     :prompt-before-cancel? (or (not= selected-tag-ids @existing-tag-ids)
-                                               (text/not-blank @new-ati)
+                                               (txt/not-blank @new-ati)
                                                (not-empty @new-tech-scales))
                     :on-editing            #(do
                                               (reset! editing? true)
@@ -649,7 +649,7 @@
                                     (merge {}
                                            (when (not= selected-tag-ids @existing-tag-ids)
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})
-                                           (when (text/not-blank @new-ati)
+                                           (when (txt/not-blank @new-ati)
                                              {:additional-tech-info @new-ati})
                                            (when (not-empty @new-tech-scales)
                                              {:tech-scales (merge tech-scales @new-tech-scales)})))]
@@ -719,7 +719,7 @@
                                                                @new-funding-tag  (conj @new-funding-tag))}))
                                          (when @new-size
                                            {:size @new-size})
-                                         (when (and @new-founded-year (text/not-blank @new-founded-year))
+                                         (when (and @new-founded-year (txt/not-blank @new-founded-year))
                                            {:founded-year @new-founded-year})
                                          (when-let [location (<sub [::subs/pending-location--raw])]
                                            {:locations [location]})))] ;; TODO we only do one locatio for now
@@ -809,7 +809,7 @@
     (fn [admin-or-owner?]
       (let [hww (<sub [::subs/how-we-work])]
         (when (or admin-or-owner?
-                  (text/not-blank hww))
+                  (txt/not-blank hww))
           [:section
            {:class (util/merge-classes
                      "company-profile__section--headed"
@@ -828,7 +828,7 @@
                       #(do
                          (reset! editing? false)
                          (when-let [changes
-                                    (when (text/not-blank @new-how-we-work)
+                                    (when (txt/not-blank @new-how-we-work)
                                       {:how-we-work @new-how-we-work})]
                            (dispatch-sync [::events/update-company changes "company-profile__how-we-work"])))}
             [:div
@@ -919,75 +919,6 @@
      (wrap-img img (<sub [::subs/logo]) {:w 32 :h 32})]
     [header-links]]])
 
-(defn company-cta
-  [_admin-or-owner? & [cls]]
-  (when-not (<sub [:user/logged-in?])
-    [:section
-     {:class (util/merge-classes "company-profile__company-cta"
-                                 cls)}
-     [:h3 "Get involved - create a free profile page for your company"]
-     [:div.is-flex
-      [:p "Use this space to connect with our community. Companies with profiles typically get 20% more applications!"]
-      [link [:button.button.is-full-width.is-hidden-mobile "Get Started"] :get-started]
-      [:div.company-profile__company-cta__img
-       [:img {:src "/images/hiw/company/hiw/hiw4.svg"
-              :alt ""}]]]
-     [link [:button.button.is-full-width.is-hidden-desktop "Get Started"] :get-started]]))
-
-(defn create-company-form-error->error-str
-  [e]
-  (case e
-    "company-with-same-name-already-exists" "A company with this name already exists. Please use a unique company name."
-    "duplicate-user"                        "A user with this email already exists. Please use a unique email address."
-    (str "An unknown error occurred (" e "). Please contact support.")))
-
-(defn company-cta-with-registration
-  [_redirect & [_cls]]
-  (let [user-name    (r/atom nil)
-        user-email   (r/atom nil)
-        company-name (r/atom nil)]
-    (fn [redirect & [cls]]
-      (when-not (<sub [:user/logged-in?])
-        (let [existing-params (<sub [:wh/query-params])
-              error           (get existing-params "create-company-form__error")]
-          [:section
-           {:class (util/merge-classes "company-profile__company-cta"
-                                       cls)}
-           [:h3 "Get involved - create a free profile page for your company"]
-           [:div.company-profile__company-cta__img.is-hidden-mobile
-            [:img {:src "/images/hiw/company/hiw/hiw4.svg"
-                   :alt ""}]]
-           [:div.company-profile__company-cta__form-container.is-flex
-            [:p "Use this space to connect with our community. Companies with profiles typically get 20% more applications!"]
-            [:form.wh-formx
-             {:action (routes/path :create-company-form :query-params {:redirect (name redirect)})
-              :method "post"}
-             [forms/text-field (merge {:label        "* Your name"
-                                       :hide-error?  true
-                                       :name         "create-company-form__user-name"
-                                       :value        (or @user-name
-                                                         (get existing-params "create-company-form__user-name"))
-                                       :force-error? (text/not-blank error)}
-                                      #?(:cljs
-                                         {:on-change #(reset! user-name (.. % -target -value))}))]
-             [forms/text-field (merge {:label        "* Company name"
-                                       :hide-error?  true
-                                       :name         "create-company-form__company-name"
-                                       :value        (or @company-name
-                                                         (get existing-params "create-company-form__company-name"))
-                                       :force-error? (text/not-blank error)}
-                                      #?(:cljs
-                                         {:on-change #(reset! company-name (.. % -target -value))}))]
-             [forms/text-field (merge {:label "* Your email"
-                                       :name  "create-company-form__user-email"
-                                       :value (or @user-email
-                                                  (get existing-params "create-company-form__user-email"))
-                                       :error (when (text/not-blank error)
-                                                (create-company-form-error->error-str error))}
-                                      #?(:cljs
-                                         {:on-change #(reset! user-email (.. % -target -value))}))]
-             [:button.button.is-full-width "Register"]]]])))))
-
 (defn company-stats
   [& [class]]
   [:section {:class (util/merge-classes
@@ -1020,7 +951,7 @@
       [hash-anchor "company-profile__benefits"]
       (when-not loading?
         [benefits admin-or-owner?])
-      [company-cta admin-or-owner? "is-hidden-desktop"]
+      [company-pods/company-cta "is-hidden-desktop"]
       [hash-anchor "company-profile__jobs"]
       (when-not loading?
         [job-header admin-or-owner?])
@@ -1029,7 +960,7 @@
      [:div.company-profile__side.split-content__side.is-hidden-mobile
       [company-info admin-or-owner?]
       [company-stats]
-      [company-cta admin-or-owner?]]]
+      [company-pods/company-cta]]]
     (when-not loading?
       [:div.split-content
        [:div.company-profile__main.split-content__main

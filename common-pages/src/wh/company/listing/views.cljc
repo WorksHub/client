@@ -2,7 +2,6 @@
   (:require
     #?(:cljs [wh.user.subs])
     [wh.common.text :as text]
-    [wh.company.listing.db :as companies]
     [wh.company.listing.db :as listing]
     [wh.company.listing.events :as events]
     [wh.company.listing.subs :as subs]
@@ -11,6 +10,8 @@
     [wh.components.forms :as forms]
     [wh.components.icons :refer [icon]]
     [wh.components.pagination :as pagination]
+    [wh.components.pods.candidates :as candidate-pods]
+    [wh.components.pods.companies :as company-pods]
     [wh.components.tag :as tag]
     [wh.interop.forms :as interop-forms]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
@@ -60,13 +61,17 @@
   [companies]
   (util/insert-at companies :registration-prompt 2))
 
+(defn insert-candidate-prompt
+  [companies]
+  (util/insert-at companies :candidate-prompt 7))
+
 (defn page
   []
-  (let [result       (<sub [::subs/companies])
-        companies    (or (some-> (:companies result) insert-registration-prompt)
-                         (map (partial hash-map :id) (range 10)))
-        query-params (<sub [:wh/query-params])
-        loading?     (<sub [::subs/loading?])]
+  (let [result              (<sub [::subs/companies])
+        companies           (or (some-> (:companies result) insert-registration-prompt insert-candidate-prompt)
+                                (map (partial hash-map :id) (range 10)))
+        query-params        (<sub [:wh/query-params])
+        loading?            (<sub [::subs/loading?])]
     [:div
      [:div.main.companies
       [:h1 "Companies using WorksHub"]
@@ -102,19 +107,26 @@
             :on-change (interop-forms/add-select-value-to-url :sort (<sub [::subs/sorting-options]))}]]]
         (doall
           (for [company companies]
-            (if (= company :registration-prompt)
+            (cond
+              (= company :registration-prompt)
               [:div.companies_interposed-cta.is-hidden-desktop
                {:key company}
                [:a {:name "create-company-form"}]
-               [company/company-cta-with-registration :companies]]
+               [company-pods/company-cta-with-registration :companies]]
+              (= company :candidate-prompt)
+              [:div.companies_interposed-cta.is-hidden-desktop
+               {:key company}
+               [candidate-pods/candidate-cta]]
+              :else
               [:div.companies__company-container
                {:key (:id company)}
                [company-card company]])))
-        (when (and (not-empty companies) (> (or (<sub [::subs/total-number-of-results]) 0) companies/page-size))
+        (when (and (not-empty companies) (> (or (<sub [::subs/total-number-of-results]) 0) listing/page-size))
           [pagination/pagination
            (<sub [::subs/current-page])
            (<sub [::subs/pagination])
            :companies
            query-params])]
        [:div.companies__side.split-content__side.is-hidden-mobile
-        [company/company-cta-with-registration :companies]]]]]))
+        [company-pods/company-cta-with-registration :companies]
+        [candidate-pods/candidate-cta]]]]]))
