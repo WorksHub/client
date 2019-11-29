@@ -350,7 +350,7 @@
                        [tabs
                         current-tab
                         frequencies
-                        #(dispatch (let [qp (assoc qp :tab %)]
+                        #(dispatch (let [qp (assoc qp :tab (name %))]
                                      (if-let [company-id (get-in select-job-link [:options :id])]
                                        [:wh.events/nav (:handler select-job-link) :params {:id company-id} :query-params qp]
                                        [:wh.events/nav (:handler select-job-link) :query-params qp])))]])
