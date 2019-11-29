@@ -12,8 +12,19 @@
 (reg-sub
   ::candidate-data
   :<- [::data]
-  (fn [data _]
-    (-> data :data :time-periods)))
+  :<- [:wh/vertical]
+  :<- [:user/admin?]
+  (fn [[data vertical admin?] _]
+    (let [vert (if (or (not admin?)
+                       (and admin? (= vertical "www")))
+                 "all"
+                 vertical)]
+      (->> data :data :time-periods
+           (map (fn [period]
+                  (-> period
+                      (update :registrations get vert)
+                      (update :approvals get vert)
+                      (update :outstanding get vert))))))))
 
 (reg-sub
   ::company-data

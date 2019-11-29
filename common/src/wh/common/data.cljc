@@ -647,7 +647,8 @@
    :items   [[:learn     "resources"  "Learn"]
              [:issues    "pr"         "Open Source Issues"]
              [:jobsboard "jobs-board" "Job Board"]
-             [:companies "company"    "Companies"]]})
+             [:companies "company"    "Companies"]
+             [:metrics   "trends"    "Metrics"]]})
 
 (defn menu
   [type user]

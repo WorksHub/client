@@ -30,7 +30,9 @@
                  {:title "Companies"
                   :route [:companies]}
                  {:title "Sitemap"
-                  :route [:sitemap]}]
+                  :route [:sitemap]}
+                 {:title "Metrics"
+                  :route [:metrics]}]
                 (vertical-links))
    :employers [(if (= "www" vertical)
                  {:title "Get Started"
