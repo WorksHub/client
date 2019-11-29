@@ -113,6 +113,11 @@
     (verticals/config vertical :label-name)))
 
 (reg-sub
+  :wh/page
+  (fn [db _]
+    (:wh.db/page db)))
+
+(reg-sub
   :wh/page-params
   (fn [db _]
     (:wh.db/page-params db)))
@@ -133,3 +138,9 @@
   :<- [:wh/query-params]
   (fn [params [_ param]]
     (get params param)))
+
+(reg-sub
+  :wh/twitter
+  :<- [:wh/vertical]
+  (fn [vertical _]
+    (verticals/config vertical :twitter)))

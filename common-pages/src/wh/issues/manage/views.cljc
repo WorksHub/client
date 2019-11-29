@@ -228,4 +228,4 @@
     (<sub [::subs/pagination])
     (<sub [:wh.subs/page])
     (<sub [:wh.subs/query-params])
-    (<sub [:wh.subs/page-params])]])
+    (<sub [:wh/page-params])]])

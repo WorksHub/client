@@ -2,16 +2,15 @@
   (:require
     [clojure.set :as set]
     [clojure.string :as str]
-    [goog.i18n.NumberFormat :as nf]
     [re-frame.core :refer [reg-sub reg-sub-raw]]
-    [reagent.ratom :refer [reaction]]
     [wh.blogs.blog.db :as blog]
-    [wh.common.http :as http]
     [wh.common.user :as common-user]
-    [wh.components.cards.subs :as cards-subs]
     [wh.graphql.jobs :as jobs]
-    [wh.subs :refer [<sub]])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+    [wh.re-frame.subs :refer [<sub]]
+    [wh.util :as util])
+  (#?(:clj :require :cljs :require-macros)
+    [wh.re-frame.subs :refer [reaction]]
+    [clojure.core.strint :refer [<<]]))
 
 ;; These subscriptions get blog/recommended-jobs query results for the
 ;; currently viewed blog. They are registered with reg-sub-raw because
@@ -22,15 +21,15 @@
   ::blog
   (fn [_ _]
     (reaction
-     (let [id     (<sub [:wh.subs/page-param :id])
-           result (<sub [:graphql/result :blog {:id id}])]
-       (:blog result)))))
+      (let [id     (<sub [:wh/page-param :id])
+            result (<sub [:graphql/result :blog {:id id}])]
+        (:blog result)))))
 
 (reg-sub-raw
   ::recommended-jobs
   (fn [_ _]
     (reaction
-      (let [id           (<sub [:wh.subs/page-param :id])
+      (let [id           (<sub [:wh/page-param :id])
             results      (<sub [:graphql/result :recommended-jobs-for-blog {:id id}])
             liked-jobs   (<sub [:user/liked-jobs])
             applied-jobs (<sub [:user/applied-jobs])]
@@ -78,7 +77,7 @@
   ::reading-time
   :<- [::blog]
   (fn [blog _]
-    (:reading-time blog)))
+    (or (:reading-time blog) 0)))
 
 (reg-sub
   ::html-body
@@ -175,12 +174,16 @@
   ::upvote-count
   :<- [::blog-db]
   :<- [::id]
-  (let [formatter (goog.i18n.NumberFormat. nf/Format.COMPACT_SHORT)]
-    (fn [[db id] _]
-      (.format formatter (get-in db [::blog/upvotes id])))))
+  (fn [[db id] _]
+    (util/number->compact-str (get-in db [::blog/upvotes id]))))
 
 ;; Finally, these ones return visibility of UI items based on other pieces
 ;; of app's state.
+
+(defn can-edit-blog? [admin? creator user-email published?]
+  (or admin?
+      (and (and creator (= creator user-email))
+           (and (not (nil? published?)) (not published?)))))
 
 (reg-sub
   ::can-edit?
@@ -189,7 +192,12 @@
   :<- [:user/email]
   :<- [::published?]
   (fn [[creator admin? email published?] _]
-    (cards-subs/can-edit-blog? admin? creator email published?)))
+    (can-edit-blog? admin? creator email published?)))
+
+(defn show-blog-unpublished? [admin? creator user-email published?]
+  (and (and (not (nil? published?)) (not published?))
+       (or admin?
+           (and user-email (= creator user-email)))))
 
 (reg-sub
   ::show-unpublished?
@@ -198,4 +206,4 @@
   :<- [:user/email]
   :<- [::published?]
   (fn [[admin? creator email published?] _]
-    (cards-subs/show-blog-unpublished? admin? creator email published?)))
+    (show-blog-unpublished? admin? creator email published?)))

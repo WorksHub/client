@@ -1,14 +1,14 @@
 (ns wh.blogs.blog.events
   (:require
+    #?(:cljs [wh.pages.core :refer [on-page-load]])
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.blogs.blog.db :as blog]
     [wh.common.job]
     [wh.db :as db]
     [wh.graphql-cache :refer [reg-query] :as graphql]
     [wh.graphql.jobs]
-    [wh.pages.core :refer [on-page-load]]
     [wh.routes :as routes])
-  (:require-macros
+  (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
 (def blog-interceptors (into db/default-interceptors
@@ -31,7 +31,7 @@
 
 (defquery recommended-jobs-query
   {:venia/operation {:operation/type :query
-                      :operation/name "recommended_jobs"}
+                     :operation/name "recommended_jobs"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID}]
    :venia/queries [[:jobs {:filter_type "recommended"
@@ -49,6 +49,14 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :String!}]
    :venia/queries   [[:upvote_blog {:id :$id}]]})
+
+(defn initial-query [db]
+  [:blog {:id (blog/id db)}])
+
+(defn recommended-jobs-for-blog-query [db]
+  [:recommended-jobs-for-blog {:id (blog/id db)}])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (reg-event-db
   ::initialize-db
@@ -72,30 +80,31 @@
   ::init-upvotes
   db/default-interceptors
   (fn [db _]
-    (let [id (get-in db [:wh.db/page-params :id])
+    (let [id   (blog/id db)
           blog (:blog (graphql/result db :blog {:id id}))]
       (assoc-in db [::blog/sub-db ::blog/upvotes id] (:upvote-count blog)))))
 
-(reg-event-fx
-  ::upvote
-  db/default-interceptors
-  (fn [{db :db} _]
-    (let [id (get-in db [:wh.db/page-params :id])
-          blog (:blog (graphql/result db :blog {:id id}))]
-      (if (db/logged-in? db)
-        {:graphql {:query      upvote-blog-mutation
-                   :variables  {:id id}
-                   :on-success [::upvote-success]
-                   :on-failure [::upvote-failure]}
-         :analytics/track ["Blog Boosted" (select-keys blog [:id :reading-time :title :tags :author :formatted-creation-date])]}
-        {:show-auth-popup {:context :upvote
-                           :redirect [:blog :params {:id id}]}}))))
+#?(:cljs
+   (reg-event-fx
+     ::upvote
+     db/default-interceptors
+     (fn [{db :db} _]
+       (let [id   (blog/id db)
+             blog (:blog (graphql/result db :blog {:id id}))]
+         (if (db/logged-in? db)
+           {:graphql         {:query      upvote-blog-mutation
+                              :variables  {:id id}
+                              :on-success [::upvote-success]
+                              :on-failure [::upvote-failure]}
+            :analytics/track ["Blog Boosted" (select-keys blog [:id :reading-time :title :tags :author :formatted-creation-date])]}
+           {:show-auth-popup {:context  :upvote
+                              :redirect [:blog :params {:id id}]}})))))
 
 (reg-event-db
   ::upvote-success
   db/default-interceptors
   (fn [db [result]]
-    (let [id (get-in db [:wh.db/page-params :id])]
+    (let [id (blog/id db)]
       (if (get-in result [:data :upvote_blog])
         (update-in db [::blog/sub-db ::blog/upvotes id] inc)
         db))))
@@ -106,7 +115,11 @@
   (fn [_ [result]]
     {:dispatch [:error/set-global "Oops, failed to boost blog!"]}))
 
-(defmethod on-page-load :blog [db]
-  (let [id (get-in db [::db/page-params :id])]
-    [[:graphql/query :blog {:id id} {:on-success [::init-upvotes]}]
-     [:graphql/query :recommended-jobs-for-blog {:id id}]]))
+#?(:cljs
+   (defmethod on-page-load :blog [db]
+     (let [id (get-in db [::db/page-params :id])]
+       (list
+         [::initialize-db]
+         (into [:graphql/query] (conj (initial-query db) {:on-complete [::init-upvotes]}) )
+         (into [:graphql/query] (recommended-jobs-for-blog-query db))
+         [:wh.pages.core/unset-loader]))))

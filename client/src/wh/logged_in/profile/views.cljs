@@ -73,7 +73,7 @@
   ([profile-page candidate-page text class]
    (let [profile? (= (<sub [:wh.pages.core/page]) :profile)]
      [link text (if profile? profile-page candidate-page)
-      :id (when-not profile? (:id (<sub [:wh.pages.core/page-params])))
+      :id (when-not profile? (:id (<sub [:wh/page-params])))
       :class class])))
 
 (defn edit-header
@@ -152,7 +152,7 @@
   ([class]
    (let [candidate? (contains? #{:candidate-edit-header :candidate-edit-cv :candidate-edit-private} (<sub [:wh.pages.core/page]))]
      (if candidate?
-       [link "Cancel" :candidate :id (:id (<sub [:wh.pages.core/page-params])) :class class]
+       [link "Cancel" :candidate :id (:id (<sub [:wh/page-params])) :class class]
        [link "Cancel" :profile :class class]))))
 
 (defn skill-field [{:keys [name rating]}

@@ -65,7 +65,8 @@
           {:class (when-not (<sub [::subs/show-left-menu?]) "page-container--no-menu")}
           (when (<sub [::error-subs/message])
             [global-status-box])
-          (if (<sub [::subs/loading?])
+          (if (and (not (<sub [::subs/ssr-page?]))
+                   (<sub [::subs/loading?]))
             [:div.main-wrapper
              [:div.loader-wrapper
               [loader]]]

@@ -195,7 +195,7 @@
            [company-pod "is-desktop"])
          [sorting-component]
          [issues-list]
-         [pagination/pagination (<sub [::subs/current-page-number]) (<sub [::subs/pagination]) (<sub [::subs/page]) (<sub [::subs/query-params]) (<sub [::subs/page-params])]]
+         [pagination/pagination (<sub [::subs/current-page-number]) (<sub [::subs/pagination]) (<sub [:wh/page]) (<sub [:wh/query-params]) (<sub [:wh/page-params])]]
         [edit-issue/edit-issue]
         [:div.issues__side.split-content__side
          #?(:cljs
@@ -207,7 +207,7 @@
            [how-it-works/pod--company]
            logged-in?
            [how-it-works/pod--candidate]
-           (and (= :issues (<sub [::subs/page]))
+           (and (= :issues (<sub [:wh/page]))
                 (<sub [::subs/company-pod?]))
            [how-it-works/pod--choice]
            (<sub [::subs/all-issues?])

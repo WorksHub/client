@@ -27,20 +27,20 @@
 
 (defn page []
   (into
-   [:div.main
-    (learn-header)]
-   (let [parts (partition-all 3 (<sub [::subs/all-blogs]))
-         tag (<sub [:wh/page-param :tag])]
-     (if (seq parts)
-       (conj (vec (for [part parts]
-                    (into [:div.columns]
-                          (for [blog part]
-                            [:div.column.is-4
-                             [blog-card blog]]))))
-             [pagination
-              (<sub [::subs/current-page])
-              (<sub [::subs/pagination])
-              (if tag :learn-by-tag :learn)
-              (<sub [:wh/query-params])
-              (when tag {:tag tag})])
-       [[:p "No learning resources found."]]))))
+    [:div.main
+     (learn-header)]
+    (let [parts (partition-all 3 (<sub [::subs/all-blogs]))
+          tag (<sub [:wh/page-param :tag])]
+      (if (seq parts)
+        (conj (vec (for [part parts]
+                     (into [:div.columns]
+                           (for [blog part]
+                             [:div.column.is-4
+                              [blog-card blog]]))))
+              [pagination
+               (<sub [::subs/current-page])
+               (<sub [::subs/pagination])
+               (if tag :learn-by-tag :learn)
+               (<sub [:wh/query-params])
+               (when tag {:tag tag})])
+        [[:p "No learning resources found."]]))))

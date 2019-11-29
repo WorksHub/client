@@ -134,10 +134,6 @@
          (fn [db _]
            (::db/page db)))
 
-(reg-sub ::page-params
-         (fn [db _]
-           (::db/page-params db)))
-
 (defn- parse-url [url]
   (assoc
     (or (bidi/match-route routes/routes url)

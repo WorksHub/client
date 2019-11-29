@@ -22,7 +22,7 @@
 (swap! db/sub-dbs conj ::blog-db/sub-db)
 
 (dispatch-sync [::initialize-page-mapping])
-(dispatch-sync [::blog-events/initialize-db])
+;; don't unset loader here; too early
 
 (db/redefine-app-db-spec!)
 

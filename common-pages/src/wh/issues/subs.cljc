@@ -44,13 +44,8 @@
     (::issues/company db)))
 
 (reg-sub
-  ::page
-  (fn [db _]
-    (:wh.db/page db)))
-
-(reg-sub
   ::own-company?
-  :<- [::page]
+  :<- [:wh/page]
   (fn [page _]
     (= :company-issues page)))
 
@@ -121,16 +116,6 @@
         (if (< issues-count page-size)
           (str "Showing " 1 "-" issues-count " of " issues-count " issues")
           (str "Showing " start "-" end " of " issues-count " issues"))))))
-
-(reg-sub
-  ::query-params
-  (fn [db _]
-    (:wh.db/query-params db)))
-
-(reg-sub
-  ::page-params
-  (fn [db _]
-    (:wh.db/page-params db)))
 
 (reg-sub
   ::pagination

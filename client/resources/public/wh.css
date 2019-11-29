@@ -9846,6 +9846,7 @@ h3 {
     max-width: 350px; } }
 
 .blog {
+  padding: 0;
   box-sizing: border-box;
   background-color: #f4f5f8;
   height: 100%;

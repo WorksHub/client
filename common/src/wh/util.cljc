@@ -1,5 +1,6 @@
 (ns wh.util
   (:require
+    #?(:cljs [goog.i18n.NumberFormat :as nf])
     [camel-snake-kebab.core :as c]
     [clojure.spec.alpha :as s]
     [clojure.string :as str]
@@ -257,6 +258,22 @@
 (defn insert-at
   [coll el idx]
   (apply concat (interpose [el] (split-at idx coll))))
+
+#?(:cljs
+   (def number-formatter (goog.i18n.NumberFormat. nf/Format.COMPACT_SHORT)))
+(defn number->compact-str
+  "Takes a number and"
+  ([n]
+   #?(:clj (number->compact-str n 0)
+      :cljs (.format number-formatter n)))
+  #?(:clj
+     ([n i]
+      (if (< n 1000)
+        (format (cond (int? n) "%d%s"
+                      (< n 10) "%.1f%s"
+                      :else    "%.0f%s")
+                n (nth ["K" "M" "B"] (dec i) ""))
+        (recur (double (/ n 1000)) (inc i))))))
 
 ;;;;
 

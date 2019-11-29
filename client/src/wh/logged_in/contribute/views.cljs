@@ -201,7 +201,7 @@
     [:div.main.contribute
      (if new?
        [:h1.title "Contribute"]
-       [:h1.title "Editing " [link (<sub [::subs/title]) :blog :id (or (:id (<sub [::pages/page-params])) "") :class "a--underlined"]])
+       [:h1.title "Editing " [link (<sub [::subs/title]) :blog :id (or (:id (<sub [:wh/page-params])) "") :class "a--underlined"]])
      (if (<sub [::subs/edit-page-authorized?])
        [main new?]
        [:div "You can only edit blogs that you have created and which are not yet published."])]))

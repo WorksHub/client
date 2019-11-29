@@ -36,15 +36,6 @@
          (fn [db _]
            (::db/vertical db)))
 
-(reg-sub ::page-params
-         (fn [db _]
-           (::db/page-params db)))
-
-(reg-sub ::page-param
-         :<- [::page-params]
-         (fn [params [_ param]]
-           (get params param)))
-
 (reg-sub ::query-params
          (fn [db _]
            (::db/query-params db)))
@@ -73,10 +64,6 @@
          (fn [db _]
            (::db/loading? db)))
 
-(reg-sub ::twitter
-         (fn [db _]
-           (::db/twitter db)))
-
 ;;; Do not use - superseeded by global error box
 (reg-sub ::errors
          (fn [db _]
@@ -89,6 +76,10 @@
 (reg-sub ::display-tracking-consent-popup?
          (fn [db _]
            (not (::db/tracking-consent? db))))
+
+(reg-sub ::ssr-page?
+         (fn [db _]
+           (::db/server-side-rendered? db)))
 
 (defn showing-company-onboarding-dashboard-welcome?
   [db]

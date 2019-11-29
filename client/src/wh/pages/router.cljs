@@ -51,10 +51,10 @@
 
      :reagent-render
      (fn []
-       (let [_ (<sub [::wh.subs/page-params])
+       (let [_ (<sub [:wh/page-params])
              page (<sub [::pages/page])] ;; this sub causes re-render when page-params changes
          (when-let [page-handler (<sub [::current-page])]
-           (if (contains? #{:blog :job :register} (<sub [::pages/page])) ;; TODO :see_no_evil:
+           (if (contains? #{:job :register} (<sub [::pages/page])) ;; TODO :see_no_evil:
              [page-handler]
              [:div.main-wrapper
               {:class (str "main-wrapper--" (name page))}
