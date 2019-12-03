@@ -445,9 +445,9 @@
           [:button.button "Change billing period"]
           :payment-setup
           :step :pay-confirm
-          :query-params {:billing          billing-period
-                         :package          package
-                         :existing-billing billing-period
+          :query-params {:billing          (name billing-period)
+                         :package          (name package)
+                         :existing-billing (name billing-period)
                          :breakdown        false}]]])
      (when has-sub?
        [:div.company-edit__payment-details__coupons

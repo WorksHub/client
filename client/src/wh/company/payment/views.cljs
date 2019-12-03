@@ -294,7 +294,12 @@
         next-charge (some #(when-not (:proration %) %) estimate)
         first-charge (if (and next-invoice coupon)
                        ;; TODO explain this
-                       (* number (cost/calculate-monthly-cost cost discount (assoc coupon :duration :forever)))
+                       (cond (and (= :once (:duration coupon)) (:discount-amount coupon))
+                             (- latent-cost (:discount-amount coupon))
+                             (and (= :once (:duration coupon)) (:discount-percentage coupon))
+                             (- latent-cost (* latent-cost (/ (:discount-percentage coupon) 100)))
+                             :else
+                             (* number (cost/calculate-monthly-cost cost discount (assoc coupon :duration :forever))))
                        latent-cost)
         breakdown? (<sub [::subs/breakdown?])]
     [:div.payment-setup__upgrading-calculator
@@ -435,7 +440,7 @@
          (when (and upgrading? existing-billing-period)
            [link [:button.button.button--inverted.is-full-width "Cancel"]
             :edit-company
-            :query-params {:page :payment-details}])]))))
+            :query-params {:page "payment-details"}])]))))
 
 (defmethod pay-confirm-content :take_off
   [_]
