@@ -544,4 +544,5 @@
         (when (get-in db [::db/query-params "apply"])
           [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
         [::fetch-recommended-jobs requested-slug]
-        [:google/load-maps]])))
+        [:google/load-maps]
+        [:wh.pages.core/unset-loader]])))

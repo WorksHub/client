@@ -204,6 +204,8 @@
     [:h3 (if (<sub [::subs/remote?])
            [:div "Remote 🙌" ]
            (<sub [::subs/location]))]]
+   [:div.job__company-header__last-modified
+    (<sub [::subs/last-modified])]
    (when (<sub [::subs/like-icon-shown?])
      [:div.job__company-header__like
       [like-icon "job__like"]])])

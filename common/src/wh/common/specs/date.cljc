@@ -14,7 +14,8 @@
 
 (def leona-custom-scalar
   {:parse     #(tf/parse (tf/formatters :date-time) %)
-   :serialize #(tf/unparse (tf/formatters :date-time) (tc/from-date %))})
+   :serialize #(cond (string? %) % ;; fingers crossed it's in the right format
+                     (inst? %) (tf/unparse (tf/formatters :date-time) (tc/from-date %)))})
 
 (defn conform-date-time
   [s]

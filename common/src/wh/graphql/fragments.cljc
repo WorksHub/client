@@ -13,11 +13,10 @@
 
 (deffragment jobFields :Job
   [:id :slug :title :companyId :tagline :descriptionHtml :tags :roleType :manager
-   ;; [:company [[:issues [:id :title [:labels [:name]]]]]] ; commented out until company is leonaized
+   :locationDescription :remote :sponsorshipOffered :applied :published :lastModified
    [:company :fragment/companyCardFields]
    [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
-   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
-   :locationDescription :remote :sponsorshipOffered :applied :published])
+   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
 
 ;; Company
 

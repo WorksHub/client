@@ -195,9 +195,6 @@
       (sort-by column cmp items))
     items))
 
-(defn format-date [date]
-  (->> date tc/from-date (tf/unparse (tf/formatter "MMMM dd, yyyy"))))
-
 (def state-display-map
   {:not-integrated "Not integrated"
    :pending "Pending"
@@ -450,3 +447,11 @@
   :<- [::company]
   (fn [company _]
     (:slug company)))
+
+(reg-sub
+  ::last-modified
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (some->> (::job/last-modified sub-db)
+             (tf/parse   (tf/formatters :date-time))
+             (tf/unparse (tf/formatter "dd MMMM, YYYY")))))
