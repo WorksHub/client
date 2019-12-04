@@ -6,10 +6,11 @@
     [wh.common.data :as data :refer [package-data]]
     [wh.components.common :refer [link]]
     [wh.components.faq :as faq]
+    [wh.components.forms :refer [fake-radio-buttons]]
     [wh.components.icons :refer [icon]]
     [wh.components.package-selector :refer [package-selector]]
-    [wh.components.forms :refer [fake-radio-buttons]]
     [wh.components.www-homepage :as www]
+    [wh.pricing.events] ;; required to register on-page-load
     [wh.pricing.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]

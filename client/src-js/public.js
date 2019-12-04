@@ -18,8 +18,6 @@ function setClass(id, cls, on){
         else {
             d.classList.remove(cls);
         }
-    } else {
-        console.warn("Tried to set class on '" + id + "' but the element couldn't be found.")
     }
 }
 
