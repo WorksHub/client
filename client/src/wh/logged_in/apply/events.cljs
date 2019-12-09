@@ -5,6 +5,7 @@
     [wh.common.cases :as cases]
     [wh.common.graphql-queries :as graphql]
     [wh.db :as db]
+    [wh.graphql.jobs :as graphql-jobs]
     [wh.logged-in.apply.db :as apply]
     [wh.logged-in.profile.location-events :as location-events]
     [wh.user.db :as user]
@@ -19,6 +20,22 @@
   apply-interceptors
   (fn [db _]
     (merge db apply/default-db)))
+
+(reg-event-fx
+  ::fetch-job-company-details
+  db/default-interceptors
+  (fn [{db :db} [job]]
+    {:graphql {:query      graphql-jobs/job-query--company-managed-details
+               :variables  job
+               :on-success [::fetch-job-company-details-success]}}))
+
+(reg-event-db
+  ::fetch-job-company-details-success
+  apply-interceptors
+  (fn [db [{{{company :company} :job} :data}]]
+    (assoc db
+           ::apply/company-managed? (:managed company)
+           ::apply/company-name     (:name company))))
 
 (reg-event-fx
   ::check-cv
@@ -57,7 +74,8 @@
   db/default-interceptors
   (fn [{db :db} [job]]
     {:db              (assoc-in db [::apply/sub-db ::apply/job] job)
-     :dispatch        [::check-name]
+     :dispatch-n      [[::check-name]
+                       [::fetch-job-company-details job]]
      :analytics/track ["Job Application Started" job]}))
 
 (reg-event-fx

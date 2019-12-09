@@ -100,20 +100,23 @@
     " for you."]])
 
 (defn thanks-step []
-  (if (<sub [::subs/submit-success?])
-    [:div
-     [codi-message "Everything looks good with your application! \uD83C\uDF89"]
-     [codi-message "Your dedicated Talent Manager will be in touch to discuss next steps."]
-     [codi-message "In the meantime check some other great jobs we have "
-      [link "recommended" :recommended :class "a--underlined" :on-click #(do
-                                                                           (dispatch [::events/close-chatbot])
-                                                                           (dispatch [::events/track-recommendations-redirect]))]
-      " for you."]]
-    [:div
-     [error-message (<sub [::subs/error-message])]
-     (when (= (<sub [::subs/error]) :incomplete-profile)
-       [link [button "Edit Profile"] :profile :on-click #(dispatch [::events/close-chatbot])])
-     [button "Re-try submit" [::events/apply]]]))
+  (let [managed? (<sub [::subs/company-managed?])]
+    (if (<sub [::subs/submit-success?])
+      [:div
+       [codi-message "Everything looks good with your application! \uD83C\uDF89"]
+       [codi-message (if managed?
+                       "Your dedicated Talent Manager will be in touch to discuss next steps."
+                       (str "If " (<sub [::subs/company-name]) " are interested in progressing your application then you will hear from them directly. Good luck!"))]
+       [codi-message "In the meantime check some other great jobs we have "
+        [link "recommended" :recommended :class "a--underlined" :on-click #(do
+                                                                             (dispatch [::events/close-chatbot])
+                                                                             (dispatch [::events/track-recommendations-redirect]))]
+        " for you."]]
+      [:div
+       [error-message (<sub [::subs/error-message])]
+       (when (= (<sub [::subs/error]) :incomplete-profile)
+         [link [button "Edit Profile"] :profile :on-click #(dispatch [::events/close-chatbot])])
+       [button "Re-try submit" [::events/apply]]])))
 
 (defn pre-application []
   (if (<sub [:user/rejected?])

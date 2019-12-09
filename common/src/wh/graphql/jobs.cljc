@@ -49,6 +49,9 @@
 (def-query-from-template job-query--candidate job-query
                          {:fields [[:fragment/jobFields] :userScore]})
 
+(def-query-from-template job-query--company-managed-details job-query
+                         {:fields [[:company [:id :managed :name]]]})
+
 (defquery issues-query
   {:venia/operation {:operation/name "jobIssues"
                      :operation/type :query}

@@ -113,3 +113,14 @@
   (fn [db [_ i]]
     (mapv location->suggestion (::apply/current-location-suggestions db))))
 
+(reg-sub
+  ::company-managed?
+  :<- [::sub-db]
+  (fn [db _]
+    (::apply/company-managed? db)))
+
+(reg-sub
+  ::company-name
+  :<- [::sub-db]
+  (fn [db _]
+    (::apply/company-name db)))

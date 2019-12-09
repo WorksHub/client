@@ -10,6 +10,8 @@
 (s/def ::slug string?)
 (s/def ::submit-success? boolean?)
 (s/def ::updating? boolean?)
+(s/def ::company-managed? boolean?)
+(s/def ::company-name string?)
 (s/def ::cv-upload-failed? boolean?)
 (s/def ::name-update-failed? boolean?)
 (s/def ::job (s/or :id   (s/keys :req-un [::id])
@@ -20,6 +22,8 @@
                                  ::updating?
                                  ::current-step
                                  ::steps-taken
+                                 ::company-managed?
+                                 ::company-name
                                  ::name-update-failed?
                                  ::cv-upload-failed?]))
 

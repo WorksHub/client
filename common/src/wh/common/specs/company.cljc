@@ -21,6 +21,7 @@
 (s/def :wh.company/description ::p/non-empty-string)
 (s/def :wh.company/description-html ::p/non-empty-string)
 (s/def :wh.company/disabled boolean?)
+(s/def :wh.company/managed boolean?)
 (s/def :wh.company/domain ::p/non-empty-string)
 (s/def :wh.company/free-trial-ended :wh/date)
 (s/def :wh.company/free-trial-started :wh/date)
