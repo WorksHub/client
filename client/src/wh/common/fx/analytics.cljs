@@ -68,10 +68,6 @@
 (reg-fx
   :analytics/account-created
   (fn [[data db]]
-    ;; The order is important, see link below
-    ;; https://segment.com/docs/destinations/mixpanel/#aliasing-server-side
-    (alias db)
-    (identify db)
     (track ["Account Created" data])
     (track-reddit)
     (track-linkedin (:type data))))

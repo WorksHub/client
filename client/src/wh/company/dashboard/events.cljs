@@ -113,11 +113,12 @@
                  :on-success [::fetch-company-success]
                  :on-failure [::fetch-company-failure]}})))
 
-(reg-event-db
+(reg-event-fx
   ::show-more
-  company-interceptors
-  (fn [db _]
-    (update db ::sub-db/activity-items-count + 15)))
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:db (update-in db [::sub-db/sub-db ::sub-db/activity-items-count] + 15)
+     :analytics/track ["Show More Activities Clicked" {:company-id (company-id db)}]}))
 
 (defn translate-job [job]
   (-> job
