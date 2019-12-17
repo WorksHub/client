@@ -437,7 +437,7 @@
                         :package package
                         :event [::events/setup-step-forward]}]
             [authorize-card-button]])
-         (when (and upgrading? existing-billing-period)
+         (when (and upgrading? existing-billing-period (<sub [::subs/stripe-card-form-enabled?]))
            [link [:button.button.button--inverted.is-full-width "Cancel"]
             :edit-company
             :query-params {:page "payment-details"}])]))))

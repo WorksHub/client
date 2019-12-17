@@ -663,6 +663,18 @@
   (fn [_ [integration]]
     {:analytics/track [(str "Connect " integration " Button Clicked")]}))
 
+(reg-event-fx
+  ::change-billing-period-clicked
+  db/default-interceptors
+  (fn [_ _]
+    {:analytics/track ["Change Billing Period Button Clicked"]}))
+
+(reg-event-fx
+  ::cancel-plan-clicked
+  db/default-interceptors
+  (fn [_ _]
+    {:analytics/track ["Cancel Plan Button Clicked"]}))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; THIS WILL MOVE TO COMPANY PROFILE
 

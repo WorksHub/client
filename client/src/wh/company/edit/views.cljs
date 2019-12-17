@@ -398,18 +398,19 @@
        [:div
         (when exp
           [:p.is-error (str "This subscription is set to expire on " exp)])
-        (if
-            (or (<sub [::subs/can-cancel-sub?])
+        (if (or (<sub [::subs/can-cancel-sub?])
                 admin?)
           [:button.button
            {:class (when (<sub [::subs/cancel-plan-loading?]) "button--loading button--inverted")
             :disabled (and exp (not admin?))
-            :on-click #(dispatch [::events/show-cancel-plan-dialog true])}
+            :on-click #(do (dispatch [::events/show-cancel-plan-dialog true])
+                           (dispatch [::events/cancel-plan-clicked]))}
            "Cancel plan"]
           [:a {:href (str "mailto:hello@works-hub.com?subject=[" (<sub [::subs/name]) "]+I+wish+to+cancel+my+plan")
                :target "_blank"
                :rel    "noopener"}
            [:button.button
+            {:on-click #(dispatch [::events/cancel-plan-clicked])}
             "Contact WorksHub"]])]])))
 
 (defn payment-details
@@ -442,7 +443,9 @@
         [:div
          [:p (billing-paragraph billing-period)]
          [link
-          [:button.button "Change billing period"]
+          [:button.button
+           {:on-click #(dispatch [::events/change-billing-period-clicked])}
+           "Change billing period"]
           :payment-setup
           :step :pay-confirm
           :query-params {:billing          (name billing-period)
