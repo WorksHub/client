@@ -31,12 +31,12 @@
 (reg-fx :analytics/identify identify)
 
 (reg-fx
- :analytics/pageview
- (fn [[event-name data]]
-   (js/sendServerAnalytics (clj->js {:type    :page
-                                     :payload (clj->js {:page-name  event-name
-                                                        :properties data})}))
-   (js/submitAnalyticsPage)))
+  :analytics/pageview
+  (fn [[event-name data]]
+    (js/sendServerAnalytics (clj->js {:type    :page
+                                      :payload (clj->js {:page-name  event-name
+                                                         :properties data})}))
+    (js/submitAnalyticsPage)))
 
 (defn add-noninteractive [data non-interactive?]
   (if non-interactive?

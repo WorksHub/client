@@ -1,6 +1,7 @@
 wh_analytics = {};
 wh_analytics.utms = null;
 wh_analytics.referrer = null;
+wh_analytics.init = getCookie("wh_tracking_consent") != null;
 
 /*--------------------------------------------------------------------------*/
 
@@ -39,7 +40,7 @@ function extractUtmFields(qps) {
 
 function storeReferralData() {
     // get existing
-    const existingQps = localStorage.getItem("wh_analytics_utms");
+    const existingQps  = localStorage.getItem("wh_analytics_utms");
     const existingUtms = extractUtmFields(extractQueryParams(existingQps));
     const existingRef  = localStorage.getItem("wh_analytics_referrer");
     // get current
@@ -47,8 +48,8 @@ function storeReferralData() {
     const currentUtms = extractUtmFields(extractQueryParams(currentQps));
     const currentRef  = document.referrer;
     // combined
-    wh_analytics.utms     = new Map([...existingUtms, ...currentUtms])
-    wh_analytics.referrer = (currentRef == "" ? existingRef : currentRef);
+    wh_analytics.utms     = (existingUtms.size > 0 ? existingUtms : currentUtms);
+    wh_analytics.referrer = (existingRef && existingRef != "" ? existingRef  : currentRef);
     // store
     localStorage.setItem("wh_analytics_utms", mapAsQueryString(wh_analytics.utms));
     localStorage.setItem("wh_analytics_referrer", (wh_analytics.referrer == null ? "" : wh_analytics.referrer));
@@ -81,20 +82,34 @@ function addSourcing(obj) {
 }
 
 function sendServerAnalytics(body) {
-    const bodyWithSourcing = addSourcing(body);
-    var r = new XMLHttpRequest();
-    r.timeout = 10000;
-    r.open("POST", "/api/analytics");
-    r.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    r.onloadend = function () {
-        if(r.status != 200) {
-            console.log("analytics failed: " + r.status);
+    var i = null;
+    let send = function() {
+        if(wh_analytics.init) {
+            clearInterval(i);
+            const bodyWithSourcing = addSourcing(body);
+            var r = new XMLHttpRequest();
+            r.timeout = 10000;
+            r.open("POST", "/api/analytics");
+            r.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            r.onloadend = function () {
+                if(r.status != 200) {
+                    console.log("analytics failed: " + r.status);
+                }
+            };
+            r.send(JSON.stringify(body));
         }
     };
-    r.send(JSON.stringify(body));
+    if(wh_analytics.init)
+    {
+        send();
+    } else {
+        // try and send every 1000ms if no consent
+        i = setInterval(send, 1000);
+    }
 }
 
 function initServerTracking() {
+    wh_analytics.init = true;
     sendServerAnalytics({"type":"init"});
 }
 
@@ -103,7 +118,12 @@ function initServerTracking() {
 function loadAnalytics() {
     var i = setInterval(function() {
         if(typeof analytics != "undefined") {
+            // analytics.ready(); ?? set ga campign details?
             analytics.load();
+            if(!isAppPresent()) {
+                submitAnalyticsPage();
+                // TODO also process pageview for server-side tracking
+            }
             clearInterval(i);
         }
     }, 100);
@@ -139,7 +159,12 @@ function submitAnalyticsIdentify(id, user, integrations) {
 function submitAnalyticsPage() {
     var i = setInterval(function() {
         if(typeof analytics != "undefined") {
-            analytics.page();
+            const sourcing = addSourcing({}).sourcing;
+            const pageProps = {path:   window.location.pathname,
+                               search: window.location.search,
+                               url:    window.location.toString(),
+                               referrer: (sourcing != null ? sourcing.referrer : "")}
+            analytics.page(addSourcing(pageProps));
             clearInterval(i);
         }
     }, 100);

@@ -52,3 +52,7 @@ function setQueryParams(url, params) {
     }
     return url;
 }
+
+function isAppPresent() {
+    return document.getElementById("data-init") != null;
+}

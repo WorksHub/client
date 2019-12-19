@@ -43,6 +43,7 @@
   ::send-magic-email
   (fn [{db :db} _]
     (let [email (str/trim (get-in db [::login/sub-db ::login/magic-email]))]
+      ;; NOTE set this condition to `false` if you want to send magic emails in dev
       (if (= (:wh.settings/environment db) :dev)
         {:dispatch [::login-as email]}
         {:dispatch [::pages/set-loader]
