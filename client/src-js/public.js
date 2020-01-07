@@ -181,8 +181,14 @@ function setClassAtScrollPosition(e, id, cls, scrollPosition){
 * because whatever action you do from a SSR page without app-js you do a full page navigation, so there are no handlers attached anymore. */
 function attachOnScrollEvent(f) {
     var el = document.getElementById("app");
-    el.addEventListener('scroll', function(){
+    el && el.addEventListener('scroll', function(){
         f(el);
     }); // desktop
+
+    var ssrEl = document.getElementById("app-ssr");
+    ssrEl && ssrEl.addEventListener('scroll', function(){
+        f(ssrEl);
+    }); // ssr
+
     window.addEventListener('scroll', function(){ f(window)}); // mobile
 }
