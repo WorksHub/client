@@ -6446,7 +6446,11 @@ a.navbar-item,
     font-size: 12px;
     line-height: 18px; }
     .card--job .basic-info .job-title {
-      font-weight: 600; }
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 100%;
+      text-overflow: ellipsis; }
   .card--job .salary {
     margin-top: 6px; }
   .card--job .tagline {
