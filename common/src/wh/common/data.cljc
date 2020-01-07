@@ -352,13 +352,11 @@
         "nick"            "Nick Maraj"
         "nick.walker"     "Nick Walker"
         "patrick"         "Patrick Gubbey"
-        "peter"           "Peter Forteath"
         "ken.cadima"      "Ken Cadima"
         "daniel.earnshaw" "Daniel Earnshaw"
         "quan"            "Quan Truc"
         "nicole"          "Nicole Sadozai"
         "sheryl"          "Sheryl Martin"
-        "hanna"           "Hanna Poplawska"
         "nikolaus"        "Nikolaus Krahé"}
        (map (fn [[k v]] [(->email k) v]))
        (into {})))
