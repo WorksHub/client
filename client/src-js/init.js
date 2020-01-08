@@ -6,10 +6,10 @@ function init() {
     if(!consent) {
         showTrackingPopup();
     } else {
-        loadAnalytics();
         if(!aid) {
             initServerTracking();
         }
+        loadAnalytics();
     }
     /* tags */
     let tagList = document.getElementById("tag-list");

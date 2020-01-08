@@ -11,8 +11,8 @@
        [:li "The Functional Works Privacy Policy (\"Policy\") sets out what, why and how personal data are collected and used by Functional Works [and its affiliates] ([collectively] “Functional Works”, \"we\". \"us\", \"our\") when you visit our online job matching website (\"Website\").  By continuing to use this Website, you consent to your information being processed in accordance with this Policy.    All Data Subjects provide consent of which we keep record.  Data Subjects have ability to withdraw consent.\n"]
        [:li "If you have questions or need to contact us about this Privacy Policy, please email us at "
         [:span [:a {:href "mailto:hello@functionalworks.com"} "hello@functionalworks.com"]]
-        " or our Data Controller, Josh Kaplan at "
-        [:span [:a {:href "mailto:josh.kaplan@functionalworks.com"} "josh.kaplan@functionalworks.com"]]]]]
+        " or our Data Controller, Alex Mesropians at "
+        [:span [:a {:href "mailto:alex@functionalworks.com"} "alex@functionalworks.com"]]]]]
 
      [:li
       [:span.heading "What personal information we collect and how we use it"]

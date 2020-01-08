@@ -36,7 +36,7 @@
        [:a.a--underlined {:href   "/privacy-policy"
                           :target "_blank"
                           :rel    "noopener"}
-        "Privacy Policy"] " of this website and the processing of your data."]]]
+        "privacy policy"] " of this website and the processing of your data."]]]
     [:div.newsletter-section
 
      [:input

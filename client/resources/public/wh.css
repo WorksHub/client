@@ -7814,6 +7814,11 @@ a.navbar-item,
   .payment-setup__content {
     margin-top: -18px; } }
 
+.company-signup__content form label {
+  color: #6E7F89;
+  line-height: 18px;
+  margin-bottom: 18px; }
+
 .company-edit__hiring-pod {
   min-height: 100px; }
 

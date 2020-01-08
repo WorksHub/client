@@ -282,7 +282,8 @@
       (not consented) {:db (assoc db ::register/upsert-user-errors :missing-consent)}
       (not (s/valid? ::primitives/email email)) {:db (assoc db ::register/upsert-user-errors :invalid-arguments)}
       :otherwise {:db (assoc db ::register/upsert-user-errors nil)
-                  :dispatch [:register/preverify-email email]})))
+                  :dispatch [:register/preverify-email email]
+                  :analytics/agree-to-tracking true})))
 
 (def skill-cap
   "Maximum number of skills that we pick from Github."

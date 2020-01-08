@@ -25,7 +25,6 @@ function getCookie(name) {
 
 function extractUtmFields(qps) {
     const utmFields = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
-    const renameFields = new Map().set("utm_campaign", "name");
     const filteredQps = Array.from(qps.keys())
           .filter(key => utmFields.includes(key))
           .reduce((obj, key) => {
@@ -55,6 +54,10 @@ function storeReferralData() {
     localStorage.setItem("wh_analytics_referrer", (wh_analytics.referrer == null ? "" : wh_analytics.referrer));
 }
 
+function clearStoredUtms() {
+    localStorage.removeItem("wh_analytics_utms");
+}
+
 /*--------------------------------------------------------------------------*/
 
 function hideTrackingPopup() {
@@ -73,7 +76,13 @@ function addSourcing(obj) {
         sourcing.referrer= wh_analytics.referrer;
     }
     if(wh_analytics.utms.size > 0) {
-        sourcing.campaign = Object.assign({}, ...[...wh_analytics.utms.entries()].map(([k, v]) => ({[k]: v})))
+        sourcing.campaign = Object.assign({},
+                                          ...[...wh_analytics.utms.entries()]
+                                          .map(([k, v]) => ({[k]: v})))
+        // also add without the `utm_` part
+        sourcing.campaign = Object.assign(sourcing.campaign,
+                                          ...[...wh_analytics.utms.entries()]
+                                          .map(([k, v]) => ({[k.replace("utm_", "")]: v})))
     }
     if(Object.keys(sourcing).length > 0) {
         obj.sourcing = sourcing;
@@ -108,6 +117,17 @@ function sendServerAnalytics(body) {
     }
 }
 
+function sendServerPage() {
+    const sourcing = addSourcing({}).sourcing;
+    const pageProps = {path:   window.location.pathname,
+                       title:  window.document.title,
+                       search: window.location.search,
+                       url:    window.location.toString(),
+                       referrer: (sourcing != null ? sourcing.referrer : "")}
+    sendServerAnalytics({"type":    "page",
+                         "payload":  pageProps});
+}
+
 function initServerTracking() {
     wh_analytics.init = true;
     sendServerAnalytics({"type":"init"});
@@ -118,11 +138,11 @@ function initServerTracking() {
 function loadAnalytics() {
     var i = setInterval(function() {
         if(typeof analytics != "undefined") {
-            // analytics.ready(); ?? set ga campign details?
             analytics.load();
             if(!isAppPresent()) {
+                // we only do this if no app, otherwise it's done in `wh.common.fx.analytics` (see `:analytics/pageview`)
                 submitAnalyticsPage();
-                // TODO also process pageview for server-side tracking
+                sendServerPage();
             }
             clearInterval(i);
         }
@@ -164,8 +184,10 @@ function submitAnalyticsPage() {
                                search: window.location.search,
                                url:    window.location.toString(),
                                referrer: (sourcing != null ? sourcing.referrer : "")}
-            analytics.page(addSourcing(pageProps));
+            analytics.page(pageProps, {context: sourcing});
             clearInterval(i);
+            // burn saved utms! we only want to send saved UTMs once, not all the time.
+            clearStoredUtms();
         }
     }, 100);
 }
@@ -180,8 +202,10 @@ function submitAnalyticsTrack(evt, prps) {
 }
 
 function agreeToTracking() {
-    setCookie("wh_tracking_consent", true, 365);
-    hideTrackingPopup();
-    loadAnalytics();
-    initServerTracking();
+    if(getCookie("wh_tracking_consent") == null) {
+        setCookie("wh_tracking_consent", true, 365);
+        hideTrackingPopup();
+        initServerTracking();
+        loadAnalytics();
+    }
 }

@@ -32,10 +32,8 @@
 
 (reg-fx
   :analytics/pageview
-  (fn [[event-name data]]
-    (js/sendServerAnalytics (clj->js {:type    :page
-                                      :payload (clj->js {:page-name  event-name
-                                                         :properties data})}))
+  (fn [_]
+    (js/sendServerPage)
     (js/submitAnalyticsPage)))
 
 (defn add-noninteractive [data non-interactive?]
@@ -71,3 +69,9 @@
     (track ["Account Created" data])
     (track-reddit)
     (track-linkedin (:type data))))
+
+(reg-fx
+  :analytics/agree-to-tracking
+  (fn [agreed?]
+    (when agreed?
+      (js/agreeToTracking))))

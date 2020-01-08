@@ -6,6 +6,7 @@
     #?(:cljs [cljs.spec.alpha :as s])
     #?(:cljs [goog.Uri.QueryData :as query-data])
     [bidi.bidi :as bidi]
+    [clojure.string :as str]
     [wh.common.specs.primitives]
     [wh.common.text :as text]))
 
@@ -244,3 +245,8 @@
   :args (s/cat :routes vector?
                :handler keyword?)
   :ret string?)
+
+(defn handler->name [handler]
+  (->> (str/split (name handler) #"-")
+       (map str/capitalize)
+       (str/join " ")))

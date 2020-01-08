@@ -114,7 +114,7 @@
        :dispatch-n                (concat []
                                           (when logo [[:wh.common.logo/fetch-clearbit-logo logo
                                                        ::logo-upload-success ::logo-upload-failure]]))
-       :analytics/account-created [{:source :email :email email :type "company"} db]
+       :register/track-account-created {:source :email :email email :type "company"}
        :analytics/track           ["Company Created" {:id   company-id
                                                       :name (::register/company-name register-db)
                                                       :user {:id (get-in data [:data :create_company_and_user :user :id])}}]})))
@@ -153,7 +153,8 @@
          :graphql (graphql/create-company-and-user-mutation
                     sub-db
                     ::create-company-and-user-success
-                    ::create-company-and-user-fail)}
+                    ::create-company-and-user-fail)
+         :analytics/agree-to-tracking true}
         (let [checked-db (assoc db ::register/sub-db (toggle-company-field-errors sub-db))
               error (find-first-error-key checked-db register/company-fields-maps)]
           (merge

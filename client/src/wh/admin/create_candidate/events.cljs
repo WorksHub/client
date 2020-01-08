@@ -302,8 +302,8 @@
   db/default-interceptors
   (fn [{db :db} [{{candidate :create_user} :data}]]
     (let [admins-email (get-in db [:wh.user.db/sub-db :wh.user.db/email])]
-      {:navigate        [:candidate :params {:id (:id candidate)}]
-       :analytics/track ["Account Created" {:source admins-email :email (:email candidate)}]})))
+      {:navigate                       [:candidate :params {:id (:id candidate)}]
+       :register/track-account-created {:source admins-email :email (:email candidate)}})))
 
 (reg-event-db
   ::save-failure

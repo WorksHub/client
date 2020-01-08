@@ -49,7 +49,15 @@
      (let [company-form-checked? (<sub [::subs/company-signup-form-checked?])]
        (for [{key :key :as field-opts} register/company-fields-maps]
          ^{:key (str key)}
-         [form-row field-opts {:force-dirty? company-form-checked? :disabled? loading?}]))]))
+         [form-row field-opts {:force-dirty? company-form-checked? :disabled? loading?}]))
+     [:label#consent-label.is-flex {:for "consent"}
+      [:div {:class "checkbox__box"}]
+      [:span
+       "By submitting this form, you agree to opt-in to the "
+       [:a.a--underlined {:href   "/privacy-policy"
+                          :target "_blank"
+                          :rel    "noopener"}
+        "privacy policy"] " of this website and the processing of your data."]]]))
 
 (defn benefits-pod
   []

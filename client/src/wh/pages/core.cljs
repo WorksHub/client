@@ -74,11 +74,6 @@
       (= can-access? db/logged-in?) :login
       :otherwise :not-found)))
 
-(defn handler->name [handler]
-  (->> (str/split (name handler) #"-")
-       (map str/capitalize)
-       (str/join " ")))
-
 ;; Set current page and page params, if any.
 ;; NOTE: this is an internal event, meant to be dispatched by
 ;; pushy only. To programmatically navigate through the app,
@@ -109,8 +104,8 @@
                                          (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
                                          (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
                       (cond-> {:db                 new-db
-                               :analytics/pageview [(handler->name handler) (merge query-params route-params)]
-                               :analytics/track    [(str (handler->name handler) " Viewed") (merge query-params route-params) true]
+                               :analytics/pageview true
+                               :analytics/track    [(str (routes/handler->name handler) " Viewed") (merge query-params route-params) true]
                                :dispatch-n         [[:error/close-global]
                                                     [::disable-no-scroll]
                                                     [:wh.events/show-chat? true]]}
