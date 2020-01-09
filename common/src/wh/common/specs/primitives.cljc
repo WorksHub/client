@@ -1,7 +1,8 @@
 (ns wh.common.specs.primitives
   (:require [#?(:clj clojure.spec.alpha
                 :cljs cljs.spec.alpha) :as s]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [wh.common.url :as url]))
 
 (defn valid-email? [email]
   (re-matches #"^[^@]+@[^@\\.]+[\\.].+" email))
@@ -14,7 +15,7 @@
   (re-matches #"([a-z0-9-]+\.)+[a-z]+" domain))
 
 (s/def ::email (s/and string? valid-email?))
-(s/def ::url (s/and string? valid-url?))
+(s/def ::url (s/and string? url/has-domain?))
 (s/def ::domain (s/and string? valid-domain?))
 
 (defn problematic-paths [spec val]

@@ -256,7 +256,10 @@
   [profile]
   (cond
     (not (common-user/full-name? (::profile/name profile))) "Please fill in your name (at least two words)"
-    (str/blank? (::profile/email profile)) "Please provide your email."))
+    (str/blank? (::profile/email profile)) "Please provide your email."
+    (->> (::profile/other-urls profile)
+         (map :url)
+         (some #(not (s/valid? ::specs/url %)))) "One (or more) of the website links is invalid. Please amend and try again."))
 
 (reg-event-fx
   ::save-header
@@ -349,16 +352,19 @@
   (fn [{db :db} _]
     (let [url-path [::profile/sub-db ::profile/cv :link]
           cv-link (get-in db url-path)
-          new-db (if (and (not (str/blank? cv-link))
-                          (not (s/valid? ::specs/url cv-link)))
-                   (update-in db url-path #(str "http://" %))
-                   db)]
-      {:db       new-db
-       :graphql  {:query      graphql/update-user-mutation--approval
-                  :variables  {:update_user (graphql-cv-update new-db)}
-                  :on-success [::save-success]
-                  :on-failure [::save-failure]}
-       :dispatch [::pages/set-loader]})))
+          valid-cv-link? (s/valid? ::specs/url cv-link)]
+      (cond
+        valid-cv-link?
+        {:db       db
+         :graphql  {:query      graphql/update-user-mutation--approval
+                    :variables  {:update_user (graphql-cv-update db)}
+                    :on-success [::save-success]
+                    :on-failure [::save-failure]}
+         :dispatch-n [[::pages/set-loader]
+                      [:error/close-global]]}
+        :else
+        {:dispatch [:error/set-global "Resume link is not valid. Please amend and try again."]}))))
+
 
 (reg-event-fx
   ::save-edit

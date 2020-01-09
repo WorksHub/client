@@ -2,7 +2,8 @@
   (:require
     #?(:clj [taoensso.timbre :refer [error]])
     #?(:cljs [goog.Uri :as uri])
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [wh.common.text :as text]))
 
 (def wh-cookie-names {:auth             "auth_token"
                       :tracking-consent "wh_tracking_consent"
@@ -20,12 +21,17 @@
 (defn uri->domain [uri]
   (let [uri (str/trim uri)]
     #?(:cljs
-       (.getDomain (uri/parse uri)))
+       (try
+         (text/not-blank (.getDomain (uri/parse uri)))
+         (catch js/Error _)))
     #?(:clj
        (try
          (.getHost (java.net.URI. uri))
          (catch Exception e
            (error "Failed to parse URI:" uri))))))
+
+(defn has-domain? [uri]
+  (not (nil? (uri->domain uri))))
 
 (defn detect-page-type [url]
   (when url
