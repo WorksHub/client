@@ -86,9 +86,6 @@
   [:div.contribute__submit
    {:class (if desktop? "is-hidden-mobile" "is-hidden-desktop")}
    (cond
-     (= :failure (<sub [::subs/save-status]))
-     [:div.save-status.message--error
-      "There was an error updating your blog. Please try again later"]
      (<sub [::subs/validation-error?])
      [:div.save-status.message--error
       "One of the fields has an error!"]

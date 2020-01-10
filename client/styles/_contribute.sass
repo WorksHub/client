@@ -114,13 +114,18 @@
   margin-top: 18px
 
 .contribute__submit
-  +desktop
-    margin-top: 18px
   display: flex
+  flex-direction: column
   justify-content: space-between
   .message--error
     color: $dark-red
     font-weight: $font-medium
+    margin-bottom: 8px
+  +desktop
+    .message--error
+      margin-bottom: 0
+    flex-direction: row
+    margin-top: 18px
 
 .contribute__body__post
   display: flex

@@ -13,3 +13,11 @@
   (when error-key
     (get error-map error-key
          "There was an error creating/updating user, please try again later.")))
+
+(def error-map-blog
+  {:duplicate-title "Please choose another title, article with this title already exists."
+   :duplicate-source "Please specify another source url, article with this source already exists."
+   :default "There was an error updating your blog. Please try again later."})
+
+(defn get-blog-error-message [error-key]
+  (get error-map-blog error-key (:default error-map-blog)))

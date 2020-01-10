@@ -9709,13 +9709,18 @@ a.navbar-item,
 
 .contribute__submit {
   display: flex;
+  flex-direction: column;
   justify-content: space-between; }
-  @media screen and (min-width: 1008px) {
-    .contribute__submit {
-      margin-top: 18px; } }
   .contribute__submit .message--error {
     color: #c4000f;
-    font-weight: 500; }
+    font-weight: 500;
+    margin-bottom: 8px; }
+  @media screen and (min-width: 1008px) {
+    .contribute__submit {
+      flex-direction: row;
+      margin-top: 18px; }
+      .contribute__submit .message--error {
+        margin-bottom: 0; } }
 
 .contribute__body__post {
   display: flex;

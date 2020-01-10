@@ -44,7 +44,7 @@
 (s/def ::tag-search (s/nilable string?))
 
 (s/def ::sub-db (s/keys :opt [::title ::author ::feature ::body ::tags ::save-status ::published
-                              ::save-status ::image-article-upload-status ::hero-upload-status
+                              ::image-article-upload-status ::hero-upload-status
                               ::body-editing? ::body-rows ::available-tags
                               ::tag-search ::original-source ::company-id ::company-name]))
 

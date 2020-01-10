@@ -12,7 +12,8 @@
     [wh.logged-in.contribute.db :as contribute]
     [wh.pages.core :refer [on-page-load] :as pages]
     [wh.user.db :as user]
-    [wh.util :as util])
+    [wh.util :as util]
+    [wh.common.errors :as errors])
   (:require-macros
     [clojure.core.strint :refer [<<]]
     [wh.graphql-macros :refer [defquery]]))
@@ -246,8 +247,11 @@
   ::save-failure
   contribute-interceptors
   (fn [{db :db} [res]]
-    {:db (assoc db ::contribute/save-status :failure)
-     :dispatch [::pages/unset-loader]}))
+    {:db       (assoc db ::contribute/save-status :failure)
+     :dispatch-n [[:error/set-global (-> res
+                                         util/gql-errors->error-key
+                                         errors/get-blog-error-message)]
+                  [::pages/unset-loader]]}))
 
 (defn find-first-error-id
   [sub-db]
@@ -264,7 +268,8 @@
       (do
         (js/console.log "invalid" ed)
         {:db (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
-         :scroll-into-view (find-first-error-id (::contribute/sub-db db))})
+         :scroll-into-view (find-first-error-id (::contribute/sub-db db))
+         :dispatch [:error/close-global]})
 
       (let [id (get-in db [::contribute/sub-db ::contribute/id])
             blog (-> db
@@ -280,7 +285,8 @@
                    :on-success (if id [::save-success] [::create-success])
                    :on-failure [::save-failure]}
          :db (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
-         :dispatch [::pages/set-loader]}))))
+         :dispatch-n [[:error/close-global]
+                      [::pages/set-loader]]}))))
 
 (reg-event-db
   ::set-published
