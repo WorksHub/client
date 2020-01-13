@@ -349,10 +349,11 @@
 (reg-event-fx
   ::save-cv-info
   db/default-interceptors
-  (fn [{db :db} _]
+  (fn [{db :db} [{:keys [type]}]]
     (let [url-path [::profile/sub-db ::profile/cv :link]
           cv-link (get-in db url-path)
-          valid-cv-link? (s/valid? ::specs/url cv-link)]
+          valid-cv-link? (or (= type :upload-cv)
+                             (s/valid? ::specs/url cv-link))]
       (cond
         valid-cv-link?
         {:db       db
@@ -364,17 +365,6 @@
                       [:error/close-global]]}
         :else
         {:dispatch [:error/set-global "Resume link is not valid. Please amend and try again."]}))))
-
-
-(reg-event-fx
-  ::save-edit
-  db/default-interceptors
-  (fn [{db :db} _]
-    {:dispatch (case (::db/page db)
-                 :profile-edit-header [::save-header]
-                 :profile-edit-cv [::save-cv-info]
-                 :profile-edit-private [::save-private]
-                 :profile-edit-company-user [::save-company-user])}))
 
 (reg-event-fx
   ::save-success
@@ -467,7 +457,7 @@
     {:db       (-> db
                    (assoc-in [::profile/sub-db ::profile/cv :file] {:url url, :name filename})
                    (assoc-in [::profile/sub-db ::profile/cv-uploading?] false))
-     :dispatch [::save-cv-info]}))
+     :dispatch [::save-cv-info {:type :upload-cv}]}))
 
 (reg-event-fx
   ::cv-upload-failure

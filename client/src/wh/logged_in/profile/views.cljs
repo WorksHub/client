@@ -201,7 +201,7 @@
    [error-box]
    [:div.buttons-container
     [:button.button.button--small {:on-click #(do (.preventDefault %)
-                                                  (dispatch [::events/save-cv-info]))} "Save"]
+                                                  (dispatch [::events/save-cv-info {:type :update-cv-link}]))} "Save"]
     [cancel-link]]])
 
 ;; CV section – view
