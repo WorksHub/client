@@ -50,13 +50,20 @@
             db
             issues)))
 
+(reg-event-db
+  ::reset-pending
+  manage-issues-interceptors
+  (fn [db _]
+    (assoc db ::manage/pending [])))
+
 #?(:cljs
    (reg-event-fx
      ::update-issues-success
      db/default-interceptors
      (fn [_ _]
        {:navigate [:manage-issues]
-        :dispatch [:company/refresh-tasks]})))
+        :dispatch-n [[::reset-pending]
+                     [:company/refresh-tasks]]})))
 
 (reg-event-fx
   ::save-changes

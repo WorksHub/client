@@ -41,7 +41,7 @@
 (reg-sub
   ::syncing-issues?
   :<- [::sub-db]
-  (fn [db [_ ]]
+  (fn [db [_]]
     (::manage/syncing-issues db)))
 
 (reg-sub
