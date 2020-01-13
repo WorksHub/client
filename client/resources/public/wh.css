@@ -17895,10 +17895,18 @@ h3 {
     width: 100%;
     position: absolute; }
 
+@keyframes progress {
+  from {
+    background-position: 0 0; }
+  to {
+    background-position: -12px 0; } }
+
 .progress-bar__background {
   height: 18px;
   color: white;
-  background: repeating-linear-gradient(-45deg, #dae8eb, #dae8eb 4px, #fff 4px, #fff 8px); }
+  background-image: repeating-linear-gradient(-45deg, #dae8eb, #dae8eb 5px, #fff 5px, #fff 10px);
+  background-size: 150% 100%;
+  animation: progress 0.25s linear infinite; }
 
 .progress-bar__foreground {
   height: 18px;
