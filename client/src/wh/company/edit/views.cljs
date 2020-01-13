@@ -230,7 +230,7 @@
    (when (<sub [::subs/some-integrations-not-connected?])
      [:div
       [:h2 "Available Integrations"]
-      [:p "Connect your WorksHub account to Slack or Greenhouse to receive application notifications via these channels"]
+      [:p "Connect your WorksHub account to our integrations:"]
       [:div.company-edit__integrations
        (when-not (<sub [::subs/slack-connected?])
          [:a {:href (when-not (<sub [:user/admin?])
@@ -259,8 +259,7 @@
                {:on-click #(do (.preventDefault %)
                                (dispatch [::events/upgrade]))}))
            [:img {:src "/images/company/greenhouse.svg"}]]])
-       (when (and (not (<sub [::subs/workable-connected?]))
-                  (<sub [:wh.user/workshub?]))
+       (when (not (<sub [::subs/workable-connected?]))
          [:a {:href (when (and (not (<sub [:user/admin?]))
                                (<sub [:wh.user/can-use-integrations?]))
                       (routes/path :oauth-workable))}

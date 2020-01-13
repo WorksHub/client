@@ -8216,7 +8216,9 @@ a.navbar-item,
 
 .company-edit__integrations {
   margin-top: 18px;
-  margin-bottom: 20px; }
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column; }
   .company-edit__integrations .button--github {
     max-width: 300px; }
 
