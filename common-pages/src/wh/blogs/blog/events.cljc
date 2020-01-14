@@ -98,7 +98,7 @@
                               :on-failure [::upvote-failure]}
             :analytics/track ["Blog Boosted" (select-keys blog [:id :reading-time :title :tags :author :formatted-creation-date])]}
            {:show-auth-popup {:context  :upvote
-                              :redirect [:blog :params {:id id}]}})))))
+                              :redirect [:blog :params {:id id} :query-params {:upvote true}]}})))))
 
 (reg-event-db
   ::upvote-success
@@ -117,9 +117,11 @@
 
 #?(:cljs
    (defmethod on-page-load :blog [db]
-     (let [id (get-in db [::db/page-params :id])]
+     (let [id (get-in db [::db/page-params :id])
+           should-upvote? (get-in db [::db/query-params "upvote"])]
        (list
          [::initialize-db]
-         (into [:graphql/query] (conj (initial-query db) {:on-complete [::init-upvotes]}) )
+         (into [:graphql/query] (conj (initial-query db) {:on-complete [::init-upvotes]}))
          (into [:graphql/query] (recommended-jobs-for-blog-query db))
+         (when should-upvote? [::upvote])
          [:wh.pages.core/unset-loader]))))
