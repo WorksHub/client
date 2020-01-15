@@ -197,7 +197,7 @@
   (let [new? (<sub [::subs/contribute-page?])]
     [:div.main.contribute
      (if new?
-       [:h1.title "Contribute"]
+       [:h1.title "Create Article"]
        [:h1.title "Editing " [link (<sub [::subs/title]) :blog :id (or (:id (<sub [:wh/page-params])) "") :class "a--underlined"]])
      (if (<sub [::subs/edit-page-authorized?])
        [main new?]

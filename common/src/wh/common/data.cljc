@@ -636,13 +636,13 @@
              [:liked                  "like"       "Liked"]
              [:applied                "applications" "Applied"]
              [:notifications-settings "resources"  "Notifications"]
-             [:contribute             "contribute" "Contribute"]
+             [:contribute             "contribute" "Create Article"]
              [:profile                "profile"    "Profile & Preferences"]]})
 
 (def default-explore-section
   {:section "Explore"
    :class   "explore"
-   :items   [[:learn     "resources"  "Learn"]
+   :items   [[:learn     "resources"  "Articles"]
              [:issues    "pr"         "Open Source Issues"]
              [:jobsboard "jobs-board" "Job Board"]
              [:companies "company"    "Companies"]

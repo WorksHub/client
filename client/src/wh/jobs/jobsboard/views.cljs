@@ -83,8 +83,8 @@
       [:a.search__location-hint
        {:on-click #(do (.stopPropagation %)
                        (dispatch [:wh.search/clear-locations]))}
-       " (clear location filters)"]
-      )]
+       " (clear location filters)"])]
+
    [icon "roll-down"
     :class "search__roll"]
    (when-not (<sub [:wh.search/show-search-everywhere?])

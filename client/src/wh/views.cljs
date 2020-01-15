@@ -38,7 +38,8 @@
         ;; specify links on the menu that should be restricted
         restricted-links (when-not (<sub [:company/has-permission? :can_see_applications])
                            #{:company-applications})
-        query-params (walk/keywordize-keys (<sub [::subs/query-params]))]
+        query-params (walk/keywordize-keys (<sub [::subs/query-params]))
+        logged-in? (<sub [:user/logged-in?])]
 
     (if (<sub [::subs/version-mismatch])
       [version-mismatch]
@@ -47,7 +48,7 @@
          [navbar/top-bar
           {:env               (<sub [::subs/env])
            :vertical          (<sub [::subs/vertical])
-           :logged-in?        (<sub [:user/logged-in?])
+           :logged-in?        logged-in?
            :show-navbar-menu? (<sub [::subs/show-navbar-menu?])
            :hide-search?      (<sub [::subs/hide-navbar-search?])
            :query-params      query-params
@@ -72,7 +73,7 @@
               [loader]]]
             [current-page])
           (when (<sub [::subs/show-footer?])
-            [footer/footer (<sub [::subs/vertical])])]
+            [footer/footer (<sub [::subs/vertical]) logged-in?])]
          [overlays]]))))
 
 (defonce remove-all-bsl-locks-when-app-loads

@@ -112,10 +112,10 @@
       [:div "Locations"]
       (for [city data/preset-job-cities
             :let [label (str "Jobs in " city)]]
-        [:a {:key label
+        [:a {:key  label
              :href (routes/path :pre-set-search :params {:location (str (slug/slug city))})}
          label])
-      [:a {:key "remote-jobs"
+      [:a {:key  "remote-jobs"
            :href (routes/path :pre-set-search :params {:tag "remote"})}
        "Remote Jobs"]]
      [:div.footer__sitemap__list
@@ -135,7 +135,7 @@
    {:logo "github"
     :href "https://github.com/workshub"}])
 
-(defn footer [vertical & [additional-class]]
+(defn footer [vertical logged-in? & [additional-class]]
   [:div.footer {:class additional-class}
    [:div.footer__top
     [:div.footer__info
@@ -158,7 +158,7 @@
      [:img {:src "/images/homepage/footer.svg"
             :alt ""}]]]
    [:div.footer__sitemap
-    (if (= "www" vertical)
+    (if (and (= "www" vertical) (not logged-in?))
       (footer-sitemap-www)
       (footer-sitemap-job-vertical vertical))]
    [:div.footer__bottom

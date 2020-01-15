@@ -66,7 +66,7 @@
                 upvote-count " " (pluralize upvote-count "boost")]))]
       (when (owner? user-type)
         [:div.empty-contributions
-         [link "Contribute" :contribute :class "button"]]))))
+         [link "Create Article" :contribute :class "button"]]))))
 
 (defn edit-link
   ([profile-page candidate-page] (edit-link profile-page candidate-page "Edit" "button toggle-edit"))

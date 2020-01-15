@@ -165,7 +165,10 @@
     :jobsboard-header     {:title       "Software Engineering and Software Developer Jobs"
                            :subtitle    "Browse jobs for developers working across a wide range of technologies"
                            :description "Look for front-end, full-stack and backend roles"}
-    }})
+    :footer-job-links     ["Scala" "Clojure" "Haskell" "Elixir" "JavaScript" "Go" "Java" "Python" "Blockchain"]
+    :footer-article-links ["Scala" "Clojure" "Haskell" "Elixir" "JavaScript" "Go" "Java" "Python" "Blockchain" "AI"]}})
+
+
 
 (defn config [vertical k]
   (get-in vertical-config [vertical k]))
