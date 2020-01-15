@@ -1,6 +1,8 @@
-wh_analytics = {};
+var wh_analytics = {};
 wh_analytics.utms = null;
 wh_analytics.referrer = null;
+wh_analytics.landingPage = null;
+wh_analytics.title = null;
 wh_analytics.init = getCookie("wh_tracking_consent") != null;
 
 /*--------------------------------------------------------------------------*/
@@ -39,23 +41,38 @@ function extractUtmFields(qps) {
 
 function storeReferralData() {
     // get existing
-    const existingQps  = localStorage.getItem("wh_analytics_utms");
-    const existingUtms = extractUtmFields(extractQueryParams(existingQps));
-    const existingRef  = localStorage.getItem("wh_analytics_referrer");
+    const existingQps   = localStorage.getItem("wh_analytics_utms");
+    const existingUtms  = extractUtmFields(extractQueryParams(existingQps));
+    const existingRef   = localStorage.getItem("wh_analytics_referrer");
+    const existingLP    = localStorage.getItem("wh_analytics_landing_page");
+    const existingTitle = localStorage.getItem("wh_analytics_title");
     // get current
-    const currentQps  = window.location.search.substring(1);
-    const currentUtms = extractUtmFields(extractQueryParams(currentQps));
-    const currentRef  = document.referrer;
+    const currentQps   = window.location.search.substring(1);
+    const currentUtms  = extractUtmFields(extractQueryParams(currentQps));
+    const currentRef   = window.document.referrer;
+    const currentLP    = window.location.toString();
+    const currentTitle = window.document.title;
     // combined
-    wh_analytics.utms     = (existingUtms.size > 0 ? existingUtms : currentUtms);
-    wh_analytics.referrer = (existingRef && existingRef != "" ? existingRef  : currentRef);
+    wh_analytics.utms        = (existingUtms.size > 0 ? existingUtms : currentUtms);
+    wh_analytics.referrer    = (existingRef   && existingRef   != "" ? existingRef   : currentRef);
+    wh_analytics.landingPage = (existingLP    && existingLP    != "" ? existingLP    : currentLP);
+    wh_analytics.title       = (existingTitle && existingTitle != "" ? existingTitle : currentTitle);
     // store
     localStorage.setItem("wh_analytics_utms", mapAsQueryString(wh_analytics.utms));
     localStorage.setItem("wh_analytics_referrer", (wh_analytics.referrer == null ? "" : wh_analytics.referrer));
+    localStorage.setItem("wh_analytics_landing_page", (wh_analytics.landingPage == null ? "" : wh_analytics.landingPage));
+    localStorage.setItem("wh_analytics_title", (wh_analytics.title == null ? "" : wh_analytics.title));
 }
 
-function clearStoredUtms() {
+function clearStoredData() {
     localStorage.removeItem("wh_analytics_utms");
+    localStorage.removeItem("wh_analytics_referrer");
+    localStorage.removeItem("wh_analytics_landing_page");
+    localStorage.removeItem("wh_analytics_title");
+    wh_analytics.utms        = null;
+    wh_analytics.referrer    = null;
+    wh_analytics.landingPage = null;
+    wh_analytics.title       = null;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -70,18 +87,18 @@ function showTrackingPopup() {
 
 /*--------------------------------------------------------------------------*/
 
-function addSourcing(obj) {
+function addSourcing(obj, atx) {
     var sourcing = {};
-    if(wh_analytics.referrer != null && wh_analytics.referrer != "") {
-        sourcing.referrer= wh_analytics.referrer;
+    if(atx.referrer != null && atx.referrer != "") {
+        sourcing.referrer = atx.referrer;
     }
-    if(wh_analytics.utms.size > 0) {
+    if(atx.utms && atx.utms.size > 0) {
         sourcing.campaign = Object.assign({},
-                                          ...[...wh_analytics.utms.entries()]
+                                          ...[...atx.utms.entries()]
                                           .map(([k, v]) => ({[k]: v})))
         // also add without the `utm_` part
         sourcing.campaign = Object.assign(sourcing.campaign,
-                                          ...[...wh_analytics.utms.entries()]
+                                          ...[...atx.utms.entries()]
                                           .map(([k, v]) => ({[k.replace("utm_", "")]: v})))
     }
     if(Object.keys(sourcing).length > 0) {
@@ -90,12 +107,42 @@ function addSourcing(obj) {
     return obj;
 }
 
+function createPageProps(atx) {
+    let url         = null;
+    let path        = null;
+    let search      = null;
+    let landingPage = null;
+    let title       = null;
+    if(atx.landingPage != null && atx.landingPage != "") {
+        landingPage = new URL(atx.landingPage);
+        url         = atx.landingPage;
+        path        = landingPage.pathname;
+        search      = landingPage.search;
+    } else {
+        url    = window.location.toString();
+        path   = window.location.pathname;
+        search = window.location.search;
+    }
+    if(atx.title != null && atx.title != "") {
+        title = atx.title;
+    } else {
+        title = window.document.title;
+    }
+    const sourcing  = addSourcing({}, atx).sourcing;
+    const pageProps = {path:     path,
+                       search:   search,
+                       url:      url,
+                       title:    title,
+                       referrer: (sourcing != null ? sourcing.referrer : "")};
+    return pageProps;
+}
+
 function sendServerAnalytics(body) {
     var i = null;
     let send = function() {
         if(wh_analytics.init) {
             clearInterval(i);
-            const bodyWithSourcing = addSourcing(body);
+            const bodyWithSourcing = addSourcing(body, wh_analytics);
             var r = new XMLHttpRequest();
             r.timeout = 10000;
             r.open("POST", "/api/analytics");
@@ -117,15 +164,9 @@ function sendServerAnalytics(body) {
     }
 }
 
-function sendServerPage() {
-    const sourcing = addSourcing({}).sourcing;
-    const pageProps = {path:   window.location.pathname,
-                       title:  window.document.title,
-                       search: window.location.search,
-                       url:    window.location.toString(),
-                       referrer: (sourcing != null ? sourcing.referrer : "")}
+function sendServerPage(atx) {
     sendServerAnalytics({"type":    "page",
-                         "payload":  pageProps});
+                         "payload":  createPageProps(atx)});
 }
 
 function initServerTracking() {
@@ -141,8 +182,7 @@ function loadAnalytics() {
             analytics.load();
             if(!isAppPresent()) {
                 // we only do this if no app, otherwise it's done in `wh.common.fx.analytics` (see `:analytics/pageview`)
-                submitAnalyticsPage();
-                sendServerPage();
+                trackPage();
             }
             clearInterval(i);
         }
@@ -176,18 +216,13 @@ function submitAnalyticsIdentify(id, user, integrations) {
     }, 100);
 }
 
-function submitAnalyticsPage() {
+function submitAnalyticsPage(atx) {
     var i = setInterval(function() {
         if(typeof analytics != "undefined") {
-            const sourcing = addSourcing({}).sourcing;
-            const pageProps = {path:   window.location.pathname,
-                               search: window.location.search,
-                               url:    window.location.toString(),
-                               referrer: (sourcing != null ? sourcing.referrer : "")}
+            const sourcing = addSourcing({}, atx).sourcing;
+            const pageProps = createPageProps(atx);
             analytics.page(pageProps, {context: sourcing});
             clearInterval(i);
-            // burn saved utms! we only want to send saved UTMs once, not all the time.
-            clearStoredUtms();
         }
     }, 100);
 }
@@ -199,6 +234,22 @@ function submitAnalyticsTrack(evt, prps) {
             clearInterval(i);
         }
     }, 100);
+}
+
+/*--------------------------------------------------------------------------*/
+
+function trackPage() {
+    const atx = Object.assign({}, wh_analytics);
+    const alternativeLandingPage =
+          atx.landingPage &&
+          atx.landingPage != "" &&
+          atx.landingPage != window.location.toString();
+    sendServerPage(atx);
+    submitAnalyticsPage(atx);
+    clearStoredData(); // this clears wh_analytics for new data later, including landingPage
+    if(alternativeLandingPage) {
+        trackPage();
+    }
 }
 
 function agreeToTracking() {

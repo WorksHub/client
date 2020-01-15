@@ -33,8 +33,7 @@
 (reg-fx
   :analytics/pageview
   (fn [_]
-    (js/sendServerPage)
-    (js/submitAnalyticsPage)))
+    (js/trackPage)))
 
 (defn add-noninteractive [data non-interactive?]
   (if non-interactive?
