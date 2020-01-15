@@ -303,10 +303,11 @@
   (fn [db [{:keys [data]}]]
     (let [result (gql-check-application->check-application (:check_application data))]
       (if (= :rejected (:check-status result))
-        (cond-> (assoc db ::apply/current-step :rejection)
+        (cond-> (assoc db ::apply/current-step :rejection
+                          ::apply/updating? false)
                 (:reason result) (assoc-in [::apply/rejection :reason] (:reason result)))
         (-> db
-            (assoc ::apply/updating? true)
+            (assoc ::apply/updating? false)
             (assoc ::apply/current-step :thanks))))))
 
 (reg-event-fx

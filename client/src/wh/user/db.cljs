@@ -20,7 +20,7 @@
   (get-in db [::sub-db ::current-location]))
 
 (defn has-visa? [db]
-  (get-in db [::sub-db ::visa-status]))
+  (not (empty? (get-in db [::sub-db ::visa-status]))))
 
 (defn admin-type? [type]
   (= type "admin"))

@@ -6,6 +6,8 @@
 
 (s/def ::steps-taken (s/coll-of steps))
 (s/def ::current-step steps)
+(s/def ::reason keyword?)
+(s/def ::rejection (s/keys :req-un [::reason]))
 (s/def ::id string?)
 (s/def ::slug string?)
 (s/def ::submit-success? boolean?)
@@ -21,6 +23,7 @@
                                  ::submit-success?
                                  ::updating?
                                  ::current-step
+                                 ::rejection
                                  ::steps-taken
                                  ::company-managed?
                                  ::company-name

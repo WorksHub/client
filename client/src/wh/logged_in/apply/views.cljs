@@ -65,8 +65,8 @@
          {:class    (when (<sub [::subs/updating?]) "button--loading")
           :id       "application-bot_update-current-location"
           :on-click #(dispatch [::events/update-current-location])})
-       "Next"
-       ]]]))
+       "Next"]]]))
+
 
 (defn cv-upload-step []
   (let [current-step? (= :cv-upload (<sub [::subs/current-step]))]

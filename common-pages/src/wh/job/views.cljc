@@ -202,7 +202,7 @@
       [:h2 (<sub [::subs/company-name])])
     [:h1 (<sub [::subs/title])]
     [:h3 (if (<sub [::subs/remote?])
-           [:div "Remote 🙌" ]
+           [:div "Remote 🙌"]
            (<sub [::subs/location]))]]
    [:div.job__company-header__last-modified
     (<sub [::subs/last-modified])]
