@@ -17907,8 +17907,9 @@ h3 {
   height: 18px;
   color: white;
   background-image: repeating-linear-gradient(-45deg, #dae8eb, #dae8eb 5px, #fff 5px, #fff 10px);
-  background-size: 150% 100%;
-  animation: progress 0.25s linear infinite; }
+  background-size: 150% 100%; }
+  .progress-bar__background.animated {
+    animation: progress 0.25s linear infinite; }
 
 .progress-bar__foreground {
   height: 18px;

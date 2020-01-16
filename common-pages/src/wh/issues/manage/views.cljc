@@ -32,7 +32,7 @@
         amount-pc (str amount "%")]
     [:div.manage-issues__sync-progress
      [:div.progress-bar
-      [:div.progress-bar__background]
+      [:div.progress-bar__background.animated]
       [:div.progress-bar__foreground {:style {:width amount-pc}}]]
      [:span (when (:total-issue-count repo-sync)
               (str (or (:running-issue-count repo-sync) 0) "/" (:total-issue-count repo-sync)))]]))
