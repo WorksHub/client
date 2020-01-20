@@ -14807,7 +14807,8 @@ h3 {
         margin: 0 10px; } }
 
 .landing__header__buttons {
-  display: flex; }
+  display: flex;
+  flex-wrap: wrap; }
   .landing__header__buttons .button {
     width: 240px;
     margin-right: 9px;
