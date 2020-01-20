@@ -14,7 +14,8 @@
 (def fields
   {::name                {:order 0 :initial "", :validate ::p/non-empty-string}
    ::email               {:order 1 :initial "", :validate ::p/email}
-   ::notify              {:order 2 :initial true}
+   ::phone               {:order 2 :initial ""}
+    ::notify              {:order 3 :initial true}
 
    ::location-search       {:order 30 :initial "" :event? false}
 

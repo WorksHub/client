@@ -257,11 +257,14 @@
    :longitude location__longitude})
 
 (defn db->graphql-user
-  [{:keys [::sub-db/email ::sub-db/name ::sub-db/notify ::sub-db/tech-tags ::sub-db/company-tags ::sub-db/github-url ::sub-db/other-links ::sub-db/cv-url ::sub-db/cv-filename ::sub-db/current-company ::sub-db/current-company-search]
+  [{:keys [::sub-db/email ::sub-db/name ::sub-db/notify ::sub-db/tech-tags ::sub-db/company-tags
+           ::sub-db/github-url ::sub-db/other-links ::sub-db/cv-url ::sub-db/cv-filename
+           ::sub-db/current-company ::sub-db/current-company-search ::sub-db/phone]
     :as db}]
   (merge (util/transform-keys
           {:email    email
            :name     name
+           :phone    phone
            :notify   notify
            :reset-session false
            :skills   (mapv #(hash-map :name (:tag %)) tech-tags)

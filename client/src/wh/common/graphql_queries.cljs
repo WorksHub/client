@@ -13,7 +13,7 @@
                       $fields]]})
 
 (def-query-from-template update-user-mutation--upsert update-user-mutation
-  {:fields [:id [:approval [:status]] :email :name :consented
+  {:fields [:id [:approval [:status]] :email :name :consented :phone
           [:skills [:name]]
           [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]})
 

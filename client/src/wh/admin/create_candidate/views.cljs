@@ -72,6 +72,7 @@
     [:h2 "Candidate details"]
     [text-field nil (field ::create-candidate/name :label "* Name")]
     [text-field nil (field ::create-candidate/email :label "* Email")]
+    [text-field nil (field ::create-candidate/phone :label "Phone Number")]
     [labelled-checkbox nil (field ::create-candidate/notify :label "Notify the candidate that their account has been created")]
     [text-field nil (field ::create-candidate/location-search
                            :label "* Location"
@@ -83,8 +84,8 @@
                            :label "Current company"
                            :auto-complete "off"
                            :suggestions (<sub [::subs/company-suggestions])
-                           :on-select-suggestion [::events/select-company-suggestion]
-                           )]]
+                           :on-select-suggestion [::events/select-company-suggestion])]]
+
    [resume-and-links]
    [:fieldset.create-candidate__preferences
     [:h2 "Candidate preferences"]

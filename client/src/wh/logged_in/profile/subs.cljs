@@ -64,6 +64,12 @@
     (:name header)))
 
 (reg-sub
+  ::phone
+  :<- [::header-data]
+  (fn [header _]
+    (:phone header)))
+
+(reg-sub
   ::rated-skills
   :<- [::header-data]
   (fn [header _]
@@ -128,7 +134,7 @@
       (update :current-location location-label)
       (update :preferred-locations preferred-location-strings)
       (update :remote boolean)
-      (select-keys [:email :job-seeking-status :company-perks :salary :visa-status :current-location :preferred-locations :remote :role-types])))
+      (select-keys [:email :job-seeking-status :company-perks :salary :visa-status :current-location :preferred-locations :remote :role-types :phone])))
 
 (reg-sub
   ::private-data

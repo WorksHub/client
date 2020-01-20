@@ -44,6 +44,7 @@
                          [:companyPerks [:name]]
                          [:otherUrls [:url]]
                          :imageUrl
+                         :phone
                          :name :summary
                          :email :jobSeekingStatus :roleTypes
                          :visaStatus :visaStatusOther
@@ -143,6 +144,12 @@
     (assoc db ::profile/name name)))
 
 (reg-event-db
+  ::edit-phone
+  profile-interceptors
+  (fn [db [phone]]
+    (assoc db ::profile/phone phone)))
+
+(reg-event-db
   ::edit-summary
   profile-interceptors
   (fn [db [summary]]
@@ -225,7 +232,7 @@
   (-> (::profile/sub-db db)
       (select-keys [::profile/id ::profile/preferred-locations ::profile/email ::profile/job-seeking-status
                     ::profile/company-perks ::profile/visa-status ::profile/visa-status-other ::profile/role-types
-                    ::profile/salary ::profile/remote ::profile/current-location])
+                    ::profile/salary ::profile/remote ::profile/current-location ::profile/phone])
       (update ::profile/preferred-locations (partial filterv map?))
       (util/transform-keys)))
 

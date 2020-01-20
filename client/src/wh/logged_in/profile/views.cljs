@@ -267,10 +267,10 @@
 
 (defn private-section-view
   ([opts] (private-section-view :owner opts))
-  ([user-type {:keys [email job-seeking-status company-perks role-types remote
+  ([user-type {:keys [email phone job-seeking-status company-perks role-types remote
                       salary visa-status current-location
                       preferred-locations fields title email-link-fn]
-               :or   {fields #{:email :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
+               :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
                       title "Preferences" email-link-fn email-link}}]
    [:section.profile-section.private
     (when (owner-or-admin? user-type)
@@ -281,6 +281,7 @@
     (when (owner? user-type)
       [:div "This section is for our info only — we won’t show this directly to anyone 🔐"])
     (when (:email fields)               [view-field "Email:" [email-link-fn email]])
+    (when (:phone fields)               [view-field "Phone Number:" phone])
     (when (:status fields)              [view-field "Status:" job-seeking-status])
     (when (:traits fields)              [view-field "Company traits:" (itemize company-perks :no-data-message "No perks selected.")])
     (when (:salary fields)              [view-field "Expected salary:" salary])
@@ -316,6 +317,9 @@
     {:label "Your email"
      :validate ::p/email
      :on-change [::events/edit-email]}]
+   [text-field (<sub [::subs/phone])
+    {:label "Your phone number (inc. dialling code)"
+     :on-change [::events/edit-phone]}]
    [select-field (<sub [::subs/job-seeking-status])
     {:options (<sub [::subs/job-seeking-statuses])
      :label "Job seeking status"

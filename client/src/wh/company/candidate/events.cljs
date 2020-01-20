@@ -30,6 +30,7 @@
   (let [fields (concat [[:skills [:name :rating]]
                         [:otherUrls [:url]]
                         :email
+                        :phone
                         :id
                         :imageUrl
                         :name :summary
