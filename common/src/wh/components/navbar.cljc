@@ -16,11 +16,6 @@
     [wh.util :as util]
     [wh.verticals :as verticals]))
 
-(defn show-promo-banner?
-  [page vertical]
-  (or (contains? #{:pricing :how-it-works :issues} page)
-      (= "www" vertical)))
-
 (def logged-out-menu-id             "logged-out-menu")
 (def candidates-overlay-menu-id     "candidates-overlay-menu")
 (def resources-overlay-menu-id      "resources-overlay-menu")
@@ -215,7 +210,7 @@
             :action (routes/path :jobsboard)}
            #?(:cljs {:on-submit (fn [e]
                                   (.preventDefault e)
-                                  (submit-search "navbar__search-input"))} ))
+                                  (submit-search "navbar__search-input"))}))
     [:input.search (merge {:id "navbar__search-input"
                            :name "search"
                            :type "text"
@@ -410,7 +405,7 @@
                         :tasks-open? tasks-open?
                         :show-tasks? (= user-type "company"))
             content? (not (contains? routes/no-menu-pages page))
-            promo-banner? (and (show-promo-banner? page vertical)
+            promo-banner? (and (contains? #{:pricing :how-it-works :issues :homepage} page)
                                (not logged-in?))]
         [:nav {:class (util/merge-classes "navbar"
                                           (when promo-banner? "navbar--has-promo-banner"))
@@ -420,10 +415,7 @@
          (when promo-banner?
            [:div.navbar__promo-banner
             {:id "promo-banner"}
-            [link [:div.is-hidden-mobile
-                   (str "Use '" data/free-week-code "' at checkout to get a week of hiring on us ")] :register-company]
-            [link [:div.is-hidden-desktop
-                   (str "Start hiring & get a week free! ('" data/free-week-code "')")] :register-company]
+            [link "Sign Up For Your FREE Company Profile" :register-company]
             [:script {:type "text/javascript"}
              "initPromoBanner(\"promo-banner\", \"wh-navbar\")"]])
          [:div.navbar__content
