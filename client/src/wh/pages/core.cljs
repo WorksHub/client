@@ -9,6 +9,7 @@
             [re-frame.db :refer [app-db]]
             [wh.db :as db]
             [wh.pages.modules :as modules]
+            [wh.verticals :as verticals]
             [wh.routes :as routes]))
 
 (def default-route {:handler :not-found})
@@ -23,6 +24,11 @@
   (set! (.-scrollTop (.getElementById js/document "app")) x)
   (set! (.-scrollTop (.-documentElement js/document)) x)
   (set! (.-scrollTop (.-body js/document)) x))
+
+(defn set-page-title! [page-name vertical]
+  (set!
+    (.-title js/document)
+    (str page-name " | " (get-in verticals/vertical-config [vertical :platform-name]))))
 
 (defn force-scroll-to-top!
   []
@@ -81,16 +87,21 @@
 (reg-event-fx ::set-page
               db/default-interceptors
               (fn [{db :db} [{:keys [handler params uri route-params query-params] :as m} history-state]]
-                (let [handler (resolve-handler db handler)]
+                (let [handler   (resolve-handler db handler)
+                      page-info {:page-name (routes/handler->name handler)
+                                 :vertical (:wh.db/vertical db)}]
                   (case (redirect-when-not-permitted db handler)
                     :not-found
                     {:db (assoc db
                                 ::db/page :not-found
-                                ::db/loading? false)} ; it might've been set in pre-rendered app-db
+                                ::db/loading? false)
+                     :page-title page-info}
+                                   ; it might've been set in pre-rendered app-db
                     :login
                     (let [current-path (bidi/url-encode (routes/path handler :params params :query-params query-params))
                           login-step (if (= :company (module-for handler)) :email :root)] ;; if company, show email login
-                      {:navigate [:login :params {:step login-step} :query-params {:redirect current-path}]})
+                      {:navigate   [:login :params {:step login-step} :query-params {:redirect current-path}]
+                       :page-title page-info})
                     ;; otherwise
                     (let [new-page? (not= (::db/page db) handler)
                           scroll (if history-state (aget history-state "scroll-position") 0)
@@ -108,7 +119,8 @@
                                :analytics/track    [(str (routes/handler->name handler) " Viewed") (merge query-params route-params) true]
                                :dispatch-n         [[:error/close-global]
                                                     [::disable-no-scroll]
-                                                    [:wh.events/show-chat? true]]}
+                                                    [:wh.events/show-chat? true]]
+                               :page-title page-info}
                               ;; this forces scrolling to top when moving forward to a new page
                               ;; but does nothing when moving backward
                               ;; TODO is this something we want to support? (:scroll-to-x fx?)
@@ -195,6 +207,11 @@
   (fn [db _]
     (js/disableNoScroll)
     db))
+
+(reg-fx
+  :page-title
+  (fn [{:keys [page-name vertical]}]
+    (set-page-title! page-name vertical)))
 
 (reg-event-db
   ::enable-no-scroll

@@ -201,9 +201,9 @@
                                                :jobsboard
                                                :learn
                                                :learn-by-tag
-                                               :pre-set-search
+                                               :pre-set-search})
                                                ;;:pricing CH3618
-                                               })
+
 (def server-side-only-paths (set (map #(bidi/path-for routes %) server-side-only-pages)))
 
 (defn serialize-query-params
