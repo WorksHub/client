@@ -3,64 +3,44 @@
     #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
     #?(:cljs [wh.user.db :as user])
     [re-frame.core :refer [path]]
-    [wh.common.cases :as cases]
+    [wh.graphql-cache :as cache]
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.common.job :refer [translate-job]]
     [wh.db :as db]
     [wh.graphql.issues :as queries]
     [wh.issue.db :as issue]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
-    [wh.routes :as routes]
     [wh.util :as util]))
 
 (def issue-interceptors (into db/default-interceptors
                               [(path ::issue/sub-db)]))
 
+(defn initial-query [db]
+  [(if (db/logged-in? db) :issue-and-me :issue) {:id (issue/id db)}])
+
+(defn issue [db]
+  (let [[query query-vars] (initial-query db)]
+    (:issue (cache/result db query query-vars))))
+
 (reg-event-fx
-  ::fetch-issue-success
-  db/default-interceptors
-  (fn [{db :db} [{{:keys [issue me]} :data}]]
-    {:db (-> db
-             (update ::issue/sub-db merge
-                     {::issue/github-login (get-in me [:githubInfo :login])
-                      ::issue/issue (gql-issue->issue issue)}))
-     :dispatch-n (concat [[::fetch-company-issues]]
-                         #?(:cljs
-                            (when (db/logged-in? db)
-                              [[::fetch-company-jobs]])))}))
-
-(reg-event-db
   ::update-issue-success
-  issue-interceptors
-  (fn [db [issue]]
-    (update db ::issue/issue merge issue)))
+  db/default-interceptors
+  (fn [{db :db} [issue]]
+      {:dispatch (into [:graphql/update-entry]
+                       (concat (initial-query db) [:merge {:issue issue}]))}))
 
-#?(:cljs
-   (reg-event-fx
-     ::fetch-issue
-     db/default-interceptors
-     (fn [{db :db} [id]]
-       {:graphql {:query (if (db/logged-in? db)
-                           queries/fetch-issue-and-login
-                           queries/fetch-issue)
-                  :variables {:id id}
-                  :on-success [::fetch-issue-success]
-                  :on-failure [:error/set-global "Something went wrong while we tried to fetch the issue’s data"
-                               [::fetch-issue id]]}})))
-
-#?(:cljs
-   (reg-event-fx
-     ::fetch-company-issues
-     db/default-interceptors
-     (fn [{db :db} _]
-       {:graphql {:query queries/fetch-company-issues
-                  :variables {:id (get-in db [::issue/sub-db ::issue/issue :company :id])
-                              :published true
-                              :page_size 3
-                              :page_number 1}
-                  :on-success [::fetch-company-issues-success]
-                  :on-failure [:error/set-global "Something went wrong while we tried to fetch more of this company's issues 😢"
-                               [::fetch-company-issues]]}})))
+(reg-event-fx
+  ::fetch-company-issues
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:graphql {:query queries/fetch-company-issues
+               :variables {:id (get-in (issue db) [:company :id])
+                           :published true
+                           :page_size 3
+                           :page_number 1}
+               :on-success [::fetch-company-issues-success]
+               :on-failure [:error/set-global "Something went wrong while we tried to fetch more of this company's issues 😢"
+                            [::fetch-company-issues]]}}))
 
 (reg-event-db
   ::fetch-company-issues-success
@@ -93,18 +73,18 @@
          {:dispatch [::show-start-work-popup true]}
          {:show-auth-popup {:context :issue
                             :redirect [:issue
-                                       :params {:id (get-in db [::issue/sub-db ::issue/issue :id])}]}}))))
+                                       :params {:id (issue/id db)}]}}))))
 
 #?(:cljs
    (reg-event-fx
      ::start-work
-     issue-interceptors
+     db/default-interceptors
      (fn [{db :db} _]
-       (if (get-in db [::issue/issue :viewer-contributed])
+       (if (:viewer-contributed (issue db))
          {:dispatch [::show-start-work-popup false]}
-         {:db (assoc db ::issue/contribute-in-progress? true)
+         {:db (assoc-in db [::issue/sub-db ::issue/contribute-in-progress?] true)
           :graphql {:query queries/start-work-mutation
-                    :variables {:id (get-in db [::issue/issue :id])}
+                    :variables {:id (issue/id db)}
                     :on-success [::start-work-success]
                     :on-failure [::start-work-failure]}}))))
 
@@ -119,11 +99,14 @@
   ::start-work-success
   db/default-interceptors
   (fn [{db :db} _]
-    {:db (-> db
-             (assoc-in [::issue/sub-db ::issue/contribute-in-progress?] false)
-             (assoc-in [::issue/sub-db ::issue/issue :viewer-contributed] true)
-             (update-in [::issue/sub-db ::issue/issue :contributors] conj (me-as-contributor db)))
-     :dispatch [::show-start-work-popup false]}))
+    (let [issue (-> db
+                    issue
+                    (assoc :viewer-contributed true)
+                    (update :contributors conj (me-as-contributor db)))]
+      {:db (assoc-in db [::issue/sub-db ::issue/contribute-in-progress?] false)
+       :dispatch-n [[::show-start-work-popup false]
+                    (into [:graphql/update-entry]
+                          (concat (initial-query db) [:merge {:issue issue}]))]})))
 
 (reg-event-fx
   ::start-work-failure
@@ -140,18 +123,12 @@
   (fn [{db :db} [val]]
     {:db (issue/default-db db)}))
 
-(reg-event-db
-  ::flush-issue
-  issue-interceptors
-  (fn [db _]
-    (dissoc db ::issue/issue)))
-
 #?(:cljs
    (reg-event-fx
      ::fetch-company-jobs
      db/default-interceptors
      (fn [{db :db} _]
-       (if-let [id (get-in db [::issue/sub-db ::issue/issue :company :id])]
+       (if-let [id (get-in (issue db) [:company :id])]
          {:graphql {:query      queries/fetch-company-jobs
                     :variables  {:id id}
                     :on-success [::fetch-company-jobs-success]
@@ -167,17 +144,20 @@
               [::issue/sub-db ::issue/company-jobs]
               (map translate-job jobs))))
 
+(reg-event-fx
+  ::fetch-company-info
+  (fn [_ _]
+    {:dispatch-n [[::fetch-company-issues]
+                  [::fetch-company-jobs]]}))
+
 #?(:cljs
    (defmethod on-page-load :issue [db]
-     (let [old-id (get-in db [::issue/sub-db ::issue/issue :id])
-           new-id (get-in db [::db/page-params :id])]
+     (let [logged-in? (db/logged-in? db)
+           initial-load? (::db/initial-load? db)]
        (list
         [::initialize-db]
-        (when (and (not (::db/initial-load? db))
-                   (not= new-id old-id))
-          [::flush-issue])
-        (if-not (::db/initial-load? db)
-          [::fetch-issue (get-in db [::db/page-params :id])]
-          [::fetch-company-issues])
-        (when (::db/initial-load? db)
-          [::fetch-company-jobs])))))
+        (if initial-load?
+          [::fetch-company-info]
+          (into [:graphql/query] (conj (initial-query db) {:on-complete [::fetch-company-info]})))))))
+
+

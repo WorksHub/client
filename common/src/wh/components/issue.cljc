@@ -23,7 +23,7 @@
     "circle"))
 
 (defn issue->status [{:keys [status pr-count contributors] :as issue}]
-  (if (= :open status)
+  (if (= :open (keyword status))
     (cond
       (and pr-count (pos? pr-count)) "submitted"
       (and contributors (pos? (count contributors))) "started"

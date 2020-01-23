@@ -27,9 +27,10 @@
           [:div.issue__edit__top-info
            [:a (str (:owner repo) " / " (:name repo))]]
           [:div.is-flex.issue__edit__title-container
-           (wrap-img img logo
-                     {:alt (str (:name company) " logo")
-                      :w   64 :h 64 :class "issue__logo"})
+           (when logo
+             (wrap-img img logo
+                       {:alt (str (:name company) " logo")
+                        :w   64 :h 64 :class "issue__logo"}))
            [:span.issue__edit__title title]]]
          [:div.issue__edit__status
           [selector (<sub [::subs/pending-status])

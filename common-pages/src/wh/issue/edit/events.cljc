@@ -21,10 +21,11 @@
   :edit-issue/show-issue-edit-popup
   edit-issue-interceptors
   (fn [db [issue on-success]]
-    (-> db
-        (assoc ::issue-edit/displayed-dialog :edit)
-        (assoc ::issue-edit/on-success on-success)
-        (assoc ::issue-edit/current-issue issue))))
+    (assoc db
+      ::issue-edit/displayed-dialog :edit
+      ::issue-edit/on-success on-success
+      ::issue-edit/current-issue issue
+      ::issue-edit/pending-compensation (get-in issue [:compensation :amount]))))
 
 (reg-event-db
   ::close-issue-edit-popup

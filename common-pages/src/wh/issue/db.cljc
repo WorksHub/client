@@ -6,6 +6,10 @@
 (def num-other-issues-to-show 2)
 (def num-related-jobs-to-show 2)
 
+(defn id
+  [db]
+  (get-in db [:wh.db/page-params :id]))
+
 (s/def ::show-cta-sticky? boolean?)
 
 (defn default-db

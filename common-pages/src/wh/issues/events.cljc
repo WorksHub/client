@@ -82,12 +82,17 @@
   (fn [db [show?]]
     (assoc db ::issues/show-webhook-info? show?)))
 
+(defn update-issue [issue-to-update issue]
+  (if (= (:id issue-to-update) (:id issue))
+    (merge issue (gql-issue->issue issue-to-update))
+    issue))
+
 #?(:cljs
    (reg-event-db
      ::update-issue-success
      db/default-interceptors
      (fn [db [issue]]
-       (update-in db [::issues/sub-db ::issues/issues (:id issue)] merge (gql-issue->issue issue)))))
+       (update-in db [::issues/sub-db ::issues/issues] #(map (partial update-issue issue) %)))))
 
 #?(:cljs
    (defmethod on-page-load :issues [db]

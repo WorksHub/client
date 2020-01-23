@@ -32,7 +32,7 @@
    [:span (when-not skeleton? content)]])
 
 (defn infobox []
-  (let [skeleton? (nil? (<sub [::subs/title]))
+  (let [skeleton? (<sub [::subs/issue-loading?])
         level (<sub [::subs/level])
         derived-status (issue/issue->status (<sub [::subs/issue]))]
     [:div.issue__infobox-container
@@ -61,7 +61,7 @@
 
 (defn header [{:keys [show-like-or-edit?]
                :or   {show-like-or-edit? true}}]
-  (let [skeleton? (nil? (<sub [::subs/title]))
+  (let [skeleton? (<sub [::subs/issue-loading?])
         owner? #?(:cljs (<sub [:user/owner? (<sub [::subs/company-id])])
                   :clj  false)
         show-start-work? #?(:cljs (not (<sub [:user/owner? (<sub [::subs/company-id])]))
@@ -99,8 +99,8 @@
          [show-popup-button]])]]))
 
 (defn description []
-  (let [body (<sub [::subs/body])
-        skeleton? (nil? body)]
+  (let [body      (<sub [::subs/body])
+        skeleton? (<sub [::subs/issue-loading?])]
     (if skeleton?
       [:section.issue__description--skeleton]
       [:section.issue__description.issue__section-content
@@ -118,8 +118,8 @@
 
 (defn author []
   (let [{:keys [name login] :as author} (<sub [::subs/author])
-        org (<sub [::subs/repo :owner])
-        skeleton? (nil? author)]
+        org       (<sub [::subs/repo :owner])
+        skeleton? (<sub [::subs/issue-loading?])]
     [:div
      {:class (util/merge-classes
                "issue__side-pod"
@@ -246,8 +246,8 @@
 
 (defn other-issues
   []
-  (let [issues (<sub [::subs/company-issues])
-        skeleton? (nil? (<sub [::subs/title]))]
+  (let [issues    (<sub [::subs/company-issues])
+        skeleton? (<sub [::subs/issue-loading?])]
     (when-not (and issues (zero? (count issues)))
       [:section.issue__other-issues
        [:div.is-flex
@@ -298,10 +298,13 @@
         hiw-pod (cond
                   (<sub [:user/company?]) [how-it-works/pod--company]
                   logged-in?              [how-it-works/pod--candidate]
-                  :else                   [how-it-works/pod--basic])]
-    (if-not (<sub [::subs/issue])
+                  :else                   [how-it-works/pod--basic])
+        loading-failed? (<sub [::subs/issue-loading-failed?])]
+    (cond
+      loading-failed?
       [:div.main.main--center-content
        [not-found/not-found]]
+      :else
       [:div.main-container
        [:div.main.issue
         [:div.is-flex

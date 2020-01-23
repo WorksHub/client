@@ -8,6 +8,12 @@
   (fn [db _] (::issue-edit/sub-db db)))
 
 (reg-sub
+  ::current-issue
+  :<- [::sub-db]
+  (fn [db _]
+    (::issue-edit/current-issue db)))
+
+(reg-sub
   ::updating?
   :<- [::sub-db]
   (fn [db _]
@@ -19,7 +25,7 @@
   :<- [::current-issue]
   (fn [[db current-issue] _]
     (or (::issue-edit/pending-level db)
-        (:level current-issue))))
+        (keyword (:level current-issue)))))
 
 (reg-sub
   ::pending-status
@@ -27,16 +33,14 @@
   :<- [::current-issue]
   (fn [[db current-issue] _]
     (or (::issue-edit/pending-status db)
-        (:status current-issue))))
+        (keyword (:status current-issue)))))
 
 (reg-sub
   ::pending-compensation
   :<- [::sub-db]
   :<- [::current-issue]
-  (fn [[db current-issue] _]
-    (or (::issue-edit/pending-compensation db)
-        (get-in current-issue [:compensation :amount])
-        0)))
+  (fn [[db] _]
+    (or (::issue-edit/pending-compensation db) 0)))
 
 (reg-sub
   :edit-issue/displayed-dialog
@@ -44,8 +48,3 @@
   (fn [db _]
     (::issue-edit/displayed-dialog db)))
 
-(reg-sub
-  ::current-issue
-  :<- [::sub-db]
-  (fn [db _]
-    (::issue-edit/current-issue db)))

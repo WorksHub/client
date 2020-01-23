@@ -1,7 +1,8 @@
 (ns wh.graphql.issues
   (:require
     [wh.graphql.jobs]
-    [wh.graphql.fragments])
+    [wh.graphql.fragments]
+    [wh.graphql-cache :refer [reg-query]])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
@@ -13,6 +14,8 @@
    :venia/queries [[:issue {:id :$id}
                     :fragment/issueFields]]})
 
+(reg-query :issue fetch-issue)
+
 (defquery fetch-issue-and-login
   {:venia/operation {:operation/type :query
                      :operation/name "issue"}
@@ -21,6 +24,8 @@
    :venia/queries [[:issue {:id :$id}
                     :fragment/issueFields]
                    [:me [[:githubInfo [:login]]]]]})
+
+(reg-query :issue-and-me fetch-issue-and-login)
 
 (defquery start-work-mutation
   {:venia/operation {:operation/type :mutation

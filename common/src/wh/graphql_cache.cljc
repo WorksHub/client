@@ -147,6 +147,11 @@
     (= (state db query-id variables) :success)))
 
 (reg-sub
+  :graphql/failure?
+  (fn [db [_ query-id variables]]
+    (= (state db query-id variables) :failure)))
+
+(reg-sub
   :graphql/result
   (fn [db [_ query-id variables]]
     (result db query-id variables)))

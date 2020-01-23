@@ -1,20 +1,39 @@
 (ns wh.issue.subs
   (:require
     [re-frame.core :refer [reg-sub reg-sub-raw subscribe]]
-    [wh.util :as util]
+    [wh.re-frame.subs :refer [<sub]]
+    [wh.db :as db]
     [wh.issue.db :as issue]
     #?(:clj [clojure.core.strint :refer [<<]]))
-  #?(:cljs (:require-macros
-             [reagent.ratom :refer [reaction]]
-             [clojure.core.strint :refer [<<]])))
+  (#?(:clj :require :cljs :require-macros)
+    [wh.re-frame.subs :refer [reaction]]
+    [clojure.core.strint :refer [<<]]))
 
 (reg-sub ::sub-db (fn [db _] (::issue/sub-db db)))
 
-(reg-sub
+(reg-sub-raw
   ::issue
-  :<- [::sub-db]
   (fn [db _]
-    (::issue/issue db)))
+    (reaction
+      (:issue (<sub [:graphql/result
+                     (if (db/logged-in? @db) :issue-and-me :issue)
+                     {:id (<sub [:wh/page-param :id])}])))))
+
+(reg-sub-raw
+  ::issue-loading?
+  (fn [db _]
+    (reaction
+      (<sub [:graphql/executing?
+             (if (db/logged-in? @db) :issue-and-me :issue)
+             {:id (<sub [:wh/page-param :id])}]))))
+
+(reg-sub-raw
+  ::issue-loading-failed?
+  (fn [db _]
+    (reaction
+      (<sub [:graphql/failure?
+             (if (db/logged-in? @db) :issue-and-me :issue)
+             {:id (<sub [:wh/page-param :id])}]))))
 
 (reg-sub
   ::title
@@ -38,14 +57,7 @@
   ::level
   :<- [::issue]
   (fn [issue _]
-    (:level issue)))
-
-(reg-sub
-  ::pending-level
-  :<- [::sub-db]
-  :<- [::level]
-  (fn [[sub-db current-level] _]
-    (or (::issue/pending-level sub-db) current-level)))
+    (keyword (:level issue))))
 
 (reg-sub
   ::author
@@ -99,9 +111,11 @@
 
 (reg-sub
   ::github-login
-  :<- [::sub-db]
-  (fn [sub-db _]
-    (::issue/github-login sub-db)))
+  (fn [_ _]
+    (let [id (<sub [:wh/page-param :id])]
+      (get-in
+        (<sub [:graphql/result :issue-and-me {:id id}])
+        [:me :github-info :login]))))
 
 (reg-sub
   ::clone-url
@@ -124,12 +138,6 @@
   :<- [::issue]
   (fn [issue _]
     (get-in issue [:repo :community])))
-
-(reg-sub
-  ::status
-  :<- [::issue]
-  (fn [issue _]
-    (:status issue)))
 
 (reg-sub
   ::company-id
@@ -180,12 +188,6 @@
     (::issue/show-cta-sticky? db)))
 
 (reg-sub
-  ::updating?
-  :<- [::sub-db]
-  (fn [db _]
-    (::issue/updating? db)))
-
-(reg-sub
   ::num-related-jobs-to-show
   (constantly issue/num-related-jobs-to-show))
 
@@ -220,9 +222,9 @@
     ::show-contributors?
     (fn [db _]
       (reaction
-       (let [id     @(subscribe [::company-id])
-             owner? @(subscribe [:user/owner? id])
-             admin? @(subscribe [:user/admin?])]
+       (let [id     (<sub [::company-id])
+             owner? (<sub [:user/owner? id])
+             admin? (<sub [:user/admin?])]
          (or owner? admin?)))))
    :clj
    (reg-sub
