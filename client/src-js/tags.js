@@ -189,6 +189,37 @@ function createTag({tag, parent, grandParent, isSelected, hasIcon}) {
     parent.appendChild(tagElement);
 }
 
+const isElementCorrect = (element, label, type) => {
+    return element.innerText.toLowerCase() === label.toLowerCase()
+        && element.classList.contains("tag--type-" + type.toLowerCase());
+};
+
+/**
+ * Clicks on tag which includes provided label in text
+ *                   & includes provided type in classlist.
+ * Tag is selected from unselected tags area.
+ *
+ * @param {string} label
+ * @param {string} type
+ *
+ * @example
+ *     clickOnTag('Remote Working', 'benefit')
+ *     clickOnTag('Scala', 'tech')
+ */
+const clickOnTag = (label, type) => {
+    const UNSELECTED_TAGS = ".tags--unselected";
+    const TAG = ".tag";
+
+    const tagElement = Array.from(document
+        .querySelector(UNSELECTED_TAGS)
+        .querySelectorAll(TAG))
+        .filter(elm => isElementCorrect(elm, label, type))[0];
+
+    if (tagElement) {
+        tagElement.click();
+    }
+};
+
 function initTagList(tagJson) {
     whTags = (!whTags && tagJson ? JSON.parse(tagJson).tags : whTags);
 }

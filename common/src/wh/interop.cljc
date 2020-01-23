@@ -4,7 +4,7 @@
 (defn unparse-arg
   [arg]
   (cond (string? arg)
-        (str "\"" (str/replace arg "\"" "\\\"") "\"" )
+        (str "\"" (str/replace arg "\"" "\\\"") "\"")
         (sequential? arg)
         (str "[" (str/join "," (map unparse-arg arg)) "]")
         (map? arg)
@@ -82,6 +82,11 @@
   [id cls]
   #?(:clj {:onClick (->jsfn "toggleClass" id cls)}
      :cljs {:on-click (fn [_] (js/toggleClass id cls))}))
+
+(defn click-tag
+  [tag type]
+  #?(:clj  (->jsfn "clickOnTag" tag type)
+     :cljs (fn [_] (js/clickOnTag tag type))))
 
 (defn toggle-is-open-on-click
   [id]

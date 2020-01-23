@@ -1,7 +1,8 @@
 (ns wh.components.tag
   (:require
     [wh.components.icons :as icons]
-    [wh.util :as util]))
+    [wh.util :as util]
+    [wh.interop :as interop]))
 
 (defn ->tag
   [m]
@@ -18,19 +19,21 @@
               :selected false}))
 
 (defn tag
-  [element-type {:keys [label type subtype id icon] :as t}]
+  [element-type {:keys [label type subtype id icon on-click] :as t}]
   [element-type
-   {:key id
-    :data-label label
-    :class (util/merge-classes "tag"
-                               (str "tag--type-" (if t (name type) "skeleton"))
-                               (when subtype (str "tag--subtype-" (name subtype))))}
+   (merge {:key id
+           :data-label label
+           :class (util/merge-classes "tag"
+                                      (str "tag--type-" (if t (name type) "skeleton"))
+                                      (when subtype (str "tag--subtype-" (name subtype))))}
+          (when on-click
+             (interop/on-click-fn on-click)))
    (when icon
      [icons/icon icon])
    [:span label]])
 
 (defn tag-list
-  [tags]
+  [element-type tags]
   (when (not-empty tags)
     (into [:ul.tags.tags--inline.tags--profile]
-          (map (fn [t] [tag :li t]) tags))))
+          (map (fn [t] [tag element-type t]) tags))))

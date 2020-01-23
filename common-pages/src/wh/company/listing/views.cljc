@@ -5,7 +5,6 @@
     [wh.company.listing.db :as listing]
     [wh.company.listing.events :as events]
     [wh.company.listing.subs :as subs]
-    [wh.company.profile.views :as company]
     [wh.components.common :refer [link wrap-img img base-img]]
     [wh.components.forms :as forms]
     [wh.components.icons :refer [icon]]
@@ -16,7 +15,11 @@
     [wh.interop.forms :as interop-forms]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
     [wh.re-frame.subs :refer [<sub]]
-    [wh.util :as util]))
+    [wh.util :as util]
+    [wh.interop :as interop]))
+
+(defn add-onclick [tag]
+  (assoc tag :on-click (interop/click-tag (:label tag) (name (:type tag)))))
 
 (defn company-card
   [{:keys [logo id name slug tags size location description profile-enabled
@@ -47,9 +50,9 @@
      [:div.companies__company__description
       [:p description]]
      [:div.companies__company__tags
-      [tag/tag-list (cond-> (vec tags)
-                            (and total-published-issue-count (pos? total-published-issue-count))
-                            (conj {:icon "pr" :id id :type :icon :label total-published-issue-count}))]]]]
+      [tag/tag-list :a (cond-> (mapv add-onclick tags)
+                               (and total-published-issue-count (pos? total-published-issue-count))
+                               (conj {:icon "pr" :id id :type :icon :label total-published-issue-count}))]]]]
    (when (and view-jobs-link? total-published-job-count (pos? total-published-job-count))
      [link
       [:div.companies__company__job-count

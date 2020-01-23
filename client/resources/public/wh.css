@@ -17491,7 +17491,7 @@ h3 {
   background-color: #ffe9e7;
   color: #ff7c6e; }
 
-.tags li {
+.tags li, .tag {
   margin-right: 6px;
   margin-bottom: 6px; }
 
@@ -17648,34 +17648,34 @@ h3 {
 .tag-add--with-label {
   top: 18px; }
 
-.tag--type-benefit {
+.tag--type-benefit, .tag.tag--type-benefit {
   background-color: #f2f7f8;
   color: #80b5bc; }
-  .tag--type-benefit .icon {
+  .tag--type-benefit .icon, .tag.tag--type-benefit .icon {
     fill: #80b5bc; }
 
-.tag--type-company {
+.tag--type-company, .tag.tag--type-company {
   background-color: #e8e8e8;
   color: #6E7F89; }
-  .tag--type-company .icon {
+  .tag--type-company .icon, .tag.tag--type-company .icon {
     fill: #6E7F89; }
 
-.tag--type-industry {
+.tag--type-industry, .tag.tag--type-industry {
   background-color: #fff1e7;
   color: #ffae71; }
-  .tag--type-industry .icon {
+  .tag--type-industry .icon, .tag.tag--type-industry .icon {
     fill: #ffae71; }
 
-.tag--type-funding {
+.tag--type-funding, .tag.tag--type-funding {
   background-color: #f4f8f9;
   color: #87a7b4; }
-  .tag--type-funding .icon {
+  .tag--type-funding .icon, .tag.tag--type-funding .icon {
     fill: #87a7b4; }
 
-.tag--type-size {
+.tag--type-size, .tag.tag--type-size {
   background-color: #ecf2f9;
   color: #437fcc; }
-  .tag--type-size .icon {
+  .tag--type-size .icon, .tag.tag--type-size .icon {
     fill: #437fcc; }
 
 .edit-tags section {

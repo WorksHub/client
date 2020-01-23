@@ -3,10 +3,7 @@
     #?(:cljs [wh.pages.core :refer [on-page-load]])
     #?(:cljs [reagent.core :as r])
     [clojure.string :as str]
-    [wh.common.text :as text]
     [wh.company.listing.db :as listing]
-    [wh.company.listing.subs :as subs]
-    [wh.components.pagination :as pagination]
     [wh.db :as db]
     [wh.graphql-cache :as cache :refer [reg-query]]
     [wh.graphql.company] ;; included for fragments
