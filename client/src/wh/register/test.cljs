@@ -12,18 +12,20 @@
     {:on-submit #(do (.preventDefault %)
                      (when (not (<sub [::subs/blank-code-answer?]))
                        (dispatch [::events/check-code-riddle])))}
-    [:input {:type       :text
-             :auto-focus true
-             :value      (<sub [::subs/code-answer])
-             :on-change  #(dispatch-sync [::events/set-code-answer (-> % .-target .-value)])
-             :aria-label "Code answer input"}]]])
+    [:label.label {:for "code"} "Corrected code"]
+    [:input#code {:type       :text
+                  :auto-focus true
+                  :value      (<sub [::subs/code-answer])
+                  :on-change  #(dispatch-sync [::events/set-code-answer (-> % .-target .-value)])
+                  :aria-label "Code answer input"
+                  :placeholder "Code without an error"}]]])
 
 ;TODO how to skip?
 (defn panel []
   (cond
     (<sub [::subs/fetch-riddles-error])
     [:div
-     [error-message "There was an error fetching data, please try again later."]]
+     [error-message "There was an error fetching data, please try again later"]]
     (<sub [::subs/approval-fail?])
     [:div
      [codi-message (str (when-not (<sub [::wh-subs/blockchain?])
@@ -33,14 +35,15 @@
      [button "Continue" [:register/advance]]]
     :otherwise
     [:div
-     [codi-message "Correct this code by re-typing it below"]
+     [codi-message [:span.highlight "The following code is incorrect"]]
      [codi-message [:code (<sub [::subs/selected-riddle-code])]]
+     [codi-message "Correct this code by re-typing it below"]
      (when (<sub [::subs/failed-code-riddle-check?])
-       [error-message "That was not a correct answer, please try again."])
+       [error-message "That was not a correct answer, please try again"])
      [code-input]
      [button "Check" [::events/upsert-user]
       :disabled (<sub [::subs/blank-code-answer?])]
-     [codi-message (str "We’re showing you a " (<sub [::subs/selected-riddle-language]) " test. Would you like to select an alternative coding language?")]
+     [codi-message "We’re showing you a " [:span.highlight (<sub [::subs/selected-riddle-language])] " test. Would you like to select an alternative coding language?"]
      [:div.animatable
       (into [:select.conversation-button
              {:on-change #(dispatch-sync [::events/change-riddle (-> % .-target .-value)])}]

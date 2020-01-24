@@ -5480,6 +5480,18 @@ a.navbar-item,
     width: 104px;
     height: 104px; } }
 
+@keyframes increase-hover {
+  from {
+    margin-left: -52px;
+    margin-top: -52px;
+    width: 104px;
+    height: 104px; }
+  to {
+    margin-left: -63px;
+    margin-top: -63px;
+    width: 126px;
+    height: 126px; } }
+
 .bubble-container {
   position: relative;
   flex-grow: 1; }
@@ -5503,6 +5515,14 @@ a.navbar-item,
   margin-top: -52px;
   width: 104px;
   height: 104px; }
+  .bubble:hover {
+    cursor: pointer; }
+  .bubble.hover {
+    animation: 0.2s increase-hover;
+    margin-left: -63px;
+    margin-top: -63px;
+    width: 126px;
+    height: 126px; }
   .bubble.like {
     animation: 0.2s increase-like;
     margin-left: -64px;
@@ -6908,6 +6928,20 @@ a.navbar-item,
   50%, 70% {
     opacity: 1; } }
 
+.register-container input {
+  font-size: 12px; }
+  @media screen and (min-width: 1008px) {
+    .register-container input {
+      font-size: 16px; } }
+
+.register-container input::placeholder {
+  color: #adadad;
+  font-weight: 500;
+  font-size: 12px; }
+  @media screen and (min-width: 1008px) {
+    .register-container input::placeholder {
+      font-size: 16px; } }
+
 @media screen and (min-width: 1008px) {
   .register-container {
     height: 100vh; } }
@@ -6915,6 +6949,42 @@ a.navbar-item,
 @media screen and (max-width: 1007px) {
   .register-container {
     height: calc(100vh - 46px); } }
+
+@media screen and (min-width: 1008px) {
+  .register-container .conversation-button {
+    font-size: 16px; } }
+
+.register-container .conversation-element {
+  position: relative; }
+  @media screen and (min-width: 1008px) {
+    .register-container .conversation-element {
+      font-size: 16px; } }
+  .register-container .conversation-element .label {
+    position: absolute;
+    right: 0;
+    color: #ff7c6e;
+    font-weight: 600;
+    top: -20px;
+    font-size: 11px; }
+    @media screen and (min-width: 1008px) {
+      .register-container .conversation-element .label {
+        top: -21px;
+        font-size: 12px; } }
+  @media screen and (min-width: 1008px) {
+    .register-container .conversation-element code {
+      font-size: 16px; } }
+  .register-container .conversation-element .highlight {
+    color: #ff7c6e;
+    font-weight: 600; }
+
+@media screen and (min-width: 1008px) {
+  .register-container .codi-container .icon {
+    width: 64px;
+    height: 64px; } }
+
+@media screen and (max-width: 1007px) {
+  .register-container .codi-container .icon {
+    margin-left: 4px; } }
 
 .full-height {
   height: 100%;
@@ -6954,61 +7024,61 @@ a.navbar-item,
   animation-delay: 0s; }
 
 .animatable:nth-child(1) .conversation-element, .animatable:nth-child(1) .multiple-buttons, .animatable:nth-child(1) .conversation-button {
-  animation-delay: 0.2s; }
+  animation-delay: 0.1s; }
 
 .animatable:nth-child(2) .icon {
-  animation-delay: 0.8s; }
+  animation-delay: 0.4s; }
 
 .animatable:nth-child(2) .conversation-element, .animatable:nth-child(2) .multiple-buttons, .animatable:nth-child(2) .conversation-button {
-  animation-delay: 1s; }
+  animation-delay: 0.5s; }
 
 .animatable:nth-child(3) .icon {
-  animation-delay: 1.6s; }
+  animation-delay: 0.8s; }
 
 .animatable:nth-child(3) .conversation-element, .animatable:nth-child(3) .multiple-buttons, .animatable:nth-child(3) .conversation-button {
-  animation-delay: 1.8s; }
+  animation-delay: 0.9s; }
 
 .animatable:nth-child(4) .icon {
-  animation-delay: 2.4s; }
+  animation-delay: 1.2s; }
 
 .animatable:nth-child(4) .conversation-element, .animatable:nth-child(4) .multiple-buttons, .animatable:nth-child(4) .conversation-button {
-  animation-delay: 2.6s; }
+  animation-delay: 1.3s; }
 
 .animatable:nth-child(5) .icon {
-  animation-delay: 3.2s; }
+  animation-delay: 1.6s; }
 
 .animatable:nth-child(5) .conversation-element, .animatable:nth-child(5) .multiple-buttons, .animatable:nth-child(5) .conversation-button {
-  animation-delay: 3.4s; }
+  animation-delay: 1.7s; }
 
 .animatable:nth-child(6) .icon {
-  animation-delay: 4s; }
+  animation-delay: 2s; }
 
 .animatable:nth-child(6) .conversation-element, .animatable:nth-child(6) .multiple-buttons, .animatable:nth-child(6) .conversation-button {
-  animation-delay: 4.2s; }
+  animation-delay: 2.1s; }
 
 .animatable:nth-child(7) .icon {
-  animation-delay: 4.8s; }
+  animation-delay: 2.4s; }
 
 .animatable:nth-child(7) .conversation-element, .animatable:nth-child(7) .multiple-buttons, .animatable:nth-child(7) .conversation-button {
-  animation-delay: 5s; }
+  animation-delay: 2.5s; }
 
 .animatable:nth-child(8) .icon {
-  animation-delay: 5.6s; }
+  animation-delay: 2.8s; }
 
 .animatable:nth-child(8) .conversation-element, .animatable:nth-child(8) .multiple-buttons, .animatable:nth-child(8) .conversation-button {
-  animation-delay: 5.8s; }
+  animation-delay: 2.9s; }
 
 .animatable:nth-child(9) .icon {
-  animation-delay: 6.4s; }
+  animation-delay: 3.2s; }
 
 .animatable:nth-child(9) .conversation-element, .animatable:nth-child(9) .multiple-buttons, .animatable:nth-child(9) .conversation-button {
-  animation-delay: 6.6s; }
+  animation-delay: 3.3s; }
 
 .animatable:nth-child(10) .icon {
-  animation-delay: 7.2s; }
+  animation-delay: 3.6s; }
 
 .animatable:nth-child(10) .conversation-element, .animatable:nth-child(10) .multiple-buttons, .animatable:nth-child(10) .conversation-button {
-  animation-delay: 7.4s; }
+  animation-delay: 3.7s; }
 
 .conversation-button--error {
   font-size: 8pt;
@@ -7029,8 +7099,7 @@ a.navbar-item,
     animation-fill-mode: both;
     align-self: flex-end;
     width: 28px;
-    height: 28px;
-    margin-left: 11px; }
+    height: 28px; }
 
 .codi-container--hidden {
   opacity: 0;
@@ -7047,6 +7116,8 @@ a.navbar-item,
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 10; }
+  .conversation-element code {
+    font-size: 12px; }
   .conversation-element .location {
     color: #6E7F89;
     font-weight: 600; }
@@ -7061,8 +7132,7 @@ a.navbar-item,
       border: none;
       color: #6E7F89;
       font-weight: 600;
-      width: 100%;
-      font-size: 16px; }
+      width: 100%; }
       .conversation-element.user input:focus {
         outline: none; }
     .conversation-element.user li {
@@ -7072,6 +7142,18 @@ a.navbar-item,
       border-top: #6E7F89 2px solid;
       padding-top: 8px;
       margin-top: 5px; }
+
+@keyframes shake {
+  4%, 18% {
+    transform: translate3d(-1px, 0, 0); }
+  4%, 16% {
+    transform: translate3d(2px, 0, 0); }
+  6%, 10%, 14% {
+    transform: translate3d(-4px, 0, 0); }
+  8%, 12% {
+    transform: translate3d(4px, 0, 0); }
+  20% {
+    transform: translate3d(0, 0, 0); } }
 
 .github-button {
   box-sizing: border-box;
@@ -7083,32 +7165,35 @@ a.navbar-item,
   top: 104px;
   right: 20px;
   z-index: 1000;
-  background: #7eb5bd; }
+  background: #24292e;
+  color: white;
+  animation: shake 6s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px; }
+  .github-button:hover {
+    cursor: pointer;
+    background: #444d56; }
   @media screen and (max-width: 1007px) {
     .github-button {
       margin: 0;
-      padding: 0;
+      padding: 4px;
       border: none;
-      width: 60px;
-      height: 60px;
-      top: 69px;
-      background: white; }
+      width: 58px;
+      height: 58px;
+      top: 69px; }
       .github-button .github-button__caption {
         display: none; } }
 
 .github-button__icon {
-  stroke: white;
-  fill: #7eb5bd;
+  fill: white;
   border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  background: white; }
+  width: 60px;
+  height: 60px; }
   @media screen and (max-width: 1007px) {
     .github-button__icon {
-      stroke: #7eb5bd;
-      border: solid 5px #7eb5bd;
-      width: 60px;
-      height: 60px; } }
+      width: 40px;
+      height: 40px; } }
 
 .github-button__caption {
   color: white;
@@ -7116,7 +7201,8 @@ a.navbar-item,
   font-size: 12px;
   text-align: center;
   text-transform: uppercase;
-  display: block; }
+  display: block;
+  padding-top: 8px; }
   @media screen and (max-width: 1007px) {
     .github-button__caption {
       display: none; } }
@@ -7131,7 +7217,7 @@ a.navbar-item,
   font-size: 12px;
   line-height: 1.5;
   border-radius: 10px;
-  padding: 12px 17px;
+  padding: 0px 17px;
   margin: 10px;
   margin-left: auto;
   margin-right: 18px;

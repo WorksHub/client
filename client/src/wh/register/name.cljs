@@ -9,11 +9,13 @@
 (defn name-box []
   [:div.animatable
    [:div.conversation-element.user
-    [:input {:type       :text
-             :auto-focus true
-             :value      (<sub [::subs/name])
-             :on-change  #(dispatch-sync [::events/set-name (-> % .-target .-value)])
-             :aria-label "Name input"}]]])
+    [:label.label {:for "name"} "Your name"]
+    [:input#name {:type       :text
+                  :auto-focus true
+                  :value      (<sub [::subs/name])
+                  :on-change  #(dispatch-sync [::events/set-name (-> % .-target .-value)])
+                  :aria-label "Name input"
+                  :placeholder "e.g. John Snow"}]]])
 
 (defn panel []
   [:form
@@ -22,7 +24,7 @@
    [codi-message
     (if (<sub [::subs/preset-name?])
       "Is this your full name?"
-      "Please enter your full name.")]
+      "Please enter your full name")]
    [name-box]
    [button "Next" nil]
    (when-let [error (<sub [::subs/upsert-user-errors])]

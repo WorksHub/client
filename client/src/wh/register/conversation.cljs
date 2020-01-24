@@ -11,13 +11,13 @@
 (defn github-button []
   [:button.github-button
    {:on-click #(dispatch [:github/call])}
-   [icon "github" :class :github-button__icon]
+   [icon "github" :class "github-button__icon"]
    [:span.github-button__caption "Connect to" [:br] "GitHub"]])
 
 (defn input-with-suggestions
   [& {:keys [input-sub error-sub dropdown-sub
              set-input-ev set-dropdown-ev pick-ev
-             on-close placeholder]}]
+             on-close placeholder label]}]
   [:div.animatable.input-with-suggestions
    [:form.conversation-element.user
     {:on-submit #(do
@@ -25,9 +25,11 @@
                    (when pick-ev
                      (dispatch pick-ev)))}
     [:div.input-with-suggestions__container
+     [:label.label {:for label} label]
      [:input
       (merge {:type :text
-              :auto-focus true}
+              :auto-focus true
+              :id label}
              (when placeholder
                {:placeholder placeholder})
              (when input-sub

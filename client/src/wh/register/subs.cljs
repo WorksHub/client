@@ -3,6 +3,7 @@
             [re-frame.core :refer [reg-sub]]
             [wh.common.errors :refer [upsert-user-error-message]]
             [wh.db :as db]
+            [wh.verticals :as verticals]
             [wh.register.db :as register]))
 
 (reg-sub ::step register/effective-step)
@@ -229,3 +230,8 @@
   ::subscribed?
   (fn [db _]
     (get-in db [::register/sub-db ::register/subscribed?])))
+
+(reg-sub
+  ::vertical-name
+  (fn [db _]
+    (get-in verticals/vertical-config [(::db/vertical db) :platform-name])))

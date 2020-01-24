@@ -29,8 +29,8 @@
                   :hidden? (<sub [::subs/skills-info-hidden?]),
                   :on-close [:register/hide-skills-info]}
     (if (<sub [::subs/connected-to-github?])
-      "We’ve done the hard work for you by pre-selecting your skills based on your GitHub profile. Large and green is selected, red and small is not. Feel free to customise your picks."
-      "Select your preferred skills. If you would like to save some time, connect your GitHub and we will pre-select skills for you. Large and green is selected, red and small is not.")]
+      [:span "We’ve done the hard work for you by pre-selecting your skills based on your GitHub profile. Large and green is selected, red and small is not. Feel free to " [:span.highlight "customise your picks"]]
+      [:span [:span.highlight "Select your preferred skills. "] "Large and green is selected, red and small is not. " [:br.is-hidden-desktop] [:span.highlight "Connect your GitHub "] "to save some time. We will pre-select skills for you. "])]
    [bubbles/bubbles (<sub [::subs/skills])
     :on-size-change #(dispatch [::events/select-skill %1 %2])]
    (when-not (<sub [::subs/connected-to-github?])

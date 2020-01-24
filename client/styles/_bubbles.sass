@@ -4,6 +4,7 @@ $animation-duration: 0.2s
 // in bubbles.cljs to match.
 $bubble-radius-base: 52
 $bubble-radius-like: 64
+$bubble-radius-hover: 63
 
 @mixin bubble-diameter($radius)
   $diameter: 2 * ($radius - $bubble-border)
@@ -23,6 +24,12 @@ $bubble-radius-like: 64
     @include bubble-diameter($bubble-radius-like + 0px)
   to
     @include bubble-diameter($bubble-radius-base + 0px)
+
+@keyframes increase-hover
+  from
+    @include bubble-diameter($bubble-radius-base + 0px)
+  to
+    @include bubble-diameter($bubble-radius-hover + 0px)
 
 .bubble-container
   position: relative
@@ -45,6 +52,13 @@ $bubble-radius-like: 64
   align-items: center
   z-index: 1
   @include bubble-diameter($bubble-radius-base + 0px)
+
+  &:hover
+    cursor: pointer
+
+  &.hover
+    animation: $animation-duration increase-hover
+    @include bubble-diameter($bubble-radius-hover + 0px)
 
   &.like
     animation: $animation-duration increase-like

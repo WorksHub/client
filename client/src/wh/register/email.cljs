@@ -14,11 +14,13 @@
    [:form.conversation-element.user
     {:on-submit #(do (.preventDefault %)
                      (dispatch [::events/upsert-user]))}
-    [:input {:type       :email
-             :auto-focus true
-             :value      (<sub [::subs/email])
-             :on-change  #(dispatch-sync [::events/set-email (-> % .-target .-value)])
-             :aria-label "Email input"}]]])
+    [:label.label {:for "email"} "Your email"]
+    [:input#email {:type       :email
+                   :auto-focus true
+                   :value      (<sub [::subs/email])
+                   :on-change  #(dispatch-sync [::events/set-email (-> % .-target .-value)])
+                   :aria-label "Email input"
+                   :placeholder "john.snow@gmail.com"}]]])
 
 (defn consent-checkbox []
   [:div.animatable
@@ -36,24 +38,24 @@
        [:a.a--underlined {:href   "/privacy-policy"
                           :target "_blank"
                           :rel    "noopener"}
-        "privacy policy"] " of this website and the processing of your data."]]]
+        "privacy policy"] " of this website and the processing of your data"]]]
     [:div.newsletter-section
-
      [:input
       {:type      "checkbox"
        :id        "newsletter"
        :checked   (<sub [::subs/subscribed?])
        :on-change #(dispatch-sync [::events/set-subscribed (target-checked %)])}]
-     [:label#newsletter-label {:for "newsletter"}
+     [:label#newsletter-label.is-flex {:for "newsletter"}
       [:div {:class "checkbox__box"}]
-      [:span "Don't get FOMO \uD83D\uDE40 and subscribe to our newsletter"]]]]])
+      [:span "Subscribe to our newsletter to get updates from " (<sub [::subs/vertical-name])]]]]])
 
 (defn panel []
   [:div
    [codi-message "Hi, I am Codi. Welcome to " (<sub [:wh/platform-name]) "!"]
+   [codi-message "Registration process should take " [:span.highlight "2 to 3 minutes"]]
    [codi-message (if (<sub [:user/email])
                    "Is this the best email for your account?"
-                   "Please enter your email.")]
+                   "Please enter your email")]
    [email-box]
    [consent-checkbox]
    [button "Next"

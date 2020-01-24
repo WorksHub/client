@@ -312,7 +312,7 @@
 
 (defn toggle-bubble
   [db k item level]
-  (update db k (if (= level :base) disj conj) item))
+  (update db k (if (or (= level :hover) (= level :base)) disj conj) item))
 
 (reg-event-db
   ::select-skill

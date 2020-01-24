@@ -1,4 +1,5 @@
 $font-size: 12px
+$font-size-desktop: 16px
 $line-height: 1.5
 
 #progress-bar
@@ -36,10 +37,50 @@ $line-height: 1.5
     opacity: 1
 
 .register-container
+  input
+    font-size: $font-size
+    +desktop
+      font-size: $font-size-desktop
+  input::placeholder
+    color: $placeholder-grey
+    font-weight: 500
+    font-size: $font-size
+    +desktop
+      font-size: $font-size-desktop
   +desktop
     height: 100vh
   +mobile
     height: calc(100vh - #{$navbar-mobile-height})
+  .conversation-button
+    +desktop
+      font-size: $font-size-desktop
+  .conversation-element
+    position: relative
+    +desktop
+      font-size: $font-size-desktop
+    .label
+      position: absolute
+      right: 0
+      color: $red
+      font-weight: 600
+      top: -20px
+      font-size: 11px
+      +desktop
+        top: -21px
+        font-size: 12px
+    code
+      +desktop
+        font-size: $font-size-desktop
+    .highlight
+      color: $red
+      font-weight: 600
+  .codi-container
+    .icon
+      +desktop
+        width: 64px
+        height: 64px
+      +mobile
+        margin-left: 4px
 
 .full-height
   height: 100%
@@ -75,9 +116,9 @@ $line-height: 1.5
     animation-fill-mode: both
   @for $i from 1 through 10
     &:nth-child(#{$i}) .icon
-      animation-delay: ($i - 1) * 0.8s
+      animation-delay: ($i - 1) * 0.4s
     &:nth-child(#{$i}) .conversation-element, &:nth-child(#{$i}) .multiple-buttons, &:nth-child(#{$i}) .conversation-button
-      animation-delay: 0.2s + ($i - 1) * 0.8s
+      animation-delay: 0.1s + ($i - 1) * 0.4s
 
 .conversation-button--error
   font-size: 8pt
@@ -100,7 +141,6 @@ $line-height: 1.5
     align-self: flex-end
     width: 28px
     height: 28px
-    margin-left: 11px
 
 .codi-container--hidden
   opacity: 0
@@ -117,6 +157,8 @@ $line-height: 1.5
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1)
   position: relative
   z-index: 10
+  code
+    font-size: $font-size
   .location
     color: $steel-gray
     font-weight: $font-semi-bold
@@ -132,7 +174,6 @@ $line-height: 1.5
       color: $steel-gray
       font-weight: $font-semi-bold
       width: 100%
-      font-size: 16px
       &:focus
         outline: none
     li
@@ -142,6 +183,18 @@ $line-height: 1.5
       border-top: $steel-gray 2px solid
       padding-top: 8px
       margin-top: 5px
+
+@keyframes shake
+  4%, 18%
+    transform: translate3d(-1px, 0, 0)
+  4%, 16%
+    transform: translate3d(2px, 0, 0)
+  6%, 10%, 14%
+    transform: translate3d(-4px, 0, 0)
+  8%, 12%
+    transform: translate3d(4px, 0, 0)
+  20%
+    transform: translate3d(0, 0, 0)
 
 .github-button
   box-sizing: border-box
@@ -153,31 +206,34 @@ $line-height: 1.5
   top: 104px
   right: 20px
   z-index: 1000
-  background: $metal-blue
+  background: $github-black
+  color: $github-white
+  animation: shake 6s cubic-bezier(.36,.07,.19,.97) infinite
+  transform: translate3d(0, 0, 0)
+  backface-visibility: hidden
+  perspective: 1000px
+  &:hover
+    cursor: pointer
+    background: $github-black-hover
   +mobile
     margin: 0
-    padding: 0
+    padding: 4px
     border: none
-    width: 60px
-    height: 60px
+    width: 58px
+    height: 58px
     top: 69px
-    background: white
     .github-button__caption
       display: none
 
-.github-button__icon
-  stroke: white
-  fill: $metal-blue
-  border-radius: 50%
-  width: 25px
-  height: 25px
-  background: white
-  +mobile
-    stroke: $metal-blue
-    border: solid 5px $metal-blue
-    width: 60px
-    height: 60px
 
+.github-button__icon
+  fill: $github-white
+  border-radius: 50%
+  width: 60px
+  height: 60px
+  +mobile
+    width: 40px
+    height: 40px
 
 .github-button__caption
   color: white
@@ -186,6 +242,7 @@ $line-height: 1.5
   text-align: center
   text-transform: uppercase
   display: block
+  padding-top: 8px
   +mobile
     display: none
 
@@ -199,7 +256,7 @@ $line-height: 1.5
   font-size: $font-size
   line-height: $line-height
   border-radius: $radius
-  padding: 12px 17px
+  padding: 0px 17px
   margin: 10px
   margin-left: auto
   margin-right: 18px

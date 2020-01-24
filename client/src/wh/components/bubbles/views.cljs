@@ -19,14 +19,16 @@
 
 (def base-radius 52)
 (def like-radius 64)
+(def hover-radius 63)
 
-(def radius-cycle {base-radius like-radius, like-radius base-radius})
-(def css-class-map {base-radius "base", like-radius "like"})
+(def radius-cycle {like-radius hover-radius, hover-radius like-radius, base-radius like-radius})
+(def radius-cycle-hover {base-radius hover-radius, hover-radius base-radius, like-radius like-radius})
+(def css-class-map {base-radius "base", like-radius "like", hover-radius "hover"})
 (def size->radius (zipmap (mapv keyword (vals css-class-map)) (keys css-class-map)))
 
 (def rows 3)         ; how many rows they initially come in
 (def gap 20)         ; vertical spacing
-(def velocity 0.15)  ; initial horizontal velocity
+(def velocity 1)  ; initial horizontal velocity
 (def resize-threshold 10) ; don't resize when moved more than this many pixels
 (def spreadout 0.95) ; how much spread apart they are initially, in screens
 
@@ -35,7 +37,7 @@
   (let [mid-x 0
         mid-y 0
         diameter (* base-radius 2)
-        base-attrs {:radius base-radius, :vy 0, :mass 1, :restitution 0, :cof 5}
+        base-attrs {:radius base-radius, :vy 0, :mass 1, :restitution 0.4, :cof 5}
         apart (* spreadout js/window.innerWidth 0.5)
         spread (fn [balls direction]
                  (for [[x column] (map-indexed vector (partition-all rows balls))
@@ -91,6 +93,11 @@
     (resize-ball! world name new-radius)
     (keyword (css-class-map new-radius))))
 
+(defn cycle-ball-size-hover! [world name]
+  (let [old-radius (.-radius (get-ball-by-name world name))
+        new-radius (radius-cycle-hover old-radius base-radius)]
+    (resize-ball! world name new-radius)))
+
 (defn balls-coords [world]
   (mapv #(let [pos (-> % .-state .-pos)]
            [(.-x pos) (.-y pos) (.-radius %) (.-name %)])
@@ -134,7 +141,9 @@
                                   (let [new-size (cycle-ball-size! world name)]
                                     (when on-size-change
                                       (on-size-change name new-size))))
-                                (reset! prevent-resize false))}
+                                (reset! prevent-resize false))
+                   :on-mouse-enter #(cycle-ball-size-hover! world name)
+                   :on-mouse-leave #(cycle-ball-size-hover! world name)}
       name]]))
 
 (defn bubbles-internal

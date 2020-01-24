@@ -12,7 +12,12 @@
    :set-input-ev [::events/set-location-query type]
    :error-sub [::subs/location-search-error type]
    :dropdown-sub [::subs/location-search-results type]
-   :set-dropdown-ev [::events/set-location type]])
+   :set-dropdown-ev [::events/set-location type]
+   :placeholder "e.g. New York or London"
+   :label (cond
+            (= type :current) "Current location"
+            (= type :preferred) "Preferred location"
+            :else "Location")])
 
 (defn panel []
   [:div.multiple-conversations
@@ -37,5 +42,5 @@
       [button "Enter current location" [:register/ask-for-current-location]]])
    (when (<sub [::subs/location-stage-visible? :ask-for-current-location])
      [:div
-      [codi-message "Please enter your current location."]
+      [codi-message "Please enter your current location"]
       [location-box :current]])])
