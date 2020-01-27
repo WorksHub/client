@@ -7,9 +7,10 @@ function init() {
         showTrackingPopup();
     } else {
         if(!aid) {
-            initServerTracking();
+            initServerTracking(r => loadAnalytics());
+        } else {
+            loadAnalytics();
         }
-        loadAnalytics();
     }
     /* tags */
     let tagList = document.getElementById("tag-list");

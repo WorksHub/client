@@ -137,7 +137,7 @@ function createPageProps(atx) {
     return pageProps;
 }
 
-function sendServerAnalytics(body) {
+function sendServerAnalytics(body, onsuccess = null) {
     var i = null;
     let send = function() {
         if(wh_analytics.init) {
@@ -150,6 +150,8 @@ function sendServerAnalytics(body) {
             r.onloadend = function () {
                 if(r.status != 200) {
                     console.log("analytics failed: " + r.status);
+                } else if(onsuccess) {
+                    onsuccess(r);
                 }
             };
             r.send(JSON.stringify(body));
@@ -169,71 +171,87 @@ function sendServerPage(atx) {
                          "payload":  createPageProps(atx)});
 }
 
-function initServerTracking() {
+function initServerTracking(onsuccess = null) {
     wh_analytics.init = true;
-    sendServerAnalytics({"type":"init"});
+    sendServerAnalytics({"type":"init"}, onsuccess);
 }
 
 /*--------------------------------------------------------------------------*/
 
-function loadAnalytics() {
+function whenAnalytics(f) {
     var i = setInterval(function() {
         if(typeof analytics != "undefined") {
-            analytics.load();
-            if(!isAppPresent()) {
-                // we only do this if no app, otherwise it's done in `wh.common.fx.analytics` (see `:analytics/pageview`)
-                trackPage();
-            }
+            f();
             clearInterval(i);
         }
     }, 100);
+}
+
+function whenAnalyticsReady(f) {
+    var i = setInterval(function() {
+        if(typeof analytics != "undefined" &&
+           typeof analytics.user != "undefined") {
+            f();
+            clearInterval(i);
+        }
+    }, 100);
+}
+
+function loadAnalytics() {
+    whenAnalytics(function () {
+        analytics.on("load", x => console.log("LOADED AJS"));
+        analytics.load();
+        whenAnalyticsReady(function () {
+            // if we have a wh_aid lets use it to make it easier to track
+            // users across destinations
+            if(getCookie("wh_aid") != null) {
+                setAnalyticsAnonymousId(getCookie("wh_aid"));
+            }
+            if(!isAppPresent()) {
+                // we only do this if no app, otherwise it's done in
+                // `wh.common.fx.analytics` (see `:analytics/pageview`)
+                trackPage();
+            }
+        });
+    });
+}
+
+function setAnalyticsAnonymousId(aid) {
+    whenAnalyticsReady(function () {
+        analytics.setAnonymousId(aid);
+    });
 }
 
 function resetAnalytics() {
-    var i = setInterval(function() {
-        if(typeof analytics != "undefined") {
-            analytics.reset();
-            clearInterval(i);
-        }
-    }, 100);
+    whenAnalytics(function () {
+        analytics.reset();
+    });
 }
 
 function submitAnalyticsAlias(id) {
-    var i = setInterval(function() {
-        if(typeof analytics != "undefined") {
-            analytics.alias(id);
-            clearInterval(i);
-        }
-    }, 100);
+    whenAnalytics(function () {
+        analytics.alias(id);
+    });
 }
 
 function submitAnalyticsIdentify(id, user, integrations) {
-    var i = setInterval(function() {
-        if(typeof analytics != "undefined") {
-            analytics.identify(id, user, integrations);
-            clearInterval(i);
-        }
-    }, 100);
+    whenAnalytics(function () {
+        analytics.identify(id, user, integrations);
+    });
 }
 
 function submitAnalyticsPage(atx) {
-    var i = setInterval(function() {
-        if(typeof analytics != "undefined") {
-            const sourcing = addSourcing({}, atx).sourcing;
-            const pageProps = createPageProps(atx);
-            analytics.page(pageProps, {context: sourcing});
-            clearInterval(i);
-        }
-    }, 100);
+    whenAnalytics(function () {
+        const sourcing = addSourcing({}, atx).sourcing;
+        const pageProps = createPageProps(atx);
+        analytics.page(pageProps, {context: sourcing});
+    });
 }
 
 function submitAnalyticsTrack(evt, prps) {
-    var i = setInterval(function() {
-        if(typeof analytics != "undefined") {
-            analytics.track(evt, prps);
-            clearInterval(i);
-        }
-    }, 100);
+    whenAnalytics(function () {
+        analytics.track(evt, prps);
+    });
 }
 
 /*--------------------------------------------------------------------------*/
@@ -256,7 +274,6 @@ function agreeToTracking() {
     if(getCookie("wh_tracking_consent") == null) {
         setCookie("wh_tracking_consent", true, 365);
         hideTrackingPopup();
-        initServerTracking();
-        loadAnalytics();
+        initServerTracking(r => loadAnalytics());
     }
 }
