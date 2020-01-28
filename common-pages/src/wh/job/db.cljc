@@ -1,7 +1,8 @@
 (ns wh.job.db
   (:require
     [#?(:cljs cljs.spec.alpha :clj clojure.spec.alpha) :as s]
-    [wh.common.data :as data]))
+    [wh.common.data :as data]
+    [wh.util :as util]))
 
 (defn company-permissions
   [db]
@@ -118,3 +119,10 @@
 
 (defn show-unpublished? [admin? owner? published?]
   (and (false? published?) (or admin? owner?)))
+
+(defn seo-job-title
+  [remote title location]
+  (cond
+    remote (str "Remote " title)
+    (seq (when location (util/remove-nils location))) (str title " in " (:city location))
+    :else title))

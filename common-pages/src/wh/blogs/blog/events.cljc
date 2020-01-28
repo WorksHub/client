@@ -116,13 +116,23 @@
   (fn [_ [result]]
     {:dispatch [:error/set-global "Oops, failed to boost blog!"]}))
 
+(reg-event-fx
+  ::on-blog-ready
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [id   (blog/id db)
+          blog (:blog (graphql/result db :blog {:id id}))]
+      {:dispatch   [::init-upvotes]
+       :page-title {:page-name (:title blog)
+                    :vertical  (:wh.db/vertical db)}})))
+
 #?(:cljs
    (defmethod on-page-load :blog [db]
      (let [id (get-in db [::db/page-params :id])
            should-upvote? (get-in db [::db/query-params "upvote"])]
        (list
          [::initialize-db]
-         (into [:graphql/query] (conj (initial-query db) {:on-complete [::init-upvotes]}))
+         (into [:graphql/query] (conj (initial-query db) {:on-complete [::on-blog-ready]}))
          (into [:graphql/query] (recommended-jobs-for-blog-query db))
          (when should-upvote? [::upvote])
          [:wh.pages.core/unset-loader]))))

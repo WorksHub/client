@@ -139,6 +139,7 @@
       (merge
         {:db       db
          :dispatch-n [[::fetch-issues-and-analytics]
+                      [::set-page-title]
                       (when (admin-or-job-owner? db)
                         [::fetch-company])]}))))
 
@@ -511,6 +512,18 @@
                          (admin-or-job-owner? db)
                          (conj [::fetch-job-analytics]))}))
 
+(reg-event-fx
+  ::set-page-title
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:page-title {:page-name
+                  (str (job/seo-job-title (get-in db [::job/sub-db ::job/remote])
+                                          (get-in db [::job/sub-db ::job/title])
+                                          (get-in db [::job/sub-db ::job/location]))
+                       " - "
+                       (get-in db [::job/sub-db ::job/company :name]))
+                  :vertical (:wh.db/vertical db)}}))
+
 (reg-event-db
   ::initialize-db
   job-interceptors
@@ -541,6 +554,8 @@
         (when (and (= requested-slug slug-in-db)
                    (admin-or-job-owner? db))
           [::fetch-company])
+        (when (= requested-slug slug-in-db)
+          [::set-page-title])
         (when (get-in db [::db/query-params "apply"])
           [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
         [::fetch-recommended-jobs requested-slug]

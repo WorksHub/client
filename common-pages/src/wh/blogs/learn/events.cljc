@@ -38,6 +38,13 @@
     {:scroll-to-top true
      :dispatch (into [:graphql/query] (initial-query db))}))
 
+(reg-event-fx
+  ::set-learn-by-tag-title
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:page-title {:page-name (str "Articles: " (:tag (learn/params db)))
+                  :vertical (:wh.db/vertical db)}}))
+
 #?(:cljs
    (defmethod on-page-load :learn [db]
      [[:wh.pages.core/unset-loader]
@@ -46,4 +53,5 @@
 #?(:cljs
    (defmethod on-page-load :learn-by-tag [db]
      [[:wh.pages.core/unset-loader]
-      [::load-blogs]]))
+      [::load-blogs]
+      [::set-learn-by-tag-title]]))

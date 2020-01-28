@@ -3,10 +3,10 @@
     #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
     #?(:cljs [wh.user.db :as user])
     [re-frame.core :refer [path]]
-    [wh.graphql-cache :as cache]
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.common.job :refer [translate-job]]
     [wh.db :as db]
+    [wh.graphql-cache :as cache]
     [wh.graphql.issues :as queries]
     [wh.issue.db :as issue]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
@@ -145,19 +145,20 @@
               (map translate-job jobs))))
 
 (reg-event-fx
-  ::fetch-company-info
-  (fn [_ _]
+  ::on-issue-ready
+  db/default-interceptors
+  (fn [{db :db} _]
     {:dispatch-n [[::fetch-company-issues]
-                  [::fetch-company-jobs]]}))
+                  [::fetch-company-jobs]]
+     :page-title {:page-name (issue/page-title (issue db))
+                  :vertical  (:wh.db/vertical db)}}))
 
 #?(:cljs
    (defmethod on-page-load :issue [db]
      (let [logged-in? (db/logged-in? db)
            initial-load? (::db/initial-load? db)]
        (list
-        [::initialize-db]
-        (if initial-load?
-          [::fetch-company-info]
-          (into [:graphql/query] (conj (initial-query db) {:on-complete [::fetch-company-info]})))))))
-
-
+         [::initialize-db]
+         (if initial-load?
+           [::on-issue-ready]
+           (into [:graphql/query] (conj (initial-query db) {:on-complete [::on-issue-ready]})))))))

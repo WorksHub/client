@@ -9,8 +9,8 @@
             [re-frame.db :refer [app-db]]
             [wh.db :as db]
             [wh.pages.modules :as modules]
-            [wh.verticals :as verticals]
-            [wh.routes :as routes]))
+            [wh.routes :as routes]
+            [wh.verticals :as verticals]))
 
 (def default-route {:handler :not-found})
 (def default-page-size 24)
@@ -89,38 +89,40 @@
               (fn [{db :db} [{:keys [handler params uri route-params query-params] :as m} history-state]]
                 (let [handler   (resolve-handler db handler)
                       page-info {:page-name (routes/handler->name handler)
-                                 :vertical (:wh.db/vertical db)}]
+                                 :vertical  (:wh.db/vertical db)}]
                   (case (redirect-when-not-permitted db handler)
                     :not-found
-                    {:db (assoc db
-                                ::db/page :not-found
-                                ::db/loading? false)
+                    {:db         (assoc db
+                                        ::db/page :not-found
+                                        ::db/loading? false)
                      :page-title page-info}
-                                   ; it might've been set in pre-rendered app-db
+                                        ; it might've been set in pre-rendered app-db
                     :login
                     (let [current-path (bidi/url-encode (routes/path handler :params params :query-params query-params))
-                          login-step (if (= :company (module-for handler)) :email :root)] ;; if company, show email login
+                          login-step   (if (= :company (module-for handler)) :email :root)] ;; if company, show email login
                       {:navigate   [:login :params {:step login-step} :query-params {:redirect current-path}]
                        :page-title page-info})
                     ;; otherwise
-                    (let [new-page? (not= (::db/page db) handler)
-                          scroll (if history-state (aget history-state "scroll-position") 0)
-                          new-db (cond-> db
-                                         true (-> (assoc ::db/page handler
-                                                         ::db/page-params (merge params route-params {})
-                                                         ::db/query-params (or query-params {})
-                                                         ::db/uri uri
-                                                         ::db/scroll scroll)
-                                                  (update ::db/page-moves inc))
-                                         (not= (contains? #{:jobsboard :pre-set-search} handler)) (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
-                                         (not (contains? #{:jobsboard :pre-set-search} handler)) (assoc ::db/search-term ""))]
+                    (let [new-page?     (not= (::db/page db) handler)
+                          initial-load? (::db/initial-load? db)
+                          scroll        (if history-state (aget history-state "scroll-position") 0)
+                          new-db        (cond-> (-> db (assoc ::db/page handler
+                                                              ::db/page-params (merge params route-params {})
+                                                              ::db/query-params (or query-params {})
+                                                              ::db/uri uri
+                                                              ::db/scroll scroll)
+                                                    (update ::db/page-moves inc))
+                                                (not= (contains? #{:jobsboard :pre-set-search} handler))
+                                                (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
+                                                (not (contains? #{:jobsboard :pre-set-search} handler))
+                                                (assoc ::db/search-term ""))]
                       (cond-> {:db                 new-db
                                :analytics/pageview true
                                :analytics/track    [(str (routes/handler->name handler) " Viewed") (merge query-params route-params) true]
                                :dispatch-n         [[:error/close-global]
                                                     [::disable-no-scroll]
-                                                    [:wh.events/show-chat? true]]
-                               :page-title page-info}
+                                                    [:wh.events/show-chat? true]]}
+                              (not initial-load?) (assoc :page-title page-info)
                               ;; this forces scrolling to top when moving forward to a new page
                               ;; but does nothing when moving backward
                               ;; TODO is this something we want to support? (:scroll-to-x fx?)
@@ -130,10 +132,12 @@
                               (assoc :scroll-to-top true)
                               ;; We only fire on-page-load events when we didn't receive a back-button
                               ;; navigation (i.e. history-state is nil). See pushy/core.cljs.
-                              (nil? history-state) (update :dispatch-n (fn [dispatch-events]
-                                                                         (concat dispatch-events
-                                                                                 (cond-> (on-page-load new-db)
-                                                                                         (::db/initial-load? db) (conj [:wh.events/set-initial-load false])))))))))))
+                              (nil? history-state)
+                              (update :dispatch-n
+                                      (fn [dispatch-events]
+                                        (concat dispatch-events
+                                                (cond-> (on-page-load new-db)
+                                                        initial-load? (conj [:wh.events/set-initial-load false])))))))))))
 
 ;; Internal event meant to be triggered by :navigate only.
 

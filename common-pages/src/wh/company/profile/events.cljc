@@ -54,7 +54,8 @@
 
 #?(:cljs
    (defmethod on-page-load :company [db]
-     (list (into [:graphql/query] (conj (initial-query db) {:on-success [::fetch-stats]}) )
+     (list (into [:graphql/query] (conj (initial-query db) {:on-success [::fetch-stats]
+                                                            :on-complete [::on-company-ready]}) )
            [::load-photoswipe]
            [:google/load-maps]
            (into [:graphql/query] (extra-data-query db))
@@ -78,15 +79,21 @@
      db/default-interceptors
      upload/image-upload-fn))
 
-#?(:cljs
-   (reg-event-fx
-     ::fetch-stats
-     db/default-interceptors
-     (fn [{db :db} _]
-       {:dispatch (into [:graphql/query] (-> db
-                                             (cached-company)
-                                             :id
-                                             (company-stats-query )))})))
+(reg-event-fx
+  ::on-company-ready
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:page-title {:page-name (:name (cached-company db))
+                  :vertical (:wh.db/vertical db)}}))
+
+(reg-event-fx
+  ::fetch-stats
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:dispatch (into [:graphql/query] (-> db
+                                          (cached-company)
+                                          :id
+                                          (company-stats-query )))}))
 
 (reg-event-db
   ::photo-upload-start

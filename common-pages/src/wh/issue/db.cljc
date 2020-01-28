@@ -16,3 +16,9 @@
   [db]
   (merge db
          {::show-cta-sticky? false}))
+
+(defn repo->full-name [repo]
+  (str (:owner repo) "/" (:name repo)))
+
+(defn page-title [{:keys [repo title]}]
+  (str (repo->full-name repo) " Issue - " title))
