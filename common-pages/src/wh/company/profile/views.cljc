@@ -333,7 +333,8 @@
                (doall
                  (for [job jobs]
                    ^{:key (:id job)}
-                   [job-card job (merge {:logged-in? logged-in?}
+                   [job-card job (merge {:logged-in?   logged-in?
+                                         :apply-source "company-profile-job"}
                                         #?(:cljs
                                            {:liked?            (contains? (<sub [:user/liked-jobs]) (:id job))
                                             :user-is-owner?    admin-or-owner?

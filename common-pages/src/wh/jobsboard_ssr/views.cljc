@@ -42,7 +42,8 @@
                   [job/job-card job {:logged-in?        logged-in?
                                      :user-has-applied? has-applied?
                                      :user-is-company?  (or admin? (= company-id (:company-id job)))
-                                     :user-is-owner?    (= company-id (:company-id job))}]]))]))])
+                                     :user-is-owner?    (= company-id (:company-id job))
+                                     :apply-source      "jobsboard-job"}]]))]))])
      (when (seq jobs)
        [pagination/pagination current-page (pagination/generate-pagination current-page total-pages) route query-params])]))
 

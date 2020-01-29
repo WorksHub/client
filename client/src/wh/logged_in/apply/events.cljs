@@ -1,6 +1,5 @@
 (ns wh.logged-in.apply.events
   (:require
-    [camel-snake-kebab.core :as csk]
     [re-frame.core :refer [reg-event-db reg-event-fx dispatch path]]
     [wh.common.cases :as cases]
     [wh.common.graphql-queries :as graphql]
@@ -72,11 +71,12 @@
 (reg-event-fx
   :apply/start-apply-for-job
   db/default-interceptors
-  (fn [{db :db} [job]]
-    {:db              (assoc-in db [::apply/sub-db ::apply/job] job)
-     :dispatch-n      [[::check-name]
-                       [::fetch-job-company-details job]]
-     :analytics/track ["Job Application Started" job]}))
+  (fn [{db :db} [job apply-source]]
+    (let [job (assoc job :apply-source apply-source)]
+      {:db              (assoc-in db [::apply/sub-db ::apply/job] job)
+       :dispatch-n      [[::check-name]
+                         [::fetch-job-company-details job]]
+       :analytics/track ["Job Application Started" job]})))
 
 (reg-event-fx
   ::track-recommendations-redirect
@@ -265,9 +265,12 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :String}
                      {:variable/name "slug"
+                      :variable/type :String}
+                     {:variable/name "applySource"
                       :variable/type :String}]
-   :venia/queries   [[:apply {:id :$id
-                              :slug :$slug}]]})
+   :venia/queries   [[:apply {:id          :$id
+                              :slug        :$slug
+                              :applySource :$applySource}]]})
 
 (defquery check-application-query
   {:venia/operation {:operation/type :query
@@ -315,8 +318,9 @@
   apply-interceptors
   (fn [{db :db} _]
     {:graphql {:query      apply-mutation
-               :variables (or (some->> (get-in db [::apply/job :id])   (hash-map :id))
-                              (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
+               :variables (-> (or (some->> (get-in db [::apply/job :id])   (hash-map :id))
+                                  (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
+                              (assoc :applySource (:apply-source (::apply/job db))))
                :on-success [::handle-apply true]
                :on-failure [::handle-apply false]}
      :db      (assoc db ::apply/updating? true)}))

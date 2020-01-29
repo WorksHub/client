@@ -111,7 +111,7 @@
      [:button.button.button--medium
       {:id (str "job-view__apply-button" (when id (str "__" id)))
        :disabled (<sub [:user/company?])
-       :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job])])}
+       :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])}
       (if (some? (<sub [:user/applied-jobs]))
         "1-Click Apply"
         "Easy Apply")])))
@@ -403,7 +403,8 @@
                [:div.column [job-card job {:logged-in?        logged-in?
                                            :user-has-applied? has-applied?
                                            :user-is-company?  (or admin? (= company-id (:company-id job)))
-                                           :user-is-owner?    (= company-id (:company-id job))}]]))]]))
+                                           :user-is-owner?    (= company-id (:company-id job))
+                                           :apply-source      "job-page-other-job"}]]))]]))
 
 (defn apply-sticky
   []

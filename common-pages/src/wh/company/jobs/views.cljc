@@ -25,7 +25,8 @@
         [job-card job {:logged-in?        logged-in?
                        :user-has-applied? has-applied?
                        :user-is-company?  (not (nil? company-id))
-                       :user-is-owner?    (or admin? (= company-id (:company-id job)))}])]
+                       :user-is-owner?    (or admin? (= company-id (:company-id job)))
+                       :apply-source      "company-jobs-job"}])]
      (when (and (not-empty jobs) (> (<sub [::subs/total-number-of-jobs]) jobs/page-size))
        [pagination/pagination
         current-page

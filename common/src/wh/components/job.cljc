@@ -59,7 +59,8 @@
 
 (defn job-card--buttons
   [{:keys [slug id state published]}
-   {:keys [user-has-applied? user-is-owner? user-is-company? applied? logged-in?]}]
+   {:keys [user-has-applied? user-is-owner? user-is-company? applied? logged-in?
+           apply-source]}]
   [:div.apply
    (when state
      [:div.state
@@ -75,7 +76,9 @@
                                {:disabled true}))]
       (if (not user-is-owner?)
         (when published
-          (let [job-page-path [:job :params {:slug slug} :query-params {:apply true}]]
+          (let [job-page-path [:job
+                               :params {:slug slug}
+                               :query-params {"apply" true "apply_source" apply-source}]]
             [:a (if logged-in?
                   {:href (apply routes/path job-page-path)}
                   (interop/on-click-fn

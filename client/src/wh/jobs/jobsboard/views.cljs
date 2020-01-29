@@ -194,7 +194,8 @@
                  [job-card job {:logged-in?        logged-in?
                                 :user-has-applied? has-applied?
                                 :user-is-company?  (not (nil? company-id))
-                                :user-is-owner?    (or admin? (= company-id (:company-id job)))}]]))))))
+                                :user-is-owner?    (or admin? (= company-id (:company-id job)))
+                                :apply-source      "jobsboard-promoted-job"}]]))))))
 
 
 (defn skeleton-jobs []
@@ -224,7 +225,8 @@
                     [job-card job {:logged-in?        logged-in?
                                    :user-has-applied? has-applied?
                                    :user-is-company?  (not (nil? company-id))
-                                   :user-is-owner?    (or admin? (= company-id (:company-id job)))}]]))]))]))
+                                   :user-is-owner?    (or admin? (= company-id (:company-id job)))
+                                   :apply-source      "jobsboard-job"}]]))]))]))
      (when (and (not (<sub [:wh.search/searching?]))
                 (seq jobs))
        [pagination/pagination

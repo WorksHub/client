@@ -541,8 +541,8 @@
 #?(:cljs
    (defmethod on-page-load :job [db]
      (let [requested-slug (get-in db [::db/page-params :slug])
-           slug-in-db (get-in db [::job/sub-db ::job/slug])
-           preset-slug (get-in db [::job/sub-db ::job/preset-slug])]
+           slug-in-db     (get-in db [::job/sub-db ::job/slug])
+           preset-slug    (get-in db [::job/sub-db ::job/preset-slug])]
        ;; If you are changing below logic make sure that wh.response.handler.job is also updated
        [[::load-company-module-if-needed]
         (when (or (and preset-slug (not= requested-slug preset-slug))
@@ -557,7 +557,9 @@
         (when (= requested-slug slug-in-db)
           [::set-page-title])
         (when (get-in db [::db/query-params "apply"])
-          [:apply/try-apply {:slug requested-slug} :jobpage-apply]) ;; TODO are we sure this was working?
+          ;; this potentially creates an invalid "auth context" but because job
+          ;; page is SSR now it shouldn't matter
+          [:apply/try-apply {:slug requested-slug} (get-in db [::db/query-params "apply_source"] "jobpage-apply")])
         [::fetch-recommended-jobs requested-slug]
         [:google/load-maps]
         [:wh.pages.core/unset-loader]])))

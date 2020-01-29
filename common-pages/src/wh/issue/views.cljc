@@ -238,7 +238,8 @@
                              :user-has-applied? has-applied?
                              :logged-in?        logged-in?
                              :user-is-owner?    (or admin? (= company-id (:company-id job)))
-                             :user-is-company?  (not (nil? company-id))}]))
+                             :user-is-company?  (not (nil? company-id))
+                             :apply-source      "issue-company-job"}]))
           (doall
             (for [i (range (<sub [::subs/num-related-jobs-to-show]))]
               ^{:key i}

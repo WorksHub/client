@@ -10,6 +10,8 @@
   db/default-interceptors
   (fn [{db :db} [job event-type]]
     (if (db/logged-in? db)
-      {:load-and-dispatch [:logged-in [:apply/start-apply-for-job job]]}
-      {:show-auth-popup {:context  (name event-type)
-                         :redirect [:job :params {:slug (:slug job)} :query-params {:apply "true"}]}})))
+      (let [apply-source (or (some-> event-type name)
+                             (get-in db [::db/query-params "apply_source"]))]
+        {:load-and-dispatch [:logged-in [:apply/start-apply-for-job job apply-source]]})
+      {:show-auth-popup {:context  (some-> event-type name)
+                         :redirect [:job :params {:slug (:slug job)} :query-params {"apply" true "apply_source" (name event-type)}]}})))

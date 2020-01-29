@@ -46,7 +46,8 @@
             jobs-columns (map (fn [job] [:div.column [job-card job
                                                       {:on-close          :reload-dashboard
                                                        :user-has-applied? has-applied?
-                                                       :logged-in?        true}]]) jobs)
+                                                       :logged-in?        true
+                                                       :apply-source      "candidate-dashboard-recommended-job"}]]) jobs)
             columns      (if (<sub [::user-subs/onboarding-msg-not-seen? "jobs"])
                            (into
                              [[:div.column.codi-column [jobs-intro]]]
