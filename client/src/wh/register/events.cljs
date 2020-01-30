@@ -250,14 +250,15 @@
     {:db      (assoc db ::register/loading? true)
      :graphql {:query      preverify-mutation
                :variables  {:email email}
-               :on-success [::preverify-email-success]
+               :on-success [::preverify-email-success email]
                :on-failure [::preverify-email-failure]}}))
 
 (reg-event-fx
   ::preverify-email-success
   register-interceptors
-  (fn [{db :db} [{:keys [data]}]]
+  (fn [{db :db} [email {:keys [data]}]]
     {:dispatch [:register/advance]
+     :analytics/track ["Email Verified" {:email email}]
      :db (assoc db
                 ::register/loading? false
                 ::register/show-verify? (not (:preverify_email data)))}))
