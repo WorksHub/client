@@ -197,27 +197,28 @@
     (for [{:keys [value count]} available-tags]
       {:tag value, :selected (contains? tags value), :count count})))
 
+;; Non-existing tags is a list of tags that appeared in URL
+;; but are not available in application DB. We want to display
+;; this tags so user may remove these from filters and clear URL
 (reg-sub
- :wh.search/dummy-tags
+ :wh.search/non-existing-tags
  :<- [:wh.search/available-tags]
  :<- [:wh.search/tags]
  (fn [[available-tags tags] _]
    (let [available-tags (into #{} (map :value available-tags))
-         tags (filter (complement available-tags) tags)]
-     (for [value tags]
-       {:tag value, :selected true, :count 0}))))
+         non-existing-tags (filter (complement available-tags) tags)]
+     (for [value non-existing-tags]
+       {:tag value, :selected true, :count 0, :tag/non-existing true}))))
 
 (reg-sub
   :wh.search/matching-tags
   :<- [:wh.search/tag-part]
   :<- [:wh.search/flagged-tags]
-  :<- [:wh.search/dummy-tags]
+  :<- [:wh.search/non-existing-tags]
   :<- [:wh.search/tags]
-  (fn [[substring tags dummy-tags] _]
-    (->> tags
-         (into dummy-tags)
-         ;; selected first, then count
-         (sort-by (juxt (comp not :selected) (comp - :count)))
+  (fn [[substring tags non-existing-tags] _]
+    (->> (concat non-existing-tags tags)
+         (sort-by (juxt (comp not :selected) (comp - :count))) ;; selected first, then count
          (filter #(or (str/blank? substring)
                       (:selected %)
                       (str/includes? (str/lower-case (:tag %))
