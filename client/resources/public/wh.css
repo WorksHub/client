@@ -8361,6 +8361,9 @@ a.navbar-item,
     border-radius: 10px;
     cursor: pointer; }
 
+.company-edit__users + .alert-box {
+  margin: 18px 0px 8px 0px; }
+
 .company-edit__integrations {
   margin-top: 18px;
   margin-bottom: 20px;
@@ -12143,6 +12146,17 @@ h3 {
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 18px; }
+
+.alert-box {
+  font-family: "Inconsolata", sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  border: 2px solid #ff7c6e;
+  padding: 12px;
+  margin: 0; }
+
+.alert-box--warning {
+  background: #ffe9e7; }
 
 .search__toggle {
   width: 10px;

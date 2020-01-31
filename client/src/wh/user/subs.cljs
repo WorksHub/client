@@ -91,6 +91,11 @@
          (fn [company _]
            (contains? (:permissions company) :can_use_integrations)))
 
+(reg-sub :wh.user/can-add-users?
+         :<- [::company]
+         (fn [company _]
+           (contains? (:permissions company) :can_add_user)))
+
 (reg-sub ::onboarding-msg-not-seen?
          (fn [db [_ msg]]
            (user/onboarding-msg-not-seen? db msg)))

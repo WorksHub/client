@@ -5,6 +5,8 @@
     [clojure.string :as str]
     [wh.common.text :as txt]))
 
+(def default-contact-email "hello@works-hub.com")
+
 (def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN"])
 (def time-periods ["Yearly" "Daily"])
 

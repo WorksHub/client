@@ -183,47 +183,58 @@
 
 (defn users
   [admin?]
-  [:form.wh-formx.wh-formx__layout
-   [:h2 "Users & notifications"]
-   [:p "Below is a list of your authorised account users. Grant access to new users by entering their name and email below."]
-   (when-let [users (not-empty (<sub [::subs/users]))]
-     (let [notifs (<sub [::subs/user-notifications])]
-       [:table.company-edit__users
-        [:tbody
-         [:tr.company-edit__user-header
-          [:th.company-edit__user-header--name "Name"]
-          [:th.company-edit__user-header--email "Email"]
-          [:th.company-edit__user-header--notify "Notify"]
-          (when admin? [:th.company-edit__user-header--admin ""])]
-         (for [{:keys [email name id]} users]
-           [:tr.company-edit__user
-            {:key email}
-            [:td.company-edit__user--name name]
-            [:td.company-edit__user--email email]
-            [:td.company-edit__user--notify [labelled-checkbox nil
-                                             {:label ""
-                                              :id (str "notify_" id)
-                                              :value (contains? notifs email)
-                                              :label-class "is-pulled-right"
-                                              :class "is-pulled-right"
-                                              :on-change [::events/toggle-user-notification email]}]]
-            (when admin? [:td.company-edit__user--admin
-                          [icon "close"
-                           :on-click #(dispatch [::events/remove-user id])]])])]]))
-   [:fieldset
-    [text-field nil (field ::edit/new-user-name
-                           :label [:span "* Name"])]
-    [text-field nil (field ::edit/new-user-email
-                           :label [:span "* Email"])]
-    [:div.is-flex.company-edit__field-footer
-     (let [saving? (<sub [::subs/user-adding?])]
-       [:button.button.button--small.button--inverted.company-edit__add-user
-        {:on-click #(do (.preventDefault %)
-                        (dispatch [::events/add-new-user]))
-         :class    (str (when saving? "button--inverted button--loading"))}
-        (when-not saving? "Add User")])
-     (when-let [error (<sub [::subs/user-error])]
-       (f/error-component error {:id "company-edit-user-error-desktop"}))]]])
+  (let [enabled? (or admin? (<sub [:wh.user/can-add-users?]))]
+    [:form.wh-formx.wh-formx__layout
+     [:h2 "Users & notifications"]
+     [:p "Below is a list of your authorised account users. Grant access to new users by entering their name and email below."]
+     (when-let [users (not-empty (<sub [::subs/users]))]
+       (let [notifs (<sub [::subs/user-notifications])]
+         [:table.company-edit__users
+          [:tbody
+           [:tr.company-edit__user-header
+            [:th.company-edit__user-header--name "Name"]
+            [:th.company-edit__user-header--email "Email"]
+            [:th.company-edit__user-header--notify "Notify"]
+            (when admin? [:th.company-edit__user-header--admin ""])]
+           (for [{:keys [email name id]} users]
+             [:tr.company-edit__user
+              {:key email}
+              [:td.company-edit__user--name name]
+              [:td.company-edit__user--email email]
+              [:td.company-edit__user--notify [labelled-checkbox nil
+                                               {:label ""
+                                                :id (str "notify_" id)
+                                                :value (contains? notifs email)
+                                                :label-class "is-pulled-right"
+                                                :class "is-pulled-right"
+                                                :on-change [::events/toggle-user-notification email]}]]
+              (when admin? [:td.company-edit__user--admin
+                            [icon "close"
+                             :on-click #(dispatch [::events/remove-user id])]])])]]))
+     (when-not enabled?
+       [:div.alert-box.alert-box--warning
+        "To add more users, please " [link "upgrade your package"
+                                      :payment-setup
+                                      :step :select-package
+                                      :class "a--underlined"] " or " [:a.a--underlined {:href (str "mailto:" data/default-contact-email)} "get in touch"] " and we can help 👍"])
+     [:fieldset
+      [text-field nil (field ::edit/new-user-name
+                             :label [:span "* Name"]
+                             :disabled (not enabled?))]
+      [text-field nil (field ::edit/new-user-email
+                             :label [:span "* Email"]
+                             :disabled (not enabled?))]
+      [:div.is-flex.company-edit__field-footer
+       (let [saving? (<sub [::subs/user-adding?])]
+         [:button
+          {:on-click #(do (.preventDefault %)
+                          (dispatch [::events/add-new-user]))
+           :disabled (not enabled?)
+           :class    (util/merge-classes "button button--small button--inverted company-edit__add-user"
+                                         (when saving? "button--loading"))}
+          (when-not saving? "Add User")])
+       (when-let [error (<sub [::subs/user-error])]
+         (f/error-component error {:id "company-edit-user-error-desktop"}))]]]))
 
 (defn integrations []
   [:div.wh-formx.wh-formx__layout
