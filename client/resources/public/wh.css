@@ -6420,7 +6420,6 @@ a.navbar-item,
   right: 0; }
 
 .card--blog {
-  height: 395px;
   overflow: hidden;
   font-size: 10px;
   line-height: 1.8; }
@@ -6434,23 +6433,30 @@ a.navbar-item,
   .card--blog .blog-info {
     display: flex;
     flex-direction: column;
-    padding: 18px; }
+    padding: 18px;
+    margin-bottom: 0; }
     .card--blog .blog-info .title {
-      font-size: 14px;
+      font-size: 16px;
       line-height: 21px;
       font-weight: 600; }
+    .card--blog .blog-info .author {
+      font-size: 12px; }
     .card--blog .blog-info .datetime {
+      font-size: 12px;
       color: #adadad; }
     .card--blog .blog-info .tags {
-      position: absolute;
-      top: 310px; }
+      height: auto;
+      margin-top: 8px; }
 
 .card--job {
   padding: 15px;
+  position: relative;
   height: 436px;
   border: 8px solid white;
-  max-width: 365px;
   transition: border 400ms ease-in-out; }
+  @media screen and (min-width: 1008px) {
+    .card--job {
+      max-width: 365px; } }
   .card--job .info {
     height: 162px; }
   .card--job .logo {
@@ -6461,6 +6467,57 @@ a.navbar-item,
       border: 1px solid #6E7F89; }
     .card--job .logo img {
       height: 48px; }
+  .card--job.card--small {
+    height: auto; }
+    .card--job.card--small .card__label--unpublished {
+      position: static;
+      margin-top: 8px; }
+    .card--job.card--small .match-circle-container {
+      position: absolute;
+      top: 85px;
+      right: 10px;
+      flex-direction: column;
+      align-items: flex-end; }
+      .card--job.card--small .match-circle-container .text {
+        margin-top: 4px; }
+    .card--job.card--small .like {
+      position: static; }
+    .card--job.card--small .tags {
+      margin-top: 12px;
+      height: 33px; }
+    .card--job.card--small .info {
+      height: 102px; }
+    .card--job.card--small .logo {
+      position: absolute;
+      right: 15px; }
+    .card--job.card--small .basic-info {
+      margin-top: 0; }
+    .card--job.card--small .basic-info .job-title {
+      max-width: 70%; }
+    .card--job.card--small .buttons {
+      margin-top: 8px;
+      align-items: center; }
+    @media screen and (min-width: 1008px) {
+      .card--job.card--small .buttons button,
+      .card--job.card--small .buttons a {
+        margin: 0;
+        margin-right: 4px; } }
+    .card--job.card--small .apply {
+      position: static; }
+      @media screen and (min-width: 1008px) {
+        .card--job.card--small .apply {
+          display: none; } }
+    @media screen and (min-width: 1008px) {
+      .card--job.card--small:hover .apply {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center; } }
   .card--job .basic-info {
     margin-top: 18px;
     font-size: 12px;
@@ -6472,7 +6529,9 @@ a.navbar-item,
       max-width: 100%;
       text-overflow: ellipsis; }
   .card--job .salary {
-    margin-top: 6px; }
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #6E7F89; }
   .card--job .tagline {
     margin: 11px 0 2px 0;
     font-size: 12px;
@@ -6530,7 +6589,9 @@ a.navbar-item,
 
 .card__perks {
   white-space: nowrap;
-  overflow: hidden; }
+  overflow: hidden;
+  margin-bottom: 6px;
+  height: 19px; }
   .card__perks .icon {
     display: inline-block; }
   .card__perks > .icon:not(:first-child) {
@@ -18137,6 +18198,17 @@ h3 {
   @media screen and (max-width: 1007px) {
     .button__public {
       width: 100%; } }
+
+.articles-page .split-content__side {
+  margin-top: 36px; }
+  @media screen and (min-width: 1008px) {
+    .articles-page .split-content__side {
+      margin-top: 0; } }
+
+.articles-page .promoted-jobs {
+  padding: 0; }
+  .articles-page .promoted-jobs .card--job {
+    margin-bottom: 9px; }
 
 @media screen and (min-width: 1008px) {
   html, body {

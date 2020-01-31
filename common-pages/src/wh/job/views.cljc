@@ -257,7 +257,8 @@
          [:div.job__candidate-action__score
           {:class (when-not message "job__candidate-action__score--empty")}
           [:span message]
-          [match-circle score true]]))
+          [match-circle {:score score
+                         :text? true}]]))
      [apply-button {:id "candidate-action-box"}]]))
 
 

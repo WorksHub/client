@@ -41,7 +41,8 @@
                            "haskell"  "Look for backend roles working with Haskell"
                            "ocaml"    "Look for backend roles working with OCaml"
                            "elm"      "Look for front-end and full-stack roles working with Elm"
-                           "reasonml" "Look for front-end and full-stack roles working with ReasonML"}}
+                           "reasonml" "Look for front-end and full-stack roles working with ReasonML"}
+    :articles-tags         ["scala" "clojure" "elm" "haskell" "ocaml" "rust" "erlang" "elixir" "F#"]}
    "blockchain"
    {:platform-name        "Blockchain Works"
     :label-name           "Blockchain"
@@ -57,7 +58,8 @@
                            :description "Look for product manager jobs, blockchain developer jobs, analyst & financial jobs and more"}
     :jobsboard-tag-desc   {"blockchain" "Look for front-end, full-stack and backend roles working with blockchain technology"
                            "quant"      "Look backend roles working in quantitative technology"
-                           "solidity"   "Look for developer roles working with Solidity"}}
+                           "solidity"   "Look for developer roles working with Solidity"}
+    :articles-tags        ["ethereum" "blockchain" "api" "cryptography" "cryptocurrency" "bitcoin" "distributed systems" "scala" "akka" "solidity"]}
    "javascript"
    {:platform-name        "JavaScript Works"
     :label-name           "Javascript"
@@ -74,7 +76,8 @@
     :jobsboard-tag-desc   {"angular"    "Look for front-end and full-stack roles working with Angular"
                            "react"      "Look for front-end and full-stack roles working with React"
                            "nodejs"     "Look for backend and full-stack roles working with NodeJS"
-                           "typescript" "Look for front-end and full-stack roles working with Typescript"}}
+                           "typescript" "Look for front-end and full-stack roles working with Typescript"}
+    :articles-tags        ["elm" "javascript" "react" "graphql" "purescript" "vue" "angular" "frameworks" "html5" "css" "react"]}
    "ai"
    {:platform-name        "Ai Works"
     :label-name           "Artificial Intelligence"
@@ -91,7 +94,8 @@
     :jobsboard-tag-desc   {"data science"            "Look for Data Science roles working with Python, R, Scala, Spark and more"
                            "data engineering"        "Look for Data Engineering roles working with Python, R, Scala, Spark and more"
                            "artificial intelligence" "Look for Artificial Intelligence roles working with NLP, Neural Networks and more"
-                           "machine learning"        "Look for Machine Learning roles working with Python, R, Tensorflow and more"}}
+                           "machine learning"        "Look for Machine Learning roles working with Python, R, Tensorflow and more"}
+    :articles-tags        ["spark" "Python" "Hadoop" "Data analysis" "Artificial Intelligence" "Reinforcement Learning" "Deep Learning" "Machine Learning" "Tensorflow" "Data Science"]}
    "golang"
    {:platform-name        "Golang Works"
     :label-name           "Golang"
@@ -105,7 +109,8 @@
     :jobsboard-header     {:title       "Golang Jobs"
                            :subtitle    "Browse jobs for software engineers and developers"
                            :description "Look for a wide range of roles working with Golang"}
-    :jobsboard-tag-desc   {"golang" "Look for Golang developer roles working with Docker, Kubernetes and more"}}
+    :jobsboard-tag-desc   {"golang" "Look for Golang developer roles working with Docker, Kubernetes and more"}
+    :articles-tags        ["go" "docker" "microservices" "security" "devsecops" "Containers" "distributed systems" "google cloud" "cybersecurity" "golang" "mongodb"]}
    "java"
    {:platform-name        "Java Works"
     :label-name           "Java"
@@ -121,7 +126,8 @@
                            :description "Look for full-stack and backend roles working with Java"}
     :jobsboard-tag-desc   {"play"  "Look for backend and full-stack roles working with the Play framework"
                            "kafka" "Look for backend roles working with Apache Kafka"
-                           "akka"  "Look for backend roles working with Akka"}}
+                           "akka"  "Look for backend roles working with Akka"}
+    :articles-tags        ["android" "ethereum" "functional programming" "scala" "haskell" "java" "clojure" "Akka" "Cluster" "Scala" "Docker" "OOP"]}
    "python"
    {:platform-name        "Python Works"
     :label-name           "Python"
@@ -136,7 +142,8 @@
                            :subtitle    "Browse jobs for software engineers and developers"
                            :description "Look for full-stack and backend roles working with Python"}
     :jobsboard-tag-desc   {"django"  "Look for backend and full-stack roles working with Django"
-                           "ansible" "Look for DevOps roles working with Ansible"}}
+                           "ansible" "Look for DevOps roles working with Ansible"}
+    :articles-tags        ["python" "django" "data science" "databases" "blockchain" "data" "Data Science" "AWS" "Cloud" "Relational Database" "Spark" "Books"]}
    "remote"
    {:platform-name        "Remote Works"
     :label-name           "Remote"
@@ -154,7 +161,8 @@
                            "golang"     "Look for Golang remote developer roles working with Docker, Kubernetes and more"
                            "python"     "Look for full-stack and backend roles working with Python"
                            "nodejs"     "Look for backend and full-stack roles working with NodeJS"
-                           "javascript" "Look for front-end, full-stack and backend roles working with JavaScript"}}
+                           "javascript" "Look for front-end, full-stack and backend roles working with JavaScript"}
+    :articles-tags        ["hiring" "startups" "remote working" "open source" "opensource" "remote"]}
    "www"
    {:platform-name        "WorksHub"
     :label-name           "WorksHub"
@@ -166,7 +174,8 @@
                            :subtitle    "Browse jobs for developers working across a wide range of technologies"
                            :description "Look for front-end, full-stack and backend roles"}
     :footer-job-links     ["Scala" "Clojure" "Haskell" "Elixir" "JavaScript" "Go" "Java" "Python" "Blockchain"]
-    :footer-article-links ["Scala" "Clojure" "Haskell" "Elixir" "JavaScript" "Go" "Java" "Python" "Blockchain" "AI"]}})
+    :footer-article-links ["Scala" "Clojure" "Haskell" "Elixir" "JavaScript" "Go" "Java" "Python" "Blockchain" "AI"]
+    :articles-tags        ["android" "ethereum" "elm" "javascript" "go" "docker" "microservices" "clojure" "clojurescript" "security" "devsecops"]}})
 
 
 

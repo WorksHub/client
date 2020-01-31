@@ -19,13 +19,14 @@
               :selected false}))
 
 (defn tag
-  [element-type {:keys [label type subtype id icon on-click] :as t}]
+  [element-type {:keys [label type subtype id icon on-click href] :as t}]
   [element-type
    (merge {:key id
            :data-label label
            :class (util/merge-classes "tag"
                                       (str "tag--type-" (if t (name type) "skeleton"))
                                       (when subtype (str "tag--subtype-" (name subtype))))}
+          (when href {:href href})
           (when on-click
              (interop/on-click-fn on-click)))
    (when icon
@@ -37,3 +38,13 @@
   (when (not-empty tags)
     (into [:ul.tags.tags--inline.tags--profile]
           (map (fn [t] [tag element-type t]) tags))))
+
+(defn strs->tag-list [element-type strs {:keys [f]
+                                         :or {f identity}}]
+  (tag-list
+    element-type
+    (map #(f (hash-map
+               :label %
+               ;;:icon (when (tags-with-icons %) (str % "1"))
+               :type "tech"))
+         strs)))

@@ -26,7 +26,7 @@
 
 (defn match [x]
   [:div.company-application__match
-   [match-circle x]
+   [match-circle {:score x}]
    (int (* x 100))
    "% match"])
 

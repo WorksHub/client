@@ -90,7 +90,7 @@
       [:h3 "Company Profiles"]
       [:p "Discover products and startups that you want to work for"]]
      [:a (merge {:href learn-link} base-opts)
-      [:h3 "Blogs"]
+      [:h3 "Articles"]
       [:p "Fresh thinking and unique perspectives from the most talented engineers"]]]))
 
 (defn looking-to-hire-menu-content

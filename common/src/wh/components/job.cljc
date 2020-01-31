@@ -23,9 +23,9 @@
 (defn job-card--header
   [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary published] :as job}
    {logo :logo company-name :name}
-   {:keys [logged-in? skeleton? liked? on-close]}]
+   {:keys [logged-in? skeleton? liked? small? on-close]}]
   [:span
-   (when (and logged-in? (not skeleton?))
+   (when (and logged-in? (not skeleton?) (not small?))
      [icon "like"
       :id (str "job-card__like-button_job-" id)
       :class (util/merge-classes "job__icon" "like" (when liked? "selected"))
@@ -43,13 +43,13 @@
         (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]
      [:div.basic-info
       [:div.job-title title]
-      [:div.company-name company-name]
-      [:div.location display-location]
+      [:div.salary salary]
       (cond-> [:div.card__perks]
-              remote                       (conj [icon "job-remote" :class "job__icon--small"] "Remote")
-              (not= role-type "Full time") (conj [icon "profile" :class "job__icon--small"] role-type)
-              sponsorship-offered          (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
-      [:div.salary salary]]]]])
+              remote                         (conj [icon "job-remote" :class "job__icon--small"] "Remote")
+              (not= role-type "Full time")   (conj [icon "profile" :class "job__icon--small"] role-type)
+              sponsorship-offered            (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
+      [:div.company-name company-name]
+      [:div.location display-location]]]]])
 
 (defn job-card--tags
   [job-tags]
@@ -58,9 +58,9 @@
              job-tags)))
 
 (defn job-card--buttons
-  [{:keys [slug id state published]}
-   {:keys [user-has-applied? user-is-owner? user-is-company? applied? logged-in?
-           apply-source]}]
+  [{:keys [slug id state published] :as job}
+   {:keys [user-has-applied? user-is-owner? user-is-company?
+           applied? logged-in? small? liked? skeleton? on-close apply-source]}]
   [:div.apply
    (when state
      [:div.state
@@ -91,16 +91,23 @@
                     :else
                     "Easy Apply")]]))
         [:a {:href (routes/path :edit-job :params {:id id})}
-         [:button.button "Edit"]]))]])
+         [:button.button "Edit"]]))
+    (when (and logged-in? (not skeleton?) small?)
+      [icon "like"
+       :id (str "job-card__like-button_job-" id)
+       :class (util/merge-classes "job__icon" "like" (when liked? "selected"))
+       :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])]])
+
 
 (defn job-card
   [{:keys [company tagline tags published score user-score applied liked display-salary remuneration]
     :or   {published true}
     :as   job}
-   {:keys [liked? applied? user-is-owner?]
+   {:keys [liked? applied? user-is-owner? small?]
     :or   {liked?            (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
            applied?          (or applied false) ;; old style job handlers added 'applied' bool to the job itself
-           user-is-owner?    false}
+           user-is-owner?    false
+           small?            false}
     :as opts}]
   (let [skeleton? (and job (empty? (dissoc job :id :slug)))
         salary    (or display-salary (jobc/format-job-remuneration remuneration))
@@ -110,22 +117,31 @@
         score     (or (:user-score job) score)
         opts      (assoc opts
                          :liked?            liked?
-                         :applied?          applied?)]
+                         :applied?          applied?)
+        unpublished-label [:div.card__label.card__label--unpublished.card__label--job
+                           "Unpublished"]]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
-                                      (str "card-border-color-" (rand-int 8))
+                                      "card-border-color-2"
                                       (str "i-cur-" (rand-int 9))
+                                      (when small? "card--small")
                                       (when skeleton? "job-card--skeleton"))}
      [job-card--header (assoc job :salary salary) company opts]
-     [job-card--tags job-tags]
-     [:div.tagline #?(:cljs [ellipsis tagline]
-                      :clj tagline)]
-     (when score
-       [match-circle score true])
+     (if (and small? (not published))
+       unpublished-label
+       [job-card--tags job-tags])
+     [:div
+      (when-not small?
+        [:div.tagline #?(:cljs [ellipsis tagline]
+                         :clj tagline)])
+      (when score
+        [match-circle {:score score
+                       :text? (not small?)
+                       :percentage? small?}])]
      [job-card--buttons job opts]
-     (when (and (not published) user-is-owner?)
-       [:div.card__label.card__label--unpublished.card__label--job
-        "Unpublished"])]))
+     (when (and (not published) (not small?) user-is-owner?)
+       unpublished-label)]))
+
 
 (defn highlight
   [title icon-name body]

@@ -10,21 +10,29 @@
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
-(def learn-interceptors (into db/default-interceptors
-                              [(path ::learn/sub-db)]))
-
 (defquery blogs-query
-  {:venia/operation {:operation/type :query
-                     :operation/name "blogs"}
-   :venia/variables [{:variable/name "page_number"
-                      :variable/type :Int}
-                     {:variable/name "tag"
-                      :variable/type :String}
-                     {:variable/name "vertical"
-                      :variable/type :vertical}]
-   :venia/queries   [[:blogs {:tag :$tag :page_size 24 :page_number :$page_number :vertical :$vertical}
-                      [[:pagination [:total]]
-                       [:blogs [:id :title :feature :tags :author :formattedCreationDate :readingTime :creator :upvoteCount :published]]]]]})
+          {:venia/operation {:operation/type :query
+                             :operation/name "blogs"}
+           :venia/variables [{:variable/name "page_number"
+                              :variable/type :Int}
+                             {:variable/name "tag"
+                              :variable/type :String}
+                             {:variable/name "vertical"
+                              :variable/type :vertical}
+                             {:variable/name "promoted_amount"
+                              :variable/type :Int}]
+           :venia/queries   [[:blogs {:tag             :$tag
+                                      :page_size       24
+                                      :page_number     :$page_number
+                                      :vertical        :$vertical}
+                              [[:pagination [:total]]
+                               [:blogs [:id :title :feature :tags :author
+                                        :formattedCreationDate :readingTime
+                                        :creator :upvoteCount :published]]]]
+                             [:jobs_search {:vertical        :$vertical
+                                            :promoted_amount :$promoted_amount}
+                              [[:promoted [:fragment/jobCardFields]]]]]})
+
 
 (reg-query :blogs blogs-query)
 

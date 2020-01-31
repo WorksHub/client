@@ -9,6 +9,7 @@
     [wh.components.common :refer [link wrap-img blog-card-hero-img]]
     [wh.routes :as routes]
     [wh.slug :as slug]
+    [wh.components.tag :as tag]
     [wh.util :as util]))
 
 (def PI
@@ -48,20 +49,24 @@
          (str/join " "))))
 
 (defn match-circle
-  ([score]
-   (match-circle score false))
-  ([score text?]
-   [:div.match-circle-container
-    (if (= score 1.0)
-      [:div.match-circle
-       [:div.foreground]]
-      [:div.match-circle
-       [:svg.circle-value
-        [:path.circle {:d (draw-shape score)}]]
-       [:div.background]])
-    (when text?
-      [:div.text #?(:cljs (gstring/format "%d%% Match" (* score 100))
-                    :clj (format "%s%% Match" (int (* score 100))))])]))
+  [{:keys [score text? percentage?]
+    :or   {text? false
+           percentage? false}}]
+  (let [percentage (* score 100)
+        percentage-fmt #?(:cljs (gstring/format "%d%%" percentage)
+                          :clj (format "%s%%" (int percentage)))]
+    [:div.match-circle-container
+      (if (= score 1.0)
+        [:div.match-circle
+         [:div.foreground]]
+        [:div.match-circle
+         [:svg.circle-value
+          [:path.circle {:d (draw-shape score)}]]
+         [:div.background]])
+      (when text?
+        [:div.text (str percentage-fmt " Match")])
+      (when percentage?
+        [:div.text percentage-fmt])]))
 
 (defn blog-card
   [{:keys [id title feature author formatted-creation-date reading-time upvote-count tags creator published] :as blog}]
@@ -88,6 +93,32 @@
                 [:li
                  [:a {:href (routes/path :learn-by-tag :params {:tag (slug/slug+encode tag)})}
                   tag]]))
+        #?(:cljs
+           [:div
+            (when (<sub [:blog-card/can-edit? creator published])
+              [link [:button.button.button--edit-blog "Edit"] :contribute-edit :id id])
+            (when (<sub [:blog-card/show-unpublished? creator published])
+              [:span.card__label.card__label--unpublished.card__label--blog "unpublished"])])])]))
+
+
+(defn blog-row
+  [{:keys [id title author formatted-creation-date reading-time upvote-count tags creator published] :as blog}]
+  (let [skeleton? (and blog (empty? (dissoc blog :id)))]
+    [:div {:class (util/merge-classes "card"
+                                      "card--blog"
+                                      (str "i-cur-" (rand-int 9))
+                                      (when skeleton? "blog-card--skeleton"))}
+     (if skeleton?
+       [:div.blog-info
+        [:div.title]
+        [:ul.tags
+         [:li] [:li] [:li]]]
+       [:div.blog-info
+        (link [:div.title title] :blog :id id)
+        (link [:div.author author] :blog :id id)
+        (link [:div.datetime formatted-creation-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)
+        (tag/strs->tag-list :a tags
+                            {:f #(assoc % :href (routes/path :learn-by-tag :params {:tag (slug/slug+encode (:label %))}))})
         #?(:cljs
            [:div
             (when (<sub [:blog-card/can-edit? creator published])

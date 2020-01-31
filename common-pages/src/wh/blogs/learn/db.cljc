@@ -12,6 +12,7 @@
   (or (util/parse-int (get-in db [:wh.db/query-params "page"])) 1))
 
 (defn params [db]
-  {:page_number (current-page db)
-   :tag         (tag db)
-   :vertical    (:wh.db/vertical db)})
+  {:page_number     (current-page db)
+   :tag             (tag db)
+   :vertical        (:wh.db/vertical db)
+   :promoted_amount 9})
