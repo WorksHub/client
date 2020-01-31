@@ -198,16 +198,30 @@
       {:tag value, :selected (contains? tags value), :count count})))
 
 (reg-sub
+ :wh.search/dummy-tags
+ :<- [:wh.search/available-tags]
+ :<- [:wh.search/tags]
+ (fn [[available-tags tags] _]
+   (let [available-tags (into #{} (map :value available-tags))
+         tags (filter (complement available-tags) tags)]
+     (for [value tags]
+       {:tag value, :selected true, :count 0}))))
+
+(reg-sub
   :wh.search/matching-tags
   :<- [:wh.search/tag-part]
   :<- [:wh.search/flagged-tags]
+  :<- [:wh.search/dummy-tags]
   :<- [:wh.search/tags]
-  (fn [[substring tags] _]
+  (fn [[substring tags dummy-tags] _]
     (->> tags
-         (sort-by (juxt (comp not :selected) (comp - :count))) ;; selected first, then count
+         (into dummy-tags)
+         ;; selected first, then count
+         (sort-by (juxt (comp not :selected) (comp - :count)))
          (filter #(or (str/blank? substring)
                       (:selected %)
-                      (str/includes? (str/lower-case (:tag %)) (str/lower-case substring))))
+                      (str/includes? (str/lower-case (:tag %))
+                                     (str/lower-case substring))))
          (take 20))))
 
 (reg-sub
