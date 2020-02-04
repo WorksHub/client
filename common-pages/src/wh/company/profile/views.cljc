@@ -215,11 +215,11 @@
   (let [blogs (<sub [::subs/blogs])]
     (when (or admin-or-owner? (not-empty blogs))
       [:section.company-profile__blogs
-       [:h2.title (str "Tech Blogs")]
+       [:h2.title (str "Recent Articles")]
        (if (empty? blogs)
          [link
           [:button.button.button--medium.button--inverted.company-profile__cta-button
-           "Add a blog post"]
+           "Add an article"]
           :contribute]
          [:ul
           (into [:div.columns]
