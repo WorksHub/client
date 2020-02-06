@@ -12,5 +12,5 @@
    [codi-message "It’s a simple test, you just need to answer a coding question"]
    (when-not (<sub [::subs/connected-to-github?])
      [codi-message "Or you can skip this part by connecting to your Github account"]
-     [button [[icon "github"] "Connect GitHub"] [:github/call]])
+     [button [[icon "github"] "Connect GitHub"] [:github/call] :class "button--github"])
    [button "Test me" [:register/advance]]])

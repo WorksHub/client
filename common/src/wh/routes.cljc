@@ -134,7 +134,8 @@
                                   "repositories"                          :manage-issues
                                   ["repositories/" :owner "/" :repo-name] :manage-repository-issues}]
               ["dashboard" :homepage-dashboard]
-              ["liked" :liked]
+              ["saved" :liked]
+              ["liked" :liked] ;; deprecated
               ["recommended" :recommended]
               ["applied" :applied]
               ["profile/" {""             :profile

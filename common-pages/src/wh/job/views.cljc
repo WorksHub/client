@@ -116,10 +116,10 @@
         "1-Click Apply"
         "Easy Apply")])))
 
-(defn like-icon [class]
-  [icon "job-heart"
-   :class (util/merge-classes class
-                              (when (<sub [::subs/liked?]) (str class "--liked")))
+(defn save-button []
+  [icon "bookmark"
+   :class (util/merge-classes "job__save"
+                              (when (<sub [::subs/liked?]) "job__save--saved"))
    :on-click #(dispatch [:wh.events/toggle-job-like
                          {:id    (<sub [::subs/id])
                           :company-name (<sub [::subs/company-name])
@@ -208,7 +208,7 @@
     (<sub [::subs/last-modified])]
    (when (<sub [::subs/like-icon-shown?])
      [:div.job__company-header__like
-      [like-icon "job__like"]])])
+      [save-button]])])
 
 (defn tagline
   []

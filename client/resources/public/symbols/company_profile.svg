@@ -18,15 +18,8 @@
     <symbol id="founded" viewBox="0 0 18 17">
         <g fill="#ADADAD" fill-rule="evenodd"><path d="M0 7h18v10H0V7zm11 3.077v5.017h5.048v-5.017H11zM14.8 2H18v4H0V2h3.4v1.524h2.4V2h6.6v1.524h2.4V2z"/><path d="M4 0h1v3H4zM13 0h1v3h-1z"/></g>
     </symbol>
-
     <symbol id="industry" viewBox="0 0 16 15">
         <g fill="none" fill-rule="evenodd"><path d="M-1-1h18v18H-1z"/><path d="M14.17 2.35c.3.155.482.478.461.821v10.152h.64c.415.047.729.407.729.836s-.314.789-.73.836H.91a.812.812 0 0 1-.784-.39.86.86 0 0 1 0-.893.812.812 0 0 1 .784-.39h.64V3.173a.864.864 0 0 1 .46-.821L7.727.07a.96.96 0 0 1 .718 0l1.147.457 1.311.523 1.457.582 1.275.505.536.214zM2.25 4.5V6L7 4.5V3L2.25 4.5zm0 3V9l4.783-.98v-1.5L2.25 7.5zm0 3V12L7 11.5V10l-4.75.5z" fill="#ADADAD" fill-rule="nonzero"/></g>
-    </symbol>
-    <symbol id="chevron_left" viewBox="0 0 86 86">
-        <path d="m64.998 80.095c1.338 1.352 1.338 3.541 0 4.893-1.336 1.35-3.506 1.352-4.844 0l-39.151-39.54c-1.338-1.352-1.338-3.543 0-4.895l39.15-39.539c1.338-1.352 3.506-1.352 4.844 0s1.338 3.542 3e-3 4.893l-35.706 37.094 35.704 37.094z"/>
-    </symbol>
-    <symbol id="chevron_right" viewBox="0 0 86 86">
-        <path d="m21.003 80.094c-1.338 1.352-1.338 3.541 0 4.893 1.337 1.35 3.506 1.352 4.845 0l39.149-39.539c1.338-1.352 1.338-3.543 0-4.895l-39.149-39.539c-1.339-1.352-3.506-1.352-4.845 0-1.338 1.352-1.338 3.541-1e-3 4.893l35.704 37.093-35.703 37.094z"/>
     </symbol>
     <symbol id="info" viewBox="0 0 22 22">
         <g fill="none" fill-rule="evenodd"><circle fill="#FFD4CF" cx="11" cy="11" r="11"/><text font-family="Montserrat-Bold, Montserrat" font-size="14" font-weight="bold" fill="#FFF"><tspan x="8.809" y="16">i</tspan></text></g>

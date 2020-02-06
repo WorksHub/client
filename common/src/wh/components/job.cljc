@@ -20,16 +20,22 @@
             (= s :rejected)) "Rejected \uD83D\uDE41"
         (= s :hired)         "Hired"))
 
+(defn save-button
+  [{:keys [id] :as job}
+   {:keys [on-close saved?]}]
+  [icon "bookmark"
+   :id (str "job-card__like-button_job-" id)
+   :class (util/merge-classes "job__icon" "like" (when saved? "selected"))
+   :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])
+
 (defn job-card--header
   [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary published] :as job}
    {logo :logo company-name :name}
    {:keys [logged-in? skeleton? liked? small? on-close]}]
   [:span
    (when (and logged-in? (not skeleton?) (not small?))
-     [icon "like"
-      :id (str "job-card__like-button_job-" id)
-      :class (util/merge-classes "job__icon" "like" (when liked? "selected"))
-      :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])
+     [save-button job {:on-close   on-close
+                       :saved? liked?}])
    (when (and logged-in? (not skeleton?) on-close)
      [icon "close"
       :id (str "job-card__blacklist-button_job-" id)
@@ -93,11 +99,8 @@
         [:a {:href (routes/path :edit-job :params {:id id})}
          [:button.button "Edit"]]))
     (when (and logged-in? (not skeleton?) small?)
-      [icon "like"
-       :id (str "job-card__like-button_job-" id)
-       :class (util/merge-classes "job__icon" "like" (when liked? "selected"))
-       :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])]])
-
+      [save-button job {:on-close   on-close
+                        :saved? liked?}])]])
 
 (defn job-card
   [{:keys [company tagline tags published score user-score applied liked display-salary remuneration]

@@ -1,12 +1,12 @@
 (ns wh.blogs.learn.subs
   (:require
-    [bidi.bidi :as bidi]
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub]]
     [wh.blogs.learn.db :as learn]
     [wh.verticals :as verticals]
     [wh.graphql.jobs :as jobs]
     [wh.common.job :as jobc]
+    [wh.common.issue :refer [gql-issue->issue]]
     [wh.components.pagination :as pagination]
     [wh.graphql-cache :as graphql]))
 
@@ -65,22 +65,47 @@
   (fn [db _]
     db))
 
+;; less blogs -> less recommendation
+(defn max-amount-to-display [all-blogs]
+  (-> (count all-blogs)
+      (quot 2)
+      dec
+      (max 1)))
+
 (reg-sub
   ::recommended-jobs
   :<- [:user/liked-jobs]
   :<- [:user/applied-jobs]
   :<- [::db]
-  (fn [[liked applied db] _]
+  :<- [::all-blogs]
+  (fn [[liked applied db all-blogs] _]
     (let [params (learn/params db)
-          amount-to-display (:promoted_amount params)
           state (graphql/state db :blogs params)
-          recommended (get-in (graphql/result db :blogs params) [:jobs-search :promoted])]
+          amount-to-display (max-amount-to-display all-blogs)
+          recommended (get-in (graphql/result db :blogs params) [:jobs-search :promoted])
+          max-amount-to-display (max 1 (quot (count all-blogs) 2))]
       (if (= state :executing)
-        (map (partial hash-map :id) (range amount-to-display))
+        (->> (range amount-to-display)
+             (map (partial hash-map :id)))
         (->> (jobs/add-interactions liked applied recommended)
-             (map #(assoc %
-                     :display-location
-                     (jobc/format-job-location (:location %) (:remote %)))))))))
+             (map #(assoc % :display-location (jobc/format-job-location (:location %) (:remote %))))
+             (take amount-to-display))))))
+
+(reg-sub
+  ::recommended-issues
+  :<- [::db]
+  :<- [::all-blogs]
+  (fn [[db all-blogs] _]
+    (let [params (learn/params db)
+          state (graphql/state db :blogs params)
+          amount-to-display (max-amount-to-display all-blogs)
+          recommended (get-in (graphql/result db :blogs params) [:query-issues :issues])]
+      (if (= state :executing)
+        (->> (range amount-to-display)
+             (map (partial hash-map :id)))
+        (->> recommended
+             (map gql-issue->issue)
+             (take amount-to-display))))))
 
 (reg-sub
   ::pagination

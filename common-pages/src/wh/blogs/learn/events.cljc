@@ -1,9 +1,7 @@
 (ns wh.blogs.learn.events
   (:require
-    [bidi.bidi :as bidi]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.blogs.learn.db :as learn]
-    [wh.common.cases :as cases]
     [wh.db :as db]
     [wh.graphql-cache :refer [reg-query]]
     #?(:cljs [wh.pages.core :refer [on-page-load] :as pages]))
@@ -19,19 +17,26 @@
                               :variable/type :String}
                              {:variable/name "vertical"
                               :variable/type :vertical}
+                             {:variable/name "vertical_blogs"
+                              :variable/type :vertical}
                              {:variable/name "promoted_amount"
+                              :variable/type :Int}
+                             {:variable/name "issues_amount"
                               :variable/type :Int}]
            :venia/queries   [[:blogs {:tag             :$tag
                                       :page_size       24
                                       :page_number     :$page_number
-                                      :vertical        :$vertical}
+                                      :vertical        :$vertical_blogs}
                               [[:pagination [:total]]
                                [:blogs [:id :title :feature :tags :author
                                         :formattedCreationDate :readingTime
                                         :creator :upvoteCount :published]]]]
                              [:jobs_search {:vertical        :$vertical
                                             :promoted_amount :$promoted_amount}
-                              [[:promoted [:fragment/jobCardFields]]]]]})
+                              [[:promoted [:fragment/jobCardFields]]]]
+                             [:query_issues
+                              {:page_size   :$issues_amount}
+                              [[:issues [:fragment/issueListFields]]]]]})
 
 
 (reg-query :blogs blogs-query)
@@ -44,7 +49,7 @@
   db/default-interceptors
   (fn [{db :db} _]
     {:scroll-to-top true
-     :dispatch (into [:graphql/query] (initial-query db))}))
+     :dispatch      (into [:graphql/query] (initial-query db))}))
 
 (reg-event-fx
   ::set-learn-by-tag-title

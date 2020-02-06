@@ -105,8 +105,8 @@ $file-cta-background-color: $red
 $navbar-z-index: 900
 $loader-z-index: 800
 
-@mixin skeleton($w:"", $h:"")
-  background-color: $skeleton-background-color !important
+@mixin skeleton($w:"", $h:"", $color:$skeleton-background-color)
+  background-color: $color !important
   border-radius: 5px !important
   @if $w != ""
     width: $w

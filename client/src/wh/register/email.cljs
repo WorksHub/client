@@ -52,6 +52,8 @@
 (defn panel []
   [:div
    [codi-message "Hi, I am Codi. Welcome to " (<sub [:wh/platform-name]) "!"]
+   [codi-message "You can sign up with your " [:span.highlight "Github account"] " or continue with your email address"]
+   [button [[icon "github"] "Connect GitHub"] [:github/call] :class "button--github"]
    [codi-message "Registration process should take " [:span.highlight "2 to 3 minutes"]]
    [codi-message (if (<sub [:user/email])
                    "Is this the best email for your account?"
@@ -61,6 +63,7 @@
    [button "Next"
     [:register/proceed-from-email]
     :class (when (<sub [::subs/loading?]) "button--loading")
-    :disabled (<sub [::subs/loading?])]
+    :disabled (<sub [::subs/loading?])
+    :id "next-step"]
    (when-let [error (<sub [::subs/upsert-user-errors])]
      [error-message error])])

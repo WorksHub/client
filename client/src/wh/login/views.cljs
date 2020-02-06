@@ -54,7 +54,7 @@
          on-magic  [::events/show-magic-form]}}]
   [:div.container.login-buttons
    [:div.container
-    [:button.button.button--large {:on-click #(dispatch on-github)}
+    [:button.button.button--large.button--github {:on-click #(dispatch on-github)}
      [icon "github" :class "button__icon"]
      "Login with github"]]
    [:div.container

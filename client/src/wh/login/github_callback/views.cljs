@@ -12,4 +12,4 @@
      (when (<sub [::subs/github-error?])
        [:div.conversation
         [error-message "We couldn't fetch your GitHub information."]
-        [button [[icon "github"] "Try again"] [:github/call]]])]]])
+        [button [[icon "github"] "Try again"] [:github/call] :class "button--github"]])]]])

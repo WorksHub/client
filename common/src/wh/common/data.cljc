@@ -635,7 +635,7 @@
    :class   "for-you"
    :items   [[:homepage               "dashboard"  "Dashboard"]
              [:recommended            "recommend"  "Recommended"]
-             [:liked                  "like"       "Liked"]
+             [:liked                  "bookmark"   "Saved Jobs"]
              [:applied                "applications" "Applied"]
              [:notifications-settings "resources"  "Notifications"]
              [:contribute             "contribute" "Create Article"]

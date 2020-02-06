@@ -12,7 +12,11 @@
   (or (util/parse-int (get-in db [:wh.db/query-params "page"])) 1))
 
 (defn params [db]
-  {:page_number     (current-page db)
-   :tag             (tag db)
-   :vertical        (:wh.db/vertical db)
-   :promoted_amount 9})
+  (-> {:page_number     (current-page db)
+       :tag             (tag db)
+       :vertical        (:wh.db/vertical db)
+       ;; we want to fetch blogs from all verticals if tag is selected
+       :vertical_blogs  (when-not (tag db) (:wh.db/vertical db))
+       :promoted_amount 8
+       :issues_amount   8}
+      util/remove-nils))

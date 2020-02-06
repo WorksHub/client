@@ -34,7 +34,7 @@
 
 (defn icons-to-load
   [page]
-  (cond-> ["symbols/common.svg"]
+  (cond-> ["symbols/common.svg" "symbols/tags.svg"]
           (or (= :company page)
               (= :companies page))
           (conj "symbols/company_profile.svg")

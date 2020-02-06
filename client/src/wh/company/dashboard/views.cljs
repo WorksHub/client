@@ -154,7 +154,7 @@
       [:div.company-job__stats
        [job-stat "views" (:views stats)
         (when partial-view-data "We've only been collecting views since 18 July 2018, so the view counts for this job may be incomplete.")]
-       [job-stat "like" (:likes stats)]
+       [job-stat "bookmark" (:likes stats)]
        [:a {:id (str "dashboard-job-card__view-applications-stat_" id)
             :href (<sub [::subs/view-applications-link id])}
         [job-stat "applications" (:applications stats)]]]]

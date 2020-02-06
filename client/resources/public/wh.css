@@ -5378,10 +5378,10 @@ a.navbar-item,
 .button--public {
   border-radius: 4px; }
 
-.button--black {
-  background-color: #171717; }
-  .button--black:hover {
-    background-color: #3e3e3e !important; }
+.button--github {
+  background-color: #24292e !important; }
+  .button--github:hover {
+    background-color: #444d56 !important; }
 
 .button--lowercase {
   text-transform: lowercase;
@@ -5396,15 +5396,15 @@ a.navbar-item,
     color: #adadad !important;
     cursor: pointer !important; }
 
-.button--github {
+.button--github-integration {
   text-align: left;
   min-width: 210px;
   height: 40px;
   padding: 0 !important;
   display: flex !important; }
-  .button--github span {
+  .button--github-integration span {
     padding-top: 1px; }
-  .button--github div {
+  .button--github-integration div {
     margin-left: 6px;
     height: 40px;
     width: 66px;
@@ -6445,8 +6445,26 @@ a.navbar-item,
       font-size: 12px;
       color: #adadad; }
     .card--blog .blog-info .tags {
-      height: auto;
-      margin-top: 8px; }
+      position: absolute;
+      top: 310px; }
+  .card--blog.card--row {
+    line-height: normal;
+    height: auto;
+    margin-bottom: 8px; }
+    .card--blog.card--row .blog-info {
+      margin-bottom: 0; }
+      .card--blog.card--row .blog-info .title {
+        font-size: 16px;
+        margin-bottom: 4px; }
+      .card--blog.card--row .blog-info .author {
+        font-size: 12px;
+        margin-bottom: 4px; }
+      .card--blog.card--row .blog-info .datetime {
+        font-size: 12px; }
+      .card--blog.card--row .blog-info .tags {
+        position: static;
+        height: auto;
+        margin-top: 8px; }
 
 .card--job {
   padding: 15px;
@@ -6602,6 +6620,11 @@ a.navbar-item,
   .blog-card--skeleton .hero {
     background-color: #ddd; }
   .blog-card--skeleton .title {
+    background-color: #adadad !important;
+    border-radius: 5px !important;
+    width: 200px;
+    height: 20px; }
+  .blog-card--skeleton .datetime {
     background-color: #ddd !important;
     border-radius: 5px !important;
     width: 200px;
@@ -8369,7 +8392,7 @@ a.navbar-item,
   margin-bottom: 20px;
   display: flex;
   flex-direction: column; }
-  .company-edit__integrations .button--github {
+  .company-edit__integrations .button--github-integration {
     max-width: 300px; }
 
 .company-edit__integration {
@@ -8530,7 +8553,7 @@ a.navbar-item,
   .company-job__stat .icon {
     margin-bottom: 4px; }
 
-.company-job__like .icon {
+.company-job__bookmark .icon {
   width: 24px;
   height: 24px;
   margin-top: -3px;
@@ -10756,9 +10779,14 @@ h3 {
   font-size: 10px;
   color: #6E7F89; }
 
-.job__like--liked {
+.job__save {
+  fill: #dae8eb; }
+  .job__save:hover {
+    fill: #ffb1a8; }
+
+.job__save--saved {
   fill: #ff7c6e; }
-  .job__like--liked:hover {
+  .job__save--saved:hover {
     fill: #ffb1a8; }
 
 .job__tagline h2 {
@@ -13500,6 +13528,8 @@ h3 {
   margin: 6px 0 6px 0;
   min-height: 100px;
   overflow: hidden; }
+  .issue-card.issue-card--small .details, .repo-card.issue-card--small .details {
+    margin-bottom: 8px; }
   @media screen and (max-width: 1007px) {
     .issue-card, .repo-card {
       margin-bottom: 12px; } }
@@ -13556,12 +13586,16 @@ h3 {
       width: 18px;
       height: 18px;
       cursor: pointer; }
-  @media screen and (min-width: 1008px) {
-    .issue-card .issue-details, .repo-card .issue-details {
-      display: flex;
-      justify-content: space-between; } }
-  .issue-card .issue-details .tags li, .repo-card .issue-details .tags li {
-    margin-bottom: 0; }
+  .issue-card .issue-details, .repo-card .issue-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; }
+    .issue-card .issue-details .tags li, .repo-card .issue-details .tags li {
+      margin-bottom: 0; }
+  .issue-card .issue-details--small, .repo-card .issue-details--small {
+    flex-direction: column; }
+    .issue-card .issue-details--small .issue-card__detail, .repo-card .issue-details--small .issue-card__detail {
+      margin-right: 12px; }
   @media screen and (max-width: 1007px) {
     .issue-card .issue-tags, .repo-card .issue-tags {
       margin-top: 18px; } }
@@ -15759,7 +15793,7 @@ h3 {
   padding: 0 0 0 40px;
   margin: 0 auto;
   max-width: 1084px; }
-  .how-it-works__stats__inner .button.button--github {
+  .how-it-works__stats__inner .button.button--github-integration {
     margin-top: 24px; }
   @media screen and (max-width: 1007px) {
     .how-it-works__stats__inner .button {
@@ -16403,6 +16437,10 @@ h3 {
   display: flex;
   width: 100%;
   justify-content: space-between; }
+
+.carousel__arrows--bottom {
+  height: 70px;
+  bottom: -25px; }
 
 .carousel-arrow {
   cursor: pointer; }
@@ -18219,10 +18257,34 @@ h3 {
     .articles-page .split-content__side {
       margin-top: 0; } }
 
-.articles-page .promoted-jobs {
+.articles-page .recommendation {
   padding: 0; }
-  .articles-page .promoted-jobs .card--job {
-    margin-bottom: 9px; }
+  .articles-page .recommendation .card {
+    margin-bottom: 8px; }
+
+.articles-page .recommendation--mobile {
+  height: 320px;
+  margin: 24px 0; }
+  .articles-page .recommendation--mobile .card {
+    margin-bottom: 0; }
+  .articles-page .recommendation--mobile .carousel {
+    height: 280px; }
+
+.articles-page .recommendation--issues .carousel {
+  height: 270px; }
+
+.articles-page .recommendation__title {
+  color: #ff7c6e;
+  font-size: 16px; }
+
+.articles-page .tag-picker {
+  margin-top: 18px; }
+  @media screen and (min-width: 1008px) {
+    .articles-page .tag-picker {
+      margin-top: 0; } }
+
+.articles-page__blogs {
+  line-height: normal; }
 
 @media screen and (min-width: 1008px) {
   html, body {

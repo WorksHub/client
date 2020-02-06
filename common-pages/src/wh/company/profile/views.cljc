@@ -434,7 +434,7 @@
 (defn profile-tag-field
   [_args]
   (let [tags-collapsed?  (r/atom true)]
-    (fn [{:keys [label placeholder tag-type tag-subtype ]}]
+    (fn [{:keys [label placeholder tag-type tag-subtype]}]
       #?(:cljs
          (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type tag-subtype])
                matching-tags (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type}
@@ -820,9 +820,7 @@
                       :editable?             admin-or-owner?
                       :prompt-before-cancel? @new-how-we-work
                       :on-editing            #(do
-                                                (reset! editing? true)
-
-                                                )
+                                                (reset! editing? true))
                       :on-cancel #(do (reset! editing? false)
                                       (reset! new-how-we-work nil))
                       :on-save
@@ -999,8 +997,7 @@
       [:img {:src "/images/hiw/candidate/hiw/hiw3.svg"}]]
      [:div.company-profile__create-profile-carousel__slide
       [:p "Once it’s live it will look more like this and you’ll be able to edit and add information straight on the page. Now let’s get started with your logo and company name…"]
-      [:img {:src "/images/hiw/candidate/benefits/benefit4.svg"}]]]
-    false]])
+      [:img {:src "/images/hiw/candidate/benefits/benefit4.svg"}]]]]])
 
 (defn create-new-profile-header
   [num txt]

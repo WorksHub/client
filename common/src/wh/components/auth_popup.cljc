@@ -66,21 +66,20 @@
     [:div
      [:p "Engineers who find a new job through " platform-name  " average a 15% increase in salary \uD83D\uDE80 "]]
     [:div.overlay__buttons
-
+     ;; Login with GitHub
+     [link [:button.button.button--large.button--github
+            {:id "auth-popup__github"}
+            [icon "github" :class "button__icon"] "Login with GitHub"]
+      :login :step :github
+      :on-click (interop/do
+                  #_(interop/analytics-track)
+                  (interop/hide-auth-popup))]
+     
      ;; Create Account
      [link [:button.button.button--large
             {:id "auth-popup__create-account"}
             [icon "profile" :class "button__icon"] "Create Account"]
       :get-started
-      :on-click (interop/do
-                  #_(interop/analytics-track)
-                  (interop/hide-auth-popup))]
-
-     ;; Login with GitHub
-     [link [:button.button.button--large.button--light
-            {:id "auth-popup__github"}
-            [icon "github" :class "button__icon button__icon--light"] "Login with GitHub"]
-      :login :step :github
       :on-click (interop/do
                   #_(interop/analytics-track)
                   (interop/hide-auth-popup))]

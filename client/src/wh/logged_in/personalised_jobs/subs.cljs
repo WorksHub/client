@@ -2,8 +2,8 @@
   (:require
     [re-frame.core :refer [reg-sub]]
     [wh.graphql.jobs :as jobs]
-    [wh.logged-in.personalised-jobs.db :as personalised-jobs]
-    ))
+    [wh.logged-in.personalised-jobs.db :as personalised-jobs]))
+
 
 (reg-sub
   ::personalised-jobs

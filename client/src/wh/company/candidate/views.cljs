@@ -68,7 +68,7 @@
    (when-not (= type "company")
      [view-field "Applied jobs:" (itemize-apps applied)])
    (when-not (= type "company")
-     [view-field "Liked jobs:" (itemize-jobs likes)])])
+     [view-field "Saved jobs:" (itemize-jobs likes)])])
 
 (defn set-application-state!
   [id-or-ids state]

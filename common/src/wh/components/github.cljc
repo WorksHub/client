@@ -24,7 +24,7 @@
 (defn install-github-app
   [{:keys [class label id]
     :or   {label "Integrate with"}}]
-  #?(:cljs [:a.button.button--black.button--public.button--github
+  #?(:cljs [:a.button.button--public.button--github.button--github-integration
             (merge
               {:class    class
                :href     (install-gh-app-url)

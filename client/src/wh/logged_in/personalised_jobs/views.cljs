@@ -17,15 +17,19 @@
                   :message [[:p "Add some skills and preferred locations to your profile to see recommendations."]]}
     :liked       {:on-close :reload-liked
                   :sub [::subs/liked-jobs]
-                  :message [[:p "Click on some " [icon "like" :class "like red-fill"] " to save jobs you like."]]}
+                  :message [[:p "Click on some " [icon "bookmark" :class "like red-fill"] " to save jobs you like."]]}
     :applied     {:sub [::subs/applied-jobs]
                   :message [[:p "You haven't applied for any jobs yet... " [link "What are you waiting for?" :jobsboard :class "a--underlined"] "."]]}))
+
+(def titles {:liked       "Saved"
+             :recommended "Recommended"
+             :applied     "Applied"})
 
 (defn page [type-of-jobs]
   (into
     [:div.main
      [:div.spread-or-stack
-      [:h1 (str (-> type-of-jobs name str/capitalize)) " Jobs"]
+      [:h1 (str (titles type-of-jobs) " Jobs")]
       (when (= type-of-jobs :recommended)
         [:div.has-bottom-margin
          [link [:button.button "Improve recommendations"] :improve-recommendations :class "level-item"]])]]

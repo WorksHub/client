@@ -38,7 +38,7 @@
     :txt "With our Open Source issues, you can get paid, learn new languages and get noticed by employers. We’re leveraging the power of open source to help you further your career."}])
 
 (defn oauth-github-button []
-  [:a.button.button--black.button--public.button--github
+  [:a.button.button--public.button--github.button--github-integration
    {:href (routes/path :login :params {:step :github})}
    [:span "Get Started with"] [:div]])
 

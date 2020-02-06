@@ -71,8 +71,27 @@ $card-job-padding: 15px
       font-size: 12px
       color: $greyish
     .tags
-      height: auto
-      margin-top: 8px
+      position: absolute
+      top: 310px
+  &.card--row
+    line-height: normal
+    height: auto
+    margin-bottom: 8px
+    .blog-info
+      margin-bottom: 0
+      .title
+        font-size: 16px
+        margin-bottom: 4px
+      .author
+        font-size: 12px
+        margin-bottom: 4px
+      .datetime
+        font-size: 12px
+      .tags
+        position: static
+        height: auto
+        margin-top: 8px
+
 
 .card--job
   padding: $card-job-padding
@@ -232,6 +251,8 @@ $card-job-padding: 15px
   .hero
     background-color: $skeleton-background-color
   .title
+    @include skeleton(200px, 20px, $greyish)
+  .datetime
     @include skeleton(200px, 21px)
   .tags li
     height: 30px

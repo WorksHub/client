@@ -19,8 +19,12 @@
        (icon "circle")])]])
 
 (defn arrows
-  [n active-n on-click]
-  [:div.carousel__arrows
+  [n active-n on-click {:keys [arrows-position]}]
+  [:div
+   {:class (util/merge-classes
+             "carousel__arrows"
+             (when (= arrows-position :bottom)
+               "carousel__arrows--bottom"))}
    [:div
     {:class (util/merge-classes
               "carousel-arrow"
@@ -42,30 +46,31 @@
 
 (defn carousel
   ([items]
-   [carousel items false])
-  ([items arrows?]
+   [carousel items {}])
+  ([items _]
    (let [num-items   (count items)
-         active-item (#?(:clj atom :cljs r/atom) 0)
-         rotate      #?(:clj nil :cljs (.setInterval js/window (fn [] (swap! active-item #(mod (inc %) num-items))) 5000))
-         on-click    #?(:clj nil :cljs #(do (.clearInterval js/window rotate)
-                                            (reset! active-item %)))
-         on-slide    #?(:clj nil :cljs #(let [new-idx (+ @active-item %)]
-                                          (.clearInterval js/window rotate)
-                                          (when (and (< new-idx num-items)
-                                                     (nat-int? new-idx))
-                                            (reset! active-item new-idx))))]
-     (fn [items arrows?]
-       [:div.carousel
-        (doall
-          (map-indexed
-            (fn [i item]
-              ^{:key (str i)}
-              [:div {:class (util/merge-classes "carousel-item"
-                                                (when (= @active-item i) "carousel-item--active"))} item])
-            items))
+          active-item (#?(:clj atom :cljs r/atom) 0)
+          rotate      #?(:clj nil :cljs (.setInterval js/window (fn [] (swap! active-item #(mod (inc %) num-items))) 5000))
+          on-click    #?(:clj nil :cljs #(do (.clearInterval js/window rotate)
+                                             (reset! active-item %)))
+          on-slide    #?(:clj nil :cljs #(let [new-idx (+ @active-item %)]
+                                           (.clearInterval js/window rotate)
+                                           (when (and (< new-idx num-items)
+                                                      (nat-int? new-idx))
+                                             (reset! active-item new-idx))))]
+      (fn [items {:keys [arrows? arrows-position]
+                  :or   {arrows? false}}]
+        [:div.carousel
+         (doall
+           (map-indexed
+             (fn [i item]
+               ^{:key (str i)}
+               [:div {:class (util/merge-classes "carousel-item"
+                                                 (when (= @active-item i) "carousel-item--active"))} item])
+             items))
 
-        (pips num-items @active-item on-click)
-        (when arrows?
-          (arrows num-items @active-item on-slide))
-        ;; poor man's analogue of componentDidMount() when SSR-ing
-        #?(:clj [:script "enableCarousel(document.currentScript.parentNode)"])]))))
+         (pips num-items @active-item on-click)
+         (when arrows?
+           (arrows num-items @active-item on-slide {:arrows-position arrows-position}))
+         ;; poor man's analogue of componentDidMount() when SSR-ing
+         #?(:clj [:script "enableCarousel(document.currentScript.parentNode)"])]))))

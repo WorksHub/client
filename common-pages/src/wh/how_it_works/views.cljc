@@ -314,7 +314,7 @@
                   :alt ""}]]]
          [:p.how-it-works-pod__selection-txt
           txt]])
-      arrows?]
+      {:arrows? arrows?}]
 
      (when (= mode :candidate)
        [link [:button.button.button--inverted "view all open source issues"]
