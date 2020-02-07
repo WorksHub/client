@@ -1,5 +1,6 @@
 (ns wh.blogs.learn.views
   (:require
+    #?(:cljs [reagent.core :as r])
     [re-frame.core :refer [dispatch]]
     [wh.blogs.learn.events :as events]
     [wh.blogs.learn.subs :as subs]
@@ -12,6 +13,7 @@
     [wh.routes :as routes]
     [wh.components.job :refer [job-card]]
     [wh.slug :as slug]
+    [wh.util :as util]
     [wh.components.tag :as tag]
     [wh.re-frame.subs :refer [<sub]]))
 
@@ -97,6 +99,30 @@
        [carousel steps {:arrows? true
                         :arrows-position :bottom}]])))
 
+(defn newsletter
+  []
+  (let [render (fn []
+                 (when-not (<sub [:user/logged-in?])
+                   [:section
+                    {:class (util/merge-classes "pod"
+                              "pod--no-shadow"
+                              "newsletter-subscription")}
+                    [:div [:h3.newsletter-subscription__title "Join our newsletter!"]
+                     [:p.newsletter-subscription__description "Join over 111,000 others and get access to exclusive content, job opportunities and more!"]
+                     [:form#newsletter-subscription.newsletter-subscription__form
+                      [:div.newsletter-subscription__input-wrapper
+                       [:label.newsletter-subscription__label {:for "email"} "Your email"]
+                       [:input.newsletter-subscription__input {:type "email" :name "email" :placeholder "turing@machine.com" :id "email"}]]
+                      [:button.button.newsletter-subscription__button "Subscribe"]]
+                     [:div.newsletter-subscription__success.is-hidden
+                      [:div.newsletter-subscription__primary-text "Thanks! " [:br.is-hidden-desktop] "See you soon!"]]]]))]
+    #?(:cljs (r/create-class
+               {:component-did-mount (interop/listen-newsletter-form)
+                :reagent-render render})
+       :clj  (some-> (render)
+                     (conj [:script (interop/listen-newsletter-form)])))))
+
+
 (defn page []
   (let [blogs (<sub [::subs/all-blogs])
         tag (<sub [:wh/page-param :tag])
@@ -116,6 +142,7 @@
        (for [blog ch1]
          ^{:key (:id blog)}
          [blog-row  blog])
+       [newsletter]
        (when (> ch-size 1)
          [recommended-jobs-mobile])
        (for [blog ch2]

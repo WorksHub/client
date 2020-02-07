@@ -1,4 +1,5 @@
 ;; Edit this file carefully; order is important
+;; Init should always be the last thing in the list
 ["wh-client/client/src-js/util.js"
  "wh-client/client/src-js/public.js"
  "wh-client/client/src-js/analytics.js"
@@ -7,4 +8,5 @@
  "wh-client/client/src-js/photo.js"
  "wh-client/client/src-js/promo_banner.js"
  "wh-client/client/src-js/tags.js"
+ "wh-client/client/src-js/newsletter.js"
  "wh-client/client/src-js/init.js"]

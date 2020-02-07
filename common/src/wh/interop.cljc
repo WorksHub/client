@@ -129,3 +129,8 @@
        :cljs
        (let [ffns (remove nil? (map :on-click fns))]
          {:on-click (fn [_] (run! (fn [f] (f)) ffns))}))))
+
+(defn listen-newsletter-form
+  []
+  #?(:clj  (->jsfn "listenNewsletterForm")
+     :cljs (fn [_] (js/listenNewsletterForm))))
