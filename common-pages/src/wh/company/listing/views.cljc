@@ -52,7 +52,7 @@
      [:div.companies__company__tags
       [tag/tag-list :a (cond-> (mapv add-onclick tags)
                                (and total-published-issue-count (pos? total-published-issue-count))
-                               (conj {:icon "pr" :id id :type :icon :label total-published-issue-count}))]]]]
+                               (conj {:icon "pr" :id id :type :icon :label (str total-published-issue-count)}))]]]]
    (when (and view-jobs-link? total-published-job-count (pos? total-published-job-count))
      [link
       [:div.companies__company__job-count
