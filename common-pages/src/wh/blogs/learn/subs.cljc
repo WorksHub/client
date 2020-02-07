@@ -82,8 +82,7 @@
     (let [params (learn/params db)
           state (graphql/state db :blogs params)
           amount-to-display (max-amount-to-display all-blogs)
-          recommended (get-in (graphql/result db :blogs params) [:jobs-search :promoted])
-          max-amount-to-display (max 1 (quot (count all-blogs) 2))]
+          recommended (get-in (graphql/result db :blogs params) [:jobs-search :promoted])]
       (if (= state :executing)
         (->> (range amount-to-display)
              (map (partial hash-map :id)))

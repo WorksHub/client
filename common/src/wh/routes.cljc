@@ -177,7 +177,8 @@
                               ["/" :filename]              :cv-file
                               ["/" :user-id "/" :filename] :cv-file-legacy}]
                        ["reset-fixtures" :reset-fixtures]
-                       ["admin/" {[:command] :admin-command}]]]]])
+                       ["admin/" {[:command] :admin-command}]
+                       ["prospect" :prospect]]]]])
 
 ;;TODO this config should pulled partially from wh.response.ssr/page-content map
 (def server-side-only-pages #{:invalid-magic-link
