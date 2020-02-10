@@ -16441,6 +16441,8 @@ h3 {
 .carousel__arrows--bottom {
   height: 70px;
   bottom: -25px; }
+  .carousel__arrows--bottom .carousel-arrow .icon {
+    height: 70px; }
 
 .carousel-arrow {
   cursor: pointer; }
