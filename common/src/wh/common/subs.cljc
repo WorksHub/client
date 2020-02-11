@@ -49,6 +49,12 @@
     (get-in db [:wh.user.db/sub-db :wh.user.db/email])))
 
 (reg-sub
+  :user/github-connected?
+  (fn [db _]
+    (-> (get-in db [:wh.user.db/sub-db :wh.user.db/github-id])
+        boolean)))
+
+(reg-sub
   :user/company-connected-github?
   (fn [db _]
     (get-in db [:wh.user.db/sub-db :wh.user.db/company :connected-github])))
