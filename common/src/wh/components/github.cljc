@@ -8,10 +8,10 @@
 
 (defn app-name []
   #?(:clj (config/get-in [:github :app :name]))
-  #?(:cljs (<sub [::subs/github-app-name])))
+  #?(:cljs (<sub [:wh.subs/github-app-name])))
 
 (defn state-query-param []
-  #?(:cljs (let [env (<sub [::subs/env])
+  #?(:cljs (let [env (<sub [:wh.subs/env])
                  pr-number (some-> (re-find #"-\d+" js/window.location.href)
                                    (subs 1))]
              (when (and (= :stage env) pr-number)

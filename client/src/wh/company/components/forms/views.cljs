@@ -1,5 +1,6 @@
 (ns wh.company.components.forms.views
-  (:require [cljsjs.react-quill]
+  (:require [cljsjs.prop-types]
+            [cljsjs.react-quill]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
             [wh.components.forms.views :refer [field-container text-field-error]]))
