@@ -28,9 +28,10 @@
                                       :page_number     :$page_number
                                       :vertical        :$vertical_blogs}
                               [[:pagination [:total]]
-                               [:blogs [:id :title :feature :tags :author
+                               [:blogs [:id :title :feature :author
                                         :formattedCreationDate :readingTime
-                                        :creator :upvoteCount :published]]]]
+                                        :creator :upvoteCount :published
+                                        [:tags :fragment/tagFields]]]]]
                              [:jobs_search {:vertical        :$vertical
                                             :promoted_amount :$promoted_amount}
                               [[:promoted [:fragment/jobCardFields]]]]

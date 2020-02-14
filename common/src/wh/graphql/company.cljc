@@ -15,7 +15,7 @@
                      :foundedYear :howWeWork :additionalTechInfo :hasPublishedProfile
                      [:techScales [:testing :ops :timeToDeploy]]
                      [:locations [:city :country :countryCode :region :subRegion :state]]
-                     [:tags [:id :type :label :slug :subtype]]
+                     [:tags :fragment/tagFields]
                      [:videos [:youtubeId :thumbnail :description]]
                      [:images [:url :width :height]]]]]})
 
@@ -161,14 +161,14 @@
    [:users [:name :email :id]]
    [:integrations [:email [:greenhouse [:enabled]] [:slack [:enabled]] [:workable [:enabled]]]]])
 
-(def edit-job-company-query
+(defquery edit-job-company-query
   {:venia/operation {:operation/name "company"
                      :operation/type :query}
    :venia/variables [{:variable/name "company_id"
                       :variable/type :ID}]
    :venia/queries   [[:company {:id :$company_id}
                       [:descriptionHtml :logo :slug
-                       [:tags [:slug :label :type :subtype :id :weight]]
+                       [:tags :fragment/tagFields]
                        [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]
                                        [:workable [:enabled :accountSubdomain
                                                    [:jobs [:id :name]]
@@ -283,5 +283,5 @@
                      :operation/name "publish_profile"}
    :venia/variables [{:variable/name "id" :variable/type :String!}
                      {:variable/name "profile_enabled" :variable/type :Boolean!}]
-   :venia/queries [[:publish_profile {:id :$id :profile_enabled :$profile_enabled }
+   :venia/queries [[:publish_profile {:id :$id :profile_enabled :$profile_enabled}
                     [:success :profile_enabled]]]})

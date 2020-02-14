@@ -136,13 +136,17 @@
   :<- [::recommended-jobs]
   :<- [::tags]
   (fn [[recommended-jobs tags] _]
-    (->> recommended-jobs
-         (mapcat :tags)
-         (map str/lower-case)
-         set
-         (set/intersection (set (map str/lower-case tags)))
-         (map str/capitalize)
-         (str/join ", "))))
+    (let [tags-labels (->> tags
+                           (map :label)
+                           (map str/lower-case)
+                           set)]
+      (->> recommended-jobs
+           (mapcat :tags)
+           (map str/lower-case)
+           set
+           (set/intersection tags-labels)
+           (map str/capitalize)
+           (str/join ", ")))))
 
 (reg-sub
   ::recommendations-from-company?

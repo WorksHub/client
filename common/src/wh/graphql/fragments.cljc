@@ -23,7 +23,7 @@
 (deffragment companyCardFields :Company
   [:id :slug :name :logo :size :description :profileEnabled
    :totalPublishedJobCount :totalPublishedIssueCount
-   [:tags [:id :label :slug :type :subtype :weight]]
+   [:tags :fragment/tagFields]
    [:locations [:city :country :countryCode :region :subRegion :state]]])
 
 ;; Issues
@@ -46,4 +46,4 @@
    [:repo [:name :owner :primary_language]]])
 
 (deffragment tagFields :tag
-  [:slug :type :subtype :label :weight])
+  [:id :slug :type :subtype :label :weight])

@@ -21,9 +21,10 @@
                       :variable/type :ID!}]
    :venia/queries [[:blog {:id :$id}
                     [:id :title :feature :creator :published
-                     :tags :htmlBody :readingTime :author
+                     :htmlBody :readingTime :author
                      :originalSource :formattedCreationDate :upvoteCount
                      :primaryVertical :verticals
+                     [:tags :fragment/tagFields]
                      [:authorInfo [:name :summary :imageUrl
                                    [:otherUrls [:url :title]]]]
                      [:company [:logo :name :id]]]]]})

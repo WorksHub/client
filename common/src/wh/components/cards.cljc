@@ -8,7 +8,6 @@
     [wh.common.text :refer [pluralize]]
     [wh.components.common :refer [link wrap-img blog-card-hero-img]]
     [wh.routes :as routes]
-    [wh.slug :as slug]
     [wh.components.tag :as tag]
     [wh.util :as util]))
 
@@ -88,11 +87,8 @@
         (link [:div.title title] :blog :id id)
         (link [:div.author author] :blog :id id)
         (link [:div.datetime formatted-creation-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)
-        (into [:ul.tags]
-              (for [tag tags]
-                [:li
-                 [:a {:href (routes/path :learn-by-tag :params {:tag (slug/slug+encode tag)})}
-                  tag]]))
+        [tag/tag-list :a (->> tags
+                              (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]
         #?(:cljs
            [:div
             (when (<sub [:blog-card/can-edit? creator published])
@@ -120,8 +116,8 @@
         (link [:div.title title] :blog :id id)
         (link [:div.author author] :blog :id id)
         (link [:div.datetime formatted-creation-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)
-        (tag/strs->tag-list :a tags
-                            {:f #(assoc % :href (routes/path :learn-by-tag :params {:tag (slug/slug+encode (:label %))}))})
+        [tag/tag-list :a (->> tags
+                              (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]
         #?(:cljs
            [:div
             (when (<sub [:blog-card/can-edit? creator published])

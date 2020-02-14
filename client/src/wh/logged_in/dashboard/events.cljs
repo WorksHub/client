@@ -10,7 +10,9 @@
     [wh.graphql.jobs :as jobs]
     [wh.logged-in.dashboard.db :as dashboard]
     [wh.pages.core :refer [on-page-load] :as pages]
-    [wh.user.db :as user]))
+    [wh.user.db :as user])
+  (:require-macros
+    [wh.graphql-macros :refer [defquery]]))
 
 (def dashboard-interceptors (into db/default-interceptors
                                   [(path ::dashboard/sub-db)]))
@@ -37,14 +39,21 @@
      :graphql {:query queries/recommended-jobs-for-user
                :on-success [::fetch-recommended-jobs-success]}}))
 
-(def dashboard-data-query
-  {:venia/queries [[:blogs {:filter_type "recommended"
+(defquery dashboard-data-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "dashboard"}
+   :venia/queries [[:blogs {:filter_type "recommended"
                             :page_size 3
                             :page_number 1}
-                    [[:blogs [:id :title :feature :tags :author :formattedCreationDate :score :readingTime :published :upvoteCount]]]]
+                    [[:blogs [:id :title :feature :author
+                              :formattedCreationDate :score
+                              :readingTime :published :upvoteCount
+                              [:tags :fragment/tagFields]]]]]
                    [:me [:onboardingMsgs]]
-                   {:query/data [:jobs {:filter_type "recommended" :entity_type "user" :page_size 3} (conj jobs/job-card-fields :score)]
-                    :query/alias :jobs}]})
+                   [:jobs {:filter_type "recommended"
+                           :entity_type "user"
+                           :page_size 3}
+                    :fragment/jobCardFields]]})
 
 (reg-event-fx
   ::fetch-initial-data

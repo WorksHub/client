@@ -9,6 +9,7 @@
     [wh.components.common :refer [link]]
     [wh.components.icons :refer [icon url-icons]]
     [wh.components.job :refer [job-card]]
+    [wh.components.tag :as tag]
     [wh.components.not-found :as not-found]
     [wh.pages.util :as putil]
     [wh.re-frame :as r]
@@ -166,11 +167,8 @@
               (when (> (<sub [::subs/reading-time]) 0)
                 (str " (" (<sub [::subs/reading-time]) " min read)"))]
              [author-info]]]
-           (into [:ul.tags]
-                 (for [tag (<sub [::subs/tags])]
-                   [:li
-                    [:a {:href (routes/path :learn-by-tag :params {:tag (slug/slug+encode tag)})}
-                     tag]]))]
+           [tag/tag-list :a (->> (<sub [::subs/tags])
+                                 (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]]
           [:div.blog-body.blog-section__width
            [putil/html (<sub [::subs/html-body])]]
           (when (<sub [::subs/show-original-source?])

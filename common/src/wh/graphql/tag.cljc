@@ -42,7 +42,7 @@
    :venia/variables [{:variable/name "type"
                       :variable/type :tag_type}]
    :venia/queries [[:list_tags {:type :$type}
-                    [[:tags [:id :label :type :slug :subtype :weight]]]]]})
+                    [[:tags :fragment/tagFields]]]]})
 
 (reg-query :tags fetch-tags)
 

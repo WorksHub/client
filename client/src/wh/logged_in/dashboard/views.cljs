@@ -91,7 +91,6 @@
 (defn page []
   (cond (= (<sub [::subs/loading-error]) :unavailable)
         [:div.main [loading-error]]
-
         :else
         [:div.main.dashboard
          [:h1 "Dashboard"]
