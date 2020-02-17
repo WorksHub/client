@@ -8,26 +8,22 @@
 (defn has-error? [k db]
   (not (s/valid? k (get db k))))
 
-(s/def ::title           ::primitives/non-empty-string)
-(s/def ::author          ::primitives/non-empty-string)
-(s/def ::feature         ::primitives/non-empty-string)
-(s/def ::body            ::primitives/non-empty-string)
-(s/def ::original-source ::primitives/url)
-(s/def ::tag             ::primitives/non-empty-string)
-(s/def ::tag-search      string?)
-(s/def ::selected?       boolean?)
-(s/def ::tag-container   (s/keys :req-un [::tag]
-                                 :opt-un [::selected]))
-(s/def ::tags            (s/coll-of ::tag-container :distinct true :min-count 1))
-(s/def ::available-tags  (s/coll-of ::tag-container :distinct true))
-(s/def ::published       boolean?)
+(s/def ::title             ::primitives/non-empty-string)
+(s/def ::author            ::primitives/non-empty-string)
+(s/def ::feature           ::primitives/non-empty-string)
+(s/def ::body              ::primitives/non-empty-string)
+(s/def ::original-source   ::primitives/url)
+(s/def ::tag-id            ::primitives/non-empty-string)
+(s/def ::tag-search        string?)
+(s/def ::selected?         boolean?)
+(s/def ::selected-tag-ids  (s/coll-of ::tag-id :distinct true :min-count 1))
+(s/def ::published         boolean?)
 
-(s/def ::blog (s/keys :req [::title ::author ::feature ::body ::tags]
+(s/def ::blog (s/keys :req [::title ::author ::feature ::body ::selected-tag-ids]
                       :opt [::original-source ::company-id]))
 
 (s/def ::company-id   (s/nilable ::primitives/non-empty-string))
 (s/def ::company-name (s/nilable ::primitives/non-empty-string))
-
 
 (s/def ::save-status #{:success :failure :tried})
 
@@ -43,13 +39,13 @@
 
 (s/def ::tag-search (s/nilable string?))
 
-(s/def ::sub-db (s/keys :opt [::title ::author ::feature ::body ::tags ::save-status ::published
+(s/def ::sub-db (s/keys :opt [::title ::author ::feature ::body ::save-status ::published
                               ::image-article-upload-status ::hero-upload-status
-                              ::body-editing? ::body-rows ::available-tags
+                              ::body-editing? ::body-rows ::selected-tag-ids
                               ::tag-search ::original-source ::company-id ::company-name]))
 
 (def form-order
-  [::feature ::author ::title ::body ::tags ::original-source])
+  [::feature ::author ::title ::body ::selected-tag-ids ::original-source])
 
 (defn form-field-id
   [k]

@@ -55,7 +55,7 @@
 #?(:cljs
    (defmethod on-page-load :company [db]
      (list (into [:graphql/query] (conj (initial-query db) {:on-success [::fetch-stats]
-                                                            :on-complete [::on-company-ready]}) )
+                                                            :on-complete [::on-company-ready]}))
            [::load-photoswipe]
            [:google/load-maps]
            (into [:graphql/query] (extra-data-query db))
@@ -93,7 +93,7 @@
     {:dispatch (into [:graphql/query] (-> db
                                           (cached-company)
                                           :id
-                                          (company-stats-query )))}))
+                                          (company-stats-query)))}))
 
 (reg-event-db
   ::photo-upload-start

@@ -109,7 +109,7 @@
                           (when removable?
                             [icon "close" :class "remove-text-field-btn" :on-click #(events/dispatch-sync on-remove)])])))))
 
-(defn tags-field
+(defn tags-filter-field
   [{:keys [on-change] :as opts}]
   (let [dirty   (r/atom false)
         focused (r/atom false)

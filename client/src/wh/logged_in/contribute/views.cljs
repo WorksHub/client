@@ -11,7 +11,6 @@
     [wh.logged-in.contribute.db :as contribute]
     [wh.logged-in.contribute.events :as events]
     [wh.logged-in.contribute.subs :as subs]
-    [wh.pages.core :as pages]
     [wh.subs :refer [<sub]]))
 
 (defn hero []
@@ -96,6 +95,28 @@
     (str (if (and (<sub [::subs/contribute-page?])
                   (not (<sub [:user/admin?]))) "Submit" "Save") " Article")]])
 
+(defn article-tags
+  []
+  (let [tags-collapsed? (reagent/atom true)]
+    (fn []
+      (let [selected-tag-ids (<sub [::subs/selected-tag-ids])
+            matching-tags    (<sub [::subs/matching-tags])
+            mark-as-selected #(if (contains? selected-tag-ids (:id %))
+                                (assoc % :selected true)
+                                %)
+            tags             (map mark-as-selected matching-tags)]
+        [tags-field
+         (<sub [::subs/tag-search])
+         {:tags               tags
+          :error              (<sub [::subs/tags-validation-error])
+          :dirty?             (<sub [::subs/validation-error?])
+          :collapsed?         @tags-collapsed?
+          :on-change          [::events/edit-tag-search]
+          :label              "* Type to search"
+          :placeholder        "e.g. clojure, python, java, aws, heroku, azure, docker etc"
+          :on-toggle-collapse #(swap! tags-collapsed? not)
+          :on-tag-click       #(dispatch [::events/toggle-tag %])}]))))
+
 (defn main [new?]
   (let [admin? (<sub [:user/admin?])]
     [:div.columns.contribute__main
@@ -133,17 +154,7 @@
          :error        (<sub [::subs/title-validation-error])
          :force-error? (<sub [::subs/validation-error?])}]
        [body]
-       [tags-field
-        (<sub [::subs/tag-search])
-        {:id           (contribute/form-field-id ::contribute/tags)
-         :label        "* Tags"
-         :placeholder  "e.g. Clojure, Haskell, Scala"
-         :on-change    [::events/edit-tag-search]
-         :on-tag-click #(dispatch [::events/toggle-tag %])
-         :on-add-tag   #(dispatch [::events/toggle-tag %])
-         :tags         (<sub [::subs/matching-tags])
-         :error        (<sub [::subs/tags-validation-error])
-         :dirty?       (<sub [::subs/validation-error?])}]
+       [article-tags]
        [text-field (<sub [::subs/original-source])
         {:id           (contribute/form-field-id ::contribute/original-source)
          :label        "Originally published on"

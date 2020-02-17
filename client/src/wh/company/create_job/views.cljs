@@ -119,7 +119,7 @@
            :tags               (<sub [::subs/matching-tags])
            :on-change          [::events/set-tag-search]
            :on-toggle-collapse #(dispatch [::events/toggle-tags-collapsed])
-           :on-tag-click       #(dispatch [::events/toggle-tag %])
+           :on-tag-click       #(dispatch [::events/toggle-tag (:tag %)])
            :on-add-tag         (when admin? #(dispatch [::events/toggle-tag %])))]])
 
 (defn location
@@ -302,9 +302,7 @@
                   :dirty?             (when show-error? true)
                   :placeholder        "e.g. flexible working, health insurance, child care, training etc"
                   :on-toggle-collapse #(swap! tags-collapsed? not)
-                  :on-tag-click
-                  #(when-let [id (some (fn [tx] (when (= (:tag tx) %) (:key tx))) matching-tags)]
-                     (dispatch [::events/toggle-selected-benefit-tag-id id]))}]))])]))))
+                  :on-tag-click       #(dispatch [::events/toggle-selected-benefit-tag-id (:id %)])}]))])]))))
 
 (defn settings-pod
   []

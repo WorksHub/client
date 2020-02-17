@@ -454,9 +454,7 @@
               :placeholder        placeholder
               :on-toggle-collapse #(swap! tags-collapsed? not)
               :on-add-tag         #(dispatch [::events/create-new-tag % tag-type tag-subtype])
-              :on-tag-click
-              #(when-let [id (some (fn [tx] (when (= (:tag tx) %) (:key tx))) matching-tags)]
-                 (dispatch [::events/toggle-selected-tag-id tag-type tag-subtype id]))}]
+              :on-tag-click       #(dispatch [::events/toggle-selected-tag-id tag-type tag-subtype (:id %)])}]
             (when (<sub [::subs/creating-tag?])
               [:div.company-profile__tag-loader [:div]])])))))
 
@@ -834,7 +832,6 @@
              [:h2.title "How we work"]
              [putil/html (or hww
                              (str"<p><i>"placeholder"</i></p>"))]]
-          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
             [:div
              [:h2.title "How we work"]
              #?(:cljs
@@ -1145,9 +1142,7 @@
                :label              label
                :placeholder        placeholder
                :on-toggle-collapse #(swap! tags-collapsed? not)
-               :on-tag-click
-               #(when-let [tag (some (fn [tx] (when (= (:tag tx) %) tx)) matching-tags)]
-                  (dispatch [::events/toggle-selected-tag-id tag-type (:subtype tag) (:id tag)]))}]
+               :on-tag-click       #(dispatch [::events/toggle-selected-tag-id tag-type (:subtype %) (:id %)])}]
              (when (<sub [::subs/creating-tag?])
                [:div.company-profile__tag-loader [:div]])]])))))
 

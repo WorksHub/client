@@ -1,13 +1,12 @@
 (ns wh.logged-in.contribute.events
   (:require
-    [camel-snake-kebab.core :as c]
-    [camel-snake-kebab.extras :as ce]
-    [clojure.spec.alpha :as s]
+    [clojure.spec.alpha :as spec]
     [clojure.string :as str]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
     [wh.common.upload :as upload]
     [wh.db :as db]
+    [wh.graphql-cache :refer [reg-query]]
     [wh.graphql-cache]
     [wh.logged-in.contribute.db :as contribute]
     [wh.pages.core :refer [on-page-load] :as pages]
@@ -24,14 +23,6 @@
 (defn simple-edit-fn [k]
   (fn [db [v]]
     (assoc db k v)))
-
-(defn multi-edit-fn
-  [k & path]
-  (fn [db [i value]]
-    (let [old-values (k db)
-          new-values (assoc-in old-values (into [i] path) value)
-          new-values (vec (remove #(str/blank? (get-in % path)) new-values))]
-      (assoc db k new-values))))
 
 (reg-event-db
   ::set-title
@@ -159,28 +150,35 @@
   (fn [db _]
     (assoc db ::contribute/image-article-upload-status :failure)))
 
-(def base-blog-fields [:id :title :feature :author :authorId
-                       :published :tags :body :creator :originalSource :verticals :primaryVertical])
-(def save-blog-fields (conj base-blog-fields :companyId))
-(def query-blog-fields (conj base-blog-fields [:company [:name :id]]))
-
-(defn blog-query [id]
-  {:venia/queries [[:blog {:id id}
-                    query-blog-fields]]})
+(defquery query-blog-contribute
+          {:venia/operation {:operation/type :query
+                             :operation/name "blog"}
+           :venia/variables [{:variable/name "id"
+                              :variable/type :ID!}]
+           :venia/queries [[:blog {:id :$id}
+                            [:id :title :feature :author :authorId
+                             :published :body :creator :originalSource
+                             :verticals :primaryVertical
+                             [:company [:name :id]]
+                             [:tags :fragment/tagFields]]]]})
 
 (reg-event-fx
   ::fetch-blog
   contribute-interceptors
   (fn [{db :db} [id]]
     {:dispatch [::pages/set-loader]
-     :graphql {:query (blog-query id)
+     :graphql {:query query-blog-contribute
                :on-success [::fetch-blog-success]
-               :on-failure [::fetch-blog-failure]}}))
+               :on-failure [::fetch-blog-failure]
+               :variables {:id id}}}))
 
 (defn translate-blog [blog]
   (let [r (-> (util/namespace-map "wh.logged-in.contribute.db"
                                   (cases/->kebab-case blog))
-              (update ::contribute/tags (comp set (partial map (fn [t] {:tag t :selected true}))))
+              (assoc ::contribute/selected-tag-ids (->> blog
+                                                        :tags
+                                                        (map :id)
+                                                        set))
               (update ::contribute/verticals (fnil set []))
               (assoc  ::contribute/company-id (get-in blog [:company :id]))
               (assoc  ::contribute/company-name (get-in blog [:company :name]))
@@ -264,19 +262,23 @@
   ::save-blog
   db/default-interceptors
   (fn [{db :db} [res]]
-    (if-let [ed (s/explain-data ::contribute/blog (::contribute/sub-db db))]
+    (if-let [ed (spec/explain-data ::contribute/blog (::contribute/sub-db db))]
       (do
         (js/console.log "invalid" ed)
         {:db (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
          :scroll-into-view (find-first-error-id (::contribute/sub-db db))
          :dispatch [:error/close-global]})
-
       (let [id (get-in db [::contribute/sub-db ::contribute/id])
+            selected-tag-ids (get-in db [::contribute/sub-db ::contribute/selected-tag-ids])
+            save-blog-fields [:id :title :feature :author :authorId
+                              :published :body :creator :originalSource
+                              :verticals :primaryVertical :companyId :tagIds]
             blog (-> db
                      ::contribute/sub-db
-                     (update ::contribute/tags (partial map :tag))
+                     (dissoc ::contribute/tags)
+                     (assoc ::contribute/tag-ids selected-tag-ids)
                      (assoc ::contribute/primary-vertical (::db/vertical db))
-                     (->> (ce/transform-keys c/->camelCaseString))
+                     cases/->camel-case-keys-str
                      (select-keys (map name save-blog-fields))
                      (dissoc (when id "creator"))
                      (util/remove-nils))]
@@ -402,41 +404,23 @@
   ::toggle-tag
   contribute-interceptors
   (fn [{db :db} [tag]]
-    {:db (update db ::contribute/tags (fnil util/toggle #{}) {:tag tag :selected true})
+    {:db (update db ::contribute/selected-tag-ids (fnil util/toggle #{}) (:id tag))
      :dispatch [::edit-tag-search ""]}))
 
-(defquery fetch-tags-query
-  {:venia/operation {:operation/type :query
-                     :operation/name "jobs_search"}
-   :venia/variables [{:variable/name "vertical" :variable/type :vertical}
-                     {:variable/name "search_term" :variable/type :String!}
-                     {:variable/name "page" :variable/type :Int!}]
-   :venia/queries   [[:jobs_search {:vertical    :$vertical
-                                    :search_term :$search_term
-                                    :page        :$page}
-                      [[:facets [:attr :value :count]]]]]})
+(defquery fetch-tags
+          {:venia/operation {:operation/type :query
+                             :operation/name "list_tags"}
+           :venia/variables [{:variable/name "type"
+                              :variable/type :tag_type}]
+           :venia/queries [[:list_tags {:type :$type}
+                            [[:tags :fragment/tagFields]]]]})
+
+(reg-query :tags fetch-tags)
 
 (reg-event-fx
   ::fetch-tags
-  contribute-interceptors
-  (fn [{db :db} _]
-    (when-not (::contribute/available-tags db)
-      {:graphql {:query fetch-tags-query
-                 :variables  {:search_term ""
-                              :page        1
-                              :vertical    "functional"}
-                 :on-success [::fetch-tags-success]}})))
-
-(reg-event-db
-  ::fetch-tags-success
-  contribute-interceptors
-  (fn [db [results]]
-    (let [results (group-by :attr (get-in results [:data :jobs_search :facets]))
-          results (->> (get results "tags")
-                       (sort-by :count)
-                       (map #(hash-map :tag (:value %)))
-                       (reverse))]
-      (assoc db ::contribute/available-tags results))))
+  (fn [_ _]
+    {:dispatch (into [:graphql/query] [:tags {}])}))
 
 (reg-event-db
   ::dismiss-codi

@@ -81,7 +81,7 @@
       [:div.split-content
        [:div.companies__main.split-content__main
         [:div.companies__filtering
-         [forms/tags-field
+         [forms/tags-filter-field
           {:id                 listing/tag-field-id
            :solo?              true
            :hide-error?        true

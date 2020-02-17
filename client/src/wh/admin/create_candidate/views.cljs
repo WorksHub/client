@@ -95,7 +95,7 @@
             :label        "* Technology"
             :placeholder  "e.g. Clojure, Haskell, Scala"
             :on-change    [::events/edit-tech-tag-search]
-            :on-tag-click #(dispatch [::events/toggle-tech-tag %])
+            :on-tag-click #(dispatch [::events/toggle-tech-tag (:tag %)])
             :on-add-tag   #(dispatch [::events/toggle-tech-tag %])
             :tags         (<sub [::subs/matching-tech-tags]))]
     [tags-field
@@ -104,7 +104,7 @@
             :label       "Company"
             :placeholder "e.g. flexible working, gym membership"
             :on-change    [::events/edit-company-tag-search]
-            :on-tag-click #(dispatch [::events/toggle-company-tag %])
+            :on-tag-click #(dispatch [::events/toggle-company-tag (:tag %)])
             :on-add-tag   #(dispatch [::events/toggle-company-tag %])
             :tags         (<sub [::subs/matching-company-tags]))]]
    (when-let [error (<sub [::subs/error])]

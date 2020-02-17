@@ -320,11 +320,11 @@
   [:span.has-text-danger " *"])
 
 (defn tag
-  [{:keys [tag count selected class]} read-only on-tag-click]
+  [{:keys [tag count selected class] :as full-tag} read-only on-tag-click]
   [:li {:class (merge-classes "tag"
                               (when selected "tag--selected")
                               class)
-        :on-click #(when-not read-only (on-tag-click tag))}
+        :on-click #(when-not read-only (on-tag-click full-tag))}
    (if count (<< "~{tag} (~{count})") tag)
    (when selected
      [icon "close"])])

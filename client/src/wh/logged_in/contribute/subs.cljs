@@ -5,11 +5,15 @@
     [clojure.string :as str]
     [markdown.core :refer [md->html]]
     [re-frame.core :refer [reg-sub]]
+    [wh.components.tag :refer [->tag tag->form-tag]]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.common.text :as txt]
     [wh.logged-in.contribute.db :as contribute]
     [wh.pages.core :as pages]
     [wh.verticals :as verticals])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+  (:require-macros
+    [clojure.core.strint :refer [<<]]
+    [wh.re-frame.subs :refer [reaction]]))
 
 (reg-sub
   ::contribute
@@ -24,15 +28,16 @@
 
 (reg-sub
   ::tags
-  :<- [::contribute]
-  (fn [db _]
-    (::contribute/tags db)))
+  (fn [_ _]
+    (->> [:list-tags :tags]
+         (get-in (<sub [:graphql/result :tags {}]))
+         (map ->tag))))
 
 (reg-sub
-  ::available-tags
+  ::selected-tag-ids
   :<- [::contribute]
   (fn [db _]
-    (::contribute/available-tags db)))
+    (::contribute/selected-tag-ids db)))
 
 (reg-sub
   ::tag-search
@@ -42,18 +47,17 @@
 
 (reg-sub
   ::matching-tags
-  :<- [::available-tags]
   :<- [::tags]
   :<- [::tag-search]
-  (fn [[available-tags tags tag-search] _]
-    (let [selected-tag-set (set (map :tag tags))
-          tag-search (when (txt/not-blank tag-search) (str/lower-case tag-search))]
-      (take 20
-            (concat tags
-                    (filter (fn [{:keys [tag]}]
-                              (and (or (str/blank? tag-search)
-                                       (str/includes? (str/lower-case tag) tag-search))
-                                   (not (contains? selected-tag-set tag)))) available-tags))))))
+  :<- [::selected-tag-ids]
+  (fn [[tags tag-search selected-tag-ids]]
+    (let [matching-but-not-selected (filter (fn [tag] (and (or (str/blank? tag-search)
+                                                               (str/includes? (str/lower-case (:label tag)) tag-search))
+                                                           (not (contains? selected-tag-ids (:id tag))))) tags)
+          selected-tags (filter (fn [tag] (contains? selected-tag-ids (:id tag))) tags)]
+      (->> (concat selected-tags matching-but-not-selected)
+           (map tag->form-tag)
+           (take (+ 20 (count selected-tag-ids)))))))
 
 (reg-sub
   ::author
@@ -221,7 +225,7 @@
   ::tags-validation-error
   :<- [::contribute]
   (fn [db]
-    (when (contribute/has-error? ::contribute/tags db)
+    (when (contribute/has-error? ::contribute/selected-tag-ids db)
       "Please select one or more tags.")))
 
 (reg-sub

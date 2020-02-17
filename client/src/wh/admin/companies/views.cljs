@@ -63,7 +63,7 @@
         :tags               tags
         :on-change          [::events/set-tag-search]
         :on-toggle-collapse #(dispatch [::events/toggle-tag-search-collapsed])
-        :on-tag-click       #(dispatch [::events/toggle-tag %])}]
+        :on-tag-click       #(dispatch [::events/toggle-tag (:tag %)])}]
       [:div.companies__beneath-tags.is-flex
        (let [[current-count total-count] (<sub [::subs/company-counts])]
          [:h3 (if (and current-count total-count)

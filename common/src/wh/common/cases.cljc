@@ -11,6 +11,9 @@
 (defn ->camel-case [m]
   (ce/transform-keys c/->camelCaseKeyword m))
 
+(defn ->camel-case-keys-str [m]
+  (ce/transform-keys c/->camelCaseString m))
+
 (def ->camel-case-str     c/->camelCaseString)
 (def ->snake-case-str     c/->snake_case_string)
 (def ->kebab-case-str     c/->kebab-case-string)
