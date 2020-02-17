@@ -156,6 +156,7 @@
               ;; Non UI routes - redirects, webhooks, API, xml
               ["sitemap.xml" :sitemapxml]
               ["rss.xml" :rss]
+              ["jooble/" {[:region ".xml"] :jooble}]
               ["magic-link/" {[:token] :magic-link}]
               ["github-dispatch/" {[:board] :github-dispatch}]
               ["github-app-connect" :connect-github-app]
