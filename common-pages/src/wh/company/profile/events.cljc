@@ -36,7 +36,7 @@
   [:company {:slug (company-slug db)}])
 
 (defn extra-data-query [db]
-  [:company-issues-and-blogs {:slug (get-in db [:wh.db/page-params :slug])}])
+  [:company-issues-and-blogs {:slug (company-slug db)}])
 
 (defn company-stats-query [company-id]
   [:company-stats {:company_id company-id}])

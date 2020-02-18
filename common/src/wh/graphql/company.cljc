@@ -36,7 +36,8 @@
                     [[:blogs {:pageSize 2 :pageNumber 1}
                       [[:blogs
                         [:id :title :feature :author :formattedCreationDate :readingTime
-                         :upvoteCount :tags :creator :published]]
+                         :upvoteCount :creator :published
+                         [:tags :fragment/tagFields]]]
                        [:pagination [:total]]]]
                      [:jobs {:pageSize 2 :pageNumber 1}
                       [[:jobs
