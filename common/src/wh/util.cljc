@@ -312,3 +312,15 @@
 (defn spec->fields
   [s]
   (get-fields (s/form s)))
+
+(defn trunc [n s]
+  (when (pos-int? n)
+    (->> (count s)
+         (min n)
+         (subs s 0))))
+
+(s/fdef trunc
+        :args (s/cat :n nat-int?
+                     :s string?)
+        :ret (s/or :success string?
+                   :nil nil?))
