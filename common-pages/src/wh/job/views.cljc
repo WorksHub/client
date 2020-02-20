@@ -61,60 +61,59 @@
 (defn apply-button
   ([]
    (apply-button {}))
-  ([{:keys [id force-view-applications?]}]
-   (cond
-     (not (<sub [::subs/loaded?]))
-     [:div.button--skeleton]
-     (or (<sub [:user/admin?])
-         (<sub [::subs/owner?]))
-     (into [:div.job__admin-buttons
-            [link "Edit" :edit-job :id (<sub [::subs/id]) :class "button button--medium button--inverted" :html-id "job-view__publish-button"]]
-           (concat []
-                   (when (<sub [::subs/show-unpublished?])
-                     [[:button.button.button--medium
-                       (merge {:id "job-view__publish-button"
-                               :class (when (<sub [::subs/publishing?]) "button--inverted button--loading")}
-                              #?(:cljs
-                                 {:on-click #(dispatch [::events/publish-role])})) "Publish"]])
-                   (when (or (not (<sub [::subs/show-unpublished?]))
-                             force-view-applications?)
-                     [[:a.button.button--medium
-                       {:href (<sub [::subs/view-applications-link])
-                        :id   "job-view__view-applications-button"} "View Applications"]])))
-
-     (<sub [::subs/applied?])
-     [:button.button.button--medium
-      {:disabled true}
-      "Applied"]
-     (not (<sub [:user/logged-in?]))
-     [:div
-      [:button.button.button--medium
-       (merge {:id (str "job-view__logged-out-apply-button" (when id (str "__" id)))}
-              (interop/on-click-fn
-                (interop/show-auth-popup :jobpage-apply
-                                         [:job
-                                          :params {:slug (:slug (<sub [::subs/apply-job]))}
-                                          :query-params {:apply "true"}])))
-       (if (some? (<sub [:user/applied-jobs]))
-         "1-Click Apply"
-         "Easy Apply")]
-      [:button.button.button--medium.button--inverted
-       (merge {:id (str "job-view__see-more-button" (when id (str "__" id)))}
-              (interop/on-click-fn
-                (interop/show-auth-popup :jobpage-see-more
-                                         [:company
-                                          :params {:slug (<sub [::subs/company-slug])}
-                                          :anchor "company-profile__jobs"])))
-       "See More"]]
-
-     :else
-     [:button.button.button--medium
-      {:id (str "job-view__apply-button" (when id (str "__" id)))
-       :disabled (<sub [:user/company?])
-       :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])}
-      (if (some? (<sub [:user/applied-jobs]))
-        "1-Click Apply"
-        "Easy Apply")])))
+  ([{:keys [id force-view-applications? condensed?]}]
+   (let [applied? (<sub [::subs/applied?])]
+     (cond
+       (not (<sub [::subs/loaded?]))
+       [:div.button--skeleton]
+       (or (<sub [:user/admin?])
+           (<sub [::subs/owner?]))
+       (into [:div
+              {:class (util/merge-classes "job__admin-buttons"
+                                          (when condensed? "job__admin-buttons--condensed"))}
+              [link [:button.button.button--medium.button--inverted "Edit"]
+               :edit-job :id (<sub [::subs/id]) :html-id "job-view__publish-button"]]
+             (concat []
+                     (when (<sub [::subs/show-unpublished?])
+                       [[:button.button.button--medium
+                         (merge {:id "job-view__publish-button"
+                                 :class (when (<sub [::subs/publishing?]) "button--inverted button--loading")}
+                                #?(:cljs
+                                   {:on-click #(dispatch [::events/publish-role])})) "Publish"]])
+                     (when (or (not (<sub [::subs/show-unpublished?]))
+                               force-view-applications?)
+                       [[:a
+                         {:href (<sub [::subs/view-applications-link])
+                          :id   "job-view__view-applications-button"}
+                         [:button.button.button--medium "View Applications"]]])))
+       :else
+       [:div
+        {:class (util/merge-classes "job__apply-buttons"
+                                    (when condensed? "job__apply-buttons--condensed"))}
+        [:button.button.button--medium
+         (if (not (<sub [:user/logged-in?]))
+           (merge {:id (str "job-view__logged-out-apply-button" (when id (str "__" id)))}
+                  (interop/on-click-fn
+                    (interop/show-auth-popup :jobpage-apply
+                                             [:job
+                                              :params {:slug (:slug (<sub [::subs/apply-job]))}
+                                              :query-params {:apply "true"}])))
+           {:id (str "job-view__apply-button" (when id (str "__" id)))
+            :disabled (or applied? (<sub [:user/company?]))
+            :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])})
+         (cond applied? "Applied"
+               (some? (<sub [:user/applied-jobs])) "1-Click Apply"
+               :else "Easy Apply")]
+        [:div
+         [:a {:href (routes/path :company-jobs :params {:slug (<sub [::subs/company-slug])})}
+          [:button.button.button--medium.button--inverted.button--ellipsis
+           (if condensed?
+             "See more"
+             (str "More jobs from " (<sub [::subs/company-name])))]]
+         (when (and (not condensed?) (<sub [::subs/profile-enabled?]))
+           [:a {:href (routes/path :company :params {:slug (<sub [::subs/company-slug])})}
+            [:button.button.button--medium.button--inverted.button--ellipsis
+             "About " (<sub [::subs/company-name])]])]]))))
 
 (defn save-button []
   [icon "bookmark"
@@ -387,7 +386,7 @@
       [icon (if loaded? "codi" "circle")]
       (when loaded?
         [:span message])]
-     [apply-button {:id id}]]))
+     [apply-button {:id id :condensed? true}]]))
 
 (defn other-roles
   []

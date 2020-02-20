@@ -5433,6 +5433,12 @@ a.navbar-item,
 .button--inline {
   margin-right: 10px; }
 
+.button--ellipsis {
+  display: block;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
 .dropdown-menu {
   width: 270px;
   padding-top: 0;
@@ -10815,26 +10821,42 @@ h3 {
 .job__candidate-action {
   font-size: 14px;
   line-height: 20px; }
-  .job__company-action .button, .job__company-action .button--skeleton,
+  .job__company-action a,
+  .job__admin-action a,
+  .job__candidate-action a {
+    display: block; }
+  .job__company-action .button,
+  .job__company-action .button--skeleton,
+  .job__company-action a,
   .job__admin-action .button,
   .job__admin-action .button--skeleton,
+  .job__admin-action a,
   .job__candidate-action .button,
-  .job__candidate-action .button--skeleton {
+  .job__candidate-action .button--skeleton,
+  .job__candidate-action a {
     width: 100%;
     margin-right: 0;
     margin-bottom: 12px; }
     @media screen and (max-width: 1007px) {
-      .job__company-action .button, .job__company-action .button--skeleton,
+      .job__company-action .button,
+      .job__company-action .button--skeleton,
+      .job__company-action a,
       .job__admin-action .button,
       .job__admin-action .button--skeleton,
+      .job__admin-action a,
       .job__candidate-action .button,
-      .job__candidate-action .button--skeleton {
+      .job__candidate-action .button--skeleton,
+      .job__candidate-action a {
         margin-bottom: 12px !important; } }
-    .job__company-action .button:last-child, .job__company-action .button--skeleton:last-child,
+    .job__company-action .button:last-child,
+    .job__company-action .button--skeleton:last-child,
+    .job__company-action a:last-child,
     .job__admin-action .button:last-child,
     .job__admin-action .button--skeleton:last-child,
+    .job__admin-action a:last-child,
     .job__candidate-action .button:last-child,
-    .job__candidate-action .button--skeleton:last-child {
+    .job__candidate-action .button--skeleton:last-child,
+    .job__candidate-action a:last-child {
       margin-bottom: 0 !important; }
   .job__company-action .button--skeleton,
   .job__admin-action .button--skeleton,
@@ -11081,12 +11103,16 @@ h3 {
     margin-right: 18px;
     min-width: 32px;
     height: 32px; }
-  .job__lower-cta .button {
-    min-width: 145px; }
-    .job__lower-cta .button:first-of-type {
-      margin-right: 5px; }
-  .job__lower-cta div:nth-of-type(2) {
-    min-width: 305px; }
+
+.job__apply-buttons--condensed .button, .job__apply-buttons--condensed div {
+  display: inline;
+  max-width: 145px;
+  min-width: 145px; }
+  .job__apply-buttons--condensed .button:first-of-type, .job__apply-buttons--condensed div:first-of-type {
+    margin-right: 5px; }
+
+.job__apply-buttons--condensed div:nth-of-type(2) {
+  min-width: 305px; }
 
 .job__lower-cta--skeleton .button--skeleton {
   min-height: 30px; }
@@ -11150,9 +11176,10 @@ h3 {
   width: 24px;
   height: 24px;
   fill: #dedede;
-  cursor: pointer;
-  top: 15px;
-  right: 15px; }
+  cursor: pointer; }
+  .job__icon.like {
+    right: 15px;
+    top: 15px; }
   .job__icon.blacklist {
     top: 15px;
     right: 53px;

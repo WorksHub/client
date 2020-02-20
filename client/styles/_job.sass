@@ -289,7 +289,11 @@ $description-height: 400px
 .job__candidate-action
   font-size: 14px
   line-height: 20px
-  .button, .button--skeleton
+  a
+    display: block
+  .button,
+  .button--skeleton,
+  a
     width: 100%
     margin-right: 0
     margin-bottom: 12px
@@ -515,7 +519,11 @@ $description-height: 400px
     margin-right: 18px
     min-width: 32px
     height: 32px
-  .button
+
+.job__apply-buttons--condensed
+  .button, div
+    display: inline
+    max-width: 145px
     min-width: 145px
     &:first-of-type
       margin-right: 5px
@@ -574,10 +582,9 @@ $description-height: 400px
   height: 24px
   fill: $grey
   cursor: pointer
-
   &.like
-  top: 15px
-  right: 15px
+    right: 15px
+    top: 15px
   &.blacklist
     top: 15px
     right: 53px
