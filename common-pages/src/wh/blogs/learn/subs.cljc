@@ -3,6 +3,7 @@
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub]]
     [wh.blogs.learn.db :as learn]
+    [wh.blogs.learn.events :as learn-events]
     [wh.verticals :as verticals]
     [wh.graphql.jobs :as jobs]
     [wh.common.job :as jobc]
@@ -30,6 +31,11 @@
     (learn/current-page db)))
 
 (reg-sub
+  ::search-term
+  (fn [db _]
+    (learn/search-term db)))
+
+(reg-sub
   ::header
   :<- [::current-tag]
   (fn [current-tag _]
@@ -55,10 +61,17 @@
 (reg-sub
   ::all-blogs
   (fn [db _]
-    (let [params (learn/params db)]
-      (if (= (graphql/state db :blogs params) :executing)
+    (let [params (learn/params db)
+          search-term (learn/search-term db)
+          query-name (if search-term
+                       :search_blogs
+                       :blogs)
+          data-path (if search-term
+                      learn-events/search-blogs-path
+                      learn-events/std-blogs-path)]
+      (if (= (graphql/state db query-name params) :executing)
         (map (partial hash-map :id) (range learn/page-size))
-        (get-in (graphql/result db :blogs params) [:blogs :blogs])))))
+        (get-in (graphql/result db query-name params) data-path)))))
 
 (reg-sub
   ::db
@@ -80,9 +93,10 @@
   :<- [::all-blogs]
   (fn [[liked applied db all-blogs] _]
     (let [params (learn/params db)
-          state (graphql/state db :blogs params)
+          query-name :recommended_jobs
+          state (graphql/state db query-name params)
           amount-to-display (max-amount-to-display all-blogs)
-          recommended (get-in (graphql/result db :blogs params) [:jobs-search :promoted])]
+          recommended (get-in (graphql/result db query-name params) [:jobs-search :promoted])]
       (if (= state :executing)
         (->> (range amount-to-display)
              (map (partial hash-map :id)))
@@ -96,9 +110,10 @@
   :<- [::all-blogs]
   (fn [[db all-blogs] _]
     (let [params (learn/params db)
-          state (graphql/state db :blogs params)
+          query-name :recommended_issues
+          state (graphql/state db query-name params)
           amount-to-display (max-amount-to-display all-blogs)
-          recommended (get-in (graphql/result db :blogs params) [:query-issues :issues])]
+          recommended (get-in (graphql/result db query-name params) [:query-issues :issues])]
       (if (= state :executing)
         (->> (range amount-to-display)
              (map (partial hash-map :id)))

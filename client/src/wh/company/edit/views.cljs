@@ -501,7 +501,7 @@
     (cond (pos? cost)
           [:h2 (int->dollars (cost/calculate-monthly-cost cost discount coupon)) [:i "/" (:per package)]]
           (and accepted-at recurring-fee)
-          [:h2 (int->dollars (cost/calculate-monthly-cost recurring-fee discount coupon)) [:i "/month" ]]
+          [:h2 (int->dollars (cost/calculate-monthly-cost recurring-fee discount coupon)) [:i "/month"]]
           :else [:div.empty])
     (when (and (or (pos? cost) (and accepted-at recurring-fee)) (:description billing-period))
       [:div.company-edit__hiring-pod__title__billing-description

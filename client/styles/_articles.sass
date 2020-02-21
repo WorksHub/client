@@ -28,6 +28,42 @@
 .articles-page__blogs
   line-height: normal
 
+  .wh-formx
+    margin-bottom: 8px
+
+.articles-page__search-form
+  position: relative
+
+  .input
+    padding-right: 18px
+    padding-left: 18px
+    border: 2px solid transparent
+
+  .input::placeholder
+    font-size: 14px
+    font-weight: 500
+
+  .input:focus
+    box-shadow: 0 0 0 2px $red
+
+  .search-button
+    background-color: transparent
+    border: none
+    cursor: pointer
+    height: 100%
+    position: absolute
+    right: 10px
+
+    &:focus
+      outline: none
+      box-shadow: 0 0 0 2px $red
+
+    .icon
+      fill: $greyish
+      height: 22px
+      width: 22px
+
+
 @keyframes bounceInLeft
   from,
   60%,

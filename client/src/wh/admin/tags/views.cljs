@@ -68,8 +68,8 @@
                     :max 1.0
                     :step 0.001
                     :value (or @temp-weight weight)
-                    :on-change #(reset! temp-weight (js/parseFloat (.. % -target -value)))}]
-           ]])
+                    :on-change #(reset! temp-weight (js/parseFloat (.. % -target -value)))}]]])
+
        #_[:div.edit-tags__tag-row__actions ;; TODO add ability to delete tags?
           [icon "delete"
            :on-click #(dispatch [::events/delete-tag id])]]])))

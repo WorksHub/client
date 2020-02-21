@@ -47,11 +47,6 @@
        :company
        (profile/->company)))
 
-(defn cached-company-extra-data
-  [db]
-  (->> (cache/result db :company-issues-and-blogs {:slug (company-slug db)})
-       :company))
-
 #?(:cljs
    (defmethod on-page-load :company [db]
      (list (into [:graphql/query] (conj (initial-query db) {:on-success [::fetch-stats]

@@ -18314,6 +18314,34 @@ h3 {
 
 .articles-page__blogs {
   line-height: normal; }
+  .articles-page__blogs .wh-formx {
+    margin-bottom: 8px; }
+
+.articles-page__search-form {
+  position: relative; }
+  .articles-page__search-form .input {
+    padding-right: 18px;
+    padding-left: 18px;
+    border: 2px solid transparent; }
+  .articles-page__search-form .input::placeholder {
+    font-size: 14px;
+    font-weight: 500; }
+  .articles-page__search-form .input:focus {
+    box-shadow: 0 0 0 2px #ff7c6e; }
+  .articles-page__search-form .search-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    height: 100%;
+    position: absolute;
+    right: 10px; }
+    .articles-page__search-form .search-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #ff7c6e; }
+    .articles-page__search-form .search-button .icon {
+      fill: #adadad;
+      height: 22px;
+      width: 22px; }
 
 @keyframes bounceInLeft {
   from,

@@ -2,8 +2,9 @@
   (:require
     #?(:cljs [reagent.core :as r])
     [re-frame.core :refer [dispatch]]
-    [wh.blogs.learn.events :as events]
+    [wh.components.icons :as icons]
     [wh.blogs.learn.subs :as subs]
+    [wh.blogs.learn.db :as learn-db]
     [wh.components.cards :refer [blog-card blog-row]]
     [wh.components.pagination :refer [pagination]]
     [wh.components.issue :as issue]
@@ -14,6 +15,7 @@
     [wh.components.job :refer [job-card]]
     [wh.slug :as slug]
     [wh.util :as util]
+    [wh.re-frame :as rf]
     [wh.components.tag :as tag]
     [wh.re-frame.subs :refer [<sub]]))
 
@@ -122,6 +124,43 @@
        :clj  (some-> (render)
                      (conj [:script (interop/listen-newsletter-form)])))))
 
+(defn search-btn [search?]
+  (let [icon-name (if search? "search-new" "close")
+        aria-label (if search? "Search button" "Reset search")]
+    [:button.search-button
+     {:aria-label aria-label}
+     [icons/icon icon-name]]))
+
+(defn search []
+  (let [search-term (<sub [::subs/search-term])
+        local-search (rf/atom search-term)]
+    (fn []
+      (let [search-term (<sub [::subs/search-term])
+            search? #?(:cljs (or (nil? @local-search)
+                                 (not= @local-search search-term))
+                       :clj true)]
+        [:form.wh-formx.articles-page__search-form
+         #?(:cljs {:on-submit (if search?
+                                #(do (.preventDefault %)
+                                     (dispatch [:wh.events/nav--set-query-param
+                                                learn-db/search-query-name
+                                                @local-search]))
+                                #(do (.preventDefault %)
+                                     (dispatch [:wh.events/nav--set-query-param
+                                                learn-db/search-query-name
+                                                nil])
+                                     (reset! local-search nil)))})
+         [:input.input
+          (merge {:name learn-db/search-query-name
+                  :placeholder "Search articles..."
+                  :type "text"
+                  :id "blog-search-box"
+                  :value @local-search}
+                 #?(:cljs {:on-change #(reset! local-search (.. % -target -value))}))]
+         [:input {:type "hidden"
+                  :name "interaction"
+                  :value 1}]
+         [search-btn search?]]))))
 
 (defn page []
   (let [blogs (<sub [::subs/all-blogs])
@@ -137,6 +176,7 @@
      (learn-header)
      [:div.split-content
       [:div.split-content__main.articles-page__blogs
+       [search]
        [:div.is-hidden-desktop
         [tag-picker tags]]
        (for [blog ch1]

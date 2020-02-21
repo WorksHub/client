@@ -27,7 +27,7 @@
        [url-icons other-urls "candidate-pod__other-urls"]
        [:p.candidate-pod__name
         [link (if (str/blank? name) "Profile" name) :candidate :id object-id]]
-       [:p [:a.a--underlined {:href (str "mailto:" email)} email] (when-not (str/blank? location) (str " | " location) )]
+       [:p [:a.a--underlined {:href (str "mailto:" email)} email] (when-not (str/blank? location) (str " | " location))]
        [:p.candidate-pod__cv-links
         (when hubspot-profile-url
           [:a.a--underlined {:href hubspot-profile-url
