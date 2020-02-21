@@ -93,9 +93,9 @@
               (cond applied?
                     "Applied"
                     user-has-applied?
-                    "1-Click Apply"
+                    "Instant Apply"
                     :else
-                    "Easy Apply")]]))
+                    "Apply")]]))
         [:a {:href (routes/path :edit-job :params {:id id})}
          [:button.button "Edit"]]))
     (when (and logged-in? (not skeleton?) small?)

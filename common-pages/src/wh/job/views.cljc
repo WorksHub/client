@@ -102,8 +102,8 @@
             :disabled (or applied? (<sub [:user/company?]))
             :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])})
          (cond applied? "Applied"
-               (some? (<sub [:user/applied-jobs])) "1-Click Apply"
-               :else "Easy Apply")]
+               (some? (<sub [:user/applied-jobs])) "Instant Apply"
+               :else "Apply")]
         [:div
          [:a {:href (routes/path :company-jobs :params {:slug (<sub [::subs/company-slug])})}
           [:button.button.button--medium.button--inverted.button--ellipsis
@@ -419,8 +419,8 @@
     {:id "job-apply-sticky__apply-button"
      :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])}
     (if (some? (<sub [:user/applied-jobs]))
-      "1-Click Apply"
-      "Easy Apply")]])
+      "Instant Apply"
+      "Apply")]])
 
 (defn job-details
   []
