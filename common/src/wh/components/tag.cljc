@@ -47,8 +47,10 @@
 (defn tag-list
   [element-type tags]
   (when (not-empty tags)
-    (into [:ul.tags.tags--inline.tags--profile]
-          (map (fn [t] [tag element-type t]) tags))))
+    (->> tags
+         (sort-by #(get % :weight 0) >)
+         (map (fn [t] [tag element-type t]))
+         (into [:ul.tags.tags--inline.tags--profile]))))
 
 (defn strs->tag-list [element-type strs {:keys [f]
                                          :or   {f identity}}]

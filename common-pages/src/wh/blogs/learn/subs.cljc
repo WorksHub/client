@@ -18,14 +18,6 @@
       (str/capitalize tag))))
 
 (reg-sub
-  ::total-pages
-  (fn [db _]
-    (let [result (graphql/result db :blogs (learn/params db))
-          count (or (get-in result [:blogs :pagination :total]) learn/page-size)]
-      #?(:clj (int (Math/ceil (/ count learn/page-size)))
-         :cljs (js/Math.ceil (/ count learn/page-size))))))
-
-(reg-sub
   ::current-page
   (fn [db _]
     (learn/current-page db)))
@@ -40,8 +32,8 @@
   :<- [::current-tag]
   (fn [current-tag _]
     (if current-tag
-      (str "Learn " current-tag)
-      "Learn")))
+      (str "Articles: " current-tag)
+      "Articles")))
 
 (reg-sub
   ::sub-header
@@ -72,6 +64,22 @@
       (if (= (graphql/state db query-name params) :executing)
         (map (partial hash-map :id) (range learn/page-size))
         (get-in (graphql/result db query-name params) data-path)))))
+
+(reg-sub
+  ::total-pages
+  (fn [db _]
+    (let [params (learn/params db)
+          search-term (learn/search-term db)
+          query-name (if search-term
+                       :search_blogs
+                       :blogs)
+          total-blogs-path (if search-term
+                             [:search-blogs :pagination :total]
+                             [:blogs :pagination :total])
+          result (graphql/result db query-name params)
+          count (or (get-in result total-blogs-path) learn/page-size)]
+      #?(:clj (int (Math/ceil (/ count learn/page-size)))
+         :cljs (js/Math.ceil (/ count learn/page-size))))))
 
 (reg-sub
   ::db

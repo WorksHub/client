@@ -4556,7 +4556,7 @@ a.navbar-item,
       height: 44px;
       width: 100%; }
       .navbar .navbar__search form:focus-within {
-        border: 2px solid #6E7F89; }
+        border: 2px solid #ff7c6e; }
         .navbar .navbar__search form:focus-within .search {
           font-weight: 400;
           padding-left: 14px; }
@@ -4597,7 +4597,7 @@ a.navbar-item,
       padding: 0;
       border: none;
       outline: none;
-      color: #adadad;
+      fill: #6E7F89;
       width: 44px;
       height: 100%;
       background-color: #f4f5f8; }
@@ -4609,10 +4609,8 @@ a.navbar-item,
           background-color: unset; } }
       @media screen and (min-width: 1008px) {
         .navbar .navbar__search .search-button .icon {
-          max-width: 26px;
-          max-height: 26px;
-          min-width: 26px;
-          min-height: 26px; } }
+          width: 22px;
+          height: 22px; } }
       @media screen and (max-width: 1007px) {
         .navbar .navbar__search .search-button .icon {
           width: 100%;
@@ -4776,18 +4774,22 @@ a.navbar-item,
     align-items: center;
     justify-content: flex-start;
     width: 100%; }
+    .navbar .mobile-search-form .search-button {
+      fill: #6E7F89; }
     .navbar .mobile-search-form .search {
       font-size: 24px;
       font-weight: 600;
       border-top: 0;
       border-left: 0;
       border-right: 0;
-      border-bottom: 4px solid #6E7F89;
+      border-bottom: 4px solid #adadad;
       background: none;
       outline: none;
       color: #6E7F89;
       display: inline-block;
       width: 100%; }
+    .navbar .mobile-search-form .search::placeholder {
+      color: #adadad; }
   .navbar .mobile-search__close {
     position: fixed;
     right: 10px;
@@ -5958,6 +5960,9 @@ a.navbar-item,
   .wh-formx .text-field-control--suggestable input:hover, .wh-formx .text-field-control--suggestable input:focus {
     padding-left: 39px !important; }
 
+.wh-formx .text-field-control--suggestable .icon {
+  fill: #6E7F89; }
+
 @media screen and (max-width: 1007px) {
   .wh-formx .text-field-control--removable {
     display: flex;
@@ -6426,6 +6431,7 @@ a.navbar-item,
   right: 0; }
 
 .card--blog {
+  height: 395px;
   overflow: hidden;
   font-size: 10px;
   line-height: 1.8; }
@@ -18339,7 +18345,7 @@ h3 {
       outline: none;
       box-shadow: 0 0 0 2px #ff7c6e; }
     .articles-page__search-form .search-button .icon {
-      fill: #adadad;
+      fill: #6E7F89;
       height: 22px;
       width: 22px; }
 

@@ -227,14 +227,14 @@
     [:button.search-button (merge {:id "navbar__search-btn"
                                    :aria-label "Search button"}
                                   #?(:cljs {:on-click #(reset! tasks-open? false)}))
-     [icon "search"]]]
+     [icon "search-new"]]]
    [:div.navbar-item.is-hidden-desktop
     (interop/multiple-on-click (interop/set-is-open-on-click mobile-search-id true)
                                (interop/set-is-open-on-click data/logged-in-menu-id false)
                                (interop/set-no-scroll-on-click mobile-search-id true))
     [:button.search-button
      {:id "navbar__search-btn"
-      :aria-label "Search button"} [icon "search"]]]])
+      :aria-label "Search button"} [icon "search-new"]]]])
 
 (defn mobile-search
   [default-value query-params]
@@ -255,7 +255,7 @@
                                   (js/disableNoScroll)
                                   (submit-search "navbar__mobile-search-input"))}))
     [:button.search-button
-     [icon "search"]]
+     [icon "search-new"]]
     [:input.search
      {:id "navbar__mobile-search-input"
       :name "search"

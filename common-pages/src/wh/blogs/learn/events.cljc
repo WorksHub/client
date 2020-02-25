@@ -47,7 +47,8 @@
                               [[:results [:id :title :feature :author
                                           :formatted_creation_date :reading_time
                                           :creator :upvote_count :published
-                                          [:tags :fragment/tagFields]]]]]]})
+                                          [:tags :fragment/tagFields]]]
+                               [:pagination [:total :count]]]]]})
 (reg-query :search_blogs search-blogs-query)
 (def search-blogs-path [:search-blogs :results])
 

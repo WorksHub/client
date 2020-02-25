@@ -118,7 +118,7 @@ $navbar-overlay-content-width: 260px
       height: 44px
       width: 100%
       &:focus-within
-        border: 2px solid $steel-gray
+        border: 2px solid $red
         .search
           font-weight: $font-regular
           padding-left: 14px
@@ -158,7 +158,7 @@ $navbar-overlay-content-width: 260px
       padding: 0
       border: none
       outline: none
-      color: $greyish
+      fill: $steel-gray
       width: 44px
       height: 100%
       background-color: $pale-gray
@@ -168,10 +168,8 @@ $navbar-overlay-content-width: 260px
         background-color: unset
       .icon
         +desktop
-          max-width: 26px
-          max-height: 26px
-          min-width: 26px
-          min-height: 26px
+          width: 22px
+          height: 22px
         +mobile
           width: 100%
           height: 100%
@@ -344,18 +342,22 @@ $navbar-overlay-content-width: 260px
     align-items: center
     justify-content: flex-start
     width: 100%
+    .search-button
+      fill: $steel-gray
     .search
       font-size: 24px
       font-weight: $font-semi-bold
       border-top: 0
       border-left: 0
       border-right: 0
-      border-bottom: 4px solid $steel-gray
+      border-bottom: 4px solid $greyish
       background: none
       outline: none
       color: $steel-gray
       display: inline-block
       width: 100%
+    .search::placeholder
+      color: $greyish
 
   .mobile-search__close
     position: fixed

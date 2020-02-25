@@ -142,13 +142,10 @@
         [:form.wh-formx.articles-page__search-form
          #?(:cljs {:on-submit (if search?
                                 #(do (.preventDefault %)
-                                     (dispatch [:wh.events/nav--set-query-param
-                                                learn-db/search-query-name
-                                                @local-search]))
+                                     (dispatch [:wh.events/nav--query-params {learn-db/search-query-name @local-search
+                                                                              "page"                     1}]))
                                 #(do (.preventDefault %)
-                                     (dispatch [:wh.events/nav--set-query-param
-                                                learn-db/search-query-name
-                                                nil])
+                                     (dispatch [:wh.events/nav--query-params {"page"                     1}])
                                      (reset! local-search nil)))})
          [:input.input
           (merge {:name learn-db/search-query-name
@@ -173,7 +170,7 @@
                             (take ch-size))
                        (drop (* 2 ch-size) blogs)]]
     [:div.main.articles-page
-     (learn-header)
+     [learn-header]
      [:div.split-content
       [:div.split-content__main.articles-page__blogs
        [search]

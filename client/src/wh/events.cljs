@@ -127,15 +127,19 @@
   ::nav--query-params
   db/default-interceptors
   (fn [{db :db} [query-params]]
-    {:navigate [(:wh.db/page db) :params (:wh.db/page-params db) :query-params query-params]}))
+    {:navigate [(:wh.db/page db)
+                :params (:wh.db/page-params db)
+                :query-params (util/remove-nils query-params)]}))
 
 (reg-event-fx
   ::nav--set-query-param
   db/default-interceptors
   (fn [{db :db} [key value]]
-    {:navigate [(:wh.db/page db) :params (:wh.db/page-params db) :query-params (if (nil? value)
-                                                                                 (dissoc (:wh.db/query-params db) key)
-                                                                                 (assoc (:wh.db/query-params db) key value))]}))
+    {:navigate [(:wh.db/page db)
+                :params (:wh.db/page-params db)
+                :query-params (if (nil? value)
+                                (dissoc (:wh.db/query-params db) key)
+                                (assoc (:wh.db/query-params db) key value))]}))
 
 (reg-event-fx
   ::contribute
