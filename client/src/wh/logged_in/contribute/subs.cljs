@@ -185,7 +185,7 @@
   (fn [db]
     (and
       (= :tried (::contribute/save-status db))
-      (not (s/valid? ::contribute/blog db)))))
+      (not (s/valid? (contribute/select-spec db) db)))))
 
 (reg-sub
   ::title-validation-error

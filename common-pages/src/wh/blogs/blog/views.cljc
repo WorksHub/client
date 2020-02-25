@@ -132,16 +132,18 @@
     :blog-not-found [:div.main.main--center-content
                      [not-found/not-found]]
     :unknown-error [:div.main "Loading error"]
-    (let [skeleton? (= :executing (<sub [:graphql/state :blog {:id (<sub [:wh/page-param :id])}]))]
+    (let [skeleton? (= :executing (<sub [:graphql/state :blog {:id (<sub [:wh/page-param :id])}]))
+          feature (<sub [::subs/feature])]
       [:div {:class (util/merge-classes "blog"
                                         "main"
                                         (when skeleton? "blog--skeleton"))}
        [:div.blog__hero-container
         (if skeleton?
           [:div.blog__hero]
-          [:img.blog__hero
-           {:src (<sub [::subs/feature])
-            :alt "Blog hero image"}])]
+          (when feature
+            [:img.blog__hero
+             {:src feature
+              :alt "Blog hero image"}]))]
        (if skeleton?
          [:div.blog__content
           [:div.blog-section__width [:h1.blog-header]]

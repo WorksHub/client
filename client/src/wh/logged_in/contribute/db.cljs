@@ -19,8 +19,16 @@
 (s/def ::selected-tag-ids  (s/coll-of ::tag-id :distinct true :min-count 1))
 (s/def ::published         boolean?)
 
-(s/def ::blog (s/keys :req [::title ::author ::feature ::body ::selected-tag-ids]
-                      :opt [::original-source ::company-id]))
+(s/def ::blog-publish (s/keys :req [::title ::author ::feature ::body ::selected-tag-ids]
+                              :opt [::original-source ::company-id]))
+
+(s/def ::blog-save (s/keys :req [::title ::author ::body ::selected-tag-ids]
+                           :opt [::feature ::original-source ::company-id]))
+
+(defn select-spec [blog]
+  (if (::published blog)
+    ::blog-publish
+    ::blog-save))
 
 (s/def ::company-id   (s/nilable ::primitives/non-empty-string))
 (s/def ::company-name (s/nilable ::primitives/non-empty-string))

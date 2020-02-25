@@ -173,20 +173,17 @@
                :variables {:id id}}}))
 
 (defn translate-blog [blog]
-  (let [r (-> (util/namespace-map "wh.logged-in.contribute.db"
-                                  (cases/->kebab-case blog))
-              (assoc ::contribute/selected-tag-ids (->> blog
-                                                        :tags
-                                                        (map :id)
-                                                        set))
-              (update ::contribute/verticals (fnil set []))
-              (assoc  ::contribute/company-id (get-in blog [:company :id]))
-              (assoc  ::contribute/company-name (get-in blog [:company :name]))
-              (dissoc ::contribute/company))
-        orig-source? (::contribute/original-source r)] ;; remove OS if it's nil; it's optional
-    (if-not orig-source?
-      (dissoc r ::contribute/original-source)
-      r)))
+  (-> (util/namespace-map "wh.logged-in.contribute.db"
+                          (cases/->kebab-case blog))
+      (assoc ::contribute/selected-tag-ids (->> blog
+                                                :tags
+                                                (map :id)
+                                                set))
+      (update ::contribute/verticals (fnil set []))
+      (assoc  ::contribute/company-id (get-in blog [:company :id]))
+      (assoc  ::contribute/company-name (get-in blog [:company :name]))
+      (dissoc ::contribute/company)
+      (util/remove-nils)))
 
 (reg-event-fx
   ::fetch-blog-success
@@ -262,33 +259,35 @@
   ::save-blog
   db/default-interceptors
   (fn [{db :db} [res]]
-    (if-let [ed (spec/explain-data ::contribute/blog (::contribute/sub-db db))]
-      (do
-        (js/console.log "invalid" ed)
-        {:db (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
-         :scroll-into-view (find-first-error-id (::contribute/sub-db db))
-         :dispatch [:error/close-global]})
-      (let [id (get-in db [::contribute/sub-db ::contribute/id])
-            selected-tag-ids (get-in db [::contribute/sub-db ::contribute/selected-tag-ids])
-            save-blog-fields [:id :title :feature :author :authorId
-                              :published :body :creator :originalSource
-                              :verticals :primaryVertical :companyId :tagIds]
-            blog (-> db
-                     ::contribute/sub-db
-                     (dissoc ::contribute/tags)
-                     (assoc ::contribute/tag-ids selected-tag-ids)
-                     (assoc ::contribute/primary-vertical (::db/vertical db))
-                     cases/->camel-case-keys-str
-                     (select-keys (map name save-blog-fields))
-                     (dissoc (when id "creator"))
-                     (util/remove-nils))]
-        {:graphql {:query      (if id update-blog-mutation create-blog-mutation)
-                   :variables  (if id {:update_blog blog} {:create_blog blog})
-                   :on-success (if id [::save-success] [::create-success])
-                   :on-failure [::save-failure]}
-         :db (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
-         :dispatch-n [[:error/close-global]
-                      [::pages/set-loader]]}))))
+    (let [blog (::contribute/sub-db db)
+          ed (spec/explain-data (contribute/select-spec blog) blog)]
+      (if ed
+        (do
+          (js/console.log "invalid" ed)
+          {:db (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
+           :scroll-into-view (find-first-error-id (::contribute/sub-db db))
+           :dispatch [:error/close-global]})
+        (let [id (get-in db [::contribute/sub-db ::contribute/id])
+              selected-tag-ids (get-in db [::contribute/sub-db ::contribute/selected-tag-ids])
+              save-blog-fields [:id :title :feature :author :authorId
+                                :published :body :creator :originalSource
+                                :verticals :primaryVertical :companyId :tagIds]
+              blog (-> db
+                       ::contribute/sub-db
+                       (dissoc ::contribute/tags)
+                       (assoc ::contribute/tag-ids selected-tag-ids)
+                       (assoc ::contribute/primary-vertical (::db/vertical db))
+                       cases/->camel-case-keys-str
+                       (select-keys (map name save-blog-fields))
+                       (dissoc (when id "creator"))
+                       (util/remove-nils))]
+          {:graphql {:query      (if id update-blog-mutation create-blog-mutation)
+                     :variables  (if id {:update_blog blog} {:create_blog blog})
+                     :on-success (if id [::save-success] [::create-success])
+                     :on-failure [::save-failure]}
+           :db (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
+           :dispatch-n [[:error/close-global]
+                        [::pages/set-loader]]})))))
 
 (reg-event-db
   ::set-published
