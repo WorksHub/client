@@ -27,9 +27,20 @@
      "Start work")])
 
 (defn sidebox-row [icon-name content skeleton? & [class]]
-  [:div {:class (util/merge-classes "issue__infobox-row" icon-name (when skeleton? "skeleton") class)}
-   [icon (if skeleton? "circle" icon-name)]
-   [:span (when-not skeleton? content)]])
+  (let [container-class (util/merge-classes
+                         "issue__infobox-row" icon-name
+                         (when skeleton? "skeleton") class)]
+    [:div {:class container-class}
+     [icon (if skeleton? "circle" icon-name)]
+     [:span (when-not skeleton? content)]]))
+
+(defn sidebox-row-link [icon-name content href skeleton? & [class]]
+  (let [container-class (util/merge-classes
+                         "issue__infobox-row issue__infobox-row-link"
+                         icon-name (when skeleton? "skeleton") class)]
+    [:a {:class container-class :href href}
+     [icon (if skeleton? "circle" icon-name)]
+     [:span (when-not skeleton? content)]]))
 
 (defn infobox []
   (let [skeleton? (<sub [::subs/issue-loading?])
@@ -50,7 +61,10 @@
          [:li.tag.issue__compensation.is-pulled-right compensation])]]
      [:div.issue__infobox.is-hidden-mobile
       [sidebox-row "issue-status" (issue/derived-status->str derived-status) skeleton? (str "issue-status--" derived-status)]
-      [sidebox-row "pr" (str "Pull requests: " (<sub [::subs/pr-count])) skeleton?]
+      [sidebox-row-link "pr"
+       (str "Pull requests: " (<sub [::subs/pr-count]))
+       (<sub [::subs/repo-prs-url])
+       skeleton?]
       [sidebox-row "contributors" (str "Contributors: " (<sub [::subs/contributor-count])) skeleton?]
       [sidebox-row (level->icon level) (str "Level: " (level->str level)) skeleton?]]
      [:ul.tags.is-hidden-mobile
@@ -105,8 +119,7 @@
       [:section.issue__description--skeleton]
       [:section.issue__description.issue__section-content
        [:h3 "Description"]
-       #?(:cljs [:div.issue__description-content {:dangerouslySetInnerHTML {:__html body}}]
-          :clj  [:div.issue__description-content (putil/html->hiccup body)])
+       [putil/html body]
        [:div.issue__labels
         (into [:ul.tags]
               (for [label (<sub [::subs/labels])]
