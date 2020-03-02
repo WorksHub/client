@@ -509,6 +509,8 @@ $description-height: 400px
   line-height: 18px
   justify-content: space-between
   align-items: center
+  div:first-child
+    flex: 1 0 300px
   span
     font-size: 14px
     line-height: 20px
@@ -521,12 +523,14 @@ $description-height: 400px
     height: 32px
 
 .job__apply-buttons--condensed
+  display: flex
+  justify-content: flex-end
+  flex-wrap: wrap
   .button, div
     display: inline
-    max-width: 145px
-    min-width: 145px
-    &:first-of-type
-      margin-right: 5px
+  .button
+    margin-left: 5px
+    margin-bottom: 5px
   div:nth-of-type(2)
     min-width: 305px
 

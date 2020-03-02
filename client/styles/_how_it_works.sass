@@ -140,6 +140,7 @@
       padding-top: 20px
       padding-bottom: 60px
   .button
+    margin: 0 auto
     +mobile
       margin-bottom: 12px
 
@@ -270,8 +271,13 @@
     p
       padding-left: 24px
 
+.how-it-works__faq__buttons
+  padding-bottom: 60px
+
 .how-it-works__benefits__buttons,
 .how-it-works__faq__buttons
+  display: flex
+  justify-content: center
   margin-top: 32px
   .button
     +desktop
@@ -448,11 +454,6 @@
       +mobile
         font-size: 14px
       line-height: 26px
-
-.how-it-works__faq__buttons
-  display: flex
-  justify-content: center
-  padding-bottom: 60px
 
 .how-it-works__type-slider
   display: flex
