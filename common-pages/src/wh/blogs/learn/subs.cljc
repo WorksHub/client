@@ -9,7 +9,8 @@
     [wh.common.job :as jobc]
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.components.pagination :as pagination]
-    [wh.graphql-cache :as graphql]))
+    [wh.graphql-cache :as graphql]
+    [wh.util :as util]))
 
 (reg-sub
   ::current-tag
@@ -62,7 +63,7 @@
                       learn-events/search-blogs-path
                       learn-events/std-blogs-path)]
       (if (= (graphql/state db query-name params) :executing)
-        (map (partial hash-map :id) (range learn/page-size))
+        (util/maps-with-id learn/page-size)
         (get-in (graphql/result db query-name params) data-path)))))
 
 (reg-sub
@@ -106,8 +107,7 @@
           amount-to-display (max-amount-to-display all-blogs)
           recommended (get-in (graphql/result db query-name params) [:jobs-search :promoted])]
       (if (= state :executing)
-        (->> (range amount-to-display)
-             (map (partial hash-map :id)))
+        (util/maps-with-id amount-to-display)
         (->> (jobs/add-interactions liked applied recommended)
              (map #(assoc % :display-location (jobc/format-job-location (:location %) (:remote %))))
              (take amount-to-display))))))
@@ -123,8 +123,7 @@
           amount-to-display (max-amount-to-display all-blogs)
           recommended (get-in (graphql/result db query-name params) [:query-issues :issues])]
       (if (= state :executing)
-        (->> (range amount-to-display)
-             (map (partial hash-map :id)))
+        (util/maps-with-id amount-to-display)
         (->> recommended
              (map gql-issue->issue)
              (take amount-to-display))))))

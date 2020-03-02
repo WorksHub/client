@@ -2,22 +2,23 @@
   (:require
     #?(:cljs [reagent.core :as r])
     [re-frame.core :refer [dispatch]]
-    [wh.components.icons :as icons]
-    [wh.blogs.learn.subs :as subs]
     [wh.blogs.learn.db :as learn-db]
+    [wh.blogs.learn.subs :as subs]
     [wh.components.cards :refer [blog-card blog-row]]
-    [wh.components.pagination :refer [pagination]]
-    [wh.components.issue :as issue]
     [wh.components.carousel :refer [carousel]]
-    [wh.interop :as interop]
-    [wh.components.pods.candidates :as candidate-pods]
-    [wh.routes :as routes]
+    [wh.components.icons :as icons]
+    [wh.components.issue :as issue]
     [wh.components.job :refer [job-card]]
-    [wh.slug :as slug]
-    [wh.util :as util]
-    [wh.re-frame :as rf]
+    [wh.components.pagination :refer [pagination]]
+    [wh.components.pods.candidates :as candidate-pods]
+    [wh.components.recommendation-cards :as recommendation-cards]
     [wh.components.tag :as tag]
-    [wh.re-frame.subs :refer [<sub]]))
+    [wh.interop :as interop]
+    [wh.re-frame :as rf]
+    [wh.re-frame.subs :refer [<sub]]
+    [wh.routes :as routes]
+    [wh.slug :as slug]
+    [wh.util :as util]))
 
 (defn learn-header
   []
@@ -35,34 +36,6 @@
              :cljs {:on-click #(dispatch (if logged-in?
                                            [:wh.events/nav :contribute]
                                            [:wh.events/contribute]))}) "Write Article"])]]]))
-
-(defn recommended-jobs []
-  (let [jobs         (<sub [::subs/recommended-jobs])
-        logged-in?   (<sub [:user/logged-in?])
-        has-applied? (some? (<sub [:user/applied-jobs]))
-        company-id   (<sub [:user/company-id])
-        admin?       (<sub [:user/admin?])]
-    (when-not (= (count jobs) 0)
-      [:section.recommendation
-       [:h2 "Recommended Jobs"]
-       (for [job jobs]
-         ^{:key (:id job)}
-         [:div
-          [job-card job {:logged-in?        logged-in?
-                         :small?            true
-                         :user-has-applied? has-applied?
-                         :user-is-company?  (not (nil? company-id))
-                         :user-is-owner?    (or admin? (= company-id (:company-id job)))}]])])))
-
-(defn recommended-issues []
-  (let [issues (<sub [::subs/recommended-issues])]
-    (when-not (= (count issues) 0)
-      [:section.recommendation
-       [:h2 "Recommended Issues"]
-       [:div.issues__list
-        (for [issue issues]
-          ^{:key (:id issue)}
-          [issue/issue-card issue {:small? true}])]])))
 
 (defn tag-picker [tags]
   [:section.split-content-section.tag-picker
@@ -199,8 +172,12 @@
       [:div.split-content__side.is-hidden-mobile
        [tag-picker tags]
        [candidate-pods/candidate-cta]
-       [recommended-jobs]
-       [recommended-issues]]]]))
+       [recommendation-cards/jobs {:jobs           (<sub [::subs/recommended-jobs])
+                                   :logged-in?     (<sub [:user/logged-in?])
+                                   :instant-apply? (some? (<sub [:user/applied-jobs]))
+                                   :company-id     (<sub [:user/company-id])
+                                   :admin?         (<sub [:user/admin?])}]
+       [recommendation-cards/issues {:issues (<sub [::subs/recommended-issues])}]]]]))
 
 
 

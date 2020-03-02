@@ -6,9 +6,12 @@
     [clojure.string :as str]
     [wh.blogs.blog.events :as events]
     [wh.blogs.blog.subs :as subs]
+    [wh.components.cards :as cards]
     [wh.components.common :refer [link]]
     [wh.components.icons :refer [icon url-icons]]
     [wh.components.job :refer [job-card]]
+    [wh.components.pods.candidates :as candidate-pods]
+    [wh.components.recommendation-cards :as recommendation-cards]
     [wh.components.tag :as tag]
     [wh.components.not-found :as not-found]
     [wh.pages.util :as putil]
@@ -101,6 +104,18 @@
                                          :user-is-owner?    (or admin? (= company-id (:company-id job)))
                                          :apply-source      "blog-recommended-job"}]]))]))))
 
+#?(:cljs
+   (defn social-icons []
+     (when (<sub [:wh.subs/show-blog-social-icons?])
+       [:div {:class "blog-social-icons"}
+        [share-buttons]
+        [upvotes]])))
+
+#?(:cljs
+   (defonce add-social-icons
+     (do
+       (swap! wh.views/extra-overlays conj [social-icons]))))
+
 (defn author-info []
   (when-let [info (<sub [::subs/author-info])]
     (let [{:keys [image-url name summary other-urls]} info]
@@ -114,72 +129,73 @@
          [:div.author-info__summary summary]
          [url-icons other-urls "author-info__other-urls"]]]])))
 
-#?(:cljs
-   (defn social-icons []
-     (when (<sub [:wh.subs/show-blog-social-icons?])
-       [:div {:class "blog-social-icons"}
-        [share-buttons]
-        [upvotes]])))
+(defn blog-info []
+  [:div.blog-info
+   [:div.author
+    [:span.blog-info__author-name
+     {:class (when (<sub [::subs/author-info]) "link")
+      :on-click #(dispatch [::events/toggle-author-info])}
+     (<sub [::subs/author])] " "
+    [:span.blog-info__datetime
+     (<sub [::subs/formatted-creation-date]) " "
+     (when (> (<sub [::subs/reading-time]) 0)
+       (str " (" (<sub [::subs/reading-time]) " min read)"))]
+    [author-info]]])
 
-#?(:cljs
-   (defonce add-social-icons
-     (do
-       (swap! wh.views/extra-overlays conj [social-icons]))))
+(defn blog-original-source []
+  (when (<sub [::subs/show-original-source?])
+    [:div.blog-body.blog-section__width.blog-body__original-source
+     [:p "Originally published on "
+      [:a {:href (<sub [::subs/original-source])
+           :target "_blank" :rel "noopener"}
+       (<sub [::subs/original-source-domain])]]]))
 
-(defn page-render
-  []
-  (case (<sub [:graphql/error-key :blog {:id (<sub [:wh/page-param :id])}])
+(defn blog-content []
+  [:div.blog__content
+   [:div.blog-section__width
+    [:h1.blog-header (<sub [::subs/title])]
+    [:div.blog-header__edit-button
+     (when (<sub [::subs/can-edit?])
+       [link [:button.button "Edit Blog"]
+        :contribute-edit :id (<sub [::subs/id])])
+     (when (<sub [::subs/show-unpublished?])
+       [:span.card__label.card__label--unpublished.card__label--blog-header "unpublished"])]
+    [blog-info]
+    [tag/tag-list :a (->> (<sub [::subs/tags])
+                          (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]]
+   [:div.blog-body.blog-section__width
+    [putil/html (<sub [::subs/html-body])]]
+   [blog-original-source]])
+
+(defn blog-hero []
+  (let [feature (<sub [::subs/feature])]
+    [:div.blog__hero-container
+     (if-not feature
+       [:div.blog__hero.blog__hero--skeleton]
+       [:img.blog__hero
+        {:src feature
+         :alt "Blog hero image"}])]))
+
+(defn page-render []
+  (case (<sub [::subs/blog-error])
     :blog-not-found [:div.main.main--center-content
                      [not-found/not-found]]
     :unknown-error [:div.main "Loading error"]
-    (let [skeleton? (= :executing (<sub [:graphql/state :blog {:id (<sub [:wh/page-param :id])}]))
-          feature (<sub [::subs/feature])]
-      [:div {:class (util/merge-classes "blog"
-                                        "main"
-                                        (when skeleton? "blog--skeleton"))}
-       [:div.blog__hero-container
-        (if skeleton?
-          [:div.blog__hero]
-          (when feature
-            [:img.blog__hero
-             {:src feature
-              :alt "Blog hero image"}]))]
-       (if skeleton?
-         [:div.blog__content
-          [:div.blog-section__width [:h1.blog-header]]
-          [:div.blog-body.blog-section__width
-           [:p] [:p] [:p]]]
-         [:div.blog__content
-          [:div.blog-section__width
-           [:h1.blog-header (<sub [::subs/title])]
-           [:div.blog-header__edit-button
-            (when (<sub [::subs/can-edit?])
-              [link [:button.button "Edit Blog"]
-               :contribute-edit :id (<sub [::subs/id])])
-            (when (<sub [::subs/show-unpublished?])
-              [:span.card__label.card__label--unpublished.card__label--blog-header "unpublished"])]
-           [:div.blog-info
-            [:div.author
-             [:span.blog-info__author-name
-              {:class (when (<sub [::subs/author-info]) "link")
-               :on-click #(dispatch [::events/toggle-author-info])}
-              (<sub [::subs/author])] " "
-             [:span.blog-info__datetime
-              (<sub [::subs/formatted-creation-date]) " "
-              (when (> (<sub [::subs/reading-time]) 0)
-                (str " (" (<sub [::subs/reading-time]) " min read)"))]
-             [author-info]]]
-           [tag/tag-list :a (->> (<sub [::subs/tags])
-                                 (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]]
-          [:div.blog-body.blog-section__width
-           [putil/html (<sub [::subs/html-body])]]
-          (when (<sub [::subs/show-original-source?])
-            [:div.blog-body.blog-section__width.blog-body__original-source
-             [:p "Originally published on "
-              [:a {:href (<sub [::subs/original-source])
-                   :target "_blank" :rel "noopener"}
-               (<sub [::subs/original-source-domain])]]])])
-       [recommended-jobs]])))
+    [:div {:class (util/merge-classes "blog" "main")}
+     [blog-hero]
+     [:div.split-content
+      [:div.split-content__main
+       [blog-content]]
+      (let [{:keys [blogs issues jobs]} (<sub [::subs/recommendations])]
+        [:div.split-content__side
+         [candidate-pods/candidate-cta]
+         [recommendation-cards/blogs {:blogs blogs}]
+         [recommendation-cards/jobs {:jobs           jobs
+                                     :instant-apply? (some? (<sub [:user/applied-jobs]))
+                                     :company-id     (<sub [:user/company-id])
+                                     :logged-in?     (<sub [:user/logged-in?])
+                                     :admin?         (<sub [:user/admin?])}]
+         [recommendation-cards/issues {:issues issues}]])]]))
 
 (defn page []
   #?(:cljs

@@ -9898,7 +9898,7 @@ h3 {
 
 @media screen and (min-width: 1008px) {
   .split-content__main {
-    width: 67%;
+    flex: 1;
     margin-right: 20px;
     min-width: 505px; } }
 
@@ -9952,13 +9952,22 @@ h3 {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch; }
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 26px; }
   @supports not (-webkit-overflow-scrolling: touch) {
     .blog {
       perspective: 1px;
       perspective-origin: 0 0; } }
-  .blog .tags {
+  .blog .blog__content .tags {
     margin-bottom: 12px; }
+  .blog .recommendation-cards {
+    padding: 0 10px;
+    line-height: normal; }
+    @media screen and (min-width: 1008px) {
+      .blog .recommendation-cards {
+        padding: 0; } }
+  .blog .pod {
+    margin-top: 20px; }
 
 .tags a {
   color: #ff7c6e; }
@@ -9972,6 +9981,7 @@ h3 {
   position: relative;
   z-index: 1;
   background-color: white;
+  padding: 0 52px;
   transform: translateZ(0px);
   transform-origin: 0 0;
   margin-left: auto;
@@ -9988,8 +9998,7 @@ h3 {
     margin: 0 !important; }
 
 .blog-section__width {
-  max-width: 600px;
-  margin: 0 auto 0 52px; }
+  max-width: 600px; }
   @media screen and (max-width: 1007px) {
     .blog-section__width {
       margin-left: 0; } }
@@ -10032,6 +10041,9 @@ h3 {
   @media screen and (max-width: 1007px) {
     .blog__hero {
       margin-top: -26px; } }
+  .blog__hero.blog__hero--skeleton {
+    background: #ddd; }
+
 @supports (-moz-appearance: none) {
   @media screen and (max-width: 1007px) {
     .blog {
@@ -10055,7 +10067,8 @@ h3 {
 
 .blog-body {
   font-size: 16px;
-  line-height: 24px; }
+  line-height: 24px;
+  max-width: 100%; }
   .blog-body h2, .blog-body .h2 {
     font-weight: 600 !important;
     color: #6E7F89 !important;
@@ -10109,25 +10122,6 @@ h3 {
   .blog-body img {
     display: block;
     margin: 0 auto; }
-
-.blog--skeleton .blog__hero {
-  background: #ddd; }
-
-.blog--skeleton .blog__content {
-  padding-top: 24px; }
-
-.blog--skeleton .blog-header {
-  margin-top: 24px;
-  background-color: #ddd !important;
-  border-radius: 5px !important;
-  width: 70%;
-  height: 48px; }
-
-.blog--skeleton .blog-body p {
-  background-color: #ddd !important;
-  border-radius: 5px !important;
-  width: 100%;
-  height: 60px; }
 
 .blog-footer {
   padding-bottom: 24px; }
@@ -18043,11 +18037,6 @@ h3 {
   @media screen and (min-width: 1008px) {
     .articles-page .split-content__side {
       margin-top: 0; } }
-.articles-page .recommendation {
-  padding: 0; }
-  .articles-page .recommendation .card {
-    margin-bottom: 8px; }
-
 .articles-page .recommendation--mobile {
   height: 320px;
   margin: 24px 0; }
@@ -18058,10 +18047,6 @@ h3 {
 
 .articles-page .recommendation--issues .carousel {
   height: 270px; }
-
-.articles-page .recommendation__title {
-  color: #ff7c6e;
-  font-size: 16px; }
 
 .articles-page .tag-picker {
   margin-top: 18px; }
@@ -18192,6 +18177,17 @@ h3 {
     @media screen and (min-width: 1008px) {
       .newsletter-subscription .newsletter-subscription__primary-text {
         font-size: 24px; } }
+.recommendation-cards .recommendation-cards__title {
+  font-size: 16px;
+  color: #ff7c6e;
+  margin-top: 40px; }
+
+.recommendation-cards > .card {
+  margin-bottom: 0; }
+
+.recommendation-cards > .card:not(:last-child) {
+  margin-bottom: 10px; }
+
 @media screen and (min-width: 1008px) {
   html, body {
     width: 100%;

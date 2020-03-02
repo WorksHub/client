@@ -6,8 +6,7 @@
     [wh.common.job]
     [wh.db :as db]
     [wh.graphql-cache :refer [reg-query] :as graphql]
-    [wh.graphql.jobs]
-    [wh.routes :as routes])
+    [wh.graphql.jobs])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
@@ -31,19 +30,37 @@
 
 (reg-query :blog blog-query)
 
-(defquery recommended-jobs-query
+(defquery recommendations-query
   {:venia/operation {:operation/type :query
                      :operation/name "recommended_jobs"}
    :venia/variables [{:variable/name "id"
-                      :variable/type :ID}]
-   :venia/queries [[:jobs {:filter_type "recommended"
-                           :entity_id   :$id
-                           :entity_type "blog"
-                           :page_size   3
-                           :page_number 1}
-                    :fragment/jobCardFields]]})
+                      :variable/type :ID}
+                     {:variable/name "page_size"
+                      :variable/type :Int}
+                     {:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries [[:jobs
+                    {:filter_type "recommended"
+                     :entity_id   :$id
+                     :entity_type "blog"
+                     :page_size   :$page_size
+                     :page_number 1}
+                    :fragment/jobCardFields]
 
-(reg-query :recommended-jobs-for-blog recommended-jobs-query)
+                   [:query_issues
+                    {:page_size   :$page_size}
+                    [[:issues [:fragment/issueListFields]]]]
+
+                   [:blogs
+                    {:page_size :$page_size
+                     :page_number 1
+                     :vertical :$vertical}
+                    [[:blogs [:id :title :feature :author :creator :published
+                              :formattedCreationDate :readingTime :upvoteCount
+                              [:tags :fragment/tagFields]]]
+                     [:pagination [:total :count]]]]]})
+
+(reg-query :recommendations-query-for-blogs recommendations-query)
 
 (defquery upvote-blog-mutation
   {:venia/operation {:operation/type :mutation
@@ -53,10 +70,10 @@
    :venia/queries   [[:upvote_blog {:id :$id}]]})
 
 (defn initial-query [db]
-  [:blog {:id (blog/id db)}])
+  [:blog (blog/params db)])
 
-(defn recommended-jobs-for-blog-query [db]
-  [:recommended-jobs-for-blog {:id (blog/id db)}])
+(defn recommendations-query-for-blogs [db]
+  [:recommendations-query-for-blogs (blog/params db)])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -83,7 +100,7 @@
   db/default-interceptors
   (fn [db _]
     (let [id   (blog/id db)
-          blog (:blog (graphql/result db :blog {:id id}))]
+          blog (:blog (graphql/result db :blog (blog/params db)))]
       (assoc-in db [::blog/sub-db ::blog/upvotes id] (:upvote-count blog)))))
 
 #?(:cljs
@@ -92,7 +109,7 @@
      db/default-interceptors
      (fn [{db :db} _]
        (let [id   (blog/id db)
-             blog (:blog (graphql/result db :blog {:id id}))]
+             blog (:blog (graphql/result db :blog (blog/params db)))]
          (if (db/logged-in? db)
            {:graphql         {:query      upvote-blog-mutation
                               :variables  {:id id}
@@ -122,7 +139,7 @@
   db/default-interceptors
   (fn [{db :db} _]
     (let [id   (blog/id db)
-          blog (:blog (graphql/result db :blog {:id id}))]
+          blog (:blog (graphql/result db :blog (blog/params db)))]
       {:dispatch   [::init-upvotes]
        :page-title {:page-name (:title blog)
                     :vertical  (:wh.db/vertical db)}})))
@@ -134,6 +151,6 @@
        (list
          [::initialize-db]
          (into [:graphql/query] (conj (initial-query db) {:on-complete [::on-blog-ready]}))
-         (into [:graphql/query] (recommended-jobs-for-blog-query db))
+         (into [:graphql/query] (recommendations-query-for-blogs db))
          (when should-upvote? [::upvote])
          [:wh.pages.core/unset-loader]))))

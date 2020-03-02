@@ -16,3 +16,10 @@
   {::share-links-shown? true
    ::author-info-visible? false
    ::upvotes {}})
+
+(def page-size 9)
+
+(defn params [db]
+  {:id        (id db)
+   :page_size page-size
+   :vertical  (:wh.db/vertical db)})

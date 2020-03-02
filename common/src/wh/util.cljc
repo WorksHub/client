@@ -324,3 +324,6 @@
                      :s string?)
         :ret (s/or :success string?
                    :nil nil?))
+
+(defn maps-with-id [n]
+  (map (partial hash-map :id) (range n)))

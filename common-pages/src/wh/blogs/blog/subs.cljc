@@ -4,6 +4,8 @@
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.blogs.blog.db :as blog]
+    [wh.common.job :as common-job]
+    [wh.common.issue :as common-issue]
     [wh.common.user :as common-user]
     [wh.graphql.jobs :as jobs]
     [wh.re-frame.subs :refer [<sub]]
@@ -19,21 +21,36 @@
 
 (reg-sub-raw
   ::blog
-  (fn [_ _]
-    (reaction
-      (let [id     (<sub [:wh/page-param :id])
-            result (<sub [:graphql/result :blog {:id id}])]
-        (:blog result)))))
+  (fn [db _]
+    (->> (<sub [:graphql/result :blog (blog/params @db)])
+         (:blog)
+         (reaction))))
 
 (reg-sub-raw
-  ::recommended-jobs
-  (fn [_ _]
+  ::blog-error
+  (fn [db _]
+    (reaction (<sub [:graphql/error-key :blog (blog/params @db)]))))
+
+(reg-sub-raw
+  ::recommendations
+  (fn [db _]
     (reaction
-      (let [id           (<sub [:wh/page-param :id])
-            results      (<sub [:graphql/result :recommended-jobs-for-blog {:id id}])
+      (let [state        (<sub [:graphql/state :recommendations-query-for-blogs (blog/params @db)])
+            results      (<sub [:graphql/result :recommendations-query-for-blogs (blog/params @db)])
             liked-jobs   (<sub [:user/liked-jobs])
-            applied-jobs (<sub [:user/applied-jobs])]
-        (jobs/add-interactions liked-jobs applied-jobs (:jobs results))))))
+            applied-jobs (<sub [:user/applied-jobs])
+            stub         (util/maps-with-id blog/page-size)]
+        (if (= :executing state)
+          {:issues stub
+           :jobs   stub
+           :blogs  stub}
+          {:issues (map
+                     common-issue/gql-issue->issue
+                     (get-in results [:query-issues :issues]))
+           :jobs   (map
+                     common-job/translate-job
+                     (jobs/add-interactions liked-jobs applied-jobs (:jobs results)))
+           :blogs  (get-in results [:blogs :blogs])})))))
 
 ;; These subscriptions extract various bits from ::blog and ::recommended-jobs.
 

@@ -72,7 +72,7 @@
   []
   (let [result              (<sub [::subs/companies])
         companies           (or (some-> (:companies result) insert-registration-prompt insert-candidate-prompt)
-                                (map (partial hash-map :id) (range 10)))
+                                (util/maps-with-id 10))
         query-params        (<sub [:wh/query-params])
         loading?            (<sub [::subs/loading?])]
     [:div
