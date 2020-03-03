@@ -64,12 +64,6 @@
     (:name header)))
 
 (reg-sub
-  ::phone
-  :<- [::header-data]
-  (fn [header _]
-    (:phone header)))
-
-(reg-sub
   ::rated-skills
   :<- [::header-data]
   (fn [header _]
@@ -179,6 +173,12 @@
   :<- [::private-data]
   (fn [private _]
     (:email private)))
+
+(reg-sub
+  ::phone
+  :<- [::private-data]
+  (fn [header _]
+    (:phone header)))
 
 (reg-sub
   ::job-seeking-status
