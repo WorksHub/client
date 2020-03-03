@@ -413,31 +413,50 @@
        :task :add_issue
        :path [:company-issues]}]]]])
 
+
+(defmulti error->message identity)
+(defmethod error->message :default [_]
+  "Unfortunately we could not load the page you were looking for. If the issue persists, please contact us.")
+(defmethod error->message :failed-to-fetch-company [_]
+  "Unfortunately we could not load company information at this time. If the issue persists, please contact us.")
+
 (defn loading
   []
   [:div.loader-wrapper
    [loader]])
 
 (defn page []
-  [:div.main-container
-   (cond
-     (not (<sub [::subs/name])) ;; no name == loading
-     [loading]
-     (<sub [::subs/show-onboarding?])
-     [company-onboarding]
-     :else
-     [:div.main.company-dashboard
-      [:h1 "Dashboard"]
-      [:div.company-dashboard__grid
-       [your-company]
-       [stats]]
-      [profile-banner]
-      [:div.company-dashboard__grid
-       [activity]
-       [live-roles]
-       [unpublished-roles]]])
-   (when (<sub [:wh.job/show-admin-publish-prompt?])
-     [job/admin-publish-prompt
-      (<sub [::subs/permissions])
-      (<sub [::subs/company-id])
-      [::events/update-company]])])
+  (let [loading?         (not (<sub [::subs/name]))
+        show-onboarding? (<sub [::subs/show-onboarding?])
+        error            (<sub [::subs/error])]
+
+    [:div.main-container
+     (cond
+       error
+       [:div.main
+        [:div.company-dashboard.company-dashboard--error
+         [:h1 "An error occurred"]
+         [:h3 (error->message error)]]]
+
+       loading?
+       [loading]
+
+       show-onboarding?
+       [company-onboarding]
+
+       :else
+       [:div.main.company-dashboard
+        [:h1 "Dashboard"]
+        [:div.company-dashboard__grid
+         [your-company]
+         [stats]]
+        [profile-banner]
+        [:div.company-dashboard__grid
+         [activity]
+         [live-roles]
+         [unpublished-roles]]])
+     (when (<sub [:wh.job/show-admin-publish-prompt?])
+       [job/admin-publish-prompt
+        (<sub [::subs/permissions])
+        (<sub [::subs/company-id])
+        [::events/update-company]])]))

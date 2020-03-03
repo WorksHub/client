@@ -54,6 +54,12 @@
     (::sub-db/logo sub-db)))
 
 (reg-sub
+  ::error
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (::sub-db/error sub-db)))
+
+(reg-sub
   ::disabled?
   :<- [::sub-db]
   (fn [sub-db _]

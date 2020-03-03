@@ -72,7 +72,7 @@
   ::initialize-db
   company-interceptors
   (fn [db _]
-    (merge db sub-db/initial-db)))
+    (sub-db/initial-db db)))
 
 ;; How many items to display initially in activity? We normally
 ;; want 15, but it can be too many when a company has one job only.
@@ -162,12 +162,11 @@
                (assoc-in [:wh.user.db/sub-db :wh.user.db/onboarding-msgs] (set (get-in resp [:data :me :onboardingMsgs])))))
      :dispatch-n (or (some-> (get-in db [:wh.db/query-params "events"]) base64/decodeString reader/read-string) [])}))
 
-(reg-event-fx
-  ::fetch-company-failure
-  company-interceptors
-  (fn [_ _]
-    {:dispatch-n [[:error/set-global "Something went wrong while we tried to fetch your data 😢"
-                   [::fetch-company]]]}))
+(reg-event-db
+ ::fetch-company-failure
+ company-interceptors
+ (fn [db _]
+   (assoc db ::sub-db/error :failed-to-fetch-company)))
 
 (reg-event-fx
   ::scroll-to-job

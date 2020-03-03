@@ -4,7 +4,11 @@
 (s/def ::publishing-jobs (s/coll-of string? :kind set))
 (s/def ::publish-celebrations (s/coll-of string? :kind set))
 
-(def initial-db
-  {::activity-items-count 15
-   ::publishing-jobs      #{}
-   ::publish-celebrations #{}})
+(defn initial-db
+  [db]
+  (merge
+    {::error                nil
+     ::activity-items-count 15
+     ::publishing-jobs      #{}
+     ::publish-celebrations #{}}
+    db))
