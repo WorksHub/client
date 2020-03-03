@@ -1,6 +1,5 @@
 (ns wh.blogs.learn.subs
   (:require
-    [clojure.string :as str]
     [re-frame.core :refer [reg-sub]]
     [wh.blogs.learn.db :as learn]
     [wh.blogs.learn.events :as learn-events]
@@ -13,10 +12,9 @@
     [wh.util :as util]))
 
 (reg-sub
-  ::current-tag
+  ::db
   (fn [db _]
-    (when-let [tag (learn/tag db)]
-      (str/capitalize tag))))
+    db))
 
 (reg-sub
   ::current-page
@@ -27,22 +25,6 @@
   ::search-term
   (fn [db _]
     (learn/search-term db)))
-
-(reg-sub
-  ::header
-  :<- [::current-tag]
-  (fn [current-tag _]
-    (if current-tag
-      (str "Articles: " current-tag)
-      "Articles")))
-
-(reg-sub
-  ::sub-header
-  :<- [::current-tag]
-  :<- [:wh/vertical-label]
-  (fn [[current-tag vertical-label] _]
-    (str "The latest news, resources and thoughts from the world of " (or current-tag
-                                                                          vertical-label))))
 
 (reg-sub
   ::show-contribute?
@@ -67,6 +49,35 @@
         (get-in (graphql/result db query-name params) data-path)))))
 
 (reg-sub
+  ::current-tag
+  :<- [::db]
+  :<- [::all-blogs]
+  (fn [[db all-blogs] _]
+    (when-let [tag-slug (learn/tag db)]
+      (let [has-correct-slug? (fn [tag]
+                                (= (clojure.string/lower-case tag-slug)
+                                   (:slug tag)))]
+        (->> all-blogs
+             (mapcat :tags)
+             (some #(when (has-correct-slug? %) %)))))))
+
+(reg-sub
+  ::sub-header
+  :<- [::current-tag]
+  :<- [:wh/vertical-label]
+  (fn [[current-tag vertical-label] _]
+    (str "The latest news, resources and thoughts from the world of "
+         (or (:label current-tag) vertical-label))))
+
+(reg-sub
+  ::header
+  :<- [::current-tag]
+  (fn [current-tag _]
+    (if current-tag
+      (str "Articles: " (:label current-tag))
+      "Articles")))
+
+(reg-sub
   ::total-pages
   (fn [db _]
     (let [params (learn/params db)
@@ -81,11 +92,6 @@
           count (or (get-in result total-blogs-path) learn/page-size)]
       #?(:clj (int (Math/ceil (/ count learn/page-size)))
          :cljs (js/Math.ceil (/ count learn/page-size))))))
-
-(reg-sub
-  ::db
-  (fn [db _]
-    db))
 
 ;; less blogs -> less recommendation
 (defn max-amount-to-display [all-blogs]

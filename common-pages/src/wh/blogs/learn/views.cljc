@@ -40,7 +40,7 @@
 (defn tag-picker [tags]
   [:section.split-content-section.tag-picker
    (tag/strs->tag-list :a tags
-    {:f #(assoc % :href (routes/path :learn-by-tag :params {:tag (slug/slug+encode (:label %))}))})])
+    {:f #(assoc % :href (routes/path :learn-by-tag :params {:tag (slug/tag-label->slug (:label %))}))})])
 
 (def carousel-size 6)
 
