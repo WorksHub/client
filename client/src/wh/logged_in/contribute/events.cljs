@@ -65,6 +65,25 @@
       (dissoc db ::contribute/original-source)
       (assoc  db ::contribute/original-source v))))
 
+(reg-event-db
+ ::set-associated-jobs
+ contribute-interceptors
+ (fn [db [idx slug]]
+   (let [jobs (::contribute/associated-jobs db)]
+     (cond
+       (not (vector? jobs))
+       (assoc db ::contribute/associated-jobs [slug])
+
+       ;; When user clears slug, remove element from vector
+       (clojure.string/blank? slug)
+       (update db ::contribute/associated-jobs #(util/drop-ith idx %))
+
+       ;; Guards from IndexOutOfBoundsException
+       (> idx (dec (count jobs)))
+       (update db ::contribute/associated-jobs #(conj % slug))
+
+       :else (assoc-in db [::contribute/associated-jobs idx] slug)))))
+
 (reg-event-fx
   ::hero-upload
   db/default-interceptors
@@ -158,7 +177,7 @@
            :venia/queries [[:blog {:id :$id}
                             [:id :title :feature :author :authorId
                              :published :body :creator :originalSource
-                             :verticals :primaryVertical
+                             :verticals :primaryVertical :associatedJobs
                              [:company [:name :id]]
                              [:tags :fragment/tagFields]]]]})
 
@@ -271,7 +290,8 @@
               selected-tag-ids (get-in db [::contribute/sub-db ::contribute/selected-tag-ids])
               save-blog-fields [:id :title :feature :author :authorId
                                 :published :body :creator :originalSource
-                                :verticals :primaryVertical :companyId :tagIds]
+                                :verticals :primaryVertical :companyId :tagIds
+                                :associatedJobs]
               blog (-> db
                        ::contribute/sub-db
                        (dissoc ::contribute/tags)

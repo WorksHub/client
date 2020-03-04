@@ -137,6 +137,7 @@
            :on-select-suggestion [::events/select-author-suggestion]
            :error                (<sub [::subs/author-validation-error])
            :force-error?         (<sub [::subs/validation-error?])}])
+
        (when admin?
          [text-field (<sub [::subs/company-name])
           {:id                   (contribute/form-field-id ::contribute/company-name)
@@ -147,14 +148,24 @@
            :on-select-suggestion [::events/select-company-suggestion]
            :error                (<sub [::subs/company-validation-error])
            :force-error?         (<sub [::subs/validation-error?])}])
+
        [text-field (<sub [::subs/title])
         {:id           (contribute/form-field-id ::contribute/title)
          :label        "* Title"
          :on-change    [::events/set-title]
          :error        (<sub [::subs/title-validation-error])
          :force-error? (<sub [::subs/validation-error?])}]
+
        [body]
+
        [article-tags]
+
+       (when admin?
+         [multi-edit
+          (<sub [::subs/associated-jobs])
+          {:label     "Associated jobs (please type in job slugs)"
+           :on-change [::events/set-associated-jobs]}])
+
        [text-field (<sub [::subs/original-source])
         {:id           (contribute/form-field-id ::contribute/original-source)
          :label        "Originally published on"
@@ -163,6 +174,7 @@
          :on-change    [::events/set-original-source]
          :error        (<sub [::subs/original-source-validation-error])
          :force-error? (<sub [::subs/validation-error?])}]
+
        (when admin?
          [:div.control
           [labelled-checkbox

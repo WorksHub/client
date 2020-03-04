@@ -12,6 +12,7 @@
 (s/def ::author            ::primitives/non-empty-string)
 (s/def ::feature           ::primitives/non-empty-string)
 (s/def ::body              ::primitives/non-empty-string)
+(s/def ::associated-jobs   (s/coll-of ::primitives/non-empty-string))
 (s/def ::original-source   ::primitives/url)
 (s/def ::tag-id            ::primitives/non-empty-string)
 (s/def ::tag-search        string?)
@@ -67,6 +68,7 @@
           ::published false
           ::body-cursor-position 0
           ::body-rows 10
+          ::associated-jobs []
           ::hide-codi? false
           ::verticals #{(::db/vertical db)}
           ::primary-vertical (::db/vertical db)}

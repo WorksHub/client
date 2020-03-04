@@ -22,7 +22,7 @@
                     [:id :title :feature :creator :published
                      :htmlBody :readingTime :author
                      :originalSource :formattedCreationDate :upvoteCount
-                     :primaryVertical :verticals
+                     :primaryVertical :verticals :associatedJobs
                      [:tags :fragment/tagFields]
                      [:authorInfo [:name :summary :imageUrl
                                    [:otherUrls [:url :title]]]]

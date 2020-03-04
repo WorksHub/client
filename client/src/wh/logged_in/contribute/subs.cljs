@@ -90,6 +90,12 @@
     (::contribute/original-source db)))
 
 (reg-sub
+ ::associated-jobs
+ :<- [::contribute]
+ (fn [db _]
+   (::contribute/associated-jobs db)))
+
+(reg-sub
   ::verticals
   :<- [::contribute]
   (fn [db _]

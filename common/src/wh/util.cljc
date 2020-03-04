@@ -250,10 +250,7 @@
 
 (defn drop-ith
   [i coll]
-  (->> coll
-       (map vector (iterate inc 0))
-       (remove #(= (first %) i))
-       (map second)))
+  (vec (concat (subvec coll 0 i) (subvec coll (inc i)))))
 
 (defn insert-at
   [coll el idx]
