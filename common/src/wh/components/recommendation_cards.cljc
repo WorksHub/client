@@ -11,7 +11,7 @@
            logged-in?]}]
   (when (seq jobs)
     [:div.recommendation-cards
-     [:h2.recommendation-cards__title "Recommended Jobs"]
+     [:h2.recommendation-cards__title "Related Jobs"]
      (for [job jobs]
        ^{:key (:id job)}
         [job/job-card job {:logged-in?        logged-in?
@@ -24,7 +24,7 @@
   [{:keys [issues]}]
   (when (seq issues)
     [:div.recommendation-cards
-     [:h2.recommendation-cards__title "Recommended Issues"]
+     [:h2.recommendation-cards__title "Related Issues"]
      (for [issue issues]
        ^{:key (:id issue)}
        [issue/issue-card issue {:small? true}])]))
@@ -33,7 +33,7 @@
   [{:keys [blogs]}]
   (when (seq blogs)
     [:div.recommendation-cards
-     [:h2.recommendation-cards__title "Recommended Articles"]
+     [:h2.recommendation-cards__title "Related Articles"]
      (for [blog blogs]
        ^{:key (:id blog)}
        [cards/blog-row blog])]))

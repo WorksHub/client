@@ -118,29 +118,32 @@
 
 (defn author-info []
   (when-let [info (<sub [::subs/author-info])]
-    (let [{:keys [image-url name summary other-urls]} info]
+    (let [{:keys [image-url name summary other-urls skills]} info
+          skill-names (map :name skills)]
       [:div.author-info
-       {:class (when (<sub [::subs/author-info-visible?]) "author-info--visible")}
        [:div.author-info__inner
         [:img.author-info__photo {:src image-url
                                   :alt "Author's avatar"}]
         [:div.author-info__data
          [:div.author-info__name name]
-         [:div.author-info__summary summary]
-         [url-icons other-urls "author-info__other-urls"]]]])))
+         (when summary [:div.author-info__summary summary])
+         (when other-urls [url-icons other-urls "author-info__other-urls"])]]
+       (when (seq skill-names)
+         [:div.author-info__tags
+          [tag/strs->tag-list :div skill-names nil]])])))
 
 (defn blog-info []
   [:div.blog-info
-   [:div.author
+   [:div.blog-info__author
     [:span.blog-info__author-name
-     {:class (when (<sub [::subs/author-info]) "link")
-      :on-click #(dispatch [::events/toggle-author-info])}
-     (<sub [::subs/author])] " "
+     {:on-click #(dispatch [::events/toggle-author-info])}
+     (or
+       (:name (<sub [::subs/author-info]))
+       (<sub [::subs/author]))] " "
     [:span.blog-info__datetime
      (<sub [::subs/formatted-creation-date]) " "
      (when (> (<sub [::subs/reading-time]) 0)
-       (str " (" (<sub [::subs/reading-time]) " min read)"))]
-    [author-info]]])
+       (str "| " (<sub [::subs/reading-time]) " min read"))]]])
 
 (defn blog-original-source []
   (when (<sub [::subs/show-original-source?])
@@ -188,14 +191,15 @@
        [blog-content]]
       (let [{:keys [blogs issues jobs]} (<sub [::subs/recommendations])]
         [:div.split-content__side
-         [candidate-pods/candidate-cta]
-         [recommendation-cards/blogs {:blogs blogs}]
+         [author-info]
          [recommendation-cards/jobs {:jobs           jobs
                                      :instant-apply? (some? (<sub [:user/applied-jobs]))
                                      :company-id     (<sub [:user/company-id])
                                      :logged-in?     (<sub [:user/logged-in?])
                                      :admin?         (<sub [:user/admin?])}]
-         [recommendation-cards/issues {:issues issues}]])]]))
+         [recommendation-cards/blogs {:blogs blogs}]
+         [recommendation-cards/issues {:issues issues}]
+         [candidate-pods/candidate-cta]])]]))
 
 (defn page []
   #?(:cljs

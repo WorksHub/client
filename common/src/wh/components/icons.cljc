@@ -13,10 +13,19 @@
        svg]
       svg)))
 
+(defn type->icon-name [type]
+  (case type
+    :twitter "twitter-circle"
+    :linkedin "linkedin-circle"
+    (name type)))
+
 (defn url-icons [other-urls class]
   (into
    [:div {:class class}]
    (for [{:keys [url type]} (url/detect-urls-type other-urls)]
-     [:a {:href url
-          :target "_blank"
-          :rel "noopener"} [icon (name type) :class (str class "__icon")]])))
+     [:a
+      {:href url
+       :target "_blank"
+       :rel "noopener"
+       :class "url-icon"}
+      [icon (type->icon-name type) :class (str class "__icon")]])))
