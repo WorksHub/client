@@ -124,23 +124,23 @@ $hero-top: 26px
 
   h2, .h2
     font-weight: 600 !important
-    color: $steel-gray !important
+    color: $grey-darker !important
     font-size: 28px !important
-    line-height: 48px !important
-    margin-top: 24px !important
-    margin-bottom: 24px !important
+    line-height: 32px !important
+    margin-top: 32px !important
+    margin-bottom: 16px !important
     letter-spacing: -0.02em
 
   h3, .h3
-    color: $steel-gray !important
+    color: $grey-darker !important
     font-weight: 600 !important
     font-size: 21px !important
     line-height: 24px !important
     margin-top: 24px !important
-    margin-bottom: 0px !important
+    margin-bottom: 12px !important
 
   h4, .h4, h5, .h5
-    color: $steel-gray !important
+    color: $grey-darker !important
     font-weight: 600 !important
     font-size: 16px
     line-height: 24px
@@ -148,14 +148,19 @@ $hero-top: 26px
     margin-bottom: 0px
 
   p, ul, ol, pre, table, blockquote
+    color: $grey-darker !important
     font-size: 16px
     line-height: 24px
-    margin-top: 0px
+    margin-top: 12px
     margin-bottom: 24px
 
   ul ul, ol ol, ul ol, ol ul
     margin-top: 0px
     margin-bottom: 0px
+
+  strong
+    color: $grey-darker
+    font-weight: $font-semi-bold
 
   a
     color: $red
@@ -167,14 +172,18 @@ $hero-top: 26px
   ul, ol
     padding-left: 0
     list-style-position: outside
+    margin-inline-start: 30px !important
 
   ul
-    list-style: disc
+    list-style: disc !important
+
+  li
+    margin-bottom: 8px
 
   blockquote p
     border-left: $metal-blue solid 10px
     font-weight: 400
-    color: $steel-gray
+    color: $grey-darker
     font-size: 24px
     line-height: 36px
     padding-left: 1em
@@ -184,7 +193,7 @@ $hero-top: 26px
 
   img
     display: block
-    margin: 0 auto
+    margin: 12px 0 auto
 
 .blog-footer
   padding-bottom: 24px

@@ -3,9 +3,9 @@
     #?(:clj [net.cgrand.jsoup :as jsoup])
     [wh.common.text :as txt]))
 
-(defn rand-width
+(defn width
   []
-  (let [pc (str (+ 80 (rand-int 20)) "%")]
+  (let [pc (str 95 "%")]
     #?(:cljs {:width pc}
        :clj (str "width:" pc))))
 
@@ -18,12 +18,19 @@
            java.io.ByteArrayInputStream.
            jsoup/parser))))
 
-(defn html [html-content]
-  (if html-content
-    #?(:clj [:div.html-content (html->hiccup html-content)]
-       :cljs [:div.html-content {:dangerouslySetInnerHTML {:__html html-content}}])
-    [:div.html-content.html-content--skeleton
-     (reduce (fn [a _] (conj a [:div {:style (rand-width)}])) [:div] (range (+ 4 (rand-int 6))))]))
+(defn html
+  ([html-content]
+   (html html-content {:classname          "html-content"
+                       :classname-skeleton "html-content html-content--skeleton"}))
+  ([html-content {:keys [classname
+                         classname-skeleton]}]
+   (if html-content
+     #?(:clj [:div {:class classname} (html->hiccup html-content)]
+        :cljs [:div {:class classname
+                     :dangerouslySetInnerHTML {:__html html-content}}])
+     (when classname-skeleton
+       [:div {:class classname-skeleton}
+        (reduce (fn [a _] (conj a [:div {:style (width)}])) [:div] (range 10))]))))
 
 ;; If you came here looking for 'on-scroll' functionlity,
 ;; be aware that although we're hooking the `onscroll` event of `js/window`

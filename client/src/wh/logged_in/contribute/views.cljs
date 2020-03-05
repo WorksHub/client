@@ -11,6 +11,7 @@
     [wh.logged-in.contribute.db :as contribute]
     [wh.logged-in.contribute.events :as events]
     [wh.logged-in.contribute.subs :as subs]
+    [wh.pages.util :as putil]
     [wh.subs :refer [<sub]]))
 
 (defn hero []
@@ -68,9 +69,8 @@
         {:type      :textarea
          :on-change [::events/set-body]
          :on-blur   #(dispatch [::events/set-body-cursor-position (-> % .-target .-selectionStart)])}]
-       [:div.textarea
-        {:dangerouslySetInnerHTML {:__html (<sub [::subs/body-html])}}])
-
+       [:div.contribute__textarea.blog-body
+        [putil/html (<sub [::subs/body-html]) nil]])
      [:div.contribute__body__post
       (if error
         [:span.field__error.field--invalid error]
