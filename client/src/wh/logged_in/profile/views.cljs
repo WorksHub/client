@@ -239,6 +239,7 @@
          [:a.a--underlined {:href cv-url, :target "_blank" :rel "noopener"}
           (if (owner? user-type)
             cv-filename
+
             "Click here to download")]
          (when (owner? user-type)
            [icon "close"
@@ -260,11 +261,8 @@
        (if (owner? user-type)
          "You haven't uploaded resume yet."
          "No uploaded resume yet."))]
-     (when (owner-or-admin? user-type)
-       [:div.cv__buttons
-        (if (<sub [::subs/cv-uploading?])
-          [:button.button {:disabled true} "Uploading..."]
-          [cv-section-buttons])])]))
+    (when (owner-or-admin? user-type)
+      [cv-section-buttons])]))
 
 ;; Private section – view
 
