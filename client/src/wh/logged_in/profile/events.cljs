@@ -363,7 +363,7 @@
                              (s/valid? ::specs/url cv-link))]
       (cond
         ;; sub handles the case when a link is nil, and won't show it in the views
-        (or valid-cv-link? "")
+        (or valid-cv-link? (empty? cv-link))
         {:db       db
          :graphql  {:query      graphql/update-user-mutation--approval
                     :variables  {:update_user (graphql-cv-update db)}
