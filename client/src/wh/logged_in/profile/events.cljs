@@ -362,7 +362,8 @@
           valid-cv-link? (or (= type :upload-cv)
                              (s/valid? ::specs/url cv-link))]
       (cond
-        valid-cv-link?
+        ;; sub handles the case when a link is nil, and won't show it in the views
+        (or valid-cv-link? "")
         {:db       db
          :graphql  {:query      graphql/update-user-mutation--approval
                     :variables  {:update_user (graphql-cv-update db)}
@@ -543,6 +544,22 @@
   profile-interceptors
   (fn [db [link]]
     (assoc-in db [::profile/cv :link] link)))
+    
+;; little event for the close link icon, as there is no dispatch-n function :/
+(reg-event-fx
+ ::remove-link
+ (fn [{db :db} _]
+   {:db db
+    :dispatch-n [[::edit-cv-link ""]
+                 [::save-cv-info]]}))
+
+(reg-event-fx
+ ::remove-cv
+ profile-interceptors
+ (fn [{db :db} _]
+   (let [file-map {:type nil :name "none" :url "http://"}]
+     {:db (assoc-in db [::profile/cv :file] file-map)
+      :dispatch [::save-cv-info]})))
 
 (reg-event-db
   ::select-suggestion

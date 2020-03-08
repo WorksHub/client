@@ -319,6 +319,19 @@
   :<- [::cv-data]
   (fn [cv _]
     (:cv-link cv)))
+    
+(reg-sub
+ ::cv-file-uploaded?
+ :<- [::profile]
+ (fn [profile]
+   (let [clear-map {:type nil :name "none" :url "http://"}]
+     (not= clear-map (get-in profile [::profile/cv :file])))))
+
+(reg-sub
+ ::cv-link-uploaded?
+ :<- [::profile]
+ (fn [profile]
+   (not (empty? (get-in profile [::profile/cv :link])))))    
 
 (reg-sub
   ::error-message

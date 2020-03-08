@@ -205,6 +205,25 @@
     [cancel-link]]])
 
 ;; CV section – view
+(defn cv-section-buttons
+  []
+  [:div.cv__buttons
+   (cond
+     (<sub [::subs/cv-uploading?]) [:button.button {:disabled true} "Uploading..."]
+     (<sub [::subs/cv-file-uploaded?]) [:button.button {:disabled true} "Upload resume"]
+     :else [:label.file-label.cv__upload
+            [:input.file-input {:type "file"
+                                :name "avatar"
+                                :on-change (upload/handler
+                                            :launch [::events/cv-upload]
+                                            :on-upload-start [::events/cv-upload-start]
+                                            :on-success [::events/cv-upload-success]
+                                            :on-failure [::events/cv-upload-failure])}]
+            [:span.file-cta.button
+             [:span.file-label "Upload resume"]]])
+   (if (<sub [::subs/cv-link-uploaded?])
+       [:button.button {:disabled true} "Add a link to resume"]
+       [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to resume" "button"])])
 
 (defn cv-section-view
   ([opts] (cv-section-view :owner opts))
@@ -212,33 +231,39 @@
    [:section.profile-section.cv
     [:div.cv__view
      [:h2 "Career History"]
+     [:p "You can upload a maximu of one cv file and one external cv link."]
      [error-box]
-     (when cv-url
-       [:p (if (owner? user-type) "You uploaded " "Uploaded CV: ")
-        [:a.a--underlined {:href cv-url, :target "_blank", :rel "noopener"}
-         (if (owner? user-type) cv-filename "Click here to download")]])
-     (when cv-link
-       [:p (if (owner? user-type) "Your external resume: " "External resume: ")
-        [:a.a--underlined {:href cv-link, :target "_blank", :rel "noopener"} cv-link]])
-     (when-not (or cv-url cv-link)
+     (when (<sub [::subs/cv-file-uploaded?])
+       [:div (if (owner? user-type) "You uploaded " "Uploaded CV: ")
+        [:div.cv__wrapper
+         [:a.a--underlined {:href cv-url, :target "_blank" :rel "noopener"}
+          (if (owner? user-type)
+            cv-filename
+            "Click here to download")]
+         (when (owner? user-type)
+           [icon "close"
+            :id (str "cv-file__" cv-url)
+            :class "cv-link__icon"
+            :on-click #(dispatch [::events/remove-cv])])]])
+     (when (<sub [::subs/cv-link-uploaded?])
+       [:div (if (owner? user-type) "Your external resume: " "External resume: ")
+        [:div.cv__wrapper
+         [:a.a--underlined {:href cv-link, :target "_blank", :rel "noopener"}
+          cv-link]
+         (when (owner? user-type)
+           [icon "close"
+            :id (str "cv-link__" cv-link)
+            :class "cv-link__icon"
+            :on-click #(dispatch [::events/remove-link])])]])
+     (when-not (or (<sub [::subs/cv-file-uploaded?])
+                   (<sub [::subs/cv-link-uploaded?]))
        (if (owner? user-type)
          "You haven't uploaded resume yet."
          "No uploaded resume yet."))]
-    (when (owner-or-admin? user-type)
-      [:div.cv__buttons
-       (if (<sub [::subs/cv-uploading?])
-         [:button.button {:disabled true} "Uploading..."]
-         [:label.file-label.cv__upload
-          [:input.file-input {:type "file"
-                              :name "avatar"
-                              :on-change (upload/handler
-                                          :launch [::events/cv-upload]
-                                          :on-upload-start [::events/cv-upload-start]
-                                          :on-success [::events/cv-upload-success]
-                                          :on-failure [::events/cv-upload-failure])}]
-          [:span.file-cta.button
-           [:span.file-label "Upload resume"]]])
-       [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to resume" "button"]])]))
+     (when (owner-or-admin? user-type)
+       [:div.cv__buttons
+        (if (<sub [::subs/cv-uploading?])
+          [cv-section-buttons)])]])
 
 ;; Private section – view
 
