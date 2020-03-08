@@ -263,6 +263,7 @@
      (when (owner-or-admin? user-type)
        [:div.cv__buttons
         (if (<sub [::subs/cv-uploading?])
+          [:button.button {:disabled true} "Uploading..."]
           [cv-section-buttons)])]])
 
 ;; Private section – view
