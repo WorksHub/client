@@ -231,7 +231,7 @@
    [:section.profile-section.cv
     [:div.cv__view
      [:h2 "Career History"]
-     [:p "You can upload a maximu of one cv file and one external cv link."]
+     [:p "You can upload a maximum of one cv file and one external cv link."]
      [error-box]
      (when (<sub [::subs/cv-file-uploaded?])
        [:div (if (owner? user-type) "You uploaded " "Uploaded CV: ")
