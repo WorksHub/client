@@ -252,11 +252,29 @@
   (fn [company _]
     (:founded-year company)))
 
+(defn add-readable-name-to-locations [locations]
+  (some->> locations
+           (map #(hash-map
+                  :location/data %
+                  :location/name (location/format-location %)))))
+
+;; This sub is used to display list of actual company locations.
+;; It changes only after admin modified company details
 (reg-sub
-  ::location
-  :<- [::company]
-  (fn [company _]
-    (some-> company :locations first location/format-location)))
+ ::locations
+ :<- [::company]
+ (fn [company _]
+   (add-readable-name-to-locations (:locations company))))
+
+;; This one is distinguished from normal ::locations sub, to
+;; to allow edition of locations list, when editing company details.
+;; It's ephemeral. It's value is important only when editing
+;; and updating locations
+(reg-sub
+ ::current-locations
+ :<- [::sub-db]
+ (fn [db _]
+   (add-readable-name-to-locations (::profile/current-locations db))))
 
 (reg-sub
   ::has-published-profile?
@@ -266,16 +284,16 @@
         (:profile-enabled company))))
 
 (reg-sub
-  ::pending-location--raw
+  ::pending-locations--raw
   :<- [::sub-db]
   (fn [sub-db _]
-    (::profile/pending-location sub-db)))
+    (::profile/pending-locations sub-db)))
 
 (reg-sub
-  ::pending-location
-  :<- [::pending-location--raw]
-  (fn [pending-location _]
-    (some-> pending-location location/format-location)))
+  ::pending-locations
+  :<- [::pending-locations--raw]
+  (fn [pending-locations _]
+    (add-readable-name-to-locations pending-locations)))
 
 (reg-sub
   ::updating?

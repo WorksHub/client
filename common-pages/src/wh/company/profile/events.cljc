@@ -416,15 +416,17 @@
      ::fetch-place-details-success
      profile-interceptors
      (fn [db [google-response]]
-       (let [location (location/google-place->location google-response)]
-         (assoc db ::profile/pending-location location)))))
+       (let [location (location/google-place->location google-response)
+             db       (dissoc db ::profile/location-search)]
+         (update db ::profile/pending-locations (fnil conj []) location)))))
 
 (reg-event-db
   ::reset-location-search
   profile-interceptors
   (fn [db _]
     (dissoc db
-            ::profile/pending-location
+            ::profile/current-locations
+            ::profile/pending-locations
             ::profile/location-suggestions
             ::profile/location-search)))
 
@@ -453,6 +455,24 @@
   profile-interceptors
   (fn [{db :db} _]
     (assoc db ::profile/logo-uploading? false)))
+
+(reg-event-db
+ ::remove-pending-location
+ profile-interceptors
+ (fn [db [{location :location/data}]]
+   (update db ::profile/pending-locations #(remove #{location} %))))
+
+(reg-event-db
+ ::remove-current-location
+ profile-interceptors
+ (fn [db [{location :location/data}]]
+   (update db ::profile/current-locations #(remove #{location} %))))
+
+(reg-event-db
+ ::edit-locations
+ profile-interceptors
+ (fn [db [locations]]
+   (assoc db ::profile/current-locations locations)))
 
 (reg-event-fx
   ::publish-profile

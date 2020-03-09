@@ -683,6 +683,35 @@
                                                 (reset! new-ati %))}])
            tech-scales-view]]]))))
 
+(defn location-item
+  ([{:keys [location/name] :as location}]
+   [:li [icon "location"] name])
+  ([{:keys [location/name]} {:keys [on-delete]}]
+   [:li [icon "location"]
+    [:span name] [icon "close" :on-click on-delete]]))
+
+(defn pending-locations []
+  (when-let [pending-locations (not-empty (<sub [::subs/pending-locations]))]
+    [:div.company-profile__company-info__location.company-profile__company-info__location--pending
+     [:i "New locations"]
+     [:ul
+      (for [location pending-locations]
+        ^{:key (:location/name location)}
+        [location-item location
+         {:on-delete
+          #(dispatch [::events/remove-pending-location location])}])]]))
+
+(defn existing-locations []
+  (when-let [locations (not-empty (<sub [::subs/current-locations]))]
+    [:div.company-profile__company-info__location
+     [:i "Current locations"]
+     [:ul
+      (for [location locations]
+        ^{:key (:location/name location)}
+        [location-item location
+         {:on-delete
+          #(dispatch [::events/remove-current-location location])}])]]))
+
 (defn company-info
   [_admin-or-owner? & [_cls]]
   (let [editing?         (r/atom false)
@@ -698,7 +727,10 @@
                   :editable?             admin-or-owner?
                   :modal?                true
                   :prompt-before-cancel? (or @new-industry-tag @new-size @new-founded-year)
-                  :on-editing            #(reset! editing? true)
+                  :on-editing            #(do
+                                            (dispatch [::events/edit-locations
+                                                       (map :location/data (<sub [::subs/locations]))])
+                                            (reset! editing? true))
                   :on-cancel             #(do
                                             (dispatch [::events/reset-location-search])
                                             (reset! editing? false))
@@ -708,7 +740,7 @@
                      (when-let [changes
                                 (not-empty
                                   (merge {}
-                                         (when (or @new-industry-tag @new-funding-tag (<sub [::subs/pending-location]))
+                                         (when (or @new-industry-tag @new-funding-tag (<sub [::subs/pending-locations]))
                                            (let [current-tags
                                                  (cond->> (<sub [::subs/tags nil])
                                                           @new-industry-tag (remove (comp (partial = :industry) :type))
@@ -720,16 +752,24 @@
                                            {:size @new-size})
                                          (when (and @new-founded-year (txt/not-blank @new-founded-year))
                                            {:founded-year @new-founded-year})
-                                         (when-let [location (<sub [::subs/pending-location--raw])]
-                                           {:locations [location]})))] ;; TODO we only do one locatio for now
+                                         (let [pending-locations (<sub [::subs/pending-locations])
+                                               current-locations (<sub [::subs/current-locations])
+                                               locations (->> current-locations
+                                                              (concat pending-locations)
+                                                              (map :location/data)
+                                                              set
+                                                              vec)]
+                                           {:locations locations})))]
+
                        (dispatch-sync [::events/update-company changes])
                        (dispatch [::events/reset-location-search])))}
+
         (let [industry     (<sub [::subs/industry])
               funding      (<sub [::subs/funding])
               size         (some-> (<sub [::subs/size]) company-spec/size->range)
               founded-year (<sub [::subs/founded-year])
-              location     (some-> (<sub [::subs/location]))]
-          (if (not (or industry funding size founded-year location))
+              locations    (not-empty (<sub [::subs/locations]))]
+          (if (not (or industry funding size founded-year locations))
             [:div.company-profile__company-info__prompt
              (when-not (<sub [::subs/company-query-loading?])
                [:i "Edit this section to include information about your company, such as industry and location."])]
@@ -744,8 +784,11 @@
                [:li [icon "people"] "People: " size])
              (when founded-year
                [:li [icon "founded"] "Founded: " founded-year])
-             (when location
-               [:li [icon "location"] location])]))
+             (when locations
+               (for [location locations]
+                 ^{:key (:location/name location)}
+                 [location-item location]))]))
+
         [:form.wh-formx.wh-formx__layout
          #?(:cljs
             [:div
@@ -768,25 +811,23 @@
                :on-change (fn [v] (if v
                                     (reset! new-founded-year v)
                                     (reset! new-founded-year "")))}]
+
              [select-field (or @new-funding-tag (:id (<sub [::subs/funding])))
               {:options   (into [{:id nil, :label "--"}] ;; add unselected
                                 (sort-by :label (<sub [::subs/all-tags-of-type :funding])))
                :label     "What is your company's primary source of funding?"
                :on-change #(reset! new-funding-tag %)}]
+
              [text-field (or (<sub [::subs/location-search]))
               {:type                 :text
-               :label                "What's your company's HQ or primary location?"
+               :label                "What's your company's HQ or primary location? You can enter multiple locations."
                :on-change            [::events/update-location-suggestions]
                :suggestions          (<sub [::subs/location-suggestions])
                :on-select-suggestion [::events/select-location]}]
-             (if-let [pending-location (<sub [::subs/pending-location])]
-               [:div.company-profile__company-info__location.company-profile__company-info__location--pending
-                [:i "New location"]
-                [:p pending-location]]
-               (when-let [location (<sub [::subs/location])]
-                 [:div.company-profile__company-info__location
-                  [:i "Current location"]
-                  [:p location]]))])]]])))
+
+             [pending-locations]
+
+             [existing-locations]])]]])))
 
 (defn how-we-work-header
   [_admin-or-owner?]
