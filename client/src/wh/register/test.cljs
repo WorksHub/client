@@ -35,9 +35,9 @@
      [button "Continue" [:register/advance]]]
     :otherwise
     [:div
-     [codi-message [:span.highlight "The following code is incorrect"]]
+     [codi-message "The following code is incorrect"]
      [codi-message [:code (<sub [::subs/selected-riddle-code])]]
-     [codi-message "Correct this code by re-typing it below"]
+     [codi-message [:span.highlight "Correct this code"] " by re-typing it below"]
      (when (<sub [::subs/failed-code-riddle-check?])
        [error-message "That was not a correct answer, please try again"])
      [code-input]

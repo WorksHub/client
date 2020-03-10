@@ -579,7 +579,7 @@
   (fn [{db :db} _]
     (let [name (get-in db [::register/sub-db ::register/name])
           valid? (and (string? name)
-                      (re-find #"[^ ]+ +[^ ]+" name))
+                      (> (count name) 0))
           show-verify? (get-in db [::register/sub-db ::register/show-verify?])]
       (cond
         (and valid? show-verify? (not (db/blockchain? (::db/vertical db)))) {:dispatch [:register/advance]}
