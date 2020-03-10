@@ -3,6 +3,9 @@
     [cljs.loader :as loader]
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
     [reagent.core :as reagent]
+    [wh.company.articles.db :as articles-db]
+    [wh.company.articles.events :as articles-events]
+    [wh.company.articles.views :as articles]
     [wh.company.events :as _company_events]
     [wh.company.jobs.db :as jobs-db]
     [wh.company.jobs.events :as jobs-events]
@@ -18,7 +21,8 @@
 (def page-mapping
   {:company profile/page
    :companies listing/page
-   :company-jobs jobs/page})
+   :company-jobs jobs/page
+   :company-articles articles/page})
 
 (reg-event-db
   ::initialize-page-mapping

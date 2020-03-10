@@ -24,10 +24,7 @@
                                       :page_number     :$page_number
                                       :vertical        :$vertical_blogs}
                               [[:pagination [:total]]
-                               [:blogs [:id :title :feature :author
-                                        :formattedCreationDate :readingTime
-                                        :creator :upvoteCount :published
-                                        [:tags :fragment/tagFields]]]]]]})
+                               [:blogs :fragment/blogCardFields]]]]})
 (reg-query :blogs blogs-query)
 (def std-blogs-path [:blogs :blogs])
 

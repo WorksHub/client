@@ -47,3 +47,11 @@
 
 (deffragment tagFields :tag
   [:id :slug :type :subtype :label :weight])
+
+;; Articles/Blogs
+
+(deffragment blogCardFields :Blog
+  [:id :title :feature :author
+   :formattedCreationDate :readingTime
+   :creator :upvoteCount :published
+   [:tags :fragment/tagFields]])

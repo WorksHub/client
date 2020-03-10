@@ -215,8 +215,12 @@
   (let [blogs (<sub [::subs/blogs])]
     (when (or admin-or-owner? (not-empty blogs))
       [:section.company-profile__blogs
-       [:h2.title (str "Recent Articles")]
-       (if (empty? blogs)
+       [:div.is-flex
+        [:h2.title (str "Recent Articles")]
+        [link "View all"
+         :company-articles :slug (<sub [::subs/slug])
+         :class "a--underlined"]]
+       (if (empty? blogs) ;; must be admin or owner to get here
          [link
           [:button.button.button--medium.button--inverted.company-profile__cta-button
            "Add an article"]

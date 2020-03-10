@@ -26,6 +26,7 @@
                 :company-dashboard
                 :company-issues
                 :company-jobs
+                :company-articles
                 :contribute
                 :contribute-edit
                 :create-candidate

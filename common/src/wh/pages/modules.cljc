@@ -19,6 +19,7 @@
    :company-dashboard          :company
    :company-issues             :issues
    :company-jobs               :company-profile
+   :company-articles           :company-profile
    :contribute                 :logged-in
    :contribute-edit            :logged-in
    :create-candidate           :admin

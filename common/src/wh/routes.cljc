@@ -94,6 +94,7 @@
                              "applications"        :company-applications
                              [:slug]               :company      ;;Public SSR
                              [:slug "/jobs"]       :company-jobs ;;Public SSR
+                             [:slug "/articles"]   :company-articles ;;Public SSR
                              [:id "/edit"]         :admin-edit-company
                              [:id "/dashboard"]    :company-dashboard
                              [:id "/applications"] :admin-company-applications
@@ -196,6 +197,7 @@
                                                :company
                                                :companies
                                                :company-jobs
+                                               :company-articles
                                                :homepage
                                                :how-it-works
                                                ;;:issue CH3610

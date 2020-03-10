@@ -83,6 +83,22 @@
                         [:fragment/jobCardFields]]
                        [:pagination [:total]]]]]]]})
 
+(defquery fetch-company-articles-page-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "company"}
+   :venia/variables [{:variable/name "slug"
+                      :variable/type :String!}
+                     {:variable/name "page_size"
+                      :variable/type :Int!}
+                     {:variable/name "page_number"
+                      :variable/type :Int!}]
+   :venia/queries [[:company {:slug :$slug}
+                    [:totalPublishedJobCount
+                     [:blogs {:pageSize :$page_size :pageNumber :$page_number}
+                      [[:blogs
+                        [:fragment/blogCardFields]]
+                       [:pagination [:total]]]]]]]})
+
 (defquery analytics-query
   {:venia/operation {:operation/name "jobAnalytics"
                      :operation/type :query}
@@ -99,6 +115,7 @@
 (reg-query :company-card fetch-company-query--card)
 (reg-query :company-issues-and-blogs fetch-company-blogs-and-issues-query)
 (reg-query :company-jobs-page fetch-company-jobs-page-query)
+(reg-query :company-articles-page fetch-company-articles-page-query)
 (reg-query :all-company-jobs fetch-all-company-jobs-query)
 (reg-query :company-stats analytics-query)
 

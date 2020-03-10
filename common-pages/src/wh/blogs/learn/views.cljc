@@ -4,7 +4,7 @@
     [re-frame.core :refer [dispatch]]
     [wh.blogs.learn.db :as learn-db]
     [wh.blogs.learn.subs :as subs]
-    [wh.components.cards :refer [blog-card blog-row]]
+    [wh.components.cards :refer [blog-row]]
     [wh.components.carousel :refer [carousel]]
     [wh.components.icons :as icons]
     [wh.components.issue :as issue]
@@ -155,6 +155,3 @@
                                    :company-id     (<sub [:user/company-id])
                                    :admin?         (<sub [:user/admin?])}]
        [recommendation-cards/issues {:issues (<sub [::subs/recommended-issues])}]]]]))
-
-
-
