@@ -134,3 +134,8 @@
   []
   #?(:clj  (->jsfn "listenNewsletterForm")
      :cljs (fn [_] (js/listenNewsletterForm))))
+
+(defn highlight-code-snippets
+  []
+  #?(:clj  (->jsfn "highlightCodeSnippets")
+     :cljs (js/highlightCodeSnippets)))

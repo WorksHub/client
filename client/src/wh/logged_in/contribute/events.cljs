@@ -208,8 +208,9 @@
   ::fetch-blog-success
   contribute-interceptors
   (fn [{db :db} [res]]
-    {:db (merge db (translate-blog (get-in res [:data :blog])))
-     :dispatch [::pages/unset-loader]}))
+    (let [blog (translate-blog (get-in res [:data :blog]))]
+      {:db       (merge db blog {::contribute/body-editing? true})
+       :dispatch [::pages/unset-loader]})))
 
 (reg-event-fx
   ::fetch-blog-failure

@@ -3,6 +3,7 @@
     #?(:cljs [wh.common.http :refer [url-encode]]
        :clj [bidi.bidi :refer [url-encode]])
     #?(:cljs [goog.Uri :as uri])
+    #?(:cljs [reagent.core :as reagent])
     [clojure.string :as str]
     [wh.blogs.blog.events :as events]
     [wh.blogs.blog.subs :as subs]
@@ -14,6 +15,7 @@
     [wh.components.recommendation-cards :as recommendation-cards]
     [wh.components.tag :as tag]
     [wh.components.not-found :as not-found]
+    [wh.interop :as interop]
     [wh.pages.util :as putil]
     [wh.re-frame :as r]
     [wh.re-frame.events :refer [dispatch]]
@@ -203,11 +205,21 @@
 
 (defn page []
   #?(:cljs
-     (let [last-y (r/atom 0)
+     (let [code-highlighted? (r/atom false)
+           last-y (r/atom 0)
            _      (putil/attach-on-scroll-event
                     (fn [y]
                       (dispatch [::events/show-share-links (< y @last-y)])
-                      (reset! last-y y)))]
-       page-render)
+                      (reset! last-y y)))
+           highlight-code (fn []
+                            (when (and (not @code-highlighted?)
+                                       (<sub [::subs/html-body]))
+                              (reset! code-highlighted? true)
+                              (interop/highlight-code-snippets)))]
+       (reagent/create-class
+         {:component-did-update highlight-code
+          :component-did-mount highlight-code
+          :render page-render}))
      :clj
-     (page-render)))
+     (conj (page-render)
+           [:script (interop/highlight-code-snippets)])))

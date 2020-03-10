@@ -319,7 +319,7 @@
              {:key (:description est)}
              [:span (:description est)]
              [:span (int->dollars (:amount est) {:cents? true})]]))
-        [:hr ]
+        [:hr]
         (when breakdown?
           [:div.is-flex
            [:strong "Initial charge, debited immediately"]
@@ -342,7 +342,7 @@
             (str "be " (int->dollars latent-cost) " and ")) "recur "
           (if (= 1 number)
             "each month"
-            (str "every " number " " (pluralize number "month" )))
+            (str "every " number " " (pluralize number "month")))
           "."]]]
        [:div.is-loading-spinner])]))
 
@@ -552,7 +552,7 @@
                    [:div.radio
                     [:label {:for k}]]]
                   [:span "Pay " (str/lower-case (str/replace title #" " "-"))]
-                  [:span (int->dollars (cost/calculate-monthly-cost cost discount coupon)) " per " per ]
+                  [:span (int->dollars (cost/calculate-monthly-cost cost discount coupon)) " per " per]
                   [:span (when discount (str "save " (* 100 discount) "%"))]]))]
             [:div.package-selector__slide-buttons.payment-setup__slide-buttons.is-hidden-desktop
              [:div.package-selector__slide-buttons-inner

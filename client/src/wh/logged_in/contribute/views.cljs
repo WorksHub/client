@@ -8,6 +8,7 @@
     [wh.components.conversation.views :as codi :refer [codi-message]]
     [wh.components.forms.views :refer [multi-edit labelled-checkbox text-field text-input logo-field tags-field select-field]]
     [wh.components.verticals :as vertical-views]
+    [wh.interop :as interop]
     [wh.logged-in.contribute.db :as contribute]
     [wh.logged-in.contribute.events :as events]
     [wh.logged-in.contribute.subs :as subs]
@@ -45,7 +46,9 @@
        [:div.tab {:on-click #(dispatch [::events/show-edit])
                   :class    (when editing? "tab--active")}
         "Edit"]
-       [:div.tab {:on-click #(dispatch [::events/show-preview])
+       [:div.tab {:on-click #(do
+                               (dispatch [::events/show-preview])
+                               (js/setTimeout interop/highlight-code-snippets 500))
                   :class    (when-not editing? "tab--active")}
         "Preview"]]
       [:div.add-image.file
