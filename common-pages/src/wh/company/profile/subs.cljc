@@ -4,6 +4,7 @@
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.common.location :as location]
+    [wh.common.job :as common-job]
     [wh.company.profile.db :as profile]
     [wh.components.stats.db :as stats]
     [wh.components.tag :refer [->tag tag->form-tag]]
@@ -200,8 +201,9 @@
   ::jobs
   :<- [::company-extra-data]
   (fn [company-extra-data _]
-    (not-empty
-      (-> company-extra-data :jobs :jobs))))
+    (->> (get-in company-extra-data [:jobs :jobs])
+         (not-empty)
+         (map common-job/translate-job))))
 
 (reg-sub
   ::total-number-of-jobs
