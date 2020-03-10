@@ -97,10 +97,11 @@
     (or (:reading-time blog) 0)))
 
 (reg-sub
-  ::html-body
+  ::html-body-parts
   :<- [::blog]
   (fn [blog _]
-    (:html-body blog)))
+    (some-> (:html-body blog)
+            (clojure.string/split #"<div class=\"divider\"></div>"))))
 
 (reg-sub
   ::formatted-creation-date

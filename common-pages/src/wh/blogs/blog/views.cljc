@@ -7,10 +7,10 @@
     [clojure.string :as str]
     [wh.blogs.blog.events :as events]
     [wh.blogs.blog.subs :as subs]
-    [wh.components.cards :as cards]
     [wh.components.common :refer [link]]
     [wh.components.icons :refer [icon url-icons]]
     [wh.components.job :refer [job-card]]
+    [wh.components.newsletter :as newsletter]
     [wh.components.pods.candidates :as candidate-pods]
     [wh.components.recommendation-cards :as recommendation-cards]
     [wh.components.tag :as tag]
@@ -155,22 +155,44 @@
            :target "_blank" :rel "noopener"}
        (<sub [::subs/original-source-domain])]]]))
 
+(defn header []
+  [:div.blog-header__edit-button
+   (when (<sub [::subs/can-edit?])
+     [link [:button.button "Edit Blog"]
+      :contribute-edit :id (<sub [::subs/id])])
+   (when (<sub [::subs/show-unpublished?])
+     [:span.card__label.card__label--unpublished.card__label--blog-header "unpublished"])])
+
+(defn tags []
+  [tag/tag-list :a (->> (<sub [::subs/tags])
+                        (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))])
+
+(defn title []
+  [:h1.blog-header (<sub [::subs/title])])
+
 (defn blog-content []
-  [:div.blog__content
-   [:div.blog-section__width
-    [:h1.blog-header (<sub [::subs/title])]
-    [:div.blog-header__edit-button
-     (when (<sub [::subs/can-edit?])
-       [link [:button.button "Edit Blog"]
-        :contribute-edit :id (<sub [::subs/id])])
-     (when (<sub [::subs/show-unpublished?])
-       [:span.card__label.card__label--unpublished.card__label--blog-header "unpublished"])]
-    [blog-info]
-    [tag/tag-list :a (->> (<sub [::subs/tags])
-                          (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]]
-   [:div.blog-body.blog-section__width
-    [putil/html (<sub [::subs/html-body])]]
-   [blog-original-source]])
+  (let [body-parts (<sub [::subs/html-body-parts])
+        show-newsletter? (= (count body-parts) 2)
+        user-logged-in? (<sub [:user/logged-in?])]
+    [:div
+     [:div.blog__content
+      [:div.blog-section__width
+       [title]
+       [header]
+       [blog-info]
+       [tags]
+       [:div.blog-body.blog-section__width
+        [putil/html (first body-parts)]
+        (when-not show-newsletter?
+          [blog-original-source])]]]
+     (when show-newsletter?
+       [newsletter/newsletter user-logged-in?])
+     (when show-newsletter?
+       [:div.blog__content
+        [:div.blog-section__width
+         [:div.blog-body.blog-section__width
+          [putil/html (second body-parts)]
+          [blog-original-source]]]])]))
 
 (defn blog-hero []
   (let [feature (<sub [::subs/feature])]
@@ -213,7 +235,7 @@
                       (reset! last-y y)))
            highlight-code (fn []
                             (when (and (not @code-highlighted?)
-                                       (<sub [::subs/html-body]))
+                                       (seq (<sub [::subs/html-body-parts])))
                               (reset! code-highlighted? true)
                               (interop/highlight-code-snippets)))]
        (reagent/create-class

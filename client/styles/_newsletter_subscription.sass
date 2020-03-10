@@ -1,0 +1,80 @@
+@keyframes bounceInLeft
+  from,
+  60%,
+  75%,
+  90%,
+  to
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1)
+  0%
+    opacity: 0
+    transform: translate3d(-3000px, 0, 0)
+  60%
+    opacity: 1
+    transform: translate3d(25px, 0, 0)
+  75%
+    transform: translate3d(-10px, 0, 0)
+  90%
+    transform: translate3d(5px, 0, 0)
+  to
+    transform: translate3d(0, 0, 0)
+
+.newsletter-subscription
+  border: 4px solid $red
+  overflow: hidden
+  .newsletter-subscription__form
+    display: flex
+    flex-direction: column
+    +desktop
+      flex-direction: row
+      align-items: flex-end
+  .newsletter-subscription__input
+    width: 100%
+    height: 40px
+    padding: 0 12px
+    color: $steel-gray
+    font-weight: 600
+    @include form-fieldx
+  .newsletter-subscription__input::placeholder
+    color: $placeholder-grey
+  .newsletter-subscription__input:focus
+    border: 2px solid $red
+    outline: none
+  .newsletter-subscription__button
+    height: 40px
+    padding: 6px 12px
+  .newsletter-subscription__input-wrapper
+    margin-bottom: 6px
+    +desktop
+      margin-bottom: 0
+      margin-right: 6px
+      flex: 1
+  .newsletter-subscription__label
+    display: inline-block
+    color: $red
+    font-weight: 600
+    margin-bottom: 6px
+    font-size: 14px
+  .newsletter-subscription__title
+    margin-bottom: 12px
+    font-size: 16px
+  .newsletter-subscription__description
+    margin-bottom: 12px
+    font-size: 15px
+  .newsletter-subscription__success
+    display: flex
+    align-items: center
+    justify-content: center
+    text-align: center
+    height: 110px
+    background-color: $red
+    +desktop
+      height: 64px
+  .newsletter-subscription__primary-text
+    color: white
+    font-weight: 600
+    font-size: 20px
+    animation-duration: 1s
+    animation-fill-mode: both
+    animation-name: bounceInLeft
+    +desktop
+      font-size: 24px

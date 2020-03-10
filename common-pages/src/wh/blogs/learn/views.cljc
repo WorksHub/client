@@ -9,6 +9,7 @@
     [wh.components.icons :as icons]
     [wh.components.issue :as issue]
     [wh.components.job :refer [job-card]]
+    [wh.components.newsletter :as newsletter]
     [wh.components.pagination :refer [pagination]]
     [wh.components.pods.candidates :as candidate-pods]
     [wh.components.recommendation-cards :as recommendation-cards]
@@ -17,8 +18,7 @@
     [wh.re-frame :as rf]
     [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
-    [wh.slug :as slug]
-    [wh.util :as util]))
+    [wh.slug :as slug]))
 
 (defn learn-header
   []
@@ -73,29 +73,6 @@
        [:h2.recommendation__title "Recommended Jobs"]
        [carousel steps {:arrows? true
                         :arrows-position :bottom}]])))
-
-(defn newsletter
-  []
-  (let [render (fn []
-                 (when-not (<sub [:user/logged-in?])
-                   [:section
-                    {:class (util/merge-classes "pod"
-                              "pod--no-shadow"
-                              "newsletter-subscription")}
-                    [:div [:h3.newsletter-subscription__title "Join our newsletter!"]
-                     [:p.newsletter-subscription__description "Join over 111,000 others and get access to exclusive content, job opportunities and more!"]
-                     [:form#newsletter-subscription.newsletter-subscription__form
-                      [:div.newsletter-subscription__input-wrapper
-                       [:label.newsletter-subscription__label {:for "email"} "Your email"]
-                       [:input.newsletter-subscription__input {:type "email" :name "email" :placeholder "turing@machine.com" :id "email"}]]
-                      [:button.button.newsletter-subscription__button "Subscribe"]]
-                     [:div.newsletter-subscription__success.is-hidden
-                      [:div.newsletter-subscription__primary-text "Thanks! " [:br.is-hidden-desktop] "See you soon!"]]]]))]
-    #?(:cljs (r/create-class
-               {:component-did-mount (interop/listen-newsletter-form)
-                :reagent-render render})
-       :clj  (some-> (render)
-                     (conj [:script (interop/listen-newsletter-form)])))))
 
 (defn search-btn [search?]
   (let [icon-name (if search? "search-new" "close")
@@ -152,7 +129,7 @@
        (for [blog ch1]
          ^{:key (:id blog)}
          [blog-row  blog])
-       [newsletter]
+       [newsletter/newsletter (<sub [:user/logged-in?])]
        (when (> ch-size 1)
          [recommended-jobs-mobile])
        (for [blog ch2]

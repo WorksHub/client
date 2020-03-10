@@ -21,9 +21,12 @@
 
 (def aws-bucket-regex #"functionalworks-backend--(prod|qa)\.s3\.amazonaws\.com")
 
+(defn aws-bucket-source? [src]
+  (and (string? src)
+       (re-find aws-bucket-regex src)))
+
 (defn wrap-img [img-component src {:keys [alt class w h] :as params}]
-  (if (and (string? src)
-           (re-find aws-bucket-regex src))
+  (if (aws-bucket-source? src)
     (img-component src params)
     [:img (merge {:src src
                   :alt alt
