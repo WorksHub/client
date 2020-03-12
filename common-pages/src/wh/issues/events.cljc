@@ -7,7 +7,8 @@
     [wh.db :as db]
     [wh.graphql.issues :as queries]
     [wh.issues.db :as issues]
-    [wh.re-frame.events :refer [reg-event-db reg-event-fx]]))
+    [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
+    [wh.slug :as slug]))
 
 (def issues-interceptors (into db/default-interceptors
                                [(path ::issues/sub-db)]))
@@ -38,22 +39,23 @@
        (if (db/logged-in? db)
          queries/fetch-company-issues--logged-in
          queries/fetch-company-issues--not-logged-in)
-       queries/fetch-company-issues)))
+       queries/fetch-issues)))
 
 #?(:cljs
    (reg-event-fx
      ::fetch-issues
      db/default-interceptors
-     (fn [{db :db} [company-id page-number]]
+     (fn [{db :db} [company-id page-number language]]
        {:db      (update db ::issues/sub-db merge
                          {::issues/loading?   true
                           ::issues/company-id company-id})
         :graphql {:query      (fetch-issues-query db company-id)
-                  :variables  {:id          company-id
-                               :page_size   issues/default-page-size
-                               :published   true
-                               :page_number (or page-number 1)
-                               :sort        (issues/issues-sort (::db/query-params db))}
+                  :variables  {:id            company-id
+                               :page_size     issues/default-page-size
+                               :published     true
+                               :repo_language language
+                               :page_number   (or page-number 1)
+                               :sort          (issues/issues-sort (::db/query-params db))}
                   :on-success [::fetch-issues-success]
                   :on-failure [::failure ::fetch-issues]}})))
 
@@ -93,6 +95,16 @@
      db/default-interceptors
      (fn [db [issue]]
        (update-in db [::issues/sub-db ::issues/issues] #(map (partial update-issue issue) %)))))
+
+#?(:cljs
+   (defmethod on-page-load :issues-by-language [db]
+     (let [page-number (get-in db [::db/query-params "page"])
+           issues-language (issues/language db)]
+       (if (::db/initial-load? db)
+         []
+         [[::initialize-db]
+          [:wh.events/scroll-to-top]
+          [::fetch-issues nil page-number (slug/slug->label issues-language)]]))))
 
 #?(:cljs
    (defmethod on-page-load :issues [db]

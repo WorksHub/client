@@ -72,6 +72,7 @@
               ["issues/" {""            :issues
                           [:company-id] (bidi/tag :issues :issues-for-company-id)}]
               ["issue/" {[:id] :issue}]
+              [[[#".+" :language] "-issues"] :issues-by-language]
               ["how-it-works" :how-it-works]
               [#{[:tag "-jobs-in-" :location]
                  [:tag "-jobs"]

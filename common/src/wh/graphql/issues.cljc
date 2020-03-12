@@ -62,41 +62,41 @@
    :venia/queries   [[:update_issues {:issues :$issues}
                       [[:issues [:fragment/issueListFields]]]]]})
 
-(defquery fetch-company-issues
+(def issues-query-variables
+  [{:variable/name "id"
+    :variable/type :ID!}
+   {:variable/name "page_number"
+    :variable/type :Int}
+   {:variable/name "repo_name"
+    :variable/type :String}
+   {:variable/name "repo_owner"
+    :variable/type :String}
+   {:variable/name "repo_language"
+    :variable/type :String}
+   {:variable/name "page_size"
+    :variable/type :Int}
+   {:variable/name "published"
+    :variable/type :Boolean}
+   {:variable/name "sort"
+    :variable/type :issues_sort}])
+
+(defquery fetch-issues
   {:venia/operation {:operation/type :query
                      :operation/name "issues"}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID}
-                     {:variable/name "page_number"
-                      :variable/type :Int}
-                     {:variable/name "page_size"
-                      :variable/type :Int}
-                     {:variable/name "published"
-                      :variable/type :Boolean}
-                     {:variable/name "sort"
-                      :variable/type :issues_sort}]
+   :venia/variables issues-query-variables
    :venia/queries   [[:query_issues
-                      {:company_id  :$id
-                       :published   :$published
-                       :page_number :$page_number
-                       :page_size   :$page_size
-                       :sort        :$sort}
+                      {:published     :$published
+                       :repo_language :$repo_language
+                       :page_number   :$page_number
+                       :page_size     :$page_size
+                       :sort          :$sort}
                       [[:issues [:fragment/issueListFields]]
                        [:pagination [:total :count :page_size :page_number]]]]]})
 
 (defquery fetch-company-issues--not-logged-in
   {:venia/operation {:operation/type :query
                      :operation/name "issues"}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID!}
-                     {:variable/name "page_number"
-                      :variable/type :Int}
-                     {:variable/name "page_size"
-                      :variable/type :Int}
-                     {:variable/name "published"
-                      :variable/type :Boolean}
-                     {:variable/name "sort"
-                      :variable/type :issues_sort}]
+   :venia/variables issues-query-variables
    :venia/queries   [[:company {:id :$id}
                       [:name :logo]]
                      [:query_issues
@@ -111,20 +111,7 @@
 (defquery fetch-company-issues--logged-in
   {:venia/operation {:operation/type :query
                      :operation/name "issues"}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID!}
-                     {:variable/name "page_number"
-                      :variable/type :Int}
-                     {:variable/name "repo_name"
-                      :variable/type :String}
-                     {:variable/name "repo_owner"
-                      :variable/type :String}
-                     {:variable/name "page_size"
-                      :variable/type :Int}
-                     {:variable/name "published"
-                      :variable/type :Boolean}
-                     {:variable/name "sort"
-                      :variable/type :issues_sort}]
+   :venia/variables issues-query-variables
    :venia/queries   [[:company {:id :$id}
                       [:name :logo]]
                      [:query_issues

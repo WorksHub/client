@@ -33,7 +33,7 @@
   ::fetch-company-issues
   db/default-interceptors
   (fn [{db :db} _]
-    {:graphql {:query queries/fetch-company-issues
+    {:graphql {:query queries/fetch-issues
                :variables {:id (get-in (issue db) [:company :id])
                            :published true
                            :page_size 3

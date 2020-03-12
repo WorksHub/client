@@ -14,7 +14,8 @@
    :manage-issues {:page manage-issues/page :can-access? user/company?}
    :manage-repository-issues {:page manage-issues/issues-page :can-access? user/company?}
    :issue issue/page
-   :issues issues/page})
+   :issues issues/page
+   :issues-by-language issues/page})
 
 (reg-event-db
   ::initialize-page-mapping

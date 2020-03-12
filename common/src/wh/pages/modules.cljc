@@ -37,6 +37,7 @@
    :improve-recommendations    :logged-in
    :issue                      :issues
    :issues                     :issues
+   :issues-by-language         :issues
    :job                        :jobs
    :jobsboard                  :jobs
    :learn                      :blogs

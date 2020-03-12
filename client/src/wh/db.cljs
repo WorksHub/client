@@ -45,6 +45,7 @@
                 :improve-recommendations
                 :issue
                 :issues
+                :issues-by-language
                 :job
                 :jobsboard
                 :learn

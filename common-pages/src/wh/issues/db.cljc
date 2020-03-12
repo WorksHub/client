@@ -2,8 +2,12 @@
   (:require
     #?(:clj  [clojure.spec.alpha :as s]
        :cljs [cljs.spec.alpha :as s])
+    [bidi.bidi :as bidi]
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.components.pagination :as pagination]))
+
+(defn language [db]
+  (bidi/url-decode (get-in db [:wh.db/page-params :language])))
 
 (defn issues-sort
   [qps]

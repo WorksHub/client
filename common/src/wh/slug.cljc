@@ -22,3 +22,14 @@
       (str/replace #"\+" "plus")  ;; C++
       (str/replace #"^\." "dot")  ;; .NET
       (str/replace #"[^a-zA-Z0-9]+" "-")))
+
+(defn slug->label
+  "Changes URL-safe string into readable label. Useful when URL parameter
+  is passed to DB query."
+  [s]
+  (-> s
+      (str/lower-case)
+      (str/trim)
+      (str/replace #"sharp" "#")  ;; C#
+      (str/replace #"plus" "+")   ;; C++
+      (str/replace #"dot" ".")))  ;; .NET
