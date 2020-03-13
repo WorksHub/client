@@ -13,6 +13,7 @@
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [level->str level->icon issue-card]]
+    [wh.components.pods.candidates :as candidate-pods]
     [wh.components.job :refer [job-card highlight]]
     [wh.interop :as interop]
     [wh.job.events :as events]
@@ -190,19 +191,19 @@
             logo-img))
         [:div.logo--skeleton]))]
    [:div.job__company-header__info
+    [:h1.job__header-job-title (<sub [::subs/title])]
     (cond
       (<sub [::subs/profile-enabled?])
-      [link [:h2.is-underlined (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
+      [link [:h2.job__header-company-link (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
 
       (<sub [:user/admin?])
-      [link [:h2 (<sub [::subs/company-name])] :company-dashboard :id (<sub [::subs/company-id])]
+      [link [:h2.job__header-company-link (<sub [::subs/company-name])] :company-dashboard :id (<sub [::subs/company-id])]
 
       :else
-      [:h2 (<sub [::subs/company-name])])
-    [:h1 (<sub [::subs/title])]
-    [:h3 (if (<sub [::subs/remote?])
-           [:div "Remote 🙌"]
-           (<sub [::subs/location]))]]
+      [:h2.job__header-company-link (<sub [::subs/company-name])])
+    [:h3.job__header-company-location (if (<sub [::subs/remote?])
+                                        [:div "Remote 🙌"]
+                                        (<sub [::subs/location]))]]
    [:div.job__company-header__last-modified
     (<sub [::subs/last-modified])]
    (when (<sub [::subs/like-icon-shown?])
@@ -213,8 +214,7 @@
   []
   (let [tagline (<sub [::subs/tagline])]
     [:section.job__tagline
-     [:h2 (when tagline "To sum it up...")]
-     [:div tagline]]))
+     tagline]))
 
 (defn job-stats
   []
@@ -266,13 +266,15 @@
   [:section.job__job-highlights
    (let [salary (<sub [::subs/salary])]
      [highlight
-      (when salary "Salary") "job-money"
+      (when salary "Salary")
+      "job-money"
       [:div.job__salary
        salary]])
    ;;
    (let [role-type (<sub [::subs/role-type])]
      [highlight
-      (when role-type "Contract type") "job-contract"
+      (when role-type "Contract type")
+      "job-contract"
       [:div.job__contract-type
        [:div role-type]
        (when (<sub [::subs/sponsorship-offered?]) [:div "Sponsorship offered"])
@@ -280,7 +282,8 @@
    ;;
    (let [tags (<sub [::subs/tags])]
      [highlight
-      (when tags "Technologies & frameworks") "job-tech"
+      (when tags "Technologies & frameworks")
+      "job-tech"
       [:div.job__technology
        [:div.row.summary__row__with-tags
         (let [skeleton? (nil? tags)
@@ -294,7 +297,8 @@
    ;;
    (when-let [benefits (<sub [::subs/benefits])]
      [highlight
-      "Benefits & perks" "job-benefits"
+      "Benefits & perks"
+      "job-benefits"
       [:div.job__benefits
        [:div.row
         (into [:ul]
@@ -342,7 +346,7 @@
   [:section.job__information
    (let [description (<sub [::subs/description])]
      [:div.job__job-description
-      [:h2 (when description "Role overview")]
+      [:h2.job__job-description-title (when description "Role overview")]
       [content [putil/html description]]])
    (let [description  (<sub [::subs/location-description])
          position     (<sub [::subs/location-position])
@@ -457,8 +461,10 @@
        [:div.job__side.is-hidden-mobile
         actions
         [job-highlights]
+        [candidate-pods/candidate-cta]
         (when (<sub [::subs/show-issues?])
           [company-issues])]]
+      [:div.is-hidden-desktop [candidate-pods/candidate-cta]]
       [other-roles]
       (when (<sub [::subs/show-notes-overlay?])
         [notes-overlay

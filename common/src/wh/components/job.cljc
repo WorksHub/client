@@ -149,8 +149,8 @@
 (defn highlight
   [title icon-name body]
   [:div.job__highlight
-   [:div.job__highlight__content
-    [:h2 title]
-    body]
    [:div.job__highlight_icon
-    (when title [icon icon-name])]])
+    (when title [icon icon-name])]
+   [:div.job__highlight__content
+    [:h2.job__highlight__title title]
+    body]])

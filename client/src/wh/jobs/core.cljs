@@ -21,4 +21,9 @@
 
 (dispatch-sync [::initialize-page-mapping])
 
+;; load extra symbols
+(let [symbol-filename "symbols/job.svg"]
+  (when-not (.getElementById js/document (str "load-icons-" symbol-filename))
+    (js/loadSymbols symbol-filename)))
+
 (loader/set-loaded! :jobs)

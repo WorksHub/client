@@ -34,12 +34,17 @@
 
 (defn icons-to-load
   [page]
-  (cond-> ["symbols/common.svg" "symbols/tags.svg"]
-          (or (= :company page)
-              (= :companies page))
-          (conj "symbols/company_profile.svg")
-          (= :issues page)
-          (conj "symbols/issues.svg")))
+  (let [base ["symbols/common.svg" "symbols/tags.svg"]]
+    (cond
+      (or (= :company page)
+          (= :companies page))
+      (conj base "symbols/company_profile.svg")
+      (= :issues page)
+      (conj base "symbols/issues.svg")
+      (= :job page)
+      (conj base "symbols/job.svg")
+      :else
+      base)))
 
 (defn ->html
   [d]

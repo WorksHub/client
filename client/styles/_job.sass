@@ -12,6 +12,98 @@
     background-color: white
     border: 1px solid black
 
+.job
+
+  .job__job-description-title
+    color: inherit
+    font-weight: 600
+
+  .job__tagline
+    +mobile
+      font-size: 14px
+      line-height: 20px
+      border-left-width: 4px
+
+    font-size: 18px
+    font-style: italic
+    line-height: 26px
+    border-left: 8px solid $red
+    &:empty
+      @include skeleton(100%, 22px)
+
+  .job__highlight
+    position: relative
+    display: flex
+
+    .job__highlight_icon
+      margin-right: 18px
+
+      .icon
+        height: 1.8rem
+        width: 1.8rem
+
+    &:not(:last-of-type)
+      margin-bottom: 24px
+
+    .job__highlight__title
+      color: inherit
+      font-weight: 600
+      margin-right: 28px
+      font-size: 14px
+      line-height: 18px
+      margin-bottom: 12px
+
+      &:empty
+        @include skeleton(75%, 22px)
+
+  .job__salary
+    font-size: 18px
+    line-height: 18px
+    color: $red
+    font-weight: 700
+    margin-top: -4px
+    &:empty
+      @include skeleton(50%, 30px)
+
+  .job__header-job-title
+    font-weight: 700
+    margin-bottom: 0
+
+  .job__header-company-link
+    color: inherit
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4)
+    display: inline-flex
+    font-size: 16px
+
+    &:hover
+      border-color: $red
+
+  .job__header-company-location
+    font-size: 14px
+
+  .job__company-header__info
+    flex: 1
+    display: flex
+    flex-direction: column
+    justify-content: center
+
+    h1:empty
+      @include skeleton(250px, 30px)
+    h2:empty
+      @include skeleton(150px, 22px)
+    h3:empty
+      @include skeleton(200px, 18px)
+    h3
+      margin-bottom: 0
+
+  .job__company-header__last-modified
+    position: absolute
+    right: 12px
+    bottom: 4px
+    font-size: 13px
+    color: $steel-gray
+
+
 .job-edit
   +mobile
     margin-bottom: 60px
@@ -145,7 +237,6 @@ $description-height: 400px
   p
     margin-bottom: 18px
   h1,h2,h3
-    color: $steel-gray
     margin-bottom: 18px
   a
     h1,h2,h3
@@ -223,17 +314,6 @@ $description-height: 400px
   .logo--skeleton
     @include skeleton(80px, 80px)
 
-.job__company-header__info
-  h1:empty
-    @include skeleton(250px, 30px)
-  h2:empty
-    @include skeleton(150px, 22px)
-  h3:empty
-    @include skeleton(200px, 18px)
-  h3
-    margin-bottom: 0
-  flex: 1
-
 .job__company-header__like
   fill: $white
   &:hover
@@ -252,13 +332,6 @@ $description-height: 400px
       width: 24px
       height: 24px
 
-.job__company-header__last-modified
-  position: absolute
-  right: 12px
-  bottom: 0px
-  font-size: 10px
-  color: $steel-gray
-
 .job__save
   fill: $green-tint
   &:hover
@@ -268,21 +341,6 @@ $description-height: 400px
   fill: $red
   &:hover
     fill: $hover-red
-
-.job__tagline
-  h2
-    font-size: 14px
-    line-height: 18px
-    margin-bottom: 10px
-    &:empty
-      @include skeleton(200px, 24px)
-  div
-    color: $steel-gray
-    font-size: 18px
-    font-style: italic
-    line-height: normal
-    &:empty
-      @include skeleton(100%, 22px)
 
 .job__company-action,
 .job__admin-action,
@@ -344,36 +402,25 @@ $description-height: 400px
   span
     display: block
 
-.job__highlight
-  position: relative
-  &:not(:last-of-type)
-    margin-bottom: 24px
-  h2
-    margin-right: 28px
+.job__benefits
+  list-style-type: none !important
+
+  li
     font-size: 14px
-    line-height: 18px
-    margin-bottom: 12px
-    &:empty
-      @include skeleton(75%, 22px)
+    line-height: 24px
+    display: flex
 
-.job__salary
-  color: $steel-gray
-  font-size: 18px
-  font-style: italic
-  &:empty
-      @include skeleton(50%, 30px)
+  li::before
+    content: ''
+    background-color: $red
+    display: inline-block
+    width: 6px
+    height: 6px
+    border-radius: 50%
+    margin-right: 8px
+    align-self: center
 
-.job__highlight_icon
-  position: absolute
-  top: 0
-  right: 0
-  svg
-    height: 28px
-    width: 28px
-  &:empty
-    @include skeleton(28px, 28px)
-
-.job__benefits, .did-you-know
+.did-you-know
   list-style-type: none !important
   li
     font-size: 14px
