@@ -9,6 +9,7 @@
 
 (def page-size 20)
 (def tag-field-id "companies-listing-tag-field")
+(def search-query-name "companies-search")
 
 (defn company-sort
   [qps]
@@ -22,6 +23,10 @@
   [qps]
   (boolean (get qps "jobs")))
 
+(defn search-term
+  [qps]
+  (get qps search-query-name))
+
 (defn qps->tag-string
   [qps]
   (when-let [tag-or-tags (get qps "tag")]
@@ -29,15 +34,17 @@
 
 (defn qps->query-body
   [qps]
-  (merge {:page_number (pagination/qps->page-number qps)
-          :page_size page-size
-          :sort        (company-sort qps)}
-         (when-let [tag-string (qps->tag-string qps)]
-           {:tag_string tag-string})
-         (when (live-jobs-only qps)
-           {:live_jobs :some})
-         (when-let [size (company-size qps)]
-           {:size size})))
+  (util/remove-nils
+    (merge {:page_number (pagination/qps->page-number qps)
+            :page_size   page-size
+            :sort        (company-sort qps)
+            :search_term (search-term qps)}
+           (when-let [tag-string (qps->tag-string qps)]
+             {:tag_string tag-string})
+           (when (live-jobs-only qps)
+             {:live_jobs :some})
+           (when-let [size (company-size qps)]
+             {:size size}))))
 
 (def tag-sort
   {:industry 1

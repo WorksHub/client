@@ -18,6 +18,7 @@
    :venia/variables [{:variable/name "page_number" :variable/type :Int}
                      {:variable/name "page_size" :variable/type :Int}
                      {:variable/name "tag_string" :variable/type :String}
+                     {:variable/name "search_term" :variable/type :String}
                      {:variable/name "sort" :variable/type :companies_sort}
                      {:variable/name "live_jobs" :variable/type :live_job_query_type}
                      {:variable/name "size" :variable/type :company_size}]
@@ -27,6 +28,7 @@
                        :tag_string  :$tag_string
                        :sort        :$sort
                        :live_jobs   :$live_jobs
+                       :search_term :$search_term
                        :size        :$size}
                       [[:pagination [:total :count]]
                        [:companies :fragment/companyCardFields]]]]})
