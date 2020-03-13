@@ -8,23 +8,6 @@
     [wh.routes :as routes]
     [wh.util :as util]))
 
-(defn company-cta
-  [& [cls]]
-  (when-not (<sub [:user/logged-in?])
-    [:section
-     {:class (util/merge-classes "pod"
-                                 "pod--no-shadow"
-                                 "company-profile__company-cta"
-                                 cls)}
-     [:h3 "Get involved - create a free profile page for your company"]
-     [:div.is-flex
-      [:p "Companies with profiles typically get 20% more applications. Start building your hiring pipeline immediately."]
-      [link [:button.button.is-full-width.is-hidden-mobile "Get Started"] :get-started]
-      [:div.company-profile__company-cta__img
-       [:img {:src "/images/hiw/company/hiw/hiw4.svg"
-              :alt ""}]]]
-     [link [:button.button.is-full-width.is-hidden-desktop "Get Started"] :get-started]]))
-
 (defn create-company-form-error->error-str
   [e]
   (case e
@@ -41,18 +24,15 @@
       (when-not (<sub [:user/logged-in?])
         (let [existing-params (<sub [:wh/query-params])
               error           (get existing-params "create-company-form__error")]
-          [:section
-           {:class (util/merge-classes "pod"
-                                       "pod--no-shadow"
-                                       "company-profile__company-cta"
-                                       cls)}
-           [:h3 "Get involved - create a free profile page for your company"]
-           [:div.company-profile__company-cta__img.is-hidden-mobile
-            [:img {:src "/images/hiw/company/hiw/hiw4.svg"
-                   :alt ""}]]
-           [:div.company-profile__company-cta__form-container.is-flex
-            [:p "Use this space to connect with our community. Companies with profiles typically get 20% more applications!"]
-            [:form.wh-formx
+          [:section {:class (util/merge-classes "pod pod--no-shadow cta-pod" cls)}
+           [:div.cta-pod__content
+            [:h3.cta-pod__title "Hire with us!"]
+            [:h4.cta-pod__subtitle "Create a free profile page for your company."]
+            [:img.cta-pod__img.cta-pod__img--company {:src "/images/hiw/company/hiw/hiw4.svg"
+                                                      :alt ""}]
+            [:p.cta-pod__description "Use this space to connect with our community. Companies with profiles typically get " [:i "20%"]
+             " more applications!"]]
+           [:form.wh-formx.cta-pod__form
              {:action (routes/path :create-company-form :query-params {:redirect (name redirect)})
               :method "post"}
              [forms/text-field (merge {:label        "* Your name"
@@ -79,4 +59,4 @@
                                                 (create-company-form-error->error-str error))}
                                       #?(:cljs
                                          {:on-change #(reset! user-email (.. % -target -value))}))]
-             [:button.button.is-full-width "Register"]]]])))))
+            [:button.button.is-full-width.cta-pod__button "Get Started"]]])))))

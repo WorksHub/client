@@ -1,0 +1,55 @@
+.cta-pod
+  display: flex
+  flex-direction: column
+
+  .cta-pod__title
+    font-size: 18px
+    color: $red
+    font-weight: 700
+    margin-bottom: 4px
+
+  .cta-pod__subtitle
+    font-size: 14px
+    color: $grey-darker
+    line-height: 18px
+    font-weight: 600
+    margin-bottom: 16px
+
+  .cta-pod__img
+    width: 100px
+    margin: 0 auto 16px
+
+  .cta-pod__img--company
+    width: 55%
+
+  .cta-pod__description
+    font-family: inherit
+    font-size: 14px
+    line-height: 20px
+    margin-bottom: 16px
+
+  .cta-pod__button
+    font-size: 1rem
+    padding: 1em
+    height: auto
+    text-decoration: none
+    color: $white
+
+    &:not(:last-of-type)
+      margin-bottom: 8px
+
+  .cta-pod__content
+    display: flex
+    flex-direction: column
+
+  .cta-pod__form
+    margin-top: -16px
+
+    & input
+      max-height: 36px
+
+  .field--errored + .cta-pod__button
+    margin-top: 18px
+
+  .field__error:not(.is-invisible)
+    margin-top: 12px

@@ -992,7 +992,7 @@
       [hash-anchor "company-profile__benefits"]
       (when-not loading?
         [benefits admin-or-owner?])
-      [company-pods/company-cta "is-hidden-desktop"]
+      [company-pods/company-cta-with-registration :companies "is-hidden-desktop"]
       [hash-anchor "company-profile__jobs"]
       (when-not loading?
         [job-header admin-or-owner?])
@@ -1001,7 +1001,7 @@
      [:div.company-profile__side.split-content__side.is-hidden-mobile
       [company-info admin-or-owner?]
       [company-stats]
-      [company-pods/company-cta]]]
+      [company-pods/company-cta-with-registration :companies]]]
     (when-not loading?
       [:div.split-content
        [:div.company-profile__main.split-content__main

@@ -12,6 +12,7 @@
     [wh.components.newsletter :as newsletter]
     [wh.components.pagination :refer [pagination]]
     [wh.components.pods.candidates :as candidate-pods]
+    [wh.components.pods.companies :as company-pods]
     [wh.components.recommendation-cards :as recommendation-cards]
     [wh.components.tag :as tag]
     [wh.interop :as interop]
