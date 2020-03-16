@@ -154,3 +154,9 @@
   (fn [[{:keys [::issues/company-id]} my-company] _]
     (and company-id
          (= (:id my-company) company-id))))
+
+(reg-sub
+ ::issues-languages
+ :<- [::sub-db]
+ (fn [db _]
+   (::issues/languages db)))

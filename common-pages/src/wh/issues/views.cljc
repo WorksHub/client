@@ -2,6 +2,7 @@
   (:require
     #?(:cljs [wh.components.github :as github])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+    [wh.components.tag :as tag]
     [wh.common.data :as data]
     [wh.common.job :refer [format-job-location]]
     [wh.components.common :refer [link img wrap-img]]
@@ -13,6 +14,8 @@
     [wh.interop.forms :as interop-forms]
     [wh.issue.edit.views :as edit-issue]
     [wh.issues.events :as events]
+    [wh.routes :as routes]
+    [wh.slug :as slug]
     [wh.issues.subs :as subs]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
@@ -174,6 +177,16 @@
       :options   (<sub [::subs/sorting-options])
       :on-change (interop-forms/add-select-value-to-url :sort (<sub [::subs/sorting-options]))}]]])
 
+(defn languages-list [class]
+  (let [languages (some->> (<sub [::subs/issues-languages])
+                           (map :language)
+                           (sort))]
+    [:section.tag-picker
+     {:class class}
+     (tag/strs->tag-list
+      :a languages
+      {:f #(assoc % :href (routes/path :issues-by-language :params {:language (slug/tag-label->slug (:label %))}))})]))
+
 (defn page []
   (if (and (<sub [::subs/own-company?])
            (not (<sub [:user/company-connected-github?])))
@@ -193,30 +206,40 @@
            [public-header]))
        [:div.is-flex.issues__main__container.split-content
         [:div.issues__main.split-content__main
+         [languages-list "is-hidden-desktop"]
          (when (<sub [::subs/company-pod?])
            [company-pod "is-desktop"])
          [sorting-component]
          [issues-list]
          [pagination/pagination (<sub [::subs/current-page-number]) (<sub [::subs/pagination]) (<sub [:wh/page]) (<sub [:wh/query-params]) (<sub [:wh/page-params])]]
         [edit-issue/edit-issue]
+
         [:div.issues__side.split-content__side
+         [languages-list ["is-hidden-mobile" "split-content-section"]]
+
          #?(:cljs
             (when (<sub [::subs/can-manage-issues?])
               [admin-pod]))
+
          (cond
            #?(:cljs (<sub [:user/company?])
               :clj  false)
            [how-it-works/pod--company]
+
            logged-in?
            [how-it-works/pod--candidate]
+
            (and (= :issues (<sub [:wh/page]))
                 (<sub [::subs/company-pod?]))
            [how-it-works/pod--choice]
+
            (<sub [::subs/all-issues?])
            [:div.is-hidden-mobile
             [balls-side]]
+
            :else
            [how-it-works/pod--basic])
+
          (when (and (<sub [::subs/company-view?])
                     (<sub [::subs/has-jobs?]))
            [hiring-pod])

@@ -37,11 +37,11 @@
 
 (def default-page-size 12)
 
-(defn update-issues-db [initial-db {:keys [query_issues company me]}]
+(defn update-issues-db [initial-db {:keys [query_issues company me query_issues_languages]}]
   (cond-> initial-db
           query_issues
           (update ::sub-db merge
-                  {::issues (map gql-issue->issue (:issues query_issues))
+                  {::issues              (map gql-issue->issue (:issues query_issues))
                    ::page-size           default-page-size
                    ::count               (get-in query_issues [:pagination :total])
                    ::current-page-number (get-in query_issues [:pagination :page_number])
@@ -53,4 +53,8 @@
                                                              (nil? (:logo company)) (dissoc :logo)))})
           me
           (update :wh.user.db/sub-db merge
-                  {:wh.user.db/onboarding-msgs (set (:onboardingMsgs me))})))
+                  {:wh.user.db/onboarding-msgs (set (:onboardingMsgs me))})
+          query_issues_languages
+          (update ::sub-db merge
+                  {::languages (map (partial into {})
+                                    (:issues_languages query_issues_languages))})))

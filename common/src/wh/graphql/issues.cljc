@@ -159,3 +159,11 @@
    :venia/queries   [[:repo {:owner :$owner
                              :name :$name}
                       [[:sync [:id :running_issue_count :time_updated :time_started :time_finished]]]]]})
+
+(defquery fetch-issues-languages
+  {:venia/operation {:operation/type :query
+                     :operation/name "issuesLanguages"}
+   :venia/queries   [[:query_issues_languages
+                      [[:issues_languages [:language]]]]]})
+
+

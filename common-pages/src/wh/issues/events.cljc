@@ -43,6 +43,15 @@
 
 #?(:cljs
    (reg-event-fx
+    ::fetch-issues-languages
+    db/default-interceptors
+    (fn [{db :db} []]
+      {:graphql {:query      queries/fetch-issues-languages
+                 :on-success [::fetch-issues-languages-success]
+                 :on-failure [::failure ::fetch-issues-languages]}})))
+
+#?(:cljs
+   (reg-event-fx
      ::fetch-issues
      db/default-interceptors
      (fn [{db :db} [company-id page-number language]]
@@ -73,6 +82,14 @@
 
 #?(:cljs
    (reg-event-db
+    ::fetch-issues-languages-success
+    db/default-interceptors
+    (fn [db [resp]]
+      (let [languages (get-in resp [:data :query_issues_languages :issues_languages])]
+        (assoc-in db [::issues/sub-db ::issues/languages] languages)))))
+
+#?(:cljs
+   (reg-event-db
      ::fetch-jobs-success
      db/default-interceptors
      (fn [db [resp]]
@@ -97,26 +114,26 @@
        (update-in db [::issues/sub-db ::issues/issues] #(map (partial update-issue issue) %)))))
 
 #?(:cljs
-   (defmethod on-page-load :issues-by-language [db]
-     (let [page-number (get-in db [::db/query-params "page"])
-           issues-language (issues/language db)]
-       (if (::db/initial-load? db)
-         []
-         [[::initialize-db]
-          [:wh.events/scroll-to-top]
-          [::fetch-issues nil page-number (slug/slug->label issues-language)]]))))
+   (do
+     (defn on-issues-load [db]
+       (let [company-id      (get-in db [::db/page-params :company-id])
+             page-number     (get-in db [::db/query-params "page"])
+             issues-language (issues/language db)]
 
-#?(:cljs
-   (defmethod on-page-load :issues [db]
-     (let [company-id (get-in db [::db/page-params :company-id])
-           page-number (get-in db [::db/query-params "page"])]
-       (concat (if (::db/initial-load? db)
-                 []
-                 [[::initialize-db]
-                  [:wh.events/scroll-to-top]
-                  [::fetch-issues company-id page-number]])
-               (when company-id
-                 [[::fetch-jobs company-id]])))))
+         (concat (if (::db/initial-load? db)
+                   []
+                   [[::initialize-db]
+                    [:wh.events/scroll-to-top]
+                    [::fetch-issues-languages]
+                    [::fetch-issues company-id page-number (some-> issues-language slug/slug->label)]])
+                 (when company-id
+                   [[::fetch-jobs company-id]]))))
+
+     (defmethod on-page-load :issues [db]
+       (on-issues-load db))
+
+     (defmethod on-page-load :issues-by-language [db]
+       (on-issues-load db))))
 
 #?(:cljs
    (defmethod on-page-load :company-issues [db]
