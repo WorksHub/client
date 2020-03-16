@@ -62,28 +62,25 @@
    :venia/queries   [[:update_issues {:issues :$issues}
                       [[:issues [:fragment/issueListFields]]]]]})
 
-(def issues-query-variables
-  [{:variable/name "id"
-    :variable/type :ID!}
-   {:variable/name "page_number"
-    :variable/type :Int}
-   {:variable/name "repo_name"
-    :variable/type :String}
-   {:variable/name "repo_owner"
-    :variable/type :String}
-   {:variable/name "repo_language"
-    :variable/type :String}
-   {:variable/name "page_size"
-    :variable/type :Int}
-   {:variable/name "published"
-    :variable/type :Boolean}
-   {:variable/name "sort"
-    :variable/type :issues_sort}])
-
 (defquery fetch-issues
   {:venia/operation {:operation/type :query
                      :operation/name "issues"}
-   :venia/variables issues-query-variables
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID!}
+                     {:variable/name "page_number"
+                      :variable/type :Int}
+                     {:variable/name "repo_name"
+                      :variable/type :String}
+                     {:variable/name "repo_owner"
+                      :variable/type :String}
+                     {:variable/name "repo_language"
+                      :variable/type :String}
+                     {:variable/name "page_size"
+                      :variable/type :Int}
+                     {:variable/name "published"
+                      :variable/type :Boolean}
+                     {:variable/name "sort"
+                      :variable/type :issues_sort}]
    :venia/queries   [[:query_issues
                       {:published     :$published
                        :repo_language :$repo_language
@@ -96,7 +93,22 @@
 (defquery fetch-company-issues--not-logged-in
   {:venia/operation {:operation/type :query
                      :operation/name "issues"}
-   :venia/variables issues-query-variables
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID!}
+                     {:variable/name "page_number"
+                      :variable/type :Int}
+                     {:variable/name "repo_name"
+                      :variable/type :String}
+                     {:variable/name "repo_owner"
+                      :variable/type :String}
+                     {:variable/name "repo_language"
+                      :variable/type :String}
+                     {:variable/name "page_size"
+                      :variable/type :Int}
+                     {:variable/name "published"
+                      :variable/type :Boolean}
+                     {:variable/name "sort"
+                      :variable/type :issues_sort}]
    :venia/queries   [[:company {:id :$id}
                       [:name :logo]]
                      [:query_issues
@@ -111,7 +123,22 @@
 (defquery fetch-company-issues--logged-in
   {:venia/operation {:operation/type :query
                      :operation/name "issues"}
-   :venia/variables issues-query-variables
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID!}
+                     {:variable/name "page_number"
+                      :variable/type :Int}
+                     {:variable/name "repo_name"
+                      :variable/type :String}
+                     {:variable/name "repo_owner"
+                      :variable/type :String}
+                     {:variable/name "repo_language"
+                      :variable/type :String}
+                     {:variable/name "page_size"
+                      :variable/type :Int}
+                     {:variable/name "published"
+                      :variable/type :Boolean}
+                     {:variable/name "sort"
+                      :variable/type :issues_sort}]
    :venia/queries   [[:company {:id :$id}
                       [:name :logo]]
                      [:query_issues
@@ -165,5 +192,3 @@
                      :operation/name "issuesLanguages"}
    :venia/queries   [[:query_issues_languages
                       [[:issues_languages [:language]]]]]})
-
-
