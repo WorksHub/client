@@ -3,7 +3,10 @@
     [re-frame.core :refer [dispatch dispatch-sync]]
     [wh.components.conversation.views :refer [button]]
     [wh.components.icons :refer [icon]]
-    [wh.subs :refer [<sub]]))
+    [wh.subs :refer [<sub]]
+    [wh.register.dropdown :refer [dropdown
+
+                                  ]]))
 
 (defn next-button []
   [button "Next »" [:register/advance]])
@@ -29,7 +32,8 @@
      [:input
       (merge {:type :text
               :auto-focus true
-              :id label}
+              :id "dropdown__input"
+              :list "dropdown__options"}
              (when placeholder
                {:placeholder placeholder})
              (when input-sub
@@ -42,9 +46,4 @@
       [:ul [:li error]])
     (let [items (and dropdown-sub (<sub dropdown-sub))]
       (when (seq items)
-        (into [:ul]
-              (map (fn [{:keys [id label]}]
-                     [:li {:on-click #(when set-dropdown-ev
-                                        (dispatch (conj set-dropdown-ev id)))}
-                      label])
-                   items))))]])
+        [dropdown items set-dropdown-ev set-input-ev]))]])
