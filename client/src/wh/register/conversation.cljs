@@ -4,9 +4,7 @@
     [wh.components.conversation.views :refer [button]]
     [wh.components.icons :refer [icon]]
     [wh.subs :refer [<sub]]
-    [wh.register.dropdown :refer [dropdown
-
-                                  ]]))
+    [wh.register.dropdown :refer [dropdown]]))
 
 (defn next-button []
   [button "Next »" [:register/advance]])
