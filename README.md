@@ -40,6 +40,14 @@ lein figwheel
 
 and after a while, a Figwheel server should launch at http://localhost:3449. Point your browser there and you should see the WorksHub UI.
 
+In order to compile the CSS, in a separate terminal you should run
+
+```
+lein sass auto
+```
+
+Now, after a refresh, you should see the landing page.
+
 Click _Login → Send Magic Link_ and enter `candidate@example.com`. You will be logged in immediately.
 
 If you want to make changes to styling, you’ll want to install [sassc](https://github.com/sass/sassc). Run `lein sass auto` to have Leiningen watch your `.sass` files for changes and rebuild the `.css` files automatically.
