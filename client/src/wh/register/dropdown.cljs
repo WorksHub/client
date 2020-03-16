@@ -1,20 +1,14 @@
 (ns wh.register.dropdown
   (:require [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as r]
-            [wh.common.keycodes :refer [codes]]))
+            [wh.common.keycodes :refer [codes]]
+            [wh.subs :refer [<sub]]))
 
-;; this is to change the input of an item once it has been highlighted,
-;; though once highlighted it changes autosuggestions to that location...
-(defn set-focused-item
-  [set-input-ev]
-  (let [item (str (.-innerHTML (.-activeElement js/document)))]
-    (dispatch-sync (conj set-input-ev item))))
-
-;; submits the highlighted item
 (defn submit-focused-item
-  [event set-dropdown-ev items]
-  (let [label (str (.-innerHTML (.-activeElement js/document)))
-        id (:id (first (filter #(= (:label %) label) items)))]
+  [event dropdown-sub set-dropdown-ev dropdown-items]
+  (let [index (js/parseInt (.-index (.-dataset (.-target event))))
+        items (vec (<sub dropdown-sub))
+        id (:id (get (vec items) index))]
     (dispatch-sync (conj set-dropdown-ev id))))
 
 (defn focus
@@ -40,15 +34,15 @@
 
 ;; handler for the input event, to focus 
 (defn keydownhandler
-  [items dropdown-items set-dropdown-ev set-input-ev event]
+  [dropdown-items dropdown-sub set-dropdown-ev set-input-ev event]
   (let [keycode (.-keyCode event)]
     (cond
       (= keycode (:down codes))  (focus-item :down dropdown-items)
       (= keycode (:up codes))    (focus-item :up dropdown-items)
-      (= keycode (:enter codes)) (submit-focused-item event set-dropdown-ev items))))
+      (= keycode (:enter codes)) (submit-focused-item event dropdown-sub set-dropdown-ev dropdown-items))))
 
 (defn dropdown
-  [items set-dropdown-ev set-input-ev]
+  [items dropdown-sub set-dropdown-ev set-input-ev]
   (let []
     (r/create-class
      {:display-name "dropdown"
@@ -57,8 +51,7 @@
                               (map (fn [{:keys [id label] :as item}]
                                      (let [data-index (.indexOf items item)
                                            data-focused false]
-                                       [:li {:id "dropdown__option"
-                                             :tabIndex "-1"
+                                       [:li {:tabIndex "-1"
                                              :data-index data-index
                                              :on-click #(when set-dropdown-ev
                                                           (dispatch (conj set-dropdown-ev id)))}
@@ -72,10 +65,10 @@
                                    counter (atom 0)]
                                (do
                                  ;; first set event listener for the input
-                                 (.addEventListener input "keydown" (partial keydownhandler items dropdown-items set-dropdown-ev set-input-ev))
+                                 (.addEventListener input "keydown" (partial keydownhandler dropdown-items dropdown-sub set-dropdown-ev set-input-ev))
 
                                  ;; then all the listeners for each item
                                  (while (< @counter length)
                                    (do
-                                     (.addEventListener (.item dropdown-items @counter) "keydown" (partial keydownhandler items dropdown-items set-dropdown-ev set-input-ev))
+                                     (.addEventListener (.item dropdown-items @counter) "keydown" (partial keydownhandler dropdown-items dropdown-sub set-dropdown-ev set-input-ev))
                                      (swap! counter inc))))))})))

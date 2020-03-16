@@ -30,6 +30,7 @@
      [:input
       (merge {:type :text
               :auto-focus true
+
               :id "dropdown__input"
               :list "dropdown__options"}
              (when placeholder
@@ -44,4 +45,4 @@
       [:ul [:li error]])
     (let [items (and dropdown-sub (<sub dropdown-sub))]
       (when (seq items)
-        [dropdown items set-dropdown-ev set-input-ev]))]])
+        [dropdown items dropdown-sub set-dropdown-ev set-input-ev]))]])
