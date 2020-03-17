@@ -8,7 +8,7 @@
   [event dropdown-sub set-dropdown-ev]
   (let [index (js/parseInt (.-index (.-dataset (.-target event))))
         items (vec (<sub dropdown-sub))
-        id (:id (get (vec items) index))]
+        id (:id (get items index))]
     (dispatch-sync (conj set-dropdown-ev id))))
 
 (defn focus
@@ -46,7 +46,7 @@
   (let []
     (r/create-class
      {:display-name "dropdown"
-      :reagent-render (fn [items set-dropdown-ev set-input-ev]
+      :reagent-render (fn [items dropdown-sub set-dropdown-ev set-input-ev]
                         (into [:ul {:id "dropdown__options"}]
                               (map (fn [{:keys [id label] :as item}]
                                      (let [data-index (.indexOf items item)
