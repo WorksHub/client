@@ -5,7 +5,7 @@
             [wh.subs :refer [<sub]]))
 
 (defn submit-focused-item
-  [event dropdown-sub set-dropdown-ev dropdown-items]
+  [event dropdown-sub set-dropdown-ev]
   (let [index (js/parseInt (.-index (.-dataset (.-target event))))
         items (vec (<sub dropdown-sub))
         id (:id (get (vec items) index))]
@@ -39,7 +39,7 @@
     (cond
       (= keycode (:down codes))  (focus-item :down dropdown-items)
       (= keycode (:up codes))    (focus-item :up dropdown-items)
-      (= keycode (:enter codes)) (submit-focused-item event dropdown-sub set-dropdown-ev dropdown-items))))
+      (= keycode (:enter codes)) (submit-focused-item event dropdown-sub set-dropdown-ev))))
 
 (defn dropdown
   [items dropdown-sub set-dropdown-ev set-input-ev]
