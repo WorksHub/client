@@ -8,6 +8,7 @@
  "wh-client/client/src-js/photo.js"
  "wh-client/client/src-js/promo_banner.js"
  "wh-client/client/src-js/code_highlight.js"
+ "wh-client/client/src-js/button_analytics.js"
  "wh-client/client/src-js/tags.js"
  "wh-client/client/src-js/newsletter.js"
  "wh-client/client/src-js/init.js"]
