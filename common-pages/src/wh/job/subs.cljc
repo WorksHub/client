@@ -363,6 +363,7 @@
       (->> (::job/recommended-jobs sub-db)
            (filter #(not= (:id %) (::job/id sub-db)))
            (take 3)
+           (map jobc/translate-job)
            (jobs/add-interactions liked-jobs applied-jobs))
       (map #(hash-map :id %) (range 3)))))
 
