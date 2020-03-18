@@ -115,7 +115,8 @@
       (if (= state :executing)
         (util/maps-with-id amount-to-display)
         (->> (jobs/add-interactions liked applied recommended)
-             (map #(assoc % :display-location (jobc/format-job-location (:location %) (:remote %))))
+             (jobc/sort-by-user-score)
+             (map jobc/translate-job)
              (take amount-to-display))))))
 
 (reg-sub

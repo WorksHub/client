@@ -76,3 +76,7 @@
     (assoc job
            :display-location (format-job-location location remote)
            :display-salary (format-job-remuneration remuneration))))
+
+(defn sort-by-user-score [jobs]
+  (sort-by #(or (get % :user-score 0) 0) > jobs))
+

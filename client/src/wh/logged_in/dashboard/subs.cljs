@@ -2,6 +2,7 @@
   (:require
     [goog.i18n.DateTimeFormat :as DateTimeFormat]
     [re-frame.core :refer [reg-sub]]
+    [wh.common.job :as jobc]
     [wh.graphql.jobs :as jobs]
     [wh.logged-in.dashboard.db :as dashboard])
   (:import [goog.i18n DateTimeFormat]))
@@ -19,6 +20,7 @@
   :<- [:user/applied-jobs]
   (fn [[dashboard liked-jobs applied-jobs] _]
     (->> (::dashboard/jobs dashboard)
+         (jobc/sort-by-user-score)
          (jobs/add-interactions liked-jobs applied-jobs))))
 
 (reg-sub

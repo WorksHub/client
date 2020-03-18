@@ -38,11 +38,13 @@
   :personalised-jobs/fetch-jobs-by-type
   personalised-jobs-interceptors
   (fn [{db :db} [type-of-jobs page-number]]
-    {:db (cond-> (assoc db ::personalised-jobs/current-page-number page-number)
-                 (= 1 page-number) (assoc ::personalised-jobs/jobs []))
-     :graphql {:query      (personalised-jobs-query type-of-jobs page-number)
-               :on-success [::fetch-personalised-jobs-success]}
-     :dispatch [::pages/set-loader]}))
+    (merge
+      {:db (cond-> (assoc db ::personalised-jobs/current-page-number page-number)
+                   (= 1 page-number) (assoc ::personalised-jobs/jobs []))
+       :graphql {:query      (personalised-jobs-query type-of-jobs page-number)
+                 :on-success [::fetch-personalised-jobs-success]}}
+      (when (= page-number 1)
+       {:dispatch [::pages/set-loader]}))))
 
 (defn add-application-state
   [jobs applications]

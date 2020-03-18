@@ -47,9 +47,10 @@
           {:issues (map
                      common-issue/gql-issue->issue
                      (get-in results [:query-issues :issues]))
-           :jobs   (map
-                     common-job/translate-job
-                     (jobs/add-interactions liked-jobs applied-jobs (:jobs results)))
+           :jobs   (->> (:jobs results)
+                        (jobs/add-interactions liked-jobs applied-jobs)
+                        (common-job/sort-by-user-score)
+                        (map common-job/translate-job))
            :blogs  (get-in results [:blogs :blogs])})))))
 
 ;; These subscriptions extract various bits from ::blog and ::recommended-jobs.

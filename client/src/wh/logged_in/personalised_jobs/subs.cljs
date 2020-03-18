@@ -1,6 +1,7 @@
 (ns wh.logged-in.personalised-jobs.subs
   (:require
     [re-frame.core :refer [reg-sub]]
+    [wh.common.job :as jobc]
     [wh.graphql.jobs :as jobs]
     [wh.logged-in.personalised-jobs.db :as personalised-jobs]))
 
@@ -38,7 +39,8 @@
  ::recommended-jobs
  :<- [::personalised-jobs]
  (fn [personalised-jobs]
-   (::personalised-jobs/jobs personalised-jobs)))
+   (->> (::personalised-jobs/jobs personalised-jobs)
+        (jobc/sort-by-user-score))))
 
 (reg-sub
   ::show-load-more?
