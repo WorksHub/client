@@ -22,6 +22,11 @@
      [:h2 "Articles"]
      [:div.sitemap__container
       (for [{:keys [title url]} (:articles links)]
+        [:span.sitemap__link [:a {:href url} title]])]]
+    [:section
+     [:h2 "Issues"]
+     [:div.sitemap__container
+      (for [{:keys [title url]} (:issues links)]
         [:span.sitemap__link [:a {:href url} title]])]]]])
 
 (defn www-sitemap-page [links]
@@ -56,7 +61,12 @@
         [:h3.sitemap__vertical [:a {:href (:vertical-link l)} (:vertical-title l)]]
         [:div.sitemap__container
          (for [{:keys [title url]} (:sitemap-links l)]
-           [:span.sitemap__link [:a {:href url} title]])]])]]])
+           [:span.sitemap__link [:a {:href url} title]])]])]
+    [:section
+     [:h2 "Issues"]
+     [:div.sitemap__container
+      (for [{:keys [title url]} (:issues links)]
+        [:span.sitemap__link [:a {:href url} title]])]]]])
 
 (defn page []
   (let [vertical (<sub [:wh/vertical])
