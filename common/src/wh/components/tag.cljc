@@ -1,9 +1,9 @@
 (ns wh.components.tag
   (:require
+    [clojure.string :as str]
     [wh.components.icons :as icons]
-    [wh.util :as util]
     [wh.interop :as interop]
-    [clojure.string :as str]))
+    [wh.util :as util]))
 
 (defn ->tag
   [m]
@@ -27,7 +27,7 @@
 
 (defn tag
   [element-type {:keys [label type subtype id icon on-click href] :as t}]
-  (let [label-lc (str/lower-case label)
+  (let [label-lc (or (some-> label str/lower-case) "")
         standard-icon (when (labels-with-icons label-lc)
                         (str label-lc "-tag"))
         icon' (or icon standard-icon)]

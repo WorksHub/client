@@ -19,7 +19,7 @@
   ::issues
   :<- [::sub-db]
   (fn [db _]
-    (vals (::manage/issues db))))
+    (sort-by :created-at > (vals (::manage/issues db)))))
 
 (reg-sub
   ::syncing-repos?
