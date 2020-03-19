@@ -318,11 +318,12 @@
 
 
 (defn pre-set-search-page []
-  [:div.main.jobs-board__pre-set-search
-   [header true]
-   [:div.search-results
-    [:h3 {:class (util/merge-classes "search-result-count"
-                                     (when (<sub [:wh.search/searching?])
-                                       "skeleton"))}
-     (<sub [::subs/pre-set-search-result-count-str])]
-    [jobs-board]]])
+  (let [view-type (<sub [::subs/view-type])]
+    [:div.main.jobs-board__pre-set-search
+     [header true]
+     [:div.search-results
+      [:h3 {:class (util/merge-classes "search-result-count"
+                                       (when (<sub [:wh.search/searching?])
+                                         "skeleton"))}
+       (<sub [::subs/pre-set-search-result-count-str])]
+      [jobs-board view-type]]]))

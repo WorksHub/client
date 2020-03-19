@@ -92,10 +92,11 @@
        [jobs-board :jobsboard query-params view-type]])]])
 
 (defn preset-search-page []
-  [:div.main.jobs-board__pre-set-search
-   [header]
-   (let [query-params (<sub [:wh/query-params])]
-     [:div.search-results
-      [:h3.search-result-count (<sub [::subs/search-result-count-str])]
-      [:section
-       [jobs-board :preset-search query-params nil]]])])
+  (let [view-type (<sub [::subs/view-type])]
+    [:div.main.jobs-board__pre-set-search
+     [header]
+     (let [query-params (<sub [:wh/query-params])]
+       [:div.search-results
+        [:h3.search-result-count (<sub [::subs/search-result-count-str])]
+        [:section
+         [jobs-board :preset-search query-params view-type]]])]))
