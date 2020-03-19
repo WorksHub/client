@@ -28,35 +28,6 @@
    :class (util/merge-classes "job__icon" "like" (when saved? "selected"))
    :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])
 
-(defn job-card--header
-  [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary published] :as job}
-   {logo :logo company-name :name}
-   {:keys [logged-in? skeleton? liked? small? on-close]}]
-  [:span
-   (when (and logged-in? (not skeleton?) (not small?))
-     [save-button job {:on-close   on-close
-                       :saved? liked?}])
-   (when (and logged-in? (not skeleton?) on-close)
-     [icon "close"
-      :id (str "job-card__blacklist-button_job-" id)
-      :class "job__icon blacklist"
-      :on-click #(dispatch [:wh.events/blacklist-job job on-close])])
-   [:a {:href (when published (routes/path :job :params {:slug slug}))}
-    [:div.info
-     [:div.logo
-      (if (or skeleton? (not logo))
-        [:div]
-        (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]
-     [:div.basic-info
-      [:div.job-title title]
-      [:div.salary salary]
-      (cond-> [:div.card__perks]
-              remote                         (conj [icon "job-remote" :class "job__icon--small"] "Remote")
-              (not= role-type "Full time")   (conj [icon "profile" :class "job__icon--small"] role-type)
-              sponsorship-offered            (conj [icon "job-sponsorship" :class "job__icon--small"] "Sponsorship"))
-      [:div.company-name company-name]
-      [:div.location display-location]]]]])
-
 (defn job-card--tags
   [job-tags]
   (into [:ul.tags.tags__job]
@@ -71,9 +42,11 @@
    (when state
      [:div.state
       [:span.applied-state "Status: " (state->candidate-status state)]])
+
    [:div.buttons
     [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
      (if user-is-owner? "View" "More Info")]
+
     (let [apply-id (str "job-card__apply-button_job-" id)
           button-opts (merge {:id apply-id}
                              (when (or applied?
@@ -98,15 +71,60 @@
                     "Apply")]]))
         [:a {:href (routes/path :edit-job :params {:id id})}
          [:button.button "Edit"]]))
+
     (when (and logged-in? (not skeleton?) small?)
       [save-button job {:on-close   on-close
                         :saved? liked?}])]])
+
+(defn card-perks [remote role-type sponsorship-offered]
+  (cond-> [:div.card__perks]
+    remote                       (conj [icon "job-remote"
+                                        :class "job__icon--small"]
+                                       [:span.card__perks__perk-name "Remote"])
+    (not= role-type "Full time") (conj [icon "profile"
+                                        :class "job__icon--small"]
+                                       [:span.card__perks__perk-name role-type])
+    sponsorship-offered          (conj [icon "job-sponsorship"
+                                        :class "job__icon--small"]
+                                       [:span.card__perks__perk-name "Sponsorship"])))
+
+(defn job-card--header
+  [{:keys [remote id slug logo title display-location role-type sponsorship-offered salary published] :as job}
+   {logo :logo company-name :name}
+   {:keys [logged-in? skeleton? liked? small? on-close user-is-owner?]}]
+  (let [perks? (or remote (not= role-type "Full time") sponsorship-offered)]
+    [:span.job-card__header
+     (when (and logged-in? (not skeleton?) (not small?))
+       [save-button job {:on-close   on-close
+                         :saved? liked?}])
+     (when (and logged-in? (not skeleton?) on-close)
+       [icon "close"
+        :id (str "job-card__blacklist-button_job-" id)
+        :class "job__icon blacklist"
+        :on-click #(dispatch [:wh.events/blacklist-job job on-close])])
+     [:a {:href (when (or published user-is-owner?) (routes/path :job :params {:slug slug}))}
+      [:div.info
+       [:div.logo
+        (if (or skeleton? (not logo))
+          [:div]
+          (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]
+       [:div.basic-info
+        {:class (when perks? "basic-info--with-perks")}
+        [:div.job-title title]
+        [:div.salary salary]
+        [card-perks remote role-type sponsorship-offered]
+        [:div.company-name company-name]
+        [:div.location display-location]]]]]))
+
+(def job-card-class
+  {:cards "card-border-color-2"
+   :list  "full-width"})
 
 (defn job-card
   [{:keys [company tagline tags published score user-score applied liked display-salary remuneration]
     :or   {published true}
     :as   job}
-   {:keys [liked? applied? user-is-owner? small?]
+   {:keys [liked? applied? user-is-owner? small? view-type]
     :or   {liked?            (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
            applied?          (or applied false) ;; old style job handlers added 'applied' bool to the job itself
            user-is-owner?    false
@@ -125,18 +143,18 @@
                            "Unpublished"]]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
-                                      "card-border-color-2"
                                       (str "i-cur-" (rand-int 9))
                                       (when small? "card--small")
-                                      (when skeleton? "job-card--skeleton"))}
+                                      (when skeleton? "job-card--skeleton")
+                                      (job-card-class view-type))}
      [job-card--header (assoc job :salary salary) company opts]
      (if (and small? (not published))
        unpublished-label
        [job-card--tags job-tags])
-     [:div
+     [:div.tagline
       (when-not small?
-        [:div.tagline #?(:cljs [ellipsis tagline]
-                         :clj tagline)])
+        [:div.tagline-content #?(:cljs [ellipsis tagline]
+                                 :clj tagline)])
       (when score
         [match-circle {:score score
                        :text? (not small?)
@@ -144,7 +162,6 @@
      [job-card--buttons job opts]
      (when (and (not published) (not small?) user-is-owner?)
        unpublished-label)]))
-
 
 (defn highlight
   [title icon-name body]

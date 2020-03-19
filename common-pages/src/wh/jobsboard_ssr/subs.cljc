@@ -1,6 +1,7 @@
 (ns wh.jobsboard-ssr.subs
   (:require
     [re-frame.core :refer [reg-sub]]
+    [wh.jobsboard-ssr.db :as jobsboard-ssr]
     [wh.verticals :as verticals]))
 
 ;; TODO: a lot of these may probably be shared with wh.jobs.jobsboard.subs
@@ -70,3 +71,8 @@
           (update :description #(if search-term
                                   (get (verticals/config vertical :jobsboard-tag-desc) search-term)
                                   %))))))
+
+(reg-sub
+ ::view-type
+ (fn [db _]
+   (keyword (get-in db [:wh.db/query-params jobsboard-ssr/view-type-param] "cards"))))

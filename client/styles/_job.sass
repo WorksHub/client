@@ -12,6 +12,17 @@
     background-color: white
     border: 1px solid black
 
+.jobs-board__jobs-list
+  &.jobs-board__jobs-list--ssr
+    margin-top: 16px
+  +desktop
+    .list-item
+      width: 100%
+      padding: 0
+  +mobile
+    .list-item
+      padding: 0.75rem 0
+
 .job
 
   .job__job-description-title
@@ -102,7 +113,6 @@
     bottom: 4px
     font-size: 13px
     color: $steel-gray
-
 
 .job-edit
   +mobile
@@ -658,6 +668,9 @@ $description-height: 400px
   fill: $red
   margin-right: 5px
   vertical-align: middle
+
+.job__icon--gray
+  fill: $grey
 
 .html-content--skeleton
   &>div>div

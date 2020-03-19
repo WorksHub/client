@@ -10,6 +10,7 @@
     [wh.components.pagination :as pagination]
     [wh.jobs.jobsboard.events :as events]
     [wh.jobs.jobsboard.subs :as subs]
+    [wh.jobsboard-ssr.db :as jobsboard-ssr]
     [wh.subs :refer [<sub]]
     [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
@@ -138,49 +139,76 @@
       :value (<sub [:wh.search/only-mine])
       :on-change [:wh.search/toggle-only-mine])]])
 
-(defn search-box []
-  [:section.search
-   [:form.search__form
-    {:on-submit #(do (.preventDefault %)
-                     (dispatch [:wh.search/search]))}
-    [:div.search__box.search__tags
-     {:class (when (<sub [:wh.search/tags-collapsed?])
-               "search__tags--collapsed")}
-     [icon "roll-down"
-      :class "search__roll search__tags-roll"
-      :on-click #(dispatch [:wh.search/toggle-tags-collapsed])]
-     [text-field (<sub [:wh.search/tag-part])
-      {:label       "Tags:"
-       :class       "search__tags-text"
-       :placeholder "Type to search tags"
-       :on-change   [:wh.search/set-tag-part]}]
-     (into [:ul.tags]
-           (map (fn [{:keys [tag count selected]} tag]
-                  [:li {:class    (when selected "tag--selected")
-                        :on-click #(dispatch [:wh.search/search-by-tag tag true])}
-                   tag]))
-           (<sub [:wh.search/matching-tags]))]
-    [:div.search__box.search__perks
-     [labelled-checkbox (<sub [:wh.search/sponsorship])
-      (assoc (<sub [:wh.search/sponsorship-desc])
-        :value (<sub [:wh.search/sponsorship])
-        :on-change [:wh.search/toggle-sponsorship])]
-     [labelled-checkbox (<sub [:wh.search/remote])
-      (assoc (<sub [:wh.search/remote-desc])
-        :value (<sub [:wh.search/remote])
-        :on-change [:wh.search/toggle-remote])]]
-    [:div.search__box.search__role-type
-     [multiple-checkboxes (<sub [:wh.search/role-types])
-      {:options   (<sub [:wh.search/available-role-types])
-       :on-change [:wh.search/toggle-role-type]}]]
-    [location-box]
-    [salary-box]
-    (when (<sub [:user/admin?])
-      [admin-filters-box])]])
+(def view-types
+  {:view/list  {:icon-name "applications" :label "List"}
+   :view/cards {:icon-name "jobs-board" :label "Cards"}})
 
-(defn promoted-jobs []
+(defn list-view-type [view-type]
+  [:div.search__box.search__view-type
+   [:span.label "View: "]
+   (for [[type {:keys [label icon-name] :as value}] view-types]
+     (let [selected (= (name type) (name view-type))]
+       ^{:key type}
+       [:p.search__view-type__button
+        {:on-click #(dispatch [:wh.events/nav--set-query-param
+                               jobsboard-ssr/view-type-param (name type)])
+         :class (when selected :search__view-type__button--selected)}
+        [icon icon-name]
+        [:span label]]))])
+
+(defn search-box []
+  (let [view-type (<sub [::subs/view-type])]
+    [:section.search
+     [:form.search__form
+      {:on-submit #(do (.preventDefault %)
+                       (dispatch [:wh.search/search]))}
+      [:div.search__box.search__tags
+       {:class (when (<sub [:wh.search/tags-collapsed?])
+                 "search__tags--collapsed")}
+       [icon "roll-down"
+        :class "search__roll search__tags-roll"
+        :on-click #(dispatch [:wh.search/toggle-tags-collapsed])]
+       [text-field (<sub [:wh.search/tag-part])
+        {:label       "Tags:"
+         :class       "search__tags-text"
+         :placeholder "Type to search tags"
+         :on-change   [:wh.search/set-tag-part]}]
+       (into [:ul.tags]
+             (map (fn [{:keys [tag count selected]} tag]
+                    [:li {:class    (when selected "tag--selected")
+                          :on-click #(dispatch [:wh.search/search-by-tag tag true])}
+                     tag]))
+             (<sub [:wh.search/matching-tags]))]
+      [:div.search__box.search__perks
+       [labelled-checkbox (<sub [:wh.search/sponsorship])
+        (assoc (<sub [:wh.search/sponsorship-desc])
+               :value (<sub [:wh.search/sponsorship])
+               :on-change [:wh.search/toggle-sponsorship])]
+       [labelled-checkbox (<sub [:wh.search/remote])
+        (assoc (<sub [:wh.search/remote-desc])
+               :value (<sub [:wh.search/remote])
+               :on-change [:wh.search/toggle-remote])]]
+      [:div.search__box.search__role-type
+       [multiple-checkboxes (<sub [:wh.search/role-types])
+        {:options   (<sub [:wh.search/available-role-types])
+         :on-change [:wh.search/toggle-role-type]}]]
+      [location-box]
+      [salary-box]
+      [list-view-type view-type]
+      (when (<sub [:user/admin?])
+        [admin-filters-box])]]))
+
+(def job-column-class
+  {:cards "column is-4"
+   :list  "list-item"})
+
+(def jobs-container-class
+  {:cards "columns"
+   :list  ""})
+
+(defn promoted-jobs [view-type]
   (into
-    [:section.promoted-jobs
+    [:section.promoted-jobs.jobs-board__jobs-list
      [:h2 "Promoted Jobs"]]
     (let [parts        (partition-all 3 (<sub [::subs/promoted-jobs]))
           logged-in?   (<sub [:user/logged-in?])
@@ -188,41 +216,52 @@
           company-id   (<sub [:user/company-id])
           admin?       (<sub [:user/admin?])]
       (for [part parts]
-        (into [:div.columns]
+        (into [:div
+               {:class (jobs-container-class view-type)}]
               (for [job part]
-                [:div.column.is-4
+                [:div
+                 {:class (job-column-class view-type)}
                  [job-card job {:logged-in?        logged-in?
+                                :view-type         view-type
                                 :user-has-applied? has-applied?
                                 :user-is-company?  (not (nil? company-id))
                                 :user-is-owner?    (or admin? (= company-id (:company-id job)))
                                 :apply-source      "jobsboard-promoted-job"}]]))))))
 
 
-(defn skeleton-jobs []
-  [:section
-   [:div.columns
-    [:div.column.is-4 [job-card {:id (str "skeleton-job-" 1)}]]
-    [:div.column.is-4 [job-card {:id (str "skeleton-job-" 2)}]]
-    [:div.column.is-4 [job-card {:id (str "skeleton-job-" 3)}]]]])
+(defn- skeleton-jobs [view-type]
+  [:section.jobs-board__jobs-list
+   [:div
+    {:class (jobs-container-class view-type)}
+    (for [i [1 2 3]]
+      ^{:key i}
+      [:div
+       {:class (job-column-class view-type)}
+       [job-card {:id (str "skeleton-job-" i)}
+                 {:view-type view-type}]])]])
 
-(defn jobs-board []
+(defn jobs-board [view-type]
   (let [jobs         (<sub [::subs/jobs])
         logged-in?   (<sub [:user/logged-in?])
         has-applied? (some? (<sub [:user/applied-jobs]))
         company-id   (<sub [:user/company-id])
-        admin?       (<sub [:user/admin?])]
-    [:section
-     (if (<sub [:wh.search/searching?])
-       [skeleton-jobs]
+        admin?       (<sub [:user/admin?])
+        searching?   (<sub [:wh.search/searching?])]
+    [:section.jobs-board__jobs-list
+     (if searching?
+       [skeleton-jobs view-type]
        (when-let [parts (seq (partition-all 3 jobs))]
          [:div
           (doall
             (for [part parts]
-              [:div.columns {:key (random-uuid)}
+              [:div {:key   (random-uuid)
+                     :class (jobs-container-class view-type)}
                (doall
                  (for [job part]
-                   [:div.column.is-4 {:key (str "col-" (:id job))}
+                   [:div {:key   (str "col-" (:id job))
+                          :class (job-column-class view-type)}
                     [job-card job {:logged-in?        logged-in?
+                                   :view-type         view-type
                                    :user-has-applied? has-applied?
                                    :user-is-company?  (not (nil? company-id))
                                    :user-is-owner?    (or admin? (= company-id (:company-id job)))
@@ -256,7 +295,8 @@
 
 (defn page []
   (let [logged-in? (<sub [:user/logged-in?])
-        searching? (<sub [:wh.search/searching?])]
+        searching? (<sub [:wh.search/searching?])
+        view-type  (<sub [::subs/view-type])]
     [:div.main.jobs-board
      (if logged-in?
        [search-box]
@@ -265,7 +305,7 @@
       (when (and (seq (<sub [::subs/promoted-jobs]))
                  (not searching?)
                  logged-in?)
-        [promoted-jobs])
+        [promoted-jobs view-type])
       (if-let [job-list-header (<sub [::subs/job-list-header])]
         [:h2 {:class (util/merge-classes "job-list-header"
                                          (when searching? "skeleton"))}
@@ -274,7 +314,7 @@
                                          (when searching?
                                            "skeleton"))}
          (<sub [::subs/result-count-str])])
-      [jobs-board]]]))
+      [jobs-board view-type]]]))
 
 
 (defn pre-set-search-page []

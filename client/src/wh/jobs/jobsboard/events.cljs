@@ -9,6 +9,7 @@
     [wh.db :as db]
     [wh.graphql.jobs]
     [wh.jobs.jobsboard.db :as jobsboard]
+    [wh.jobsboard-ssr.db :as jobsboard-ssr]
     [wh.pages.core :refer [on-page-load] :as pages]
     [wh.user.db :as user-db]
     [wh.util :as util])
@@ -56,6 +57,15 @@
 (reg-event-fx
   ::fetch-jobs
   db/default-interceptors
+  (fn [{db :db} [initial-load? query-variables page all-jobs?]]
+    {:db      (assoc-in db [::jobsboard/sub-db ::jobsboard/current-page-number] page)
+     :graphql {:query      jobs-query
+               :variables  query-variables
+               :on-success [::fetch-jobs-success all-jobs? page]}}))
+
+(reg-event-fx
+  ::set-jobs-query
+  db/default-interceptors
   (fn [{db :db} [initial-load?]]
     (let [all-jobs? (and (str/blank? (::db/search-term db))
                          (empty? (::db/query-params db)))
@@ -78,15 +88,17 @@
           page (if (zero? page-from-params)
                  (inc page-from-params)
                  page-from-params)
-          filters (cases/->camel-case db-filters)]
-      {:db      (assoc-in db [::jobsboard/sub-db ::jobsboard/current-page-number] page)
-       :graphql {:query      jobs-query
-                 :variables  {:search_term   (or (get-in db [::db/query-params "search"]) "")
-                              :preset_search (when preset-search? preset-search)
-                              :page          page
-                              :filters       filters
-                              :vertical      (:wh.db/vertical db)}
-                 :on-success [::fetch-jobs-success all-jobs? page]}})))
+          filters (cases/->camel-case db-filters)
+          query-variables {:search_term   (or (get-in db [::db/query-params "search"]) "")
+                           :preset_search (when preset-search? preset-search)
+                           :page          page
+                           :filters       filters
+                           :vertical      (:wh.db/vertical db)}]
+      (when-not (= query-variables (::jobsboard/query-variables db))
+        {:db         (assoc db ::jobsboard/query-variables query-variables)
+         :dispatch-n [[::fetch-jobs initial-load? query-variables page all-jobs?]
+                      [:wh.search/in-progress true]]}))))
+
 
 (reg-event-fx
   ::fetch-jobs-success
@@ -279,7 +291,8 @@
         {:keys [:wh.search/query :wh.search/tags :wh.search/role-types
                 :wh.search/remote :wh.search/sponsorship :wh.search/currency
                 :wh.search/wh-regions :wh.search/cities :wh.search/countries
-                :wh.search/salary-type :wh.search/only-mine :wh.search/published]} criteria]
+                :wh.search/salary-type :wh.search/only-mine :wh.search/published]} criteria
+        view-type (get-in app-db [:wh.db/query-params jobsboard-ssr/view-type-param])]
     [:jobsboard
      :query-params (cond-> {}
                            (not (str/blank? query)) (assoc :search query)
@@ -292,20 +305,22 @@
                            (seq role-types) (assoc :role-type (str/join ";" role-types))
                            (and (not= "*" currency) salary-type) (merge (salary-params criteria))
                            only-mine (assoc :manager (get-in app-db [:wh.user.db/sub-db :wh.user.db/email]))
-                           (and published (= (count published) 1)) (assoc :published (first published)))]))
+                           (and published (= (count published) 1)) (assoc :published (first published))
+                           view-type (assoc :view-type (name view-type)))]))
 
 (reg-event-fx
   :wh.search/search
   db/default-interceptors
   (fn [{db :db} [query-only?]]
-    {:navigate (search-params (get-in db [::jobsboard/sub-db ::jobsboard/search]) query-only? db)}))
+    {:navigate (search-params
+                (get-in db [::jobsboard/sub-db ::jobsboard/search])
+                query-only? db)}))
 
 (defmethod on-page-load :jobsboard [db]
   (conj (if (and (::db/server-side-rendered? db)
                  (::db/initial-load? db))
           []
-          [[:wh.search/in-progress true]])
-        [::fetch-jobs (::db/initial-load? db)] ;; TODO put this back in the if statement when filters are finished
+          [[::set-jobs-query (::db/initial-load? db)]])
         [:wh.search/initialize-widgets]
         [:wh.events/scroll-to-top]))
 
@@ -314,7 +329,7 @@
                  (::db/initial-load? db))
           []
           [[:wh.search/in-progress true]])
-        [::fetch-jobs (::db/initial-load? db)] ;; TODO put this back in the if statement when filters are finished
+        [::set-jobs-query (::db/initial-load? db)] ;; TODO put this back in the if statement when filters are finished
         [:wh.events/scroll-to-top]))
 
 (defn- update-min-max

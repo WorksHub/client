@@ -38,6 +38,8 @@ $search-gap: 2.5px
 .search__box
   background-color: white
   margin: $search-gap
+  &.search__box-no-margin
+    margin: $search-gap 0
   .label
     color: $greyish
     display: inline
@@ -52,6 +54,28 @@ $search-gap: 2.5px
     border-bottom: 1px solid $grey
     +desktop
       width: auto
+
+.search__view-type
+  grid-area: 6 / 1 / 7 / 3
+  padding: 9px 10px 9px 23px
+  display: flex
+  +mobile
+    &.search__view-type--ssr
+      display: none
+
+.search__view-type__button
+  display: flex
+  align-items: center
+  cursor: pointer
+  color: $greyish
+  .icon
+    fill: $greyish
+    margin-left: 12px
+    margin-right: 9px
+  &:hover, &--selected
+    color: $red
+    .icon
+      fill: $red
 
 .search__query
   padding: 0 10px
@@ -233,7 +257,6 @@ $search-gap: 2.5px
   vertical-align: middle
 
 .jobs-board__header
-  min-height: 150px
   .jobs-board__header__filter-toggle
     display: block
     min-height: 15px

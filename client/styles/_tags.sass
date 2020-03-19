@@ -7,6 +7,10 @@ $tag-spacing: 6px
   .tags
     height: 2 * ($tag-height + 2 * $tag-padding) + $tag-spacing
     overflow-y: hidden
+  +desktop
+    &.full-width
+      .tags
+        height: 1 * ($tag-height + 2 * $tag-padding) + $tag-spacing
 
 .tags li, .tag
   font-size: 11px
@@ -38,6 +42,9 @@ $tag-spacing: 6px
 
 .tags__job
   margin-top: 19px
+  +desktop
+    .card--job.full-width &
+      margin-top: 0
   li
     cursor: pointer
 

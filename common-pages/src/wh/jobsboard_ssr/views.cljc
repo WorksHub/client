@@ -2,10 +2,38 @@
   (:require
     [wh.components.icons :refer [icon]]
     [wh.components.job :as job]
+    [wh.routes :as routes]
     [wh.components.pagination :as pagination]
     [wh.interop :as interop]
     [wh.jobsboard-ssr.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]))
+
+(def job-column-class
+  {:cards "column is-4"
+   :list  "list-item"})
+
+(def jobs-container-class
+  {:cards "columns"
+   :list  ""})
+
+(def view-types
+  {:view/list  {:icon-name "applications" :label "List"}
+   :view/cards {:icon-name "jobs-board" :label "Cards"}})
+
+(defn list-view-type [route query-params view-type]
+  [:div.search__box.search__view-type.search__box-no-margin.search__view-type--ssr
+   [:span.label "View: "]
+   (for [[type {:keys [label icon-name] :as value}] view-types]
+     (let [selected (= (name type) (name view-type))]
+       ^{:key type}
+       [:a
+        {:href  (routes/path route
+                             :query-params (assoc query-params "view-type" (name type)))
+         :class (if selected
+                  "search__view-type__button search__view-type__button--selected"
+                  "search__view-type__button")}
+        [icon icon-name]
+        [:span label]]))])
 
 (defn header []
   (let [{:keys [title subtitle description]} (<sub [::subs/header-info])]
@@ -21,25 +49,28 @@
         [icon "plus" :class "search__toggle"]
         [:span "Show filters"]]]]]))
 
-(defn jobs-board [route]
+(defn jobs-board [route query-params view-type]
   (let [jobs         (<sub [::subs/jobs])
         current-page (<sub [::subs/current-page])
         total-pages  (<sub [::subs/total-pages])
-        query-params (<sub [:wh/query-params])
         logged-in?   (<sub [:user/logged-in?])
         company-id   (<sub [:user/company-id])
         admin?       (<sub [:user/admin?])
         has-applied? (some? (<sub [:user/applied-jobs]))]
-    [:section
+    [:section.jobs-board__jobs-list.jobs-board__jobs-list--ssr
      (when-let [parts (seq (partition-all 3 jobs))]
        [:div
         (doall
           (for [part parts]
-            [:div.columns {:key (hash part)}
+            [:div
+             {:class (jobs-container-class view-type)
+              :key   (hash part)}
              (doall
                (for [job part]
-                 [:div.column.is-4 {:key (str "col-" (:id job))}
+                 [:div {:key (str "col-" (:id job))
+                        :class (job-column-class view-type)}
                   [job/job-card job {:logged-in?        logged-in?
+                                     :view-type         view-type
                                      :user-has-applied? has-applied?
                                      :user-is-company?  (or admin? (= company-id (:company-id job)))
                                      :user-is-owner?    (= company-id (:company-id job))
@@ -54,13 +85,17 @@
     (if (<sub [::subs/all-jobs?])
       [:h2 "All Jobs"]
       [:h3.search-result-count (<sub [::subs/search-result-count-str])])
-    [:section
-     [jobs-board :jobsboard]]]])
+    (let [view-type    (<sub [::subs/view-type])
+          query-params (<sub [:wh/query-params])]
+      [:section
+       [list-view-type :jobsboard query-params view-type]
+       [jobs-board :jobsboard query-params view-type]])]])
 
 (defn preset-search-page []
   [:div.main.jobs-board__pre-set-search
    [header]
-   [:div.search-results
-    [:h3.search-result-count (<sub [::subs/search-result-count-str])]
-    [:section
-     [jobs-board :preset-search]]]])
+   (let [query-params (<sub [:wh/query-params])]
+     [:div.search-results
+      [:h3.search-result-count (<sub [::subs/search-result-count-str])]
+      [:section
+       [jobs-board :preset-search query-params nil]]])])

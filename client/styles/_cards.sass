@@ -103,6 +103,69 @@ $card-job-padding: 15px
   border: $card-border solid white
   +desktop
     max-width: $max-job-card-width
+    &.full-width
+      max-width: none
+      margin-bottom: 2px
+      height: auto
+      position: relative
+      padding: 0
+      .logo
+        display: flex
+      .card__perks__perk-name
+        font-size: 10px
+      .card__perks
+        margin-bottom: 0
+      .card__label
+        top: -14px
+        right: -10px
+      .tagline, .apply
+        display: none
+      .info
+        height: auto
+        display: flex
+      .basic-info
+        display: grid
+        width: 100%
+        grid-template-columns: fit-content(28%) 1fr 16% 29% 20%
+        margin-left: 14px
+        margin-top: 0
+        margin-bottom: 2px
+        .job-title
+          font-size: 14px
+          grid-column: 1
+          align-self: center
+        .company-name
+          margin-left: 1ch
+          grid-row: 1
+          grid-column: 2
+          align-self: center
+          margin-top: 2px
+          white-space: nowrap
+        .salary
+          margin-bottom: 0
+          grid-column: 3
+          align-self: center
+          padding-left: 2ch
+        .location
+          grid-column: 5
+          align-self: center
+          padding-right: 44px
+        .card__perks
+          overflow: visible
+          grid-column: 1/3
+          grid-row: 2
+          &:empty
+            display: none
+        &.basic-info--with-perks
+          padding-top: 4px
+          .location, .salary
+            grid-row: 1/3
+      .tags
+        position: absolute
+        top: 9px
+        right: 20%
+        width: 25%
+        margin-top: 0
   // This is hover off transition
   transition: border 400ms ease-in-out
   .info
@@ -179,7 +242,7 @@ $card-job-padding: 15px
     font-weight: 600
     margin-bottom: 6px
     color: $steel-gray
-  .tagline
+  .tagline-content
     margin: 11px 0 2px 0
     font-size: 12px
     line-height: 18px

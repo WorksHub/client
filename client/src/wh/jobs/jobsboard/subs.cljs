@@ -8,6 +8,7 @@
     [wh.components.pagination :as pagination]
     [wh.db :as db]
     [wh.graphql.jobs :as jobs]
+    [wh.jobsboard-ssr.db :as jobsboard-ssr]
     [wh.jobs.jobsboard.db :as jobsboard]
     [wh.user.db :as user]
     [wh.verticals :as verticals])
@@ -381,6 +382,12 @@
   :<- [::total-pages]
   (fn [[current-page total-pages] _]
     (pagination/generate-pagination current-page total-pages)))
+
+(reg-sub
+ ::view-type
+ :<- [:wh.subs/query-params]
+ (fn [params]
+   (keyword (get params jobsboard-ssr/view-type-param "cards"))))
 
 (reg-sub
   ::pagination-query-params
