@@ -96,8 +96,12 @@
     +desktop
       top: 16px
 
+.popup-container
+  position: relative
+  height: 100%
+
 .popup
-  @include center(440px, 360px)
+  @include auto-center
   width: 440px
   +mobile
     width: auto
