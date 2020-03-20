@@ -192,8 +192,13 @@ $loader-z-index: 800
 
 #app, #app-ssr
   background-color: $pale-gray
+  overflow-x: hidden
+  overflow-y: auto
   +desktop
+    margin-top: $navbar-height
     height: 100%
+  +mobile
+    margin-top: $navbar-mobile-height
   &.app--hidden
     display: none
 
@@ -201,12 +206,18 @@ $loader-z-index: 800
     height: 100%
 
     .navbar
-      position: sticky
+      position: fixed
       top: 0
 
     .page-container
+      overflow-y: auto
+      overflow-x: hidden
+      -webkit-overflow-scrolling: touch
       +desktop
         margin-left: $left-menu-width
+
+    .navbar--has-promo-banner + .page-container
+      margin-top: $promo-banner-height
 
     .page-container--no-menu
       margin-left: 0
@@ -324,16 +335,15 @@ html, body
   +desktop
     width: 100%
     overflow: visible
+    position: fixed
 html
-  // we want body: 100% to work, but without height it doesn't work
-  // (height = 1px, min-height = 100%) -> height = 100% & body = 100% works
-  height: 1px
-  min-height: 100%
+  +desktop
+    height: 100%
   +mobile
     overflow: initial
-
 body
-  height: 100%
+  +desktop
+    height: calc(100% - #{$navbar-height})
 
 .no-scroll
   overflow: hidden
