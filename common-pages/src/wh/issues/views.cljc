@@ -181,7 +181,7 @@
   (let [languages (some->> (<sub [::subs/issues-languages])
                            (map :language)
                            (sort))]
-    [:section.tag-picker
+    [:section
      {:class class}
      (tag/strs->tag-list
       :a languages
@@ -206,7 +206,7 @@
            [public-header]))
        [:div.is-flex.issues__main__container.split-content
         [:div.issues__main.split-content__main
-         [languages-list "is-hidden-desktop"]
+         [languages-list "tag-picker is-hidden-desktop"]
          (when (<sub [::subs/company-pod?])
            [company-pod "is-desktop"])
          [sorting-component]
@@ -215,7 +215,7 @@
         [edit-issue/edit-issue]
 
         [:div.issues__side.split-content__side
-         [languages-list ["is-hidden-mobile" "split-content-section"]]
+         [languages-list "tag-picker is-hidden-mobile split-content-section"]
 
          #?(:cljs
             (when (<sub [::subs/can-manage-issues?])
