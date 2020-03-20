@@ -619,10 +619,13 @@ $issue-sticky-hide-mobile-offset: 28px
   flex: 1
   font-size: 14px
   margin-left: 10px
-  height: 36px
   font-weight: $font-medium
   color: $grey-darker
   line-height: 18px
+  display: -webkit-box
+  -webkit-line-clamp: 2
+  -webkit-box-orient: vertical
+  overflow: hidden
 
 .issue__start-work-sticky__buttons
   margin-left: 12px

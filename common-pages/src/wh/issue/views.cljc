@@ -1,7 +1,6 @@
 (ns wh.issue.views
   (:require
     #?(:cljs [reagent.core :as r])
-    #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
     #?(:cljs [wh.components.forms.views :refer [radio-buttons]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     [clojure.string :as str]
@@ -220,8 +219,7 @@
          (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :class "logo"})
          [icon "codi"])]
       [:div.issue__start-work-sticky__title
-       #?(:cljs [ellipsis (<sub [::subs/title]) {:vcenter? true}]
-          :clj  (<sub [::subs/title]))]
+       (<sub [::subs/title])]
       [:div.issue__start-work-sticky__buttons
        [:a.button.button--inverted.is-hidden-mobile
         {:href (<sub [::subs/url]) :target "_blank" :rel "noopener"}
