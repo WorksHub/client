@@ -4,15 +4,16 @@
     [clojure.string :as str]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
+    [wh.common.errors :as errors]
     [wh.common.upload :as upload]
     [wh.db :as db]
     [wh.graphql-cache :refer [reg-query]]
     [wh.graphql-cache]
+    [wh.graphql.fragments]
     [wh.logged-in.contribute.db :as contribute]
     [wh.pages.core :refer [on-page-load] :as pages]
     [wh.user.db :as user]
-    [wh.util :as util]
-    [wh.common.errors :as errors])
+    [wh.util :as util])
   (:require-macros
     [clojure.core.strint :refer [<<]]
     [wh.graphql-macros :refer [defquery]]))
