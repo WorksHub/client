@@ -202,6 +202,21 @@
     <symbol id="location" viewbox="0 0 13 16">
         <g fill="none" fill-rule="evenodd"><path d="M-2-1h18v18H-2z"/><path d="M11.21 2.739C10.059.989 8.219 0 6.158 0c-2.06 0-3.9.989-5.054 2.739C-.05 4.463-.32 6.643.392 8.57c.196.507.49 1.04.883 1.52L6.157 16l4.857-5.908c.393-.482.712-.989.884-1.521.736-1.928.466-4.108-.687-5.832zM6.158 8.368c-1.374 0-2.502-1.141-2.502-2.536s1.128-2.536 2.502-2.536c1.374 0 2.502 1.141 2.502 2.536S7.531 8.368 6.157 8.368z" fill="#ADADAD" fill-rule="nonzero"/></g>
     </symbol>
+    <symbol id="location-round" viewBox="0 0 18 18" fill="none">
+      <path d="M15.75 7.5c0 5.25-6.75 9.75-6.75 9.75s-6.75-4.5-6.75-9.75a6.75 6.75 0 0113.5 0z" stroke="#999" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 9.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" stroke="#999" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol width="16" height="16" viewBox="0 0 16 16" fill="none" id="home">
+      <path d="M2 6l6-4.67L14 6v7.33a1.33 1.33 0 01-1.33 1.34H3.33A1.33 1.33 0 012 13.33V6z" stroke="#999" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 14.67V8h4v6.67" stroke="#999" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol width="16" height="16" viewBox="0 0 16 16" fill="none" id="contract">
+      <path d="M9.33 1.33H4a1.33 1.33 0 00-1.33 1.34v10.66A1.33 1.33 0 004 14.67h8a1.33 1.33 0 001.33-1.34v-8l-4-4z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.33 1.33v4h4M10.67 8.67H5.33M10.67 11.33H5.33M6.67 6H5.33" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol width="16" height="16" viewBox="0 0 16 16" fill="none" id="award">
+      <path d="M8 10A4.67 4.67 0 108 .67 4.67 4.67 0 008 10z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.47 9.26l-.8 6.07 3.33-2 3.33 2-.8-6.08" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol width="16" height="16" viewBox="0 0 16 16" fill="none" id="globe">
+      <path d="M8 14.67A6.67 6.67 0 108 1.33a6.67 6.67 0 000 13.34zM1.33 8h13.34" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 1.33A10.2 10.2 0 0110.67 8 10.2 10.2 0 018 14.67 10.2 10.2 0 015.33 8c.05-2.47 1-4.84 2.67-6.67z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
     <symbol id="job-sponsorship" viewBox="0 0 378 512">
         <path d="M188.969 107.972C138.945 107.972 98.2459 148.668 98.2459 198.691C98.2459 248.719 138.945 289.414 188.969 289.414C238.992 289.414 279.687 248.719 279.687 198.691C279.687 148.668 238.992 107.972 188.969 107.972Z" />
         <path d="M377.933 260.089L350.421 198.691L377.933 137.293L319.589 103.789L305.757 37.9452L238.859 45.1366L188.968 0L139.074 45.1366L72.1795 37.9491L58.3475 103.793L0 137.293L27.5117 198.691L0 260.089L58.3475 293.593L65.8397 329.265L3.55859 461.605L68.5585 462.456L110.644 511.999L171.863 381.909L188.968 397.382L206.07 381.909L267.292 511.999L309.374 462.456L374.374 461.605L312.093 329.265L319.589 293.593L377.933 260.089ZM188.968 319.41C122.402 319.41 68.2499 265.257 68.2499 198.691C68.2499 132.125 122.402 77.9725 188.968 77.9725C255.531 77.9725 309.687 132.129 309.687 198.691C309.687 265.257 255.531 319.41 188.968 319.41V319.41Z" />

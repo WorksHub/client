@@ -198,36 +198,28 @@
       (when (<sub [:user/admin?])
         [admin-filters-box])]]))
 
-(def job-column-class
-  {:cards "column is-4"
-   :list  "list-item"})
-
 (def jobs-container-class
-  {:cards "columns"
+  {:cards "jobs-board__jobs-list__content"
    :list  ""})
 
 (defn promoted-jobs [view-type]
-  (into
+  (let [jobs         (<sub [::subs/promoted-jobs])
+        logged-in?   (<sub [:user/logged-in?])
+        has-applied? (some? (<sub [:user/applied-jobs]))
+        company-id   (<sub [:user/company-id])
+        admin?       (<sub [:user/admin?])]
     [:section.promoted-jobs.jobs-board__jobs-list
-     [:h2 "Promoted Jobs"]]
-    (let [parts        (partition-all 3 (<sub [::subs/promoted-jobs]))
-          logged-in?   (<sub [:user/logged-in?])
-          has-applied? (some? (<sub [:user/applied-jobs]))
-          company-id   (<sub [:user/company-id])
-          admin?       (<sub [:user/admin?])]
-      (for [part parts]
-        (into [:div
-               {:class (jobs-container-class view-type)}]
-              (for [job part]
-                [:div
-                 {:class (job-column-class view-type)}
-                 [job-card job {:logged-in?        logged-in?
-                                :view-type         view-type
-                                :user-has-applied? has-applied?
-                                :user-is-company?  (not (nil? company-id))
-                                :user-is-owner?    (or admin? (= company-id (:company-id job)))
-                                :apply-source      "jobsboard-promoted-job"}]]))))))
+     [:h2 "Promoted Jobs"]
 
+     [:div {:class (jobs-container-class view-type)}
+      (for [job jobs]
+        ^{:key (:id job)}
+        [job-card job {:logged-in?        logged-in?
+                       :view-type         view-type
+                       :user-has-applied? has-applied?
+                       :user-is-company?  (not (nil? company-id))
+                       :user-is-owner?    (or admin? (= company-id (:company-id job)))
+                       :apply-source      "jobsboard-promoted-job"}])]]))
 
 (defn- skeleton-jobs [view-type]
   [:section.jobs-board__jobs-list
@@ -235,10 +227,8 @@
     {:class (jobs-container-class view-type)}
     (for [i [1 2 3]]
       ^{:key i}
-      [:div
-       {:class (job-column-class view-type)}
-       [job-card {:id (str "skeleton-job-" i)}
-                 {:view-type view-type}]])]])
+      [job-card {:id (str "skeleton-job-" i)}
+       {:view-type view-type}])]])
 
 (defn jobs-board [view-type]
   (let [jobs         (<sub [::subs/jobs])
@@ -250,22 +240,17 @@
     [:section.jobs-board__jobs-list
      (if searching?
        [skeleton-jobs view-type]
-       (when-let [parts (seq (partition-all 3 jobs))]
+       (when jobs
          [:div
-          (doall
-            (for [part parts]
-              [:div {:key   (random-uuid)
-                     :class (jobs-container-class view-type)}
-               (doall
-                 (for [job part]
-                   [:div {:key   (str "col-" (:id job))
-                          :class (job-column-class view-type)}
-                    [job-card job {:logged-in?        logged-in?
-                                   :view-type         view-type
-                                   :user-has-applied? has-applied?
-                                   :user-is-company?  (not (nil? company-id))
-                                   :user-is-owner?    (or admin? (= company-id (:company-id job)))
-                                   :apply-source      "jobsboard-job"}]]))]))]))
+          {:class (jobs-container-class view-type)}
+          (for [job jobs]
+            ^{:key (:id job)}
+            [job-card job {:logged-in?        logged-in?
+                           :view-type         view-type
+                           :user-has-applied? has-applied?
+                           :user-is-company?  (not (nil? company-id))
+                           :user-is-owner?    (or admin? (= company-id (:company-id job)))
+                           :apply-source      "jobsboard-job"}])]))
      (when (and (not (<sub [:wh.search/searching?]))
                 (seq jobs))
        [pagination/pagination

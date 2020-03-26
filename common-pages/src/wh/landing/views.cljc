@@ -6,6 +6,7 @@
     [wh.common.data :as data]
     [wh.components.cards :refer [blog-card]]
     [wh.components.carousel :refer [carousel]]
+    [wh.components.job :refer [job-card]]
     [wh.components.common :refer [companies-section link wrap-img img]]
     [wh.components.www-homepage :as www :refer [animated-hr]]
     [wh.how-it-works.views :as hiw]
@@ -41,44 +42,6 @@
   [:a.button.button--public.button--github.button--github-integration
    {:href (routes/path :login :params {:step :github})}
    [:span "Get Started with"] [:div]])
-
-(defn job-card
-  [{:keys [company tagline title display-salary display-location role-type tags id slug] :as job}]
-  (let [{company-name :name logo :logo} company
-        skeleton? (and job (empty? (dissoc job :id)))]
-    [:div {:class (util/merge-classes "card"
-                                      "card--job"
-                                      (str "i-cur-" (rand-int 9))
-                                      (when skeleton? "job-card--skeleton"))}
-     [:span
-      [:div.info
-       [:div.logo
-        (if skeleton?
-          [:div]
-          [link (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}) :job :slug slug])]
-       [:div.basic-info
-        [:div.job-title [link title :job :slug slug]]
-        [:div.company-name [link company-name :job :slug slug]]
-        [:div.location [link display-location :job :slug slug]]
-        (when-not (= role-type "Full time")
-          [:div.role-type role-type])]
-       [:div.salary display-salary]]]
-     (into [:ul.tags.tags__job]
-           (map (fn [tag] [:li [link tag :jobsboard :query-params {"tags" tag}]])
-                (if skeleton?
-                  (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " ")))
-                       (range 6))
-                  tags)))
-     [:div.tagline tagline]
-     [:div.buttons
-      [link [:button.button.button--inverted "More Info"] :job :slug slug]
-      [:button.button
-       (interop/on-click-fn
-         (interop/show-auth-popup :homepage-jobcard-apply
-                                  [:job
-                                   :params {:slug slug}
-                                   :query-params {:apply "true"}]))
-       "Apply"]]]))
 
 (defn header []
   (let [{:keys [discover]} (get data/in-demand-hiring-data (<sub [:wh/vertical]))]
@@ -125,10 +88,10 @@
        [:div.homepage__jobs.columns.is-hidden-mobile
         (for [job jobs]
           ^{:key (:id job)}
-          [:div.column [job-card job]])]
+          [job-card job {}])]
        [:div.is-hidden-desktop
         (let [blogs (<sub [::subs/blogs])]
-          [carousel (for [job jobs] [job-card job])])]
+          [carousel (for [job jobs] [job-card job {}])])]
        [:div.homepage__feature-ctas
         (link [:button.button
                "View All Jobs"] :jobsboard)]])

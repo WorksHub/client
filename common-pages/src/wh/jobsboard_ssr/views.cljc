@@ -8,12 +8,8 @@
     [wh.jobsboard-ssr.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]))
 
-(def job-column-class
-  {:cards "column is-4"
-   :list  "list-item"})
-
 (def jobs-container-class
-  {:cards "columns"
+  {:cards "jobs-board__jobs-list__content"
    :list  ""})
 
 (def view-types
@@ -58,23 +54,17 @@
         admin?       (<sub [:user/admin?])
         has-applied? (some? (<sub [:user/applied-jobs]))]
     [:section.jobs-board__jobs-list.jobs-board__jobs-list--ssr
-     (when-let [parts (seq (partition-all 3 jobs))]
-       [:div
-        (doall
-          (for [part parts]
-            [:div
-             {:class (jobs-container-class view-type)
-              :key   (hash part)}
-             (doall
-               (for [job part]
-                 [:div {:key (str "col-" (:id job))
-                        :class (job-column-class view-type)}
-                  [job/job-card job {:logged-in?        logged-in?
-                                     :view-type         view-type
-                                     :user-has-applied? has-applied?
-                                     :user-is-company?  (or admin? (= company-id (:company-id job)))
-                                     :user-is-owner?    (= company-id (:company-id job))
-                                     :apply-source      "jobsboard-job"}]]))]))])
+     [:div
+      {:class (jobs-container-class view-type)}
+      (for [job jobs]
+        ^{:key (str "col-" (:id job))}
+        [job/job-card job {:logged-in?        logged-in?
+                           :view-type         view-type
+                           :user-has-applied? has-applied?
+                           :user-is-company?  (or admin? (= company-id (:company-id job)))
+                           :user-is-owner?    (= company-id (:company-id job))
+                           :apply-source      "jobsboard-job"}])]
+
      (when (seq jobs)
        [pagination/pagination current-page (pagination/generate-pagination current-page total-pages) route query-params])]))
 

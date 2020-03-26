@@ -13,6 +13,12 @@
     border: 1px solid black
 
 .jobs-board__jobs-list
+  .jobs-board__jobs-list__content
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax($max-job-card-width, 1fr))
+    grid-gap: 9px
+    flex-wrap: wrap
+    margin-top: 1.5rem
   &.jobs-board__jobs-list--ssr
     margin-top: 16px
   +desktop
@@ -644,8 +650,8 @@ $description-height: 400px
   fill: $grey
   cursor: pointer
   &.like
-    right: 15px
-    top: 15px
+    right: 8px
+    top: 4px
   &.blacklist
     top: 15px
     right: 53px
@@ -666,7 +672,7 @@ $description-height: 400px
   width: 18px
   height: 18px
   fill: $red
-  margin-right: 5px
+  margin-right: 3px
   vertical-align: middle
 
 .job__icon--gray

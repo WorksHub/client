@@ -1,11 +1,11 @@
 $tag-height: 14px
 $tag-padding: 8px
-$tag-spacing: 6px
+$tag-spacing: 3px
 
 .card--blog,
 .card--job
   .tags
-    height: 2 * ($tag-height + 2 * $tag-padding) + $tag-spacing
+    max-height: 2 * ($tag-height + 2 * $tag-padding) + $tag-spacing
     overflow-y: hidden
   +desktop
     &.full-width

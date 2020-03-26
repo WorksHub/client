@@ -1,7 +1,8 @@
 $min-card-width: 247px
-$max-job-card-width: (742px - 12px) / 2 /* two cards in a standard content section inc. 12px margin */
+$max-job-card-width: (742px - 42px) / 2
 $card-border: 8px
-$card-job-padding: 15px
+$card-job-padding: 11px
+
 
 .card
   width: 100%
@@ -42,8 +43,8 @@ $card-job-padding: 15px
   border: none
   color: white
   position: absolute
-  top: 4px
-  right: 0
+  top: -1px
+  right: -1px
   border-radius: 5px 0 0 5px
   padding-left: 12px
 
@@ -95,34 +96,84 @@ $card-job-padding: 15px
         height: auto
         margin-top: 8px
 
-
 .card--job
-  padding: $card-job-padding
+  padding: ($card-job-padding * 3) $card-job-padding ($card-job-padding * 2) $card-job-padding
   position: relative
-  height: 436px
-  border: $card-border solid white
+  height: 374px
+  line-height: 22px
+  border: 1px solid transparent
+  display: flex
+  flex-direction: column
+  .carousel-item &
+    margin: 0
+  .homepage &
+    flex: 1 0 31%
+    +desktop
+      margin: 9px
+    .button
+      font-size: 11px
+      height: 30px
+      padding: 6px
+  .jobs-board__jobs-list--ssr &
+    padding: ($card-job-padding * 2) $card-job-padding
+  .card__label--unpublished
+    top: -5px
+    right: -3px
+  .card__perks
+    display: flex
+    align-items: center
+    height: 22px
+    .card__perks__perk-name
+      margin-right: 11px
+      padding-bottom: 2px
+  +mobile
+    &.full-width
+      margin-bottom: 1.5rem
   +desktop
-    max-width: $max-job-card-width
     &.full-width
       max-width: none
       margin-bottom: 2px
       height: auto
       position: relative
       padding: 0
+      margin: 0
+      margin-bottom: 2px
+      .location
+        font-size: 12px
+        .icon
+          display: none
+      .job-card__header
+        margin-left: 8px
+        .job__icon
+          top: 50%
+          transform: translateY(-50%)
       .logo
         display: flex
+        margin-top: 0
+        align-self: center
       .card__perks__perk-name
         font-size: 10px
       .card__perks
         margin-bottom: 0
-      .card__label
-        top: -14px
-        right: -10px
+        position: absolute
+        bottom: 8px
+        left: 70px
+        &:empty
+          display: none
       .tagline, .apply
         display: none
       .info
         height: auto
         display: flex
+        flex-direction: row-reverse
+        margin-bottom: 0
+        padding: 8px 0
+        &.info--with-perks
+          padding: 0
+          height: 64px
+          .job-title, .company-name
+            align-self: flex-start
+            margin-top: 10px
       .basic-info
         display: grid
         width: 100%
@@ -134,13 +185,16 @@ $card-job-padding: 15px
           font-size: 14px
           grid-column: 1
           align-self: center
+          padding-right: 0
         .company-name
+          font-weight: $font-regular
           margin-left: 1ch
           grid-row: 1
           grid-column: 2
           align-self: center
-          margin-top: 2px
           white-space: nowrap
+          .icon
+            display: none
         .salary
           margin-bottom: 0
           grid-column: 3
@@ -162,15 +216,28 @@ $card-job-padding: 15px
             grid-row: 1/3
       .tags
         position: absolute
-        top: 9px
+        top: 50%
+        transform: translateY(-50%)
         right: 20%
         width: 25%
         margin-top: 0
   // This is hover off transition
-  transition: border 400ms ease-in-out
+  transition: border 100ms ease-in-out
+  font-size: 13px
+  &:hover
+    border-color: $red
+    .job-title
+      color: $red
   .info
-    height: 162px
+    margin-bottom: 11px
+    height: 88px
+    display: flex
+    width: 100%
   .logo
+    margin-left: auto
+    flex-shrink: 0
+    margin-top: 7px
+    font-size: 30px
     .logo--empty
       height: 48px
       width: 48px
@@ -178,12 +245,13 @@ $card-job-padding: 15px
     img
       height: 48px
       object-fit: contain
-    font-size: 30px
   &.card--small
     height: auto
+    margin: 0
+    padding: $card-job-padding
     .card__label--unpublished
-      position: static
-      margin-top: 8px
+      top: 0
+      right: 0
     .match-circle-container
       position: absolute
       top: 85px
@@ -230,32 +298,56 @@ $card-job-padding: 15px
         justify-content: center
         align-items: center
   .basic-info
-    margin-top: 18px
-    font-size: 12px
-    line-height: 18px
-    .job-title
+    flex: 1
+    min-width: 0
+    padding-right: 8px
+    .company-name
       font-weight: $font-semi-bold
-      overflow: hidden
-      white-space: nowrap
-      max-width: 100%
-      text-overflow: ellipsis
+      width: 100%
+      span
+        text-overflow: ellipsis
+        white-space: nowrap
+        overflow: hidden
+    .location
+      margin-left: -1px
+    .company-name, .location, .salary
+      display: flex
+      align-items: center
+    .icon
+      fill: $greyish
+      margin-right: 8px
+      width: 19px
+      flex-shrink: 0
+    .salary
+      color: $red
+      .icon
+        margin-bottom: 3px
+  .job-title
+    font-size: 14px
+    font-weight: $font-semi-bold
+    height: 22px
+    overflow: hidden
+    white-space: nowrap
+    padding-right: 30px
+    max-width: 100%
+    text-overflow: ellipsis
   .salary
+    margin-bottom: 11px
     font-weight: 600
-    margin-bottom: 6px
     color: $steel-gray
-  .tagline-content
-    margin: 11px 0 2px 0
-    font-size: 12px
-    line-height: 18px
-    height: 58px
-    overflow-y: hidden
+  .tagline
+    .tagline-content
+      margin-bottom: 11px
+      margin-top: 11px
+      height: 44px
+      overflow-y: hidden
   .apply
     width: 100%
     display: flex
     justify-content: flex-start
     flex-direction: column
     position: absolute
-    bottom: $card-job-padding
+    bottom: $card-job-padding * 2
     button, a
       margin-right: 6px
       min-width: 90px
@@ -303,11 +395,27 @@ $card-job-padding: 15px
       height: 18px
       border-radius: 9px
 
-.card__perks
+.card--job .basic-info .card__remote
+  position: absolute
+  top: -18px
+  left: -12px
+  color: #fff
+  background: linear-gradient(135deg, #f38735b5 0%, #ffae71 35%)
+  border-color: transparent
+  padding: 2px 8px 2px 6px
   white-space: nowrap
   overflow: hidden
   margin-bottom: 6px
-  height: 19px
+  border-radius: 0 5px 5px 0
+  display: flex
+  flex-direction: row
+  align-items: center
+  color: #fff
+  font-weight: 600
+  .icon
+    fill: #fff
+  &:empty
+    display: none
   .icon
     display: inline-block
   & > .icon:not(:first-child)
@@ -328,6 +436,8 @@ $card-job-padding: 15px
 
 .job-card--skeleton
   pointer-events: none
+  .icon
+    display: none
   .logo
     height: 48px
     width: 48px
