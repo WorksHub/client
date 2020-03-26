@@ -159,7 +159,7 @@
               (reset! new-company-name nil))}
           [:div.company-profile__header__inner
            [:div.company-profile__logo
-            (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60})]
+            (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60 :fit "clamp"})]
            [:div.company-profile__name
             (when-let [n (txt/not-blank (<sub [::subs/name]))]
               (if (<sub [:user/admin?])

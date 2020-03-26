@@ -119,7 +119,7 @@
      [:div.logo
       (if (or skeleton? (not logo))
         [:div]
-        (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48}))]]]])
+        (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48 :fit "clamp"}))]]]])
 
 (def job-card-class
   {:cards ""
