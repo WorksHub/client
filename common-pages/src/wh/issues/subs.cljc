@@ -1,17 +1,19 @@
 (ns wh.issues.subs
   (:require
-    #?(:clj [clj-time.coerce :as tc]
+    #?(:clj  [clj-time.coerce :as tc]
        :cljs [cljs-time.coerce :as tc])
-    #?(:clj [clj-time.format :as tf]
+    #?(:clj  [clj-time.format :as tf]
        :cljs [cljs-time.format :as tf])
+    [clojure.string :as str]
     [re-frame.core :refer [reg-sub]]
-    [wh.common.issue :as common-issue]
     [wh.components.pagination :as pagination]
     [wh.issues.db :as issues]))
 
 (reg-sub
   ::sub-db
   (fn [db _] (::issues/sub-db db)))
+
+(reg-sub ::db (fn [db _] db))
 
 (reg-sub
   ::sorting-by
@@ -77,8 +79,17 @@
 (reg-sub
   ::header
   :<- [::company]
-  (fn [company _]
-    (str (:name company) " Open Source Issues")))
+  :<- [::db]
+  (fn [[company db] _]
+    (let [title "Open Source Issues"
+          selected-language (issues/language db)]
+      (cond
+        company (-> (:name company)
+                    (str " " title))
+        selected-language (-> selected-language
+                               (str/capitalize)
+                               (str " " title))
+        :else title))))
 
 (reg-sub
   ::loading?
