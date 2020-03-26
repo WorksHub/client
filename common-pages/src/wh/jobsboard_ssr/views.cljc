@@ -3,6 +3,7 @@
     [wh.components.icons :refer [icon]]
     [wh.components.job :as job]
     [wh.routes :as routes]
+    [wh.components.newsletter :as newsletter]
     [wh.components.pagination :as pagination]
     [wh.interop :as interop]
     [wh.jobsboard-ssr.subs :as subs]
@@ -47,23 +48,36 @@
 
 (defn jobs-board [route query-params view-type]
   (let [jobs         (<sub [::subs/jobs])
+        ;; Split jobs after 9th so we can put newsletter CTA between jobs
+        jobs         (split-at 9 jobs)
         current-page (<sub [::subs/current-page])
         total-pages  (<sub [::subs/total-pages])
         logged-in?   (<sub [:user/logged-in?])
         company-id   (<sub [:user/company-id])
         admin?       (<sub [:user/admin?])
-        has-applied? (some? (<sub [:user/applied-jobs]))]
+        has-applied? (some? (<sub [:user/applied-jobs]))
+
+        job-card-opts (fn [job-company-id]
+                        {:logged-in?        logged-in?
+                         :view-type         view-type
+                         :user-has-applied? has-applied?
+                         :user-is-company?  (or admin? (= company-id job-company-id))
+                         :user-is-owner?    (= company-id job-company-id)
+                         :apply-source      "jobsboard-job"})]
     [:section.jobs-board__jobs-list.jobs-board__jobs-list--ssr
      [:div
       {:class (jobs-container-class view-type)}
-      (for [job jobs]
+      (for [job (first jobs)]
         ^{:key (str "col-" (:id job))}
-        [job/job-card job {:logged-in?        logged-in?
-                           :view-type         view-type
-                           :user-has-applied? has-applied?
-                           :user-is-company?  (or admin? (= company-id (:company-id job)))
-                           :user-is-owner?    (= company-id (:company-id job))
-                           :apply-source      "jobsboard-job"}])]
+        [job/job-card job (job-card-opts (:company-id job))])]
+
+     [newsletter/newsletter (<sub [:user/logged-in?])]
+
+     [:div
+      {:class (jobs-container-class view-type)}
+      (for [job (second jobs)]
+        ^{:key (str "col-" (:id job))}
+        [job/job-card job (job-card-opts (:company-id job))])]
 
      (when (seq jobs)
        [pagination/pagination current-page (pagination/generate-pagination current-page total-pages) route query-params])]))
@@ -85,7 +99,8 @@
   (let [view-type (<sub [::subs/view-type])]
     [:div.main.jobs-board__pre-set-search
      [header]
-     (let [query-params (<sub [:wh/query-params])]
+     (let [view-type    (<sub [::subs/view-type])
+           query-params (<sub [:wh/query-params])]
        [:div.search-results
         [:h3.search-result-count (<sub [::subs/search-result-count-str])]
         [:section
