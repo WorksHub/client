@@ -53,8 +53,6 @@
                         (map common-job/translate-job))
            :blogs  (get-in results [:blogs :blogs])})))))
 
-;; These subscriptions extract various bits from ::blog and ::recommended-jobs.
-
 (reg-sub
   ::id
   :<- [::blog]
@@ -174,7 +172,12 @@
   (fn [[company-name recommended-jobs] _]
     (every? (comp (partial = company-name) :company-name) recommended-jobs)))
 
-;; These subscriptions refer to client-side state of the blog.
+(reg-sub
+  ::upvote-count
+  :<- [::blog]
+  (fn [blog _]
+    (->> blog
+         :upvote-count)))
 
 (reg-sub
   ::blog-db
@@ -192,13 +195,6 @@
   :<- [::blog-db]
   (fn [db _]
     (::blog/author-info-visible? db)))
-
-(reg-sub
-  ::upvote-count
-  :<- [::blog-db]
-  :<- [::id]
-  (fn [[db id] _]
-    (util/number->compact-str (get-in db [::blog/upvotes id]))))
 
 ;; Finally, these ones return visibility of UI items based on other pieces
 ;; of app's state.

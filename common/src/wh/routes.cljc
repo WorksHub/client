@@ -194,7 +194,7 @@
                               :oauth-slack
                               :oauth-workable})
 ;;TODO this config should be added to wh.response.ssr/page-content map
-(def pages-without-app-js-when-not-logged-in #{;;:blog TODO we need app to move social icons to SSR
+(def pages-without-app-js-when-not-logged-in #{:blog
                                                :company
                                                :companies
                                                :company-jobs

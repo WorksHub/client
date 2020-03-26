@@ -12,11 +12,6 @@ $hero-top: 26px
   padding: 0
   box-sizing: border-box
   background-color: $pale-gray
-  height: 100%
-  overflow-y: auto
-  overflow-x: hidden
-  -webkit-overflow-scrolling: touch
-  margin-bottom: $hero-top
   @supports (not (-webkit-overflow-scrolling: touch))
     perspective: 1px
     perspective-origin: 0 0
@@ -60,6 +55,18 @@ $hero-top: 26px
   max-width: 600px
   +mobile
     margin-left: 0
+
+.blog__social-icons
+  padding-bottom: 8px
+
+.blog__social-icons-wrapper
+  position: sticky
+  bottom: 0
+  z-index: 1
+  display: flex
+  justify-content: flex-end
+  +mobile
+    justify-content: flex-start
 
 .blog-header
   padding-top: 20px
@@ -213,50 +220,25 @@ $hero-top: 26px
 .blog-footer__share-buttons
   text-align: center
 
-.share-links--logged-in
-  @include overlay-icons-placement-logged-in
-
-.share-links--logged-out
-  @include overlay-icons-placement-logged-out
-
 .share-links
-  display: block
-  position: fixed
+  display: flex
+  padding: 16px 0
+  flex-direction: column
+  justify-content: space-between
+  align-items: center
   background-color: #ffae71
-  bottom: 90px
   width: 60px
-  height: 149px
   border-radius: 29px
+
   +mobile
-    width: 149px
-    height: 60px
-    bottom: -70px
-    right: 90px
-    display: flex
-    align-items: center
-    z-index: 1
-    transition: bottom 0.3s ease-in
-    &.share-links--shown
-      bottom: 20px
+    display: none
 
-  a
-    line-height: 0
-
-  svg.icon
-    display: block
+  .icon
     fill: white
-    margin: 8px auto
-    +mobile
-      display: inline-block
-      margin: 0
 
     &.share-links__facebook
       width: 37px
       height: 37px
-      +desktop
-        margin-top: 11px
-      +mobile
-        margin-left: 11px
 
     &.share-links__twitter
       width: 39px
@@ -265,8 +247,6 @@ $hero-top: 26px
     &.share-links__linkedin
       width: 26px
       height: 26px
-      +mobile
-        margin-left: 8px
 
 $author-info-size: 300px
 $author-info-photo-size: 95px
@@ -339,22 +319,14 @@ $author-info-photo-margin: 15px
 $rocket-red-1: #ffae71
 $rocket-red-2: #ff7c6e
 
-.upvote--logged-in
-  @include overlay-icons-placement-logged-in
-
-.upvote--logged-out
-  @include overlay-icons-placement-logged-out
-
 .upvote
-  position: fixed
-  bottom: 250px
+  padding-bottom: 4px
+  z-index: 1
   +mobile
-    right: 250px
-    bottom: -70px
-    transition: bottom 0.3s ease-in
-    z-index: 1
+    display: none
+    padding-left: 4px
     &.upvote--shown
-      bottom: 20px
+     display: block
 
 .upvote__circle
   width: 60px
@@ -373,7 +345,6 @@ $rocket-red-2: #ff7c6e
   .icon
     fill: white
     height: auto
-    position: fixed
     width: 20px
   &:hover
     color: #7eb5bd
@@ -385,8 +356,6 @@ $counter-size: 24px
   position: absolute
   font-size: 10px
   font-weight: $font-semi-bold
-  top: -4px
-  left: -4px
   width: $counter-size
   height: $counter-size
   line-height: $counter-size
@@ -395,9 +364,6 @@ $counter-size: 24px
   color: white
   z-index: 1010
   border-radius: $counter-size / 2
-  +mobile
-    bottom: 84px - $counter-size
-    right: 314px - $counter-size
 
 .upvote__circle--pulsing
   box-shadow: 0px 0px 20px
@@ -408,39 +374,3 @@ $counter-size: 24px
   background-color: #7eb5bd
   -webkit-clip-path: circle(48% at center)
   clip-path: circle(48% at center)
-  .upvote-rocket-1
-    z-index: 1001
-    fill: $rocket-red-2
-    transform: translateY(200%)
-    animation-delay: 0.08s !important
-    animation: rocket-2 1s ease-in-out 1
-
-  .upvote-rocket-2
-    z-index: 1002
-    fill: $rocket-red-1
-    transform: translateY(200%)
-    animation-delay: 0.04s !important
-    animation: rocket-2 1s ease-in-out 1
-
-  .upvote-rocket-3
-    z-index: 1003
-    fill: white
-    transform: translateY(200%)
-    animation: rocket-2 1s ease-in-out 1
-
-  .upvote-rocket-4
-    z-index: 1001
-    fill: $rocket-red-2
-    animation-delay: 0.08s !important
-    animation: rocket-1 1s ease-in-out 1
-
-  .upvote-rocket-5
-    z-index: 1002
-    fill: $rocket-red-1
-    animation-delay: 0.04s !important
-    animation: rocket-1 1s ease-in-out 1
-
-  .upvote-rocket-6
-    z-index: 1003
-    fill: white
-    animation: rocket-1 1s ease-in-out 1

@@ -114,20 +114,15 @@
          (if (db/logged-in? db)
            {:graphql         {:query      upvote-blog-mutation
                               :variables  {:id id}
-                              :on-success [::upvote-success]
+                              :on-success [:graphql/update-entry
+                                             :blog (blog/params db)
+                                             :merge {:blog {:upvote-count (-> blog
+                                                                              :upvote-count
+                                                                              inc)}}]
                               :on-failure [::upvote-failure]}
             :analytics/track ["Blog Boosted" (select-keys blog [:id :reading-time :title :tags :author :formatted-creation-date])]}
            {:show-auth-popup {:context  :upvote
                               :redirect [:blog :params {:id id} :query-params {:upvote true}]}})))))
-
-(reg-event-db
-  ::upvote-success
-  db/default-interceptors
-  (fn [db [result]]
-    (let [id (blog/id db)]
-      (if (get-in result [:data :upvote_blog])
-        (update-in db [::blog/sub-db ::blog/upvotes id] inc)
-        db))))
 
 (reg-event-fx
   ::upvote-failure

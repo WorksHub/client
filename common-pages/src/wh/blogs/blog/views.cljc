@@ -1,9 +1,7 @@
 (ns wh.blogs.blog.views
   (:require
-    #?(:cljs [wh.common.http :refer [url-encode]]
-       :clj [bidi.bidi :refer [url-encode]])
-    #?(:cljs [goog.Uri :as uri])
     #?(:cljs [reagent.core :as reagent])
+    [bidi.bidi :refer [url-encode]]
     [clojure.string :as str]
     [wh.blogs.blog.events :as events]
     [wh.blogs.blog.subs :as subs]
@@ -21,67 +19,44 @@
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.routes :as routes]
-    [wh.slug :as slug]
     [wh.util :as util])
   #?(:cljs (:require-macros [clojure.core.strint :refer [<<]])))
 
-;; NOTE: There's a hack/gotcha here.
+(defn link-to-share []
+  (let [path (routes/path :blog
+                          :params {:id (:id (<sub [::subs/blog]))}
+                          :query-params {:utm_campaign "sharebutton" :utm_source "blog"})
+        vertical (<sub [:wh/vertical])]
+    #?(:cljs (str js/window.location.origin path)
+       :clj  (wh.url/base-url vertical path))))
 
-;; With CSS animations that are one-off (not infinite), it's not easy
-;; to re-trigger them once they have already fired.  The usual way of
-;; doing this is to remove and re-insert the animated element to the
-;; DOM, tricking the browser to think it's a new element and re-firing
-;; the animation.  We're not supposed to do it directly in React/reagent,
-;; so we provide it with alternating key, forcing Virtual DOM to
-;; reinsert the element. Hence the `keypart` ratom: it starts out
-;; with 0 (not upvoted yet) and then alternates between 1 and 2.
-
-#?(:cljs
-   (defn upvotes []
-     (let [keypart (r/atom 0)]
-       (fn []
-         [:div.upvote {:class (util/merge-classes (when (<sub [::subs/share-links-shown?]) "upvote--shown")
-                                                  (if (<sub [:user/logged-in?]) "upvote--logged-in" "upvote--logged-out"))}
-          [:div.upvote__counter (<sub [::subs/upvote-count])]
-          (into
-            ^{:key (str "upvote" @keypart)}
-            [:div.upvote__circle {:class (if (pos? @keypart) "upvote__circle--animated" "upvote__circle--pulsing")
-                                  :on-click #(do
-                                               (dispatch [::events/upvote])
-                                               (swap! keypart (fn [i] (if (= i 2) 1 2))))}]
-            (for [i (range 1 7) :let [name (str "upvote-rocket-" i)]]
-              [icon "upvote-rocket" :class name]))]))))
-
-#?(:cljs
-   (defn share-buttons []
-     (let [message-prefix "Check out this blog on "
-           normal-message (str message-prefix (<sub [:wh/platform-name]))
-           twitter-message (str message-prefix (<sub [:wh/twitter]))
-           link (-> js/window.location.href uri/parse (.setQueryData "utm_campaign=sharebutton&utm_source=blog") .toString)
-           enc-link (url-encode link)
-           enc-normal-message (url-encode normal-message)
-           enc-twitter-message (url-encode twitter-message)]
-       [:div.share-links
-        {:class (util/merge-classes (when (<sub [::subs/share-links-shown?]) "share-links--shown")
-                                    (if (<sub [:user/logged-in?]) "share-links--logged-in" "share-links--logged-out"))}
-        [:a
-         {:href   (<< "http://www.facebook.com/sharer/sharer.php?u=~{enc-link}")
-          :target "_blank"
-          :rel    "noopener"
-          :aria-label "Share blog on Facebook"}
-         [icon "facebook" :class "share-links__facebook"]]
-        [:a
-         {:href   (<< "https://twitter.com/intent/tweet?text=~{enc-twitter-message}&url=~{enc-link}")
-          :target "_blank"
-          :rel    "noopener"
-          :aria-label "Share blog on Twitter"}
-         [icon "twitter" :class "share-links__twitter"]]
-        [:a
-         {:href   (<< "https://www.linkedin.com/shareArticle?mini=true&url=~{enc-link}&title=~{enc-normal-message}&summary=&origin=")
-          :target "_blank"
-          :rel    "noopener"
-          :aria-label "Share blog on Linkedin"}
-         [icon "linkedin" :class "share-links__linkedin"]]])))
+(defn share-buttons []
+  (let [message-prefix "Check out this blog on "
+        normal-message (str message-prefix (<sub [:wh/platform-name]))
+        twitter-message (str message-prefix (<sub [:wh/twitter]))
+        link (link-to-share)
+        enc-link (url-encode link)
+        enc-normal-message (url-encode normal-message)
+        enc-twitter-message (url-encode twitter-message)]
+    [:div.share-links
+     [:a
+      {:href   (str "http://www.facebook.com/sharer/sharer.php?u=" enc-link)
+       :target "_blank"
+       :rel    "noopener"
+       :aria-label "Share blog on Facebook"}
+      [icon "facebook" :class "share-links__facebook"]]
+     [:a
+      {:href   (str "https://twitter.com/intent/tweet?text=" enc-twitter-message "&url=" enc-link)
+       :target "_blank"
+       :rel    "noopener"
+       :aria-label "Share blog on Twitter"}
+      [icon "twitter" :class "share-links__twitter"]]
+     [:a
+      {:href   (str "https://www.linkedin.com/shareArticle?mini=true&url=" enc-link "&title=" enc-normal-message "&summary=&origin=")
+       :target "_blank"
+       :rel    "noopener"
+       :aria-label "Share blog on Linkedin"}
+      [icon "linkedin" :class "share-links__linkedin"]]]))
 
 (defn recommended-jobs []
   (when-let [jobs (<sub [::subs/recommended-jobs])]
@@ -106,17 +81,27 @@
                                          :user-is-owner?    (or admin? (= company-id (:company-id job)))
                                          :apply-source      "blog-recommended-job"}]]))]))))
 
-#?(:cljs
-   (defn social-icons []
-     (when (<sub [:wh.subs/show-blog-social-icons?])
-       [:div {:class "blog-social-icons"}
-        [share-buttons]
-        [upvotes]])))
+(defn upvotes []
+  [:div
+   {:class (util/merge-classes
+             "upvote"
+             (when (<sub [::subs/share-links-shown?]) "upvote--shown"))}
+   [:div.upvote__counter (<sub [::subs/upvote-count])]
+   [:div (merge
+           {:class "upvote__circle upvote__circle--pulsing"}
+           (interop/on-click-fn
+             #?(:cljs #(dispatch [::events/upvote])
+                :clj (interop/show-auth-popup :blog
+                                              [:blog
+                                               :params {:id (:id (<sub [::subs/blog]))}
+                                               :query-params {:upvote true}]))))
+    [icon "upvote-rocket"]]])
 
-#?(:cljs
-   (defonce add-social-icons
-     (do
-       (swap! wh.views/extra-overlays conj [social-icons]))))
+(defn social-icons []
+  [:div.blog__social-icons-wrapper
+   [:div.blog__social-icons
+    [upvotes]
+    [share-buttons]]])
 
 (defn author-info []
   (when-let [info (<sub [::subs/author-info])]
@@ -223,7 +208,8 @@
                                      :admin?         (<sub [:user/admin?])}]
          [recommendation-cards/blogs {:blogs blogs}]
          [recommendation-cards/issues {:issues issues}]
-         [candidate-pods/candidate-cta]])]]))
+         [candidate-pods/candidate-cta]])]
+     [social-icons]]))
 
 (defn page []
   #?(:cljs
