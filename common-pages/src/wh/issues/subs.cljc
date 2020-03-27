@@ -81,15 +81,7 @@
   :<- [::company]
   :<- [::db]
   (fn [[company db] _]
-    (let [title "Open Source Issues"
-          selected-language (issues/language db)]
-      (cond
-        company (-> (:name company)
-                    (str " " title))
-        selected-language (-> selected-language
-                               (str/capitalize)
-                               (str " " title))
-        :else title))))
+    (issues/title db (:name company))))
 
 (reg-sub
   ::loading?

@@ -268,27 +268,28 @@
 
 (defn pod--benefits-render
   [user-type selected-site on-slide]
-  (let [img-selector {:company "/images/hiw/company/benefits/benefit2.svg"
-                      :candidate "/images/hiw/candidate/hiw/hiw4.svg"}]
-    [:div
-     {:class (util/merge-classes
-               "pod"
-               "how-it-works-pod"
-               "how-it-works-pod--benefits"
-               (when (nil? user-type)
-                 "how-it-works-pod--benefits--slider"))}
-     (when (nil? user-type)
-       [slider selected-site on-slide])
-     [:div.is-flex
-      [:div.how-it-works-pod--benefits-info
-       [:h2 "What's in it for you?"]
-       [:ul
-        (for [{:keys [txt]} (get data/how-it-works-benefits selected-site)]
-          ^{:key txt}
-          [:li [icon "cutout-tick"] txt])]]
-      [:div.how-it-works-pod--benefits-img
-       [:img {:src (img-selector selected-site)
-              :alt ""}]]]]))
+  (when-not (= user-type "admin")
+    (let [img-selector {:company "/images/hiw/company/benefits/benefit2.svg"
+                        :candidate "/images/hiw/candidate/hiw/hiw4.svg"}]
+      [:div
+       {:class (util/merge-classes
+                 "pod"
+                 "how-it-works-pod"
+                 "how-it-works-pod--benefits"
+                 (when (nil? user-type)
+                   "how-it-works-pod--benefits--slider"))}
+       (when (nil? user-type)
+         [slider selected-site on-slide])
+       [:div.is-flex
+        [:div.how-it-works-pod--benefits-info
+         [:h2 "What's in it for you?"]
+         [:ul
+          (for [{:keys [txt]} (get data/how-it-works-benefits selected-site)]
+            ^{:key txt}
+            [:li [icon "cutout-tick"] txt])]]
+        [:div.how-it-works-pod--benefits-img
+         [:img {:src (img-selector selected-site)
+                :alt ""}]]]])))
 
 (defn pod--benefits
   [user-type]

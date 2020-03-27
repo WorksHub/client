@@ -3,11 +3,23 @@
     #?(:clj  [clojure.spec.alpha :as s]
        :cljs [cljs.spec.alpha :as s])
     [bidi.bidi :as bidi]
+    [clojure.string :as str]
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.components.pagination :as pagination]))
 
 (defn language [db]
   (bidi/url-decode (get-in db [:wh.db/page-params :language])))
+
+(defn title [db company-name]
+  (let [title "Open Source Issues"
+        language (language db)]
+    (cond
+      company-name (-> company-name
+                       (str " " title))
+      language (-> language
+                   (str/capitalize)
+                   (str " " title))
+      :else title)))
 
 (defn issues-sort
   [qps]

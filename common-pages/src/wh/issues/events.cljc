@@ -106,6 +106,13 @@
     (merge issue (gql-issue->issue issue-to-update))
     issue))
 
+(reg-event-fx
+  ::set-page-title
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:page-title {:page-name (issues/title db nil)
+                  :vertical (:wh.db/vertical db)}}))
+
 #?(:cljs
    (reg-event-db
      ::update-issue-success
@@ -124,6 +131,7 @@
                    []
                    [[::initialize-db]
                     [:wh.events/scroll-to-top]
+                    [::set-page-title]
                     [::fetch-issues-languages]
                     [::fetch-issues company-id page-number (some-> issues-language slug/slug->label)]])
                  (when company-id
@@ -141,4 +149,5 @@
            page-number (get-in db [::db/query-params "page"])]
        [[::initialize-db]
         [:wh.events/scroll-to-top]
+        [::set-page-title]
         [::fetch-issues company-id page-number]])))
