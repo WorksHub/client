@@ -202,7 +202,9 @@
       :else
       [:h2.job__header-company-link (<sub [::subs/company-name])])
     [:h3.job__header-company-location (if (<sub [::subs/remote?])
-                                        [:div "Remote 🙌"]
+                                        [:div [icon "globe"
+                                               :class "job__icon--small"]
+                                              "Remote"]
                                         (<sub [::subs/location]))]]
    [:div.job__company-header__last-modified
     (<sub [::subs/last-modified])]
