@@ -6402,8 +6402,8 @@ a.navbar-item,
 
 .card__label--job {
   position: absolute;
-  bottom: 11px;
-  right: 11px; }
+  bottom: 10px;
+  right: 10px; }
 
 .button--edit-blog {
   margin: 6px 0; }
@@ -6472,11 +6472,11 @@ a.navbar-item,
         margin-top: 8px; }
 
 .card--job {
-  padding: 33px 11px 22px 11px;
+  padding: 30px 10px 20px 10px;
   position: relative;
   height: 374px;
   line-height: 22px;
-  border: 1px solid transparent;
+  border: 6px solid transparent;
   display: flex;
   flex-direction: column;
   transition: border 100ms ease-in-out;
@@ -6493,7 +6493,7 @@ a.navbar-item,
       height: 30px;
       padding: 6px; }
   .jobs-board__jobs-list--ssr .card--job {
-    padding: 22px 11px; }
+    padding: 20px 10px; }
   .card--job .card__label--unpublished {
     top: -5px;
     right: -3px; }
@@ -6623,7 +6623,7 @@ a.navbar-item,
   .card--job.card--small {
     height: auto;
     margin: 0;
-    padding: 11px; }
+    padding: 10px; }
     .card--job.card--small .card__label--unpublished {
       top: 0;
       right: 0; }
@@ -6722,7 +6722,7 @@ a.navbar-item,
     justify-content: flex-start;
     flex-direction: column;
     position: absolute;
-    bottom: 22px; }
+    bottom: 10px; }
     .card--job .apply button, .card--job .apply a {
       margin-right: 6px;
       min-width: 90px; }
@@ -6736,7 +6736,7 @@ a.navbar-item,
     text-transform: uppercase; }
   .card--job .match {
     position: absolute;
-    left: 11px;
+    left: 10px;
     bottom: 45px;
     text-transform: uppercase;
     font-size: 11px;
@@ -7108,7 +7108,7 @@ a.navbar-item,
   .sidebar__stats .stats__item {
     grid-template-columns: 50px 130px 1fr; }
 
-.dashboard .columns, .dashboard .table-container {
+.dashboard .table-container {
   overflow-x: auto; }
 
 .dashboard .pref-container {
