@@ -1,9 +1,9 @@
 (ns wh.common.upload
   (:require
     [ajax.json :as ajax-json]
+    [bidi.bidi :as bidi]
     [re-frame.core :refer [dispatch]]
     [re-frame.db]
-    [wh.common.http :refer [url-encode]]
     [wh.routes :refer [path]]))
 
 (defn upload-file
@@ -37,7 +37,7 @@
                   :uri             (str (:wh.db/api-server @re-frame.db/app-db) endpoint)
                   :body            contents
                   :headers         (merge {"Content-Type" (.-type file)
-                                           "X-Filename" (url-encode filename)}
+                                           "X-Filename" (bidi/url-encode filename)}
                                           custom-headers)
                   :response-format (ajax-json/json-response-format {:keywords? true})
                   :with-credentials true

@@ -34,11 +34,6 @@
          (fn [[user admin?]]
            (or admin? (= (:wh.user.db/company-id user) "workshub-f0774"))))
 
-(reg-sub ::candidate?
-         :<- [::type]
-         (fn [type]
-           (user/candidate-type? type)))
-
 (reg-sub ::show-consent-popup?
          :<- [::user]
          :<- [:user/logged-in?]

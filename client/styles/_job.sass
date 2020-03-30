@@ -12,15 +12,17 @@
     background-color: white
     border: 1px solid black
 
-.jobs-board__jobs-list
-  .jobs-board__jobs-list__content
-    display: grid
-    grid-template-columns: repeat(auto-fill, minmax($max-job-card-width, 1fr))
-    grid-gap: 9px
-    flex-wrap: wrap
-    margin-top: 1.5rem
+.jobs-board__jobs-list .jobs-board__jobs-list__content,
+.dashboard__jobs .dashboard__jobs__jobs-list__content
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax($max-job-card-width, 1fr))
+  grid-gap: 9px
+  flex-wrap: wrap
+  margin-top: 1.5rem
   &.jobs-board__jobs-list--ssr
     margin-top: 16px
+
+.jobs-board__jobs-list
   +desktop
     .list-item
       width: 100%
@@ -654,11 +656,11 @@ $description-height: 400px
   fill: $grey
   cursor: pointer
   &.like
+    top: 4px
     right: 8px
-    top: 6px
   &.blacklist
-    top: 6px
-    right: 53px
+    top: 4px
+    right: 39px
     cursor: pointer
   &.match
     top: 12px

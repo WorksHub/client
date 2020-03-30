@@ -1,9 +1,8 @@
 (ns wh.job.subs
   (:require
-    #?(:cljs [wh.common.http :refer [url-encode]]
-       :clj [bidi.bidi :refer [url-encode]])
     [#?(:cljs cljs-time.coerce :clj clj-time.coerce) :as tc]
     [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
+    [bidi.bidi :as bidi]
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub]]
     [wh.common.job :as jobc]
@@ -119,7 +118,7 @@
          vals
          (str/join ", ")
          (str company-name ", ")
-         url-encode
+         (bidi/url-encode)
          (str "https://www.google.com/maps/search/?api=1&query="))))
 
 (reg-sub
@@ -222,8 +221,9 @@
   ::like-icon-shown?
   :<- [::loaded?]
   :<- [:user/candidate?]
-  (fn [[loaded? candidate?] _]
-    (and candidate?
+  :<- [:user/prospect?]
+  (fn [[loaded? candidate? prospect?] _]
+    (and (or candidate? prospect?)
          loaded?)))
 
 (reg-sub

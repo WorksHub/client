@@ -47,6 +47,7 @@
 (reg-sub
   ::vertical-options
   (fn [db _]
-    (mapv (fn [vertical]
-           {:id (keyword vertical) :label vertical :url (url/get-url vertical :metrics)})
-         (concat ["www"] verticals/ordered-job-verticals))))
+    #?(:clj ;; vertical options only available in SSR anyway?
+       (mapv (fn [vertical]
+               {:id (keyword vertical) :label vertical :url (url/get-url vertical :metrics)})
+             (concat ["www"] verticals/ordered-job-verticals)))))

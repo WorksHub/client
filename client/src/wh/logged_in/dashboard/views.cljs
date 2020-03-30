@@ -43,18 +43,18 @@
       [:h3 "Sorry, there seem to be no jobs matching your profile \uD83D\uDE25. Try to add/change skills in your profile to see some recommended jobs."]
       (let [jobs         (<sub [::subs/jobs])
             has-applied? (some? (<sub [:user/applied-jobs]))
-            jobs-columns (map (fn [job] [:div.column [job-card job
-                                                      {:on-close          :reload-dashboard
-                                                       :user-has-applied? has-applied?
-                                                       :logged-in?        true
-                                                       :apply-source      "candidate-dashboard-recommended-job"}]]) jobs)
+            jobs-columns (map (fn [job] [job-card job
+                                        {:on-close          :reload-dashboard
+                                         :user-has-applied? has-applied?
+                                         :logged-in?        true
+                                         :apply-source      "candidate-dashboard-recommended-job"}]) jobs)
             columns      (if (<sub [::user-subs/onboarding-msg-not-seen? "jobs"])
                            (into
                              [[:div.column.codi-column [jobs-intro]]]
                              (take 2 jobs-columns))
                            jobs-columns)]
         (into
-          [:div.columns.is-mobile]
+          [:div.dashboard__jobs__jobs-list__content]
           columns)))]])
 
 (defn user-preferences []

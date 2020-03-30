@@ -188,7 +188,7 @@
   [& {:keys [job candidate-name candidate-email on-ok]}]
   (let [{:keys [package manager]} (<sub [:wh.user.subs/company])
         manager-name (when manager (get-manager-name manager))]\
-       (popup-wrapper
+       [popup-wrapper
         {:id :get-in-touch
          :on-ok on-ok
          :class "company-applications"}
@@ -214,7 +214,7 @@
                         (if (:title job)
                           (str (:title job) " role")
                           "multiple roles"))}
-            candidate-email]]))))
+            candidate-email]])]))
 
 (defn state->verb
   [s]
@@ -226,7 +226,7 @@
 
 (defn job-selection-overlay
   [& {:keys [jobs state on-ok on-close dispatch-on-check selected-jobs]}]
-  (popup-wrapper
+  [popup-wrapper
    {:id :job-selection
     :on-close on-close
     :on-ok on-ok
@@ -242,11 +242,11 @@
        [:div.job-selection__job
         [:span.job-selection__job__title (str company-name " - " title)]
         [:div.job-selection__job__checkbox
-         [forms/labelled-checkbox (contains? selected-jobs id) {:on-change (conj dispatch-on-check id)}]]]))]))
+         [forms/labelled-checkbox (contains? selected-jobs id) {:on-change (conj dispatch-on-check id)}]]]))]])
 
 (defn notes-overlay
   [& {:keys [user-id value on-ok on-close on-change]}]
-  (popup-wrapper
+  [popup-wrapper
    {:id :notes
     :on-ok on-ok
     :on-close on-close
@@ -256,7 +256,7 @@
      value
      {:type :textarea
       :label [:span "Notes on this applicant that are relevant to this role"]
-      :on-change on-change}]]))
+      :on-change on-change}]]])
 
 (defn page-header
   [admin-dashboard? job-id]

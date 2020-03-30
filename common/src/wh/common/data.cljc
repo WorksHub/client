@@ -654,9 +654,6 @@
 (defn menu
   [type user]
   (case type
-    "candidate"
-    [default-for-you-section
-     default-explore-section]
     "admin"
     [{:section "Admin"
       :class   "admin"
@@ -680,6 +677,9 @@
                 [:company-issues "pr" "Your issues"]
                 [:edit-company "settings" "Settings"]
                 [:profile "profile" "Your Profile"]]}
+     default-explore-section]
+    ;; default
+    [default-for-you-section
      default-explore-section]))
 
 (def how-it-works-benefits

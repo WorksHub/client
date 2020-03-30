@@ -1,7 +1,6 @@
 (ns wh.common.http
   (:require
     [clojure.string :as str]
-    [goog.Uri :as uri]
     [goog.uri.utils :as uri-utils])
   (:require-macros
     [clojure.core.strint :refer [<<]]))
@@ -28,6 +27,3 @@
         query-params (when (staging? domain)
                        (str "?vertical=" vertical))]
     (<< "~{scheme}://~{prefix}~{suffix}~{colon-port}~{query-params}")))
-
-(defn url-encode [url]
-  (some-> url str (js/encodeURIComponent) (.replace "+" "%20")))
