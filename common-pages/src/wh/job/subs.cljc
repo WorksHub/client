@@ -222,8 +222,9 @@
   ::like-icon-shown?
   :<- [::loaded?]
   :<- [:user/candidate?]
-  (fn [[loaded? candidate?] _]
-    (and candidate?
+  :<- [:user/prospect?]
+  (fn [[loaded? candidate? prospect?] _]
+    (and (or candidate? prospect?)
          loaded?)))
 
 (reg-sub

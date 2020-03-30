@@ -13,8 +13,8 @@
     [wh.components.common :refer [wrap-img link img]]
     [wh.components.icons :refer [icon]]
     [wh.components.issue :refer [level->str level->icon issue-card]]
-    [wh.components.pods.candidates :as candidate-pods]
     [wh.components.job :refer [job-card highlight]]
+    [wh.components.pods.candidates :as candidate-pods]
     [wh.interop :as interop]
     [wh.job.events :as events]
     [wh.job.subs :as subs]
@@ -481,7 +481,7 @@
 (defn admin-publish-prompt
   [permissions company-id success-event]
   #?(:cljs
-     (popup-wrapper
+     [popup-wrapper
        {:id :admin-publish-prompt
         :codi? false}
        [:div.job__admin-publish-prompt
@@ -500,7 +500,7 @@
           {:on-click #(dispatch [::events/show-admin-publish-prompt? false])}
           "Cancel"]]
         (when (<sub [::subs/admin-publish-prompt-loading?])
-          [:div.job__admin-publish-prompt__loader])])))
+          [:div.job__admin-publish-prompt__loader])]]))
 
 (defn page []
   [:div

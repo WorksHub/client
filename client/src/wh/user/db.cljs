@@ -43,6 +43,12 @@
 (defn candidate? [db]
   (candidate-type? (get-in db [::sub-db ::type])))
 
+(defn prospect-type? [type]
+  (= type "prospect"))
+
+(defn prospect? [db]
+  (prospect-type? (get-in db [::sub-db ::type])))
+
 (defn approved? [db]
   (= (get-in db [::sub-db ::approval :status])
      "approved"))

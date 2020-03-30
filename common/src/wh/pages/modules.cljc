@@ -31,6 +31,7 @@
    :get-started                :login
    :github-callback            :login
    :homepage                   {"candidate" :logged-in
+                                "prospect"  :logged-in
                                 "company"   :company
                                 "admin"     :company}
    :homepage-dashboard         :logged-in

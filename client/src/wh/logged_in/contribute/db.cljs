@@ -72,8 +72,7 @@
           ::hide-codi? false
           ::verticals #{(::db/vertical db)}
           ::primary-vertical (::db/vertical db)}
-         (when (or (user/candidate? db)
-                   (user/company? db))
+         (when-not (user/admin? db)
            {::author (user/user-name db)})
          (when (user/company? db)
            {::company-id (user/company-id db)})))
