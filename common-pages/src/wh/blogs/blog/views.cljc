@@ -1,7 +1,7 @@
 (ns wh.blogs.blog.views
   (:require
     #?(:cljs [reagent.core :as reagent])
-    [bidi.bidi :refer [url-encode]]
+    [bidi.bidi :as bidi]
     [clojure.string :as str]
     [wh.blogs.blog.events :as events]
     [wh.blogs.blog.subs :as subs]
@@ -35,9 +35,9 @@
         normal-message (str message-prefix (<sub [:wh/platform-name]))
         twitter-message (str message-prefix (<sub [:wh/twitter]))
         link (link-to-share)
-        enc-link (url-encode link)
-        enc-normal-message (url-encode normal-message)
-        enc-twitter-message (url-encode twitter-message)]
+        enc-link (bidi/url-encode link)
+        enc-normal-message (bidi/url-encode normal-message)
+        enc-twitter-message (bidi/url-encode twitter-message)]
     [:div.share-links
      [:a
       {:href   (str "http://www.facebook.com/sharer/sharer.php?u=" enc-link)
