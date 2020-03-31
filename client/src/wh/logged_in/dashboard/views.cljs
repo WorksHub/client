@@ -10,7 +10,8 @@
     [wh.logged-in.dashboard.events :as events]
     [wh.logged-in.dashboard.subs :as subs]
     [wh.subs :refer [<sub]]
-    [wh.user.subs :as user-subs]))
+    [wh.user.subs :as user-subs]
+    [wh.util :as util]))
 
 (defn jobs-intro []
   [:div
@@ -41,21 +42,24 @@
     (<sub [::subs/loading-recommended?])
     (if-not (seq (<sub [::subs/jobs]))
       [:h3 "Sorry, there seem to be no jobs matching your profile \uD83D\uDE25. Try to add/change skills in your profile to see some recommended jobs."]
-      (let [jobs         (<sub [::subs/jobs])
-            has-applied? (some? (<sub [:user/applied-jobs]))
-            jobs-columns (map (fn [job] [job-card job
-                                        {:on-close          :reload-dashboard
-                                         :user-has-applied? has-applied?
-                                         :logged-in?        true
-                                         :apply-source      "candidate-dashboard-recommended-job"}]) jobs)
-            columns      (if (<sub [::user-subs/onboarding-msg-not-seen? "jobs"])
-                           (into
-                             [[:div.column.codi-column [jobs-intro]]]
-                             (take 2 jobs-columns))
-                           jobs-columns)]
-        (into
-          [:div.dashboard__jobs__jobs-list__content]
-          columns)))]])
+      (let [jobs            (<sub [::subs/jobs])
+            has-applied?    (some? (<sub [:user/applied-jobs]))
+            jobs            (map (fn [job] [job-card job
+                                           {:on-close          :reload-dashboard
+                                            :user-has-applied? has-applied?
+                                            :logged-in?        true
+                                            :apply-source      "candidate-dashboard-recommended-job"}]) jobs)
+            onboarding-msg? (<sub [::user-subs/onboarding-msg-not-seen? "jobs"])]
+        (if onboarding-msg?
+          [:div.dashboard__jobs__jobs-with-codi
+           [:div.codi-column [jobs-intro]]
+           (into
+            [:div.dashboard__jobs__jobs-list__content]
+            (take 2 jobs))]
+
+          (into
+           [:div.dashboard__jobs__jobs-list__content]
+           jobs))))]])
 
 (defn user-preferences []
   (let [user-name (<sub [::user-subs/name])

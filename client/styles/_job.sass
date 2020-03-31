@@ -22,6 +22,18 @@
   &.jobs-board__jobs-list--ssr
     margin-top: 16px
 
+.dashboard__jobs__jobs-with-codi
+  display: flex
+  .codi-column
+    width: 33%
+  +mobile
+    flex-direction: column
+    .codi-column
+      width: 50%
+  .dashboard__jobs__jobs-list__content
+    flex: 1
+
+
 .jobs-board__jobs-list
   +desktop
     .list-item
