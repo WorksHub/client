@@ -474,36 +474,5 @@ $card-job-padding: 11px
   p:not(:last-child)
     margin-bottom: 12px
 
-@mixin cursor-list
-  @for $i from 0 through 8
-    .i-cur-#{$i}
-      cursor: url(/cursors/cursor-#{$i}.svg), auto
-
-@include cursor-list
-
-@mixin card-hover-list
-  @for $i from 1 through length($hover-colors)
-    .card-border-color-#{$i - 1}
-      .button--inverted
-        transition: color 400ms ease-in-out, border-color 400ms ease-in-out
-      &:hover
-        border: $card-border solid nth($hover-colors, $i)
-        .button
-          background: nth($hover-colors, $i)
-        .button--inverted
-          background: inherit
-          color: nth($hover-colors, $i)
-          border-color: nth($hover-colors, $i)
-
-@include card-hover-list
-
-@mixin random-colour-border-list
-  @for $i from 1 through length($hover-colors)
-    .border-color-#{$i - 1}
-      border: $card-border solid nth($hover-colors, $i)
-      transition : border 400ms ease-in-out
-
-@include random-colour-border-list
-
 .red-fill
   fill: $red

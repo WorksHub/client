@@ -150,7 +150,6 @@
         perks? (or remote (not= role-type "Full time") sponsorship-offered)]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
-                                      (str "i-cur-" (rand-int 9))
                                       (when remote "card--job--remote")
                                       (when small? "card--small")
                                       (when skeleton? "job-card--skeleton")

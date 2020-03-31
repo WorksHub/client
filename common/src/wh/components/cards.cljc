@@ -72,7 +72,6 @@
   (let [skeleton? (and blog (empty? (dissoc blog :id)))]
     [:div {:class (util/merge-classes "card"
                                       "card--blog"
-                                      (str "i-cur-" (rand-int 9))
                                       (when skeleton? "blog-card--skeleton"))}
      (if skeleton?
        [:div.hero]
@@ -103,7 +102,6 @@
     [:div {:class (util/merge-classes "card"
                                       "card--blog"
                                       "card--row"
-                                      (str "i-cur-" (rand-int 9))
                                       (when skeleton? "blog-card--skeleton"))}
      (if skeleton?
        [:div.blog-info
