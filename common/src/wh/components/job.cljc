@@ -18,7 +18,17 @@
         (= s :get_in_touch)  "Interviewing \u2728"
         (or (= s :pass)
             (= s :rejected)) "Rejected \uD83D\uDE41"
-        (= s :hired)         "Hired"))
+        (= s :hired)         "Hired 🎉"))
+
+(defn state-class
+  [s]
+  (cond (or (= s :approved)
+            (= s :pending))  "state state--pending"
+        (= s :get_in_touch)  "state state--interviewing"
+        (or (= s :pass)
+            (= s :rejected)) "state state--rejected"
+        (= s :hired)         "state state--hired"))
+
 
 (defn save-button
   [{:keys [id] :as job}
@@ -39,10 +49,6 @@
    {:keys [user-has-applied? user-is-owner? user-is-company?
            applied? logged-in? small? liked? skeleton? on-close apply-source]}]
   [:div.apply
-   (when state
-     [:div.state
-      [:span.applied-state "Status: " (state->candidate-status state)]])
-
    [:div.buttons
     [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
      (if user-is-owner? "View" "More Info")]
@@ -76,8 +82,11 @@
       [save-button job {:on-close   on-close
                         :saved? liked?}])]])
 
-(defn card-perks [remote role-type sponsorship-offered]
+(defn card-perks [remote role-type sponsorship-offered score small?]
   (cond-> [:div.card__perks]
+    score                        (conj [match-circle {:score       score
+                                                      :text?       (not small?)
+                                                      :percentage? small?}])
     remote                       (conj [icon "globe"
                                         :class "job__icon--small"]
                                        [:span.card__perks__perk-name "Remote"])
@@ -93,14 +102,6 @@
    {logo :logo company-name :name}
    {:keys [logged-in? skeleton? liked? small? on-close user-is-owner? perks?]}]
   [:div.job-card__header
-   (when (and logged-in? (not skeleton?) (not small?))
-     [save-button job {:on-close   on-close
-                       :saved? liked?}])
-   (when (and logged-in? (not skeleton?) on-close)
-     [icon "close"
-      :id (str "job-card__blacklist-button_job-" id)
-      :class "job__icon blacklist"
-      :on-click #(dispatch [:wh.events/blacklist-job job on-close])])
    [:a {:href (when (or published user-is-owner?) (routes/path :job :params {:slug slug}))}
     [:div
      {:class (util/merge-classes "info" (when perks? "info--with-perks"))}
@@ -127,10 +128,10 @@
 
 (defn job-card
   [{:keys [company tagline tags published score user-score applied role-type
-           liked display-salary remuneration remote sponsorship-offered]
+           liked display-salary remuneration remote sponsorship-offered id]
     :or   {published true}
     :as   job}
-   {:keys [liked? applied? user-is-owner? small? view-type]
+   {:keys [liked? applied? user-is-owner? small? view-type logged-in? on-close]
     :or   {liked?            (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
            applied?          (or applied false) ;; old style job handlers added 'applied' bool to the job itself
            user-is-owner?    false
@@ -147,25 +148,40 @@
                          :applied?          applied?)
         unpublished-label [:div.card__label.card__label--unpublished.card__label--job
                            "Unpublished"]
-        perks? (or remote (not= role-type "Full time") sponsorship-offered)]
+        perks? (or remote (not= role-type "Full time") sponsorship-offered)
+        state (:state job)]
     [:div {:class (util/merge-classes "card"
                                       "card--job"
                                       (when remote "card--job--remote")
                                       (when small? "card--small")
                                       (when skeleton? "job-card--skeleton")
                                       (job-card-class view-type))}
+     [:div
+      {:class (util/merge-classes "card--job__control-bar"
+                                  (when state "card--job__control-bar--with-state"))}
+      (when state
+       [:div
+        {:class (state-class state)}
+        [:span.applied-state (state->candidate-status state)]])
+
+      (when (and logged-in? (not skeleton?) on-close)
+        [icon "close"
+         :id (str "job-card__blacklist-button_job-" id)
+         :class "job__icon blacklist"
+         :on-click #(dispatch [:wh.events/blacklist-job job on-close])])
+
+      (when (and logged-in? (not skeleton?) (not small?))
+        [save-button job {:on-close on-close
+                          :saved?   liked?}])]
+
      [job-card--header (assoc job :salary salary) company (assoc opts :perks? perks?)]
 
      [:div.tagline
       (when-not small?
         [:div.tagline-content #?(:cljs [ellipsis tagline]
-                                 :clj tagline)])
-      (when score
-        [match-circle {:score score
-                       :text? (not small?)
-                       :percentage? small?}])]
+                                 :clj tagline)])]
 
-     [card-perks remote role-type sponsorship-offered]
+     [card-perks remote role-type sponsorship-offered score small?]
 
      (if (and small? (not published))
        unpublished-label

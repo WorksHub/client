@@ -97,13 +97,42 @@ $card-job-padding: 11px
         margin-top: 8px
 
 .card--job
-  padding: ($card-job-padding * 3) $card-job-padding ($card-job-padding * 2) $card-job-padding
+  padding: $card-job-padding
   position: relative
   height: 374px
   line-height: 22px
   border: 1px solid transparent
   display: flex
   flex-direction: column
+  .card--job__control-bar
+    height: 22px
+    display: flex
+    &.card--job__control-bar--with-state
+      height: 33px
+    .state
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 33px
+      text-align: center
+      &.state--hired
+        color: $hired-color
+        background: $hired-background
+      &.state--rejected
+        color: $rejected-color
+        background: $rejected-background
+      &.state--pending, &.state--interviewing
+        color: $pending-color
+        background: $pending-background
+      .applied-state
+        line-height: 33px
+        font-size: 14px
+        font-weight: $font-semi-bold
+    &:empty
+      display: none
+  .match-circle-container
+    margin-right: 9px
   .carousel-item &
     margin: 0
   .homepage &
@@ -138,15 +167,18 @@ $card-job-padding: 11px
       padding: 0
       margin: 0
       margin-bottom: 2px
+      .card--job__control-bar
+        height: 0
       .location
         font-size: 12px
         .icon
           display: none
       .job-card__header
         margin-left: 8px
-        .job__icon
-          top: 50%
-          transform: translateY(-50%)
+      .job__icon
+        position: absolute
+        top: 52%
+        transform: translateY(-50%)
       .logo
         display: flex
         margin-top: 0
@@ -254,7 +286,7 @@ $card-job-padding: 11px
       right: 0
     .match-circle-container
       position: absolute
-      top: 85px
+      top: 92px
       right: 10px
       flex-direction: column
       align-items: flex-end
@@ -347,18 +379,13 @@ $card-job-padding: 11px
     justify-content: flex-start
     flex-direction: column
     position: absolute
-    bottom: $card-job-padding * 2
+    bottom: $card-job-padding
     button, a
       margin-right: 6px
       min-width: 90px
     .buttons
       display: flex
       justify-content: flex-start
-  .applied-state
-    font-size: 12px
-    font-weight: $font-medium
-    color: $red
-    text-transform: uppercase
 
   .match
     position: absolute
