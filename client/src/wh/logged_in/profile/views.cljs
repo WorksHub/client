@@ -12,7 +12,8 @@
                                                labelled-checkbox
                                                multi-edit multiple-buttons
                                                select-field select-input
-                                               text-field text-input]]
+                                               text-field text-input
+                                               avatar-field]]
             [wh.components.icons :refer [icon]]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
@@ -94,46 +95,6 @@
 
 ;; Profile header – edit
 
-(defn predefined-avatar-picker []
-  (into
-   [:div.avatars]
-   (for [i (range 1 6)]
-     [:img.avatar {:class (when (= i (<sub [::subs/predefined-avatar])) "selected")
-                   :src (common-user/avatar-url i)
-                   :on-mouse-down #(dispatch [::events/set-predefined-avatar i])
-                   :alt (str "Pre-set avatar image " i)}])))
-
-(defn custom-avatar-picker []
-  (if (<sub [::subs/avatar-uploading?])
-    [:p "Uploading your avatar, please wait..."]
-    [:div.file.avatar-picker
-     [:label.file-label
-      [:input.file-input {:type "file"
-                          :name "avatar"
-                          :on-change (upload/handler
-                                      :launch [::events/image-upload]
-                                      :on-upload-start [::events/avatar-upload-start]
-                                      :on-success [::events/avatar-upload-success]
-                                      :on-failure [::events/avatar-upload-failure])}]
-      [:span.file-cta.button
-       [:span.file-label "Choose a file..."]]]
-     [:div.avatar [:img {:src (<sub [::subs/image-url])
-                         :alt "Uploaded avatar"}]]]))
-
-(defn avatar-field []
-  (let [custom? (<sub [::subs/custom-avatar-mode])]
-    [:div.field.avatar-field
-     [:label.label "Your avatar"]
-     [:div.control
-      [:label.radio
-       [:input {:type "radio" :name "avatar-type" :checked (not custom?) :on-change #(dispatch [::events/set-custom-avatar-mode false])}] " Use a predefined avatar"
-       (when-not custom?
-         [predefined-avatar-picker])]
-      [:label.radio
-       [:input {:type "radio" :name "avatar-type" :checked custom? :on-change #(dispatch [::events/set-custom-avatar-mode true])}] " Upload your own image"
-       (when custom?
-         [custom-avatar-picker])]]]))
-
 (defn skill-rating [i rating]
   (let [hover-rate (reagent/atom nil)]
     (fn [i rating]
@@ -169,23 +130,37 @@
 (defn header-edit []
   [:form.wh-formx.header-edit
    [:h1 "Edit your basic info"]
-   [avatar-field]
+   [avatar-field {:custom-avatar-mode     (<sub [::subs/custom-avatar-mode])
+                  :set-custom-avatar-mode ::events/set-custom-avatar-mode
+                  :predefined-avatar      (<sub [::subs/predefined-avatar])
+                  :set-predefined-avatar  ::events/set-predefined-avatar
+                  :uploading-avatar?      (<sub [::subs/avatar-uploading?])
+                  :avatar-url             (<sub [::subs/image-url])
+                  :set-avatar             (upload/handler
+                                            :launch [::events/image-upload]
+                                            :on-upload-start [::events/avatar-upload-start]
+                                            :on-success [::events/avatar-upload-success]
+                                            :on-failure [::events/avatar-upload-failure])}]
    [text-field (<sub [::subs/name])
     {:label "Your name"
      :on-change [::events/edit-name]}]
    [multi-edit
     (<sub [::subs/rated-skills])
-    {:label [:div "Skills" [:br] [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]
+    {:label [:div "Skills"
+             [:br]
+             [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]
      :component skill-field}]
    [multi-edit
     (<sub [::subs/editable-urls])
     {:label "Websites"
      :placeholder "Link to your web page, profile, portfolio, etc..."
      :on-change [::events/edit-url]}]
-   [text-field (<sub [::subs/summary]) {:type :textarea
-                                        :label "Summary"
-                                        :placeholder "Here's your chance to tell us a bit about you. Use this summary as your personal elevator pitch, what have you achieved and what makes you tick."
-                                        :on-change [::events/edit-summary]}]
+   [text-field
+    (<sub [::subs/summary])
+    {:type        :textarea
+     :label       "Summary"
+     :placeholder "Here's your chance to tell us a bit about you. Use this summary as your personal elevator pitch, what have you achieved and what makes you tick."
+     :on-change   [::events/edit-summary]}]
    [error-box]
    [:div.buttons-container.is-flex
     [:button.button.button--small {:on-click #(do (.preventDefault %)

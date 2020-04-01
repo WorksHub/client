@@ -63,15 +63,20 @@
 (defn default-db
   [db]
   (merge {::image-article-upload-status :not-started
-          ::hero-upload-status :not-started
-          ::body-editing? true
-          ::published false
-          ::body-cursor-position 0
-          ::body-rows 10
-          ::associated-jobs []
-          ::hide-codi? false
-          ::verticals #{(::db/vertical db)}
-          ::primary-vertical (::db/vertical db)}
+          ::hero-upload-status          :not-started
+          ::body-editing?               true
+          ::published                   false
+          ::body-cursor-position        0
+          ::body-rows                   10
+          ::associated-jobs             []
+          ::hide-codi?                  false
+          ::verticals                   #{(::db/vertical db)}
+          ::primary-vertical            (::db/vertical db)
+          ::author-info                 {:summary    ""
+                                         :other-urls []
+                                         :skills     []
+                                         :avatar-uploading? false
+                                         :avatar-url nil}}
          (when-not (user/admin? db)
            {::author (user/user-name db)})
          (when (user/company? db)

@@ -300,8 +300,50 @@
     (::contribute/hide-codi? db)))
 
 (reg-sub
+  ::user-selected?
+  :<- [::contribute]
+  (fn [db]
+    (::contribute/author-id db)))
+
+(reg-sub
   ::show-vertical-selector?
   :<- [:user/admin?]
   :<- [:user/company?]
   (fn [[admin? company?]]
     (or admin? company?)))
+
+(reg-sub
+  ::author-info
+  (fn [db _]
+    (get-in db [::contribute/sub-db ::contribute/author-info])))
+
+(reg-sub
+  ::summary
+  :<- [::author-info]
+  (fn [ai _]
+    (:summary ai)))
+
+(reg-sub
+  ::other-urls
+  :<- [::author-info]
+  (fn [ai _]
+    (->> (:other-urls ai)
+         (map :url))))
+
+(reg-sub
+  ::skills
+  :<- [::author-info]
+  (fn [ai _]
+    (:skills ai)))
+
+(reg-sub
+  ::avatar-url
+  :<- [::author-info]
+  (fn [ai _]
+    (:avatar-url ai)))
+
+(reg-sub
+  ::avatar-uploading?
+  :<- [::author-info]
+  (fn [ai _]
+    (:avatar-uploading? ai)))

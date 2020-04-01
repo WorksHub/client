@@ -6,7 +6,14 @@
     [wh.common.upload :as upload]
     [wh.components.common :refer [link]]
     [wh.components.conversation.views :as codi :refer [codi-message]]
-    [wh.components.forms.views :refer [multi-edit labelled-checkbox text-field text-input logo-field tags-field select-field]]
+    [wh.components.forms.views :refer [multi-edit
+                                       labelled-checkbox
+                                       text-field
+                                       text-input
+                                       logo-field
+                                       tags-field
+                                       select-field
+                                       custom-avatar-picker]]
     [wh.components.verticals :as vertical-views]
     [wh.interop :as interop]
     [wh.logged-in.contribute.db :as contribute]
@@ -120,6 +127,58 @@
           :on-toggle-collapse #(swap! tags-collapsed? not)
           :on-tag-click       #(dispatch [::events/toggle-tag %])}]))))
 
+(defn admin-title [title]
+  (when (<sub [:user/admin?])
+    [:h2.contribute__admin-title title]))
+
+(defn skill-field [{:keys [name]}
+                   {:keys [i label]}]
+  [:div.field.skill-field
+   (when label [:label.label label])
+   [:div.control
+    [:div.text-field-control
+     [:input.input {:value name
+                    :placeholder "Type in a new skill"
+                    :on-change #(dispatch-sync [::events/edit-skill i (-> % .-target .-value)])}]]]])
+
+(defn author-info []
+  [:div
+   [text-field (<sub [::subs/author])
+    {:id                   (contribute/form-field-id ::contribute/author)
+     :label                "* Author"
+     :class                (merge-classes "author" (when (<sub [::subs/author-searching?]) "field--loading"))
+     :on-change            [::events/set-author]
+     :suggestions          (<sub [::subs/author-suggestions])
+     :on-select-suggestion [::events/select-author-suggestion]
+     :error                (<sub [::subs/author-validation-error])
+     :force-error?         (<sub [::subs/validation-error?])}]
+   (when-not (<sub [::subs/user-selected?])
+     [:div
+      [:div
+       [:label.label "Avatar"]
+       [custom-avatar-picker {:uploading? (<sub [::subs/avatar-uploading?])
+                              :avatar-url             (<sub [::subs/avatar-url])
+                              :set-avatar             (upload/handler
+                                                        :launch [::events/avatar-upload]
+                                                        :on-upload-start [::events/avatar-upload-start]
+                                                        :on-success [::events/avatar-upload-success]
+                                                        :on-failure [::events/avatar-upload-failure])}]]
+      [multi-edit
+       (<sub [::subs/skills])
+       {:label "Skills"
+        :component skill-field}]
+      [multi-edit
+       (<sub [::subs/other-urls])
+       {:label "Websites"
+        :placeholder "Link to user web page, profile, portfolio, etc..."
+        :on-change [::events/edit-url]}]
+      [text-field
+       (<sub [::subs/summary])
+       {:type        :textarea
+        :label       "Summary"
+        :placeholder "Story about user"
+        :on-change   [::events/edit-summary]}]])])
+
 (defn main [new?]
   (let [admin? (<sub [:user/admin?])]
     [:div.columns.contribute__main
@@ -129,18 +188,12 @@
         [:div.contribute__saved
          "Your article has been saved and sent to our team. We will make sure it is in good shape before publishing it to our members dashboards. In the meantime, you can edit the post via the link in your profile anytime before it goes live."])
       [:div.wh-formx
-       [hero]
-       (when admin?
-         [text-field (<sub [::subs/author])
-          {:id                   (contribute/form-field-id ::contribute/author)
-           :label                "* Author"
-           :class                (merge-classes "author" (when (<sub [::subs/author-searching?]) "field--loading"))
-           :on-change            [::events/set-author]
-           :suggestions          (<sub [::subs/author-suggestions])
-           :on-select-suggestion [::events/select-author-suggestion]
-           :error                (<sub [::subs/author-validation-error])
-           :force-error?         (<sub [::subs/validation-error?])}])
 
+       [admin-title "Author"]
+       (when admin?
+         [author-info])
+
+       [admin-title "Company"]
        (when admin?
          [text-field (<sub [::subs/company-name])
           {:id                   (contribute/form-field-id ::contribute/company-name)
@@ -152,6 +205,8 @@
            :error                (<sub [::subs/company-validation-error])
            :force-error?         (<sub [::subs/validation-error?])}])
 
+       [admin-title "Blog"]
+       [hero]
        [text-field (<sub [::subs/title])
         {:id           (contribute/form-field-id ::contribute/title)
          :label        "* Title"

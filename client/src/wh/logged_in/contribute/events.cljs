@@ -6,6 +6,7 @@
     [wh.common.cases :as cases]
     [wh.common.errors :as errors]
     [wh.common.upload :as upload]
+    [wh.components.forms.events :as form-events]
     [wh.db :as db]
     [wh.graphql-cache :refer [reg-query]]
     [wh.graphql-cache]
@@ -276,6 +277,25 @@
             (contribute/form-field-id k)))
         contribute/form-order))
 
+(defn prepare-author-info [db]
+  (let [contribute-db (::contribute/sub-db db)
+        author-name (::contribute/author contribute-db)
+        author-id (::contribute/author-id contribute-db)
+        user-admin? (user/admin? db)]
+    (when (and (not author-id)
+               user-admin?)
+      (-> contribute-db
+          ::contribute/author-info
+          (select-keys [:summary
+                        :other-urls
+                        :skills])
+          ;; TODO: remove :author from blog, use :author-info instead
+          (assoc :name author-name
+                 :image-url (-> contribute-db
+                                ::contribute/author-info
+                                :avatar-url))
+          (util/remove-nil-blank-or-empty)))))
+
 (reg-event-fx
   ::save-blog
   db/default-interceptors
@@ -293,12 +313,13 @@
               save-blog-fields [:id :title :feature :author :authorId
                                 :published :body :creator :originalSource
                                 :verticals :primaryVertical :companyId :tagIds
-                                :associatedJobs]
+                                :associatedJobs :authorInfo]
               blog (-> db
                        ::contribute/sub-db
                        (dissoc ::contribute/tags)
-                       (assoc ::contribute/tag-ids selected-tag-ids)
-                       (assoc ::contribute/primary-vertical (::db/vertical db))
+                       (assoc ::contribute/tag-ids selected-tag-ids
+                              ::contribute/primary-vertical (::db/vertical db)
+                              ::contribute/author-info (prepare-author-info db))
                        cases/->camel-case-keys-str
                        (select-keys (map name save-blog-fields))
                        (dissoc (when id "creator"))
@@ -459,6 +480,53 @@
         (if (contains? (::contribute/verticals new-db) (::contribute/primary-vertical new-db)) ;; ensure primary vertical is one of the selected verticals
           new-db
           (assoc new-db ::contribute/primary-vertical (first (::contribute/verticals new-db))))))))
+
+;; AUTHOR info
+
+(def author-info-interceptos
+  (into db/default-interceptors [(path ::contribute/sub-db) (path ::contribute/author-info)]))
+
+(reg-event-db
+  ::edit-summary
+  author-info-interceptos
+  (fn [db [summary]]
+    (assoc db :summary summary)))
+
+(reg-event-db
+  ::edit-url
+  author-info-interceptos
+  (form-events/multi-edit-fn :other-urls :url))
+
+(reg-event-db
+  ::edit-skill
+  author-info-interceptos
+  (form-events/multi-edit-fn :skills :name))
+
+(reg-event-fx
+  ::avatar-upload
+  db/default-interceptors
+  upload/image-upload-fn)
+
+(reg-event-db
+  ::avatar-upload-start
+  author-info-interceptos
+  (fn [db _]
+    (assoc db :avatar-uploading? true)))
+
+(reg-event-db
+  ::avatar-upload-success
+  author-info-interceptos
+  (fn [db [filename {:keys [url]}]]
+    (assoc db
+      :avatar-url url
+      :avatar-uploading? false)))
+
+(reg-event-fx
+  ::avatar-upload-failure
+  author-info-interceptos
+  (fn [{db :db} _]
+    {:db       (assoc db :avatar-uploading? false)
+     :dispatch [::pages/set-error "There was an error uploading your avatar."]}))
 
 (defmethod on-page-load :contribute [db]
   [[::init-contribute-db]

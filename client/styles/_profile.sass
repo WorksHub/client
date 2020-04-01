@@ -94,38 +94,6 @@ $avatar-size-mobile: 60px
       font-weight: $font-regular
       text-transform: none
 
-    .avatar-field
-      .radio
-        height: auto
-        width: auto
-        border: none
-        margin-left: 0
-        &+.radio
-          margin-top: 10px
-      label
-        display: block
-      .avatars
-        height: 1.5 * $avatar-size
-        display: flex
-        align-items: center
-        justify-content: center
-        overflow-y: hidden
-        overflow-x: auto
-        +mobile
-          background: white
-        .avatar
-          width: $avatar-size
-          height: $avatar-size
-          display: inline-block
-          transition: all 0.3s ease-in-out
-          cursor: pointer
-          +mobile
-            width: $avatar-size-mobile
-            height: $avatar-size-mobile
-
-          &.selected
-            transform: scale(1.5)
-
   .private
     .private__disclaimer
       color: $steel-gray
@@ -182,6 +150,41 @@ $avatar-size-mobile: 60px
         align-items: center
     .button
       margin: 10px
+
+.avatar-field
+  .radio
+    height: auto
+    width: auto
+    border: none
+    margin-left: 0
+    &+.radio
+      margin-top: 10px
+  label
+    display: block
+  .avatars
+    height: 1.5 * $avatar-size
+    display: flex
+    align-items: center
+    justify-content: center
+    overflow-y: hidden
+    overflow-x: auto
+    +mobile
+      background: white
+    .avatar
+      width: $avatar-size
+      height: $avatar-size
+      display: inline-block
+      transition: all 0.3s ease-in-out
+      cursor: pointer
+      +mobile
+        width: $avatar-size-mobile
+        height: $avatar-size-mobile
+
+      &.selected
+        transform: scale(1.5)
+
+  .avatar-picker
+    margin: 18px
 
 .profile-section__applications__job
   border-bottom: 1px solid $pale-gray
@@ -246,6 +249,8 @@ $avatar-size-mobile: 60px
     margin: 6px
 
 .avatar-picker
-  margin: 18px
   .avatar
     margin-left: 18px
+    width: 150px
+    height: 150px
+    object-fit: cover

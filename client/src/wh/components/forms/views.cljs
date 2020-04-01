@@ -24,6 +24,7 @@
     [wh.common.emoji :as emoji]
     [wh.common.re-frame-helpers :refer [merge-classes]]
     [wh.common.specs.primitives :as p]
+    [wh.common.user :as common-user]
     [wh.components.icons :refer [icon]]
     [wh.subs :refer [<sub]]
     [wh.util :as util])
@@ -466,3 +467,58 @@
     [:div.toggle__thumb
      {:on-click #(when on-change
                    (on-change (not value)))}]]])
+
+(defn predefined-avatar-picker [{:keys [selected on-change]}]
+  (into
+    [:div.avatars]
+    (for [i (range 1 6)]
+      [:img.avatar {:class (when (= i selected) "selected")
+                    :src (common-user/avatar-url i)
+                    :on-mouse-down #(dispatch [on-change i])
+                    :alt (str "Pre-set avatar image " i)}])))
+
+(defn custom-avatar-picker [{:keys [uploading? set-avatar avatar-url]}]
+  (if uploading?
+    [:p "Uploading your avatar, please wait..."]
+    [:div.file.avatar-picker
+     [:label.file-label
+      [:input.file-input {:type "file"
+                          :name "avatar"
+                          :on-change set-avatar}]
+      [:span.file-cta.button
+       [:span.file-label "Choose an avatar"]]]
+     (when avatar-url
+       [:img.avatar {:src avatar-url
+                     :alt "Uploaded avatar"}])]))
+
+(defn avatar-field [{:keys [custom-avatar-mode
+                            set-custom-avatar-mode
+                            predefined-avatar
+                            set-predefined-avatar
+                            uploading-avatar?
+                            avatar-url
+                            set-avatar]}]
+  (let [custom? custom-avatar-mode]
+    [:div.field.avatar-field
+     [:label.label "Your avatar"]
+     [:div.control
+      [:label.radio
+       [:input {:type "radio"
+                :name "avatar-type"
+                :checked (not custom?)
+                :on-change #(dispatch [set-custom-avatar-mode false])}]
+       " Use a predefined avatar"
+       (when-not custom?
+         [predefined-avatar-picker
+          {:selected predefined-avatar
+           :on-change set-predefined-avatar}])]
+      [:label.radio
+       [:input {:type "radio"
+                :name "avatar-type"
+                :checked custom?
+                :on-change #(dispatch [set-custom-avatar-mode true])}]
+       " Upload your own image"
+       (when custom?
+         [custom-avatar-picker {:uploading? uploading-avatar?
+                                :set-avatar set-avatar
+                                :avatar-url avatar-url}])]]]))
