@@ -253,6 +253,7 @@
   :ret string?)
 
 (defn handler->name [handler]
-  (->> (str/split (name handler) #"-")
-       (map str/capitalize)
-       (str/join " ")))
+  (when handler
+    (->> (str/split (name handler) #"-")
+         (map str/capitalize)
+         (str/join " "))))
