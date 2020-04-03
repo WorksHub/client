@@ -179,6 +179,7 @@
                        ["cv" {""                           :cv-upload
                               ["/" :filename]              :cv-file
                               ["/" :user-id "/" :filename] :cv-file-legacy}]
+                       ["cover-letter" {"" :cover-letter-upload}]
                        ["reset-fixtures" :reset-fixtures]
                        ["admin/" {[:command] :admin-command}]
                        ["prospect" :prospect]]]]])

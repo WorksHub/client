@@ -179,6 +179,17 @@
                                                   (dispatch [::events/save-cv-info {:type :update-cv-link}]))} "Save"]
     [cancel-link]]])
 
+(defn upload-document [document-name uploading? on-change]
+  [:div.profile-section__upload-document
+   (if uploading?
+     [:button.button {:disabled true} "Uploading..."]
+     [:label.file-label.profile-section__upload-document__label
+      [:input.file-input {:type "file"
+                          :name "avatar"
+                          :on-change on-change}]
+      [:span.file-cta.button
+       [:span.file-label (str "Upload " document-name)]]])])
+
 ;; CV section – view
 
 (defn cv-section-view
@@ -187,33 +198,55 @@
    [:section.profile-section.cv
     [:div.cv__view
      [:h2 "Career History"]
-     [error-box]
+
      (when cv-url
        [:p (if (owner? user-type) "You uploaded " "Uploaded CV: ")
         [:a.a--underlined {:href cv-url, :target "_blank", :rel "noopener"}
          (if (owner? user-type) cv-filename "Click here to download")]])
+
      (when cv-link
-       [:p (if (owner? user-type) "Your external resume: " "External resume: ")
+       [:p (if (owner? user-type) "Your external CV: " "External CV: ")
         [:a.a--underlined {:href cv-link, :target "_blank", :rel "noopener"} cv-link]])
+
      (when-not (or cv-url cv-link)
        (if (owner? user-type)
-         "You haven't uploaded resume yet."
-         "No uploaded resume yet."))]
+         "You haven't uploaded cv yet."
+         "No uploaded cv yet."))]
+
     (when (owner-or-admin? user-type)
-      [:div.cv__buttons
-       (if (<sub [::subs/cv-uploading?])
-         [:button.button {:disabled true} "Uploading..."]
-         [:label.file-label.cv__upload
-          [:input.file-input {:type "file"
-                              :name "avatar"
-                              :on-change (upload/handler
-                                          :launch [::events/cv-upload]
-                                          :on-upload-start [::events/cv-upload-start]
-                                          :on-success [::events/cv-upload-success]
-                                          :on-failure [::events/cv-upload-failure])}]
-          [:span.file-cta.button
-           [:span.file-label "Upload resume"]]])
-       [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to resume" "button"]])]))
+      [:div.cv__upload
+       (conj
+        (upload-document "resume" (<sub [::subs/cv-uploading?])
+                         (upload/handler
+                          :launch [::events/cv-upload]
+                          :on-upload-start [::events/cv-upload-start]
+                          :on-success [::events/cv-upload-success]
+                          :on-failure [::events/cv-upload-failure]))
+
+        [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to CV" "button"])])]))
+
+(defn cover-letter-section-view
+  ([opts] (cover-letter-section-view :owner opts))
+  ([user-type {:keys [cover-letter-filename cover-letter-url]}]
+   [:section.profile-section.cover-letter
+    [:div.cover-letter__view
+     [:h2 "Default Cover Letter"]
+
+     (when cover-letter-url
+       [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ") cover-letter-filename])
+
+     (when-not cover-letter-url
+       (if (owner? user-type)
+         "You haven't uploaded Cover Letter yet."
+         "No uploaded Cover Letter yet."))]
+
+    (when (owner-or-admin? user-type)
+      [:div.cover-letter__upload [upload-document "cover letter" (<sub [::subs/cover-letter-uploading?])
+                                  (upload/handler
+                                   :launch [::events/cover-letter-upload]
+                                   :on-upload-start [::events/cover-letter-upload-start]
+                                   :on-success [::events/cover-letter-upload-success]
+                                   :on-failure [::events/cover-letter-upload-failure])]])]))
 
 ;; Private section – view
 
@@ -381,8 +414,11 @@
      [company-user-view (<sub [::subs/company-data])]
      [:div
       [header-view :owner (<sub [::subs/header-data])]
+      [error-box]
       [cv-section-view (<sub [::subs/cv-data])]
+      [cover-letter-section-view (<sub [::subs/cover-letter-data])]
       [private-section-view (<sub [::subs/private-data])]])
+
    [:a.button
     {:data-pushy-ignore "true"
      :href (routes/path :logout)}

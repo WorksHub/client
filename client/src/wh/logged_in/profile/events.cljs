@@ -51,6 +51,8 @@
                          :remote
                          [:cv [:link
                                [:file [:type :name :url]]]]
+                         [:coverLetter [:link
+                                        [:file [:type :name :url]]]]
                          [:salary [:currency :min :timePeriod]]
                          [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
                          [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]
@@ -257,6 +259,13 @@
        :cv (get-in db [::profile/sub-db ::profile/cv])}
       (util/transform-keys)))
 
+(defn graphql-cover-letter-update
+  [db]
+  (-> {:id           (or (get-in db [::profile/sub-db ::profile/id])
+                         (get-in db [::user/sub-db ::user/id]))
+       :cover-letter (get-in db [::profile/sub-db ::profile/cover-letter])}
+      (util/transform-keys)))
+
 (defn validate-profile
   "Returns nil if valid, an error message if invalid.
   Quick-and-dirty but will do for now."
@@ -371,7 +380,28 @@
          :dispatch-n [[::pages/set-loader]
                       [:error/close-global]]}
         :else
-        {:dispatch [:error/set-global "Resume link is not valid. Please amend and try again."]}))))
+        {:dispatch [:error/set-global "CV link is not valid. Please amend and try again."]}))))
+
+
+(reg-event-fx
+ ::save-cover-letter-info
+ db/default-interceptors
+ (fn [{db :db} [{:keys [type]}]]
+   (let [url-path                 [::profile/sub-db ::profile/cover-letter :link]
+         cover-letter-link        (get-in db url-path)
+         valid-cover-letter-link? (or (= type :upload-cover-letter)
+                                      (s/valid? ::specs/url cover-letter-link))]
+     (cond
+       valid-cover-letter-link?
+       {:db         db
+        :graphql    {:query      graphql/update-user-mutation--approval
+                     :variables  {:update_user (graphql-cover-letter-update db)}
+                     :on-success [::save-success]
+                     :on-failure [::save-failure]}
+        :dispatch-n [[::pages/set-loader]
+                     [:error/close-global]]}
+       :else
+       {:dispatch [:error/set-global "Cover letter link is not valid. Please amend and try again."]}))))
 
 (reg-event-fx
   ::save-success
@@ -450,6 +480,38 @@
   (fn [{db :db} _]
     {:db       (assoc db ::profile/avatar-uploading? false)
      :dispatch [::pages/set-error "There was an error uploading your avatar."]}))
+
+(reg-event-fx
+ ::cover-letter-upload
+ db/default-interceptors
+ upload/cover-letter-upload-fn)
+
+(reg-event-db
+  ::cover-letter-upload-start
+  profile-interceptors
+  (fn [db _]
+    (assoc db ::profile/cover-letter-uploading? true)))
+
+(reg-event-fx
+  ::cover-letter-upload-success
+  db/default-interceptors
+  (fn [{db :db} data]
+    (let [[filename {:keys [url]}] data]
+      {:db       (-> db
+                     (assoc-in [::profile/sub-db ::profile/cover-letter :file] {:url url, :name filename})
+                     (assoc-in [::profile/sub-db ::profile/cover-letter-uploading?] false))
+       :dispatch [::save-cover-letter-info {:type :upload-cover-letter}]})))
+
+(reg-event-fx
+  ::cover-letter-upload-failure
+  profile-interceptors
+  (fn [{db :db} [error]]
+    {:db       (assoc db ::profile/cover-letter-uploading? false)
+     :dispatch [::pages/set-error (case (:status error)
+                                    413 "Your cover letter is too large, please upload a smaller file (less than 5 MB)."
+                                    400 "Your cover letter is empty, please try again with a filled out cover letter."
+                                    "There was an error uploading your cover letter, please try a smaller file (less than 5 MB).")]}))
+
 
 (reg-event-db
   ::cv-upload-start

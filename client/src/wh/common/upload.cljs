@@ -47,3 +47,4 @@
 
 (def image-upload-fn (partial file-upload-fn (path :image-upload)))
 (def cv-upload-fn (partial file-upload-fn (path :cv-upload)))
+(def cover-letter-upload-fn (partial file-upload-fn (path :cover-letter-upload)))

@@ -4,6 +4,7 @@
     [re-frame.core :refer [reg-sub]]
     [wh.common.data :as data]
     [wh.common.specs.primitives]
+    [wh.common.text :as text]
     [wh.common.url :as url]
     [wh.logged-in.profile.db :as profile]
     [wh.subs :refer [with-unspecified-option]]
@@ -93,12 +94,8 @@
   (fn [profile _]
     (vec (::profile/contributions profile))))
 
-(defn nil-if-blank [s]
-  (when-not (str/blank? s)
-    s))
-
 (defn salary-string [{:keys [min currency time-period]}]
-  (let [min (nil-if-blank min)
+  (let [min (text/not-blank min)
         time-period (when time-period (str/lower-case time-period))]
     (if min
       (<< "Minimum ~{min} ~{currency} ~{time-period}")
@@ -167,6 +164,12 @@
   :<- [::profile]
   (fn [profile _]
     (::profile/cv-uploading? profile)))
+
+(reg-sub
+ ::cover-letter-uploading?
+ :<- [::profile]
+ (fn [profile _]
+   (::profile/cover-letter-uploading? profile)))
 
 (reg-sub
   ::email
@@ -298,15 +301,27 @@
 
 (defn cv-data
   [{{:keys [file link] :as cv} :cv}]
-  {:cv-url      (nil-if-blank (:url file)),
-   :cv-filename (nil-if-blank (:name file)),
-   :cv-link     (nil-if-blank link)})
+  {:cv-url      (text/not-blank (:url file)),
+   :cv-filename (text/not-blank (:name file)),
+   :cv-link     (text/not-blank link)})
 
 (reg-sub
   ::cv-data
   :<- [::profile]
   (fn [profile _]
     (cv-data (util/strip-ns-from-map-keys profile))))
+
+(defn cover-letter-data
+  [{{:keys [file link] :as cover-letter} :cover-letter}]
+  {:cover-letter-url      (text/not-blank (:url file)),
+   :cover-letter-filename (text/not-blank (:name file)),
+   :cover-letter-link     (text/not-blank link)})
+
+(reg-sub
+ ::cover-letter-data
+ :<- [::profile]
+ (fn [profile _]
+   (cover-letter-data (util/strip-ns-from-map-keys profile))))
 
 (reg-sub
   ::remote
