@@ -169,6 +169,7 @@
                          "slack"               :oauth-slack
                          "slack-callback"      :oauth-slack-callback
                          "process"             :oauth-process}]
+              ["documents/" {[:access-id "/" :doc-type] :document-access}]
               ["api/" [["graphql" :graphql]
                        ["graphql-schema" :graphql-schema]
                        ["webhook/" {"github-app" :github-app-webhook}]
