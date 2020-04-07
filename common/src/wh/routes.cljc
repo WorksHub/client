@@ -180,7 +180,8 @@
                        ["cv" {""                           :cv-upload
                               ["/" :filename]              :cv-file
                               ["/" :user-id "/" :filename] :cv-file-legacy}]
-                       ["cover-letter" {"" :cover-letter-upload}]
+                       ["cover-letter" {""              :cover-letter-upload
+                                        ["/" :filename] :cover-letter-file}]
                        ["reset-fixtures" :reset-fixtures]
                        ["admin/" {[:command] :admin-command}]
                        ["prospect" :prospect]]]]])

@@ -233,7 +233,9 @@
      [:h2 "Default Cover Letter"]
 
      (when cover-letter-url
-       [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ") cover-letter-filename])
+       [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
+        [:a.a--underlined {:href cover-letter-url, :target "_blank", :rel "noopener"}
+         (if (owner? user-type) cover-letter-filename "Click here to download")]])
 
      (when-not cover-letter-url
        (if (owner? user-type)
