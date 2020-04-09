@@ -43,8 +43,8 @@
     (if (user/has-cv? db)
       {:dispatch [::apply]}
       {:db (-> db
-               (assoc-in [::apply/sub-db ::apply/current-step] :cv-upload)
-               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :cv-upload))})))
+               (assoc-in [::apply/sub-db ::apply/current-step] :step/cv-upload)
+               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :step/cv-upload))})))
 
 (reg-event-fx
   ::check-name
@@ -53,8 +53,8 @@
     (if (user/has-full-name? db)
       {:dispatch [::check-current-location]}
       {:db (-> db
-               (assoc-in [::apply/sub-db ::apply/current-step] :name)
-               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :name))})))
+               (assoc-in [::apply/sub-db ::apply/current-step] :step/name)
+               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :step/name))})))
 
 
 (reg-event-fx
@@ -64,8 +64,8 @@
     (if (user/has-current-location? db)
       {:dispatch [::check-cv]}
       {:db (-> db
-               (assoc-in [::apply/sub-db ::apply/current-step] :current-location)
-               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :current-location))})))
+               (assoc-in [::apply/sub-db ::apply/current-step] :step/current-location)
+               (update-in [::apply/sub-db ::apply/steps-taken] (fnil conj #{}) :step/current-location))})))
 
 
 (reg-event-fx
@@ -96,6 +96,12 @@
   (fn [db _]
     (assoc db ::apply/updating? true)))
 
+(reg-event-db
+ ::cover-letter-upload-start
+ apply-interceptors
+ (fn [db _]
+   (assoc db ::apply/updating? true)))
+
 (reg-event-fx
   ::cv-upload-success
   db/default-interceptors
@@ -106,6 +112,20 @@
                :on-success [::cv-update-url-success]
                :on-failure [::cv-upload-failure]}}))
 
+(reg-event-fx
+ ::cover-letter-upload-success
+ db/default-interceptors
+ (fn [{db :db} [name {url :url}]]
+   {:dispatch [::set-cover-letter {:file {:name name :url url}}]
+    :db (assoc-in db [::apply/sub-db ::apply/cover-letter-upload-failed?] false)}))
+
+(reg-event-db
+ ::cover-letter-upload-failure
+ db/default-interceptors
+ (fn [db]
+   (-> db
+       (assoc-in [::apply/sub-db ::apply/updating?] false)
+       (assoc-in [::apply/sub-db ::apply/cover-letter-upload-failed?] true))))
 
 (reg-event-fx
   ::cv-update-url-success
@@ -191,7 +211,13 @@
   (fn [{db :db} [_]]
     (if (user/has-visa? db)
       {:dispatch [::check-application]}
-      {:db (assoc-in db [::apply/sub-db ::apply/current-step] :visa)})))
+      {:db (assoc-in db [::apply/sub-db ::apply/current-step] :step/visa)})))
+
+(reg-event-db
+ ::add-cover-letter
+ db/default-interceptors
+ (fn [db _]
+   (assoc-in db [::apply/sub-db ::apply/current-step] :step/cover-letter)))
 
 (reg-event-fx
   ::update-current-location-success
@@ -251,13 +277,34 @@
   ::handle-apply
   apply-interceptors
   (fn [{db :db} [success? resp]]
-    (cond-> {:db (assoc db ::apply/submit-success? success?
+    (cond-> {:db (assoc db
+                        ::apply/submit-success? success?
                         ::apply/updating? false
                         ::apply/error (when-not success?
                                         (util/gql-errors->error-key resp)))}
             success? (assoc :dispatch-n [[::check-visa]
                                          [:wh.job.events/set-applied]]
                             :analytics/track ["Job Applied" (::apply/job db)]))))
+
+(reg-event-db
+ ::set-cover-letter-success
+ db/default-interceptors
+ (fn [db _]
+   (-> db
+       (assoc-in [::apply/sub-db ::apply/cover-letter-upload-failed?] false)
+       (assoc-in [::apply/sub-db ::apply/current-step] :step/thanks))))
+
+(reg-event-db
+ ::set-cover-letter-failure
+ db/default-interceptors
+ (fn [db _]
+   (assoc-in db [::apply/sub-db ::apply/cover-letter-upload-failed?] true)))
+
+(reg-event-db
+ ::discard-cover-letter
+ db/default-interceptors
+ (fn [db _]
+   (assoc-in db [::apply/sub-db ::apply/current-step] :step/thanks)))
 
 (defquery apply-mutation
   {:venia/operation {:operation/type :mutation
@@ -306,21 +353,46 @@
   (fn [db [{:keys [data]}]]
     (let [result (gql-check-application->check-application (:check_application data))]
       (if (= :rejected (:check-status result))
-        (cond-> (assoc db ::apply/current-step :rejection
+        (cond-> (assoc db ::apply/current-step :step/rejection
                           ::apply/updating? false)
                 (:reason result) (assoc-in [::apply/rejection :reason] (:reason result)))
         (-> db
             (assoc ::apply/updating? false)
-            (assoc ::apply/current-step :thanks))))))
+            (assoc ::apply/current-step :step/cover-letter))))))
 
 (reg-event-fx
   ::apply
   apply-interceptors
   (fn [{db :db} _]
     {:graphql {:query      apply-mutation
-               :variables (-> (or (some->> (get-in db [::apply/job :id])   (hash-map :id))
-                                  (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
-                              (assoc :applySource (:apply-source (::apply/job db))))
+               :variables  (-> (or (some->> (get-in db [::apply/job :id])   (hash-map :id))
+                                   (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
+                               (assoc :applySource (:apply-source (::apply/job db))))
                :on-success [::handle-apply true]
                :on-failure [::handle-apply false]}
      :db      (assoc db ::apply/updating? true)}))
+
+(def set-application-cover-letter-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "set_application_cover_letter"}
+   :venia/variables [{:variable/name "job_id"       :variable/type :String!}
+                     {:variable/name "user_id"      :variable/type :ID!}
+                     {:variable/name "cover_letter" :variable/type :cover_letter_input!}]
+   :venia/queries   [[:set_application_cover_letter {:job_id       :$job_id
+                                                     :user_id      :$user_id
+                                                     :cover_letter :$cover_letter}
+                      [:status]]]})
+
+(reg-event-fx
+ ::set-cover-letter
+ db/default-interceptors
+ (fn [{db :db} [cover-letter]]
+   (let [job-id  (get-in db [:wh.job.db/sub-db :wh.job.db/id])
+         user-id (get-in db [:wh.user.db/sub-db :wh.user.db/id])]
+     {:graphql {:query      set-application-cover-letter-mutation
+                :variables  {:job_id       job-id
+                             :user_id      user-id
+                             :cover_letter cover-letter}
+                :on-success [::set-cover-letter-success]
+                :on-failure [::set-cover-letter-failure]}
+      :db      (assoc db ::apply/updating? true)})))

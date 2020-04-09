@@ -124,3 +124,9 @@
   :<- [::sub-db]
   (fn [db _]
     (::apply/company-name db)))
+
+(reg-sub
+ ::cover-letter-upload-failed?
+ :<- [::sub-db]
+ (fn [db _]
+   (::apply/cover-letter-upload-failed? db)))

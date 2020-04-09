@@ -258,7 +258,7 @@ $line-height: 1.5
   font-size: $font-size
   line-height: $line-height
   border-radius: $radius
-  padding: 0px 17px
+  padding: 12px 17px
   margin: 10px
   margin-left: auto
   margin-right: 18px
@@ -266,7 +266,8 @@ $line-height: 1.5
   transition: background 0.3s
   &:hover
     color: white
-  &:disabled
+    background: $red
+  input:disabled + &,  &:disabled
     color: $dark-gray
   .icon
     fill: white

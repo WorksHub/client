@@ -2,7 +2,9 @@
   (:require
     [cljs.spec.alpha :as s]))
 
-(def steps #{:name :cv-upload :thanks :current-location :visa :rejection})
+;; Using namespaced keywords to make them more direct and understandable
+(def steps #{:step/name :step/cv-upload :step/thanks :step/current-location
+             :step/visa :step/rejection :step/cover-letter})
 
 (s/def ::steps-taken (s/coll-of steps))
 (s/def ::current-step steps)

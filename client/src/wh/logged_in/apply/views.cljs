@@ -35,7 +35,7 @@
                   :aria-label "Name input"}]]]
        [:div.animatable
         [:button.conversation-button.update-name
-         (when (= :name (<sub [::subs/current-step]))
+         (when (= :step/name (<sub [::subs/current-step]))
            {:class    (when (<sub [::subs/updating?]) "button--loading")
             :id       "application-bot_update-name"
             :on-click #(if (user/full-name? @full-name)
@@ -61,7 +61,7 @@
          :placeholder          "Type to search..."}]]]
      [:div.animatable
       [:button.conversation-button.update-current-location
-       (when (= :current-location (<sub [::subs/current-step]))
+       (when (= :step/current-location (<sub [::subs/current-step]))
          {:class    (when (<sub [::subs/updating?]) "button--loading")
           :id       "application-bot_update-current-location"
           :on-click #(dispatch [::events/update-current-location])})
@@ -69,7 +69,7 @@
 
 
 (defn cv-upload-step []
-  (let [current-step? (= :cv-upload (<sub [::subs/current-step]))]
+  (let [current-step? (= :step/cv-upload (<sub [::subs/current-step]))]
     [:div.cv-upload
      (if (<sub [::subs/cv-upload-failed?])
        [error-message "There was an error uploading your resume, please try again."]
@@ -85,9 +85,9 @@
                                          :on-success [::events/cv-upload-success]
                                          :on-failure [::events/cv-upload-failure]))}]
       [:span.file-cta.conversation-button
-       [:span.file-label {:class (when (and current-step?
-                                            (<sub [::subs/updating?]))
-                                   "button--loading")}
+       [:span {:class (if (and current-step? (<sub [::subs/updating?]))
+                        "button--loading"
+                        "file-label")}
         "Upload resume"]]]]))
 
 (defn rejection-step []
@@ -112,25 +112,68 @@
                                                                              (dispatch [::events/close-chatbot])
                                                                              (dispatch [::events/track-recommendations-redirect]))]
         " for you."]]
+
       [:div
        [error-message (<sub [::subs/error-message])]
        (when (= (<sub [::subs/error]) :incomplete-profile)
          [link [button "Edit Profile"] :profile :on-click #(dispatch [::events/close-chatbot])])
        [button "Re-try submit" [::events/apply]]])))
 
+(defn cover-letter-step []
+  (let [managed?                    (<sub [::subs/company-managed?])
+        ;; Access default cover letter from user profile
+        default-cover-letter        (<sub [::user-subs/cover-letter])
+        cover-letter-upload-failed? (<sub [::subs/cover-letter-upload-failed?])
+        updating?                   (<sub [::subs/updating?])]
+
+    [:div
+     [codi-message "Thanks for your application!"]
+
+     (if cover-letter-upload-failed?
+       [error-message "We couldn't upload your cover letter. Do you want to try again?"]
+       [codi-message "Do you want to add a cover letter?"])
+
+     (when default-cover-letter
+       [button "Send my default cover letter"
+        [::events/set-cover-letter default-cover-letter]
+        :disabled updating?])
+
+     [:label.file-label.animatable
+      [:input.file-input {:id        "application-bot_upload-cover-letter"
+                          :type      "file"
+                          :name      "avatar"
+                          :disabled  updating?
+                          :on-change (upload/handler
+                                      :launch [::profile-events/cover-letter-upload]
+                                      :on-upload-start [::events/cover-letter-upload-start]
+                                      :on-success [::events/cover-letter-upload-success]
+                                      :on-failure [::events/cover-letter-upload-failure])}]
+
+      [:span.file-cta.conversation-button
+       [:span {:class (if updating?
+                        "button--loading"
+                        "file-label")}
+        (if cover-letter-upload-failed?
+          "Sure, let me try again!"
+          "Sure, I'd love to add one!")]]]
+
+     [button "I'm good, thanks :)" [::events/discard-cover-letter]
+      :disabled updating?]]))
+
 (defn pre-application []
   (if (<sub [:user/rejected?])
     [:div.multiple-conversations
      [:div
       [codi-message "Unfortunately you're unable to apply for this role until your profile has been approved \uD83D\uDE41"]]]
+
     [:div.multiple-conversations
      [:div
       [codi-message "Oh, snap! \uD83E\uDD14 We need a few more details about you"]]
-     (when (<sub [::subs/step-taken? :name])
+     (when (<sub [::subs/step-taken? :step/name])
        [add-full-name-step])
-     (when (<sub [::subs/step-taken? :current-location])
+     (when (<sub [::subs/step-taken? :step/current-location])
        [current-location-step])
-     (when (<sub [::subs/step-taken? :cv-upload])
+     (when (<sub [::subs/step-taken? :step/cv-upload])
        [cv-upload-step])]))
 
 (defn visa-step []
@@ -176,10 +219,12 @@
     :class "close is-pulled-right"
     :id "application-bot_close-bot"
     :on-click #(dispatch [::events/close-chatbot])]
+
    (case (<sub [::subs/current-step])
-     :thanks [thanks-step]
-     :rejection [rejection-step]
-     :visa [visa-step]
+     :step/thanks       [thanks-step]
+     :step/cover-letter [cover-letter-step]
+     :step/rejection    [rejection-step]
+     :step/visa         [visa-step]
      [pre-application])])
 
 (defn overlay-apply []
@@ -187,4 +232,6 @@
              (<sub [::subs/current-step]))
     [chatbot]))
 
+;; TODO: find a way to remove extra-overlays from codebase and implement
+;; overlays in more sane manner
 (swap! wh.views/extra-overlays conj [overlay-apply])

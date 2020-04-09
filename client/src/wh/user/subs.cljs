@@ -98,3 +98,7 @@
 (reg-sub ::company-onboarding-msg-not-seen?
          (fn [db [_ msg]]
            (user/company-onboarding-msg-not-seen? db msg)))
+
+(reg-sub ::cover-letter
+         (fn [db _]
+           (get-in db [::user/sub-db ::user/cover-letter])))
