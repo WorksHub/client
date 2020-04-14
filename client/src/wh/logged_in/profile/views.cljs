@@ -243,12 +243,19 @@
          "No uploaded Cover Letter yet."))]
 
     (when (owner-or-admin? user-type)
-      [:div.cover-letter__upload [upload-document "cover letter" (<sub [::subs/cover-letter-uploading?])
-                                  (upload/handler
-                                   :launch [::events/cover-letter-upload]
-                                   :on-upload-start [::events/cover-letter-upload-start]
-                                   :on-success [::events/cover-letter-upload-success]
-                                   :on-failure [::events/cover-letter-upload-failure])]])]))
+      [:div.cover-letter__upload
+       (conj
+        (upload-document "cover letter" (<sub [::subs/cover-letter-uploading?])
+         (upload/handler
+          :launch [::events/cover-letter-upload]
+          :on-upload-start [::events/cover-letter-upload-start]
+          :on-success [::events/cover-letter-upload-success]
+          :on-failure [::events/cover-letter-upload-failure]))
+
+        (when (and cover-letter-url (owner? user-type))
+          [:button.button
+           {:on-click #(dispatch [::events/remove-cover-letter])}
+           "Remove cover letter"]))])]))
 
 ;; Private section – view
 

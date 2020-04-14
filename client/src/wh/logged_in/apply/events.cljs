@@ -115,8 +115,8 @@
 (reg-event-fx
  ::cover-letter-upload-success
  db/default-interceptors
- (fn [{db :db} [name {url :url}]]
-   {:dispatch [::set-cover-letter {:file {:name name :url url}}]
+ (fn [{db :db} [name {url :url hash :hash}]]
+   {:dispatch [::set-cover-letter {:file {:name name :url url :hash hash}}]
     :db (assoc-in db [::apply/sub-db ::apply/cover-letter-upload-failed?] false)}))
 
 (reg-event-db

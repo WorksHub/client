@@ -52,7 +52,7 @@
                          [:cv [:link
                                [:file [:type :name :url]]]]
                          [:coverLetter [:link
-                                        [:file [:type :name :url]]]]
+                                        [:file [:type :name :url :hash]]]]
                          [:salary [:currency :min :timePeriod]]
                          [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
                          [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]
@@ -370,38 +370,28 @@
           cv-link (get-in db url-path)
           valid-cv-link? (or (= type :upload-cv)
                              (s/valid? ::specs/url cv-link))]
-      (cond
-        valid-cv-link?
-        {:db       db
-         :graphql  {:query      graphql/update-user-mutation--approval
+      (if valid-cv-link?
+        {:graphql  {:query      graphql/update-user-mutation--approval
                     :variables  {:update_user (graphql-cv-update db)}
                     :on-success [::save-success]
                     :on-failure [::save-failure]}
          :dispatch-n [[::pages/set-loader]
                       [:error/close-global]]}
-        :else
-        {:dispatch [:error/set-global "CV link is not valid. Please amend and try again."]}))))
+
+        {:dispatch
+         [:error/set-global "CV link is not valid. Please amend and try again."]}))))
 
 
 (reg-event-fx
  ::save-cover-letter-info
  db/default-interceptors
- (fn [{db :db} [{:keys [type]}]]
-   (let [url-path                 [::profile/sub-db ::profile/cover-letter :link]
-         cover-letter-link        (get-in db url-path)
-         valid-cover-letter-link? (or (= type :upload-cover-letter)
-                                      (s/valid? ::specs/url cover-letter-link))]
-     (cond
-       valid-cover-letter-link?
-       {:db         db
-        :graphql    {:query      graphql/update-user-mutation--approval
-                     :variables  {:update_user (graphql-cover-letter-update db)}
-                     :on-success [::save-success]
-                     :on-failure [::save-failure]}
-        :dispatch-n [[::pages/set-loader]
-                     [:error/close-global]]}
-       :else
-       {:dispatch [:error/set-global "Cover letter link is not valid. Please amend and try again."]}))))
+ (fn [{db :db} _]
+   {:graphql    {:query      graphql/update-user-mutation--approval
+                 :variables  {:update_user (graphql-cover-letter-update db)}
+                 :on-success [::save-success]
+                 :on-failure [::save-failure]}
+    :dispatch-n [[::pages/set-loader]
+                 [:error/close-global]]}))
 
 (reg-event-fx
   ::save-success
@@ -424,6 +414,20 @@
                       [::pages/set-error (str "Account with email: " (::user/email db) " already exists.")]
                       [::pages/set-error "An error occurred while saving your data."])
                     [::pages/unset-loader]]})))
+
+(reg-event-fx
+ ::removal-success
+ db/default-interceptors
+ (fn [{db :db} _res]
+   {:dispatch [::pages/clear-errors]
+    :navigate [:profile]}))
+
+(reg-event-fx
+ ::removal-failure
+ user-interceptors
+ (fn [{db :db} _res]
+   {:dispatch-n [[::pages/set-error "An error occurred while deleting your data."]
+                 [::pages/unset-loader]]}))
 
 
 (reg-event-db
@@ -496,9 +500,9 @@
   ::cover-letter-upload-success
   db/default-interceptors
   (fn [{db :db} data]
-    (let [[filename {:keys [url]}] data]
+    (let [[filename {:keys [url hash]}] data]
       {:db       (-> db
-                     (assoc-in [::profile/sub-db ::profile/cover-letter :file] {:url url, :name filename})
+                     (assoc-in [::profile/sub-db ::profile/cover-letter :file] {:url url :name filename :hash hash})
                      (assoc-in [::profile/sub-db ::profile/cover-letter-uploading?] false))
        :dispatch [::save-cover-letter-info {:type :upload-cover-letter}]})))
 
@@ -622,3 +626,28 @@
            ::profile/current-location item
            ::profile/current-location-text nil
            ::profile/current-location-suggestions nil)))
+
+(def remove-default-cover-letter-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "remove_default_cover_letter"}
+   :venia/variables [{:variable/name "user_id"           :variable/type :ID!}
+                     {:variable/name "cover_letter_hash" :variable/type :String!}]
+   :venia/queries   [[:remove_default_cover_letter
+                      {:user_id :$user_id
+                       :hash    :$cover_letter_hash}
+                      [:status]]]})
+
+(reg-event-fx
+ ::remove-cover-letter
+ db/default-interceptors
+ (fn [{db :db} _]
+   (let [user-id      (get-in db [:wh.user.db/sub-db :wh.user.db/id])
+         cover-letter (get-in db [::profile/sub-db ::profile/cover-letter])
+         hash         (get-in cover-letter [:file :hash])]
+     {:graphql    {:query      remove-default-cover-letter-mutation
+                   :variables  {:user_id           user-id
+                                :cover_letter_hash hash}
+                   :on-success [::removal-success]
+                   :on-failure [::removal-failure]}
+      :dispatch-n [[::pages/set-loader]
+                   [:error/close-global]]})))
