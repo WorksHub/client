@@ -43,6 +43,11 @@
    {:href (routes/path :login :params {:step :github})}
    [:span "Get Started with"] [:div]])
 
+(defn oauth-stackoverflow-button []
+  [:a.button.button--public.button--stackoverflow.button--stackoverflow-integration
+   {:href (routes/path :login :params {:step :stackoverflow})}
+   [:span "Get Started with"]])
+
 (defn header []
   (let [{:keys [discover]} (get data/in-demand-hiring-data (<sub [:wh/vertical]))]
     [:div.homepage__header
@@ -55,6 +60,7 @@
       [:p "We match your skills to great jobs using languages you love."]
       [:div.landing__header__buttons
        [oauth-github-button]
+       [oauth-stackoverflow-button]
        (link [:button.button
               {:id "www-landing__hero"}
               "Get Started"] :get-started)]]]))

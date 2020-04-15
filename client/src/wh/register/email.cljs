@@ -51,14 +51,18 @@
 
 (defn panel []
   [:div
-   (if (<sub [:user/github-connected?])
-     [codi-message "Thanks for connecting your GitHub account!"]
+   (cond
+     (<sub [:user/github-connected?])
+     [codi-message "Thanks for connecting your " [:span.highlight "GitHub"] " account"]
+
+     (<sub [::subs/stackoverflow-signup?])
+     [codi-message "Thanks for connecting your " [:span.highlight "StackOverflow"] " account"]
+
+     :else
      [:<> [codi-message "Hi, I am Codi. Welcome to " (<sub [:wh/platform-name]) "!"]
           [codi-message "You can sign in with your " [:span.highlight "Github account"] " to get started or continue with your email address"]
           [button [[icon "github"] "Connect GitHub"] [:github/call] :class "button--github"]])
-   [codi-message "Registration process should take " [:span.highlight (if (<sub [:user/github-connected?])
-                                                                        "2 to 3 minutes"
-                                                                        "3 to 4 minutes")]]
+   [codi-message "Registration process should take " [:span.highlight "2 to 3 minutes"]]
    [codi-message (if (<sub [:user/email])
                    "Is this the best email for your account?"
                    "Please enter your email")]

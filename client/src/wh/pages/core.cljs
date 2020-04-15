@@ -156,6 +156,7 @@
   (let [db @re-frame.db/app-db
         skip-loader? (or (= (first event) :github/call) ;; this is to avoid loader flickering when logging in via GitHub
                          (= (:wh.db/page db) :github-callback) ;; hacky, but we're not in an event
+                         (= (:wh.db/page db) :stackoverflow-callback)
                          (and (zero? (:wh.db/page-moves db))
                               (:wh.db/server-side-rendered? db)))]
     (when (and (not skip-loader?) (not (loader/loaded? module)))

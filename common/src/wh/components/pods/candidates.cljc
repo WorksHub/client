@@ -10,6 +10,11 @@
    {:href (routes/path :login :params {:step :github})}
    [:span "Get Started with"] [:div]])
 
+(defn oauth-stackoverflow-button []
+  [:a.button.button--public.button--stackoverflow.button--stackoverflow-integration.cta-pod__button
+   {:href (routes/path :login :params {:step :github})}
+   [:span "Get Started with"] [:div]])
+
 (defn candidate-cta
   [& [cls]]
   (when-not (<sub [:user/logged-in?])
@@ -25,4 +30,5 @@
      [:p.cta-pod__description "Engineers who find a new job through " (<sub [:wh/platform-name])
                                          " average a " [:i "15%"]  " increase in salary."]
      [oauth-github-button]
+     [oauth-stackoverflow-button]
      [link [:button.button.is-full-width.cta-pod__button "Get Started"] :register :step :email]]))

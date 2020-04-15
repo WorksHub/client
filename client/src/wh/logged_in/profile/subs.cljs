@@ -20,7 +20,7 @@
 (defn header-data
   [data contributions]
   (-> data
-      (select-keys [:image-url :name :skills :other-urls :summary])
+      (select-keys [:image-url :name :skills :other-urls :summary :stackoverflow-info :github-id])
       (update :other-urls url/detect-urls-type)
       (assoc :contributions contributions)))
 

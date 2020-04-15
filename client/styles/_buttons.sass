@@ -41,6 +41,9 @@ $button-font-size: 11px
 .button--large
   height: 50px
   width: 270px
+  .icon
+    width: 22px
+    height: 22px
 
 .button--medium
   height: 35px
@@ -53,7 +56,7 @@ $button-font-size: 11px
 .button__icon
   fill: white
   vertical-align: middle
-  margin-right: 20px
+  margin-right: 12px
 
 .button__icon--light
   fill: $red
@@ -162,8 +165,10 @@ $button-font-size: 11px
   height: 40px
   padding: 0 !important
   display: flex !important
+  justify-content: flex-start
   span
     padding-top: 1px
+    padding-left: 36px
   div
     margin-left: 6px
     height: 40px
@@ -172,6 +177,38 @@ $button-font-size: 11px
     background-position: 0px 10px
     background-size: 66px 18px
     background-image: url("/images/company/github-logo.svg")
+
+.button--stackoverflow
+  background-color: $wh-white !important
+  color: $wh-black !important
+  box-shadow: 0 0 0 1px $stackoverflow-grey
+  &:hover
+    background-color: $wh-white !important
+    color: $wh-black !important
+    box-shadow: 0 0 0 1px $wh-black
+
+.button--connect
+  height: auto
+  padding: 6px 12px
+
+.button--stackoverflow-integration
+  text-align: left
+  min-width: 210px
+  height: 40px
+  padding: 0 !important
+  display: flex !important
+  justify-content: flex-start
+  &::after
+    content: ""
+    height: 40px
+    width: 100px
+    background-repeat: no-repeat
+    background-position: center
+    background-size: 91px 39px
+    background-image: url("/images/company/stackoverflow-logo.svg")
+  span
+    padding-top: 1px
+    padding-left: 36px
 
 .remove-text-field-btn
   fill: white

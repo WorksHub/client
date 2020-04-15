@@ -74,6 +74,13 @@
       :on-click (interop/do
                   #_(interop/analytics-track)
                   (interop/hide-auth-popup))]
+
+     [link [:button.button.button--large.button--stackoverflow
+            {:id "auth-popup__stackoverflow"}
+            [icon "stackoverflow-with-colors" :class "button__icon"] "Login with StackOverflow"]
+      :login :step :stackoverflow
+      :on-click (interop/do
+                  (interop/hide-auth-popup))]
      
      ;; Create Account
      [link [:button.button.button--large

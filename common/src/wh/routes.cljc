@@ -11,7 +11,7 @@
     [wh.common.text :as text]))
 
 (def company-landing-page "https://www.works-hub.com")
-(def pages-with-loader #{:homepage :learn :blog :github-callback :liked :recommended :profile :pre-set-search :jobsboard :contribute-edit})
+(def pages-with-loader #{:homepage :learn :blog :github-callback :stackoverflow-callback :liked :recommended :profile :pre-set-search :jobsboard :contribute-edit})
 (def no-menu-pages #{:register :register-company :payment-setup :get-started})
 (def no-footer-pages (set (concat no-menu-pages #{:blog})))
 
@@ -116,12 +116,14 @@
                             "test"         (with-params :register :step :test)
                             "email"        (with-params :register :step :email)}]
               ["company-registration" :register-company]
-              ["login" {""        (with-params :login :step :root)
-                        "/"       (with-params :login :step :root)
-                        "/email"  (with-params :login :step :email)
-                        "/github" (with-params :login :step :github)}]
+              ["login" {""               (with-params :login :step :root)
+                        "/"              (with-params :login :step :root)
+                        "/email"         (with-params :login :step :email)
+                        "/github"        (with-params :login :step :github)
+                        "/stackoverflow" (with-params :login :step :stackoverflow)}]
               ["get-started" :get-started]
               ["github-callback" :github-callback]
+              ["stackoverflow-callback" :stackoverflow-callback]
 
               ;;Private pages - app.js required
               ["admin/" {"companies" :admin-companies}]

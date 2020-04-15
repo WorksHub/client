@@ -235,3 +235,9 @@
   ::vertical-name
   (fn [db _]
     (get-in verticals/vertical-config [(::db/vertical db) :platform-name])))
+
+(reg-sub
+  ::stackoverflow-signup?
+  (fn [db _]
+    (-> (get-in db [:wh.user.db/sub-db :wh.user.db/stackoverflow-info])
+        boolean)))

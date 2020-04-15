@@ -30,10 +30,17 @@
                   :on-close [:register/hide-skills-info]}
     (if (<sub [::subs/connected-to-github?])
       [:span "We’ve done the hard work for you by pre-selecting your skills based on your GitHub profile. Large and green is selected, red and small is not. Feel free to " [:span.highlight "customise your picks"]]
-      [:span [:span.highlight "Select your preferred skills. "] "Large and green is selected, red and small is not. " [:br.is-hidden-desktop] [:span.highlight "Connect your GitHub "] "to save some time. We will pre-select skills for you. "])]
+      [:span [:span.highlight "Select your preferred skills. "]
+             "Large and green is selected, red and small is not. "
+             (when-not (<sub [::subs/stackoverflow-signup?])
+               [:<>
+                [:br.is-hidden-desktop]
+                [:span.highlight "Connect your GitHub "]
+                "to save some time. We will pre-select skills for you. "])])]
    [bubbles/bubbles (<sub [::subs/skills])
     :on-size-change #(dispatch [::events/select-skill %1 %2])]
-   (when-not (<sub [::subs/connected-to-github?])
+   (when-not (or (<sub [::subs/connected-to-github?])
+                 (<sub [::subs/stackoverflow-signup?]))
      [github-button])
    [:div.bubble-panel__bottom
     [button "I'm all done" [:register/advance]

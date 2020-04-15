@@ -10,7 +10,8 @@
    [codi-message "Perfect - thanks"]
    [codi-message "We need to complete one last check before creating your personal dashboard"]
    [codi-message "It’s a simple test, you just need to answer a coding question"]
-   (when-not (<sub [::subs/connected-to-github?])
+   (when (and (not (<sub [::subs/connected-to-github?]))
+              (not (<sub [::subs/stackoverflow-signup?])))
      [codi-message "Or you can skip this part by connecting to your Github account"]
      [button [[icon "github"] "Connect GitHub"] [:github/call] :class "button--github"])
    [button "Test me" [:register/advance]]])

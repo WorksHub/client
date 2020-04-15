@@ -463,20 +463,25 @@
                                                             :riddle_answer :$riddle_answer
                                                             :force_unapproved :$force_unapproved}
                                               upsert-user-fields]]})
+
 (defn db->graphql-user
-  [{:keys [::register/email ::register/name ::register/preferred-location
-           ::register/selected-skills ::register/id
-           ::register/consented ::register/subscribed?
-           ::register/current-location ::register/remote]}]
-  (cond-> {:email    email
-           :name     name
-           :skills   (mapv #(hash-map :name %) selected-skills)
-           :preferred-locations (when preferred-location [preferred-location])
-           :current-location current-location
-           :remote remote
-           :consented consented
-           :subscribed subscribed?}
-    id (assoc :id id)))
+  [db]
+  (let [stackoverflow-access-token (get-in db [::user/sub-db ::user/stackoverflow-info :access-token])
+        sub-db (::register/sub-db db)
+        {:keys [::register/email ::register/name ::register/preferred-location
+                ::register/selected-skills ::register/id
+                ::register/consented ::register/subscribed?
+                ::register/current-location ::register/remote]} sub-db]
+    (cond-> {:email                      email
+             :name                       name
+             :skills                     (mapv #(hash-map :name %) selected-skills)
+             :preferred-locations        (when preferred-location [preferred-location])
+             :current-location           current-location
+             :remote                     remote
+             :consented                  consented
+             :subscribed                 subscribed?
+             :stackoverflow-access-token stackoverflow-access-token}
+           id (assoc :id id))))
 
 ;; We don't want to pass empty/blank values because otherwise we might
 ;; override what's already set.
@@ -492,7 +497,7 @@
   db/default-interceptors
   (fn [{db :db} _]
     (let [sub-db (::register/sub-db db)
-          {:keys [id consented] :as user} (db->graphql-user sub-db)
+          {:keys [id consented] :as user} (db->graphql-user db)
           user (util/transform-keys remove-value-for-upsert? user)
           verify-riddle? (= (::register/step sub-db) :test)]
       (if-not consented

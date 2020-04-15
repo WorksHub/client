@@ -49,14 +49,19 @@
        "Send Login Link"]]]))
 
 (defn login-buttons
-  [{:keys [on-github on-magic]
+  [{:keys [on-github on-stackoverflow on-magic]
     :or {on-github [:github/call {:type :login-page}]
+         on-stackoverflow [:stackoverflow/call {:type :login-page}]
          on-magic  [::events/show-magic-form]}}]
   [:div.container.login-buttons
    [:div.container
     [:button.button.button--large.button--github {:on-click #(dispatch on-github)}
      [icon "github" :class "button__icon"]
      "Login with github"]]
+   [:div.container
+    [:button.button.button--large.button--stackoverflow {:on-click #(dispatch on-stackoverflow)}
+     [icon "stackoverflow-with-colors" :class "button__icon"]
+     "Login with StackOverflow"]]
    [:div.container
     [link [:button.button.button--large.button--light
            [icon "magic-link" :class "button__icon button__icon--light"]

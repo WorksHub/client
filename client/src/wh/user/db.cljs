@@ -101,7 +101,7 @@
                        :opt-un [::rating]))
 (s/def ::skills (s/* ::skill))
 (s/def ::type string?)
-(s/def ::github-id string?)
+(s/def ::github-id (s/nilable string?))
 (s/def :wh.user.cv.file/name (s/nilable string?))
 (s/def :wh.user.cv.file/type (s/nilable string?))
 (s/def :wh.user.cv.file/url (s/nilable string?))

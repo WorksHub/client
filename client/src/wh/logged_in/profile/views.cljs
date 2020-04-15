@@ -37,13 +37,35 @@
          (for [{:keys [name rating]} (:skills opts)]
            [:li name (when rating [icon (str "rating-" rating)])]))])
 
-(defn linkbox [{:keys [other-urls]}]
-  (into
-   [:div.linkbox]
-   (for [{:keys [url type display]} other-urls]
-     [:span [icon (name type)] [:a {:href url
-                                    :target "_blank"
-                                    :rel "noopener"} display]])))
+(defn linkbox [{:keys [other-urls stackoverflow-info]}]
+  (when (seq other-urls)
+    (let [so-reputation (:reputation stackoverflow-info)]
+      (into
+       [:div.linkbox]
+       (for [{:keys [url type display]} other-urls]
+         [:span.linkbox__link-wrapper
+          [icon (name type)]
+          (when (and (= type :stackoverflow)
+                     so-reputation)
+            [:span.linkbox__reputation-badge so-reputation])
+          [:a.linkbox__link {:href url
+                             :target "_blank"
+                             :rel "noopener"} display]])))))
+
+(defn connect-buttons [{:keys [stackoverflow-info github-id]}]
+  (when (or (not stackoverflow-info)
+            (not github-id))
+    (let [on-github [:github/call {:type :login-page}]
+          on-stackoverflow [:stackoverflow/call {:type :login-page}]]
+      [:div
+       (when-not stackoverflow-info
+         [:button.button.button--stackoverflow.button--connect {:on-click #(dispatch on-stackoverflow)}
+          [icon "stackoverflow-with-colors" :class "button__icon"]
+          "Connect StackOverflow"])
+       (when-not github-id
+         [:button.button.button--github.button--connect {:on-click #(dispatch on-github)}
+          [icon "github" :class "button__icon"]
+          "Connect Github"])])))
 
 (defn summary [opts]
   (let [summary (:summary opts)]
@@ -89,6 +111,7 @@
    [avatar data]
    [name-view data]
    [skills data]
+   [connect-buttons data]
    [linkbox data]
    [summary data]
    [contributions user-type data]])
@@ -414,7 +437,7 @@
    [error-box]
    [:div.buttons-container
     [:button.button.button--small {:on-click #(do (.preventDefault %)
-                                    (dispatch [::events/save-company-user]))} "Save"]
+                                                  (dispatch [::events/save-company-user]))} "Save"]
     [cancel-link]]])
 
 (defn main-view []

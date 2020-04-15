@@ -37,6 +37,7 @@
                 :edit-job
                 :get-started
                 :github-callback
+                :stackoverflow-callback
                 :homepage
                 :homepage-company-dashboard
                 :homepage-dashboard

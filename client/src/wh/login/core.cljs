@@ -7,11 +7,14 @@
     [wh.login.get-started.events]
     [wh.login.get-started.views :as get-started]
     [wh.login.github-callback.events]
+    [wh.login.stackoverflow-callback.events]
     [wh.login.github-callback.views :as github-callback]
+    [wh.login.stackoverflow-callback.views :as stackoverflow-callback]
     [wh.login.views :as login]))
 
 (def page-mapping
   {:github-callback github-callback/page
+   :stackoverflow-callback stackoverflow-callback/page
    :login login/page
    :get-started get-started/page})
 

@@ -79,8 +79,8 @@
   db/default-interceptors
   (fn [{db :db} _]
     {:set-url (github-authorize-url (:wh.settings/github-client-id db)
-                                   (:wh.settings/environment db)
-                                   (::db/vertical db))}))
+                                    (:wh.settings/environment db)
+                                    (::db/vertical db))}))
 
 (reg-event-fx
   :github/call
@@ -88,6 +88,36 @@
   (fn [{db :db} [track-context]]
     {:dispatch-n [[::pages/set-loader]
                   [::go-github]]
+     :persist-state (cond-> db
+                            track-context (assoc :register/track-context track-context)
+                            true (assoc ::db/loading? true
+                                        :google/maps-loaded? false) ; reload google maps when we return here
+                            true (dissoc ::db/page-mapping))}))
+
+(defn stackoverflow-authorize-url
+  [client-id env]
+  (let [base "https://stackoverflow.com/oauth"
+        redirect-uri (str
+                       js/window.location.origin
+                       "/stackoverflow-callback")]
+    (str base
+         "?client_id=" client-id
+         "&scope=no_expiry"
+         "&redirect_uri=" redirect-uri)))
+
+(reg-event-fx
+  ::go-stackoverflow
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:set-url (stackoverflow-authorize-url (:wh.settings/stackoverflow-client-id db)
+                                           (:wh.settings/environment db))}))
+
+(reg-event-fx
+  :stackoverflow/call
+  db/default-interceptors
+  (fn [{db :db} [track-context]]
+    {:dispatch-n [[::pages/set-loader]
+                  [::go-stackoverflow]]
      :persist-state (cond-> db
                             track-context (assoc :register/track-context track-context)
                             true (assoc ::db/loading? true
@@ -145,4 +175,6 @@
     (when-let [query-redirect (get-in db [:wh.db/query-params "redirect"])]
       (vec (concat [:login/set-redirect] (query-redirect->path query-redirect))))
     (when (= :github (get-in db [::db/page-params :step]))
-      [:github/call {:type :login-page}])))
+      [:github/call {:type :login-page}])
+    (when (= :stackoverflow (get-in db [::db/page-params :step]))
+      [:stackoverflow/call {:type :login-page}])))

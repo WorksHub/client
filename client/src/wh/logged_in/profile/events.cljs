@@ -11,6 +11,7 @@
     [wh.common.user :as common-user]
     [wh.components.forms.events :as form-events]
     [wh.db :as db]
+    [wh.login.events]
     [wh.logged-in.dashboard.db :as dashboard]
     [wh.logged-in.profile.db :as profile]
     [wh.logged-in.profile.location-events :as location-events]
@@ -44,6 +45,7 @@
                          [:companyPerks [:name]]
                          [:otherUrls [:url]]
                          :imageUrl
+                         :githubId
                          :phone
                          :name :summary
                          :email :jobSeekingStatus :roleTypes
@@ -55,7 +57,8 @@
                                         [:file [:type :name :url :hash]]]]
                          [:salary [:currency :min :timePeriod]]
                          [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
-                         [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]
+                         [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
+                         [:stackoverflowInfo [:reputation]]]]
                    [:blogs {:filter_type "mine"} [[:blogs [:id :title :published :upvoteCount]]]]]})
 
 (reg-event-fx
