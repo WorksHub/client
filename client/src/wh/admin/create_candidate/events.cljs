@@ -63,11 +63,12 @@
 (reg-event-db
   ::cv-upload-success
   create-candidate-interceptors
-  (fn [db [filename {:keys [url]}]]
+  (fn [db [filename {:keys [url hash]}]]
     (assoc db
            ::sub-db/cv-uploading? false
            ::sub-db/cv-url url
-           ::sub-db/cv-filename filename)))
+           ::sub-db/cv-filename filename
+           ::sub-db/cv-hash hash)))
 
 (reg-event-db
   ::cv-upload-failure
@@ -257,8 +258,9 @@
    :longitude location__longitude})
 
 (defn db->graphql-user
-  [{:keys [::sub-db/email ::sub-db/name ::sub-db/notify ::sub-db/tech-tags ::sub-db/company-tags
-           ::sub-db/github-url ::sub-db/other-links ::sub-db/cv-url ::sub-db/cv-filename
+  [{:keys [::sub-db/email ::sub-db/name ::sub-db/notify ::sub-db/tech-tags
+           ::sub-db/company-tags ::sub-db/github-url ::sub-db/other-links
+           ::sub-db/cv-url ::sub-db/cv-hash ::sub-db/cv-filename
            ::sub-db/current-company ::sub-db/current-company-search ::sub-db/phone]
     :as db}]
   (merge (util/transform-keys
@@ -280,8 +282,8 @@
            :consented (-> (t/now) (tc/to-string))
            :subscribed false
            })
-         (when (and cv-url cv-filename)
-           {:cv {:file {:url cv-url, :name cv-filename}}})))
+         (when (and cv-url cv-filename cv-hash)
+           {:cv {:file {:url cv-url :name cv-filename :hash cv-hash}}})))
 
 (reg-event-fx
   ::save

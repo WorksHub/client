@@ -52,7 +52,7 @@
                          :visaStatus :visaStatusOther
                          :remote
                          [:cv [:link
-                               [:file [:type :name :url]]]]
+                               [:file [:type :name :url :hash]]]]
                          [:coverLetter [:link
                                         [:file [:type :name :url :hash]]]]
                          [:salary [:currency :min :timePeriod]]
@@ -529,9 +529,9 @@
 (reg-event-fx
   ::cv-upload-success
   db/default-interceptors
-  (fn [{db :db} [filename {:keys [url]}]]
+  (fn [{db :db} [filename {:keys [url hash]}]]
     {:db       (-> db
-                   (assoc-in [::profile/sub-db ::profile/cv :file] {:url url, :name filename})
+                   (assoc-in [::profile/sub-db ::profile/cv :file] {:url url :name filename :hash hash})
                    (assoc-in [::profile/sub-db ::profile/cv-uploading?] false))
      :dispatch [::save-cv-info {:type :upload-cv}]}))
 

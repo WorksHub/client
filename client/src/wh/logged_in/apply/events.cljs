@@ -105,10 +105,10 @@
 (reg-event-fx
   ::cv-upload-success
   db/default-interceptors
-  (fn [{db :db} [filename {:keys [url]}]]
+  (fn [{db :db} [filename {:keys [url hash]}]]
     {:graphql {:query      graphql/update-user-mutation--cv
                :variables  {:update_user {:id (get-in db [::user/sub-db ::user/id])
-                                          :cv {:file {:name filename, :url url}}}}
+                                          :cv {:file {:name filename :url url :hash hash}}}}
                :on-success [::cv-update-url-success]
                :on-failure [::cv-upload-failure]}}))
 
