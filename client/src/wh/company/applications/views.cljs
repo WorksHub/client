@@ -118,7 +118,7 @@
      {:class (when skeleton? "skeleton")}
      [:div.company-application__name
       (when-not skeleton?
-        [link (:name app) :candidate :id user-id :class "a--hover-red"])]
+        [link (:name app) :candidate :id user-id :class "a--hover-red" :query-params {:job-id job-id}])]
      [:div.company-application__applied-on-section
       [:div.company-application__applied-on (when-not skeleton? "Applied on ") timestamp]
       (when (or cv skeleton?)
@@ -131,26 +131,26 @@
        [:div.company-application__infobox {:class (when (and job admin?) "company-application__infobox--short")}
         (when-not (and job admin?)
           (infobox-row "email"
-                     (when email
-                       [:a {:href (str "mailto:" email)} email])))
+                       (when email
+                         [:a {:href (str "mailto:" email)} email])))
         (infobox-row "job-location"
                      (or display-location [:i "No location preference"]))
         (when (seq other-urls)
           (into
-           [:div.company-application__infobox-row]
-           (for [{:keys [type url]} other-urls]
-             [:div.company-application__infobox-icon
-              [:a {:href url, :target "_blank", :rel "noopener"}
-               [icon (name type) :class (name type)]]])))])
+            [:div.company-application__infobox-row]
+            (for [{:keys [type url]} other-urls]
+              [:div.company-application__infobox-icon
+               [:a {:href url, :target "_blank", :rel "noopener"}
+                [icon (name type) :class (name type)]]])))])
      (cond score     (match score)
            skeleton? [:div.company-application__match [icon "circle"] [:span ""]]
            :else     [:div.company-application__match])
      (into
-      [:ul.company-application__tags.tags]
-      (map (fn [{:keys [name highlighted]}]
-             [(if (or (not job-id) highlighted) :li.tag.tag--selected :li.tag.tag--unselected) name])
-           (if skeleton?
-             (repeatedly 6 #(hash-map :name (apply str (repeat (+ 8 (rand-int 30)) " ")) :highlighted true)) skills)))
+       [:ul.company-application__tags.tags]
+       (map (fn [{:keys [name highlighted]}]
+              [(if (or (not job-id) highlighted) :li.tag.tag--selected :li.tag.tag--unselected) name])
+            (if skeleton?
+              (repeatedly 6 #(hash-map :name (apply str (repeat (+ 8 (rand-int 30)) " ")) :highlighted true)) skills)))
      (when-not skeleton?
        (if admin?
          [:div.company-application__notes.is-flex

@@ -26,7 +26,7 @@
 (defn candidate-id [db]
   (get-in db [::db/page-params :id]))
 
-(defn candidate-query [id admin?]
+(defn candidate-query [id db]
   (let [fields (concat [[:skills [:name :rating]]
                         [:otherUrls [:url]]
                         :email
@@ -41,7 +41,7 @@
                         :remote
                         [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
                         [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]
-                       (if admin?
+                       (if (user/admin? db)
                          [[:companyPerks [:name]]
                           [:approval [:status :source :time]]
                           [:likes [:id :slug :title [:company [:name]]]]
@@ -53,7 +53,9 @@
                           [:salary [:currency :min :timePeriod]]]
                          ;;
                          [[:applied [:timestamp :state :note [:job [:id :slug :title]]]]]))]
-    {:venia/queries [[:user {:id id} fields]]}))
+    {:venia/queries [[:user (merge {:id id}
+                                   (when-let [job-id (get-in db [:wh.db/query-params "job-id"])]
+                                     {:jobId job-id})) fields]]}))
 
 (reg-event-fx
   ::load-candidate-success
@@ -78,7 +80,7 @@
   (fn [{db :db} _]
     (let [id (get-in db [::db/page-params :id])]
       {:dispatch [::pages/set-loader]
-       :graphql {:query (candidate-query id (user/admin? db))
+       :graphql {:query (candidate-query id db)
                  :on-success [::load-candidate-success]
                  :on-failure [::load-candidate-failure]}})))
 
