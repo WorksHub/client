@@ -106,7 +106,8 @@
                          :new
                          [:stackoverflow_info
                           [:access_token
-                           :account_id]]]]
+                           :account_id
+                           :tags]]]]
                        [:user
                         [:id]]]]]})
 

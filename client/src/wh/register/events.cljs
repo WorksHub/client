@@ -298,8 +298,9 @@
   :register/update-data-from-user
   db/default-interceptors
   (fn [db _]
-    (let [{:keys [::user/github-info ::user/email ::user/name ::user/id]} (::user/sub-db db)
-          skills (take skill-cap (map :name (:skills github-info)))
+    (let [{:keys [::user/github-info ::user/email ::user/name ::user/id ::user/stackoverflow-info]} (::user/sub-db db)
+          skills (take skill-cap (or (:tags stackoverflow-info)
+                                     (map :name (:skills github-info))))
           name (if (str/blank? name) (:name github-info) name)
           old-register (::register/sub-db db)]
       (update db ::register/sub-db merge
