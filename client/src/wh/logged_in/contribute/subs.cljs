@@ -1,19 +1,17 @@
 (ns wh.logged-in.contribute.subs
-  (:require
-    [cljs.spec.alpha :as s]
-    [clojure.set :as set]
-    [clojure.string :as str]
-    [markdown.core :refer [md->html]]
-    [re-frame.core :refer [reg-sub]]
-    [wh.components.tag :refer [->tag tag->form-tag]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.common.text :as txt]
-    [wh.logged-in.contribute.db :as contribute]
-    [wh.pages.core :as pages]
-    [wh.verticals :as verticals])
-  (:require-macros
-    [clojure.core.strint :refer [<<]]
-    [wh.re-frame.subs :refer [reaction]]))
+  (:require [cljs.spec.alpha :as s]
+            [clojure.set :as set]
+            [clojure.string :as str]
+            [markdown.core :refer [md->html]]
+            [re-frame.core :refer [reg-sub]]
+            [wh.components.tag :refer [->tag tag->form-tag]]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.common.text :as txt]
+            [wh.logged-in.contribute.db :as contribute]
+            [wh.pages.core :as pages]
+            [wh.verticals :as verticals])
+  (:require-macros [clojure.core.strint :refer [<<]]
+                   [reagent.ratom :refer [reaction]]))
 
 (reg-sub
   ::contribute

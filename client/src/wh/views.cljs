@@ -1,18 +1,17 @@
 (ns wh.views
-  (:require
-    [cljsjs.smoothscroll-polyfill]
-    [clojure.walk :as walk]
-    [re-frame.core :refer [dispatch dispatch-sync]]
-    [reagent.core :as r]
-    [wh.components.error.subs :as error-subs]
-    [wh.components.error.views :refer [global-status-box]]
-    [wh.components.footer :as footer]
-    [wh.components.icons :refer [icon]]
-    [wh.components.loader :refer [loader]]
-    [wh.components.menu :as menu]
-    [wh.components.navbar :as navbar]
-    [wh.pages.router :refer [current-page]]
-    [wh.subs :as subs :refer [<sub]]))
+  (:require [clojure.walk :as walk]
+            [re-frame.core :refer [dispatch dispatch-sync]]
+            [reagent.core :as r]
+            ["smoothscroll-polyfill"]
+            [wh.components.error.subs :as error-subs]
+            [wh.components.error.views :refer [global-status-box]]
+            [wh.components.footer :as footer]
+            [wh.components.icons :refer [icon]]
+            [wh.components.loader :refer [loader]]
+            [wh.components.menu :as menu]
+            [wh.components.navbar :as navbar]
+            [wh.pages.router :refer [current-page]]
+            [wh.subs :as subs :refer [<sub]]))
 
 (defn version-mismatch []
   [:div.version-mismatch

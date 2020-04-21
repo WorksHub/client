@@ -1,4 +1,4 @@
-(ns ^:figwheel-always wh.core
+(ns ^:dev/always wh.core
   (:require [cljs.loader :as loader]
             [re-frame.core :as re-frame]
             [reagent.core :as reagent]
@@ -13,9 +13,9 @@
 (defn dev-setup []
   (when debug?
     (enable-console-print!)
-    (println "dev mode")))
+    (js/console.log "dev mode")))
 
-(defn mount-root []
+(defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app")))

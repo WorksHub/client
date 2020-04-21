@@ -1,37 +1,36 @@
 (ns wh.company.payment.views
-  (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [cljsjs.react-stripe-elements]
-    [clojure.string :as str]
-    [re-frame.core :refer [dispatch dispatch-sync]]
-    [reagent.core :as r]
-    [wh.common.cases :as cases]
-    [wh.common.cost :as cost]
-    [wh.common.data :as data]
-    [wh.common.re-frame-helpers :as rf-helpers]
-    [wh.common.text :refer [pluralize]]
-    [wh.company.payment.db :as payment]
-    [wh.company.payment.events :as events]
-    [wh.company.payment.subs :as subs]
-    [wh.company.views :refer [int->dollars]]
-    [wh.components.common :refer [companies-section link]]
-    [wh.components.forms.views :as f :refer [text-field select-field]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.navbar :as nav-common]
-    [wh.components.package-selector :refer [package-selector]]
-    [wh.db :as db]
-    [wh.subs :refer [<sub] :as core-subs]
-    [wh.util :as util]
-    [wh.verticals :as verticals]))
+  (:require ["react-stripe-elements" :as stripe-elements]
+            [cljs-time.core :as t]
+            [cljs-time.format :as tf]
+            [clojure.string :as str]
+            [re-frame.core :refer [dispatch dispatch-sync]]
+            [reagent.core :as r]
+            [wh.common.cases :as cases]
+            [wh.common.cost :as cost]
+            [wh.common.data :as data]
+            [wh.common.re-frame-helpers :as rf-helpers]
+            [wh.common.text :refer [pluralize]]
+            [wh.company.payment.db :as payment]
+            [wh.company.payment.events :as events]
+            [wh.company.payment.subs :as subs]
+            [wh.company.views :refer [int->dollars]]
+            [wh.components.common :refer [companies-section link]]
+            [wh.components.forms.views :as f :refer [text-field select-field]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.navbar :as nav-common]
+            [wh.components.package-selector :refer [package-selector]]
+            [wh.db :as db]
+            [wh.subs :refer [<sub] :as core-subs]
+            [wh.util :as util]
+            [wh.verticals :as verticals]))
 
 (defonce stripe-form-contexts (r/atom {}))
 (defonce stripe-loaded? (r/atom false))
 
 ;; Stripe elements
-(def Elements (r/adapt-react-class js/ReactStripeElements.Elements))
-(def CardElement (r/adapt-react-class js/ReactStripeElements.CardElement))
-(def StripeProvider (r/adapt-react-class js/ReactStripeElements.StripeProvider))
+(def Elements (r/adapt-react-class stripe-elements/Elements))
+(def CardElement (r/adapt-react-class stripe-elements/CardElement))
+(def StripeProvider (r/adapt-react-class stripe-elements/StripeProvider))
 
 (def element-style {:base {:color "#6E7F89"
                            :textTransform "capitalize"
@@ -64,7 +63,7 @@
 (defn StripeForm
   [id end-event]
   (r/adapt-react-class
-   (js/ReactStripeElements.injectStripe
+   (stripe-elements/injectStripe
     (r/reactify-component
      (r/create-class {:display-name "stripe-reagent-form"
                       :component-did-update

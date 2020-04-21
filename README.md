@@ -35,10 +35,19 @@ npm install
 From then on, any time you want to run the app itself, run
 
 ```
-lein figwheel
+lein repl
+> (do (require 'wh.server) (wh.server/start-server))
 ```
 
-and after a while, a Figwheel server should launch at http://localhost:3449. Point your browser there and you should see the WorksHub UI.
+to start simple Ring server. Next start watching ClojureScript files with:
+
+```
+npm run watch
+```
+
+Now point your browser to: http://localhost:3449 and you should see the WorksHub UI.
+
+(If you're curious, we're using shadow-cljs to watch and compile our frontend. Fell free to run shadow server by yourself and access shadow-cljs Inspect. We have globally available `tap>` in our code. It also means that you can freely install any npm packages with `npm install` and require these in code. Go crazy!)
 
 In order to compile the CSS, in a separate terminal you should run
 

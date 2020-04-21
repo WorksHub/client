@@ -1,11 +1,10 @@
 (ns wh.components.info-icon
-  (:require
-    #?(:cljs [cljsjs.react-tooltip])
-    #?(:cljs [reagent.core :as reagent])
-    [wh.components.icons :refer [icon]]))
+  (:require #?(:cljs ["react-tooltip" :as ReactTooltip])
+            #?(:cljs [reagent.core :as reagent])
+            [wh.components.icons :refer [icon]]))
 
 #?(:cljs
-   (def react-tooltip (reagent/adapt-react-class js/ReactTooltip)))
+   (def react-tooltip (reagent/adapt-react-class ReactTooltip)))
 
 (defn info-icon
   [id txt]

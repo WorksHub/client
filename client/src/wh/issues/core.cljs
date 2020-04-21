@@ -1,13 +1,12 @@
 (ns wh.issues.core
-  (:require
-    [cljs.loader :as loader]
-    [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
-    [wh.db :as db]
-    [wh.issue.edit.events :as edit-issue]
-    [wh.issue.views :as issue]
-    [wh.issues.manage.views :as manage-issues]
-    [wh.issues.views :as issues]
-    [wh.user.db :as user]))
+  (:require [shadow.loader :as loader]
+            [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
+            [wh.db :as db]
+            [wh.issue.edit.events :as edit-issue]
+            [wh.issue.views :as issue]
+            [wh.issues.manage.views :as manage-issues]
+            [wh.issues.views :as issues]
+            [wh.user.db :as user]))
 
 (def page-mapping
   {:company-issues {:page issues/page :can-access? user/company?}

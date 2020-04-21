@@ -1,30 +1,27 @@
 (ns wh.company.create-job.views
-  (:require
-    [clojure.set :as set]
-    [rcslider :as slider]
-    [re-frame.core :refer [dispatch]]
-    [reagent.core :as r]
-    [wh.common.upload :as upload]
-    [wh.company.components.forms.views :refer [rich-text-field]]
-    [wh.company.create-job.db :as create-job]
-    [wh.company.create-job.events :as events]
-    [wh.company.create-job.subs :as subs]
-    [wh.components.common :refer [link]]
-    [wh.components.forms.views :as f
-     :refer [labelled-checkbox field-container
-             select-field text-field radio-buttons tags-field logo-field]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.verticals :as vertical-views]
-    [wh.db :as db]
-    [wh.subs :refer [<sub error-sub-key]]
-    [wh.util :as util]
-    [wh.verticals :as verticals])
+  (:require ["rc-slider" :as slider]
+            [clojure.set :as set]
+            [re-frame.core :refer [dispatch]]
+            [reagent.core :as r]
+            [wh.common.upload :as upload]
+            [wh.company.components.forms.views :refer [rich-text-field]]
+            [wh.company.create-job.db :as create-job]
+            [wh.company.create-job.events :as events]
+            [wh.company.create-job.subs :as subs]
+            [wh.components.common :refer [link]]
+            [wh.components.forms.views :as f
+             :refer [labelled-checkbox field-container
+                     select-field text-field radio-buttons tags-field logo-field]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.verticals :as vertical-views]
+            [wh.db :as db]
+            [wh.subs :refer [<sub error-sub-key]]
+            [wh.util :as util]
+            [wh.verticals :as verticals])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
-(def slider-obj (aget js/window "rc-slider"))
-(def slider (r/adapt-react-class slider-obj))
-(def create-slider-with-tooltip (aget slider-obj "createSliderWithTooltip"))
-(def slider-range (r/adapt-react-class (create-slider-with-tooltip (aget slider-obj "Range"))))
+(def create-slider-with-tooltip (aget slider "createSliderWithTooltip"))
+(def slider-range (r/adapt-react-class (create-slider-with-tooltip (aget slider "Range"))))
 
 (defn field
   [k & {:as opts}]

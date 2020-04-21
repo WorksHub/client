@@ -8,12 +8,9 @@
   :resource-paths ["target/resources"
                    "client/resources"
                    "client/src-js"]
-  :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.18"]
-            [lein-sass "0.4.0"]
+  :plugins [[lein-sass "0.4.0"]
             [lein-shell "0.5.0"]]
-  :prep-tasks ["compile"
-               ["cljsbuild" "once"]]
+  :prep-tasks ["compile"]
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/clojurescript "1.10.439"]
                  [cljsjs/react "16.3.2-0"]
@@ -48,52 +45,17 @@
                  [ring/ring-jetty-adapter "1.6.3"]
                  [thi.ng/geom "1.0.0-RC3"]]
 
-  :cljsbuild {:builds {:client {:compiler {:foreign-libs  [{:file        "client/vendor/js/physicsjs.js"
-                                                            :module-type :es6
-                                                            :provides    ["physicsjs"]}
-                                                           {:file     "client/vendor/js/rc-slider.min.js"
-                                                            :requires ["cljsjs.react"
-                                                                       "cljsjs.react.dom"]
-                                                            :provides ["rcslider"]}]
-                                           :modules       ~(read-string (slurp "client/resources/modules.edn"))
-                                           :verbose       true
-                                           :output-to     "target/resources/public/js/wh.js"
-                                           :output-dir    "target/resources/public/js/"
-                                           :asset-path    "/js"}}}}
-
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.9"]
                                   [com.taoensso/tufte "2.0.1"]
                                   [nrepl "0.6.0"]
                                   [cider/piggieback "0.4.0"]
-                                  [figwheel-sidecar "0.5.18"]
                                   [javax.servlet/servlet-api "2.5"]
                                   [org.clojure/test.check "0.9.0"]
                                   [day8.re-frame/re-frame-10x "0.3.7"]
                                   [ring-mock "0.1.5"]]
                    :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
-                   :cljsbuild    {:builds {:client {:source-paths ["client/env/dev" "client/src" "common/src" "common-pages/src"]
-                                                    :figwheel     {:build-id       "client"
-                                                                   :websocket-host :js-client-host}
-                                                    :compiler     {:main                 wh.dev
-                                                                   :optimizations        :none
-                                                                   :closure-defines      {"re_frame.trace.trace_enabled_QMARK_" true}
-                                                                   :preloads             [devtools.preload day8.re-frame-10x.preload]
-                                                                   :source-map           true
-                                                                   :source-map-timestamp true}}}}
-                   :plugins      [[lein-ancient "0.6.15" :exclusions [org.clojure/clojure commons-codec org.clojure/data.xml]]]
-                   :figwheel     {:ring-handler   wh.server/handler
-                                  :server-logfile false
-                                  :css-dirs       ["client/resources/public/wh.css"]}}
-             :prod {:cljsbuild {:builds {:client {:source-paths ["client/env/prod" "client/src" "common/src" "common-pages/src"]
-                                                  :jar          true
-                                                  :compiler     {:main            wh.core
-                                                                 :externs         ["client/externs/physics.js"
-                                                                                   "client/externs/analytics.js"]
-                                                                 :source-map      "target/resources/public/js/works-hub.js.map"
-                                                                 :optimizations   :advanced
-                                                                 :closure-defines {goog.DEBUG false}
-                                                                 :pseudo-names    false
-                                                                 :pretty-print    false}}}}}}
+                   :plugins      [[lein-ancient "0.6.15" :exclusions [org.clojure/clojure commons-codec org.clojure/data.xml]]]}
+             :prod {}}
 
   :sass {:src              "client/styles/"
          :output-directory "client/resources/public"}

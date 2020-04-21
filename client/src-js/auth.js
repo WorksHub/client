@@ -14,9 +14,7 @@ function showAuthPopUp(context, redirect) {
     localStorage.setItem('wh_auth.redirect', redirect);
     var newContext = wh_auth.contexts.get(context);
     var arr = new Set(Array.from(wh_auth.contexts.values()));
-    for (var item of arr) {
-        setClass("auth-popup__" + item, "is-visible", false);
-    }
+    arr.forEach(item => setClass("auth-popup__" + item, "is-visible", false));
     setClass("auth-popup__" + newContext, "is-visible", true);
     setClass("auth-popup", "is-open", true);
     setNoScroll("auth-popup", true);

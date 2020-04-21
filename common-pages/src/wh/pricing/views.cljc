@@ -1,21 +1,15 @@
 (ns wh.pricing.views
-  (:require
-    #?(:cljs [re-frame.core :refer [dispatch-sync]])
-    #?(:cljs [reagent.core :as r])
-    #?(:cljs [wh.subs :refer [<sub] :as core-subs])
-    [wh.common.data :as data :refer [package-data]]
-    [wh.components.common :refer [link]]
-    [wh.components.faq :as faq]
-    [wh.components.forms :refer [fake-radio-buttons]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.package-selector :refer [package-selector]]
-    [wh.components.www-homepage :as www]
-    [wh.pricing.events] ;; required to register on-page-load
-    [wh.pricing.subs :as subs]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.util :as util]
-    [wh.verticals :as verticals]))
+  (:require [wh.common.data :as data]
+            [wh.components.faq :as faq]
+            [wh.components.forms :refer [fake-radio-buttons]]
+            [wh.components.package-selector :refer [package-selector]]
+            [wh.components.www-homepage :as www]
+            [wh.pricing.events] ;; required to register on-page-load
+            [wh.pricing.subs :as subs]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
+            [wh.util :as util]
+            [wh.verticals :as verticals]))
 
 (defn demo-button []
   (fn [secondary? label package _billing-period]

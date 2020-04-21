@@ -1,13 +1,12 @@
 (ns wh.company.listing.subs
-  (:require
-    [re-frame.core :refer [reg-sub reg-sub-raw]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.company.listing.db :as listing]
-    [wh.components.pagination :as pagination]
-    [wh.util :as util]
-    [clojure.string :as str])
-  (#?(:clj :require :cljs :require-macros)
-    [wh.re-frame.subs :refer [reaction]]))
+  (:require [re-frame.core :refer [reg-sub reg-sub-raw]]
+            [wh.re-frame.subs :refer [<sub reaction]]
+            [wh.company.listing.db :as listing]
+            [wh.components.pagination :as pagination]
+            [wh.util :as util]
+            [clojure.string :as str]
+            #?(:clj [wh.re-frame.subs :refer [reaction]]))
+  #?(:cljs (:require-macros [reagent.ratom :refer [reaction]])))
 
 (reg-sub ::db (fn [db _] db))
 

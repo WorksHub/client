@@ -6,7 +6,7 @@
 (defn scroll-to-top
   ([]
    (force-scroll-to-top!))
-  ([_ &]
+  ([_ & rest]
    (scroll-to-top)))
 
 (defn scroll-into-view-effect

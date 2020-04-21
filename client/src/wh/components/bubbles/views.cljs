@@ -1,11 +1,11 @@
 (ns wh.components.bubbles.views
-  (:require [cljsjs.react-draggable]
+  (:require ["react-draggable" :as r-draggable]
+            ["physicsjs" :as physics]
             [clojure.set :refer [difference]]
             [clojure.string :as string]
-            [physicsjs :as physics]
             [reagent.core :as reagent]))
 
-(def draggable (reagent/adapt-react-class js/ReactDraggable))
+(def draggable (reagent/adapt-react-class r-draggable))
 
 ;; We need to know the bubble radii in cljs, to be able to pass them to
 ;; the physics engine. But at the same time we also need them in SASS,

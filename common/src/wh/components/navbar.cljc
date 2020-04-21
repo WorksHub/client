@@ -1,20 +1,18 @@
 (ns wh.components.navbar
-  (:require
-    #?(:cljs [re-frame.core :refer [dispatch dispatch-sync]])
-    #?(:cljs [wh.pages.core :as pages])
-    [clojure.string :as str]
-    [wh.common.data :as data]
-    [wh.common.data.company-profile :as company-data]
-    [wh.common.url :as url]
-    [wh.components.common :refer [link]]
-    [wh.components.icons :refer [icon]]
-    [wh.interop :as interop]
-    [wh.re-frame :as r]
-    [wh.re-frame.events :refer [dispatch]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.util :as util]
-    [wh.verticals :as verticals]))
+  (:require #?(:cljs [wh.pages.core :as pages])
+            [wh.re-frame.events :refer [dispatch]]
+            [clojure.string :as str]
+            [wh.common.data :as data]
+            [wh.common.data.company-profile :as company-data]
+            [wh.common.url :as url]
+            [wh.components.common :refer [link]]
+            [wh.components.icons :refer [icon]]
+            [wh.interop :as interop]
+            [wh.re-frame :as r]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
+            [wh.util :as util]
+            [wh.verticals :as verticals]))
 
 (def logged-out-menu-id             "logged-out-menu")
 (def candidates-overlay-menu-id     "candidates-overlay-menu")

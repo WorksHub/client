@@ -159,6 +159,7 @@
                          (= (:wh.db/page db) :stackoverflow-callback)
                          (and (zero? (:wh.db/page-moves db))
                               (:wh.db/server-side-rendered? db)))]
+
     (when (and (not skip-loader?) (not (loader/loaded? module)))
       (dispatch [::set-loader]))
     ;; If we don't wrap the loader/load call in setTimeout and happen to

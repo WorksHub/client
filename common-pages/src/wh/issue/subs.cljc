@@ -1,13 +1,12 @@
 (ns wh.issue.subs
-  (:require
-    [re-frame.core :refer [reg-sub reg-sub-raw subscribe]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.db :as db]
-    [wh.issue.db :as issue]
-    #?(:clj [clojure.core.strint :refer [<<]]))
-  (#?(:clj :require :cljs :require-macros)
-    [wh.re-frame.subs :refer [reaction]]
-    [clojure.core.strint :refer [<<]]))
+  (:require [re-frame.core :refer [reg-sub reg-sub-raw subscribe]]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.db :as db]
+            [wh.issue.db :as issue]
+            #?(:clj [wh.re-frame.subs :refer [reaction]])
+            #?(:clj [clojure.core.strint :refer [<<]]))
+  #?(:cljs (:require-macros [clojure.core.strint :refer [<<]]
+                            [reagent.ratom :refer [reaction]])))
 
 (reg-sub ::sub-db (fn [db _] (::issue/sub-db db)))
 

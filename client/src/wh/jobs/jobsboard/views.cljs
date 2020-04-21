@@ -1,24 +1,20 @@
 (ns wh.jobs.jobsboard.views
-  (:require
-    [rcslider :as slider]
-    [re-frame.core :refer [dispatch]]
-    [reagent.core :as r]
-    [wh.common.emoji :as emoji]
-    [wh.components.forms.views :refer [labelled-checkbox multiple-checkboxes select-field text-input text-field radio-buttons]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.job :refer [job-card]]
-    [wh.components.pagination :as pagination]
-    [wh.jobs.jobsboard.events :as events]
-    [wh.jobs.jobsboard.subs :as subs]
-    [wh.jobsboard-ssr.db :as jobsboard-ssr]
-    [wh.subs :refer [<sub]]
-    [wh.util :as util])
+  (:require ["rc-slider" :as slider]
+            [re-frame.core :refer [dispatch]]
+            [reagent.core :as r]
+            [wh.common.emoji :as emoji]
+            [wh.components.forms.views :refer [labelled-checkbox multiple-checkboxes select-field text-input text-field radio-buttons]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.job :refer [job-card]]
+            [wh.components.pagination :as pagination]
+            [wh.jobs.jobsboard.events :as events]
+            [wh.jobs.jobsboard.subs :as subs]
+            [wh.jobsboard-ssr.db :as jobsboard-ssr]
+            [wh.subs :refer [<sub]]
+            [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
-(def slider-obj (aget js/window "rc-slider"))
-(def slider (r/adapt-react-class slider-obj))
-(def create-slider-with-tooltip (aget slider-obj "createSliderWithTooltip"))
-(def slider-range (r/adapt-react-class (create-slider-with-tooltip (aget slider-obj "Range"))))
+(def slider-range (r/adapt-react-class (slider/createSliderWithTooltip slider/Range)))
 
 (defn city-list [cities]
   (doall
@@ -119,7 +115,8 @@
                     :year 1000
                     1)
        :on-change #(dispatch [:wh.search/set-salary-range (js->clj %)])}])
-   (<sub [:wh.search/salary-range-desc])
+   [:span.search__salary__range
+    (<sub [:wh.search/salary-range-desc])]
    [:span.wh-form
     [select-field (<sub [:wh.search/currency])
      {:options   (<sub [:wh.search/currencies])

@@ -1,13 +1,11 @@
 (ns wh.admin.tags.subs
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [reg-sub reg-sub-raw]]
-    [wh.admin.tags.db :as tags]
-    [wh.common.specs.tags :as tag-spec]
-    [wh.common.text :as text]
-    [wh.re-frame.subs :refer [<sub]])
-  (:require-macros
-    [wh.re-frame.subs :refer [reaction]]))
+  (:require [clojure.string :as str]
+            [re-frame.core :refer [reg-sub reg-sub-raw]]
+            [wh.admin.tags.db :as tags]
+            [wh.common.specs.tags :as tag-spec]
+            [wh.common.text :as text]
+            [wh.re-frame.subs :refer [<sub]])
+  (:require-macros [reagent.ratom :refer [reaction]]))
 
 (reg-sub ::sub-db (fn [db _] (::tags/sub-db db)))
 

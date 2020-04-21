@@ -1,11 +1,11 @@
 (ns wh.company.components.forms.views
-  (:require [cljsjs.prop-types]
-            [cljsjs.react-quill]
+  (:require [prop-types]
+            ["react-quill" :as ReactQuill]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
             [wh.components.forms.views :refer [field-container text-field-error]]))
 
-(def quill (reagent/adapt-react-class js/ReactQuill))
+(def quill (reagent/adapt-react-class ReactQuill))
 
 (defn rich-text-field
   "Like text-field, but renders a React Quill text area."
