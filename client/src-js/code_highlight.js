@@ -38,12 +38,12 @@ function highlightCodeSnippets() {
   }
 
   function getLanguagesUsedInSnippets() {
-    const languages = [...document.querySelectorAll("code")]
+    const languages = Array.from(document.querySelectorAll("code"))
       .map(elm => elm.classList.value)
       .filter(elm => elm !== "")
       .map(elm => elm.split(" ")[0]);
 
-    return [...new Set(languages)];
+    return Array.from(new Set(languages));
   }
 
   loadScript(HIGHTLIGHTJS, () => {
