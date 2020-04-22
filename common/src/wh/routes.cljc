@@ -170,7 +170,8 @@
                          "workable-callback"   :oauth-workable-callback
                          "slack"               :oauth-slack
                          "slack-callback"      :oauth-slack-callback
-                         "process"             :oauth-process}]
+                         "process"             :oauth-process
+                         "twitter"             :oauth-twitter}]
               ["documents/" {[:access-id "/" :doc-type] :document-access}]
               ["api/" [["graphql" :graphql]
                        ["graphql-schema" :graphql-schema]
