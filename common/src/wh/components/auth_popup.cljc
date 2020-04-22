@@ -1,5 +1,6 @@
 (ns wh.components.auth-popup
-  (:require [wh.components.common :refer [link]]
+  (:require [wh.components.button-auth :as button-auth]
+            [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon]]
             [wh.interop :as interop]
             [wh.util :as util]))
@@ -47,6 +48,12 @@
    {:id (build-sub-id "contribute")}
    [:h1 "Login or register to start contributing with an article!"]])
 
+(def button-params {:on-click (interop/hide-auth-popup)})
+(def email-signup-params (-> {:text "Signup with Email"}
+                             (merge button-params)))
+(def email-signin-params (-> {:inverted? true}
+                             (merge button-params)))
+
 (defn popup [platform-name]
   [:div
    {:id auth-popup-id
@@ -66,36 +73,7 @@
     [:div
      [:p "Engineers who find a new job through " platform-name  " average a 15% increase in salary \uD83D\uDE80 "]]
     [:div.overlay__buttons
-     ;; Login with GitHub
-     [link [:button.button.button--large.button--github
-            {:id "auth-popup__github"}
-            [icon "github" :class "button__icon"] "Login with GitHub"]
-      :login :step :github
-      :on-click (interop/do
-                  #_(interop/analytics-track)
-                  (interop/hide-auth-popup))]
-
-     [link [:button.button.button--large.button--stackoverflow
-            {:id "auth-popup__stackoverflow"}
-            [icon "stackoverflow-with-colors" :class "button__icon"] "Login with StackOverflow"]
-      :login :step :stackoverflow
-      :on-click (interop/do
-                  (interop/hide-auth-popup))]
-     
-     ;; Create Account
-     [link [:button.button.button--large
-            {:id "auth-popup__create-account"}
-            [icon "profile" :class "button__icon"] "Create Account"]
-      :get-started
-      :on-click (interop/do
-                  #_(interop/analytics-track)
-                  (interop/hide-auth-popup))]
-
-     ;; Login with Email
-     [link [:button.button.button--large.button--light
-            {:id "auth-popup__magic-link"}
-            [icon "magic-link" :class "button__icon button__icon--light"] "Login with Email"]
-      :login :step :email
-      :on-click (interop/do
-                  #_(interop/analytics-track)
-                  (interop/hide-auth-popup))]]]])
+     [button-auth/button :github button-params]
+     [button-auth/button :stackoverflow button-params]
+     [button-auth/button :email-signup email-signup-params]
+     [button-auth/button :email-signin email-signin-params]]]])

@@ -103,7 +103,7 @@
     [:div.container.login-buttons
      [:div.container
       [:button.button.button--large.button--light {:on-click #(dispatch [::events/go-to-magic-form])}
-       [icon "magic-link" :class "button__icon button__icon--light"]
+       [icon "mail" :class "button__icon button__icon--light"]
        "Login"]]
      [:div.container
       [:h3 "If you do not have account, please contact your company manager"

@@ -193,7 +193,7 @@
                "how-it-works__stats"
                (str "how-it-works__stats--" (name selected-site)))}
      [:div.how-it-works__stats__inner
-      [get-started-link github? {:class "is-hidden-desktop"}]
+      [get-started-link github? {:class "is-hidden-desktop how-it-works__github-button"}]
       [:div.how-it-works__stats__balls.is-hidden-mobile
        [:div.how-it-works__stats__balls-container
         (stats-ball blue :blue)
@@ -210,7 +210,7 @@
        (for [i info]
          ^{:key i}
          [:p i])
-       [get-started-link github? {:class "is-hidden-mobile" :label "Get Started for Free"}]]]]))
+       [get-started-link github? {:class "is-hidden-mobile how-it-works__github-button" :label "Get Started for Free"}]]]]))
 
 (defn faq
   [selected-site github?]

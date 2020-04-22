@@ -1,19 +1,10 @@
 (ns wh.components.pods.candidates
   (:require
+    [wh.components.button-auth :as button-auth]
     [wh.components.common :refer [link]]
+    [wh.components.icons :refer [icon]]
     [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
     [wh.util :as util]))
-
-(defn oauth-github-button []
-  [:a.button.button--public.button--github.button--github-integration.cta-pod__button
-   {:href (routes/path :login :params {:step :github})}
-   [:span "Get Started with"] [:div]])
-
-(defn oauth-stackoverflow-button []
-  [:a.button.button--public.button--stackoverflow.button--stackoverflow-integration.cta-pod__button
-   {:href (routes/path :login :params {:step :github})}
-   [:span "Get Started with"] [:div]])
 
 (defn candidate-cta
   [& [cls]]
@@ -29,6 +20,6 @@
                          :alt ""}]
      [:p.cta-pod__description "Engineers who find a new job through " (<sub [:wh/platform-name])
                                          " average a " [:i "15%"]  " increase in salary."]
-     [oauth-github-button]
-     [oauth-stackoverflow-button]
-     [link [:button.button.is-full-width.cta-pod__button "Get Started"] :register :step :email]]))
+     [button-auth/button :github {:class "cta-pod__auth-button"}]
+     [button-auth/button :stackoverflow {:class "cta-pod__auth-button"}]
+     [button-auth/button :email-signup {:class "cta-pod__auth-button"}]]))

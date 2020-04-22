@@ -1,6 +1,7 @@
 (ns wh.login.views
   (:require [re-frame.core :refer [dispatch dispatch-sync]]
             [wh.common.re-frame-helpers :refer [dispatch-on-enter]]
+            [wh.components.button-auth :as button-auth]
             [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon]]
             [wh.login.events :as events]
@@ -55,17 +56,11 @@
          on-magic  [::events/show-magic-form]}}]
   [:div.container.login-buttons
    [:div.container
-    [:button.button.button--large.button--github {:on-click #(dispatch on-github)}
-     [icon "github" :class "button__icon"]
-     "Login with github"]]
+    [button-auth/button :github {:text "Login with Github" :id "auth-github"}]]
    [:div.container
-    [:button.button.button--large.button--stackoverflow {:on-click #(dispatch on-stackoverflow)}
-     [icon "stackoverflow-with-colors" :class "button__icon"]
-     "Login with StackOverflow"]]
+    [button-auth/button :stackoverflow {:text "Login with Stack Overflow"}]]
    [:div.container
-    [link [:button.button.button--large.button--light
-           [icon "magic-link" :class "button__icon button__icon--light"]
-           "Login with email"] :login :step :email]]
+    [button-auth/button :email-signin {:text "Login with Email" :id "auth-email-signin"}]]
    [:div.container
     [link "Create Account" :get-started :class "a--underlined"]]
    [:img.sparkle {:src "/images/sparkle.svg"

@@ -4,18 +4,17 @@
   (:require
     #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     [wh.common.data :as data]
+    [wh.components.button-auth :as button-auth]
     [wh.components.cards :refer [blog-card]]
     [wh.components.carousel :refer [carousel]]
     [wh.components.job :refer [job-card]]
     [wh.components.common :refer [companies-section link wrap-img img]]
+    [wh.components.icons :refer [icon]]
     [wh.components.www-homepage :as www :refer [animated-hr]]
     [wh.how-it-works.views :as hiw]
-    [wh.interop :as interop]
     [wh.landing.subs :as subs]
     [wh.re-frame.events :refer [dispatch]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.util :as util]))
+    [wh.re-frame.subs :refer [<sub]]))
 
 (def issues-benefits
   [{:img "/images/hiw/candidate/benefits/benefit1.svg"
@@ -39,14 +38,16 @@
     :txt "With our Open Source issues, you can get paid, learn new languages and get noticed by employers. We’re leveraging the power of open source to help you further your career."}])
 
 (defn oauth-github-button []
-  [:a.button.button--public.button--github.button--github-integration
-   {:href (routes/path :login :params {:step :github})}
-   [:span "Get Started with"] [:div]])
+  [button-auth/button :github {:class "landing__button-auth"}])
 
 (defn oauth-stackoverflow-button []
-  [:a.button.button--public.button--stackoverflow.button--stackoverflow-integration
-   {:href (routes/path :login :params {:step :stackoverflow})}
-   [:span "Get Started with"]])
+  [button-auth/button :stackoverflow {:class "landing__button-auth"}])
+
+(defn oauth-email
+  ([]
+   [oauth-email nil])
+  ([{id :id}]
+   [button-auth/button :email-signup {:class "landing__button-auth" :id id}]))
 
 (defn header []
   (let [{:keys [discover]} (get data/in-demand-hiring-data (<sub [:wh/vertical]))]
@@ -58,12 +59,10 @@
      [:div.homepage__header__copy
       [:h1 discover]
       [:p "We match your skills to great jobs using languages you love."]
-      [:div.landing__header__buttons
+      [:div.landing__auth-buttons
        [oauth-github-button]
        [oauth-stackoverflow-button]
-       (link [:button.button
-              {:id "www-landing__hero"}
-              "Get Started"] :get-started)]]]))
+       [oauth-email {:id "auth-email-signup"}]]]]))
 
 (defn bottom []
   (let [{:keys [title href]} (get data/in-demand-hiring-data (<sub [:wh/vertical]))]
@@ -129,9 +128,7 @@
      (hiw/benefits-list how-we-are-different-items {:class "homepage__benefits-list homepage__how-we-are-different"})
      [:div.homepage__feature-ctas
       [oauth-github-button]
-      (link [:button.button
-             {:id "www-landing__hero"}
-             "Get Started"] :get-started)]]]
+      [oauth-email]]]]
    [bottom]])
 
 (defn page []

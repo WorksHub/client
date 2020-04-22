@@ -4,7 +4,8 @@
     #?(:cljs [wh.events])
     #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     #?(:cljs [wh.subs :as subs :refer [<sub]])
-    #?(:clj [wh.config :as config])))
+    #?(:clj [wh.config :as config])
+    [wh.components.icons :refer [icon]]))
 
 (defn app-name []
   #?(:clj (config/get-in [:github :app :name]))
@@ -23,12 +24,13 @@
 
 (defn install-github-app
   [{:keys [class label id]
-    :or   {label "Integrate with"}}]
-  #?(:cljs [:a.button.button--public.button--github.button--github-integration
+    :or   {label "Integrate with Github"}}]
+  #?(:cljs [:a.button.button--public.button--github
             (merge
               {:class    class
                :href     (install-gh-app-url)
                :on-click #(dispatch [:company/track-install-gh-clicked])}
               (when id
                 {:id id}))
-            [:span label] [:div]]))
+            [icon "github" :class "button__icon"]
+            [:span label]]))

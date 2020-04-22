@@ -159,25 +159,6 @@ $button-font-size: 11px
     color: $greyish !important
     cursor: pointer !important
 
-.button--github-integration
-  text-align: left
-  min-width: 210px
-  height: 40px
-  padding: 0 !important
-  display: flex !important
-  justify-content: flex-start
-  span
-    padding-top: 1px
-    padding-left: 36px
-  div
-    margin-left: 6px
-    height: 40px
-    width: 66px
-    background-repeat: no-repeat
-    background-position: 0px 10px
-    background-size: 66px 18px
-    background-image: url("/images/company/github-logo.svg")
-
 .button--stackoverflow
   background-color: $wh-white !important
   color: $wh-black !important
@@ -190,25 +171,6 @@ $button-font-size: 11px
 .button--connect
   height: auto
   padding: 6px 12px
-
-.button--stackoverflow-integration
-  text-align: left
-  min-width: 210px
-  height: 40px
-  padding: 0 !important
-  display: flex !important
-  justify-content: flex-start
-  &::after
-    content: ""
-    height: 40px
-    width: 100px
-    background-repeat: no-repeat
-    background-position: center
-    background-size: 91px 39px
-    background-image: url("/images/company/stackoverflow-logo.svg")
-  span
-    padding-top: 1px
-    padding-left: 36px
 
 .remove-text-field-btn
   fill: white
@@ -233,3 +195,7 @@ $button-font-size: 11px
   overflow-x: hidden
   text-overflow: ellipsis
   white-space: nowrap
+
+.button--auth
+  .button__icon
+    margin-bottom: 0
