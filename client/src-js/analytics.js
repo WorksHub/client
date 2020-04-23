@@ -93,18 +93,13 @@ function addSourcing(obj, atx) {
         sourcing.referrer = atx.referrer;
     }
     if(atx.utms && atx.utms.size > 0) {
-        const utmsEntries = Array.from(atx.utms.entries())
-
-        sourcing.campaign = Object.assign.apply(Object,
-                                                [{}]
-                                                .concat(utmsEntries
-                                                        .map(([k, v]) => ({[k]: v}))))
-
+        sourcing.campaign = Object.assign({},
+                                          ...[...atx.utms.entries()]
+                                          .map(([k, v]) => ({[k]: v})))
         // also add without the `utm_` part
-        sourcing.campaign = Object.assign.apply(Object,
-                                                [sourcing.campaign]
-                                                .concat(utmsEntries
-                                                        .map(([k, v]) => ({[k.replace("utm_", "")]: v}))))
+        sourcing.campaign = Object.assign(sourcing.campaign,
+                                          ...[...atx.utms.entries()]
+                                          .map(([k, v]) => ({[k.replace("utm_", "")]: v})))
     }
     if(Object.keys(sourcing).length > 0) {
         obj.sourcing = sourcing;
