@@ -120,7 +120,8 @@
                         "/"              (with-params :login :step :root)
                         "/email"         (with-params :login :step :email)
                         "/github"        (with-params :login :step :github)
-                        "/stackoverflow" (with-params :login :step :stackoverflow)}]
+                        "/stackoverflow" (with-params :login :step :stackoverflow)
+                        "/twitter"       (with-params :login :step :twitter)}]
               ["get-started" :get-started]
               ["github-callback" :github-callback]
               ["stackoverflow-callback" :stackoverflow-callback]
