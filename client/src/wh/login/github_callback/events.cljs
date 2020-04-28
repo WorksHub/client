@@ -1,6 +1,6 @@
 (ns wh.login.github-callback.events
   (:require
-    [re-frame.core :refer [reg-event-fx inject-cofx]]
+    [re-frame.core :refer [reg-event-fx reg-event-db inject-cofx]]
     [wh.common.fx.persistent-state]
     [wh.db :as db]
     [wh.login.db :as login]
@@ -40,10 +40,12 @@
   ::gh-auth-success
   db/default-interceptors
   (fn [{db :db} [{{{:keys [email new] :as user} :githubUserSession} :data}]]
-    (let [db (update db ::user/sub-db #(merge % (-> user
-                                                    initialize-associated-jobs
-                                                    util/remove-nils
-                                                    user/translate-user)))
+    (let [db (-> db
+                 (update ::user/sub-db merge (-> user
+                                                 initialize-associated-jobs
+                                                 util/remove-nils
+                                                 user/translate-user))
+                 (assoc-in [::github-callback/sub-db :callback-status] :success))
           base-dispatch (cond-> [[::pages/unset-loader]]
                                 new (conj [:register/track-account-created {:source :github :email email}])
                                 (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
@@ -57,7 +59,8 @@
   (fn [{db :db} [_]]
     {:dispatch [::pages/unset-loader]
      :db       (-> db
-                   (assoc-in [::github-callback/sub-db ::github-callback/github-error?] true)
+                   (assoc-in [::github-callback/sub-db :error?] true)
+                   (assoc-in [::github-callback/sub-db :callback-status] :fail)
                    (assoc ::db/page :github-callback))}))
 
 (defquery github-auth-mutation
@@ -69,6 +72,7 @@
                       [:id :name :visaStatus :visaStatusOther [:approval [:status]] :type :email :new :githubId
                        :consented
                        [:githubInfo [:name [:skills [:name]]]]
+                       [:twitterInfo [:id]]
                        [:cv [:link
                              [:file [:type :name :url]]]]
                        [:salary [:min :currency]]
@@ -90,13 +94,22 @@
                (:db cofx)
                (merge (select-keys (:db cofx) [::db/page-mapping])
                       (:persistent-state cofx)))]
-      {:db            db
-       :graphql       {:query      github-auth-mutation
-                       :variables  {:githubCode code}
-                       :on-success [::gh-auth-success]
-                       :on-failure [::gh-auth-fail]}
-       :persist-state {}})))
+      (if (= (get-in db [::github-callback/sub-db :callback-status]) :sent)
+        {:db db}
+        {:db            (assoc-in db [::github-callback/sub-db :callback-status] :sent)
+         :graphql       {:query      github-auth-mutation
+                         :variables  {:githubCode code}
+                         :on-success [::gh-auth-success]
+                         :on-failure [::gh-auth-fail]}
+         :persist-state {}}))))
+
+(reg-event-db
+  ::init-db
+  db/default-interceptors
+  (fn [db _]
+    (update db ::github-callback/sub-db merge github-callback/default-db)))
 
 (defmethod on-page-load :github-callback [db]
   (let [qp (::db/query-params db)]
-    [[::github-callback (qp "code")]]))
+    [[::init-db]
+     [::github-callback (qp "code")]]))

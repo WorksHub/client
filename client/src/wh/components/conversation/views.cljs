@@ -35,5 +35,6 @@
      (into
       [:button.conversation-button
        (merge options
-              {:on-click (when on-click-event #(dispatch on-click-event))})]
+              (when on-click-event
+                {:on-click #(dispatch on-click-event)}))]
       caption-v))])

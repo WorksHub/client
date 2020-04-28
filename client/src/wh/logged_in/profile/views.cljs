@@ -52,11 +52,12 @@
                              :target "_blank"
                              :rel "noopener"} display]])))))
 
-(defn connect-buttons [{:keys [stackoverflow-info github-id]}]
+(defn connect-buttons [{:keys [stackoverflow-info github-id twitter-info]}]
   (when (or (not stackoverflow-info)
             (not github-id))
     (let [on-github [:github/call {:type :login-page}]
           on-stackoverflow [:stackoverflow/call {:type :login-page}]]
+      ;; TODO: CH4166: refactor to links?
       [:div
        (when-not stackoverflow-info
          [:button.button.button--stackoverflow.button--connect {:on-click #(dispatch on-stackoverflow)}

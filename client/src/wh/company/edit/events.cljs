@@ -621,7 +621,7 @@
        :graphql {:query payment-events/coupon-check-query
                  :variables {:code coupon-code}
                  :on-success [::check-coupon-success]
-                 :on-failure [::check-coupon-failure {:code coupon-code :message "Code not valid!"} ]}})))
+                 :on-failure [::check-coupon-failure {:code coupon-code :message "Code not valid!"}]}})))
 
 (reg-event-fx
   ::check-coupon-success

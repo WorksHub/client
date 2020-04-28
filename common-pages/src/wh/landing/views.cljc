@@ -43,6 +43,9 @@
 (defn oauth-stackoverflow-button []
   [button-auth/button :stackoverflow {:class "landing__button-auth"}])
 
+(defn oauth-twitter-button []
+  [button-auth/button :twitter {:class "landing__button-auth"}])
+
 (defn oauth-email
   ([]
    [oauth-email nil])
@@ -62,6 +65,7 @@
       [:div.landing__auth-buttons
        [oauth-github-button]
        [oauth-stackoverflow-button]
+       #_[oauth-twitter-button]
        [oauth-email {:id "auth-email-signup"}]]]]))
 
 (defn bottom []

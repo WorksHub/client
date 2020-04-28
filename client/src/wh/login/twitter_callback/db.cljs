@@ -1,4 +1,4 @@
-(ns wh.login.stackoverflow-callback.db
+(ns wh.login.twitter-callback.db
   (:require [cljs.spec.alpha :as s]))
 
 (s/def ::error? boolean?)

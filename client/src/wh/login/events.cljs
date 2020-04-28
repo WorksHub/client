@@ -125,6 +125,24 @@
                             true (dissoc ::db/page-mapping))}))
 
 (reg-event-fx
+  ::go-twitter
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:set-url (routes/path :oauth-twitter)}))
+
+(reg-event-fx
+  :twitter/call
+  db/default-interceptors
+  (fn [{db :db} [track-context]]
+    {:dispatch-n [[::pages/set-loader]
+                  [::go-twitter]]
+     :persist-state (cond-> db
+                            track-context (assoc :register/track-context track-context)
+                            true (assoc ::db/loading? true
+                                        :google/maps-loaded? false) ; reload google maps when we return here
+                            true (dissoc ::db/page-mapping))}))
+
+(reg-event-fx
   ::login-as-success
   db/default-interceptors
   (fn [{db :db} [response]]
@@ -164,6 +182,13 @@
               (not-empty query-params)
               (concat [:query-params query-params])))))
 
+(reg-event-fx
+  ::redirect-to-twitter-callback
+  db/default-interceptors
+  (fn [{db :db}]
+    {:navigate   [:twitter-callback
+                  :query-params (::db/query-params db)]}))
+
 (defmethod on-page-load :login
   [db]
   (list
@@ -177,4 +202,6 @@
     (when (= :github (get-in db [::db/page-params :step]))
       [:github/call {:type :login-page}])
     (when (= :stackoverflow (get-in db [::db/page-params :step]))
-      [:stackoverflow/call {:type :login-page}])))
+      [:stackoverflow/call {:type :login-page}])
+    (when (= :twitter (get-in db [::db/page-params :step]))
+      [:twitter/call {:type :login-page}])))

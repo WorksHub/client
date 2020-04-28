@@ -50,10 +50,7 @@
        "Send Login Link"]]]))
 
 (defn login-buttons
-  [{:keys [on-github on-stackoverflow on-magic]
-    :or {on-github [:github/call {:type :login-page}]
-         on-stackoverflow [:stackoverflow/call {:type :login-page}]
-         on-magic  [::events/show-magic-form]}}]
+  []
   [:div.container.login-buttons
    [:div.container
     [button-auth/button :github {:text "Login with Github" :id "auth-github"}]]

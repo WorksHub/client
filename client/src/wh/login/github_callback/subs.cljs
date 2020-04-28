@@ -6,4 +6,4 @@
 (reg-sub
   ::github-error?
   (fn [db _]
-    (get-in db [::github-callback/sub-db ::github-callback/github-error?])))
+    (get-in db [::github-callback/sub-db :error?])))

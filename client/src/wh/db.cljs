@@ -38,6 +38,7 @@
                 :get-started
                 :github-callback
                 :stackoverflow-callback
+                :twitter-callback
                 :homepage
                 :homepage-company-dashboard
                 :homepage-dashboard

@@ -11,7 +11,18 @@
     [wh.common.text :as text]))
 
 (def company-landing-page "https://www.works-hub.com")
-(def pages-with-loader #{:homepage :learn :blog :github-callback :stackoverflow-callback :liked :recommended :profile :pre-set-search :jobsboard :contribute-edit})
+(def pages-with-loader #{:homepage
+                         :learn
+                         :blog
+                         :github-callback
+                         :stackoverflow-callback
+                         :twitter-callback
+                         :liked
+                         :recommended
+                         :profile
+                         :pre-set-search
+                         :jobsboard
+                         :contribute-edit})
 (def no-menu-pages #{:register :register-company :payment-setup :get-started})
 (def no-footer-pages (set (concat no-menu-pages #{:blog})))
 
@@ -125,6 +136,7 @@
               ["get-started" :get-started]
               ["github-callback" :github-callback]
               ["stackoverflow-callback" :stackoverflow-callback]
+              ["twitter-callback" :twitter-callback]
 
               ;;Private pages - app.js required
               ["admin/" {"companies" :admin-companies}]

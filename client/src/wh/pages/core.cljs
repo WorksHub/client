@@ -157,6 +157,7 @@
         skip-loader? (or (= (first event) :github/call) ;; this is to avoid loader flickering when logging in via GitHub
                          (= (:wh.db/page db) :github-callback) ;; hacky, but we're not in an event
                          (= (:wh.db/page db) :stackoverflow-callback)
+                         (= (:wh.db/page db) :twitter-callback)
                          (and (zero? (:wh.db/page-moves db))
                               (:wh.db/server-side-rendered? db)))]
 

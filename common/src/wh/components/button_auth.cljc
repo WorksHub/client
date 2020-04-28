@@ -15,24 +15,31 @@
 (def type->icon
   {:github "github"
    :stackoverflow "stackoverflow-with-colors"
+   :twitter "twitter"
    :email-signin "mail"
    :email-signup "mail"})
 
 (def type->href
   {:github (routes/path :login :params {:step :github})
    :stackoverflow (routes/path :login :params {:step :stackoverflow})
+   :twitter (routes/path :login :params {:step :stackoverflow})
    :email-signin (routes/path :login :params {:step :email})
    :email-signup (routes/path :get-started)})
 
 (def type->class
   {:github "button--github"
    :stackoverflow "button--stackoverflow"
+   :twitter "button--twitter"
    :email-signin nil
    :email-signup nil})
+
+(def type->class-icon
+  {:twitter "button__icon--twitter"})
 
 (def type->default-text
   {:github "Start with Github"
    :stackoverflow "Start with Stack Overflow"
+   :twitter "Start with Twitter"
    :email-signin "Login with Email"
    :email-signup "Start with Email"})
 
@@ -48,11 +55,14 @@
                  (type->class type)
                  (when inverted? "button--inverted")
                  class)
+         class-icon (util/merge-classes
+                      "button__icon"
+                      (type->class-icon type))
          icon-name (type->icon type)]
      [:a
       (-> {:href href
            :class class}
           (add-onclick on-click)
           (add-id id))
-      [icon icon-name :class "button__icon"]
+      [icon icon-name :class class-icon]
       text])))

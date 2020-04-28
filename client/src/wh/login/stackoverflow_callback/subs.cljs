@@ -6,5 +6,4 @@
 (reg-sub
   ::error?
   (fn [db _]
-    (get-in db [::stackoverflow-callback/sub-db
-                ::stackoverflow-callback/error?])))
+    (get-in db [::stackoverflow-callback/sub-db :error?])))

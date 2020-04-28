@@ -1,10 +1,10 @@
-(ns wh.login.stackoverflow-callback.events
+(ns wh.login.twitter-callback.events
   (:require
-    [re-frame.core :refer [reg-event-fx reg-event-db inject-cofx]]
+    [re-frame.core :refer [reg-event-fx inject-cofx reg-event-db]]
     [wh.common.fx.persistent-state]
     [wh.db :as db]
     [wh.login.db :as login]
-    [wh.login.stackoverflow-callback.db :as stackoverflow-callback]
+    [wh.login.twitter-callback.db :as twitter-callback]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
     [wh.util :as util])
@@ -16,7 +16,6 @@
    :analytics/identify db
    :dispatch-n (into base-dispatch (login/redirect-post-login-or-registration db))})
 
-;; TODO: do we have function for this?
 (defn- initialize-associated-jobs
   [{:keys [likes applied] :as user}]
   (-> user
@@ -44,9 +43,9 @@
   (fn [{db :db} [_]]
     {:dispatch [::pages/unset-loader]
      :db       (-> db
-                   (assoc-in [::stackoverflow-callback/sub-db :error?] true)
-                   (assoc-in [::stackoverflow-callback/sub-db :callback-status] :fail)
-                   (assoc ::db/page :stackoverflow-callback))}))
+                   (assoc-in [::twitter-callback/sub-db :error?] true)
+                   (assoc-in [::twitter-callback/sub-db :callback-status] :fail)
+                   (assoc ::db/page :twitter-callback))}))
 
 ;; TODO: CH4172: kill it after after fixing user type in leona
 (defquery user-details
@@ -65,19 +64,17 @@
                        [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]]})
 
 (reg-event-fx
-  ::stackoverflow-auth-success
+  ::twitter-auth-success
   db/default-interceptors
   (fn [{db :db} [resp]]
-    (let [resp-data (get-in resp [:data :stackoverflow_auth])
-          user (or (:user_info_stackoverflow resp-data)
-                   (:user resp-data))
-          account-id (get-in user [:stackoverflow_info :account_id])
+    (let [user (get-in resp [:data :twitter_auth :user])
+          account-id (get-in user [:twitter_info :id])
           new (:new user)
           db (-> db
                  (update ::user/sub-db merge (prepare-user user))
-                 (assoc-in [::stackoverflow-callback/sub-db :callback-status] :success))
-          base-dispatch (cond-> [[::pages/unset-loader]]
-                                new (conj [:register/track-account-created {:source :stackoverflow :id account-id}])
+                 (assoc-in [::twitter-callback/sub-db :callback-status] :success))
+          base-dispatch (cond-> []
+                                new (conj [:register/track-account-created {:source :twitter :id account-id}])
                                 (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
       (if (:new user)
         {:db db
@@ -88,46 +85,51 @@
                    :on-success [::user-details-success]
                    :on-failure [::request-fail]}}))))
 
-(defquery stackoverflow-auth-mutation
+(defquery twitter-auth-mutation
   {:venia/operation {:operation/type :mutation
-                     :operation/name "stackoverflow_auth"}
-   :venia/variables [{:variable/name "stackoverflowCode"
+                     :operation/name "twitter_auth"}
+   :venia/variables [{:variable/name "token"
+                      :variable/type :String!}
+                     {:variable/name "verifier"
                       :variable/type :String!}]
-   :venia/queries   [[:stackoverflow_auth {:stackoverflow_code :$stackoverflowCode}
-                      [[:user_info_stackoverflow
-                        [:name
+   :venia/queries   [[:twitter_auth {:token :$token
+                                     :verifier :$verifier}
+                      [[:user
+                        [:id
+                         :name
                          :new
-                         [:stackoverflow_info
-                          [:access_token
-                           :account_id
-                           :tags]]]]
-                       [:user
-                        [:id]]]]]})
+                         :email
+                         [:twitter_info
+                          [:id]]]]]]]})
 
 (reg-event-fx
-  ::stackoverflow-callback
+  ::twitter-callback
   [(inject-cofx :persistent-state)]
-  (fn [cofx [_ code]]
+  (fn [cofx [_ [token verifier]]]
     (let [db (if (empty? (:persistent-state cofx))
                (:db cofx)
                (merge (select-keys (:db cofx) [::db/page-mapping])
                       (:persistent-state cofx)))]
-      (if (= (get-in db [::stackoverflow-callback/sub-db :callback-status]) :sent)
+      (if (= (get-in db [::twitter-callback/sub-db :callback-status]) :sent)
         {:db db}
-        {:db            (assoc-in db [::stackoverflow-callback/sub-db :callback-status] :sent)
-         :graphql       {:query      stackoverflow-auth-mutation
-                         :variables  {:stackoverflowCode code}
-                         :on-success [::stackoverflow-auth-success]
+        {:db            (assoc-in db [::twitter-callback/sub-db :callback-status] :sent)
+         :graphql       {:query      twitter-auth-mutation
+                         :variables  {:token    token
+                                      :verifier verifier}
+                         :on-success [::twitter-auth-success]
                          :on-failure [::request-fail]}
+         :dispatch      [::pages/set-loader]
          :persist-state {}}))))
 
 (reg-event-db
   ::init-db
   db/default-interceptors
   (fn [db _]
-    (update db ::stackoverflow-callback/sub-db merge stackoverflow-callback/default-db)))
+    (update db ::twitter-callback/sub-db merge twitter-callback/default-db)))
 
-(defmethod on-page-load :stackoverflow-callback [db]
+(defmethod on-page-load :twitter-callback [db]
   (let [qp (::db/query-params db)]
     [[::init-db]
-     [::stackoverflow-callback (qp "code")]]))
+     [::twitter-callback [(qp "oauth_token")
+                          (qp "oauth_verifier")]]]))
+

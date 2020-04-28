@@ -58,7 +58,8 @@
                          [:salary [:currency :min :timePeriod]]
                          [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
                          [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
-                         [:stackoverflowInfo [:reputation]]]]
+                         [:stackoverflowInfo [:reputation]]
+                         [:twitterInfo [:id]]]]
                    [:blogs {:filter_type "mine"} [[:blogs [:id :title :published :upvoteCount]]]]]})
 
 (reg-event-fx
