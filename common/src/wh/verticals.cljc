@@ -180,4 +180,4 @@
 
 
 (defn config [vertical k]
-  (get-in vertical-config [vertical k]))
+  (get-in vertical-config [(name vertical) k]))
