@@ -429,6 +429,7 @@
              [:label
               [:input.file-input {:type      "file"
                                   :name      [:span "logo"]
+                                  :accept    "image/*"
                                   :on-change #(do
                                                 (reset! dirty true)
                                                 (on-select-file %))}]
@@ -484,6 +485,7 @@
      [:label.file-label
       [:input.file-input {:type "file"
                           :name "avatar"
+                          :accept    "image/*"
                           :on-change set-avatar}]
       [:span.file-cta.button
        [:span.file-label "Choose an avatar"]]]

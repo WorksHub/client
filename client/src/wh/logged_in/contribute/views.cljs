@@ -62,6 +62,7 @@
        [:label.file-label
         [:input.file-input {:type      "file"
                             :name      "article-image"
+                            :accept    "image/*"
                             :on-change (upload/handler
                                          :launch [::events/image-article-upload]
                                          :on-upload-start [::events/image-article-upload-start]

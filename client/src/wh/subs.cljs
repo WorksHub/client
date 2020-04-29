@@ -1,10 +1,11 @@
 (ns wh.subs
-  (:require [re-frame.core :refer [reg-sub]]
-            [re-frame.registrar :as rf-registrar]
-            [wh.common.subs] ;; required for inclusion
-            [wh.db :as db]
-            [wh.routes :as routes]
-            [wh.user.db :as user])
+  (:require
+    [re-frame.core :refer [reg-sub]]
+    [re-frame.registrar :as rf-registrar]
+    [wh.common.subs] ;; required for inclusion
+    [wh.db :as db]
+    [wh.routes :as routes]
+    [wh.user.db :as user])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 ;;; Functions useful in subscriptions
