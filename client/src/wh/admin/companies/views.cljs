@@ -25,7 +25,7 @@
        [:div.title [link name :company-dashboard :id id :class "a--hover-red"]]
        [:div.company-details
         [:span "Manager:"]  [:span (or (get-manager-name manager) [:i "Unassigned"])]
-        [:span "Vertical:"] [:span (verticals/config vertical :platform-name)]]]]
+        [:span "Vertical:"] [:span (if vertical (verticals/config vertical :platform-name) "None")]]]]
      [:div.column.is-narrow.stats
       [:div.counts
        [:div.count [icon (if skeleton? "circle" "applications")] (:applications job-stats)]
