@@ -108,7 +108,7 @@
      [:section.split-content-section.manage-issues__control-panel
       [:div.manage-issues__control-panel__cta
        [:p "Can't see all your repositories?"]
-       [github/install-github-app {:label "Add repos on"
+       [github/install-github-app {:label "Add/Remove repos"
                                    :class "button--large"}]]
       (when (false? (<sub [::subs/slack-connected?]))
         [:div.manage-issues__control-panel__cta.manage-issues__control-panel__cta--left
