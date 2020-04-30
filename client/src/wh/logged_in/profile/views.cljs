@@ -53,9 +53,17 @@
                              :target "_blank"
                              :rel "noopener"} display]])))))
 
-(defn connect-buttons [{:keys [stackoverflow-info github-id twitter-info]}]
-  (when (or (not stackoverflow-info)
-            (not github-id))
+(defn owner? [user-type] (= user-type :owner))
+(defn admin? [user-type] (= user-type :admin))
+(defn owner-or-admin? [user-type] (contains? #{:owner :admin} user-type))
+
+(defn connect-buttons
+  [user-type
+   {:keys [stackoverflow-info github-id twitter-info]}]
+  (when (and (owner? user-type)
+             (or (not stackoverflow-info)
+                 (not github-id)
+                 (not twitter-info)))
     [:div
      (when-not stackoverflow-info
        [button-auth/connect-button :stackoverflow])
@@ -68,10 +76,6 @@
   (let [summary (:summary opts)]
     (when-not (str/blank? summary)
       [:div.summary summary])))
-
-(defn owner? [user-type] (= user-type :owner))
-(defn admin? [user-type] (= user-type :admin))
-(defn owner-or-admin? [user-type] (contains? #{:owner :admin} user-type))
 
 (defn contributions [user-type opts]
   (let [contributions (:contributions opts)]
@@ -108,7 +112,7 @@
    [avatar data]
    [name-view data]
    [skills data]
-   [connect-buttons data]
+   [connect-buttons user-type data]
    [linkbox data]
    [summary data]
    [contributions user-type data]])

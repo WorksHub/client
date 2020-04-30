@@ -40,10 +40,10 @@
 (reg-event-fx
   ::request-fail
   db/default-interceptors
-  (fn [{db :db} [_]]
+  (fn [{db :db} [{:keys [errors] :as _resp}]]
     {:dispatch [::pages/unset-loader]
      :db       (-> db
-                   (assoc-in [::twitter-callback/sub-db :error?] true)
+                   (assoc-in [::twitter-callback/sub-db :error] (first errors))
                    (assoc-in [::twitter-callback/sub-db :callback-status] :fail)
                    (assoc ::db/page :twitter-callback))}))
 

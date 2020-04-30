@@ -4,6 +4,6 @@
     [wh.login.twitter-callback.db :as twitter-callback]))
 
 (reg-sub
-  ::error?
+  ::error
   (fn [db _]
-    (get-in db [::twitter-callback/sub-db :error?])))
+    (get-in db [::twitter-callback/sub-db :error])))
