@@ -74,6 +74,7 @@
      [:p "Engineers who find a new job through " platform-name  " average a 15% increase in salary \uD83D\uDE80 "]]
     [:div.overlay__buttons
      [button-auth/button :github button-params]
+     [button-auth/button :twitter button-params]
      [button-auth/button :stackoverflow button-params]
      [button-auth/button :email-signup email-signup-params]
      [button-auth/button :email-signin email-signin-params]]]])

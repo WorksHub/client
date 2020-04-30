@@ -58,6 +58,9 @@
      (<sub [::subs/stackoverflow-signup?])
      [codi-message "Thanks for connecting your " [:span.highlight "StackOverflow"] " account"]
 
+     (<sub [::subs/twitter-signup?])
+     [codi-message "Thanks for connecting your " [:span.highlight "Twitter"] " account"]
+
      :else
      [:<> [codi-message "Hi, I am Codi. Welcome to " (<sub [:wh/platform-name]) "!"]
           [codi-message "You can sign in with your " [:span.highlight "Github account"] " to get started or continue with your email address"]

@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
+            [wh.components.button-auth :as button-auth]
             [wh.common.specs.primitives :as p]
             [wh.common.text :refer [pluralize]]
             [wh.common.upload :as upload]
@@ -55,18 +56,13 @@
 (defn connect-buttons [{:keys [stackoverflow-info github-id twitter-info]}]
   (when (or (not stackoverflow-info)
             (not github-id))
-    (let [on-github [:github/call {:type :login-page}]
-          on-stackoverflow [:stackoverflow/call {:type :login-page}]]
-      ;; TODO: CH4166: refactor to links?
-      [:div
-       (when-not stackoverflow-info
-         [:button.button.button--stackoverflow.button--connect {:on-click #(dispatch on-stackoverflow)}
-          [icon "stackoverflow-with-colors" :class "button__icon"]
-          "Connect StackOverflow"])
-       (when-not github-id
-         [:button.button.button--github.button--connect {:on-click #(dispatch on-github)}
-          [icon "github" :class "button__icon"]
-          "Connect Github"])])))
+    [:div
+     (when-not stackoverflow-info
+       [button-auth/connect-button :stackoverflow])
+     (when-not github-id
+       [button-auth/connect-button :github])
+     (when-not twitter-info
+       [button-auth/connect-button :twitter])]))
 
 (defn summary [opts]
   (let [summary (:summary opts)]

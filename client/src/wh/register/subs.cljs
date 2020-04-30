@@ -239,5 +239,12 @@
 (reg-sub
   ::stackoverflow-signup?
   (fn [db _]
-    (-> (get-in db [:wh.user.db/sub-db :wh.user.db/stackoverflow-info])
-        boolean)))
+    (boolean
+      (get-in db [:wh.user.db/sub-db :wh.user.db/stackoverflow-info]))))
+
+(reg-sub
+  ::twitter-signup?
+  (fn [db _]
+    (boolean
+      (get-in db [:wh.user.db/sub-db :wh.user.db/twitter-info]))))
+

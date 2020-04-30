@@ -14,7 +14,6 @@
     [wh.logged-in.dashboard.db :as dashboard]
     [wh.logged-in.profile.db :as profile]
     [wh.logged-in.profile.location-events :as location-events]
-    [wh.login.events]
     [wh.pages.core :refer [on-page-load] :as pages]
     [wh.user.db :as user]
     [wh.util :as util])

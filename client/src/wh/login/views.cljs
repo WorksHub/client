@@ -55,6 +55,8 @@
    [:div.container
     [button-auth/button :github {:text "Login with Github" :id "auth-github"}]]
    [:div.container
+    [button-auth/button :twitter {:text "Login with Twitter"}]]
+   [:div.container
     [button-auth/button :stackoverflow {:text "Login with Stack Overflow"}]]
    [:div.container
     [button-auth/button :email-signin {:text "Login with Email" :id "auth-email-signin"}]]

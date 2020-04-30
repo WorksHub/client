@@ -22,7 +22,7 @@
 (def type->href
   {:github (routes/path :login :params {:step :github})
    :stackoverflow (routes/path :login :params {:step :stackoverflow})
-   :twitter (routes/path :login :params {:step :stackoverflow})
+   :twitter (routes/path :login :params {:step :twitter})
    :email-signin (routes/path :login :params {:step :email})
    :email-signup (routes/path :get-started)})
 
@@ -66,3 +66,24 @@
           (add-id id))
       [icon icon-name :class class-icon]
       text])))
+
+(def type->connect-text
+  {:github "Connect Github"
+   :stackoverflow "Connect Stack Overflow"
+   :twitter "Connect Twitter"})
+
+(def type->icon-class
+  {:github "button__icon"
+   :stackoverflow "button__icon"
+   :twitter "button__icon button__icon--twitter"})
+
+(defn connect-button
+  [type]
+  [:a
+   (-> {:href (type->href type)
+        :class (util/merge-classes
+                 "button button--connect"
+                 (type->class type))})
+   [icon (type->icon type) :class (type->icon-class type)]
+   (type->connect-text type)])
+

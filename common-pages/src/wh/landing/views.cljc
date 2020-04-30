@@ -64,8 +64,8 @@
       [:p "We match your skills to great jobs using languages you love."]
       [:div.landing__auth-buttons
        [oauth-github-button]
+       [oauth-twitter-button]
        [oauth-stackoverflow-button]
-       #_[oauth-twitter-button]
        [oauth-email {:id "auth-email-signup"}]]]]))
 
 (defn bottom []

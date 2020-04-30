@@ -21,5 +21,6 @@
      [:p.cta-pod__description "Engineers who find a new job through " (<sub [:wh/platform-name])
                                          " average a " [:i "15%"]  " increase in salary."]
      [button-auth/button :github {:class "cta-pod__auth-button"}]
+     [button-auth/button :twitter {:class "cta-pod__auth-button"}]
      [button-auth/button :stackoverflow {:class "cta-pod__auth-button"}]
      [button-auth/button :email-signup {:class "cta-pod__auth-button"}]]))
