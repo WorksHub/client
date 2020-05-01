@@ -109,10 +109,11 @@
     (str "https://github.com/" owner "/" name)))
 
 (reg-sub
- ::repo-prs-url
- :<- [::repo]
- (fn [{:keys [name owner]} _]
-   (str "https://github.com/" owner "/" name "/pulls?utf8=✓&q=is%3Apr+is%3Aopen+%234")))
+  ::repo-prs-url
+  :<- [::repo]
+  :<- [::issue]
+  (fn [[{:keys [name owner]} {:keys [number]}] _]
+    (str "https://github.com/" owner "/" name "/pulls?utf8=✓&q=is%3Apr+is%3Aopen+%23" number)))
 
 (reg-sub
   ::github-login

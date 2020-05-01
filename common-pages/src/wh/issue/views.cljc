@@ -35,9 +35,9 @@
 
 (defn sidebox-row-link [icon-name content href skeleton? & [class]]
   (let [container-class (util/merge-classes
-                         "issue__infobox-row issue__infobox-row-link"
-                         icon-name (when skeleton? "skeleton") class)]
-    [:a {:class container-class :href href}
+                          "issue__infobox-row issue__infobox-row-link"
+                          icon-name (when skeleton? "skeleton") class)]
+    [:a {:class container-class :href href :target "_blank", :rel "noopener"}
      [icon (if skeleton? "circle" icon-name)]
      [:span (when-not skeleton? content)]]))
 
