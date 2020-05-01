@@ -65,7 +65,7 @@
     (reduce #(str %1 (slurp (io/resource (.getName (clojure.java.io/file %2))))) "" files)))
 
 (html/deftemplate wh-index-template "index.html"
-                  [{:keys [app-db page vertical] :as ctx}]
+                  [{:keys [app-db page] :as ctx}]
                   [:script#data-init] (html/content (pr-str app-db))
                   [:script#google-maps] (html/content (format "window.googleMapsURL = 'https://maps.googleapis.com/maps/api/js?key=%s&libraries=places';" (:google-maps-key config)))
                   [:script.inline-js]  (html/clone-for [filename (inline-js page)]
@@ -85,7 +85,7 @@
                   [:div#app-ssr] (html/set-attr :class "app--hidden")
                   [:div#app-js] (html/content {:tag :script, :attrs {:type "text/javascript", :src "/js/wh.js"}})
                   [:div#tracking-popup-container] (html/content (->html (tracking/popup)))
-                  [:div#auth-popup-container] (html/content (->html (auth/popup (verticals/config vertical :platform-name))))
+                  [:div#auth-popup-container] (html/content (->html (auth/popup (verticals/config (:wh.db/vertical app-db) :platform-name))))
                   [:style#main-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href "/wh.css"}})
                   [:link.external-css]  (html/clone-for [filename (external-css)]
                                                         (html/set-attr :href filename

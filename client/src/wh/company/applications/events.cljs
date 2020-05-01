@@ -39,6 +39,7 @@
 
 (def base-application-fields
   [:state :timestamp :score :userId :jobId :note
+   [:coverLetter [:link [:file [:url]]]]
    [:user [:name :email
            [:cv [:link [:file [:url]]]]
            [:otherUrls [:url :title]]

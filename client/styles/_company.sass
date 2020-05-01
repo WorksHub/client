@@ -736,7 +736,23 @@ $description-height: 300px
 
 .company-application__applied-on-section
   display: flex
-  justify-content: space-between
+  flex-direction: column
+
+.company-application__application-buttons,
+.company-application__admin-buttons
+  margin-top: 8px
+  display: grid
+  grid-template-columns: 50% 50%
+  gap: 8px
+  .button
+    font-size: 10px
+    width: 100%
+
+.company-application__view-documents
+  margin-top: 8px
+
+.company-application__view-document
+  line-height: 1.6em
 
 .company-application__applied-on
   color: $steel-gray
@@ -746,10 +762,6 @@ $description-height: 300px
   letter-spacing: 0.9px
   font-weight: $font-medium
   text-transform: uppercase
-
-.company-application__view-cv
-  color: $steel-gray
-  line-height: 18px
 
 .company-application__infobox
   font-size: 12px
@@ -997,11 +1009,6 @@ $description-height: 300px
   width: calc(100% - 40px)
   .button
     height: 30px
-
-.company-application__cta-buttons__application-buttons, .company-application__cta-buttons__admin-buttons
-  .button:first-child
-    width: 120px
-    margin-right: 18px
 
 .company-applications__tabs
   margin-bottom: 18px

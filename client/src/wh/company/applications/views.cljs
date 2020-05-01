@@ -110,7 +110,7 @@
    [:div.company-name name] [:div (str \u2002 "- " title)]])
 
 (defn application-card
-  [{:keys [user-id timestamp display-location other-urls email skills score cv state note job] :as app} job-id]
+  [{:keys [user-id timestamp display-location other-urls email skills score cv cover-letter state note job] :as app} job-id]
   (let [admin?    (<sub [:user/admin?])
         skeleton? (empty? app)
         job-id (or job-id (:job-id app))]
@@ -121,10 +121,20 @@
         [link (:name app) :candidate :id user-id :class "a--hover-red" :query-params {:job-id job-id}])]
      [:div.company-application__applied-on-section
       [:div.company-application__applied-on (when-not skeleton? "Applied on ") timestamp]
-      (when (or cv skeleton?)
-        [:a.a--underlined.company-application__view-cv {:href cv, :target "_blank", :rel "noopeer"} (when-not skeleton? "View CV")])]
-     (when (and job admin?)
-       (format-job-title job))
+      [:div.company-application__view-documents
+       [:div.company-application__view-document
+        (if (or cv skeleton?)
+          [:a.a--underlined.company-application__view-cv {:href cv, :target "_blank", :rel "noopener"} (when-not skeleton? "View CV")]
+          [:i "No CV provided"])]
+       [:div.company-application__view-document
+        (when-not skeleton?
+          [link "View Profile" :candidate :id user-id :class "a--underlined" :query-params {:job-id job-id}])]
+       [:div.company-application__view-document
+        (if (or cover-letter skeleton?)
+          [:a.a--underlined.company-application__view-cover-letter {:href cover-letter, :target "_blank", :rel "noopener"} (when-not skeleton? "View Cover Letter")]
+          [:i "No Cover Letter provided"])]]
+      (when (and job admin?)
+        (format-job-title job))]
      (if skeleton?
        (into [:div.company-application__infobox]
              (repeat 2 [:div.company-application__infobox-row [icon "circle"]]))
@@ -169,7 +179,7 @@
       (when-not skeleton?
         (if admin?
           [admin-buttons
-           :class "company-application__cta-buttons__admin-buttons"
+           :class "company-application__admin-buttons"
            :state state
            :on-approve (set-application-state! job-id user-id :approve)
            :on-reject  (set-application-state! job-id user-id :reject)
@@ -177,7 +187,7 @@
            :on-pass (set-application-state! job-id user-id :pass)
            :on-hire (set-application-state! job-id user-id :hire)]
           [application-buttons
-           :class "company-application__cta-buttons__application-buttons"
+           :class "company-application__application-buttons"
            :state state
            :on-get-in-touch (set-application-state! job-id user-id :get_in_touch)
            :on-pass (set-application-state! job-id user-id :pass)

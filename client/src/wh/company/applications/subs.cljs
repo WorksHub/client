@@ -50,6 +50,8 @@
       (update :timestamp (partial tf/unparse (tf/formatters :date)))
       (update :cv #(or (get-in % [:file :url])
                        (get % :link)))
+      (update :cover-letter #(or (get-in % [:file :url])
+                                 (get % :link)))
       (update :skills move-matching-skills-to-front job-tags)))
 
 (reg-sub
