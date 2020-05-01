@@ -45,14 +45,17 @@
                          [[:companyPerks [:name]]
                           [:approval [:status :source :time]]
                           [:likes [:id :slug :title [:company [:name]]]]
-                          [:applied [:timestamp :state [:job [:id :slug :title [:company [:name]]]]]]
+                          [:applied [:timestamp :state
+                                     [:job [:id :slug :title [:company [:name]]]]]]
                           :jobSeekingStatus :roleTypes
                           :hubspotProfileUrl
                           :type
                           [:company [:id :name]]
                           [:salary [:currency :min :timePeriod]]]
                          ;;
-                         [[:applied [:timestamp :state :note [:job [:id :slug :title]]]]]))]
+                         [[:applied [:timestamp :state :note
+                                     [:coverLetter [:link [:file [:url]]]]
+                                     [:job [:id :slug :title]]]]]))]
     {:venia/queries [[:user (merge {:id id}
                                    (when-let [job-id (get-in db [:wh.db/query-params "job-id"])]
                                      {:jobId job-id})) fields]]}))

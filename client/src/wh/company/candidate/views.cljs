@@ -80,7 +80,7 @@
   []
   [:section.profile-section.profile-section__applications
    [:h2 "Applications at " (:name (<sub [:wh.user.subs/company]))]
-   (for [{:keys [job timestamp state note]} (<sub [::subs/application-data])]
+   (for [{:keys [job timestamp state note cover-letter]} (<sub [::subs/application-data])]
      ^{:key (:id job)}
      [:div.profile-section__applications__job
       [:div.columns
@@ -88,7 +88,9 @@
        [:div.column
         [:div.profile-section__applications__job-link
          [link (:title job) :job :slug (:slug job)]]
-        [:div.profile-section__applications__applied-on "Applied on " (first (str/split timestamp #"T"))]]
+        [:div.profile-section__applications__applied-on "Applied on " (first (str/split timestamp #"T"))]
+        (when-let [cover-letter-url (get-in cover-letter [:file :url])]
+          [:a.a--underlined {:href cover-letter-url :target "_blank" :rel "noopener"} "View Cover Letter"])]
        [:div.column.is-narrow.profile-section__applications__actions
         [:div.profile-section__applications__state (state->str state)]]]
       (when note
