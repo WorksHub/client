@@ -6,6 +6,7 @@
     [clojure.string :as str]
     [re-frame.core :refer [path reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
+    [wh.common.errors :as common-errors]
     [wh.common.data :as data :refer [get-manager-email get-manager-name]]
     [wh.common.fx.google-maps :as google-maps]
     [wh.common.location :as location]
@@ -668,11 +669,12 @@
                ::create-job/logo-uploading? false)
              (update ::create-job/form-errors (fnil disj #{}) :wh.company.profile/logo))}))
 
-(reg-event-db
+(reg-event-fx
   ::logo-upload-failure
   create-job-interceptors
-  (fn [db _]
-    (assoc db ::create-job/logo-uploading? false)))
+  (fn [{db :db} [resp]]
+    {:db (assoc db ::create-job/logo-uploading? false)
+     :dispatch [:error/set-global (common-errors/image-upload-error-message (:status resp))]}))
 
 (reg-event-db
   ::set-benefits-search

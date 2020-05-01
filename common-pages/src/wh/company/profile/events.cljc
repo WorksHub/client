@@ -105,9 +105,9 @@
 (reg-event-fx
   ::photo-upload-failure
   profile-interceptors
-  (fn [{db :db} _]
+  (fn [{db :db} [resp]]
     {:db (assoc db ::profile/photo-uploading? false)
-     :dispatch [:error/set-global "There was an error adding the photo"]}))
+     :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (reg-event-fx
   ::add-photo
@@ -450,11 +450,12 @@
   (fn [db _]
     (dissoc db ::profile/pending-logo)))
 
-(reg-event-db
+(reg-event-fx
   ::logo-upload-failure
   profile-interceptors
-  (fn [{db :db} _]
-    (assoc db ::profile/logo-uploading? false)))
+  (fn [{db :db} [resp]]
+    {:db (assoc db ::profile/logo-uploading? false)
+     :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (reg-event-db
  ::remove-pending-location

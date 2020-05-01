@@ -4,6 +4,7 @@
     [clojure.string :as str]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
+    [wh.common.errors :as errors]
     [wh.common.data :as data]
     [wh.common.graphql-queries :as graphql]
     [wh.common.specs.primitives :as specs]
@@ -484,9 +485,9 @@
 (reg-event-fx
   ::avatar-upload-failure
   profile-interceptors
-  (fn [{db :db} _]
+  (fn [{db :db} [resp]]
     {:db       (assoc db ::profile/avatar-uploading? false)
-     :dispatch [::pages/set-error "There was an error uploading your avatar."]}))
+     :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (reg-event-fx
  ::cover-letter-upload

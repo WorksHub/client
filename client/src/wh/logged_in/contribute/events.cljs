@@ -104,13 +104,14 @@
     (assoc db ::contribute/hero-upload-status :success
            ::contribute/feature url)))
 
-(reg-event-db
+(reg-event-fx
   ::hero-upload-failure
   contribute-interceptors
-  (fn [db [resp]]
-    (assoc db ::contribute/hero-upload-status (if (= 413 (:status resp))
-                                                :failure-too-big
-                                                :failure))))
+  (fn [{db :db} [resp]]
+    {:db (assoc db ::contribute/hero-upload-status (if (= 413 (:status resp))
+                                                     :failure-too-big
+                                                     :failure))
+     :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (reg-event-db
   ::set-body
@@ -165,11 +166,12 @@
                                        (markdown-image url filename)
                                        (apply str after-cursor))))))
 
-(reg-event-db
+(reg-event-fx
   ::image-article-upload-failure
   contribute-interceptors
-  (fn [db _]
-    (assoc db ::contribute/image-article-upload-status :failure)))
+  (fn [{db :db} [resp]]
+    {:db (assoc db ::contribute/image-article-upload-status :failure)
+     :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (defquery query-blog-contribute
           {:venia/operation {:operation/type :query
@@ -524,9 +526,9 @@
 (reg-event-fx
   ::avatar-upload-failure
   author-info-interceptos
-  (fn [{db :db} _]
+  (fn [{db :db} [resp]]
     {:db       (assoc db :avatar-uploading? false)
-     :dispatch [::pages/set-error "There was an error uploading your avatar."]}))
+     :dispatch [::pages/set-error (errors/image-upload-error-message (:status resp))]}))
 
 (defmethod on-page-load :contribute [db]
   [[::init-contribute-db]

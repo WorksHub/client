@@ -10,6 +10,7 @@
     [goog.Uri :as uri]
     [re-frame.core :refer [path reg-event-db reg-event-fx]]
     [wh.common.cases :as cases]
+    [wh.common.errors :as errors]
     [wh.common.data :refer [get-manager-email get-manager-name]]
     [wh.common.logo]
     [wh.common.upload :as upload]
@@ -120,11 +121,12 @@
                 ::edit/logo-uploading? false)
      :dispatch [::check ::edit/logo]}))
 
-(reg-event-db
+(reg-event-fx
   ::logo-upload-failure
   company-interceptors
-  (fn [{db :db} _]
-    (assoc db ::edit/logo-uploading? false)))
+  (fn [{db :db} [resp]]
+    {:db (assoc db ::edit/logo-uploading? false)
+     :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (defn naive-diff
   "A top-level comparison of key values across two maps. First arg should be the one you expect to have changed.

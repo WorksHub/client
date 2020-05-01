@@ -21,3 +21,11 @@
 
 (defn get-blog-error-message [error-key]
   (get error-map-blog error-key (:default error-map-blog)))
+
+(defn image-upload-error-message
+  "Generate a message to display to the user based on `status-code`."
+  [status-code]
+  (cond
+    (= status-code 413) "Selected image is too large."
+    (= status-code 415) "Selected file's media type is not supported."
+    :else "There was an error uploading your image."))
