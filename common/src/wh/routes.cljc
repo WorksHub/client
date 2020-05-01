@@ -176,6 +176,8 @@
               ["jooble/" {[:region ".xml"] :jooble}]
               ["magic-link/" {[:token] :magic-link}]
               ["github-dispatch/" {[:board] :github-dispatch}]
+              ["stackoverflow-dispatch/" {[:board] :stackoverflow-dispatch}]
+              ["twitter-dispatch/" {[:board] :twitter-dispatch}]
               ["github-app-connect" :connect-github-app]
               ["oauth/" {"greenhouse"          :oauth-greenhouse
                          "greenhouse-callback" :oauth-greenhouse-callback
