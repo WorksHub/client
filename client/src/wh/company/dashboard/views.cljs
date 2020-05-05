@@ -88,9 +88,9 @@
          [:p "We have prepared a new Take-Off package offer for you \uD83D\uDE80" [:br]
           " Click the button to see the offer and accelerate your hiring process!"]
          [link [:button.button.your-company__payment-setup__button "View Take-Off offer"]
-          :payment-setup :step :pay-confirm :query-params {:package :take_off
-                                                           :billing (or (<sub [::subs/billing-period])
-                                                                        data/default-billing-period)}]]
+          :payment-setup :step :pay-confirm :query-params {:package "take_off"
+                                                           :billing (name (or (<sub [::subs/billing-period])
+                                                                              data/default-billing-period))}]]
         ;;
         :else
         [:div.your-company__package
