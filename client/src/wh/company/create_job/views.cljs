@@ -107,17 +107,18 @@
   [admin?]
   [:fieldset.job-edit__skills
    [:h2 "Skills"]
-   [tags-field
-    (<sub [::subs/tag-search])
-    (field ::create-job/tags
-           :label              "* Enter any of the key skills required for this role"
-           :collapsed?         (<sub [::subs/tags-collapsed?])
-           :placeholder        "e.g. Clojure, Haskell, Scala"
-           :tags               (<sub [::subs/matching-tags])
-           :on-change          [::events/set-tag-search]
-           :on-toggle-collapse #(dispatch [::events/toggle-tags-collapsed])
-           :on-tag-click       #(dispatch [::events/toggle-tag (:tag %)])
-           :on-add-tag         (when admin? #(dispatch [::events/toggle-tag %])))]])
+   (let [tags (<sub [::subs/matching-tags])]
+     ;; TODO: use new tags-filter-field component here
+     [tags-field
+      (<sub [::subs/tag-search])
+      {:label              "* Enter any of the key skills required for this role"
+       :id                 "_wh_company_create-job_db_tags"
+       :collapsed?         (<sub [::subs/tags-collapsed?])
+       :placeholder        "e.g. Clojure, Haskell, Scala"
+       :tags               tags
+       :on-change          [::events/set-tag-search]
+       :on-toggle-collapse #(dispatch [::events/toggle-tags-collapsed])
+       :on-tag-click       #(dispatch [::events/toggle-tag %])}])])
 
 (defn location
   []

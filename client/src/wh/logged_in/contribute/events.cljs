@@ -448,18 +448,9 @@
   ::toggle-tag
   contribute-interceptors
   (fn [{db :db} [tag]]
-    {:db (update db ::contribute/selected-tag-ids (fnil util/toggle #{}) (:id tag))
+    {:db       (update db ::contribute/selected-tag-ids
+                       (fnil util/toggle #{}) (:id tag))
      :dispatch [::edit-tag-search ""]}))
-
-(defquery fetch-tags
-          {:venia/operation {:operation/type :query
-                             :operation/name "list_tags"}
-           :venia/variables [{:variable/name "type"
-                              :variable/type :tag_type}]
-           :venia/queries [[:list_tags {:type :$type}
-                            [[:tags :fragment/tagFields]]]]})
-
-(reg-query :tags fetch-tags)
 
 (reg-event-fx
   ::fetch-tags

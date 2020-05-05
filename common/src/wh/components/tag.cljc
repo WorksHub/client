@@ -13,11 +13,11 @@
       (cond-> (nil? (:subtype m)) (dissoc :subtype))))
 
 (defn tag->form-tag
-  [{:keys [id label type] :as tag}]
+  [{:keys [id label type selected] :as tag}]
   (merge tag {:tag      label
               :key      id
               :class    (str "tag--type-" (name type))
-              :selected false}))
+              :selected (or selected false)}))
 
 (def labels-with-icons #{"java" "docker" "graphql" "nodejs" "akka" "bitcoin"
                          "c++" "etherium" "git" "go"

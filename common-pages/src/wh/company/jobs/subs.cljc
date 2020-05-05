@@ -1,12 +1,11 @@
 (ns wh.company.jobs.subs
-  (:require
-    [re-frame.core :refer [reg-sub reg-sub-raw]]
-    [wh.components.pagination :as pagination]
-    [wh.company.listing.db :as listing]
-    [wh.common.job :refer [format-job-location]]
-    [wh.company.profile.db :as profile]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.company.jobs.db :as jobs])
+  (:require [re-frame.core :refer [reg-sub reg-sub-raw]]
+            [wh.components.pagination :as pagination]
+            [wh.company.listing.db :as listing]
+            [wh.common.job :refer [format-job-location]]
+            [wh.company.profile.db :as profile]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.company.jobs.db :as jobs])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
 

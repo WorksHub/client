@@ -346,7 +346,7 @@
                          (not (str/blank? text)) false ;; can't be collapsed if we have text
                          (not (contains? opts :collapsed?)) @-collapsed? ;; use internal state if we're controlling it
                          :otherwise collapsed?)
-                         
+
             on-toggle-collapse (or on-toggle-collapse #(swap! -collapsed? not))]
         [:div
          {:class (merge-classes

@@ -1,15 +1,16 @@
 (ns wh.components.job
-  (:require
-    #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
-    [wh.common.job :as jobc]
-    [wh.components.cards :refer [match-circle]]
-    [wh.components.common :refer [wrap-img link img]]
-    [wh.components.icons :refer [icon]]
-    [wh.interop :as interop]
-    [wh.re-frame.events :refer [dispatch]]
-    [wh.routes :as routes]
-    [wh.slug :as slug]
-    [wh.util :as util]))
+  (:require #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
+            [wh.common.job :as jobc]
+            [wh.components.cards :refer [match-circle]]
+            [wh.components.common :refer [wrap-img link img]]
+            [wh.components.icons :refer [icon]]
+            [wh.interop :as interop]
+            [wh.components.tag :as tag]
+            [wh.re-frame.events :refer [dispatch]]
+            [wh.routes :as routes]
+            [wh.slug :as slug]
+            [wh.util :as util]
+            [clojure.string :as str]))
 
 (defn state->candidate-status
   [s]
@@ -38,11 +39,17 @@
    :class (util/merge-classes "job__icon" "like" (when saved? "selected"))
    :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])
 
+
+(defn job-card--tag [tag]
+  (let [href (routes/path :pre-set-search :params {:tag (slug/slug (:slug tag))})
+        tag  (assoc tag :href href)
+        tag  (update tag :label str/lower-case)]
+    [tag/tag :a tag]))
+
 (defn job-card--tags
   [job-tags]
   (into [:ul.tags.tags__job]
-        (map (fn [tag] [:li [:a {:href (routes/path :pre-set-search :params {:tag (slug/slug tag)})} tag]])
-             job-tags)))
+        (map job-card--tag job-tags)))
 
 (defn job-card--buttons
   [{:keys [slug id state published] :as job}
@@ -126,6 +133,15 @@
   {:cards ""
    :list  "full-width"})
 
+(defn create-skeleton-tags []
+  (map (fn [i]
+         {:label   (apply str (repeat (+ 8 (rand-int 30)) " "))
+          :key     i
+          :type    :tech
+          :subtype :software
+          :slug    ""})
+       (range 6)))
+
 (defn job-card
   [{:keys [company tagline tags published score user-score applied role-type
            liked display-salary remuneration remote sponsorship-offered id]
@@ -139,9 +155,7 @@
     :as opts}]
   (let [skeleton? (and job (empty? (dissoc job :id :slug)))
         salary    (or display-salary (jobc/format-job-remuneration remuneration))
-        job-tags  (if skeleton?
-                    (map (fn [_i] (apply str (repeat (+ 8 (rand-int 30)) " "))) (range 6))
-                    tags)
+        job-tags  (if skeleton? (create-skeleton-tags) tags)
         score     (or (:user-score job) score)
         opts      (assoc opts
                          :liked?            liked?

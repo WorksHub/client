@@ -49,10 +49,14 @@
   :<- [::tag-search]
   :<- [::selected-tag-ids]
   (fn [[tags tag-search selected-tag-ids]]
-    (let [matching-but-not-selected (filter (fn [tag] (and (or (str/blank? tag-search)
-                                                               (str/includes? (str/lower-case (:label tag)) tag-search))
-                                                           (not (contains? selected-tag-ids (:id tag))))) tags)
-          selected-tags (filter (fn [tag] (contains? selected-tag-ids (:id tag))) tags)]
+    (let [matching-but-not-selected
+          (filter (fn [tag] (and (or (str/blank? tag-search)
+                                    (str/includes? (str/lower-case (:label tag)) tag-search))
+                                (not (contains? selected-tag-ids (:id tag))))) tags)
+          selected-tags (->> tags
+                             (filter
+                               (fn [tag] (contains? selected-tag-ids (:id tag))))
+                             (map #(assoc % :selected true)))]
       (->> (concat selected-tags matching-but-not-selected)
            (map tag->form-tag)
            (take (+ 20 (count selected-tag-ids)))))))

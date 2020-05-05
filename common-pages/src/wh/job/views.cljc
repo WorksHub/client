@@ -262,6 +262,12 @@
                          :text? true}]]))
      [apply-button {:id "candidate-action-box"}]]))
 
+(defn create-skeleton-tags []
+  (map (fn [i]
+         {:label (apply str (repeat (+ 8 (rand-int 30)) " "))
+          :_key   i
+          :slug  ""})
+       (range 6)))
 
 (defn job-highlights
   []
@@ -282,6 +288,7 @@
        (when (<sub [::subs/sponsorship-offered?]) [:div "Sponsorship offered"])
        (when (<sub [::subs/remote?]) [:div "Remote working"])]])
    ;;
+
    (let [tags (<sub [::subs/tags])]
      [highlight
       (when tags "Technologies & frameworks")
@@ -289,12 +296,12 @@
       [:div.job__technology
        [:div.row.summary__row__with-tags
         (let [skeleton? (nil? tags)
-              tags (if skeleton? (map #(hash-map :key % :tag (apply str (repeat (+ 4 (rand-int 20)) " "))) (range 6)) tags)]
+              tags      (if skeleton? (create-skeleton-tags) tags)]
           (into [:ul.tags.tags--inline]
-                (map (fn [tag]
+                (map (fn [{:keys [label _key] :as tag}]
                        [:li {:class (when skeleton? "tag--skeleton")
-                             :key (or (:key tag) tag)}
-                        (or (:tag tag) tag)])
+                             :key   (or _key label)}
+                        label])
                      tags)))]]])
    ;;
    (when-let [benefits (<sub [::subs/benefits])]

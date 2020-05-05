@@ -1,10 +1,9 @@
 (ns wh.util
-  (:require
-    #?(:cljs [goog.i18n.NumberFormat :as nf])
-    [camel-snake-kebab.core :as c]
-    [clojure.spec.alpha :as s]
-    [clojure.string :as str]
-    [clojure.walk :refer [postwalk]])
+  (:require #?(:cljs [goog.i18n.NumberFormat :as nf])
+            [camel-snake-kebab.core :as c]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as str]
+            [clojure.walk :refer [postwalk]])
   (:refer-clojure :exclude [random-uuid]))
 
 (defn now []
@@ -231,6 +230,10 @@
   [m k f & args]
   (apply update-in* m [k] f args))
 
+(defn update-vals
+  "Update many values under many keys in map"
+  [m ks & args]
+  (reduce #(apply update % %2 args) m ks))
 
 (defn merge-classes
   [& classes]

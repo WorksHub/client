@@ -60,7 +60,7 @@
     (let [new-jobs (mapv job/translate-job (get-in resp [:data :jobs]))
           candidate-applications (mapv cases/->kebab-case (get-in resp [:data :candidate_applications]))
           jobs (::personalised-jobs/jobs db)
-          updated-jobs (concat jobs new-jobs)]
+          updated-jobs (distinct (concat jobs new-jobs))]
       {:db (assoc db ::personalised-jobs/jobs (if candidate-applications
                                                 (add-application-state updated-jobs candidate-applications)
                                                 updated-jobs)

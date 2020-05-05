@@ -16,16 +16,6 @@
 (defmethod on-page-load :tags-edit [db]
   [[::fetch-tags]])
 
-(defquery fetch-tags
-  {:venia/operation {:operation/type :query
-                     :operation/name "list_tags"}
-   :venia/variables [{:variable/name "type"
-                      :variable/type :tag_type}]
-   :venia/queries [[:list_tags {:type :$type}
-                    [[:tags [:id :label :type :slug :subtype :weight]]]]]})
-
-(reg-query :tags fetch-tags)
-
 (reg-event-fx
   ::fetch-tags
   (fn [_ _]

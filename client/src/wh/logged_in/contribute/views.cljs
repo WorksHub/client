@@ -110,12 +110,7 @@
   []
   (let [tags-collapsed? (reagent/atom true)]
     (fn []
-      (let [selected-tag-ids (<sub [::subs/selected-tag-ids])
-            matching-tags    (<sub [::subs/matching-tags])
-            mark-as-selected #(if (contains? selected-tag-ids (:id %))
-                                (assoc % :selected true)
-                                %)
-            tags             (map mark-as-selected matching-tags)]
+      (let [tags (<sub [::subs/matching-tags])]
         [tags-field
          (<sub [::subs/tag-search])
          {:tags               tags

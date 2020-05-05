@@ -1,17 +1,16 @@
 (ns wh.jobs.jobsboard.subs
-  (:require
-    [clojure.string :as str]
-    [goog.i18n.NumberFormat :as nf]
-    [re-frame.core :refer [reg-sub]]
-    [wh.common.data :refer [currency-symbols]]
-    [wh.common.emoji :as emoji]
-    [wh.components.pagination :as pagination]
-    [wh.db :as db]
-    [wh.graphql.jobs :as jobs]
-    [wh.jobsboard-ssr.db :as jobsboard-ssr]
-    [wh.jobs.jobsboard.db :as jobsboard]
-    [wh.user.db :as user]
-    [wh.verticals :as verticals])
+  (:require [clojure.string :as str]
+            [goog.i18n.NumberFormat :as nf]
+            [re-frame.core :refer [reg-sub]]
+            [wh.common.data :refer [currency-symbols]]
+            [wh.common.emoji :as emoji]
+            [wh.components.pagination :as pagination]
+            [wh.db :as db]
+            [wh.graphql.jobs :as jobs]
+            [wh.jobsboard-ssr.db :as jobsboard-ssr]
+            [wh.jobs.jobsboard.db :as jobsboard]
+            [wh.user.db :as user]
+            [wh.verticals :as verticals])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (reg-sub

@@ -14,7 +14,8 @@
     [wh.job.events :refer [publish-job navigate-to-payment-setup process-publish-role-intention]]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
-    [wh.util :as util]))
+    [wh.util :as util])
+  (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (def company-interceptors (into db/default-interceptors
                                 [(path ::sub-db/sub-db)]))
@@ -26,43 +27,52 @@
   (when-not (str/blank? s)
     (tf/parse (tf/formatters :date-time) s)))
 
-(defn dashboard-query [id]
-  {:venia/queries [[:company {:id id}
-                    [:id :name :descriptionHtml :logo :package :permissions :disabled :slug :profileEnabled
+(defquery dashboard-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "dashboard_population"}
+   ;; company_id and company_jobs_id are actually the same thing.
+   ;; Repetition is caused by different GraphQL fragments requiring
+   ;; different variables types.
+   ;; TODO: unify those types into one
+   :venia/variables [{:variable/name "company_id" :variable/type :ID}
+                     {:variable/name "company_jobs_id" :variable/type :String!}
+                     {:variable/name "end_date" :variable/type :String!}]
+   :venia/queries   [[:company {:id :$company_id}
+                      [:id :name :descriptionHtml :logo :package :permissions :disabled :slug :profileEnabled
 
-                     ;; ----------
-                     ;; required for profile completion percentage
-                     :size :foundedYear :howWeWork
-                     [:tags [:id :type :label :slug :subtype]]
-                     [:techScales [:testing :ops :timeToDeploy]]
-                     [:locations [:city]]
-                     [:videos [:youtubeId]]
-                     [:images [:url]]
-                     [:blogs {:pageSize 1 :pageNumber 1}
-                      [[:blogs
-                        [:id]]]]
-                     ;; ----------
-                     [:pendingOffer [:recurringFee]]
-                     [:payment [:billingPeriod]]]]
-                   [:jobs {:filter_type "all"
-                           :company_id  id
-                           :page_size   100
-                           :page_number 1}
-                    [:id :slug :title :tags :published :firstPublished :creationDate :verticals
-                     [:location [:city :state :country :countryCode]]
-                     [:stats [:applications :views :likes]]
-                     :matchingUsers]]
-                   [:me [:onboardingMsgs]]
-                   [:job_analytics {:company_id  id
-                                    :end_date    (-> (t/now) date->str)
-                                    :granularity 0
-                                    :num_periods 0}
-                    [:granularity
-                     [:applications [:date :count]]
-                     [:views [:date :count]]
-                     [:likes [:date :count]]]]
-                   [:activity {:company_id id}
-                    [:type :jobId :jobTitle :jobSlug :userId :userName :count :timestamp]]]})
+                       ;; ----------
+                       ;; required for profile completion percentage
+                       :size :foundedYear :howWeWork
+                       [:tags [:id :type :label :slug :subtype]]
+                       [:techScales [:testing :ops :timeToDeploy]]
+                       [:locations [:city]]
+                       [:videos [:youtubeId]]
+                       [:images [:url]]
+                       [:blogs {:pageSize 1 :pageNumber 1}
+                        [[:blogs
+                          [:id]]]]
+                       ;; ----------
+                       [:pendingOffer [:recurringFee]]
+                       [:payment [:billingPeriod]]]]
+                     [:jobs {:filter_type "all"
+                             :company_id  :$company_jobs_id
+                             :page_size   100
+                             :page_number 1}
+                      [:id :slug :title [:tags :fragment/tagFields] :published :firstPublished :creationDate :verticals
+                       [:location [:city :state :country :countryCode]]
+                       [:stats [:applications :views :likes]]
+                       :matchingUsers]]
+                     [:me [:onboardingMsgs]]
+                     [:job_analytics {:company_id  :$company_id
+                                      :end_date    :$end_date
+                                      :granularity 0
+                                      :num_periods 0}
+                      [:granularity
+                       [:applications [:date :count]]
+                       [:views [:date :count]]
+                       [:likes [:date :count]]]]
+                     [:activity {:company_id :$company_id}
+                      [:type :jobId :jobTitle :jobSlug :userId :userName :count :timestamp]]]})
 
 (defmethod on-page-load :company-dashboard [db]
   [[::initialize-db]
@@ -109,7 +119,10 @@
   db/default-interceptors
   (fn [{db :db} _]
     (let [id (company-id db)]
-      {:graphql {:query (dashboard-query id)
+      {:graphql {:query      dashboard-query
+                 :variables  {:company_id      id
+                              :company_jobs_id id
+                              :end_date        (-> (t/now) date->str)}
                  :on-success [::fetch-company-success]
                  :on-failure [::fetch-company-failure]}})))
 
@@ -165,7 +178,10 @@
 (reg-event-db
  ::fetch-company-failure
  company-interceptors
- (fn [db _]
+ (fn [db data]
+   (js/console.log data)
+   (tap> data)
+
    (assoc db ::sub-db/error :failed-to-fetch-company)))
 
 (reg-event-fx

@@ -1,24 +1,26 @@
 (ns wh.company.create-job.events
-  (:require
-    [camel-snake-kebab.core :as c]
-    [camel-snake-kebab.extras :as ce]
-    [clojure.set :as set :refer [intersection]]
-    [clojure.string :as str]
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.common.errors :as common-errors]
-    [wh.common.data :as data :refer [get-manager-email get-manager-name]]
-    [wh.common.fx.google-maps :as google-maps]
-    [wh.common.location :as location]
-    [wh.company.create-job.db :as create-job]
-    [wh.components.tag :as tag]
-    [wh.db :as db]
-    [wh.graphql.company :refer [company-query create-job-mutation update-job-mutation update-company-mutation fetch-tags] :as company-queries]
-    [wh.graphql.tag :refer [tag-query]]
-    [wh.job.db :as job]
-    [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.user.db :as user]
-    [wh.util :as util]))
+  (:require [camel-snake-kebab.core :as c]
+            [camel-snake-kebab.extras :as ce]
+            [clojure.string :as str]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.data :as data :refer [get-manager-email get-manager-name]]
+            [wh.common.errors :as common-errors]
+            [wh.common.location :as location]
+            [wh.company.create-job.db :as create-job]
+            [wh.components.tag :as tag]
+            [wh.db :as db]
+            [wh.graphql-cache :refer [reg-query]]
+            [wh.graphql.company
+             :refer [create-job-mutation
+                     update-job-mutation update-company-mutation]
+             :as company-queries]
+            [wh.graphql.tag :refer [tag-query]]
+            [wh.job.db :as job]
+            [wh.pages.core :as pages :refer [on-page-load]]
+            [wh.user.db :as user]
+            [wh.util :as util])
+  (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (def create-job-interceptors (into db/default-interceptors
                                    [(path ::create-job/sub-db)]))
@@ -43,13 +45,14 @@
           (select-keys sub-db (create-job/relevant-fields db))
           (util/unflatten-map sub-db)
           (dissoc sub-db ::create-job/company)
-          (update sub-db ::create-job/tags (partial map :tag))
+          (assoc sub-db :tag-ids (::create-job/tags sub-db))
+          (dissoc sub-db ::create-job/tags)
           (update sub-db ::create-job/remuneration util/remove-nils)
           (update sub-db ::create-job/location (fn [l] (util/dissoc-selected-keys-if-blank l (set (keys l)))))
           (update sub-db ::create-job/verticals vec)
           (ce/transform-keys c/->camelCaseString sub-db))))
 
-(defn variables
+(defn create-mutation-variables
   [db]
   (let [job (db->graphql-job db)]
     (if (create-job/edit? db)
@@ -65,7 +68,7 @@
         (util/namespace-map "wh.company.create-job.db" job)
         (update job ::create-job/verticals set)
         (update job ::create-job/manager get-manager-name)
-        (update job ::create-job/tags #(set (map (partial hash-map :selected true :tag) %)))))
+        (update job ::create-job/tags #(set (map :id %)))))
 
 (defn company-by-id [db id]
   (->> db ::create-job/companies (filter #(= (:id %) id)) first))
@@ -157,25 +160,28 @@
     (let [errors            (not-empty
                               (concat (create-job/invalid-fields db)
                                       (create-job/invalid-company-fields db)))
-          include-location? (some #(when (str/starts-with? (name %) "location") %) errors)]
+          include-location? (some #(when (str/starts-with? (name %) "location") %) errors)
+          variables         (create-mutation-variables db)]
       (if errors
         (do
           (js/console.error "Errors in form:" errors)
-          (merge {:db (-> db
-                          (assoc-in [::create-job/sub-db ::create-job/error] nil)
-                          (assoc-in [::create-job/sub-db ::create-job/saving?] false)
-                          (assoc-in [::create-job/sub-db ::create-job/form-errors] (set errors)))
+          (merge {:db                (-> db
+                                         (assoc-in [::create-job/sub-db ::create-job/error] nil)
+                                         (assoc-in [::create-job/sub-db ::create-job/saving?] false)
+                                         (assoc-in [::create-job/sub-db ::create-job/form-errors] (set errors)))
                   :dispatch-debounce {:id       :scroll-to-error-after-pause
                                       :dispatch [::scroll-into-view (db/key->id (first errors))]
                                       :timeout  50}}
                  (when include-location?
                    {:dispatch [::set-editing-address true false]})))
-        {:db      (-> db (assoc-in [::create-job/sub-db ::create-job/error] nil)
+
+        {:db      (-> db
+                      (assoc-in [::create-job/sub-db ::create-job/error] nil)
                       (assoc-in [::create-job/sub-db ::create-job/saving?] true))
          :graphql {:query      (if (create-job/edit? db)
                                  update-job-mutation
                                  create-job-mutation)
-                   :variables  (variables db)
+                   :variables  variables
                    :on-success [::create-job-success]
                    :on-failure [::create-job-error]}}))))
 
@@ -257,29 +263,33 @@
            (add-keyset-to-field :remuneration [:competitive :currency :timePeriod :min :max :equity])))
     fields))
 
-(def job-fields
-  (let [all-fields (->> create-job/fields
-                        (keys)
-                        (map (comp cases/->camel-case-str #(str/replace % #"__" "##") name))
-                        (set))
-        top-fields (->> all-fields
-                        (remove (partial re-find #"##")))
-        nst-fields (->> top-fields
-                        (set/difference all-fields)
-                        (map #(str/split % #"##" ))
-                        (group-by first)
-                        (reduce-kv (fn [a k v] (conj a [(keyword k) (mapv (comp keyword second) v)])) []))]
-    (concat (map keyword top-fields) nst-fields)))
-
-(defn job-query [id]
-  {:venia/queries [[:job {:id id} job-fields]]})
+(defquery job-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "fetch_job"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID!}]
+   :venia/queries [[:job {:id :$id}
+                    [:companyId :promoted :tagline
+                     :approved :sponsorshipOffered
+                     [:tags :fragment/tagFields]
+                     :remote :published :verticals
+                     :descriptionHtml :title :roleType
+                     :manager :atsJobId
+                     [:location
+                      [:state
+                       :city :street :countryCode :country
+                       :latitude :longitude :postCode]]
+                     [:remuneration
+                      [:competitive :equity :currency :min :timePeriod :max]]
+                     [:company [:name]]]]]})
 
 (reg-event-fx
   ::load-job
   db/default-interceptors
   (fn [{db :db} [id]]
     {:dispatch [::pages/set-loader]
-     :graphql  {:query      (job-query id)
+     :graphql  {:query      job-query
+                :variables  {:id id}
                 :on-success [::load-job-success]
                 :on-failure [::load-job-failure [::load-job id]]}}))
 
@@ -288,7 +298,7 @@
   db/default-interceptors
   (fn [{db :db} [{:keys [data]}]]
     (let [new-db (merge (::create-job/sub-db db) (graphql-job->sub-db (:job data)))
-          save? (get (::db/query-params db) "save")]
+          save?  (get (::db/query-params db) "save")]
       {:db         (assoc db ::create-job/sub-db new-db)
        :dispatch-n (list [::pages/unset-loader]
                          [::close-search-location-form]
@@ -608,6 +618,11 @@
 
 ;; Tags
 
+(reg-event-fx
+  ::fetch-tags
+  (fn [_ _]
+    {:dispatch (into [:graphql/query] [:tags {:type :tech}])}))
+
 (reg-event-db
   ::toggle-tags-collapsed
   create-job-interceptors
@@ -618,7 +633,8 @@
   ::toggle-tag
   create-job-interceptors
   (fn [{db :db} [tag]]
-    {:db (update db ::create-job/tags util/toggle {:tag tag :selected true})
+    {:db       (update db ::create-job/tags
+                       (fnil util/toggle #{}) (:id tag))
      :dispatch [::set-tag-search ""]}))
 
 (reg-event-db
@@ -626,13 +642,6 @@
   create-job-interceptors
   (fn [db [tag-search]]
     (assoc db ::create-job/tag-search tag-search)))
-
-(reg-event-fx
-  ::fetch-tags
-  create-job-interceptors
-  (fn [{db :db} _]
-    (when-not (get db ::create-job/available-tags)
-      {:graphql (fetch-tags ::fetch-tags-success)})))
 
 (reg-event-db
   ::fetch-tags-success

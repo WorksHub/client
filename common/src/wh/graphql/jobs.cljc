@@ -5,7 +5,11 @@
     [wh.graphql-macros :refer [defquery def-query-template def-query-from-template]]))
 
 (def job-card-fields
-  [:id :slug :title :tagline :tags :published :userScore
+  ;; we'd like to use [:tags :fragment/tagFields] but it's not
+  ;; defquery so it wouldn't compile properly
+  ;; TODO: find proper solution for this problem
+  [:id :slug :title :tagline [:tags [:id :slug :type :subtype :label :weight]]
+   :published :userScore
    :roleType :sponsorshipOffered :remote :companyId
    [:company [:name :slug :logo]]
    [:location [:city :state :country :countryCode]]

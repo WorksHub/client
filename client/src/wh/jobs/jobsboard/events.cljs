@@ -1,20 +1,20 @@
 (ns wh.jobs.jobsboard.events
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
-    [wh.algolia]
-    [wh.common.cases :as cases]
-    [wh.common.job :as job]
-    [wh.common.search :as search]
-    [wh.db :as db]
-    [wh.graphql.jobs]
-    [wh.jobs.jobsboard.db :as jobsboard]
-    [wh.jobsboard-ssr.db :as jobsboard-ssr]
-    [wh.pages.core :refer [on-page-load] :as pages]
-    [wh.user.db :as user-db]
-    [wh.util :as util])
-  (:require-macros
-    [wh.graphql-macros :refer [defquery]]))
+  (:require [clojure.string :as str]
+            [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
+            [wh.algolia]
+            [wh.common.cases :as cases]
+            [wh.common.job :as job]
+            [wh.common.search :as search]
+            [wh.db :as db]
+            [wh.graphql.jobs]
+            [wh.jobs.jobsboard.db :as jobsboard]
+            [wh.jobs.jobsboard.events.fetch-jobs-success :as fetch-jobs-success]
+            [wh.jobs.jobsboard.queries :as queries]
+            [wh.jobsboard-ssr.db :as jobsboard-ssr]
+            [wh.pages.core :refer [on-page-load] :as pages]
+            [wh.user.db :as user-db]
+            [wh.util :as util])
+  (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (def jobsboard-interceptors (into db/default-interceptors
                                   [(path ::jobsboard/sub-db)]))
@@ -25,41 +25,12 @@
   (fn [_ _]
     jobsboard/default-db))
 
-
-(defquery jobs-query
-  {:venia/operation {:operation/type :query
-                     :operation/name "jobs_search"}
-   :venia/variables [{:variable/name "vertical" :variable/type :vertical}
-                     {:variable/name "search_term" :variable/type :String!}
-                     {:variable/name "preset_search" :variable/type :String}
-                     {:variable/name "page" :variable/type :Int!}
-                     {:variable/name "filters" :variable/type :SearchFiltersInput}]
-   :venia/queries   [[:jobs_search {:vertical      :$vertical
-                                    :search_term   :$search_term
-                                    :preset_search :$preset_search
-                                    :page          :$page
-                                    :filters       :$filters}
-                      [:numberOfPages
-                       :numberOfHits
-                       :hitsPerPage
-                       :page
-                       [:facets [:attr :value :count]]
-                       [:searchParams [:label
-                                       :query
-                                       [:filters [:remote :roleType :sponsorshipOffered :published :tags :manager
-                                                  [:location [:cities :countryCodes :regions]]
-                                                  [:remuneration [:min :max :currency :timePeriod]]]]]]
-                       [:promoted [:fragment/jobCardFields]]
-                       [:jobs [:fragment/jobCardFields]]]]
-                     [:city_info [:city :country :countryCode :region]]
-                     [:remuneration_ranges [:currency :timePeriod :min :max]]]})
-
 (reg-event-fx
   ::fetch-jobs
   db/default-interceptors
   (fn [{db :db} [initial-load? query-variables page all-jobs?]]
     {:db      (assoc-in db [::jobsboard/sub-db ::jobsboard/current-page-number] page)
-     :graphql {:query      jobs-query
+     :graphql {:query      queries/jobs-query
                :variables  query-variables
                :on-success [::fetch-jobs-success all-jobs? page]}}))
 
@@ -67,35 +38,36 @@
   ::set-jobs-query
   db/default-interceptors
   (fn [{db :db} [initial-load?]]
-    (let [all-jobs? (and (str/blank? (::db/search-term db))
-                         (empty? (::db/query-params db)))
-          cities (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities]) ;; for preset-search
-          countries (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/countries]) ;; for preset-search
-          remote? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote]) ;; for preset-search
-          tags (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/tags]) ;; for preset search
-          preset-search? (= :pre-set-search (::db/page db))
-          preset-search (if initial-load? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/preset-search])
-                            (str/replace (::db/uri db) #"/" ""))
-          db-filters (-> (merge (if (and initial-load? preset-search?)
-                                  (cond-> {}
-                                          (seq tags) (assoc :tags tags)
-                                          (seq cities) (update-in [:location :cities] (fnil concat []) cities)
-                                          (seq countries) (update-in [:location :country-codes] (fnil concat []) countries)
-                                          remote? (assoc :remote true))
-                                  {})
-                                (search/query-params->filters (::db/query-params db)))
-                         (util/update-in* [:remuneration :min] js/parseInt)
-                         (util/update-in* [:remuneration :max] js/parseInt))
+    (let [all-jobs?        (and (str/blank? (::db/search-term db))
+                                (empty? (::db/query-params db)))
+          cities           (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities])    ;; for preset-search
+          countries        (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/countries]) ;; for preset-search
+          remote?          (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote])    ;; for preset-search
+          tags             (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/tags])      ;; for preset search
+          preset-search?   (= :pre-set-search (::db/page db))
+          preset-search    (if initial-load? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/preset-search])
+                               (str/replace (::db/uri db) #"/" ""))
+          db-filters       (->
+                             (merge (if (and initial-load? preset-search?)
+                                      (cond-> {}
+                                              (seq tags)      (assoc :tags tags)
+                                              (seq cities)    (update-in [:location :cities] (fnil concat []) cities)
+                                              (seq countries) (update-in [:location :country-codes] (fnil concat []) countries)
+                                              remote?         (assoc :remote true))
+                                      {})
+                                    (search/query-params->filters (::db/query-params db)))
+                             (util/update-in* [:remuneration :min] js/parseInt)
+                             (util/update-in* [:remuneration :max] js/parseInt))
           page-from-params (int (get-in db [::db/query-params "page"]))
-          page (if (zero? page-from-params)
-                 (inc page-from-params)
-                 page-from-params)
-          filters (cases/->camel-case db-filters)
-          query-variables {:search_term   (or (get-in db [::db/query-params "search"]) "")
-                           :preset_search (when preset-search? preset-search)
-                           :page          page
-                           :filters       filters
-                           :vertical      (:wh.db/vertical db)}]
+          page             (if (zero? page-from-params)
+                             (inc page-from-params)
+                             page-from-params)
+          filters          (cases/->camel-case db-filters)
+          query-variables  {:search_term   (or (get-in db [::db/query-params "search"]) "")
+                            :preset_search (when preset-search? preset-search)
+                            :page          page
+                            :filters       filters
+                            :vertical      (:wh.db/vertical db)}]
       (when-not (= query-variables (::jobsboard/query-variables db))
         {:db         (assoc db ::jobsboard/query-variables query-variables)
          :dispatch-n [[::fetch-jobs initial-load? query-variables page all-jobs?]
@@ -105,68 +77,7 @@
 (reg-event-fx
   ::fetch-jobs-success
   db/default-interceptors
-  (fn [{{:keys [::jobsboard/sub-db] :as db} :db} [all-jobs? page-number {{jobs-search :jobs_search city-info :city_info remuneration-ranges :remuneration_ranges} :data}]]
-    (let [facets (group-by :attr (:facets jobs-search))
-          search-params (:searchParams jobs-search)
-          user-email (get-in db [:wh.user.db/sub-db :wh.user.db/email])
-          salary-type-mapping {"Daily" :day "Yearly" :year}
-          min-salary (get-in search-params [:filters :remuneration :min])
-          max-salary (get-in search-params [:filters :remuneration :max])
-          published (get-in search-params [:filters :published])
-          role-type (get-in search-params [:filters :roleType])
-          search-data (cond->
-                        #:wh.search{:available-role-types (facets "role-type")
-                                    :tags                 (set (get-in search-params [:filters :tags]))
-                                    :cities               (set (get-in search-params [:filters :location :cities]))
-                                    :countries            (set (get-in search-params [:filters :location :countryCodes]))
-                                    :wh-regions           (set (map keyword (get-in search-params [:filters :location :regions])))
-                                    :remote               (boolean (get-in search-params [:filters :remote]))
-                                    :sponsorship          (boolean (get-in search-params [:filters :sponsorshipOffered]))
-                                    :only-mine            (boolean (and user-email (= user-email (get-in search-params [:filters :manager]))))
-                                    :role-types           (if role-type
-                                                            (set [role-type]) ;; TODO now we only pass one, should we get more?
-                                                            (get-in jobsboard/default-db [::jobsboard/search :wh.search/role-types]))
-                                    :published            (if published
-                                                            (set [published])
-                                                            (get-in jobsboard/default-db [::jobsboard/search :wh.search/published]))
-                                    :currency             (or (get-in search-params [:filters :remuneration :currency])
-                                                              (get-in jobsboard/default-db [::jobsboard/search :wh.search/currency]))
-                                    :salary-type          (or (get salary-type-mapping (get-in search-params [:filters :remuneration :timePeriod]))
-                                                              (get-in jobsboard/default-db [::jobsboard/search :wh.search/salary-type]))
-                                    :salary-range         (when (and min-salary max-salary) [min-salary max-salary])
-                                    :query                (:query search-params)
-                                    :available-tags       (facets "tags")
-                                    :available-wh-regions (facets "wh-region")
-                                    :available-cities     (facets "location.city")
-                                    :available-countries  (facets "location.country-code")
-                                    :remote-count         (->> (facets "remote") (filter #(= (:value %) "true")) first :count)
-                                    :sponsorship-count    (->> (facets "sponsorship-offered") (filter #(= (:value %) "true")) first :count)}
-                        (user-db/admin? db) (assoc :wh.search/mine-count (->> (facets "manager") (filter #(= (:value %) user-email)) first :count)
-                                                   :wh.search/published-count (facets "published"))
-                        city-info (assoc :wh.search/city-info
-                                         (mapv (fn [loc]
-                                                 (as-> loc loc
-                                                       (cases/->kebab-case loc)
-                                                       (update loc :region keyword)))
-                                               city-info)
-                                         :wh.search/salary-ranges
-                                         (mapv cases/->kebab-case remuneration-ranges)))
-          jobsboard-db #:wh.jobs.jobsboard.db{:jobs                     (mapv job/translate-job (:jobs jobs-search))
-                                              :promoted-jobs            (mapv job/translate-job (:promoted jobs-search))
-                                              :number-of-search-results (:numberOfHits jobs-search)
-                                              :current-page             (:page jobs-search)
-                                              :total-pages              (:numberOfPages jobs-search)
-                                              :search-term-for-results  (:query search-params)}]
-      {:db         (-> db
-                       (update ::jobsboard/sub-db (fn [current-jobsboard]
-                                                    (-> current-jobsboard
-                                                        (assoc ::jobsboard/all-jobs? all-jobs?)
-                                                        (merge jobsboard-db)
-                                                        (update ::jobsboard/search merge search-data))))
-                       (merge {::db/search-term  (:query search-params)
-                               ::db/search-label (:label search-params)}))
-       :dispatch-n [[:wh.search/in-progress false]
-                    [::pages/unset-loader]]})))
+  fetch-jobs-success/handler)
 
 (reg-event-db
   ::toggle-filter
@@ -283,8 +194,8 @@
 (defn- salary-params
   [{[min max] :wh.search/salary-range, type :wh.search/salary-type, currency :wh.search/currency}]
   (cond-> {:remuneration.time-period ({:year "Yearly", :day "Daily"} type)}
-          min (assoc :remuneration.min min)
-          max (assoc :remuneration.max max)
+          min (assoc :remuneration.min (js/parseInt min))
+          max (assoc :remuneration.max (js/parseInt max))
           currency (assoc :remuneration.currency currency)))
 
 (defn- search-params

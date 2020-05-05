@@ -24,7 +24,7 @@
                                   ::benefits]))
 (s/def ::location-description (s/nilable string?))
 (s/def ::display-location string?)
-(s/def ::tags (s/coll-of (s/nilable string?)))
+(s/def ::tags :wh/tags)
 (s/def ::applied (s/nilable boolean?))
 (s/def ::manager (s/nilable string?))
 

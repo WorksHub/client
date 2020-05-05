@@ -198,18 +198,6 @@
     (let [symbol (currency-symbols currency)]
       (str symbol  (format-number min) " – " symbol (format-number max)))))
 
-(defn take-tags
-  [num selected-tags all-tags search]
-  (let [search (some-> search (str/lower-case))
-        selected-tags-set (set (map :tag selected-tags))]
-    (->> all-tags
-         (filter (fn [{:keys [tag]}]
-                   (and (or (str/blank? search)
-                            (str/includes? tag search))
-                        (not (contains? selected-tags-set tag)))))
-         (concat selected-tags)
-         (take num))))
-
 ;; Tags
 
 (reg-sub
@@ -231,12 +219,29 @@
     (::create-job/tags-collapsed? db)))
 
 (reg-sub
+  ::all-tags
+  (fn [_ _]
+    (->> [:list-tags :tags]
+         (get-in (<sub [:graphql/result :tags {:type :tech}]))
+         (map ->tag))))
+
+(reg-sub
   ::matching-tags
   :<- [::tag-search]
-  :<- [::available-tags]
+  :<- [::all-tags]
   :<- [::tags]
-  (fn [[tag-search all-tags selected-tags] _]
-    (take-tags 20 selected-tags all-tags tag-search)))
+  (fn [[tag-search tags selected-tag-ids]]
+    (let [matching-but-not-selected
+          (filter (fn [tag] (and (or (str/blank? tag-search)
+                                    (str/includes? (str/lower-case (:label tag)) tag-search))
+                                (not (contains? selected-tag-ids (:id tag))))) tags)
+          selected-tags (->> tags
+                             (filter
+                               (fn [tag] (contains? selected-tag-ids (:id tag))))
+                             (map #(assoc % :selected true)))]
+      (->> (concat selected-tags matching-but-not-selected)
+           (map tag->form-tag)
+           (take (+ 20 (count selected-tag-ids)))))))
 
 (reg-sub
   ::editing-address?

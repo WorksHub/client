@@ -5,14 +5,14 @@
 ;; Jobs
 
 (deffragment jobCardFields :Job
-  [:id :slug :title :tagline :tags :published :userScore
+  [:id :slug :title :tagline [:tags :fragment/tagFields] :published :userScore
    :roleType :sponsorshipOffered :remote :companyId
    [:company [:name :slug :logo]]
    [:location [:city :state :country :countryCode]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
 
 (deffragment jobFields :Job
-  [:id :slug :title :companyId :tagline :descriptionHtml :tags :roleType :manager
+  [:id :slug :title :companyId :tagline :descriptionHtml [:tags :fragment/tagFields] :roleType :manager
    :locationDescription :remote :sponsorshipOffered :applied :published :lastModified
    [:company :fragment/companyCardFields]
    [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]

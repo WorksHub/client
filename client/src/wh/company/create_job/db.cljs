@@ -86,13 +86,15 @@
   [db]
   (letfn [(remove-admin-fields [f]
             (if-not (user/admin? db)
-              (disj f ::manager
+              (disj f
+                    ::manager
                     ::promoted
                     ::published)
               f))
           (remove-currency-fields [f]
             (if (get-in db [::sub-db ::remuneration__competitive])
-              (disj f ::remuneration__currency
+              (disj f
+                    ::remuneration__currency
                     ::remuneration__min
                     ::remuneration__max)
               f))]
@@ -150,12 +152,13 @@
 (s/def ::equity boolean?)
 
 (s/def ::tag ::p/non-empty-string)
+(s/def ::tag-id ::p/non-empty-string)
 (s/def ::tag-search string?)
 (s/def ::selected? boolean?)
 (s/def ::tag-container (s/keys :req-un [::tag]
                                :opt-un [::selected]))
 (s/def ::available-tags (s/coll-of ::tag-container :distinct true))
-(s/def ::selected-tags (s/coll-of ::tag-container :distinct true :kind set? :min-count 1))
+(s/def ::selected-tags (s/coll-of ::tag-id :distinct true :kind set? :min-count 1))
 
 (s/def ::company-id ::p/non-empty-string)
 (s/def ::manager ::data/manager)
