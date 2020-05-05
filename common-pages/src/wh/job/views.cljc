@@ -185,7 +185,7 @@
    [:div.job__company-header__logo
     (let [logo (<sub [::subs/logo])]
       (if (or logo (<sub [::subs/loaded?]))
-        (let [logo-img (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 80 :h 80 :class "logo"})]
+        (let [logo-img (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 80 :h 80 :class "logo" :fit "clamp"})]
           (if (<sub [::subs/profile-enabled?])
             [link logo-img :company :slug (<sub [::subs/company-slug])]
             logo-img))
