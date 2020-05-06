@@ -43,16 +43,17 @@
 
 (defn translate-application
   [job-tags application]
-  (-> application
-      (update :name #(if (str/blank? %)
-                       [:i "Unnamed user"]
-                       (capitalize %)))
-      (update :timestamp (partial tf/unparse (tf/formatters :date)))
-      (update :cv #(or (get-in % [:file :url])
-                       (get % :link)))
-      (update :cover-letter #(or (get-in % [:file :url])
-                                 (get % :link)))
-      (update :skills move-matching-skills-to-front job-tags)))
+  (let [tags (set (->> job-tags (map :label) (map str/lower-case)))]
+    (-> application
+        (update :name #(if (str/blank? %)
+                         [:i "Unnamed user"]
+                         (capitalize %)))
+        (update :timestamp (partial tf/unparse (tf/formatters :date)))
+        (update :cv #(or (get-in % [:file :url])
+                         (get % :link)))
+        (update :cover-letter #(or (get-in % [:file :url])
+                                   (get % :link)))
+        (update :skills move-matching-skills-to-front tags))))
 
 (reg-sub
   ::current-tab
@@ -124,7 +125,7 @@
   (fn [[sub-db {:keys [tags]} tab admin?] _]
     (when (::sub-db/applications sub-db)
       (->> (::sub-db/applications sub-db)
-           (map (partial translate-application (set (map str/lower-case tags))))))))
+           (map (partial translate-application tags))))))
 
 (reg-sub
   ::logo
@@ -325,7 +326,7 @@
                                (update :applications (fn [applications]
                                                        (when applications
                                                          (->> applications
-                                                              (map (partial translate-application (set (map str/lower-case job-tags))))))))
+                                                              (map (partial translate-application job-tags))))))
                                (update :frequencies (fn [freqs] (when freqs
                                                                   (tabs freqs admin?))))
                                (assoc  :current-frequency (when frequencies

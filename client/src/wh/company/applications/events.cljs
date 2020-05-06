@@ -220,12 +220,13 @@
           admin?              (user/admin? db)
           page-number         (get-in db [::sub-db/sub-db ::sub-db/current-page])
           states              (sub-db/tab->states (get-in db [::sub-db/sub-db ::sub-db/current-tab]) admin?)
-          admin-applications? (and admin?  (not company-id))]
-      {:graphql  {:query      (if admin-applications?
+          admin-applications? (and admin?  (not company-id))
+          query               (if admin-applications?
                                 (admin-applications-query job-id-or-nil (get-in db [::user/sub-db ::user/email]) states page-number)
-                                (applications-query {:job-id job-id-or-nil :company-id company-id :states states :page-number page-number}))
-                  :on-success [::fetch-applications-success admin-applications? job-id-or-nil page-number]
-                  :on-failure [::fetch-applications-failure]}})))
+                                (applications-query {:job-id job-id-or-nil :company-id company-id :states states :page-number page-number}))]
+      {:graphql {:query      query
+                 :on-success [::fetch-applications-success admin-applications? job-id-or-nil page-number]
+                 :on-failure [::fetch-applications-failure]}})))
 
 (reg-event-fx
   ::fetch-applications-success

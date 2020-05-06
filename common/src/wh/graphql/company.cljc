@@ -260,7 +260,7 @@
                    {:manager manager})
                  (when vertical
                    {:vertical vertical}))
-    (or fields [:id :slug :title :firstPublished :tags :published
+    (or fields [:id :slug :title :firstPublished [:tags [:id :slug :type :subtype :label :weight]] :published
                 [:location [:city :state :country :countryCode]]
                 [:stats [:applications :views :likes]]])]))
 
