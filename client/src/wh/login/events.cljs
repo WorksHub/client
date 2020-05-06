@@ -94,12 +94,18 @@
                                         :google/maps-loaded? false) ; reload google maps when we return here
                             true (dissoc ::db/page-mapping))}))
 
+;; copy of integration.stackoverflow/stackoverflow-redirect-url
+(defn stackoverflow-redirect-url [url env vertical]
+  (let [pr-number (re-find #"-\d+" url)]
+    (case env
+      :prod  (str "https://" vertical ".works-hub.com/stackoverflow-callback")
+      :stage (str "https://works-hub-stage.herokuapp.com/stackoverflow-dispatch/" vertical pr-number)
+      :dev   (str "http://" vertical ".localdomain:3449/stackoverflow-callback"))))
+
 (defn stackoverflow-authorize-url
-  [client-id env]
+  [client-id env vertical]
   (let [base "https://stackoverflow.com/oauth"
-        redirect-uri (str
-                       js/window.location.origin
-                       "/stackoverflow-callback")]
+        redirect-uri (stackoverflow-redirect-url js/window.location.href env vertical)]
     (str base
          "?client_id=" client-id
          "&scope=no_expiry"
@@ -110,7 +116,8 @@
   db/default-interceptors
   (fn [{db :db} _]
     {:set-url (stackoverflow-authorize-url (:wh.settings/stackoverflow-client-id db)
-                                           (:wh.settings/environment db))}))
+                                           (:wh.settings/environment db)
+                                           (::db/vertical db))}))
 
 (reg-event-fx
   :stackoverflow/call
