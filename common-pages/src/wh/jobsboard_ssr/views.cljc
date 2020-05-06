@@ -1,13 +1,12 @@
 (ns wh.jobsboard-ssr.views
-  (:require
-    [wh.components.icons :refer [icon]]
-    [wh.components.job :as job]
-    [wh.routes :as routes]
-    [wh.components.newsletter :as newsletter]
-    [wh.components.pagination :as pagination]
-    [wh.interop :as interop]
-    [wh.jobsboard-ssr.subs :as subs]
-    [wh.re-frame.subs :refer [<sub]]))
+  (:require [wh.components.icons :refer [icon]]
+            [wh.components.job :as job]
+            [wh.components.newsletter :as newsletter]
+            [wh.components.pagination :as pagination]
+            [wh.interop :as interop]
+            [wh.jobsboard-ssr.subs :as subs]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]))
 
 (def jobs-container-class
   {:cards "jobs-board__jobs-list__content"
