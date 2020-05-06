@@ -62,13 +62,14 @@
 (reg-query :recommended_jobs recommended-jobs-query)
 
 (defquery recommended-issues-query
-          {:venia/operation {:operation/type :query
-                             :operation/name "recommended_issues"}
-           :venia/variables [{:variable/name "issues_amount"
-                              :variable/type :Int}]
-           :venia/queries   [[:query_issues
-                              {:page_size   :$issues_amount}
-                              [[:issues [:fragment/issueListFields]]]]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "recommended_issues"}
+   :venia/variables [{:variable/name "issues_amount"
+                      :variable/type :Int}]
+   :venia/queries   [[:query_issues
+                      {:page_size :$issues_amount
+                       :published true}
+                      [[:issues [:fragment/issueListFields]]]]]})
 (reg-query :recommended_issues recommended-issues-query)
 
 (defn std-blogs [db]
