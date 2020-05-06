@@ -1,25 +1,21 @@
 (ns wh.company.dashboard.views
-  (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [clojure.set :refer [rename-keys]]
-    [re-frame.core :refer [dispatch dispatch-sync]]
-    [wh.common.data :as data]
-    [wh.common.data.company-profile :as company-data]
-    [wh.common.text :refer [pluralize]]
-    [wh.company.dashboard.events :as events]
-    [wh.company.dashboard.subs :as subs]
-    [wh.company.edit.subs :as edit-subs]
-    [wh.company.payment.views :as payment]
-    [wh.components.common :refer [link]]
-    [wh.components.conversation.views :as codi]
-    [wh.components.ellipsis.views :refer [ellipsis]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.loader :refer [loader]]
-    [wh.components.stats.views :refer [stats-item]]
-    [wh.job.views :as job]
-    [wh.subs :refer [<sub]]
-    [wh.user.subs :as user-subs]))
+  (:require [cljs-time.core :as t]
+            [cljs-time.format :as tf]
+            [re-frame.core :refer [dispatch dispatch-sync]]
+            [wh.common.data :as data]
+            [wh.common.data.company-profile :as company-data]
+            [wh.common.text :refer [pluralize]]
+            [wh.company.dashboard.events :as events]
+            [wh.company.dashboard.subs :as subs]
+            [wh.company.payment.views :as payment]
+            [wh.components.common :refer [link]]
+            [wh.components.ellipsis.views :refer [ellipsis]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.loader :refer [loader]]
+            [wh.components.stats.views :refer [stats-item]]
+            [wh.components.tag :as tag]
+            [wh.job.views :as job]
+            [wh.subs :refer [<sub]]))
 
 (defn- date->str [d]
   (let [t (t/today-at-midnight)
@@ -175,8 +171,7 @@
        [:div.company-job__posted "Posted on " first-published]
        [:div.company-job__posted " "])
      (into
-       [:ul.company-job__tags.tags]
-       (map (fn [tag] [:li tag]) tags))
+       [:ul.company-job__tags.tags] (map (fn [tag] [tag/tag :li tag]) tags))
      (when (pos? matching-users)
        [:div.company-job__candidate-info
         "We have " matching-users " active " (pluralize matching-users "member") " with 75%+ match rates for this role. "
