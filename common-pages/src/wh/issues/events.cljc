@@ -1,14 +1,14 @@
 (ns wh.issues.events
-  (:require
-    #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
-    [re-frame.core :refer [path]]
-    [wh.common.cases :as cases]
-    [wh.common.issue :refer [gql-issue->issue]]
-    [wh.db :as db]
-    [wh.graphql.issues :as queries]
-    [wh.issues.db :as issues]
-    [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
-    [wh.slug :as slug]))
+  (:require #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
+            [re-frame.core :refer [path]]
+            [wh.common.cases :as cases]
+            [wh.common.issue :refer [gql-issue->issue]]
+            [wh.db :as db]
+            [wh.graphql.issues :as queries]
+            [wh.issues.db :as issues]
+            [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
+            [wh.slug :as slug]
+            [wh.util :as util]))
 
 (def issues-interceptors (into db/default-interceptors
                                [(path ::issues/sub-db)]))
@@ -63,7 +63,7 @@
                                :page_size     issues/default-page-size
                                :published     true
                                :repo_language language
-                               :page_number   (or page-number 1)
+                               :page_number   (util/coerce-int (or page-number 1))
                                :sort          (issues/issues-sort (::db/query-params db))}
                   :on-success [::fetch-issues-success]
                   :on-failure [::failure ::fetch-issues]}})))
