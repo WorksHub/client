@@ -316,6 +316,7 @@
                                 :published :body :creator :originalSource
                                 :verticals :primaryVertical :companyId :tagIds
                                 :associatedJobs :authorInfo]
+              author-id (get-in db [::contribute/sub-db ::contribute/author-id])
               blog (-> db
                        ::contribute/sub-db
                        (dissoc ::contribute/tags)
@@ -325,7 +326,8 @@
                        cases/->camel-case-keys-str
                        (select-keys (map name save-blog-fields))
                        (dissoc (when id "creator"))
-                       (util/remove-nils))]
+                       (util/remove-nils)
+                       (assoc :authorId author-id))]
           {:graphql {:query      (if id update-blog-mutation create-blog-mutation)
                      :variables  (if id {:update_blog blog} {:create_blog blog})
                      :on-success (if id [::save-success] [::create-success])
