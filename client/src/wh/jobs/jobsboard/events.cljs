@@ -56,6 +56,8 @@
                                               remote?         (assoc :remote true))
                                       {})
                                     (search/query-params->filters (::db/query-params db)))
+                             (util/update* "sponsorship-offered" util/string->boolean)
+                             (util/update* "remote" util/string->boolean)
                              (util/update-in* [:remuneration :min] js/parseInt)
                              (util/update-in* [:remuneration :max] js/parseInt))
           page-from-params (int (get-in db [::db/query-params "page"]))

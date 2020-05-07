@@ -343,3 +343,6 @@
 
 (defn maps-with-id [n]
   (map (partial hash-map :id) (range n)))
+
+(defn string->boolean [x]
+  (= "true" x))
