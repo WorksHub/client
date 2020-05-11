@@ -289,7 +289,9 @@
        (when (and (not (<sub [:user/admin?]))
                   (not (<sub [:user/company-connected-github?])))
          [github/install-github-app
-          {:id "company-edit__integration--github"}])]])
+          {:id    "company-edit__integration--github"
+           :label "GitHub"
+           :class "company-edit__github-integration"}])]])
    (when (<sub [::subs/some-integrations-connected?])
      (let [deleting (<sub [::subs/deleting-integration?])]
        [:div.company-edit__connected-integrations
