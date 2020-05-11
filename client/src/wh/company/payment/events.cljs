@@ -96,7 +96,7 @@
   (fn [{db :db} [billing-period]]
     {:navigate [:payment-setup
                 :query-params (assoc (::db/query-params db) "billing" (name billing-period))
-                :params {:step (subs/payment-step db)} ]}))
+                :params {:step (subs/payment-step db)}]}))
 
 (reg-event-fx
   ::confirm-free
