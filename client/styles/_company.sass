@@ -458,23 +458,24 @@ $description-height: 300px
   margin-bottom: 20px
   display: flex
   flex-direction: column
+  width: 139px
 
 .company-edit__integration
   background-color: transparent
   float: none !important
   padding: 0
   margin-top: 0 !important
-  margin-right: 10px
   height: 40px
-  &.company-edit__github-integration
-    max-width: 140px
-  +mobile
-    margin-right: 3px
   img
-    margin: 0 25px 0 0
+    margin: 0
     height: 40px
   &:hover
     background-color: transparent !important
+
+.company-edit__github-integration
+  border-radius: 4px !important
+  &:hover
+    background-color: black !important
 
 .company-edit__connected-integrations
   margin-top: 12px
