@@ -17,7 +17,8 @@
     [wh.logged-in.profile.location-events :as location-events]
     [wh.pages.core :refer [on-page-load] :as pages]
     [wh.user.db :as user]
-    [wh.util :as util])
+    [wh.util :as util]
+    [wh.pages.util :refer [set-main-style!]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def profile-interceptors (into db/default-interceptors
@@ -655,3 +656,10 @@
                    :on-failure [::removal-failure]}
       :dispatch-n [[::pages/set-loader]
                    [:error/close-global]]})))
+
+(reg-event-db
+ ::toggle-dark-mode
+  profile-interceptors
+ (fn [db [state]]
+   (set-main-style! (if state :dark :light))
+   (assoc db ::profile/darkmode-enabled? state)))

@@ -10,10 +10,10 @@ $logo-dimension: 62px
   border-radius: 0
   box-shadow: none
   font-size: 14px
-  background: white
+  background: $white
   input, textarea, select
-    color: $steel-gray
-    border: solid 1px $steel-gray
+    color: $steel-gray-text
+    border: solid 1px $steel-gray-text
     &:focus, &:focus-within, &:hover
       @include hover-focus-state
 
@@ -38,7 +38,7 @@ $logo-dimension: 62px
 
 .wh-formx
   p
-    color: $steel-gray
+    color: $steel-gray-text
     line-height: 1.5em
   fieldset
     border: none
@@ -47,7 +47,7 @@ $logo-dimension: 62px
       margin-top: 0
   .field
     margin-bottom: 0.75rem
-    color: $steel-gray
+    color: $steel-gray-text
     +mobile
       margin-bottom: 0
     &:last-of-type
@@ -81,7 +81,7 @@ $logo-dimension: 62px
     width: 100%
     line-height: $field-height
     &:after
-      border-color: $steel-gray !important
+      border-color: $steel-gray-text !important
   .text-field-control
     @include form-fieldx
     &:focus-within
@@ -101,7 +101,7 @@ $logo-dimension: 62px
         padding-left: 39px !important
 
     .icon
-      fill: $steel-gray
+      fill: $steel-gray-text
   .text-field-control--removable
     +mobile
       display: flex
@@ -113,7 +113,7 @@ $logo-dimension: 62px
       padding-top: 9px !important /* fixes shift */
 
   .text-field-markdown-preview
-    border: 1px solid $steel-gray
+    border: 1px solid $steel-gray-text
     padding: 12px
   .input, .textarea
     padding: $field-padding
@@ -134,7 +134,7 @@ $logo-dimension: 62px
     font-size: 12px
     line-height: 18px
     font-weight: $font-medium
-    color: $steel-gray
+    color: $steel-gray-text
     margin-bottom: 0px
     &:first-child
       margin-top: 12px
@@ -148,7 +148,7 @@ $logo-dimension: 62px
     font-size: 14px
     position: absolute
     width: 100%
-    background: white
+    background: $white
     z-index: $dropdown-content-z
     padding: 0px 1px 1px 1px
     top: calc(#{$field-height} - 2px) /* overlaps input */
@@ -177,7 +177,7 @@ $logo-dimension: 62px
       width: 100%
       height: calc(100% + #{$field-height})
       bottom: 0
-      box-shadow: 4px 4px 4px $steel-gray
+      box-shadow: 4px 4px 4px $steel-gray-text
       pointer-events: none
   .label__markdown-menu
     display: flex
@@ -207,11 +207,11 @@ $logo-dimension: 62px
   .button
     border-radius: 2px
   .logo
-    color: $steel-gray
+    color: $steel-gray-text
     width: $logo-dimension
     height: $logo-dimension
-    background-color: white
-    border: 1px solid $steel-gray
+    background-color: $white
+    border: 1px solid $steel-gray-text
     padding: 1px
     cursor: pointer
     label
@@ -282,10 +282,10 @@ $logo-dimension: 62px
   vertical-align: middle
   margin-right: 5px
   cursor: pointer
-  background: white
+  background: $white
 
 .checkbox
-  color: $steel-gray
+  color: $steel-gray-text
   input[type=checkbox]
     visibility: hidden
     width: 0
@@ -299,7 +299,7 @@ $logo-dimension: 62px
     cursor: pointer
     .checkbox__box
       @include checkbox-and-radio
-      border: 1px solid $steel-gray
+      border: 1px solid $steel-gray-text
 
 .checkbox--indeterminate
   label
@@ -308,7 +308,7 @@ $logo-dimension: 62px
       background-position: 3px -1px
       background-size: 70%
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 9 h-9 h-6 h-9 v6 h9 h6 h9 z' fill='%236e7f89'/%3E%3C/svg%3E");
-      border-color: $steel-gray
+      border-color: $steel-gray-text
 
 .radios
   display: inline-block
@@ -316,11 +316,11 @@ $logo-dimension: 62px
     width: 0
     visibility: hidden
     &:checked + label, &:checked + .radio > label
-      background-color: white
+      background-color: $white
       &::after
         position: absolute
         content: ' '
-        background-color: $steel-gray
+        background-color: $steel-gray-text
         border: 0
         border-radius: 10px
         width: 12px
@@ -329,11 +329,11 @@ $logo-dimension: 62px
         left: 2px
   label
     @include checkbox-and-radio
-    border: 1px solid $steel-gray
+    border: 1px solid $steel-gray-text
     border-radius: 10px
     background-color: $grey
     transition: background-color 0.3s linear
-    background-color: white
+    background-color: $white
     margin: 0 6px 0 6px
     width: 18px
     height: 18px
@@ -342,7 +342,7 @@ $logo-dimension: 62px
 .radio
   +desktop
     margin: 16px
-  border: 1px solid $steel-gray
+  border: 1px solid $steel-gray-text
   border-radius: 20px
   width: 20px
   height: 20px
@@ -351,7 +351,7 @@ $logo-dimension: 62px
   opacity: 0.4
 
 .quill
-  border-color: $steel-gray
+  border-color: $steel-gray-text
   +desktop
     max-width: 470px
   +mobile
@@ -398,7 +398,7 @@ $logo-dimension: 62px
     box-shadow: 0 0 0 5px $light-red !important
 
 .pseudo-link
-  color: $steel-gray
+  color: $steel-gray-text
   font-weight: $font-semi-bold
   text-decoration: underline
 

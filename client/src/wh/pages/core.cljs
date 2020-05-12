@@ -8,6 +8,7 @@
             [re-frame.core :refer [reg-fx reg-sub reg-event-db reg-event-fx dispatch dispatch-sync]]
             [re-frame.db :refer [app-db]]
             [wh.db :as db]
+            [wh.pages.util :refer [get-main-style set-main-style!]]
             [wh.pages.modules :as modules]
             [wh.routes :as routes]
             [wh.verticals :as verticals]))
@@ -251,6 +252,9 @@
 
 (defn hook-browser-navigation! []
   (pushy/start! pushy-instance))
+
+(defn load-default-style! []
+  (set-main-style! (get-main-style)))
 
 (reg-event-db
   ::set-loader

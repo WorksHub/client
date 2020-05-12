@@ -43,7 +43,7 @@ $bubble-radius-hover: 63
   font-weight: $font-semi-bold
   text-transform: uppercase
   text-align: center
-  color: white
+  color: $white
   //border: $bubble-border solid black
   box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.2)
   padding: 0
@@ -64,7 +64,7 @@ $bubble-radius-hover: 63
     animation: $animation-duration increase-like
     @include bubble-diameter($bubble-radius-like + 0px)
     background-color: $metal-blue
-    border: 6px solid $steel-gray
+    border: 6px solid $steel-gray-text
 
   &.base
     animation: $animation-duration increase-unlike

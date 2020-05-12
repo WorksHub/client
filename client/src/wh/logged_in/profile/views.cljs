@@ -332,6 +332,18 @@
     (when (:current-location fields)    [view-field "Current location:" (or current-location "None")])
     (when (:preferred-locations fields) [view-field "Preferred locations:" (itemize preferred-locations :no-data-message "No locations selected.")])]))
 
+(defn settings-view []
+  (let [dark-mode (<sub [::subs/darkmode-enabled?])]
+    [:section.profile-section.settings
+     [:h2 "Settings"]
+     [:div {:class "field"}
+      [:input.toggle {:type "checkbox"
+                      :id "dark-mode-toggle"
+                      :class "switch is-rtl"
+                      :checked dark-mode
+                      :on-change  #(dispatch [::events/toggle-dark-mode (not dark-mode)])}]      
+      [:label {:for "dark-mode-toggle"} "Toggle Dark Mode"]]]))
+
 ;; Private section – edit
 
 (defn current-location-field []
@@ -444,13 +456,16 @@
 (defn main-view []
   [:div
    (if (<sub [:user/company?])
-     [company-user-view (<sub [::subs/company-data])]
+     [:div
+      [company-user-view (<sub [::subs/company-data])]
+      [settings-view]]
      [:div
       [header-view :owner (<sub [::subs/header-data])]
       [error-box]
       [cv-section-view (<sub [::subs/cv-data])]
       [cover-letter-section-view (<sub [::subs/cover-letter-data])]
-      [private-section-view (<sub [::subs/private-data])]])
+      [private-section-view (<sub [::subs/private-data])]
+      [settings-view]])
 
    [:a.button
     {:data-pushy-ignore "true"

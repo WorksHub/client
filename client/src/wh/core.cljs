@@ -21,6 +21,7 @@
                   (.getElementById js/document "app")))
 
 (defn ^:export init []
+  (pages/load-default-style!)
   (pages/hook-browser-navigation!)
   (mount-root))
 

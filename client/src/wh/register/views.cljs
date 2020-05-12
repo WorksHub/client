@@ -1,6 +1,7 @@
 (ns wh.register.views
   (:require [re-frame.core :refer [dispatch]]
             [wh.components.conversation.views :refer [codi-message]]
+            [wh.pages.util :refer [local-storage-supported?]]
             [wh.register.email :as email]
             [wh.register.events :as events]
             [wh.register.location :as location]
@@ -10,16 +11,6 @@
             [wh.register.test :as test]
             [wh.register.verify :as verify]
             [wh.subs :refer [<sub]]))
-
-;; See https://stackoverflow.com/questions/11214404/how-to-detect-if-browser-supports-html5-local-storage
-(defn local-storage-supported? []
-  (let [item "workshub-test-ls"]
-    (try
-      (js/localStorage.setItem item item)
-      (js/localStorage.removeItem item)
-      true
-      (catch :default _
-        false))))
 
 (defn unsupported-warning []
   [:div

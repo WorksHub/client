@@ -27,7 +27,7 @@
   color: $greyish
   .company-signup__steps--current,
   .payment-setup__steps--current
-    color: $steel-gray
+    color: $steel-gray-text
   span
     margin: 0px 10px
 
@@ -72,7 +72,7 @@
 .company-signup__content
   form
     label
-      color: $steel-gray
+      color: $steel-gray-text
       line-height: 18px
       margin-bottom: 18px
 
@@ -163,7 +163,7 @@
   line-height: 20px
   strong
     font-weight: $font-semi-bold
-    color: $steel-gray
+    color: $steel-gray-text
 
 
 $company-card-padding: 18px
@@ -316,7 +316,7 @@ $column-gap: 1.5rem
       content: 'Upgrade/View'
 
 .your-company__package-name
-  color: $steel-gray
+  color: $steel-gray-text
   font-size: 14px
   line-height: 14px
   font-weight: $font-semi-bold
@@ -414,13 +414,13 @@ $description-height: 300px
 .company-edit__user-header
   margin: 12px 0
   th
-    color: $steel-gray
+    color: $steel-gray-text
     font-weight: $font-regular
     font-size: 12px
 
 .company-edit__user
   td
-    color: $steel-gray
+    color: $steel-gray-text
     font-weight: $font-semi-bold
     font-size: 14px
 
@@ -445,7 +445,7 @@ $description-height: 300px
   svg
     margin-right: 5px
     margin-top: 6px
-    fill: white
+    fill: $white
     background: $red
     border-radius: 10px
     cursor: pointer
@@ -466,8 +466,6 @@ $description-height: 300px
   margin-top: 0 !important
   margin-right: 10px
   height: 40px
-  &.company-edit__github-integration
-    max-width: 140px
   +mobile
     margin-right: 3px
   img
@@ -518,7 +516,7 @@ $description-height: 300px
     padding: 18px
     margin: auto 0
     width: 320px
-    background: white
+    background: $white
     border-radius: 5px
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.3)
     p
@@ -541,19 +539,19 @@ $description-height: 300px
     margin-top: 5px
 
 .activity__container
-  background: white
+  background: $white
   height: 100%
-  color: $steel-gray
+  color: $steel-gray-text
   padding: 18px
   line-height: 18px
   strong
-    color: $steel-gray
+    color: $steel-gray-text
     font-weight: $font-semi-bold
 
 .activity__item
   display: flex
   .icon
-    fill: $steel-gray
+    fill: $steel-gray-text
     &.like
       width: 24px
       height: 24px
@@ -621,7 +619,7 @@ $description-height: 300px
   margin-bottom: 1px
 
 .company-job__stat-number
-  color: $steel-gray
+  color: $steel-gray-text
   font-size: 11px
   line-height: 18px
   text-align: center
@@ -632,10 +630,10 @@ $description-height: 300px
     color: $red
 
 .company-job__thats-you
-  color: $steel-gray
+  color: $steel-gray-text
 
 .company-job__posted
-  color: $steel-gray
+  color: $steel-gray-text
   font-weight: $font-medium
   margin-top: 12px
   font-size: 9px
@@ -757,7 +755,7 @@ $description-height: 300px
   line-height: 1.6em
 
 .company-application__applied-on
-  color: $steel-gray
+  color: $steel-gray-text
   font-size: 9px
   line-height: 18px
   height: 18px
@@ -790,7 +788,7 @@ $description-height: 300px
   .icon
     width: 16px
     height: 16px
-    fill: $steel-gray
+    fill: $steel-gray-text
     &.job-location
       width: 24px
       height: 24px
@@ -850,7 +848,7 @@ $description-height: 300px
     opacity: 0.4
 
 .company-application__job
-  background-color: white
+  background-color: $white
   display: grid
   padding: 18px
   grid-template-columns: 75px 1fr 108px
@@ -894,7 +892,7 @@ $description-height: 300px
   font-size: 9px
   font-weight: $font-medium
   letter-spacing: 0.9px
-  color: $steel-gray
+  color: $steel-gray-text
   +mobile
     display: none
 
@@ -902,7 +900,7 @@ $description-height: 300px
   grid-area: 1 / 3 / 4 / 4
   display: flex
   fill: $steel-gray
-  color: $steel-gray
+  color: $steel-gray-text
   +mobile
     display: none
 
@@ -928,7 +926,7 @@ $description-height: 300px
 
 .company-applications__tabs-spacer
   height: 40px
-  background-color: white
+  background-color: $white
   width: 100%
   margin-bottom: 18px
   border-bottom: 3px solid $skeleton-background-color
@@ -992,7 +990,7 @@ $description-height: 300px
 .company-application__notes
   white-space: pre-wrap
   margin-top: 16px
-  color: $steel-gray
+  color: $steel-gray-text
   svg
     margin-right: 8px
   &>div
@@ -1019,13 +1017,13 @@ $description-height: 300px
   &>div
     p
       line-height: 22px
-      color: $steel-gray
+      color: $steel-gray-text
       margin-bottom: 20px
       font-size: 14px
     h1
       padding: 0 0 16px 0
       margin: 0
-      color: $steel-gray
+      color: $steel-gray-text
 
 .company-applications__popup--job-selection
   .job-selection__jobs
@@ -1175,7 +1173,7 @@ $description-height: 300px
     span
       white-space: nowrap
       line-height: 15px
-      color: $steel-gray
+      color: $steel-gray-text
       &:nth-child(odd)
         font-weight: $font-medium
         font-size: 9px
@@ -1194,7 +1192,7 @@ $description-height: 300px
   .counts
     display: flex
     fill: $steel-gray
-    color: $steel-gray
+    color: $steel-gray-text
   .count
     display: flex
     flex-direction: column
@@ -1238,7 +1236,7 @@ $description-height: 300px
     fill: $skeleton-background-color
 
 .company-edit__payment-details
-  color: $steel-gray
+  color: $steel-gray-text
   +mobile
     margin-bottom: 60px
   .payment__card-form
@@ -1365,9 +1363,9 @@ $description-height: 300px
         font-weight: $font-semi-bold
         text-decoration: underline
         a
-          color: $steel-gray
+          color: $steel-gray-text
       td
-        color: $steel-gray
+        color: $steel-gray-text
         padding-left: 18px
       tr:not(.is-selected)
         &:nth-child(odd)
@@ -1434,13 +1432,13 @@ $description-height: 300px
   border: 1px solid $red
   background-color: $lighter-red
   padding: 18px
-  color: $steel-gray
+  color: $steel-gray-text
   p
     margin-bottom: 6px
   div, strong
     line-height: 18px
   strong
-    color: $steel-gray
+    color: $steel-gray-text
     display: inline-block
     width: 170px
 
@@ -1461,7 +1459,7 @@ $description-height: 300px
 
 .company-dashboard__profile-banner
   section
-    background-color: white
+    background-color: $white
     padding: 18px
     display: flex
 

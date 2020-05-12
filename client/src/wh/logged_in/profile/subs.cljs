@@ -343,3 +343,9 @@
       (condp = field
         :email "Please enter a valid email address."
         "This field is incorrect."))))
+
+(reg-sub
+ ::darkmode-enabled?
+ :<- [::profile]
+ (fn [profile _]
+   (::profile/darkmode-enabled? profile)))

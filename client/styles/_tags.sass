@@ -65,10 +65,10 @@ $tag-spacing: 3px
     input
       @include hover-focus-state
 .tags-selection
-  color: $steel-gray
-  border: 1px solid $steel-gray
+  color: $steel-gray-text
+  border: 1px solid $steel-gray-text
   border-top: 0
-  background-color: white
+  background-color: $white
   position: relative
   padding: 1px
   @include splitter-hr(15px)
@@ -173,9 +173,9 @@ $tag-spacing: 3px
 
 .tag--type-company, .tag.tag--type-company
   background-color: $disabled-gray
-  color: $steel-gray
+  color: $steel-gray-text
   .icon
-    fill: $steel-gray
+    fill: $steel-gray-text
 
 .tag--type-industry, .tag.tag--type-industry
   background-color: $tag-bg-orange
@@ -206,7 +206,7 @@ $tag-spacing: 3px
       min-width: 200px
 
 .edit-tags__list
-  background-color: white
+  background-color: $white
   li + li
     border-top: 1px solid rgba(0,0,0,0.1)
 

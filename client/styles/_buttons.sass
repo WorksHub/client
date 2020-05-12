@@ -18,12 +18,12 @@ $button-font-size: 11px
   font-weight: $font-semi-bold
   letter-spacing: 0.5px
   line-height: normal
-  color: white
+  color: $white
   // needed for button--loading to work always
   position: relative
   &:hover
     background: $button-hover !important
-    color: white !important
+    color: $white !important
     cursor: pointer
   &:focus
     outline: none
@@ -54,7 +54,7 @@ $button-font-size: 11px
   width: 108px
 
 .button__icon
-  fill: white
+  fill: $white
   vertical-align: middle
   margin-right: 12px
 
@@ -62,7 +62,7 @@ $button-font-size: 11px
   fill: $red
 
 .button__icon--twitter
-  fill: $wh-white
+  fill: $white
 
 .button--light
   background: $light-red
@@ -72,7 +72,7 @@ $button-font-size: 11px
     color: $red !important
 
 .button--inverted
- background: white
+ background: $white
  color: $red
  border: solid 1px $red
  &:hover
@@ -81,17 +81,17 @@ $button-font-size: 11px
 
 .button--green
   background: $metal-blue
-  color: white
+  color: $white
   &:hover
     background: $metal-blue !important
-    color: white !important
+    color: $white !important
 
 .button--grey
   background: $greyish
-  color: white
+  color: $white
   &:hover
     background: $greyish !important
-    color: white !important
+    color: $white !important
 
 .button--loading
   color: transparent !important
@@ -111,9 +111,9 @@ $button-font-size: 11px
 
 .conversation-multi-button
   display: block
-  border: 1px solide $steel-gray
+  border: 1px solide $steel-gray-text
   background: $light-gray
-  color: $steel-gray
+  color: $steel-gray-text
   font-weight: $font-medium
   font-size: $button-font-size
   line-height: 1
@@ -123,13 +123,13 @@ $button-font-size: 11px
   margin-left: auto
 
   &:hover
-    background: white !important
-    color: $steel-gray
+    background: $white !important
+    color: $steel-gray-text
     cursor: pointer
 
 .conversation-multi-button--selected
-  background: $steel-gray
-  color: white
+  background: $steel-gray-text
+  color: $white
   &:hover
     background: $dark-gray !important
 
@@ -154,36 +154,36 @@ $button-font-size: 11px
   font-size: 14px
 
 .button--disabled
-  background-color: white
+  background-color: $white
   color: $greyish
   border: solid 1px $greyish
   &:hover
-    background: white !important
+    background: $white !important
     color: $greyish !important
     cursor: pointer !important
 
 .button--stackoverflow
-  background-color: $wh-white !important
+  background-color: $white !important
   color: $wh-black !important
   box-shadow: 0 0 0 1px $stackoverflow-grey
   &:hover
-    background-color: $wh-white !important
+    background-color: $white !important
     color: $wh-black !important
     box-shadow: 0 0 0 1px $wh-black
 
 .button--twitter
   background-color: $twitter-blue !important
-  color: $wh-white !important
+  color: $white !important
   &:hover
     background-color: $twitter-blue-hover !important
-    color: $wh-white !important
+    color: $white !important
 
 .button--connect
   height: auto
   padding: 6px 12px
 
 .remove-text-field-btn
-  fill: white
+  fill: $white
   background: $red
   border-radius: 10px
   cursor: pointer

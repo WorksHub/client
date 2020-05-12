@@ -13,12 +13,12 @@
 
 .payment-setup__content
   position: relative
-  color: $steel-gray
+  color: $steel-gray-text
   p
     line-height: 18px
     margin-bottom: 18px
   h1
-    color: $steel-gray
+    color: $steel-gray-text
     font-size: 14px
     font-weight: $font-medium
     line-height: 18px
@@ -41,7 +41,7 @@
   padding: 24px 48px 48px 48px
   margin: auto 0
   margin-top: -100px
-  background: white
+  background: $white
   box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.3)
   position: relative
   p
@@ -94,8 +94,8 @@
   background-color: $red
   color: $white
 .StripeForm
-  background-color: white
-  border: 1px solid $steel-gray
+  background-color: $white
+  border: 1px solid $steel-gray-text
   padding: 14px
   margin-top: 16px
   .error
@@ -106,7 +106,7 @@
       display: none
 
 .payment-setup__pay-success
-  background: white
+  background: $white
   padding: 24px
   svg
     fill: $green
@@ -138,7 +138,7 @@
   padding: 18px
   height: 80px
   width: 100%
-  background-color: white
+  background-color: $white
   display: flex
   margin-bottom: 18px
 .card-data__brand
@@ -186,7 +186,7 @@
   justify-content: space-around
   @include animation('payment-card-final-reveal 0.5s 1')
   h1
-    color: white
+    color: $white
 
 .payment-publish-celebration__content
   padding: 18px
@@ -202,12 +202,12 @@
     top: $navbar-mobile-height + 12px
   right: 12px
   svg
-    fill: white
+    fill: $white
     width: 32px
     height: 32px
 
 .payment-setup__pay-confirm-container
-  background: white
+  background: $white
   padding: 24px
   position: relative
   font-size: 14px
@@ -234,7 +234,7 @@
   .is-flex
     justify-content: space-between
   strong
-    color: $steel-gray
+    color: $steel-gray-text
     font-weight: $font-medium
     line-height: 24px
   i
@@ -284,7 +284,7 @@
     display: flex
     flex-direction: column
     align-items: center
-    background-color: white
+    background-color: $white
     border: 1px solid transparent
     +desktop
       margin-left: 0 !important
@@ -309,7 +309,7 @@
       letter-spacing: 0.5px
       margin-top: 12px
     &.checked
-      border: 1px solid $steel-gray
+      border: 1px solid $steel-gray-text
     &.disabled
     &.existing, &.disabled
       span
@@ -362,7 +362,7 @@
     cursor: pointer
     justify-content: flex-start
   svg
-    fill: $steel-gray
+    fill: $steel-gray-text
   form
     display: flex
     .button
@@ -432,7 +432,7 @@
     position: absolute
     bottom: -14px
     margin-left: -32px
-    background-color: white
+    background-color: $white
     padding: 0px 32px
   li
     display: flex

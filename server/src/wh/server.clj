@@ -86,7 +86,7 @@
                   [:div#app-js] (html/content {:tag :script, :attrs {:type "text/javascript", :src "/js/wh.js"}})
                   [:div#tracking-popup-container] (html/content (->html (tracking/popup)))
                   [:div#auth-popup-container] (html/content (->html (auth/popup (verticals/config (:wh.db/vertical app-db) :platform-name))))
-                  [:style#main-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href "/wh.css"}})
+                  [:style#main-style] (constantly {:tag :link, :attrs {:id "main-style" :rel "stylesheet", :type "text/css", :href "/wh-light.css"}})
                   [:link.external-css]  (html/clone-for [filename (external-css)]
                                                         (html/set-attr :href filename
                                                                        :rel "stylesheet"

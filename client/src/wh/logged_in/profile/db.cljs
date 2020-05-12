@@ -2,7 +2,8 @@
   (:require [cljs.spec.alpha :as s]
             [clojure.string :as str]
             [wh.common.cases :as cases]
-            [wh.util :as util]))
+            [wh.util :as util]
+            [wh.pages.util :refer [get-main-style]]))
 
 (s/def ::predefined-avatar integer?)
 (s/def ::custom-avatar-mode boolean?)
@@ -20,7 +21,8 @@
 (def default-db {::editing nil
                  ::predefined-avatar 1
                  ::custom-avatar-mode false
-                 ::location-suggestions {}})
+                 ::location-suggestions {}
+                 ::darkmode-enabled? (= :dark (get-main-style))})
 
 (defn ->sub-db [data]
   (into {}

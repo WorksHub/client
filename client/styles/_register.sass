@@ -149,7 +149,7 @@ $line-height: 1.5
   visibility: hidden
 
 .conversation-element
-  background: white
+  background: $white
   color: $wh-black
   padding: 12px 20px
   margin: 10px
@@ -162,27 +162,34 @@ $line-height: 1.5
   code
     font-size: $font-size
   .location
-    color: $steel-gray
+    color: $steel-gray-text
     font-weight: $font-semi-bold
   &.codi
     border-radius: $radius $radius $radius 0
   &.user
     margin-left: auto
     margin-right: 18px
-    border: 2px solid $steel-gray
+    border: 2px solid $steel-gray-text
     border-radius: $radius $radius 0 $radius
+
     input
+      background-color: $white
       border: none
-      color: $steel-gray
+      color: $steel-gray-text
       font-weight: $font-semi-bold
       width: 100%
       &:focus
         outline: none
+
+    input:-webkit-autofill
+      -webkit-text-fill-color: $steel-gray-text
+      box-shadow: 0 0 0 30px $white inset !important
+
     li
-      color: $steel-gray
+      color: $steel-gray-text
       line-height: 2.3
     ul
-      border-top: $steel-gray 2px solid
+      border-top: $steel-gray-text 2px solid
       padding-top: 8px
       margin-top: 5px
 
@@ -238,7 +245,7 @@ $line-height: 1.5
     height: 40px
 
 .github-button__caption
-  color: white
+  color: $white
   font-weight: $font-semi-bold
   font-size: 12px
   text-align: center
@@ -252,8 +259,8 @@ $line-height: 1.5
   display: flex
   height: 42px
   border: none
-  background: $steel-gray
-  color: white
+  background: $steel-gray-text
+  color: $white
   font-weight: $font-medium
   font-size: $font-size
   line-height: $line-height
@@ -266,12 +273,12 @@ $line-height: 1.5
   transition: background 0.3s
   align-items: center
   &:hover
-    color: white
+    color: $white
     background: $red
   input:disabled + &,  &:disabled
     color: $dark-gray
   .icon
-    fill: white
+    fill: $white
     vertical-align: middle
     margin-right: 12px
 

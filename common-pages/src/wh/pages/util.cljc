@@ -1,6 +1,7 @@
 (ns wh.pages.util
   (:require
-    #?(:clj [net.cgrand.jsoup :as jsoup])
+   #?(:clj [net.cgrand.jsoup :as jsoup])
+   #?(:cljs [goog.dom :as dom])
     [wh.common.text :as txt]))
 
 (defn width
@@ -49,3 +50,39 @@
        (.addEventListener js/window "scroll"
                           (fn [_]
                             (f (.-scrollY js/window)))))))
+
+;; See https://stackoverflow.com/questions/11214404/how-to-detect-if-browser-supports-html5-local-storage
+(defn local-storage-supported?
+  []
+  #?(:cljs
+  (let [item "workshub-test-ls"]
+    (try
+      (.setItem js/localStorage item item)
+      (.removeItem js/localStorage item)
+      true
+      (catch :default _
+        false)))))
+
+(defn get-main-style
+  []
+  #?(:cljs
+     (if (and (local-storage-supported?) (= "true" (.getItem js/localStorage "darkmode-enabled?")))
+       :dark
+       :light)))
+
+(defn set-main-style!
+  [style]
+  #?(:cljs
+     (let [new-href (if (= style :dark) "/wh-dark.css" "/wh-light.css")
+           old-link (dom/getElement "main-style")]
+       (if-not (clojure.string/ends-with? (.-href old-link) new-href) 
+         (let [head (aget (dom/getElementsByTagName "head") 0)
+               new-link (dom/createElement "link")]
+           (dom/setProperties old-link (clj->js {:id "main-style-old"}))
+           (dom/setProperties new-link (clj->js {:href new-href
+                                                 :id "main-style"
+                                                 :rel "stylesheet"
+                                                 :type "text/css"
+                                                 :onload #(dom/removeNode old-link)}))
+           (dom/appendChild head new-link)
+           (if (local-storage-supported?) (.setItem js/localStorage "darkmode-enabled?" (= style :dark))))))))
