@@ -118,11 +118,33 @@
                                            :wh.issue/url
                                            :wh.issue/viewer-contributed])))
 
-(s/def :wh.issue/raw #?(:clj  (-> :wh/issue
-                                  (sc/replace-spec {:wh.issue/status :wh.issue.raw/status})
-                                  (sc/replace-spec {:wh.issue/level :wh.issue.raw/level})
-                                  (sc/replace-spec {:wh.issue.compensation/currency :wh.issue.raw.compensation/currency}))
-                        :cljs :wh/issue))
+(def algolia-fields
+  [:wh.issue/status
+   :wh.issue/title
+   :wh.issue/body
+   :wh.issue/compensation
+   :wh.issue/tags
+   ;; company logo and name
+   :wh.issue/company
+   ;; contributors count
+   :wh.issue/contributors
+   :wh.issue/id
+   ;; TODO: transform labels into tags
+   ;; :wh.issue/labels
+   :wh.issue/level
+   :wh.issue/pr-count
+   ;; org name and repo name
+   :wh.issue/repo])
+
+(s/def :wh.issue/raw
+  #?(:clj  (-> :wh/issue
+               (sc/replace-spec
+                 {:wh.issue/status :wh.issue.raw/status})
+               (sc/replace-spec
+                 {:wh.issue/level :wh.issue.raw/level})
+               (sc/replace-spec
+                 {:wh.issue.compensation/currency :wh.issue.raw.compensation/currency}))
+     :cljs :wh/issue))
 
 (s/def :wh/issues (s/coll-of :wh/issue))
 
