@@ -279,7 +279,7 @@
   {:dispatch [::show-admin-publish-prompt? true]})
 
 (defn process-publish-role-intention
-  [{:keys [db job-id permissions publish-events on-publish pending-offer]}]
+  [{:keys [db job-id permissions publish-events on-publish pending-offer] :as _args}]
   #?(:cljs
      (cond
        (or (contains? permissions :can_publish)

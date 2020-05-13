@@ -396,12 +396,12 @@
      [:div.split-content
       [:div.split-content__main
        [:div.is-flex.job-edit__footer
-        [:button.button.button--medium.is-pulled-right
+        [:button
          {:id "job-edit__footer__save"
           :on-click #(do (.preventDefault %)
                          (dispatch [::events/create-job]))
-          :class    (when (<sub [::subs/saving?])
-                      "button--inverted button--loading")}
+          :class    (cond-> (util/merge-classes "button" "button--medium" "job-edit__save-button")
+                            (<sub [::subs/saving?]) (util/merge-classes "button--inverted" "button--loading"))}
          (when-not (<sub [::subs/saving?])
            (cond published? "Save"
                  (<sub [::subs/edit?]) "Save & Preview"

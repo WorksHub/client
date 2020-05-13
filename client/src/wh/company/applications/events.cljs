@@ -32,7 +32,8 @@
   {:venia/queries [[:latest_applied_jobs {:company_id company-id
                                           :page_size sub-db/latest-applied-jobs-page-size
                                           :page_number page-number}
-                    [[:jobs [:id :slug :title :firstPublished :tags
+                    [[:jobs [:id :slug :title :firstPublished
+                             [:tags [:id :type :label :slug :subtype]]
                              [:location [:city :state :country :countryCode]]
                              [:stats [:applications :views :likes]]]]
                      [:pagination [:total]]]]]})
