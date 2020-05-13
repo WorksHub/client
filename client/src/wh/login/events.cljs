@@ -120,6 +120,12 @@
                                            (::db/vertical db))}))
 
 (reg-event-fx
+  ::go-profile
+  db/default-interceptors
+  (fn [_ _]
+    {:navigate [:profile]}))
+
+(reg-event-fx
   :stackoverflow/call
   db/default-interceptors
   (fn [{db :db} [track-context]]

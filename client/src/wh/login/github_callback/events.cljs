@@ -56,10 +56,10 @@
 (reg-event-fx
   ::gh-auth-fail
   db/default-interceptors
-  (fn [{db :db} [_]]
+  (fn [{db :db} [{:keys [errors] :as _resp}]]
     {:dispatch [::pages/unset-loader]
      :db       (-> db
-                   (assoc-in [::github-callback/sub-db :error?] true)
+                   (assoc-in [::github-callback/sub-db :error] (first errors))
                    (assoc-in [::github-callback/sub-db :callback-status] :fail)
                    (assoc ::db/page :github-callback))}))
 

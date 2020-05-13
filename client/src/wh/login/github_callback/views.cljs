@@ -3,13 +3,23 @@
     [wh.components.conversation.views :refer [error-message button]]
     [wh.components.icons :refer [icon]]
     [wh.login.github-callback.subs :as subs]
+    [wh.login.github-callback.db :as github-callback]
+    [wh.login.views :as login-views]
     [wh.subs :refer [<sub]]))
 
 (defn page []
   [:div.register-container
    [:div.columns.full-height
     [:div.column.is-half.is-offset-one-quarter.full-height
-     (when (<sub [::subs/github-error?])
-       [:div.conversation
-        [error-message "We couldn't fetch your GitHub information."]
-        [button [[icon "github"] "Try again"] [:github/call] :class "button--github"]])]]])
+     (let [error (<sub [::subs/error])
+           already-connected? (github-callback/already-connected? error)
+           msg (if already-connected?
+                 "This Github account is connected to another user profile."
+                 "We couldn't fetch your Github information.")]
+       (when error
+         [:div.conversation
+          [error-message msg]
+          (if already-connected?
+            [login-views/back-button]
+            [button
+             [[icon "github"] "Try again"] [:github/call]])]))]]])

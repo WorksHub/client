@@ -3,6 +3,7 @@
             [wh.common.re-frame-helpers :refer [dispatch-on-enter]]
             [wh.components.button-auth :as button-auth]
             [wh.components.common :refer [link]]
+            [wh.components.conversation.views :refer [button]]
             [wh.components.icons :refer [icon]]
             [wh.login.events :as events]
             [wh.login.subs :as subs]
@@ -64,6 +65,10 @@
     [link "Create Account" :get-started :class "a--underlined"]]
    [:img.sparkle {:src "/images/sparkle.svg"
                   :alt "Background sparkle"}]])
+
+(defn back-button
+  []
+  [button "Back to Profile" [::events/go-profile]])
 
 (defn page []
   [:div.main

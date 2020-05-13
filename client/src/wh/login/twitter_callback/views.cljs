@@ -4,6 +4,7 @@
     [wh.components.icons :refer [icon]]
     [wh.login.twitter-callback.subs :as subs]
     [wh.login.twitter-callback.db :as twitter-callback]
+    [wh.login.views :as login-views]
     [wh.subs :refer [<sub]]))
 
 (defn page []
@@ -18,6 +19,7 @@
        (when error
          [:div.conversation
           [error-message msg]
-          (when-not already-connected?
+          (if already-connected?
+            [login-views/back-button]
             [button
              [[icon "twitter"] "Try again"] [:twitter/call]])]))]]])

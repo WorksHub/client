@@ -4,6 +4,6 @@
             [wh.login.github-callback.db :as github-callback]))
 
 (reg-sub
-  ::github-error?
+  ::error
   (fn [db _]
-    (get-in db [::github-callback/sub-db :error?])))
+    (get-in db [::github-callback/sub-db :error])))

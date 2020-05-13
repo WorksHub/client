@@ -4,6 +4,6 @@
     [wh.login.stackoverflow-callback.db :as stackoverflow-callback]))
 
 (reg-sub
-  ::error?
+  ::error
   (fn [db _]
-    (get-in db [::stackoverflow-callback/sub-db :error?])))
+    (get-in db [::stackoverflow-callback/sub-db :error])))
