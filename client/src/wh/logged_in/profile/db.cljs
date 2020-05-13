@@ -8,6 +8,7 @@
 (s/def ::predefined-avatar integer?)
 (s/def ::custom-avatar-mode boolean?)
 (s/def ::editing (s/nilable keyword?))
+(s/def ::darkmode-enabled? boolean?)
 (s/def ::contributions (s/* (s/keys :req-un [::id ::title]
                                     :opt-un [::published])))
 ;; FIXME: This spec is wrong (:wh/location specs unnamespaced keys and
@@ -15,7 +16,7 @@
 ;; location spec between client and server.
 ;; (s/def ::location-suggestions (s/map-of integer? (s/nilable (s/coll-of :wh/location))))
 
-(s/def ::sub-db (s/keys :req [::editing ::predefined-avatar ::custom-avatar-mode]
+(s/def ::sub-db (s/keys :req [::editing ::predefined-avatar ::custom-avatar-mode ::darkmode-enabled?]
                         :opt [::contributions]))
 
 (def default-db {::editing nil
