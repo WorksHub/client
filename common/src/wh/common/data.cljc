@@ -443,7 +443,7 @@
              :cost 0
              :per nil
              :button "Get Started"
-             :live-jobs "None"
+             :live-jobs "One"
              :img {:src "/images/employers/essential.svg"
                    :alt "Explore icon"}
              :perks #{"Unlimited hubs"
@@ -451,7 +451,8 @@
                       "Github integration"
                       "Company profile"}
              :order 1
-             :description (str "Our basic package allows you to attract talent by creating a company profile and posting open-soure issues. This way you can experience some of our core features before upgrading.")}
+             :description (str "Our basic package allows you to attract talent by creating a company profile and posting open-soure issues. This way you can experience some of our core features before upgrading.")
+             :extra "First Job FREE!"}
    :essential {:name "Essential"
                :cost 500
                :per "month"
@@ -471,7 +472,6 @@
                 :cost 1500
                 :per "month"
                 :button "Start Hiring"
-                :extra "1st week free!"
                 :button-alt "Get Started"
                 :live-jobs "Unlimited"
                 :img {:src "/images/employers/launch_pad.svg"

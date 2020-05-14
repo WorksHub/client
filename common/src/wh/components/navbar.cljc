@@ -413,7 +413,7 @@
          (when promo-banner?
            [:div.navbar__promo-banner
             {:id "promo-banner"}
-            [link "Sign Up For Your FREE Company Profile" :register-company]
+            [link "Hiring? Sign up and post your first job for FREE!" :register-company]
             [:script {:type "text/javascript"}
              "initPromoBanner(\"promo-banner\", \"wh-navbar\")"]])
          [:div.navbar__content
