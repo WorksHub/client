@@ -9,7 +9,7 @@
 (s/def ::platform-name string?)
 (s/def ::twitter string?)
 (s/def ::default-technologies (s/* string?))
-(s/def ::page #{:admin-application
+(s/def ::page #{:admin-applications
                 :admin-articles
                 :admin-companies
                 :admin-company-applications
