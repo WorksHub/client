@@ -227,7 +227,7 @@
 
 (defn navigate-to-payment-setup
   [job-id]
-  {:navigate [:payment-setup :params {:step :select-package} :query-params {:job job-id :action :publish}]})
+  {:navigate [:payment-setup :params {:step :select-package} :query-params {:job job-id :action "publish"}]})
 
 (defn publish-job
   [db job-id {:keys [success failure retry]}]

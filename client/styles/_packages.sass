@@ -212,27 +212,26 @@
 
 .package-selector__container
   position: relative
+
 .package-selector__info-message.package-selector__columns
-  position: absolute
   bottom: 0
+  font-size: 14px
+  height: 290px
   justify-content: flex-start
+  line-height: 24px
   margin-bottom: 1%
   overflow-y: hidden
-  height: 290px
-  font-size: 14px
-  line-height: 24px
+  position: absolute
   transition: height 0.5s
-  &.is-collapsed
-    +mobile
-      height: 130% !important
+  width: 100%
+
   .package-selector__column
     max-width: unset
     padding: 0
     margin: 0
     &.is-4
-      padding-right: 14px
-    &.is-8
-      padding-right: 12px
+      padding-right: 6px
+
   .package-selector__column-inner
     position: relative
     background-color: $green
@@ -260,20 +259,23 @@
 .package-selector--mobile-fullscreen
   .package-selector__info-message.package-selector__columns
     +mobile
-      position: fixed
       bottom: 0
-      top: 0
-      height: 100%
-      font-size: 2vh
+      height: 50%
+      margin: 0
+      max-height: 200px
+      position: fixed
       p
-        line-height: 3vh
+        line-height: 1.6em
         margin-top: 20px
+
     .package-selector__column
       +mobile
-        height: 20%
+        bottom: 0
+        height: 100%
+        min-width: unset
         padding: 0 !important
         position: absolute
-        bottom: 0
+        right: 55px
         transition: height 0.5s
 
 .package-selector__trial

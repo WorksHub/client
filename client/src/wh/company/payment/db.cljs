@@ -7,7 +7,7 @@
     [wh.user.db :as user]))
 
 (s/def ::step #{:select-package :pay-confirm :pay-success})
-(s/def ::action #{:publish :applications})
+(s/def ::action #{:publish :applications :integrations})
 (s/def ::token (s/nilable string?))
 (s/def ::error (s/nilable keyword?))
 (s/def ::error-message (s/nilable string?))
