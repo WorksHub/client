@@ -19,7 +19,7 @@
     [:div.main.company-jobs
      [company-card (<sub [::subs/company-card]) {:view-jobs-link? false}]
      [:h1 (str "All Jobs from " (<sub [::subs/name]))]
-     [:div.company-jobs__grid-list
+     [:div.card-grid-list
       (for [job jobs]
         ^{:key (:id job)}
         [job-card job {:logged-in?        logged-in?

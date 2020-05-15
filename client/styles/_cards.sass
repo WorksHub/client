@@ -502,3 +502,18 @@ $card-job-padding: 11px
 
 .red-fill
   fill: $red
+
+.card-grid-list
+  +desktop
+    display: grid
+    grid-template-columns: 1fr 1fr 1fr
+    grid-gap: 0.9vw 0.9vw
+  +mobile
+    display: flex
+    flex-wrap: wrap
+    margin-right: -16px
+    .card
+      max-width: 100%
+      flex: 1 0 47.3%
+      margin-bottom: 16px
+      margin-right: 16px

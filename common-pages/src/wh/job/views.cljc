@@ -410,14 +410,14 @@
         admin?       (<sub [:user/admin?])]
     [:div.job__other-roles
      [:h2 "Other roles that might interest you"]
-     [:div.columns
+     [:div.card-grid-list
       (doall (for [job jobs]
                ^{:key (:id job)}
-               [:div.column [job-card job {:logged-in?        logged-in?
-                                           :user-has-applied? has-applied?
-                                           :user-is-company?  (or admin? (= company-id (:company-id job)))
-                                           :user-is-owner?    (= company-id (:company-id job))
-                                           :apply-source      "job-page-other-job"}]]))]]))
+               [job-card job {:logged-in?        logged-in?
+                              :user-has-applied? has-applied?
+                              :user-is-company?  (or admin? (= company-id (:company-id job)))
+                              :user-is-owner?    (= company-id (:company-id job))
+                              :apply-source      "job-page-other-job"}]))]]))
 
 (defn apply-sticky
   []
