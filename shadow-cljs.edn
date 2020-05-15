@@ -53,7 +53,7 @@
                 :output-dir       "target/resources/public/js"
                 :asset-path       "/js"
                 :compiler-options {:closure-defines {re-frame.trace.trace-enabled? true}}
-                :devtools         {:watch-dir "wh-client/client/resources/public"
+                :devtools         {:watch-dir "client/resources/public"
                                    :http-root "public"
                                    :http-port 8700
                                    :preloads  [shadow.remote.runtime.cljs.browser

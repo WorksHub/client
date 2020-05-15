@@ -42,24 +42,16 @@ lein repl
 to start simple Ring server. Next start watching ClojureScript files with:
 
 ```
-npm run watch
+npm run dev
 ```
 
 Now point your browser to: http://localhost:3449 and you should see the WorksHub UI.
 
 (If you're curious, we're using shadow-cljs to watch and compile our frontend. Fell free to run shadow server by yourself and access shadow-cljs Inspect. We have globally available `tap>` in our code. It also means that you can freely install any npm packages with `npm install` and require these in code. Go crazy!)
 
-In order to compile the CSS, in a separate terminal you should run
-
-```
-lein sass auto
-```
-
 Now, after a refresh, you should see the landing page.
 
 Click _Login → Send Magic Link_ and enter `candidate@example.com`. You will be logged in immediately.
-
-If you want to make changes to styling, you’ll want to install [sassc](https://github.com/sass/sassc). Run `lein sass auto` to have Leiningen watch your `.sass` files for changes and rebuild the `.css` files automatically.
 
 Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for information about how to submit pull requests.
 

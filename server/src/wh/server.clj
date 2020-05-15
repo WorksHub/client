@@ -61,8 +61,7 @@
 
 (defn- load-public-js
   []
-  (let [files (read-string (slurp (io/resource "publicjs.edn")))]
-    (reduce #(str %1 (slurp (io/resource (.getName (clojure.java.io/file %2))))) "" files)))
+  (slurp (io/resource "./public/public.js")))
 
 (html/deftemplate wh-index-template "index.html"
                   [{:keys [app-db page] :as ctx}]

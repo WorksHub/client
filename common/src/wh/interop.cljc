@@ -36,51 +36,51 @@
 
 (defn set-is-open
   [id on?]
-  #?(:clj (->jsfn "setClass" id "is-open" on?)
+  #?(:clj  (->jsfn "setClass" id "is-open" on?)
      :cljs (fn [_] (js/setClass id "is-open" on?))))
 
 (defn set-is-open-class
   [class on?]
-  #?(:clj (->jsfn "setClassOnClass" class "is-open" on?)
+  #?(:clj  (->jsfn "setClassOnClass" class "is-open" on?)
      :cljs (fn [_] (js/setClassOnClass class "is-open" on?))))
 
 (defn analytics-track
   [evt prps]
-  #?(:clj (->jsfn "submitAnalyticsTrack" evt prps)
+  #?(:clj  (->jsfn "submitAnalyticsTrack" evt prps)
      :cljs (fn [_] (js/submitAnalyticsTrack evt prps))))
 
 (defn show-auth-popup
   [context & [redirect]]
   (let [c (when context (name context))
         r (when redirect (pr-str redirect))]
-    #?(:clj (->jsfn "showAuthPopUp" c r)
+    #?(:clj  (->jsfn "showAuthPopUp" c r)
        :cljs (fn [_] (js/showAuthPopUp c r)))))
 
 (defn hide-auth-popup
   []
-  #?(:clj (->jsfn "hideAuthPopUp")
+  #?(:clj  (->jsfn "hideAuthPopUp")
      :cljs (fn [_] (js/hideAuthPopUp))))
 
 (defn open-video-player
   [youtube-id]
-  #?(:clj (->jsfn "openVideoPlayer" youtube-id)
+  #?(:clj  (->jsfn "openVideoPlayer" youtube-id)
      :cljs (fn [_] (js/openVideoPlayer youtube-id))))
 
 (defn open-photo-gallery
   [index images]
-  #?(:clj (->jsfn "openPhotoGallery" index images)
+  #?(:clj  (->jsfn "openPhotoGallery" index images)
      :cljs (fn [_] (js/openPhotoGallery index (clj->js (mapv clj->js images))))))
 
 ;;
 
 (defn on-click-fn
   [jsf]
-  #?(:clj {:onClick jsf}
+  #?(:clj  {:onClick jsf}
      :cljs {:on-click jsf}))
 
 (defn toggle-class-on-click
   [id cls]
-  #?(:clj {:onClick (->jsfn "toggleClass" id cls)}
+  #?(:clj  {:onClick (->jsfn "toggleClass" id cls)}
      :cljs {:on-click (fn [_] (js/toggleClass id cls))}))
 
 (defn click-tag
@@ -102,22 +102,22 @@
 
 (defn disable-no-scroll-on-click
   []
-  #?(:clj {:onClick (->jsfn "disableNoScroll")}
+  #?(:clj  {:onClick (->jsfn "disableNoScroll")}
      :cljs {:on-click (fn [_] (js/disableNoScroll))}))
 
 (defn toggle-no-scroll-on-click
   [id]
-  #?(:clj {:onClick (->jsfn "toggleNoScroll" id)}
+  #?(:clj  {:onClick (->jsfn "toggleNoScroll" id)}
      :cljs {:on-click (fn [_] (js/toggleNoScroll id))}))
 
 (defn set-no-scroll-on-click
   [id on?]
-  #?(:clj {:onClick (->jsfn "setNoScroll" id on?)}
+  #?(:clj  {:onClick (->jsfn "setNoScroll" id on?)}
      :cljs {:on-click (fn [_] (js/setNoScroll id on?))}))
 
 (defn agree-to-tracking-on-click
   []
-  #?(:clj {:onClick (->jsfn "agreeToTracking")}
+  #?(:clj  {:onClick (->jsfn "agreeToTracking")}
      :cljs {:on-click (fn [_] (js/agreeToTracking))}))
 
 (defn multiple-on-click

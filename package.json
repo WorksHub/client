@@ -1,9 +1,12 @@
 {
   "scripts": {
-    "release": "shadow-cljs release app",
+    "shadow-release": "shadow-cljs release app",
     "compile": "shadow-cljs compile app",
+    "shadow-watch": "shadow-cljs watch app",
     "dev-server": "shadow-cljs server",
-    "watch": "shadow-cljs watch app"
+    "webpack-watch": "webpack --watch",
+    "webpack-release": "webpack --config ./webpack.config.prod.js",
+    "dev": "concurrently --kill-others \"npm run shadow-watch\" \"npm run webpack-watch\""
   },
   "dependencies": {
     "@cljs-oss/module-deps": "^1.1.1",
@@ -26,6 +29,18 @@
     "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
-    "shadow-cljs": "^2.8.94"
+    "autoprefixer": "^9.7.6",
+    "concurrently": "^5.2.0",
+    "css-loader": "^3.5.3",
+    "extract-loader": "^5.0.1",
+    "file-loader": "^6.0.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.14.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.2",
+    "shadow-cljs": "^2.8.94",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-manifest-plugin": "^2.2.0"
   }
 }
