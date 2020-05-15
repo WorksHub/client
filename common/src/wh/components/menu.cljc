@@ -23,7 +23,7 @@
   (let [[target target-link] (if (coll? target) target [target target])
         link-opts (interop/multiple-on-click (interop/set-is-open-on-click data/logged-in-menu-id false)
                                              (interop/disable-no-scroll-on-click))]
-    [:li (merge {:key icon-name}
+    [:li (merge {:key (str (name target) "_" icon-name)}
                 (when (or (= target current-page)
                           (and (probably-homepage-match? target current-page)))
                   {:class "current"}))

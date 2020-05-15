@@ -2,6 +2,8 @@
   (:require [cljs.loader :as loader]
             [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
             [reagent.core :as reagent]
+            [wh.admin.articles.events :as articles-events]
+            [wh.admin.articles.views :as articles]
             [wh.admin.candidates.events :as candidates-events]
             [wh.admin.candidates.views :as candidates]
             [wh.admin.companies.views :as companies]
@@ -17,6 +19,7 @@
   {:candidates           {:page candidates/page, :can-access? user/admin?}
    :create-candidate     {:page create-candidate/page, :can-access? user/admin?}
    :admin-companies      {:page companies/page, :can-access? user/admin?}
+   :admin-articles       {:page articles/page, :can-access? user/admin?}
    :create-company-offer {:page create-offer/page, :can-access? user/admin?}
    :tags-edit            {:page tags/page, :can-access? user/admin?}})
 
@@ -28,6 +31,7 @@
 (dispatch-sync [::initialize-page-mapping])
 (dispatch-sync [::candidates-events/initialize-db])
 (dispatch-sync [::create-offer-events/initialize-db])
+(dispatch-sync [::articles-events/initialize-db])
 
 (db/redefine-app-db-spec!)
 

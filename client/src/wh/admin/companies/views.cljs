@@ -1,14 +1,13 @@
 (ns wh.admin.companies.views
-  (:require
-    [re-frame.core :refer [dispatch]]
-    [wh.admin.companies.events :as events]
-    [wh.admin.companies.subs :as subs]
-    [wh.common.data :refer [get-manager-name package-data]]
-    [wh.components.common :refer [link img wrap-img]]
-    [wh.components.forms.views :as forms]
-    [wh.components.icons :refer [icon]]
-    [wh.subs :refer [<sub]]
-    [wh.verticals :as verticals]))
+  (:require [re-frame.core :refer [dispatch]]
+            [wh.admin.companies.events :as events]
+            [wh.admin.companies.subs :as subs]
+            [wh.common.data :refer [get-manager-name package-data]]
+            [wh.components.common :refer [link img wrap-img]]
+            [wh.components.forms.views :as forms]
+            [wh.components.icons :refer [icon]]
+            [wh.subs :refer [<sub]]
+            [wh.verticals :as verticals]))
 
 (defn company-card
   [{:keys [name id logo manager vertical job-stats package application-state-frequencies] :as company}]

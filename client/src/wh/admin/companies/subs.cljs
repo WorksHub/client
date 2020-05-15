@@ -1,9 +1,8 @@
 (ns wh.admin.companies.subs
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [reg-sub]]
-    [wh.admin.companies.db :as companies]
-    [wh.common.data :refer [get-manager-name]]))
+  (:require [clojure.string :as str]
+            [re-frame.core :refer [reg-sub]]
+            [wh.admin.companies.db :as companies]
+            [wh.common.data :refer [get-manager-name]]))
 
 (reg-sub
   ::sub-db

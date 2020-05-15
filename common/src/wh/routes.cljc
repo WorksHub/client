@@ -139,7 +139,8 @@
               ["twitter-callback" :twitter-callback]
 
               ;;Private pages - app.js required
-              ["admin/" {"companies" :admin-companies}]
+              ["admin/" {"companies" :admin-companies
+                         "learn"     :admin-articles}]
               ["candidates/" {""                    :candidates
                               "new"                 :create-candidate
                               [:id]                 :candidate

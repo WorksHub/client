@@ -1,13 +1,12 @@
 (ns wh.admin.companies.events
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.admin.companies.db :as companies]
-    [wh.common.cases :as cases]
-    [wh.common.data :refer [get-manager-email]]
-    [wh.db :as db]
-    [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.util :as util]))
+  (:require [clojure.string :as str]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.admin.companies.db :as companies]
+            [wh.common.cases :as cases]
+            [wh.common.data :refer [get-manager-email]]
+            [wh.db :as db]
+            [wh.pages.core :as pages :refer [on-page-load]]
+            [wh.util :as util]))
 
 (def companies-interceptors (into db/default-interceptors
                                   [(path ::companies/sub-db)]))

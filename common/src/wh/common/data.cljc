@@ -659,6 +659,7 @@
       :class   "admin"
       :items   [[[:admin-applications :homepage] "applications" "Applications"]
                 [:admin-companies                "recommend"    "Companies"]
+                [:admin-articles                 "resources"    "Articles"]
                 [:candidates                     "profile"      "Candidates"]
                 [:create-job                     "resources"    "Create role"]
                 [:create-company                 "jobs-board"   "Create company"]
