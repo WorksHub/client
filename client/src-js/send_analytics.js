@@ -1,14 +1,13 @@
-import { addSourcing } from './add-sourcing';
-
-const wh_analytics = window.wh_analytics || {};
+import { addSourcing } from './add_sourcing';
 
 export function sendServerAnalytics(body, onsuccess = null) {
   var i = null;
+
   let send = function() {
-    if (wh_analytics.init) {
+    if (window.wh_analytics && window.wh_analytics.init) {
       window.clearInterval(i);
 
-      const bodyWithSourcing = addSourcing(body, wh_analytics);
+      const bodyWithSourcing = addSourcing(body, window.wh_analytics);
 
       var r = new XMLHttpRequest();
       r.timeout = 10000;
@@ -25,10 +24,11 @@ export function sendServerAnalytics(body, onsuccess = null) {
     }
   };
 
-  if (wh_analytics.init) {
+  if (window.wh_analytics && window.wh_analytics.init) {
     send();
   } else {
     // try and send every 1000ms if no consent
+    // TODO: remove this mechanism in favor of some proper queue or Pub/Sub
     i = window.setInterval(send, 1000);
   }
 }

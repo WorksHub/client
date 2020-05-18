@@ -8,7 +8,7 @@ export function addSourcing(obj, atx) {
   if (atx.utms && atx.utms.size > 0) {
     const utmsEntries = Array.from(atx.utms.entries());
 
-    const campaign = Object.assign.apply(Object, [
+    sourcing.campaign = Object.assign.apply(Object, [
       {},
       utmsEntries.map(([k, v]) => ({ [k]: v }))
     ]);

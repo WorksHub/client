@@ -1,17 +1,15 @@
 /* global analytics */
 import { isAppPresent, mapAsQueryString, extractQueryParams } from './util';
-import { sendServerAnalytics } from './send-analytics';
-import { addSourcing } from './add-sourcing';
+import { sendServerAnalytics } from './send_analytics';
+import { addSourcing } from './add_sourcing';
 import { setClass } from './public';
 
-var wh_analytics = {};
-wh_analytics.utms = null;
-wh_analytics.referrer = null;
-wh_analytics.landingPage = null;
-wh_analytics.title = null;
-wh_analytics.init = getCookie('wh_tracking_consent') != null;
-
-window.wh_analytics = wh_analytics;
+window.wh_analytics = {};
+window.wh_analytics.utms = null;
+window.wh_analytics.referrer = null;
+window.wh_analytics.landingPage = null;
+window.wh_analytics.title = null;
+window.wh_analytics.init = getCookie('wh_tracking_consent') != null;
 
 /*--------------------------------------------------------------------------*/
 
@@ -74,29 +72,31 @@ export function storeReferralData() {
   const currentLP = window.location.toString();
   const currentTitle = window.document.title;
   // combined
-  wh_analytics.utms = existingUtms.size > 0 ? existingUtms : currentUtms;
-  wh_analytics.referrer =
+  window.wh_analytics.utms = existingUtms.size > 0 ? existingUtms : currentUtms;
+  window.wh_analytics.referrer =
     existingRef && existingRef != '' ? existingRef : currentRef;
-  wh_analytics.landingPage =
+  window.wh_analytics.landingPage =
     existingLP && existingLP != '' ? existingLP : currentLP;
-  wh_analytics.title =
+  window.wh_analytics.title =
     existingTitle && existingTitle != '' ? existingTitle : currentTitle;
   // store
   localStorage.setItem(
     'wh_analytics_utms',
-    mapAsQueryString(wh_analytics.utms)
+    mapAsQueryString(window.wh_analytics.utms)
   );
   localStorage.setItem(
     'wh_analytics_referrer',
-    wh_analytics.referrer == null ? '' : wh_analytics.referrer
+    window.wh_analytics.referrer == null ? '' : window.wh_analytics.referrer
   );
   localStorage.setItem(
     'wh_analytics_landing_page',
-    wh_analytics.landingPage == null ? '' : wh_analytics.landingPage
+    window.wh_analytics.landingPage == null
+      ? ''
+      : window.wh_analytics.landingPage
   );
   localStorage.setItem(
     'wh_analytics_title',
-    wh_analytics.title == null ? '' : wh_analytics.title
+    window.wh_analytics.title == null ? '' : window.wh_analytics.title
   );
 }
 
@@ -105,10 +105,10 @@ function clearStoredData() {
   localStorage.removeItem('wh_analytics_referrer');
   localStorage.removeItem('wh_analytics_landing_page');
   localStorage.removeItem('wh_analytics_title');
-  wh_analytics.utms = null;
-  wh_analytics.referrer = null;
-  wh_analytics.landingPage = null;
-  wh_analytics.title = null;
+  window.wh_analytics.utms = null;
+  window.wh_analytics.referrer = null;
+  window.wh_analytics.landingPage = null;
+  window.wh_analytics.title = null;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -160,7 +160,7 @@ function sendServerPage(atx) {
 }
 
 export function initServerTracking(onsuccess = null) {
-  wh_analytics.init = true;
+  window.wh_analytics.init = true;
   sendServerAnalytics({ type: 'init' }, onsuccess);
 }
 
@@ -252,7 +252,7 @@ window.submitAnalyticsTrack = submitAnalyticsTrack;
 /*--------------------------------------------------------------------------*/
 
 function trackPage() {
-  const atx = Object.assign({}, wh_analytics);
+  const atx = Object.assign({}, window.wh_analytics);
   const alternativeLandingPage =
     atx.landingPage &&
     atx.landingPage != '' &&

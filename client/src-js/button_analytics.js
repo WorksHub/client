@@ -1,5 +1,5 @@
 import { submitAnalyticsTrack } from './analytics';
-import { sendServerAnalytics } from './send-analytics';
+import { sendServerAnalytics } from './send_analytics';
 
 function sendAnalytics(id) {
   let eventName = 'Button Pressed';
