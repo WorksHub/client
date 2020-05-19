@@ -22,6 +22,7 @@
   [k]
   (case k
     :duplicate-user "A user with this email address is already registered in our system. Please use a unique email address."
+    :common-email-domain "Please use a company email address."
     :unknown-error "An unknown error or timeout has occurred. Please check your connection and try again."
     (errors/upsert-user-error-message k)))
 
