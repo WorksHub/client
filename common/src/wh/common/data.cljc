@@ -618,8 +618,8 @@
 (def pricing-questions
   [{:title "Why should I sign up?"
     :answer "Signing up to WorksHub is really easy. Just click “Get Started”, and we’ll get your dashboard set up with just a couple of clicks. From here if you select our Launch Pad or Take-Off plans you will be able to create as many jobs as you like across all of our hubs. You can also manage all of your applications and add colleagues to your account. Once signed up your jobs will be seen by a highly qualified pool of candidates — both full-time and contract — that are ready to interview now."}
-   {:title "How does the 'free week' work?"
-    :answer (str "When you first sign up you will automatically be put on our Explore package, so you can get to know how our platform works and create a company profile. Once you're ready to start hiring, use the code '" free-week-code"' to get a whole week for free on our Launch Pad package. Once upgraded you can post unlimited jobs and talk directly to candidates.")}
+   {:title "How does the 'free job' work?"
+    :answer "When you first sign up you will automatically be put on our 'Explore' package. This will enable you to get to know how our platform works, create a company profile, import open-source issues etc. Once you're ready to start hiring, just create a job from your dashboard and after you hit the publish button, that's it; the job will be live! In order to access some of our integrations and add more jobs you will need to upgrade allowing you to post unlimited jobs. Get in touch if you want to find out how we can do more to help with your hiring."}
    {:title "How much does Take-Off cost?"
     :answer "Depending on your company size and headcount goals, our Take-Off package is built to be flexible for you. Whether you're hiring two or two hundred, combining a subscription plan with a success fee will help give you access to our direct sourcing team to ensure you hit your hiring goals. Your account manager who you can find in your settings page will discuss the best option with you and create a custom pricing plan."}
    {:title "Are there discounts?"

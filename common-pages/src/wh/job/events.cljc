@@ -10,6 +10,7 @@
     [wh.common.job :as common-job]
     [wh.db :as db]
     [wh.graphql.jobs :as graphql-jobs]
+    [wh.components.tag :as tag]
     [wh.job.db :as job]
     #?(:cljs [wh.pages.core :refer [on-page-load]])
     #?(:cljs [wh.user.db :as user])
@@ -48,6 +49,7 @@
 (defn translate-job [job]
   (as-> job job
         (cases/->kebab-case job)
+        (update job :tags #(map tag/->tag %))
         (util/namespace-map "wh.job.db" job)))
 
 (defn admin-or-job-owner? [db]
@@ -211,13 +213,14 @@
   (fn [db _]
     (assoc db :google/maps-loaded? true)))
 
-(reg-event-db
+(reg-event-fx
   ::publish-job-success
   job-interceptors
-  (fn [db [job-id]]
-    (assoc db
-           ::job/publishing? false
-           ::job/published true)))
+  (fn [{db :db} [job-id]]
+    {:db (assoc db
+                ::job/publishing? false
+                ::job/published true)
+     :dispatch [:success/set-global (str "Congratulations! Your role '" (::job/title db)"' is now live!")]}))
 
 (reg-event-db
   ::publish-job-failure
