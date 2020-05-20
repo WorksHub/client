@@ -37,7 +37,7 @@
    ::location__street       {:order 31 :initial "" :validate (s/nilable :wh.location/street)}
    ::location__city         {:order 32 :initial "" :validate ::city :event? false}
    ::location__post-code    {:order 33 :initial "" :validate (s/nilable :wh.location/post-code)}
-   ::location__state        {:order 34 :initial "" :validate (s/nilable :wh.location/state)}
+   ::location__state        {:order 34 :initial nil :validate (s/nilable :wh.location/state)}
    ::location__country      {:order 35 :initial nil :validate :wh.location/country :event? false}
    ::location__country-code {:order 36 :initial "" :validate (s/nilable :wh.location/country-code)}
    ::location__latitude     {:order 37 :initial nil :validate (s/nilable :wh.location/latitude)}

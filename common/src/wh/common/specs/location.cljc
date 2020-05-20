@@ -11,7 +11,9 @@
 (s/def :wh.location/post-code string?)
 (s/def :wh.location/city string?)
 (s/def :wh.location/cities (s/coll-of :wh.location/city :distinct true))
-(s/def :wh.location/state string?)
+(s/def :wh.location/state (s/with-gen
+                            (s/and string? (set (map second data/us-states)))
+                            #(gen/elements (map second data/us-states))))
 (s/def :wh.location/administrative string?)
 (s/def :wh.location/country string?)
 (s/def :wh.location/country-code (st/spec (set data/country-codes) {:type 'String}))

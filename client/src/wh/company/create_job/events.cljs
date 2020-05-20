@@ -405,15 +405,16 @@
   (fn [{db :db} [google-response]]
     (let [{:keys [street city country country-code state post-code latitude longitude]}
           (location/google-place->location google-response)]
-      {:db (assoc db
-                  ::create-job/location__street street
-                  ::create-job/location__city city
-                  ::create-job/location__country country
-                  ::create-job/location__country-code country-code
-                  ::create-job/location__state state
-                  ::create-job/location__post-code post-code
-                  ::create-job/location__latitude latitude
-                  ::create-job/location__longitude longitude)
+      {:db (merge db
+                  (util/remove-nil-blank-or-empty
+                    {::create-job/location__street street
+                     ::create-job/location__city city
+                     ::create-job/location__country country
+                     ::create-job/location__country-code country-code
+                     ::create-job/location__state state
+                     ::create-job/location__post-code post-code
+                     ::create-job/location__latitude latitude
+                     ::create-job/location__longitude longitude}))
        :dispatch-n [[::set-location-suggestions []]
                     [::open-search-location-form]]})))
 
