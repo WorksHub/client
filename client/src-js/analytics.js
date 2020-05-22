@@ -189,20 +189,23 @@ function whenAnalyticsReady(f) {
 
 export function loadAnalytics() {
   whenAnalytics(function() {
-    analytics.on('load', x => console.log('LOADED AJS'));
-    analytics.load();
-    whenAnalyticsReady(function() {
-      // if we have a wh_aid lets use it to make it easier to track
-      // users across destinations
-      if (getCookie('wh_aid') != null) {
-        setAnalyticsAnonymousId(getCookie('wh_aid'));
-      }
-      if (!isAppPresent()) {
-        // we only do this if no app, otherwise it's done in
-        // `wh.common.fx.analytics` (see `:analytics/pageview`)
-        trackPage();
-      }
-    });
+      analytics.ready(function() {
+          if(window.onSegmentReady) {
+              window.onSegmentReady();
+          }});
+      analytics.load();
+      whenAnalyticsReady(function() {
+          // if we have a wh_aid lets use it to make it easier to track
+          // users across destinations
+          if (getCookie('wh_aid') != null) {
+              setAnalyticsAnonymousId(getCookie('wh_aid'));
+          }
+          if (!isAppPresent()) {
+              // we only do this if no app, otherwise it's done in
+              // `wh.common.fx.analytics` (see `:analytics/pageview`)
+              trackPage();
+          }
+      });
   });
 }
 

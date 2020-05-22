@@ -188,11 +188,30 @@
   (fn [db [& path]]
     (assoc-in db [:wh.login.db/sub-db :wh.login.db/redirect] path)))
 
+(defn show-hs-chat
+  [show?]
+  (if-let [el (js/document.getElementById "hubspot-messages-iframe-container")]
+    (do
+      (if show?
+        (.remove (.-classList el) "hide")
+        (.add    (.-classList el) "hide"))
+      true)
+    false))
+
 (reg-event-fx
   ::show-chat?
   db/default-interceptors
-  (fn [_ [show?]]
-    (when-let [el (js/document.getElementById "hubspot-messages-iframe-container")]
-      (if show?
-        (.remove (.-classList el) "hide")
-        (.add    (.-classList el) "hide")))))
+  (fn [{db :db} [show?]]
+    (show-hs-chat show?)
+    {:db (assoc db ::db/show-hs-chat? show?)}))
+
+(defonce hook-up-segment-ready
+  (set!
+    (.-onSegmentReady js/window)
+    (fn []
+      (let [show? (boolean (::db/show-hs-chat? @app-db))
+            i     (atom nil)]
+        (reset! i
+                (.setInterval js/window
+                              (fn [] (when (show-hs-chat show?)
+                                      (.clearInterval js/window @i))) 500))))))

@@ -117,8 +117,9 @@
      ::page-params            {}
      ::page-mapping           {}
      ::user/sub-db            user/default-db
-     ::github-callback/sub-db github-callback/default-db}
-   server-side-db))
+     ::github-callback/sub-db github-callback/default-db
+     ::show-hs-chat?          true}
+    server-side-db))
 
 (defn blockchain? [vertical]
   (= vertical "blockchain"))
