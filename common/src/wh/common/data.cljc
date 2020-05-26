@@ -482,7 +482,6 @@
 (def get-started-cta-string "Get Started")
 (def free-trial-days 0)
 (def launch-pad-trial-days 0)
-(def free-week-code "FREEWEEK")
 
 (def package-data
   {:free {:name "Trial"
