@@ -30,9 +30,9 @@
     :blog-description     "A curated blog on functional programming. Read news, posts and opinions from the community - we have FP covered."
     :twitter              "@functionalworks"
     :linkedin             "https://www.linkedin.com/company/functional-works/"
-    :default-technologies ["Clojure" "Haskell" "Scala" "Erlang" "F#" "OCaml"]
-    :footer-job-links     ["Scala" "Clojure" "Haskell" "OCaml" "Elixir" "Elm" "Erlang" "ReasonML"]
-    :footer-article-links ["Scala" "Clojure" "Haskell" "F#" "Elixir" "Erlang"]
+    :default-technologies ["Scala" "Clojure" "ClojureScript" "Haskell" "Erlang" "Elixir" "Elm" "F#" "OCaml"]
+    :footer-job-links     ["Scala" "Clojure" "ClojureScript" "Haskell" "Erlang" "Elixir" "Elm" "ReasonML" "OCaml"]
+    :footer-article-links ["Scala" "Clojure" "ClojureScript" "Haskell" "Erlang" "Elixir" "F#"]
     :jobsboard-header     {:title       "Functional Programming Jobs"
                            :subtitle    "Browse jobs for software engineers and developers"
                            :description "Look for front-end, full-stack and backend roles working with functional programming"}
