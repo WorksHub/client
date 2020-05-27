@@ -20,7 +20,7 @@ export function sendServerAnalytics(body, onsuccess = null) {
           onsuccess(r);
         }
       };
-      r.send(JSON.stringify(body));
+      r.send(JSON.stringify(bodyWithSourcing));
     }
   };
 
