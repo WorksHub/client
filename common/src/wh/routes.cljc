@@ -79,6 +79,7 @@
 (def routes ["/"
              ;;Public SSR Pages - no app.js required
              [["" :homepage]
+              ["homepage-new" :homepage-new]
               ["hire-" {[:template] :homepage}]
               ["issues/" {""            :issues
                           [:company-id] (bidi/tag :issues :issues-for-company-id)}]
@@ -222,6 +223,7 @@
                                                :company-jobs
                                                :company-articles
                                                :homepage
+                                               :homepage-new
                                                :how-it-works
                                                ;;:issue CH3610
                                                ;;:issues CH3615

@@ -1,4 +1,4 @@
-(ns wh.issue.edit.views
+(ns wh.pages.issue.edit.views
   (:require
     #?(:cljs [wh.components.forms.views :refer [radio-buttons text-input]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
@@ -6,8 +6,8 @@
     [wh.components.icons :refer [icon]]
     [wh.components.issue :as issue]
     [wh.components.selector :refer [selector]]
-    [wh.issue.edit.events :as events]
-    [wh.issue.edit.subs :as subs]
+    [wh.pages.issue.edit.events :as events]
+    [wh.pages.issue.edit.subs :as subs]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]))
 

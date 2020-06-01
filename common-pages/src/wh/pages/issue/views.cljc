@@ -1,4 +1,4 @@
-(ns wh.issue.views
+(ns wh.pages.issue.views
   (:require
     #?(:cljs [reagent.core :as r])
     #?(:cljs [wh.components.forms.views :refer [radio-buttons]])
@@ -10,14 +10,15 @@
     [wh.components.job :refer [job-card]]
     [wh.components.not-found :as not-found]
     [wh.how-it-works.views :as how-it-works]
-    [wh.issue.edit.views :as edit-issue]
-    [wh.issue.events :as events]
-    [wh.issue.subs :as subs]
+    [wh.pages.issue.edit.views :as edit-issue]
+    [wh.pages.issue.events :as events]
+    [wh.pages.issue.subs :as subs]
     [wh.pages.util :as putil]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
 
+; TODO: CH4302
 (defn show-popup-button []
   [:button.button
    {:on-click #(dispatch [::events/try-contribute])}

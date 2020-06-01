@@ -37,6 +37,7 @@
                                 "prospect"  :logged-in
                                 "company"   :company
                                 "admin"     :company}
+   :homepage-new               :homepage-new
    :homepage-dashboard         :logged-in
    :improve-recommendations    :logged-in
    :issue                      :issues

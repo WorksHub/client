@@ -1,20 +1,19 @@
 ;; Candidate landing page
 
 (ns wh.landing.views
-  (:require
-    #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
-    [wh.common.data :as data]
-    [wh.components.button-auth :as button-auth]
-    [wh.components.cards :refer [blog-card]]
-    [wh.components.carousel :refer [carousel]]
-    [wh.components.job :refer [job-card]]
-    [wh.components.common :refer [companies-section link wrap-img img]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.www-homepage :as www :refer [animated-hr]]
-    [wh.how-it-works.views :as hiw]
-    [wh.landing.subs :as subs]
-    [wh.re-frame.events :refer [dispatch]]
-    [wh.re-frame.subs :refer [<sub]]))
+  (:require #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
+            [wh.common.data :as data]
+            [wh.components.button-auth :as button-auth]
+            [wh.components.cards :refer [blog-card]]
+            [wh.components.carousel :refer [carousel]]
+            [wh.components.job :refer [job-card]]
+            [wh.components.common :refer [companies-section link wrap-img img]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.www-homepage :as www :refer [animated-hr]]
+            [wh.how-it-works.views :as hiw]
+            [wh.landing.subs :as subs]
+            [wh.re-frame.events :refer [dispatch]]
+            [wh.re-frame.subs :refer [<sub]]))
 
 (def issues-benefits
   [{:img "/images/hiw/candidate/benefits/benefit1.svg"

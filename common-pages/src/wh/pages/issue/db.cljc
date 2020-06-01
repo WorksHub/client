@@ -1,4 +1,4 @@
-(ns wh.issue.db
+(ns wh.pages.issue.db
   (:require
     #?(:clj [clojure.spec.alpha :as s]
        :cljs [cljs.spec.alpha :as s])))

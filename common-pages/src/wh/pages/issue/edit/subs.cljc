@@ -1,7 +1,7 @@
-(ns wh.issue.edit.subs
+(ns wh.pages.issue.edit.subs
   (:require
     [re-frame.core :refer [reg-sub]]
-    [wh.issue.edit.db :as issue-edit]))
+    [wh.pages.issue.edit.db :as issue-edit]))
 
 (reg-sub
   ::sub-db

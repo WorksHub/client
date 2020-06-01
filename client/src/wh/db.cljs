@@ -41,6 +41,7 @@
                 :stackoverflow-callback
                 :twitter-callback
                 :homepage
+                :homepage-new
                 :homepage-company-dashboard
                 :homepage-dashboard
                 :homepage-not-logged-in
