@@ -32,8 +32,8 @@ module.exports = {
           {
             loader: 'cljc-css-loader',
             options: {
-              path: path.resolve(__dirname, 'client/src/styles'),
-              nsPrefix: 'styles'
+              path: path.resolve(__dirname, 'common/src/wh/styles'),
+              nsPrefix: 'wh.styles'
             }
           },
           {
