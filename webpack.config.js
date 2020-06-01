@@ -4,14 +4,18 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
 module.exports = {
-  entry: ['./client/src-js/index.js', './client/styles/wh.sass'],
+  entry: {
+    public: './client/src-js/index.js',
+    'wh-legacy': './client/legacy-styles/wh.sass',
+    'wh-styles': './client/styles/index.js'
+  },
   output: {
     path: path.resolve(__dirname, 'client/resources/public'),
-    filename: 'public.js'
+    filename: '[name].min.js'
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: './wh.css'
+      filename: './[name].css'
     })
   ],
   mode: 'development',
@@ -20,6 +24,39 @@ module.exports = {
     rules: [
       {
         test: /\.sass$/,
+        include: [path.resolve(__dirname, 'client/styles')],
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
+            loader: 'cljc-css-loader',
+            options: {
+              path: path.resolve(__dirname, 'client/src/styles'),
+              nsPrefix: 'styles'
+            }
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: {
+                mode: 'local',
+                localIdentName: '[name]__[local]--[hash:base64:5]'
+              }
+            }
+          },
+          {
+            loader: 'postcss-loader'
+          },
+          {
+            loader: 'sass-loader'
+          }
+        ]
+      },
+      {
+        test: /\.sass$/,
+        include: [path.resolve(__dirname, 'client/legacy-styles')],
         use: [
           {
             loader: MiniCssExtractPlugin.loader

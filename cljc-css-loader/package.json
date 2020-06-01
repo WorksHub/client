@@ -1,0 +1,10 @@
+{
+  "name": "cjlc-css-loader",
+  "version": "1.0.0",
+  "main": "index.js",
+
+  "dependencies": {
+    "acorn": "^7.2.0",
+    "loader-utils": "^2.0.0"
+  }
+}

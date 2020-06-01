@@ -16,7 +16,7 @@
     "physicsjs": "^0.7.0",
     "process": "^0.11.10",
     "prop-types": "^15.7.2",
-    "rc-slider": "^9.2.4",
+    "rc-slider": "^8.6.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-draggable": "^4.2.0",
@@ -32,15 +32,20 @@
     "autoprefixer": "^9.7.6",
     "concurrently": "^5.2.0",
     "css-loader": "^3.5.3",
+    "cypress": "^4.7.0",
     "extract-loader": "^5.0.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^6.0.0",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.14.0",
+    "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^8.0.2",
     "shadow-cljs": "^2.8.94",
+    "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-manifest-plugin": "^2.2.0"
+    "webpack-manifest-plugin": "^2.2.0",
+    "cljc-css-loader": "file:./cljc-css-loader"
   }
 }
