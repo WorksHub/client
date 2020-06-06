@@ -49,7 +49,9 @@
                  :register        {:entries    [wh.register.core]
                                    :depends-on #{:user :login :venia}}
                  :company         {:entries    [wh.company.core]
-                                   :depends-on #{:logged-in :jobs}}}
+                                   :depends-on #{:logged-in :jobs}}
+                 :activities      {:entries    [wh.activities.core]
+                                   :depends-on #{:common}}}
 
                 :output-dir       "target/resources/public/js"
                 :asset-path       "/js"

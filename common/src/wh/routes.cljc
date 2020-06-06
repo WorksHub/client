@@ -190,6 +190,7 @@
                          "process"             :oauth-process
                          "twitter"             :oauth-twitter}]
               ["documents/" {[:access-id "/" :doc-type] :document-access}]
+              ["feed-preview/" :feed-preview]
               ["api/" [["graphql" :graphql]
                        ["graphql-schema" :graphql-schema]
                        ["webhook/" {"github-app" :github-app-webhook}]

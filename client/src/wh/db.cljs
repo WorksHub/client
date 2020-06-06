@@ -37,6 +37,7 @@
                 :edit-company
                 :edit-job
                 :get-started
+                :feed-preview
                 :github-callback
                 :stackoverflow-callback
                 :twitter-callback

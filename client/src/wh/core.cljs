@@ -27,5 +27,5 @@
 (dev-setup)
 (re-frame/dispatch-sync [:init])
 
-(loader/set-loaded! :cljs-base)
+(loader/set-loaded! :wh)
 (js/console.log "ok")
