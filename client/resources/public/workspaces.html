@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div id="app"></div>
+        <script type="text/javascript">
+         function loadSymbols(filename) {
+             var r = new XMLHttpRequest();
+             r.open('GET', '/' + filename);
+             r.onreadystatechange = function() {
+                 if (r.readyState == 4 && r.status == 200) {
+                     var container = document.createElement('div');
+                     container.classList.add('svg-container');
+                     container.innerHTML = r.responseText;
+                     document.body.append(container);
+                 }
+             };
+             r.send();
+         }
+         loadSymbols("symbols/common.svg");
+         loadSymbols("symbols/wh_logos.svg");
+        </script>
+
+        <script src="/js/workspaces/main.js"
+                type="text/javascript"></script>
+        <link rel="stylesheet"
+              href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link rel="stylesheet"
+              href="./wh-legacy.css">
+        <link rel="stylesheet"
+              href="./wh-styles.css">
+    </body>
+</html>
