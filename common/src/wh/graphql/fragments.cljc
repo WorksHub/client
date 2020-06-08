@@ -38,7 +38,7 @@
    [:labels [:name]]])
 
 (deffragment issueListFields :issue
-  [:id :url :number :body :title :pr_count :level :status :published :created_at
+  [:id :url :number :title :pr_count :level :status :published :created_at
    [:compensation [:amount :currency]]
    [:contributors [:id]]
    [:labels [:name]]

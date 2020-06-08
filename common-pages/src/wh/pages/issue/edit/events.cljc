@@ -1,11 +1,11 @@
-(ns wh.issue.edit.events
+(ns wh.pages.issue.edit.events
   (:require
     #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
     [re-frame.core :refer [path]]
     [wh.common.issue :refer [gql-issue->issue]]
     [wh.db :as db]
     [wh.graphql.issues :as queries]
-    [wh.issue.edit.db :as issue-edit]
+    [wh.pages.issue.edit.db :as issue-edit]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]))
 
 (def edit-issue-interceptors (into db/default-interceptors

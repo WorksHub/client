@@ -8,7 +8,8 @@
     [wh.common.specs.primitives :as p]))
 
 (def types #{:tech :company :industry :funding :benefit})
-(def types-with-size #{:tech :company :industry :funding :benefit :size}) ;; used some times to present size as a tag
+;; used some times to present size as a tag
+(def types-with-size #{:tech :company :industry :funding :benefit :size})
 
 ;; Tech subtypes
 ;; `Software` - languages, frameworks + DBs,
@@ -45,13 +46,17 @@
                               :opt-un [:wh.tag.db/subtype]))
 (s/def :wh/tags (s/coll-of :wh/tag))
 
-(s/def :wh.gql.tag/type types-with-size)
+(def string-types (set (map name types-with-size)))
+(s/def :wh.gql.tag/type string-types)
+(def string-subtypes (set (map name all-subtypes)))
+(s/def :wh.gql.tag/subtype string-subtypes)
+
 (s/def :wh.gql/tag (s/keys :opt-un [:wh.tag/id
                                     :wh.tag/label
                                     :wh.tag/slug
                                     :wh.tag/weight
                                     :wh.gql.tag/type
-                                    :wh.tag/subtype]))
+                                    :wh.gql.tag/subtype]))
 
 (s/def :wh.gql/tags (s/coll-of :wh.gql/tag))
 

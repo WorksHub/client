@@ -1,8 +1,8 @@
-(ns wh.issue.subs
+(ns wh.pages.issue.subs
   (:require [re-frame.core :refer [reg-sub reg-sub-raw subscribe]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.db :as db]
-            [wh.issue.db :as issue]
+            [wh.pages.issue.db :as issue]
             #?(:clj [wh.re-frame.subs :refer [reaction]])
             #?(:clj [clojure.core.strint :refer [<<]]))
   #?(:cljs (:require-macros [clojure.core.strint :refer [<<]]

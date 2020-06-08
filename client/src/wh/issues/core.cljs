@@ -2,8 +2,8 @@
   (:require [shadow.loader :as loader]
             [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
             [wh.db :as db]
-            [wh.issue.edit.events :as edit-issue]
-            [wh.issue.views :as issue]
+            [wh.pages.issue.edit.events :as edit-issue]
+            [wh.pages.issue.views :as issue]
             [wh.issues.manage.views :as manage-issues]
             [wh.issues.views :as issues]
             [wh.user.db :as user]))

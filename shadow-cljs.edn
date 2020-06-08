@@ -10,6 +10,7 @@
                 [metosin/spec-tools "0.10.1"]
                 [cider/cider-nrepl "0.24.0"]
                 [bidi "2.1.3"]
+                [nubank/workspaces "1.0.15"]
                 [re-frame "0.10.7"]
                 [alandipert/storage-atom "2.0.1" :exclusions [com.cognitect/transit-cljs]]
                 [com.andrewmcveigh/cljs-time "0.5.2"]
@@ -48,7 +49,9 @@
                  :register        {:entries    [wh.register.core]
                                    :depends-on #{:user :login :venia}}
                  :company         {:entries    [wh.company.core]
-                                   :depends-on #{:logged-in :jobs}}}
+                                   :depends-on #{:logged-in :jobs}}
+                 :activities      {:entries    [wh.activities.core]
+                                   :depends-on #{:common}}}
 
                 :output-dir       "target/resources/public/js"
                 :asset-path       "/js"
@@ -58,4 +61,10 @@
                                    :http-port 8700
                                    :preloads  [shadow.remote.runtime.cljs.browser
                                                devtools.preload
-                                               day8.re-frame-10x.preload]}}}}
+                                               day8.re-frame-10x.preload]}}
+
+          :cards {:target     nubank.workspaces.shadow-cljs.target
+                  :ns-regexp  "-(test|cards)$"
+                  :output-dir "target/resources/public/js/workspaces"
+                  :asset-path "/js/workspaces"
+                  :preloads   []}}}

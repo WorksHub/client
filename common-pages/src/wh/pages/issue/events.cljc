@@ -1,4 +1,4 @@
-(ns wh.issue.events
+(ns wh.pages.issue.events
   (:require
     #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
     #?(:cljs [wh.user.db :as user])
@@ -8,7 +8,7 @@
     [wh.db :as db]
     [wh.graphql-cache :as cache]
     [wh.graphql.issues :as queries]
-    [wh.issue.db :as issue]
+    [wh.pages.issue.db :as issue]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
     [wh.util :as util]))
 

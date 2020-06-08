@@ -79,6 +79,7 @@
 (def routes ["/"
              ;;Public SSR Pages - no app.js required
              [["" :homepage]
+              ["homepage-new" :homepage-new]
               ["hire-" {[:template] :homepage}]
               ["issues/" {""            :issues
                           [:company-id] (bidi/tag :issues :issues-for-company-id)}]
@@ -189,6 +190,7 @@
                          "process"             :oauth-process
                          "twitter"             :oauth-twitter}]
               ["documents/" {[:access-id "/" :doc-type] :document-access}]
+              ["feed-preview/" :feed-preview]
               ["api/" [["graphql" :graphql]
                        ["graphql-schema" :graphql-schema]
                        ["webhook/" {"github-app" :github-app-webhook}]
@@ -222,6 +224,7 @@
                                                :company-jobs
                                                :company-articles
                                                :homepage
+                                               :homepage-new
                                                :how-it-works
                                                ;;:issue CH3610
                                                ;;:issues CH3615

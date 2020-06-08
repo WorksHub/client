@@ -12,7 +12,7 @@
     [wh.components.pagination :as pagination]
     [wh.how-it-works.views :as how-it-works]
     [wh.interop.forms :as interop-forms]
-    [wh.issue.edit.views :as edit-issue]
+    [wh.pages.issue.edit.views :as edit-issue]
     [wh.issues.events :as events]
     [wh.routes :as routes]
     [wh.slug :as slug]

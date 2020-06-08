@@ -29,6 +29,7 @@
    :create-job                 :company
    :edit-company               :company
    :edit-job                   :company
+   :feed-preview               :activities
    :get-started                :login
    :github-callback            :login
    :stackoverflow-callback     :login
@@ -37,6 +38,7 @@
                                 "prospect"  :logged-in
                                 "company"   :company
                                 "admin"     :company}
+   :homepage-new               :homepage-new
    :homepage-dashboard         :logged-in
    :improve-recommendations    :logged-in
    :issue                      :issues
