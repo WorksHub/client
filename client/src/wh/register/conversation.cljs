@@ -65,13 +65,12 @@
           [icon "close" :class :close :on-click #(dispatch on-close)])]
        (when-let [error (and error-sub (<sub error-sub))]
          [:ul [:li error]])
-       (let [items (and dropdown-sub (<sub dropdown-sub))]
-         (when (seq items)
-           (into [:ul]
-                 (map-indexed (fn [i {:keys [id label]}]
-                                [:li {:on-click #(when set-dropdown-ev
-                                                   (dispatch (conj set-dropdown-ev id)))
-                                      :tab-index i
-                                      :class (when (= i @selected) "hover")}
-                                 label])
-                      items))))]])))
+       (when (seq items)
+         (into [:ul]
+               (map-indexed (fn [i {:keys [id label]}]
+                              [:li {:on-click #(when set-dropdown-ev
+                                                 (dispatch (conj set-dropdown-ev id)))
+                                    :tab-index i
+                                    :class (when (= i @selected) "hover")}
+                               label])
+                    items)))]])))
