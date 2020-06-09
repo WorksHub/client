@@ -1,3 +1,13 @@
 /node_modules
 /target
-
+.lein-repl-history
+.shadow-cljs/
+client/resources/public/public.min.js
+client/resources/public/public.min.js.map
+client/resources/public/wh-dark.css
+client/resources/public/wh-legacy.min.js
+client/resources/public/wh-legacy.min.js.map
+client/resources/public/wh-light.css
+client/resources/public/wh-styles.min.js
+client/resources/public/wh-styles.min.js.map
+client/resources/public/wh.css
