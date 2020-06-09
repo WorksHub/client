@@ -1,0 +1,60 @@
+$green100: #daf3f2
+$green200: #454e54
+$black100: rgba(0, 0, 0, .1)
+
+.card
+  background: $green100
+  color: $green200
+  border-radius: 8px
+  box-shadow: 0 4px 16px $black100
+  min-width: 260px
+  padding: 19px 23px
+  align-items: center
+  display: grid
+  grid-template-columns: 72px 2fr 1fr
+  grid-gap: 24px
+
+.chart
+  width: 72px
+  height: 72px
+  position: relative
+  display: flex
+  justify-content: center
+  align-items: center
+
+  &--percentage
+    font-family: Montserrat, sans-serif
+    position: absolute
+    font-size: 18px
+    line-height: 60px
+
+  &--icon
+    width: 100%
+    height: 100%
+
+.text
+  font-family: Montserrat, sans-serif
+  font-weight: 600
+  font-size: 14px
+  line-height: 22px
+  color: $green200
+
+.button
+  font-family: Montserrat, sans-serif
+  border: 1px solid $green200
+  padding: 11px 22px
+  font-size: 13px
+  line-height: 18px
+  display: flex
+  justify-content: center
+  align-items: center
+  border-radius: 4px
+  background-color: transparent
+  font-weight: 600
+  letter-spacing: .2px
+  height: 40px
+  cursor: pointer
+  white-space: nowrap
+  
+  &:hover
+    background-color: $black100

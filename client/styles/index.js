@@ -27,3 +27,4 @@ import './stream_preview.sass';
 // components
 import './branding.sass';
 import './attract_card.sass';
+import './stat_card.sass';
