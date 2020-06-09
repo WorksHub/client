@@ -1,0 +1,246 @@
+$red: #EF8374
+$red-hover: #FCEAE8
+
+$white: white
+$black: black
+
+$grey100: #F4F5F8
+$grey200: #E8E8E8
+$grey300: #728088
+$grey400: #454E54
+
+$shadow: 0 0 0 2px $red
+
+@mixin focus
+  outline: none
+  box-shadow: 0 0 0 2px $red
+
+.section
+  width: 100%
+  background-color: $white
+  border-radius: 6px
+  padding: 23px 16px
+  margin-bottom: 16px
+
+.tabs
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 1px
+  width: 100%
+  list-style: none
+  padding: 0
+  margin: 0 0 40px
+
+.tabs__tab
+  height: 32px
+  background: $grey100
+  color: $grey300
+  font-size: 13px
+  display: flex
+  align-items: center
+  justify-content: center
+  border-radius: 2px
+  cursor: pointer
+
+.section--with-tabs
+  & > .tabs__input,
+  & > .tabs__content > .tabs__tab-content
+    display: none
+
+#tabs__tab--companies:checked ~ .tabs__content .tabs__tab-content--companies,
+#tabs__tab--blogs:checked ~ .tabs__content .tabs__tab-content--blogs
+  display: block
+
+#tabs__tab--companies:checked ~ .tabs__wrapper .tabs__tab--companies,
+#tabs__tab--blogs:checked ~ .tabs__wrapper .tabs__tab--blogs
+  background: $grey400
+  color: $white
+
+.section__title
+  font-family: Montserrat, serif
+  font-style: normal
+  font-weight: bold
+  font-size: 18px
+  line-height: 26px
+  color: #454E54
+  padding-bottom: 31px
+  margin: 0
+
+.section__elements
+  display: grid
+  grid-template-columns: 1fr
+  row-gap: 40px
+  margin-bottom: 50px
+
+.section__element
+  display: grid
+  row-gap: 16px
+
+.element__tags
+  list-style: none
+
+.element__link
+  font-family: Montserrat, serif
+  font-weight: 600
+  font-size: 14px
+  line-height: 1.2
+  color: $grey400
+
+  &:hover
+    color: $red
+
+  &:focus
+    @include focus
+
+.connected-entity
+  display: flex
+  align-items: center
+
+  &--link
+    &:hover
+      .connected-entity__title
+        color: $red
+
+    &:focus
+      @include focus
+
+.connected-entity__image
+  margin-right: 16px
+  min-width: 32px
+  min-height: 32px
+  height: 32px
+  width: 32px
+  border-radius: 2px
+
+  &--rounded
+    border-radius: 50%
+
+.connected-entity__title
+  font-family: Montserrat, serif
+  font-size: 13px
+  line-height: 1.2
+  color: $grey400
+
+  &--primary
+    font-weight: 600
+    font-size: 14px
+
+  &--minor
+    color: $grey300
+
+.connected-entity__info
+  display: grid
+  grid-template-columns: 1fr
+  row-gap: 5px
+
+.footer
+  display: grid
+
+  &--issues
+    row-gap: 24px
+
+  &--jobs
+    row-gap: 24px
+
+  &--companies
+    row-gap: 40px
+
+  &--blogs
+    row-gap: 40px
+
+.footer__link
+  display: flex
+  justify-content: center
+  font-family: Montserrat, serif
+  font-size: 14px
+  line-height: 135%
+
+  &:hover
+    color: $red
+
+  &:focus
+    @include focus
+
+.footer__bold-text
+  font-weight: 600
+  padding-left: 4px
+
+.footer__title
+  font-weight: 600
+  font-size: 14px
+  line-height: 18px
+  margin-bottom: 16px
+  color: $grey400
+
+.footer__text
+  font-size: 14px
+  line-height: 135%
+  color: $grey300
+  margin-bottom: 16px
+
+.footer__form
+  display: grid
+  row-gap: 16px
+  margin-bottom: 24px
+
+.numeric-info
+  display: grid
+  row-gap: 8px
+
+.numeric-info__line
+  display: flex
+  align-items: center
+
+  .icon
+    fill: $grey300
+    margin-right: 18px
+  font-family: Montserrat, serif
+  font-size: 14px
+  line-height: 16px
+
+.button
+  font-family: Montserrat, serif
+  font-style: normal
+  font-weight: 600
+  font-size: 14px
+  line-height: 18px
+  display: flex
+  align-items: center
+  justify-content: center
+  text-align: center
+  letter-spacing: 0.2px
+  color: $red
+  background: $white
+  border: 1px solid $red
+  border-radius: 4px
+  padding: 14px 0
+  width: 100%
+
+  &:hover
+    background: $red-hover
+    color: $red
+    cursor: pointer
+
+  &:focus
+    @include focus
+
+  &--text
+    border: 1px solid transparent
+    color: $red
+    background: $white
+
+    &:hover
+      background: $grey100
+      color: $red
+
+.input
+  height: 46px
+  border: 1px solid $grey200
+  width: 100%
+  padding: 14px 16px
+
+  &:hover
+    border: 1px solid $grey300
+
+  &:focus
+    @include focus

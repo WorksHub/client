@@ -1,26 +1,19 @@
-;; Candidate landing page
-
 (ns wh.landing-new.views
-  (:require #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
-            [wh.common.data :as data]
-            [wh.components.button-auth :as button-auth]
-            [wh.components.cards :refer [blog-card]]
-            [wh.components.carousel :refer [carousel]]
-            [wh.components.job :refer [job-card]]
-            [wh.components.common :refer [companies-section link wrap-img img]]
-            [wh.components.icons :refer [icon]]
-            [wh.components.www-homepage :as www :refer [animated-hr]]
-            [wh.how-it-works.views :as hiw]
+  (:require [wh.components.side-card.side-card :as side-cards]
             [wh.landing-new.subs :as subs]
-            [wh.re-frame.events :refer [dispatch]]
-            [wh.re-frame.subs :refer [<sub]]))
+            #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.styles.landing :as styles]))
 
 (defn page []
-  (let [top-blogs (<sub [::subs/top-blogs])]
-    [:div
-     [:h1 "Side columns"]
-     [:section
-      [:h2 "Top blogs"]
-      [:ul
-       (for [blog top-blogs]
-         [:li (:title blog)])]]]))
+  (let [blogs (<sub [::subs/top-blogs])
+        jobs (<sub [::subs/recent-jobs])
+        users (<sub [::subs/top-users])
+        issues (<sub [::subs/live-issues])
+        companies (<sub [::subs/top-companies])]
+    [:div {:class styles/container-all-cards}
+     [side-cards/live-issues issues]
+     [side-cards/top-ranking-users users]
+     [side-cards/recent-jobs jobs]
+     [side-cards/top-ranking {:blogs blogs
+                              :companies companies}]]))

@@ -21,6 +21,7 @@
 
 // pages
 import './landing.sass';
+import './side_card.sass';
 import './stream_preview.sass';
 
 // components

@@ -1,0 +1,6 @@
+(ns wh.styles.branding)
+(def vertical-title "branding__vertical-title--1pSpw")
+(def vertical-title__line "branding__vertical-title__line--3myD3")
+(def vertical-title--multiline "branding__vertical-title--multiline--3GNyQ")
+(def vertical-title--small "branding__vertical-title--small--7t970")
+(def vertical-title--medium "branding__vertical-title--medium--vZiqL")

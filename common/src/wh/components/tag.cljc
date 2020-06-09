@@ -26,7 +26,9 @@
                          "c#" "elm" "aws" "erlang" "ocaml" "react" "elixir"})
 
 (defn tag
-  [element-type {:keys [label type subtype id icon on-click href] :as t}]
+  [element-type {:keys [label type subtype id icon on-click href with-icon?]
+                 :or {with-icon? true}
+                 :as t}]
   (let [label-lc (or (some-> label str/lower-case) "")
         standard-icon (when (labels-with-icons label-lc)
                         (str label-lc "-tag"))
@@ -40,7 +42,7 @@
             (when href {:href href})
             (when on-click
               (interop/on-click-fn on-click)))
-     (when icon'
+     (when (and icon' with-icon?)
        [icons/icon icon'])
      [:span label]]))
 
