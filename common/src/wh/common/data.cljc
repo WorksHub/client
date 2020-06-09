@@ -628,7 +628,7 @@
                  :description2 "Whether you’re looking to hire developers, programmers or software engineers to work with Golang, we've got you covered"}
    "ai"         {:title        "Data Scientists"
                  :logo         "ai"
-                 :discover     "Discover the best opportunities in Data Science"
+                 :discover     "Discover the best Data Science opportunities"
                  :description  "Experts in Data Science, Machine Learning, Data Engineering, Artificial Intelligence as well as Scala, Spark, Python and R."
                  :href         "/hire-data-scientists"
                  :description2 "Whether you’re looking to hire data scientists, machine learning experts, or data engineers to work with Spark, Python and R, we've got you covered"}

@@ -34,7 +34,7 @@
 
 (defn icons-to-load
   [page]
-  (let [base ["symbols/common.svg" "symbols/tags.svg"]]
+  (let [base ["symbols/wh_logos.svg""symbols/common.svg" "symbols/tags.svg"]]
     (cond
       (or (= :company page)
           (= :companies page))

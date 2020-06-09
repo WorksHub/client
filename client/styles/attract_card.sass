@@ -1,0 +1,46 @@
+@import 'colours'
+@import 'text'
+@import 'vars'
+
+$intro-card-logo-dim: 48px
+$attract-card-heading-font-size: 18px
+$attract-card-heading-color: $text-black
+$attract-card-shadow-color: rgba(0, 0, 0, .04)
+
+@mixin attract-card
+  background-color: $background-white
+  border-radius: 8px
+  border: 1px solid $primary-red
+  box-shadow: 0px 4px 8px $attract-card-shadow-color
+  height: 214px
+  max-width: 388px
+  min-width: $global-min-width
+  padding: 20px
+
+.intro
+  @include attract-card
+
+  align-items: center
+  background-image: url('/images/intro-card-bg.svg')
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  text-align: center
+
+.intro__branding
+  align-items: center
+  display: flex
+  flex-direction: column
+
+.intro__icon
+  height: $intro-card-logo-dim
+  margin-bottom: 12px
+  width: $intro-card-logo-dim
+
+.intro__description
+  font-size: 16px
+  line-height: $p-line-height
+
+.intro__vertical-title
+  font-weight: 500
+  white-space: nowrap

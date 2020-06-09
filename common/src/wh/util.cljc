@@ -255,6 +255,12 @@
   [& classes]
   (str/join " " (remove nil? classes)))
 
+;; helper alias
+(def mc merge-classes)
+
+(defn smc [& classes]
+  {:class (str/join " " (remove nil? classes))})
+
 (defn ctx->ip [{:keys [remote-addr headers]}]
   (or (get headers "cf-connecting-ip")                      ;This header is added by Cloudflare and has original IP in prod
       (get headers "x-forwarded-for")                       ;This is filled by both Heroku and Cloudflare in prod (has 2 IPs in prod), in staging it will have original IP

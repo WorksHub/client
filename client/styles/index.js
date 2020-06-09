@@ -19,6 +19,10 @@
 //
 // In days of uncertainty find @Andrzej Fricze
 
-
+// pages
 import './landing.sass';
 import './stream_preview.sass';
+
+// components
+import './branding.sass';
+import './attract_card.sass';

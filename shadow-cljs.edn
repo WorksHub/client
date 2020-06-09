@@ -65,6 +65,6 @@
 
           :cards {:target     nubank.workspaces.shadow-cljs.target
                   :ns-regexp  "-(test|cards)$"
-                  :output-dir "target/resources/public/js/workspaces"
+                  :output-dir "client/resources/public/js/workspaces"
                   :asset-path "/js/workspaces"
                   :preloads   []}}}
