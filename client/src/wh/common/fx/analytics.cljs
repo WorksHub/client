@@ -33,7 +33,8 @@
 (reg-fx
   :analytics/pageview
   (fn [_]
-    (js/trackPage)))
+    (when (.. js/window -wh_analytics -init)
+      (js/trackPage))))
 
 (defn add-noninteractive [data non-interactive?]
   (if non-interactive?

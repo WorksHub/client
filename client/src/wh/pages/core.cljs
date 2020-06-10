@@ -118,7 +118,7 @@
                                                 (assoc ::db/search-term ""))]
                       (cond-> {:db                 new-db
                                :analytics/pageview true
-                               :analytics/track    [(str (routes/handler->name handler) " Viewed") (merge query-params route-params) true]
+                               :analytics/track    [(str (routes/handler->name handler) " Viewed") (merge params query-params route-params) true]
                                :dispatch-n         [[:error/close-global]
                                                     [::disable-no-scroll]
                                                     [:wh.events/show-chat? true]]}
