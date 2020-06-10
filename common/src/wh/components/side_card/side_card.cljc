@@ -10,7 +10,7 @@
             [wh.common.text :refer [pluralize]]
             [wh.routes :as routes]
             [wh.styles.side-card :as style]
-            [wh.util :refer [merge-classes]]))
+            [wh.util :refer [merge-classes random-uuid]]))
 
 (defn card-tags [tags]
   [tag/tag-list :a (->> tags
@@ -206,7 +206,7 @@
 (defn card-blog [{:keys [title author-info tags creation-date] :as blog}]
   [:section {:class style/section__element}
    [card-link {:title title
-               :href (routes/path :company :params {:slug (:slug blog)})}]
+               :href (routes/path :blog :params {:id (:id blog)})}]
    [connected-entity {:title (:name author-info)
                       :subtitle (str/join " • " [(format-blog-date creation-date)
                                                  (str (:reading-time blog) " min read")
@@ -233,24 +233,29 @@
 
 ; -------------------------------------------
 
-(defn top-ranking [{:keys [companies blogs]}]
-  [:section {:class (merge-classes style/section style/section--with-tabs)}
-   [section-title "Top rankings"]
-   [:input {:id      style/tabs__tab--companies
-            :class   style/tabs__input
-            :type    "radio"
-            :checked true
-            :name    "top"}]
-   [:input {:id    style/tabs__tab--blogs
-            :class style/tabs__input
-            :type  "radio"
-            :name  "top"}]
-   [:nav {:class style/tabs__wrapper}
-    [:ul {:class style/tabs}
-     [:li
-      [:label {:for style/tabs__tab--companies :class (merge-classes style/tabs__tab style/tabs__tab--companies)} "Companies"]]
-     [:li
-      [:label {:for style/tabs__tab--blogs :class (merge-classes style/tabs__tab style/tabs__tab--blogs)} "Blogs"]]]]
-   [:section {:class style/tabs__content}
-    [top-ranking-companies companies]
-    [top-ranking-blogs blogs]]])
+(defn top-ranking [{:keys [companies blogs default-tab]
+                    :or {default-tab :companies}}]
+  (let [input1-id (random-uuid)
+        input2-id (random-uuid)
+        name (random-uuid)]
+    [:section {:class (merge-classes style/section style/section--with-tabs)}
+     [section-title "Top rankings"]
+     [:input (cond-> {:id      input1-id
+                      :class   (merge-classes style/tabs__input style/tabs__input--companies)
+                      :type    "radio"
+                      :name    name}
+                     (= :companies default-tab) (assoc :checked true))]
+     [:input (cond-> {:id    input2-id
+                      :class (merge-classes style/tabs__input style/tabs__input--blogs)
+                      :type  "radio"
+                      :name  name}
+                     (= :blogs default-tab) (assoc :checked true))]
+     [:nav {:class style/tabs__wrapper}
+      [:ul {:class style/tabs}
+       [:li
+        [:label {:for input1-id :class (merge-classes style/tabs__tab style/tabs__tab--companies)} "Companies"]]
+       [:li
+        [:label {:for input2-id :class (merge-classes style/tabs__tab style/tabs__tab--blogs)} "Blogs"]]]]
+     [:section {:class style/tabs__content}
+      [top-ranking-companies companies]
+      [top-ranking-blogs blogs]]]))

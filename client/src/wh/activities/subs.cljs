@@ -3,7 +3,7 @@
             [wh.re-frame.subs :refer [<sub]]))
 
 (defn normalize-activity
-  [{:keys [job blog] :as activity}]
+  [{:keys [issue job blog] :as activity}]
   (-> activity
       (merge
         (cond
@@ -11,6 +11,8 @@
                  :object-type "job"}
           blog  {:object      blog
                  :object-type "article"}
+          issue {:object      issue
+                 :object-type "issue"}
           :else {}))
       (update :actor :id)))
 

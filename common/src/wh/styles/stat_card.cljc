@@ -1,0 +1,7 @@
+(ns wh.styles.stat-card)
+(def card "stat_card__card--347_n")
+(def chart "stat_card__chart--31Jlv")
+(def chart--percentage "stat_card__chart--percentage--WmvX7")
+(def chart--icon "stat_card__chart--icon--1R_wt")
+(def text "stat_card__text--2dw3a")
+(def button "stat_card__button--2geJs")

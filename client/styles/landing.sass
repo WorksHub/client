@@ -1,4 +1,70 @@
-.container-all-cards
-  width: 280px
+$black100: rgba(0, 0, 0, .2)
+
+.page
+  max-width: 1232px
   margin: 0 auto
-  padding: 32px 0
+  padding: 32px 16px
+  display: grid
+  grid-gap: 54px
+
+  &__main
+    display: grid
+    grid-template-columns: 279px 1fr 279px
+    grid-gap: 32px
+
+  &__intro
+    display: grid
+    grid-template-columns: repeat(3, 1fr)
+    grid-gap: 17px
+
+.side-column
+  display: grid
+  grid-gap: 26px
+  align-items: start
+  grid-auto-rows: min-content
+
+.main-column
+  display: grid
+  grid-gap: 24px
+  grid-auto-rows: min-content
+
+.card
+  padding: 24px 16px
+  color: white
+  font-size: 24px
+  font-weight: bold
+  border-radius: 8px
+  box-shadow: 0 4px 8px $black100
+
+  &--tag-picker
+    background: #0f81cc
+    height: 401px
+
+  &--intro
+    background: #9933ff
+    height: 214px
+
+  &--blog-published
+    background: #2a9292
+    height: 397px
+
+  &--job-published
+    background: steelblue
+    height: 397px
+
+  &--matching-issues
+    background: darkslategrey
+    height: 397px
+
+  &--company-stats
+    background: #ff4e3b
+    height: 397px
+
+  &--issue-started
+    background: darkgreen
+    height: 397px
+
+  &--matching-jobs
+    background: indianred
+    height: 397px
+

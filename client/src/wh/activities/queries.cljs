@@ -7,4 +7,5 @@
    :venia/queries   [[:query_activities
                       [[:activities [:id :verb [:actor [:id]] :to :date
                                      [:job [:id :title :slug :tagline :remote]]
+                                     [:issue [:id :title :status :level]]
                                      [:blog [:id :title :author :creator]]]]]]]})

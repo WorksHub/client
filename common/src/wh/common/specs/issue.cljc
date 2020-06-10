@@ -28,6 +28,7 @@
 (s/def :wh.issue/label (s/keys :req-un [:wh.issue.label/name]))
 (s/def :wh.issue/labels (s/coll-of :wh.issue/label))
 (s/def :wh.issue/created-at :wh/date)
+(s/def :wh.issue.raw/created-at number?)
 (s/def :wh.issue/added-at :wh/date)
 (s/def :wh.issue/company-id #?(:clj  (s/with-gen
                                        :leona.id/string
@@ -149,3 +150,17 @@
 (s/def :wh/issues (s/coll-of :wh/issue))
 
 (s/def :wh.issues/sort #{:published :compensation})
+
+(s/def :wh.feed/issue
+  (s/keys :req-un [:wh.issue/id
+                   :wh.issue/body
+                   :wh.issue/body-html
+                   :wh.issue/company-id
+                   :wh.issue.raw/created-at
+                   :wh.issue.raw/level
+                   :wh.issue/number
+                   :wh.issue/title
+                   :wh.issue/url
+                   :wh.issue/github-id
+                   :wh.issue/repo-id
+                   :wh.issue.raw/status]))

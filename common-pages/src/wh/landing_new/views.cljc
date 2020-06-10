@@ -1,9 +1,29 @@
 (ns wh.landing-new.views
   (:require [wh.components.side-card.side-card :as side-cards]
+            [wh.components.stat-card :as stat-card]
+            [wh.components.attract-card :as attract-card]
             [wh.landing-new.subs :as subs]
             #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
             [wh.re-frame.subs :refer [<sub]]
-            [wh.styles.landing :as styles]))
+            [wh.styles.landing :as styles]
+            [wh.util :refer [merge-classes]]))
+
+(defn tag-picker []
+  [:div {:class (merge-classes styles/card styles/card--tag-picker)} "Tag picker"])
+
+(defn intro-card []
+  [:div {:class (merge-classes styles/card styles/card--intro)} "Intro card"])
+
+(defn future-card [cls text]
+  [:div {:class (merge-classes styles/card cls)} text])
+
+(def future-cards
+  [[styles/card--blog-published "Blog Published"]
+   [styles/card--company-stats "Company Stats"]
+   [styles/card--issue-started "Issue Started"]
+   [styles/card--job-published "Jobs Published"]
+   [styles/card--matching-issues "Matching Issues"]
+   [styles/card--matching-jobs "Matching Jobs"]])
 
 (defn page []
   (let [blogs (<sub [::subs/top-blogs])
@@ -11,9 +31,27 @@
         users (<sub [::subs/top-users])
         issues (<sub [::subs/live-issues])
         companies (<sub [::subs/top-companies])]
-    [:div {:class styles/container-all-cards}
-     [side-cards/live-issues issues]
-     [side-cards/top-ranking-users users]
-     [side-cards/recent-jobs jobs]
-     [side-cards/top-ranking {:blogs blogs
-                              :companies companies}]]))
+    [:div {:class styles/page}
+     [:div {:class styles/page__intro}
+      [attract-card/intro "functional"]
+      [intro-card]
+      [intro-card]]
+     [:div {:class styles/page__main}
+      [:div {:class styles/side-column}
+       [tag-picker]
+       [side-cards/top-ranking {:blogs blogs
+                                :companies companies
+                                :default-tab :companies}]
+       [side-cards/top-ranking {:blogs blogs
+                                :companies companies
+                                :default-tab :blogs}]]
+      (into [:div {:class styles/main-column}
+             [stat-card/about-applications]
+             [stat-card/about-open-source]
+             [stat-card/about-salary-increase]]
+            (for [fc future-cards]
+              (apply future-card fc)))
+      [:div {:class styles/side-column}
+       [side-cards/recent-jobs jobs]
+       [side-cards/live-issues issues]
+       [side-cards/top-ranking-users users]]]]))

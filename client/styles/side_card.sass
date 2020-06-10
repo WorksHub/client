@@ -20,7 +20,6 @@ $shadow: 0 0 0 2px $red
   background-color: $white
   border-radius: 6px
   padding: 23px 16px
-  margin-bottom: 16px
 
 .tabs
   display: grid
@@ -47,12 +46,12 @@ $shadow: 0 0 0 2px $red
   & > .tabs__content > .tabs__tab-content
     display: none
 
-#tabs__tab--companies:checked ~ .tabs__content .tabs__tab-content--companies,
-#tabs__tab--blogs:checked ~ .tabs__content .tabs__tab-content--blogs
+.tabs__input--companies:checked ~ .tabs__content .tabs__tab-content--companies,
+.tabs__input--blogs:checked ~ .tabs__content .tabs__tab-content--blogs
   display: block
 
-#tabs__tab--companies:checked ~ .tabs__wrapper .tabs__tab--companies,
-#tabs__tab--blogs:checked ~ .tabs__wrapper .tabs__tab--blogs
+.tabs__input--companies:checked ~ .tabs__wrapper .tabs__tab--companies,
+.tabs__input--blogs:checked ~ .tabs__wrapper .tabs__tab--blogs
   background: $grey400
   color: $white
 
