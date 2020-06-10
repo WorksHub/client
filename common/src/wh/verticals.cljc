@@ -5,6 +5,7 @@
 
 (def ordered-job-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python" "remote"])
 (def ordered-blog-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python" "remote" "www"])
+(def ordered-issue-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python" "remote" "www"])
 
 ;;This should be used to allow admins to publish job for future verticals.
 ;; You also need to make sure that the vertical is added to grapql spec
