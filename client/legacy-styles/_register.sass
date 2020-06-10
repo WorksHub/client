@@ -181,6 +181,12 @@ $line-height: 1.5
     li
       color: $steel-gray
       line-height: 2.3
+      cursor: pointer
+      &:hover, &.hover
+        color: white
+        background: $steel-gray
+      &:hover:not(.hover)
+        opacity: 0.6
     ul
       border-top: $steel-gray 2px solid
       padding-top: 8px
