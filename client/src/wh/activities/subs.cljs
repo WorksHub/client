@@ -3,17 +3,19 @@
             [wh.re-frame.subs :refer [<sub]]))
 
 (defn normalize-activity
-  [{:keys [issue job blog] :as activity}]
+  [{:keys [feed-company feed-issue feed-job feed-blog] :as activity}]
   (-> activity
       (merge
         (cond
-          job   {:object      job
-                 :object-type "job"}
-          blog  {:object      blog
-                 :object-type "article"}
-          issue {:object      issue
-                 :object-type "issue"}
-          :else {}))
+          feed-job     {:object      feed-job
+                        :object-type "job"}
+          feed-blog    {:object      feed-blog
+                        :object-type "article"}
+          feed-issue   {:object      feed-issue
+                        :object-type "issue"}
+          feed-company {:object      feed-company
+                        :object-type "company"}
+          :else        {}))
       (update :actor :id)))
 
 (reg-sub

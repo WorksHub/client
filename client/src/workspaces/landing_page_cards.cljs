@@ -18,4 +18,10 @@
                           (swap! vertical-idx inc))}
          [attract/intro (nth (vec verticals/all-verticals) @vertical-idx)]]))))
 
+(ws/defcard attract-contribute-card
+  {::wsm/card-width 4::wsm/card-height 8}
+  (ct.react/react-card
+    (r/as-element
+      [attract/contribute false])))
+
 (defonce init (ws/mount))

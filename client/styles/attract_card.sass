@@ -7,19 +7,16 @@ $attract-card-heading-font-size: 18px
 $attract-card-heading-color: $text-black
 $attract-card-shadow-color: rgba(0, 0, 0, .04)
 
-@mixin attract-card
+.attract-card
   background-color: $background-white
   border-radius: 8px
   border: 1px solid $primary-red
   box-shadow: 0px 4px 8px $attract-card-shadow-color
-  height: 214px
-  max-width: 388px
-  min-width: $global-min-width
+  height: 215px
+  max-width: 390px
   padding: 20px
 
 .intro
-  @include attract-card
-
   align-items: center
   background-image: url('/images/intro-card-bg.svg')
   display: flex
@@ -44,3 +41,60 @@ $attract-card-shadow-color: rgba(0, 0, 0, .04)
 .intro__vertical-title
   font-weight: 500
   white-space: nowrap
+
+// REMOVE ME ONCE WE HAVE A BUTTON COMPONENT
+.button
+  align-items: center
+  background: $primary-red
+  border-radius: 4px
+  border: 1px solid $primary-red
+  color: $text-white
+  display: flex
+  font-family: Montserrat, serif
+  font-size: 13px
+  font-style: normal
+  font-weight: 600
+  justify-content: center
+  letter-spacing: 0.2px
+  line-height: 1.35
+  max-height: 40px
+  max-width: 136px
+  padding: 11px 24px
+  text-align: center
+  width: 100%
+
+  &:hover
+    background: $highlight-red
+    color: $primary-red
+    cursor: pointer
+
+  &:focus
+    box-shadow: inset 0 0 0 2px $primary-red
+    outline: none
+
+.contribute
+  display: flex
+
+.contribute__info
+  display: flex
+  flex: 2
+  flex-direction: column
+  justify-content: space-between
+
+.contribute__heading
+  color: $attract-card-heading-color
+  display: flex
+  font-size: $attract-card-heading-font-size
+  line-height: 1.35
+  margin: 0
+  white-space: nowrap
+
+.contribute__copy
+  color: $text-black
+  font-size: 14px
+  line-height: $p-line-height
+  padding-right: 10px
+
+.contribute__illustration
+  display: flex
+  flex: 1

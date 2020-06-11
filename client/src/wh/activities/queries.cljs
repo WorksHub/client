@@ -6,6 +6,7 @@
                      :operation/name "all_activities"}
    :venia/queries   [[:query_activities
                       [[:activities [:id :verb [:actor [:id]] :to :date
-                                     [:job [:id :title :slug :tagline :remote]]
-                                     [:issue [:id :title :status :level]]
-                                     [:blog [:id :title :author :creator]]]]]]]})
+                                     [:feed_job [:id :title :slug :tagline :remote]]
+                                     [:feed_company [:id :name :description]]
+                                     [:feed_issue [:id :title :status :level]]
+                                     [:feed_blog [:id :title :author :creator]]]]]]]})

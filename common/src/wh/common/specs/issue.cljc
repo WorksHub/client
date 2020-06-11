@@ -151,7 +151,7 @@
 
 (s/def :wh.issues/sort #{:published :compensation})
 
-(s/def :wh.feed/issue
+(s/def :wh.feed/feed-issue
   (s/keys :req-un [:wh.issue/id
                    :wh.issue/body
                    :wh.issue/body-html

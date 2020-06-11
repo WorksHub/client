@@ -17,5 +17,6 @@
           [:span " did "]
           [:span verb]
           [:span (str " " object-type ": ")]
-          [:span {:class styles/object-title} (:title object)]
+          [:span {:class styles/object-title}
+           (or (:title object) (:name object))]
           [:span (str ", with id: " id)]]])]]))
