@@ -26,11 +26,11 @@
    [styles/card--matching-jobs "Matching Jobs"]])
 
 (defn page []
-  (let [blogs      (<sub [::subs/top-blogs])
-        jobs       (<sub [::subs/recent-jobs])
-        users      (<sub [::subs/top-users])
-        issues     (<sub [::subs/live-issues])
-        companies  (<sub [::subs/top-companies])
+  (let [jobs (<sub [::subs/recent-jobs])
+        users (<sub [::subs/top-users])
+        issues (<sub [::subs/live-issues])
+        companies (<sub [::subs/top-companies])
+        blogs (<sub [::subs/top-blogs])
         logged-in? (<sub [:user/logged-in?])]
     [:div {:class styles/page}
      [:div {:class styles/page__intro}

@@ -200,18 +200,18 @@
 (defn format-blog-date
   [t]
   (->> t
-       (tc/from-date)
+       (tf/parse)
        (tf/unparse (tf/formatter "MMM d"))))
 
-(defn card-blog [{:keys [title author-info tags creation-date] :as blog}]
+(defn card-blog [{:keys [title author-info tags creation-date id upvote-count reading-time] :as _blog}]
   [:section {:class style/section__element}
    [card-link {:title title
-               :href (routes/path :blog :params {:id (:id blog)})}]
+               :href (routes/path :blog :params {:id id})}]
    [connected-entity {:title (:name author-info)
                       :subtitle (str/join " • " [(format-blog-date creation-date)
-                                                 (str (:reading-time blog) " min read")
-                                                 (str (count (:upvotes blog)) " boosts")])
-                      :img-src (:image_url author-info)
+                                                 (str reading-time " min read")
+                                                 (str upvote-count " boosts")])
+                      :img-src (:image-url author-info)
                       :img-type :rounded}]
    [card-tags tags]])
 

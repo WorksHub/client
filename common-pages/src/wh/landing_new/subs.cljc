@@ -7,12 +7,6 @@
     (:wh.homepage-new.db/sub-db db)))
 
 (reg-sub
-  ::top-blogs
-  :<- [::sub-db]
-  (fn [sub-db _]
-    (:top-blogs sub-db)))
-
-(reg-sub
   ::top-companies
   :<- [::sub-db]
   (fn [sub-db _]
@@ -35,3 +29,8 @@
   :<- [::sub-db]
   (fn [sub-db _]
     (:recent-jobs sub-db)))
+
+(reg-sub
+  ::top-blogs
+  (fn [db _]
+      (get-in (wh.graphql-cache/result db :top-blogs nil) [:top-blogs :results])))
