@@ -1,0 +1,56 @@
+$white: #fff
+$black: #454E54
+$red: #ff7c6e
+
+.card
+  background: $white
+  padding: 24px 16px
+  border-radius: 8px
+
+.title
+  font-family: Montserrat, sans-serif
+  font-weight: bold
+  font-size: 18px
+  line-height: 26px
+  color: $black
+  margin-bottom: 30px
+
+.status
+  display: flex
+  width: 100%
+  justify-content: space-between
+  margin-top: 26px
+  align-items: center
+  
+.selected-counter
+  font-family: Montserrat, sans-serif
+  font-size: 14px
+  line-height: 16px
+  color: $black
+  font-feature-settings: 'case' on
+
+.reset-button
+  border: none
+  background: transparent
+  font-size: 14px
+  line-height: 16px
+  color: $black
+  text-transform: lowercase
+  cursor: pointer
+  display: flex
+  align-items: center
+  padding: 4px 2px
+
+  &:hover
+    color: $red
+    .reset-button__icon
+      fill: $red
+
+  &:focus
+    outline-color: $red
+
+.reset-button__icon
+  width: 15px
+  height: 15px
+  fill: $black
+  margin-left: 9px

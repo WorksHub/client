@@ -296,3 +296,8 @@ export function initTags(tagBox) {
   }
 }
 window.initTags = initTags;
+
+function invertTag(tag) {
+  tag.classList.toggle('tag--inverted');
+}
+window.invertTag = invertTag;

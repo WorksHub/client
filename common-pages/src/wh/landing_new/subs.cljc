@@ -31,6 +31,12 @@
     (:recent-jobs sub-db)))
 
 (reg-sub
+  ::top-tags
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (:top-tags sub-db)))
+
+(reg-sub
   ::top-blogs
   (fn [db _]
       (get-in (wh.graphql-cache/result db :top-blogs nil) [:top-blogs :results])))

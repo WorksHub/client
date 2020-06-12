@@ -38,7 +38,8 @@ $tag-spacing: 3px
   padding-right: 6px
 
 .tags--inline
-  display: inline-block
+  display: inline-flex
+  flex-wrap: wrap
 
 .tags__job
   margin-top: 19px
@@ -150,6 +151,19 @@ $tag-spacing: 3px
     @include skeleton--text
     .icon
       display: none
+  &.tag--inverted
+    color: $white
+    background: $red
+  &.tag--interactive
+    cursor: pointer
+    user-select: none
+  &.tag--button
+    border: none
+    display: flex
+    align-items: center
+    &:focus
+      outline-color: $red
+
 .tag-add
   position: absolute
   top: 0px

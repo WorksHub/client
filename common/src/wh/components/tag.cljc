@@ -25,8 +25,11 @@
                          "haskell" "scala" "javascript" "clojure" "f#" "rust"
                          "c#" "elm" "aws" "erlang" "ocaml" "react" "elixir"})
 
+(defn add-invert [on-click]
+  (str on-click "invertTag(this);"))
+
 (defn tag
-  [element-type {:keys [label type subtype id icon on-click href with-icon?]
+  [element-type {:keys [label type subtype id icon on-click href with-icon? inverted? interactive? server-side-invert-on-click?]
                  :or {with-icon? true}
                  :as t}]
   (let [label-lc (or (some-> label str/lower-case) "")
@@ -37,11 +40,16 @@
      (merge {:key        id
              :data-label label
              :class      (util/merge-classes "tag"
+                                             (when inverted? "tag--inverted")
+                                             (when interactive? "tag--interactive")
+                                             (when (= :button element-type) "tag--button")
                                              (str "tag--type-" (if t (name type) "skeleton"))
                                              (when subtype (str "tag--subtype-" (name subtype))))}
             (when href {:href href})
             (when on-click
-              (interop/on-click-fn on-click)))
+              (interop/on-click-fn #?(:cljs on-click
+                                      :clj (cond-> on-click
+                                                   server-side-invert-on-click? add-invert)))))
      (when (and icon' with-icon?)
        [icons/icon icon'])
      [:span label]]))

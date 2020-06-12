@@ -5,4 +5,5 @@ import './promo_banner.js';
 import './code_highlight.js';
 import './button_analytics.js';
 import './newsletter.js';
+import './tags_selector.js'
 import './init.js';
