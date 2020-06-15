@@ -28,4 +28,5 @@ import './stream_preview.sass';
 import './branding.sass';
 import './attract_card.sass';
 import './stat_card.sass';
+import './signin_buttons.sass';
 import './tag_selector.sass'

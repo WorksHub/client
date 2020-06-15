@@ -6,7 +6,6 @@
 (def main-column "landing__main-column--3d3VB")
 (def card "landing__card--1Kley")
 (def card--tag-picker "landing__card--tag-picker--2fgJO")
-(def card--intro "landing__card--intro--3Rh6z")
 (def card--blog-published "landing__card--blog-published--1t1Ub")
 (def card--job-published "landing__card--job-published--3kvVB")
 (def card--matching-issues "landing__card--matching-issues--3l9_0")

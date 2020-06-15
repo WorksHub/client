@@ -11,3 +11,7 @@
 (def contribute__heading "attract_card__contribute__heading--BwTiw")
 (def contribute__copy "attract_card__contribute__copy--1uIju")
 (def contribute__illustration "attract_card__contribute__illustration--1pjkK")
+(def signin "attract_card__signin--1SReL")
+(def signin__heading "attract_card__signin__heading--3ygBE")
+(def signin__copy "attract_card__signin__copy--2UFCN")
+(def signin__buttons "attract_card__signin__buttons--2G9OD")

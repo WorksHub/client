@@ -24,4 +24,10 @@
     (r/as-element
       [attract/contribute false])))
 
+(ws/defcard attract-signin-card
+  {::wsm/card-width 4::wsm/card-height 8}
+  (ct.react/react-card
+    (r/as-element
+      [attract/signin])))
+
 (defonce init (ws/mount))

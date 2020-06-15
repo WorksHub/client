@@ -1,0 +1,37 @@
+@import 'colours'
+
+.button
+  align-items: center
+  background: $background-white
+  border-radius: 4px
+  border: 1px solid $gray400
+  color: $text-black
+  display: flex
+  justify-content: center
+  font-family: Montserrat, serif
+  font-size: 13px
+  font-style: normal
+  font-weight: 600
+  letter-spacing: 0.2px
+  line-height: 1.35
+  max-height: 40px
+  padding: 11px 16px
+  text-align: center
+
+  &:hover
+    background: $highlight-red
+    color: $primary-red
+    cursor: pointer
+
+  &:focus
+    box-shadow: inset 0 0 0 2px $primary-red
+    outline: none
+
+.icon
+  margin-right: 12px
+
+.icon--twitter
+  fill: $twitter-blue
+
+.icon--email
+  color: $primary-red

@@ -12,9 +12,6 @@
 (defn tag-picker []
   [:div {:class (merge-classes styles/card styles/card--tag-picker)} "Tag picker"])
 
-(defn intro-card []
-  [:div {:class (merge-classes styles/card styles/card--intro)} "Intro card"])
-
 (defn future-card [cls text]
   [:div {:class (merge-classes styles/card cls)} text])
 
@@ -38,7 +35,7 @@
      [:div {:class styles/page__intro}
       [attract-card/intro "functional"]
       [attract-card/contribute logged-in?]
-      [intro-card]]
+      [attract-card/signin]]
      [:div {:class styles/page__main}
       [:div {:class styles/side-column}
        [tag-selector/card-with-selector tags]

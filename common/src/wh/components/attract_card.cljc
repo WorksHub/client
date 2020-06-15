@@ -4,6 +4,7 @@
             [wh.common.data :as data]
             [wh.components.branding :as branding]
             [wh.components.icons :refer [icon]]
+            [wh.components.signin-buttons :as signin-button]
             [wh.interop :as interop]
             [wh.styles.attract-card :as style]
             [wh.util :as util]
@@ -36,3 +37,14 @@
                                              [:wh.events/contribute]))})) "Write article"]]
    [:div (util/smc style/contribute__illustration)
     [:img {:src "/images/hiw/company/benefits/benefit2.svg"}]]])
+
+(defn signin
+  []
+  [:div (util/smc style/attract-card style/signin)
+   [:h2 (util/smc style/signin__heading) "Sign in"]
+   [:p (util/smc style/signin__copy) "to customize your feed & discover cool stuff"]
+   [:div (util/smc style/signin__buttons)
+    [signin-button/github]
+    [signin-button/stack-overflow]
+    [signin-button/twitter]
+    [signin-button/email]]])
