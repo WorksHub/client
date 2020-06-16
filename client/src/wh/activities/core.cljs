@@ -1,8 +1,8 @@
 (ns wh.activities.core
   (:require [cljs.loader :as loader]
             [re-frame.core :refer [dispatch-sync reg-event-db]]
-            [wh.activities.queries :as queries]
             [wh.activities.views :as views]
+            [wh.components.activities.queries :as queries]
             [wh.db :as db]
             [wh.graphql-cache :refer [reg-query]]
             [wh.user.db :as user]))

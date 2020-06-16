@@ -1,9 +1,16 @@
 (ns wh.landing-new.events
-  (:require
-    [wh.graphql-cache :refer [reg-query]]
-    [wh.graphql.fragments])
+  (:require [wh.graphql-cache :refer [reg-query]]
+            [wh.response.handler.util :as hutil]
+            [wh.components.activities.queries :as activities-queries]
+            [wh.graphql.fragments])
   (#?(:clj :require :cljs :require-macros)
-   [wh.graphql-macros :refer [defquery]]))
+    [wh.graphql-macros :refer [defquery]]))
+
+
+(reg-query :all-activities activities-queries/all-activities-query)
+(defn all-activities [_]
+  [:all-activities nil])
+
 
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query

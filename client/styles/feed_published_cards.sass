@@ -1,0 +1,214 @@
+@import 'colours'
+@import 'text'
+@import 'vars'
+
+$font-family: Montserrat, serif
+
+@mixin text-light
+  font-weight: 500
+  font-size: 14px
+  line-height: 17px
+
+@mixin text-base
+  font-weight: 600
+  font-size: 14px
+  line-height: 17px
+
+@mixin title-base
+  font-size: 16px
+  font-weight: 600
+  line-height: 22px
+
+@mixin content-centered
+  align-items: center
+  display: flex
+  justify-content: center
+
+@mixin button-highlight
+  &:hover
+    background: $highlight-red
+    color: $primary-red
+    cursor: pointer
+
+@mixin button-text
+  font-family: $font-family
+  font-size: 13px
+  font-weight: bold
+  letter-spacing: 0.02em
+  line-height: 135%
+
+@mixin button-size
+  border-radius: 4px
+  height: 40px
+
+@mixin button-inverted
+  @include button-highlight
+  @include button-text
+  @include content-centered
+  @include button-size
+  background: transparent
+  border: none
+  color: $primary-red
+  padding: 0 40px
+
+@mixin button-full
+  @include button-highlight
+  @include button-text
+  @include content-centered
+  @include button-size
+  background: $primary-red
+  border: 1px solid #EF8374
+  box-sizing: border-box
+  color: $text-white
+  padding: 0 60px
+
+@mixin link-icon
+  display: block
+  margin-right: 22px
+
+
+.card
+  background-color: $background-white
+  border-radius: 8px
+  box-shadow: 0px 4px 8px $card-shadow-color
+  max-width: 628px
+  min-width: 528px
+  padding: 20px
+
+
+.icon-thumbsup
+  @include link-icon
+  height: 22px
+  width: 22px
+
+.icon-save
+  @include link-icon
+  height: 20px
+  width: 16px
+
+.icon-network
+  @include link-icon
+  height: 22px
+  width: 20px
+
+
+.company
+  column-gap: 16px
+  display: grid
+  grid-template-columns: 40px 1fr 40px
+  grid-template-rows: 1fr 1fr
+  height: 40px
+
+.company__name
+  @include title-base
+  color: $text-black
+  grid-column: 2
+  grid-row: 1
+  margin: 0
+
+.company__logo
+  grid-column: 1
+  grid-row: 1/3
+  height: 40px
+  width: 40px
+
+.company__live-jobs
+  bottom: 4px
+  color: $text-gray
+  font-family: $font-family
+  font-size: 14px
+  grid-column: 2
+  grid-row: 2
+  height: 20px
+  position: relative
+
+.company__icon
+  grid-column: 3
+  grid-row: 1/3
+  height: 40px
+  width: 40px
+
+
+.job-description
+  -webkit-box-orient: vertical
+  -webkit-line-clamp: 2
+  display: -webkit-box
+  font-family: $font-family
+  font-size: 14px
+  line-height: 17px
+  margin-bottom: 22px
+  margin-top: 26px
+  max-height: 44px
+  overflow: hidden
+  text-overflow: ellipsis
+
+.job-info
+  border-radius: 4px
+  border: 1px solid $border-gray
+  box-sizing: border-box
+  padding: 24px
+
+.job-info__title
+  color: $text-black
+  font-family: $font-family
+  font-size: 18px
+  font-weight: bold
+  line-height: 26px
+  margin: 0 0 16px 0
+
+.job-info__title__link
+  &:hover
+    color: $primary-red
+
+.job-details
+  display: flex
+  justify-content: flex-start
+  flex-wrap: wrap
+
+.job-details__icon
+  bottom: 1px
+  height: 16px
+  margin-right: 8px
+  position: relative
+  width: 16px
+
+.job-details__remuneration
+  @include text-base
+  color: $text-black
+  font-family: $font-family
+  margin-right: 16px
+
+.job-details__contract-type,
+.job-details__published-date,
+.job-details__location,
+.job-details__remote,
+.job-details__sponsorship
+  @include text-light
+  color: $text-black
+  display: flex
+  font-family: $font-family
+  margin-bottom: 8px
+  &:not(:last-child)
+    margin-left: 0
+    margin-right: 16px
+
+.job-details__tags
+  margin-top: 18px
+
+
+.links
+  align-items: center
+  border-top: 1px solid $border-gray
+  display: flex
+  margin-left: 3px
+  margin-top: 16px
+  padding-top: 16px
+
+
+.all-jobs
+  @include button-inverted
+  margin-left: auto
+  margin-right: 16px
+
+.see-job
+  @include button-full
