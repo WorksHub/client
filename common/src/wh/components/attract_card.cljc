@@ -1,6 +1,5 @@
 (ns wh.components.attract-card
-  (:require [clojure.string :as str]
-            [re-frame.core :refer [dispatch]]
+  (:require [re-frame.core :refer [dispatch]]
             [wh.common.data :as data]
             [wh.components.branding :as branding]
             [wh.components.icons :refer [icon]]

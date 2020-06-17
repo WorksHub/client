@@ -14,8 +14,6 @@
 
 (defn card-tags [tags]
   [tag/tag-list :a (->> tags
-                        (filter #(and (= (:subtype %) "software")
-                                      (= (:type %) "tech")))
                         (take 3)
                         (map #(assoc %
                                 :href (routes/path :learn-by-tag :params {:tag (:slug %)})
@@ -76,7 +74,7 @@
 (defn card-issue [{:keys [company title id level repo compensation] :as _issue}]
   [:section {:class style/section__element}
    [connected-entity {:title (:name company)
-                      :subtitle (str "Level: " (str/capitalize level))
+                      :subtitle (str "Level: " (str/capitalize (name level)))
                       :href (routes/path :company :params {:slug (:slug company)})
                       :img-src (:logo company)}]
    [card-link {:href (routes/path :issue :params {:id id})
@@ -90,7 +88,7 @@
         [card-tag {:label (str "$" amount)
                    :type "funding"}]))]])
 
-(defn live-issues [issues]
+(defn recent-issues [issues]
   [:section {:class style/section}
    [section-title "Live Open Source Issues"]
    [section-elements issues card-issue]
@@ -106,21 +104,21 @@
 (defn format-user-date
   [t]
   (->> t
-       (tc/from-date)
+       (tf/parse)
        (tf/unparse (tf/formatter "yyyy"))))
 
-(defn card-user [{:keys [blogs-count issues-count created] :as user}]
+(defn card-user [{:keys [blog-count issue-count created name image-url] :as _user}]
   [:section {:class style/section__element}
-   [connected-entity {:title (:name user)
+   [connected-entity {:title name
                       :title-type :primary
                       :subtitle (str "Joined in " (format-user-date created))
-                      :img-src (:image_url user)
+                      :img-src image-url
                       :img-type :rounded}]
-   [numeric-info [{:number blogs-count
+   [numeric-info [{:number blog-count
                    :sing "article published"
                    :plural "articles published"
                    :icon "article"}
-                  {:number issues-count
+                  {:number issue-count
                    :sing "open source issue started"
                    :plural "open source issues started"
                    :icon "commit"}]]])
@@ -135,14 +133,14 @@
 
 ; -----------------------------------------------
 
-(defn card-job [{:keys [title company slug] :as _job}]
+(defn card-job [{:keys [title company-info slug] :as _job}]
   [:section {:class style/section__element}
-   (let [jobs-count (:jobs-count company)
+   (let [jobs-count (:jobs-count company-info)
          text (str jobs-count (pluralize jobs-count " live job"))]
-     [connected-entity {:title (:name company)
+     [connected-entity {:title (:name company-info)
                         :subtitle text
-                        :href (routes/path :company :params {:slug (:slug company)})
-                        :img-src (:logo company)}])
+                        :href (routes/path :company :params {:slug (:slug company-info)})
+                        :img-src (:logo company-info)}])
    [card-link {:title title
                :href (routes/path :job :params {:slug slug})}]])
 
@@ -159,19 +157,19 @@
 
 ; -----------------------------------------------
 
-(defn card-company [{:keys [name tags jobs-count issues-count logo locations] :as company}]
+(defn card-company [{:keys [name total-published-issue-count total-published-job-count logo slug locations tags] :as _company}]
   [:section {:class style/section__element}
    (let [location (first locations)
          location-str (str (:city location) ", " (:country location))]
      [connected-entity {:title name
                         :subtitle location-str
-                        :href (routes/path :company :params {:slug (:slug company)})
+                        :href (routes/path :company :params {:slug slug})
                         :img-src logo}])
-   [numeric-info [{:number jobs-count
+   [numeric-info [{:number total-published-job-count
                    :icon "case"
                    :sing "live role"
                    :plural "live roles"}
-                  {:number issues-count
+                  {:number total-published-issue-count
                    :icon "commit"
                    :sing "live open source issue"
                    :plural "live open source issues"}]]

@@ -25,15 +25,14 @@
    [styles/card--matching-jobs "Matching Jobs"]])
 
 (defn page []
-  (let [blogs      (<sub [::subs/top-blogs])
-        jobs       (<sub [::subs/recent-jobs])
-        users      (<sub [::subs/top-users])
-        issues     (<sub [::subs/live-issues])
+  (let [blogs (<sub [::subs/top-blogs])
+        users (<sub [::subs/top-users])
+        companies (<sub [::subs/top-companies])
+        jobs (<sub [::subs/recent-jobs])
+        issues (<sub [::subs/recent-issues])
+        tags (<sub [::subs/top-tags])
         activities (<sub [::subs/all-activities])
-        companies  (<sub [::subs/top-companies])
-        tags       (<sub [::subs/top-tags])
         logged-in? (<sub [:user/logged-in?])]
-
     [:div {:class styles/page}
      [:div {:class styles/page__intro}
       [attract-card/intro "functional"]
@@ -59,8 +58,8 @@
               [job-published/card (:object activity)])
 
             #_(for [fc future-cards]
-              (apply future-card fc)))
+                (apply future-card fc)))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs]
-       [side-cards/live-issues issues]
+       [side-cards/recent-issues issues]
        [side-cards/top-ranking-users users]]]]))
