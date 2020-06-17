@@ -548,22 +548,24 @@
            slug-in-db     (get-in db [::job/sub-db ::job/slug])
            preset-slug    (get-in db [::job/sub-db ::job/preset-slug])]
        ;; If you are changing below logic make sure that wh.response.handler.job is also updated
-       [[::load-company-module-if-needed]
-        (when (or (and preset-slug (not= requested-slug preset-slug))
-                  (and (not preset-slug) (not (::db/initial-load? db))))
-          [::initialize-db])
-        (if (not= requested-slug slug-in-db)
-          [::fetch-job requested-slug]
-          [::fetch-issues-and-analytics])
-        (when (and (= requested-slug slug-in-db)
-                   (admin-or-job-owner? db))
-          [::fetch-company])
-        (when (= requested-slug slug-in-db)
-          [::set-page-title])
-        (when (get-in db [::db/query-params "apply"])
-          ;; this potentially creates an invalid "auth context" but because job
-          ;; page is SSR now it shouldn't matter
-          [:apply/try-apply {:slug requested-slug} (get-in db [::db/query-params "apply_source"] "jobpage-apply")])
-        [::fetch-recommended-jobs requested-slug]
-        [:google/load-maps]
-        [:wh.pages.core/unset-loader]])))
+       (if (get-in db [::job/sub-db :wh.job.db/error]) ;; if there's an error set on load, do nothing
+         []
+         [[::load-company-module-if-needed]
+          (when (or (and preset-slug (not= requested-slug preset-slug))
+                    (and (not preset-slug) (not (::db/initial-load? db))))
+            [::initialize-db])
+          (if (not= requested-slug slug-in-db)
+            [::fetch-job requested-slug]
+            [::fetch-issues-and-analytics])
+          (when (and (= requested-slug slug-in-db)
+                     (admin-or-job-owner? db))
+            [::fetch-company])
+          (when (= requested-slug slug-in-db)
+            [::set-page-title])
+          (when (get-in db [::db/query-params "apply"])
+            ;; this potentially creates an invalid "auth context" but because job
+            ;; page is SSR now it shouldn't matter
+            [:apply/try-apply {:slug requested-slug} (get-in db [::db/query-params "apply_source"] "jobpage-apply")])
+          [::fetch-recommended-jobs requested-slug]
+          [:google/load-maps]
+          [:wh.pages.core/unset-loader]]))))
