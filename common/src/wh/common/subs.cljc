@@ -16,7 +16,7 @@
 (reg-sub
   :user/logged-in?
   (fn [db _]
-    (get-in db [:wh.user.db/sub-db :wh.user.db/id])))
+    (boolean (get-in db [:wh.user.db/sub-db :wh.user.db/id]))))
 
 (reg-sub
   :user/type

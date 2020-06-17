@@ -51,6 +51,8 @@
                  :company         {:entries    [wh.company.core]
                                    :depends-on #{:logged-in :jobs}}
                  :activities      {:entries    [wh.activities.core]
+                                   :depends-on #{:common}}
+                 :landing-page    {:entries    [wh.landing-page.core]
                                    :depends-on #{:common}}}
 
                 :output-dir       "target/resources/public/js"

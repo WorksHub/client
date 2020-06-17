@@ -1,13 +1,13 @@
 (ns wh.components.side-card.side-card
-  (:require [clojure.string :as str]
-            [#?(:cljs cljs-time.coerce
+  (:require [#?(:cljs cljs-time.coerce
                 :clj clj-time.coerce) :as tc]
             [#?(:cljs cljs-time.format
                 :clj clj-time.format) :as tf]
+            [clojure.string :as str]
+            [wh.common.text :refer [pluralize]]
             [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon] :as icons]
             [wh.components.tag :as tag]
-            [wh.common.text :refer [pluralize]]
             [wh.routes :as routes]
             [wh.styles.side-card :as style]
             [wh.util :refer [merge-classes random-uuid]]))
@@ -16,8 +16,8 @@
   [tag/tag-list :a (->> tags
                         (take 3)
                         (map #(assoc %
-                                :href (routes/path :learn-by-tag :params {:tag (:slug %)})
-                                :with-icon? false)))])
+                                     :href (routes/path :learn-by-tag :params {:tag (:slug %)})
+                                     :with-icon? false)))])
 
 (defn card-tag [t]
   [tag/tag :div (assoc t :with-icon? false)])
@@ -27,16 +27,16 @@
    text [:span {:class style/footer__bold-text} bold-text]])
 
 (defn connected-entity [{:keys [title title-type subtitle href img-src img-type]}]
-  (let [wrapper-tag (if href :a :div)
+  (let [wrapper-tag   (if href :a :div)
         wrapper-class (cond-> style/connected-entity
                               href (merge-classes style/connected-entity--link))
-        img-class (cond-> style/connected-entity__image
-                          (= img-type :rounded) (merge-classes style/connected-entity__image--rounded))
-        title-class (cond->
-                      style/connected-entity__title
-                      (= title-type :primary) (merge-classes style/connected-entity__title--primary))]
+        img-class     (cond-> style/connected-entity__image
+                              (= img-type :rounded) (merge-classes style/connected-entity__image--rounded))
+        title-class   (cond->
+                        style/connected-entity__title
+                        (= title-type :primary) (merge-classes style/connected-entity__title--primary))]
     [wrapper-tag {:class wrapper-class
-                  :href href}
+                  :href  href}
      [:img {:src img-src :class img-class}]
      [:div {:class style/connected-entity__info}
       [:span {:class title-class} title]
@@ -48,20 +48,22 @@
 (defn section-elements [elements card-component]
   [:div {:class style/section__elements}
    (for [elm elements]
+     ^{:key (:id elm)}
      [card-component elm])])
 
 (defn numeric-info [lines]
   [:div {:class style/numeric-info}
    (for [{:keys [number sing plural icon]} lines]
      (when (and number (pos? number))
-       [:div {:class style/numeric-info__line}
+       [:div {:key   icon
+              :class style/numeric-info__line}
         [icons/icon icon :class style/icon]
         (str number " " (pluralize number sing plural))]))])
 
 (defn section-button [{:keys [title href type]}]
   [:a {:class (cond-> style/button
                       (= :no-border type) (merge-classes style/button--text))
-       :href href}
+       :href  href}
    title])
 
 (defn card-link [{:keys [title href]}]
@@ -69,24 +71,24 @@
        :class style/element__link}
    title])
 
-; ----------------------------------------------
+;; ----------------------------------------------
 
 (defn card-issue [{:keys [company title id level repo compensation] :as _issue}]
   [:section {:class style/section__element}
-   [connected-entity {:title (:name company)
+   [connected-entity {:title    (:name company)
                       :subtitle (str "Level: " (str/capitalize (name level)))
-                      :href (routes/path :company :params {:slug (:slug company)})
-                      :img-src (:logo company)}]
-   [card-link {:href (routes/path :issue :params {:id id})
+                      :href     (routes/path :company :params {:slug (:slug company)})
+                      :img-src  (:logo company)}]
+   [card-link {:href  (routes/path :issue :params {:id id})
                :title title}]
    [:ul {:class style/element__tags}
     (when-let [language (:primary-language repo)]
       [card-tag {:label language
-                 :type "tech"}])
+                 :type  "tech"}])
     (let [amount (or (:amount compensation) 0)]
       (when-not (zero? amount)
         [card-tag {:label (str "$" amount)
-                   :type "funding"}]))]])
+                   :type  "funding"}]))]])
 
 (defn recent-issues [issues]
   [:section {:class style/section}
@@ -94,12 +96,12 @@
    [section-elements issues card-issue]
    [:div {:class (merge-classes style/footer style/footer--issues)}
     [section-button {:title "All open source issues"
-                     :href (routes/path :issues)}]
-    [footer-link {:text "Post your"
+                     :href  (routes/path :issues)}]
+    [footer-link {:text      "Post your"
                   :bold-text "open source issue here"
-                  :href (routes/path :create-job)}]]])
+                  :href      (routes/path :create-job)}]]])
 
-; -----------------------------------------------
+;; -----------------------------------------------
 
 (defn format-user-date
   [t]
@@ -109,40 +111,40 @@
 
 (defn card-user [{:keys [blog-count issue-count created name image-url] :as _user}]
   [:section {:class style/section__element}
-   [connected-entity {:title name
+   [connected-entity {:title      name
                       :title-type :primary
-                      :subtitle (str "Joined in " (format-user-date created))
-                      :img-src image-url
-                      :img-type :rounded}]
+                      :subtitle   (str "Joined in " (format-user-date created))
+                      :img-src    image-url
+                      :img-type   :rounded}]
    [numeric-info [{:number blog-count
-                   :sing "article published"
+                   :sing   "article published"
                    :plural "articles published"
-                   :icon "article"}
+                   :icon   "article"}
                   {:number issue-count
-                   :sing "open source issue started"
+                   :sing   "open source issue started"
                    :plural "open source issues started"
-                   :icon "commit"}]]])
+                   :icon   "commit"}]]])
 
 (defn top-ranking-users [users]
   [:section {:class style/section}
    [section-title "Top Ranking Users"]
-   [section-elements users card-user]
-   [:div
-    [section-button {:title "Write an Article"
-                     :href (routes/path :contribute)}]]])
+   [section-elements users card-user]]
+  [:div
+   [section-button {:title "Write an Article"
+                    :href  (routes/path :contribute)}]])
 
-; -----------------------------------------------
+;; -----------------------------------------------
 
 (defn card-job [{:keys [title company-info slug] :as _job}]
   [:section {:class style/section__element}
    (let [jobs-count (:jobs-count company-info)
-         text (str jobs-count (pluralize jobs-count " live job"))]
-     [connected-entity {:title (:name company-info)
+         text       (str jobs-count (pluralize jobs-count " live job"))]
+     [connected-entity {:title    (:name company-info)
                         :subtitle text
-                        :href (routes/path :company :params {:slug (:slug company-info)})
-                        :img-src (:logo company-info)}])
+                        :href     (routes/path :company :params {:slug (:slug company-info)})
+                        :img-src  (:logo company-info)}])
    [card-link {:title title
-               :href (routes/path :job :params {:slug slug})}]])
+               :href  (routes/path :job :params {:slug slug})}]])
 
 (defn recent-jobs [jobs]
   [:section {:class style/section}
@@ -150,28 +152,28 @@
    [section-elements jobs card-job]
    [:div {:class (merge-classes style/footer style/footer--jobs)}
     [section-button {:title "All live jobs"
-                     :href (routes/path :jobsboard)}]
-    [footer-link {:text "Hiring?"
+                     :href  (routes/path :jobsboard)}]
+    [footer-link {:text      "Hiring?"
                   :bold-text "Post your job here"
-                  :href (routes/path :create-job)}]]])
+                  :href      (routes/path :create-job)}]]])
 
-; -----------------------------------------------
+;; -----------------------------------------------
 
 (defn card-company [{:keys [name total-published-issue-count total-published-job-count logo slug locations tags] :as _company}]
   [:section {:class style/section__element}
-   (let [location (first locations)
+   (let [location     (first locations)
          location-str (str (:city location) ", " (:country location))]
-     [connected-entity {:title name
+     [connected-entity {:title    name
                         :subtitle location-str
-                        :href (routes/path :company :params {:slug slug})
-                        :img-src logo}])
+                        :href     (routes/path :company :params {:slug slug})
+                        :img-src  logo}])
    [numeric-info [{:number total-published-job-count
-                   :icon "case"
-                   :sing "live role"
+                   :icon   "case"
+                   :sing   "live role"
                    :plural "live roles"}
                   {:number total-published-issue-count
-                   :icon "commit"
-                   :sing "live open source issue"
+                   :icon   "commit"
+                   :sing   "live open source issue"
                    :plural "live open source issues"}]]
    [card-tags tags]])
 
@@ -183,17 +185,17 @@
     [:input {:placeholder "Email" :class style/input}]
     [:input {:placeholder "Password" :class style/input}]]
    [section-button {:title "Create company"
-                    :href (routes/path :create-company)}]])
+                    :href  (routes/path :create-company)}]])
 
 (defn top-ranking-companies [companies]
   [:div {:class (merge-classes style/tabs__tab-content style/tabs__tab-content--companies)}
    [section-elements companies card-company]
    [:div {:class (merge-classes style/footer style/footer--companies)}
     [section-button {:title "All companies"
-                     :href (routes/path :companies)}]
+                     :href  (routes/path :companies)}]
     [create-company]]])
 
-; -------------------------------------------
+;; -------------------------------------------
 
 (defn format-blog-date
   [t]
@@ -204,12 +206,12 @@
 (defn card-blog [{:keys [title author-info tags creation-date id upvote-count reading-time] :as _blog}]
   [:section {:class style/section__element}
    [card-link {:title title
-               :href (routes/path :blog :params {:id id})}]
-   [connected-entity {:title (:name author-info)
+               :href  (routes/path :blog :params {:id id})}]
+   [connected-entity {:title    (:name author-info)
                       :subtitle (str/join " • " [(format-blog-date creation-date)
                                                  (str reading-time " min read")
                                                  (str upvote-count " boosts")])
-                      :img-src (:image-url author-info)
+                      :img-src  (:image-url author-info)
                       :img-type :rounded}]
    [card-tags tags]])
 
@@ -218,36 +220,36 @@
    [:h3 {:class style/footer__title} "Write an article"]
    [:p {:class style/footer__text} "Share your fresh thinking and unique perspectives with developers from around the world."]
    [section-button {:title "Write an article"
-                    :href (routes/path :contribute)
-                    :type :no-border}]])
+                    :href  (routes/path :contribute)
+                    :type  :no-border}]])
 
 (defn top-ranking-blogs [blogs]
   [:div {:class (merge-classes style/tabs__tab-content style/tabs__tab-content--blogs)}
    [section-elements blogs card-blog]
    [:div {:class (merge-classes style/footer style/footer--blogs)}
     [section-button {:title "All articles"
-                     :href (routes/path :learn)}]
+                     :href  (routes/path :learn)}]
     [write-article]]])
 
-; -------------------------------------------
+;; -------------------------------------------
 
 (defn top-ranking [{:keys [companies blogs default-tab]
-                    :or {default-tab :companies}}]
+                    :or   {default-tab :companies}}]
   (let [input1-id (random-uuid)
         input2-id (random-uuid)
-        name (random-uuid)]
+        name      (random-uuid)]
     [:section {:class (merge-classes style/section style/section--with-tabs)}
      [section-title "Top rankings"]
-     [:input (cond-> {:id      input1-id
-                      :class   (merge-classes style/tabs__input style/tabs__input--companies)
-                      :type    "radio"
-                      :name    name}
-                     (= :companies default-tab) (assoc :checked true))]
+     [:input (cond-> {:id    input1-id
+                      :class (merge-classes style/tabs__input style/tabs__input--companies)
+                      :type  "radio"
+                      :name  name}
+                     (= :companies default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:input (cond-> {:id    input2-id
                       :class (merge-classes style/tabs__input style/tabs__input--blogs)
                       :type  "radio"
                       :name  name}
-                     (= :blogs default-tab) (assoc :checked true))]
+                     (= :blogs default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:nav {:class style/tabs__wrapper}
       [:ul {:class style/tabs}
        [:li

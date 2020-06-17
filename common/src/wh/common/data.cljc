@@ -720,21 +720,22 @@
                 [:candidates                     "profile"      "Candidates"]
                 [:create-job                     "resources"    "Create role"]
                 [:create-company                 "jobs-board"   "Create company"]
-                [:create-candidate               "add-new"      "Create candidate"]]}
+                [:create-candidate               "add-new"      "Create candidate"]
+                [:homepage-new                   "trends"       "New Homepage"]]}
      default-explore-section
      default-for-you-section]
     "company"
-    [{:section "For You"
-      :class   "for-you"
+    [{:section             "For You"
+      :class               "for-you"
       :show-notifications? true
-      :items   [[[:company-dashboard :homepage] "dashboard" "Dashboard"]
-                [[:company [:slug (get-in user [:wh.user.db/company :slug])]]
-                 "company" "Company Profile"]
-                [:company-applications "applications" "Applications"]
-                [:create-job "add-new" "Add new role"]
-                [:company-issues "pr" "Your issues"]
-                [:edit-company "settings" "Settings"]
-                [:profile "profile" "Your Profile"]]}
+      :items               [[[:company-dashboard :homepage] "dashboard" "Dashboard"]
+                            [[:company [:slug (get-in user [:wh.user.db/company :slug])]]
+                             "company" "Company Profile"]
+                            [:company-applications "applications" "Applications"]
+                            [:create-job "add-new" "Add new role"]
+                            [:company-issues "pr" "Your issues"]
+                            [:edit-company "settings" "Settings"]
+                            [:profile "profile" "Your Profile"]]}
      default-explore-section]
     ;; default
     [default-for-you-section

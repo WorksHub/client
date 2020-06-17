@@ -1,10 +1,12 @@
 (ns wh.landing-new.subs
   (:require #?(:clj [clj-time.coerce :as c])
             #?(:clj [clj-time.format :as cf])
+            [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
-            [wh.util :as util]
-            [clojure.string :as str]))
+            [wh.graphql-cache :as gqlc]
+            [wh.landing-new.events :as events]
+            [wh.util :as util]))
 
 (reg-sub
   ::sub-db
@@ -12,35 +14,34 @@
     (:wh.homepage-new.db/sub-db db)))
 
 (reg-sub
-  ::top-tags
-  :<- [::sub-db]
-  (fn [sub-db _]
-    (:top-tags sub-db)))
-
-(reg-sub
   ::top-blogs
   (fn [db _]
-      (get-in (wh.graphql-cache/result db :top-blogs nil) [:top-blogs :results])))
+    (get-in (gqlc/result db :top-blogs nil) [:top-blogs :results])))
 
 (reg-sub
   ::top-companies
   (fn [db _]
-    (get-in (wh.graphql-cache/result db :top-companies nil) [:top-companies :results])))
+    (get-in (gqlc/result db :top-companies nil) [:top-companies :results])))
+
+(reg-sub
+  ::top-tags
+  (fn [db _]
+    (get-in (apply gqlc/result db (events/top-tags db)) [:top-tags :results])))
 
 (reg-sub
   ::top-users
   (fn [db _]
-    (get-in (wh.graphql-cache/result db :top-users nil) [:top-users :results])))
+    (get-in (gqlc/result db :top-users nil) [:top-users :results])))
 
 (reg-sub
   ::recent-jobs
   (fn [db _]
-    (get-in (wh.graphql-cache/result db :recent-jobs nil) [:recent-jobs :results])))
+    (get-in (gqlc/result db :recent-jobs nil) [:recent-jobs :results])))
 
 (reg-sub
   ::recent-issues
   (fn [db _]
-    (get-in (wh.graphql-cache/result db :recent-issues nil) [:recent-issues :results])))
+    (get-in (gqlc/result db :recent-issues nil) [:recent-issues :results])))
 
 (defn display-date [date]
   #?(:clj
@@ -82,5 +83,5 @@
   ::all-activities
   (fn [db _]
     (map normalize-activity
-         (get-in (wh.graphql-cache/result db :all-activities nil)
+         (get-in (gqlc/result db :all-activities nil)
                  [:query-activities :activities]))))

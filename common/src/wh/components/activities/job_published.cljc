@@ -4,18 +4,18 @@
             [wh.components.tag :as tag]
             [wh.interop :as interop]
             [wh.routes :as routes]
-            [wh.slug :as slug]
             [wh.styles.feed-published-cards :as styles]
             [wh.util :as util]))
 
 (defn job-tag [tag]
-  (let [href (routes/path :pre-set-search :params {:tag (slug/slug (:slug tag))})]
+  (let [href (routes/path :pre-set-search :params {:tag (:slug tag)})]
     [tag/tag :a (assoc tag :href href)]))
 
 (defn job-tags
   [tags]
   [:ul (util/smc styles/job-details__tags "tags" "tags--inline")
    (for [tag tags]
+     ^{:key (:slug tag)}
      [job-tag tag])])
 
 (defn job-details [{:keys [title slug remote location remuneration

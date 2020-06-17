@@ -25,19 +25,21 @@
    [styles/card--matching-jobs "Matching Jobs"]])
 
 (defn page []
-  (let [blogs (<sub [::subs/top-blogs])
-        users (<sub [::subs/top-users])
-        companies (<sub [::subs/top-companies])
-        jobs (<sub [::subs/recent-jobs])
-        issues (<sub [::subs/recent-issues])
-        tags (<sub [::subs/top-tags])
+  (let [blogs      (<sub [::subs/top-blogs])
+        users      (<sub [::subs/top-users])
+        companies  (<sub [::subs/top-companies])
+        jobs       (<sub [::subs/recent-jobs])
+        issues     (<sub [::subs/recent-issues])
+        tags       (<sub [::subs/top-tags])
         activities (<sub [::subs/all-activities])
-        logged-in? (<sub [:user/logged-in?])]
+        logged-in? (<sub [:user/logged-in?])
+        vertical   (<sub [:wh/vertical])]
     [:div {:class styles/page}
-     [:div {:class styles/page__intro}
-      [attract-card/intro "functional"]
-      [attract-card/contribute logged-in?]
-      [attract-card/signin]]
+     (when-not logged-in?
+       [:div {:class styles/page__intro}
+        [attract-card/intro vertical]
+        [attract-card/contribute logged-in?]
+        [attract-card/signin]])
      [:div {:class styles/page__main}
       [:div {:class styles/side-column}
        [tag-selector/card-with-selector tags]
@@ -51,10 +53,8 @@
              [stat-card/about-applications]
              [stat-card/about-open-source]
              [stat-card/about-salary-increase]]
-
-            (for [activity (filter (fn [activity]
-                                     (= (:object-type activity) "job"))
-                                   activities)]
+            (for [activity activities
+                  :when    (= (:object-type activity) "job")]
               [job-published/card (:object activity)])
 
             #_(for [fc future-cards]

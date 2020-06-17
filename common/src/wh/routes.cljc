@@ -23,8 +23,8 @@
                          :pre-set-search
                          :jobsboard
                          :contribute-edit})
-(def no-menu-pages #{:register :register-company :payment-setup :get-started})
-(def no-footer-pages (set (concat no-menu-pages #{:blog})))
+(def no-menu-pages #{:register :register-company :payment-setup :get-started :homepage-new})
+(def no-footer-pages no-menu-pages)
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation

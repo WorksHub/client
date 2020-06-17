@@ -1,16 +1,15 @@
 (ns wh.landing-new.events
   (:require [wh.graphql-cache :refer [reg-query]]
-            [wh.response.handler.util :as hutil]
             [wh.components.activities.queries :as activities-queries]
+            #?(:cljs [wh.pages.core :refer [on-page-load]])
             [wh.graphql.fragments])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
-
 (reg-query :all-activities activities-queries/all-activities-query)
+
 (defn all-activities [_]
   [:all-activities nil])
-
 
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query
@@ -23,7 +22,9 @@
                                   :reading_time
                                   :upvote_count
                                   [:author_info [:name :image_url]]]]]]]})
+
 (reg-query :top-blogs top-blogs-query)
+
 (defn top-blogs [_]
   [:top-blogs nil])
 
@@ -86,3 +87,24 @@
 (reg-query :recent-jobs recent-jobs-query)
 (defn recent-jobs [_]
   [:recent-jobs nil])
+
+(defquery top-tags-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "top_tags"}
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries   [[:top_tags {:vertical :$vertical}
+                      [[:results :fragment/tagFields]]]]})
+(reg-query :top-tags top-tags-query)
+(defn top-tags [db]
+  [:top-tags {:vertical (:wh.db/vertical db)}])
+
+#?(:cljs
+   (defmethod on-page-load :homepage-new [db]
+     [(into [:graphql/query] (all-activities db))
+      (into [:graphql/query] (top-blogs db))
+      (into [:graphql/query] (top-companies db))
+      (into [:graphql/query] (top-tags db))
+      (into [:graphql/query] (top-users db))
+      (into [:graphql/query] (recent-issues db))
+      (into [:graphql/query] (recent-jobs db))]))
