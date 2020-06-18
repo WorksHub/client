@@ -1,6 +1,6 @@
 (defproject works-hub "2.0.0-SNAPSHOT"
   :license {:name "Eclipse Public License 2.0"
-            :url "https://www.eclipse.org/legal/epl-2.0/"}
+            :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :url "https://github.com/WorksHub/client"
   :source-paths ["server/src"
                  "common/src"
@@ -22,14 +22,6 @@
                  [circleci/analytics-clj "0.8.0"]
                  [clj-http "3.9.1"]
                  [cljs-ajax "0.7.3" :exclusions [com.cognitect/transit-clj]]
-                 [cljsjs/body-scroll-lock "2.6.1-0"]
-                 [cljsjs/google-maps "3.18-1"]
-                 [cljsjs/moment "2.24.0-0"]
-                 [cljsjs/react-draggable "3.0.3-0" :exclusions [cljsjs/react cljsjs/react-dom]]
-                 [cljsjs/react-quill "1.1.0-0" :exclusions [cljsjs/react]]
-                 [cljsjs/react-stripe-elements "1.6.0-1"]
-                 [cljsjs/react-tooltip "3.3.0-0"]
-                 [cljsjs/smoothscroll-polyfill "0.4.0-0"]
                  [com.andrewmcveigh/cljs-time "0.5.2"]
                  [com.smxemail/re-frame-cookie-fx "0.0.2"]
                  [com.taoensso/timbre "4.10.0"]
@@ -45,16 +37,16 @@
                  [ring/ring-jetty-adapter "1.6.3"]
                  [thi.ng/geom "1.0.0-RC3"]]
 
-  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.9"]
-                                  [com.taoensso/tufte "2.0.1"]
-                                  [nrepl "0.6.0"]
-                                  [cider/piggieback "0.4.0"]
-                                  [javax.servlet/servlet-api "2.5"]
-                                  [org.clojure/test.check "0.9.0"]
-                                  [day8.re-frame/re-frame-10x "0.3.7"]
-                                  [ring-mock "0.1.5"]]
-                   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
-                   :plugins      [[lein-ancient "0.6.15" :exclusions [org.clojure/clojure commons-codec org.clojure/data.xml]]]}
+  :profiles {:dev  {:dependencies [[binaryage/devtools "0.9.9"]
+                                   [com.taoensso/tufte "2.0.1"]
+                                   [nrepl "0.6.0"]
+                                   [cider/piggieback "0.4.0"]
+                                   [javax.servlet/servlet-api "2.5"]
+                                   [org.clojure/test.check "0.9.0"]
+                                   [day8.re-frame/re-frame-10x "0.3.7"]
+                                   [ring-mock "0.1.5"]]
+                    :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}
+                    :plugins      [[lein-ancient "0.6.15" :exclusions [org.clojure/clojure commons-codec org.clojure/data.xml]]]}
              :prod {}}
 
   :sass {:src              "client/styles/"

@@ -1,9 +1,10 @@
 (ns wh.landing-new.subs
-  (:require #?(:clj [clj-time.coerce :as c])
-            #?(:clj [clj-time.format :as cf])
+  (:require [#?(:clj clj-time.coerce
+                :cljs cljs-time.coerce) :as tc]
             [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
+            [wh.common.time :as time]
             [wh.graphql-cache :as gqlc]
             [wh.landing-new.events :as events]
             [wh.util :as util]))
@@ -43,22 +44,12 @@
   (fn [db _]
     (get-in (gqlc/result db :recent-issues nil) [:recent-issues :results])))
 
-(defn display-date [date]
-  #?(:clj
-     (when (pos? date)
-       (cf/unparse (cf/formatter "yyyy-MM-dd")
-                   (c/from-long (long date))))
-
-     ;; TODO: implement cljs version based on moment.js
-     ;; CH4363
-     :cljs date))
-
 (defn translate-job [job]
   (-> job
       (util/update-in*
         [:remuneration :currency] #(when % (name %)))
       (assoc
-        :display-date (display-date (:first-published job)))
+        :display-date (time/human-time (tc/from-long (:first-published job))))
       (util/update*
         :role-type #(-> % name (str/replace "_" " ")))
       jobc/translate-job))

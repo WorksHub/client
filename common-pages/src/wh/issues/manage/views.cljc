@@ -171,11 +171,12 @@
   #?(:cljs
      [:div.manage-issues-list
       (let [issues (<sub [::subs/issues])
-            sync (<sub [::subs/current-repo-sync])]
+            sync   (<sub [::subs/current-repo-sync])]
         [:div.repo__content
          [:div.repo__header
           [:div.manage-issues__sync-info
-           [:p "Last GitHub sync: " (time/human-time (:time-finished sync))]
+           (when-let [t (:time-finished sync)]
+             [:p "Last GitHub sync: " (time/human-time (time/str->time t :date-time))])
            [:button.button.button--inverted
             {:on-click #(dispatch [::events/sync-repo-issues (<sub [::subs/repo]) {:force? true}])}
             "Re-sync now"]]
@@ -188,7 +189,7 @@
               (and (seq issues)
                    (every? true? (map :published issues)))
               {:indeterminate? (> (count (distinct (map :published issues))) 1)
-               :on-change [::events/update-pending issues]}]]]
+               :on-change      [::events/update-pending issues]}]]]
            [:div.publish-container
             [:span.publish "Published"]]]]
          [:div.issues
