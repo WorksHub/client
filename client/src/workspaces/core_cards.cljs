@@ -12,5 +12,3 @@
     (r/as-element [views/back-button])))
 
 (defonce init (ws/mount))
-
-

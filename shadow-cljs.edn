@@ -69,4 +69,9 @@
                   :ns-regexp  "-(test|cards)$"
                   :output-dir "client/resources/public/js/workspaces"
                   :asset-path "/js/workspaces"
-                  :preloads   []}}}
+                  :preloads   []
+                  :devtools   {:watch-dir "client/resources/public"
+                               :http-root "client/resources/public"
+                               :http-port 3500
+                               :preloads  [shadow.remote.runtime.cljs.browser
+                                           devtools.preload]}}}}

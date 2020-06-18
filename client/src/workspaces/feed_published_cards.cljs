@@ -1,11 +1,8 @@
 (ns workspaces.feed-published-cards
   (:require [nubank.workspaces.card-types.react :as ct.react]
             [nubank.workspaces.core :as ws]
-            [re-frame.core :as rf]
             [reagent.core :as r]
-            [wh.components.activities.job-published :as job-published]
-            [wh.styles.feed-published-cards :as styles]
-            [workspaces.reagent :as wr]))
+            [wh.components.activities.job-published :as job-published]))
 
 (def example-tags
   [{:label   "ClojureScript"
@@ -42,27 +39,28 @@ My gosh, I love this job so much! My gosh, I love this job so much!"
   [:div
    {:style {:background-color "pink"
             :padding          20}}
-
    children])
 
 (ws/defcard job-published-card
-  (wr/reagent-card
-    [bg
-     [job-published/card example-job]]))
+  (ct.react/react-card
+    (r/as-element [bg [job-published/card example-job]])))
 
 
 (defn issue-published []
   [:div "issue published!"])
 
 (ws/defcard issue-published-card
-  (wr/reagent-card [issue-published]))
+  (ct.react/react-card
+    (r/as-element [bg [issue-published]])))
 
 
 (defn blog-published []
   [:div "blog published!"])
 
 (ws/defcard blog-published-card
-  (wr/reagent-card [blog-published]))
+  (ct.react/react-card
+    (r/as-element [bg [blog-published]])))
 
-(defonce init (ws/mount))
+(defonce init
+  (ws/mount))
 

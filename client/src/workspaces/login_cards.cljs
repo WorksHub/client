@@ -1,7 +1,6 @@
 (ns workspaces.login-cards
   (:require [nubank.workspaces.card-types.react :as ct.react]
             [nubank.workspaces.core :as ws]
-            [workspaces.reagent :as wr]
             [reagent.core :as r]
             [re-frame.core :as rf]
             [wh.login.views :as views]))
@@ -23,7 +22,8 @@
 
 
 (ws/defcard hello-card
-  (wr/reagent-card [views/magic-form]))
+  (ct.react/react-card
+    (r/as-element [views/magic-form])))
 
 (defonce init (ws/mount))
 

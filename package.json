@@ -3,7 +3,7 @@
     "shadow-release": "shadow-cljs release app",
     "compile": "shadow-cljs compile app",
     "shadow-watch": "shadow-cljs watch app",
-    "workspaces": "concurrently --kill-others \"shadow-cljs watch cards\" \"http-server -p 3500 ./\" ",
+    "workspaces": "shadow-cljs watch cards",
     "dev-server": "shadow-cljs server",
     "webpack-watch": "webpack --watch",
     "webpack-release": "webpack --config ./webpack.config.prod.js",
