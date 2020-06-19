@@ -14,7 +14,9 @@
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query
                      :operation/name "top_blogs"}
-   :venia/queries   [[:top_blogs
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries   [[:top_blogs {:vertical :$vertical}
                       [[:results [:id
                                   :title
                                   [:tags :fragment/tagFields]
@@ -25,13 +27,15 @@
 
 (reg-query :top-blogs top-blogs-query)
 
-(defn top-blogs [_]
-  [:top-blogs nil])
+(defn top-blogs [db]
+  [:top-blogs {:vertical (:wh.db/vertical db)}])
 
 (defquery recent-issues-query
   {:venia/operation {:operation/type :query
                      :operation/name "recent_issues"}
-   :venia/queries   [[:recent_issues
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries   [[:recent_issues {:vertical :$vertical}
                       [[:results [:id
                                   [:compensation [:amount]]
                                   :title
@@ -39,13 +43,15 @@
                                   [:repo [:primary_language]]
                                   [:company [:name :slug :logo]]]]]]]})
 (reg-query :recent-issues recent-issues-query)
-(defn recent-issues [_]
-  [:recent-issues nil])
+(defn recent-issues [db]
+  [:recent-issues {:vertical (:wh.db/vertical db)}])
 
 (defquery top-companies-queries
   {:venia/operation {:operation/type :query
                      :operation/name "top_companies"}
-   :venia/queries   [[:top_companies
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries   [[:top_companies {:vertical :$vertical}
                       [[:results [:id
                                   :name
                                   :slug
@@ -55,13 +61,15 @@
                                   [:tags :fragment/tagFields]
                                   [:locations [:city :country]]]]]]]})
 (reg-query :top-companies top-companies-queries)
-(defn top-companies [_]
-  [:top-companies nil])
+(defn top-companies [db]
+  [:top-companies {:vertical (:wh.db/vertical db)}])
 
 (defquery top-users-queries
   {:venia/operation {:operation/type :query
                      :operation/name "top_users"}
-   :venia/queries   [[:top_users
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries   [[:top_users {:vertical :$vertical}
                       [[:results [:id
                                   :name
                                   :created
@@ -69,13 +77,15 @@
                                   :blog_count
                                   :issue_count]]]]]})
 (reg-query :top-users top-users-queries)
-(defn top-users [_]
-  [:top-users nil])
+(defn top-users [db]
+  [:top-users {:vertical (:wh.db/vertical db)}])
 
 (defquery recent-jobs-query
   {:venia/operation {:operation/type :query
                      :operation/name "recent_jobs"}
-   :venia/queries   [[:recent_jobs
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries   [[:recent_jobs {:vertical :$vertical}
                       [[:results [:id
                                   :title
                                   :slug
@@ -85,8 +95,8 @@
                                                   :logo
                                                   :total_published_job_count]]]]]]]})
 (reg-query :recent-jobs recent-jobs-query)
-(defn recent-jobs [_]
-  [:recent-jobs nil])
+(defn recent-jobs [db]
+  [:recent-jobs {:vertical (:wh.db/vertical db)}])
 
 (defquery top-tags-query
   {:venia/operation {:operation/type :query

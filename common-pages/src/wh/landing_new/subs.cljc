@@ -19,12 +19,12 @@
 (reg-sub
   ::top-blogs
   (fn [db _]
-    (get-in (gqlc/result db :top-blogs nil) [:top-blogs :results])))
+    (get-in (apply gqlc/result db (events/top-blogs db)) [:top-blogs :results])))
 
 (reg-sub
   ::top-companies
   (fn [db _]
-    (get-in (gqlc/result db :top-companies nil) [:top-companies :results])))
+    (get-in (apply gqlc/result db (events/top-companies db)) [:top-companies :results])))
 
 (reg-sub
   ::top-tags
@@ -34,17 +34,17 @@
 (reg-sub
   ::top-users
   (fn [db _]
-    (get-in (gqlc/result db :top-users nil) [:top-users :results])))
+    (get-in (apply gqlc/result db (events/top-users db)) [:top-users :results])))
 
 (reg-sub
   ::recent-jobs
   (fn [db _]
-    (get-in (gqlc/result db :recent-jobs nil) [:recent-jobs :results])))
+    (get-in (apply gqlc/result db (events/recent-jobs db)) [:recent-jobs :results])))
 
 (reg-sub
   ::recent-issues
   (fn [db _]
-    (get-in (gqlc/result db :recent-issues nil) [:recent-issues :results])))
+    (get-in (apply gqlc/result db (events/recent-issues db)) [:recent-issues :results])))
 
 
 (defn display-month [date]

@@ -106,3 +106,12 @@
                                                       :wh.company.profile/videos
                                                       :wh.company.profile/locations
                                                       :wh.company/tech-scales]))
+
+(s/def :wh.company/top-company (s/keys :req-un [:wh.company/name
+                                                :wh.company/id
+                                                :wh.company/slug]
+                                       :opt-un [:wh.company/locations
+                                                :wh.company/logo
+                                                :wh/tags
+                                                :wh.company/total-published-issue-count
+                                                :wh.company/total-published-job-count]))
