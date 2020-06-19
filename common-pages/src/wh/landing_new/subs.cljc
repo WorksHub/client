@@ -1,6 +1,8 @@
 (ns wh.landing-new.subs
-  (:require [#?(:clj clj-time.coerce
-                :cljs cljs-time.coerce) :as tc]
+  (:require #?(:clj [clj-time.coerce :as tc]
+               :cljs [cljs-time.coerce :as tc])
+            #?(:clj [clj-time.format :as tf]
+               :cljs [cljs-time.format :as tf])
             [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
@@ -44,6 +46,12 @@
   (fn [db _]
     (get-in (gqlc/result db :recent-issues nil) [:recent-issues :results])))
 
+
+(defn display-month [date]
+  (when (pos? date)
+    (tf/unparse (tf/formatter "MMM d")
+                (tc/from-long (long date)))))
+
 (defn translate-job [job]
   (-> job
       (util/update-in*
@@ -54,6 +62,11 @@
         :role-type #(-> % name (str/replace "_" " ")))
       jobc/translate-job))
 
+(defn translate-blog [blog]
+  (-> blog
+      (assoc
+        :display-date (display-month (:creation-date blog)))))
+
 (defn normalize-activity
   [{:keys [feed-company feed-issue feed-job feed-blog] :as activity}]
   (-> activity
@@ -61,7 +74,7 @@
         (cond
           feed-job     {:object      (translate-job feed-job)
                         :object-type "job"}
-          feed-blog    {:object      feed-blog
+          feed-blog    {:object      (translate-blog feed-blog)
                         :object-type "article"}
           feed-issue   {:object      feed-issue
                         :object-type "issue"}

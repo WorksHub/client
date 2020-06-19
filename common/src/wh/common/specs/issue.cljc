@@ -12,6 +12,7 @@
     [wh.common.specs.date]
     [wh.common.specs.primitives]
     [wh.common.specs.repo]
+    [wh.common.specs.tags]
     [wh.components.pagination :as pagination]))
 
 (s/def :wh.issue/id #?(:clj  sc/string-uuid
@@ -151,16 +152,34 @@
 
 (s/def :wh.issues/sort #{:published :compensation})
 
+(s/def :wh.feed.issue/compensation
+  (s/keys :req-un [:wh.issue.compensation/amount
+                   :wh.issue.raw.compensation/currency]))
+
+(s/def :wh.feed.issue/contributors-count int?)
+
+(s/def :wh.feed.issue/issue-company
+  (s/keys :req-un [:wh.company/id
+                   :wh.company/name
+                   :wh.company/slug]
+          :opt-un [:wh.company/logo
+                   :wh.company/total-published-job-count]))
+
 (s/def :wh.feed/feed-issue
   (s/keys :req-un [:wh.issue/id
                    :wh.issue/body
                    :wh.issue/body-html
                    :wh.issue/company-id
-                   :wh.issue.raw/created-at
+                   :wh.issue/created-at
                    :wh.issue.raw/level
                    :wh.issue/number
                    :wh.issue/title
                    :wh.issue/url
                    :wh.issue/github-id
                    :wh.issue/repo-id
-                   :wh.issue.raw/status]))
+                   :wh.issue.raw/status]
+          :opt-un [:wh.gql/tags
+                   :wh.feed.issue/issue-company
+                   :wh.issue/pr-count
+                   :wh.feed.issue/compensation
+                   :wh.feed.issue/contributors-count]))

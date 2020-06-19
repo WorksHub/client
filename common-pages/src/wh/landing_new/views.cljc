@@ -55,10 +55,7 @@
              [stat-card/about-salary-increase]]
             (for [activity activities
                   :when    (= (:object-type activity) "job")]
-              [job-published/card (:object activity)])
-
-            #_(for [fc future-cards]
-                (apply future-card fc)))
+              [job-published/card (:object activity)]))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs]
        [side-cards/recent-issues issues]
