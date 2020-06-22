@@ -91,17 +91,17 @@
         ^{:key title}
         [:a (cond
               route {:href (apply routes/path route)}
-              href {:href   href
-                    :target "_blank"
-                    :rel    "noopener"}) title])]
+              href  {:href   href
+                     :target "_blank"
+                     :rel    "noopener"}) title])]
      [:div.footer__sitemap__list
       [:div "For companies"]
       (for [{:keys [title href route]} (:employers link-data)]
         ^{:key title}
         [:a (cond route {:href (apply routes/path route)}
-                  href {:href   href
-                        :target "_blank"
-                        :rel    "noopener"}) title])]
+                  href  {:href   href
+                         :target "_blank"
+                         :rel    "noopener"}) title])]
      [:div.footer__sitemap__list
       [:div "Jobs"]
       (for [label (verticals/config vertical :footer-job-links)]
@@ -122,7 +122,7 @@
       [:div "Articles"]
       (for [tag (verticals/config vertical :footer-article-links)]
         [:a {:key  (str tag "-articles")
-             :href (routes/path :learn-by-tag :params {:tag (slug/slug+encode tag)})}
+             :href (routes/path :learn-by-tag :params {:tag (slug/tag-label->slug tag)})}
          (str tag " articles")])]]))
 
 (defn social-links [vertical]
