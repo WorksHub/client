@@ -3,10 +3,14 @@
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
-(defquery all-activities-query
+(defquery recent-activities-query
   {:venia/operation {:operation/type :query
-                     :operation/name "all_activities"}
-   :venia/queries   [[:query_activities
+                     :operation/name "recent_activities"}
+   :venia/variables [{:variable/name "activities_tags"
+                      :variable/type {:type/kind       :list
+                                      :type.list/items {:type/type
+                                                        :activity_tag_input}}}]
+   :venia/queries   [[:query_activities {:activities_tags :$activities_tags}
                       [[:activities
                         [:id :verb [:actor [:id]] :to :date
                          [:feed_job [:id :title :slug :tagline :remote

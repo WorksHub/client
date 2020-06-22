@@ -21,7 +21,8 @@
 (reg-sub
   ::activities
   (fn [_ _]
-    (let [activities (get-in (<sub [:graphql/result :all_activities {}])
+    (let [activities (get-in (<sub [:graphql/result :recent_activities
+                                    {:activities_tags []}])
                              [:query-activities :activities])
           activities (map normalize-activity activities)]
       activities)))

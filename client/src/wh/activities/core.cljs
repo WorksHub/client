@@ -7,7 +7,7 @@
             [wh.graphql-cache :refer [reg-query]]
             [wh.user.db :as user]))
 
-(reg-query :all_activities queries/all-activities-query)
+(reg-query :recent_activities queries/recent-activities-query)
 
 (def page-mapping
   {:feed-preview {:page views/preview :can-access? user/admin?}})
@@ -18,6 +18,7 @@
     (update db ::db/page-mapping merge page-mapping)))
 
 (dispatch-sync [::initialize-page-mapping])
-(dispatch-sync [:graphql/query :all_activities {}])
+(dispatch-sync [:graphql/query :recent_activities
+                {:activities_tags []}])
 
 (loader/set-loaded! :activities)

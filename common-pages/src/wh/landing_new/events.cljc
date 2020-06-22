@@ -1,17 +1,17 @@
 (ns wh.landing-new.events
   (:require [wh.graphql-cache :refer [reg-query]]
+            [wh.landing-new.tags :as tags]
             [wh.components.activities.queries :as activities-queries]
             #?(:cljs [wh.pages.core :refer [on-page-load]])
             [wh.graphql.fragments])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
-(reg-query :all-activities activities-queries/all-activities-query)
+(reg-query :recent-activities activities-queries/recent-activities-query)
 
-(defn all-activities [_db]
-  ;; TODO [ch4393] use (get-in db [:wh/query-params "tags"]) to get list of
-  ;; selected tags for feed
-  [:all-activities nil])
+(defn recent-activities [{:keys [wh.db/page-params] :as _req}]
+  (let [tags (tags/param->tags (:tags page-params))]
+    [:recent-activities {:activities_tags tags}]))
 
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query
@@ -113,7 +113,7 @@
 
 #?(:cljs
    (defmethod on-page-load :homepage-new [db]
-     [(into [:graphql/query] (all-activities db))
+     [(into [:graphql/query] (recent-activities db))
       (into [:graphql/query] (top-blogs db))
       (into [:graphql/query] (top-companies db))
       (into [:graphql/query] (top-tags db))

@@ -31,7 +31,7 @@
         jobs       (<sub [::subs/recent-jobs])
         issues     (<sub [::subs/recent-issues])
         tags       (<sub [::subs/top-tags])
-        activities (<sub [::subs/all-activities])
+        activities (<sub [::subs/recent-activities])
         logged-in? (<sub [:user/logged-in?])
         vertical   (<sub [:wh/vertical])]
     [:div {:class styles/page}

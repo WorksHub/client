@@ -4,11 +4,13 @@
             #?(:clj [clj-time.format :as tf]
                :cljs [cljs-time.format :as tf])
             [clojure.string :as str]
+            [clojure.walk :as walk]
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
             [wh.common.time :as time]
             [wh.graphql-cache :as gqlc]
             [wh.landing-new.events :as events]
+            [wh.landing-new.tags :as tags]
             [wh.util :as util]))
 
 (reg-sub
@@ -83,8 +85,9 @@
       (update :actor :id)))
 
 (reg-sub
-  ::all-activities
-  (fn [db _]
-    (map normalize-activity
-         (get-in (gqlc/result db :all-activities nil)
-                 [:query-activities :activities]))))
+  ::recent-activities
+  (fn [{:keys [wh.db/query-params] :as db} _]
+    (let [tags (tags/param->tags (get query-params "tags"))]
+      (map normalize-activity
+           (get-in (gqlc/result db :recent-activities {:activities_tags tags})
+                   [:query-activities :activities])))))
