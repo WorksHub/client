@@ -1,15 +1,18 @@
 (ns wh.components.tag-selector.tag-selector
-  (:require [wh.common.subs] ;;required for query params sub
+  (:require [clojure.string :as str]
+            [wh.common.subs] ;;required for query params sub
+            [wh.common.text :as text]
             [wh.components.icons :refer [icon]]
             [wh.components.tag :as tag]
             [wh.interop :as interop]
+            [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.styles.tag-selector :as styles]
-            [clojure.string :as str]))
+            [wh.util :as util]))
 
 (defn tag->qp-tag-id [tag]
   "Takes tag and returns string representation of this tag for query params"
-  (str (:slug tag) ":" (:type tag)))
+  (str (name (:slug tag)) ":" (name (:type tag))))
 
 (defn query-params->qp-tags-ids [query-params]
   (if-let [query-params-tags (get query-params "tags")]
@@ -25,20 +28,27 @@
 
 (defn selector [tags qp-tags-ids]
   [:div
-   [tag/tag-list :button (map (fn [tag]
-                                (assoc tag
-                                  :on-click #?(:clj (format "toggleTagAndRedirect('%s');" (tag->qp-tag-id tag))
-                                               :cljs nil)
-                                  :interactive? true
-                                  :with-icon? false
-                                  :inverted? (tag-selected? qp-tags-ids tag)
-                                  :server-side-invert-on-click? true))
-                              tags)]
+   [tag/tag-list
+    :button
+    (map (fn [tag]
+           (assoc tag
+                  :on-click #?(:clj (format "toggleTagAndRedirect('%s');" (tag->qp-tag-id tag))
+                               :cljs #(dispatch [:wh.events/nav--set-query-param "tags"
+                                                 (->> (tag->qp-tag-id tag)
+                                                      (util/toggle (set qp-tags-ids))
+                                                      (str/join ",")
+                                                      (text/not-blank))]))
+                  :interactive? true
+                  :with-icon? false
+                  :inverted? (tag-selected? qp-tags-ids tag)
+                  :server-side-invert-on-click? true))
+         tags)]
    [:div {:class styles/status}
     [:span {:class styles/selected-counter} (str (count qp-tags-ids) " selected")]
-    [:button (merge {:class styles/reset-button}
-                    (interop/on-click-fn #?(:clj "removeSelectedTagsAndRedirect()"
-                                            :cljs nil)))
+    [:button
+     (merge {:class styles/reset-button}
+            (interop/on-click-fn #?(:clj "removeSelectedTagsAndRedirect()"
+                                    :cljs #(dispatch [:wh.events/nav--set-query-param "tags" nil]))))
      "Reset selection" [reset-icon]]]])
 
 (defn card-with-selector [tags]
@@ -46,5 +56,3 @@
    [:div {:class styles/title}
     "Show me more of..."]
    [selector tags (query-params->qp-tags-ids (<sub [:wh/query-params]))]])
-
-

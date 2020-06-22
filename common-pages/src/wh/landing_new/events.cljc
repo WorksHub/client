@@ -8,7 +8,9 @@
 
 (reg-query :all-activities activities-queries/all-activities-query)
 
-(defn all-activities [_]
+(defn all-activities [_db]
+  ;; TODO [ch4393] use (get-in db [:wh/query-params "tags"]) to get list of
+  ;; selected tags for feed
   [:all-activities nil])
 
 (defquery top-blogs-query

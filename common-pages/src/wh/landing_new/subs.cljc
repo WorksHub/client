@@ -48,16 +48,15 @@
 
 
 (defn display-month [date]
-  (when (pos? date)
-    (tf/unparse (tf/formatter "MMM d")
-                (tc/from-long (long date)))))
+  (tf/unparse (tf/formatter "MMM d yyyy")
+              date))
 
 (defn translate-job [job]
   (-> job
       (util/update-in*
         [:remuneration :currency] #(when % (name %)))
       (assoc
-        :display-date (time/human-time (tc/from-long (:first-published job))))
+        :display-date (time/human-time (time/str->time (:first-published job) :date-time)))
       (util/update*
         :role-type #(-> % name (str/replace "_" " ")))
       jobc/translate-job))
@@ -65,7 +64,7 @@
 (defn translate-blog [blog]
   (-> blog
       (assoc
-        :display-date (display-month (:creation-date blog)))))
+        :display-date (display-month (time/str->time (:creation-date blog) :date-time)))))
 
 (defn normalize-activity
   [{:keys [feed-company feed-issue feed-job feed-blog] :as activity}]

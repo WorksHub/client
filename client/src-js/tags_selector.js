@@ -1,4 +1,4 @@
-import {getCurrentSearchString, toggleParamValue, urlWithNewSearchString, removeParam} from './search_string'
+import {getCurrentSearchString, toggleParamValue, urlWithNewSearchString, removeParam, setParamValue} from './search_string'
 
 function redirect(url) {
     window.location = url
@@ -7,7 +7,8 @@ function redirect(url) {
 function toggleTagAndRedirect(tagId) {
     const searchString = getCurrentSearchString(window)
     const newSearchString = toggleParamValue(searchString, "tags", tagId)
-    const newUrl = urlWithNewSearchString(window, newSearchString)
+    const newSearchStringWithInteraction = setParamValue(newSearchString, "interaction", 1)
+    const newUrl = urlWithNewSearchString(window, newSearchStringWithInteraction)
     redirect(newUrl)
 }
 
