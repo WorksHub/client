@@ -1,23 +1,14 @@
-$red: #EF8374
-$red-hover: #FCEAE8
+@import 'colours'
 
-$white: white
-$black: black
-
-$grey100: #F4F5F8
-$grey200: #E8E8E8
-$grey300: #728088
-$grey400: #454E54
-
-$shadow: 0 0 0 2px $red
+$shadow: 0 0 0 2px $primary-red
 
 @mixin focus
   outline: none
-  box-shadow: 0 0 0 2px $red
+  box-shadow: 0 0 0 2px $primary-red
 
 .section
   width: 100%
-  background-color: $white
+  background-color: $background-white
   border-radius: 6px
   padding: 23px 16px
 
@@ -52,8 +43,8 @@ $shadow: 0 0 0 2px $red
 
 .tabs__input--companies:checked ~ .tabs__wrapper .tabs__tab--companies,
 .tabs__input--blogs:checked ~ .tabs__wrapper .tabs__tab--blogs
-  background: $grey400
-  color: $white
+  background: $grey500
+  color: $text-white
 
 .section__title
   font-family: Montserrat, serif
@@ -83,10 +74,10 @@ $shadow: 0 0 0 2px $red
   font-weight: 600
   font-size: 14px
   line-height: 1.2
-  color: $grey400
+  color: $grey500
 
   &:hover
-    color: $red
+    color: $primary-red
 
   &:focus
     @include focus
@@ -98,7 +89,7 @@ $shadow: 0 0 0 2px $red
   &--link
     &:hover
       .connected-entity__title
-        color: $red
+        color: $primary-red
 
     &:focus
       @include focus
@@ -118,7 +109,7 @@ $shadow: 0 0 0 2px $red
   font-family: Montserrat, serif
   font-size: 13px
   line-height: 1.2
-  color: $grey400
+  color: $grey500
 
   &--primary
     font-weight: 600
@@ -155,7 +146,7 @@ $shadow: 0 0 0 2px $red
   line-height: 135%
 
   &:hover
-    color: $red
+    color: $primary-red
 
   &:focus
     @include focus
@@ -169,7 +160,7 @@ $shadow: 0 0 0 2px $red
   font-size: 14px
   line-height: 18px
   margin-bottom: 16px
-  color: $grey400
+  color: $grey500
 
 .footer__text
   font-size: 14px
@@ -180,7 +171,6 @@ $shadow: 0 0 0 2px $red
 .footer__form
   display: grid
   row-gap: 16px
-  margin-bottom: 24px
 
 .numeric-info
   display: grid
@@ -208,16 +198,16 @@ $shadow: 0 0 0 2px $red
   justify-content: center
   text-align: center
   letter-spacing: 0.2px
-  color: $red
-  background: $white
-  border: 1px solid $red
+  color: $primary-red
+  background: $background-white
+  border: 1px solid $primary-red
   border-radius: 4px
   padding: 14px 0
   width: 100%
 
   &:hover
-    background: $red-hover
-    color: $red
+    background: $highlight-red
+    color: $primary-red
     cursor: pointer
 
   &:focus
@@ -225,12 +215,12 @@ $shadow: 0 0 0 2px $red
 
   &--text
     border: 1px solid transparent
-    color: $red
-    background: $white
+    color: $primary-red
+    background: $background-white
 
     &:hover
       background: $grey100
-      color: $red
+      color: $primary-red
 
 .input
   height: 46px
@@ -243,3 +233,11 @@ $shadow: 0 0 0 2px $red
 
   &:focus
     @include focus
+
+.input--error
+  border-color: $error-red
+
+.error-message
+  color: $error-red
+  line-height: 1.4em
+  margin: 8px 0

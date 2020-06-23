@@ -38,6 +38,15 @@
        url('/fonts/montserrat-v12-latin-600.woff2') format('woff2'),
        url('/fonts/montserrat-v12-latin-600.woff') format('woff');
 }
+/* montserrat-700 - latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Montserrat Bold'), local('Montserrat-Bold'),
+  url('/fonts/montserrat-v12-latin-700.woff2') format('woff2'),
+}
 /* montserrat-800 - latin */
 @font-face {
   font-family: 'Montserrat';

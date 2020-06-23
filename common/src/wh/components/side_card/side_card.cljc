@@ -4,13 +4,15 @@
             [#?(:cljs cljs-time.format
                 :clj clj-time.format) :as tf]
             [clojure.string :as str]
-            [wh.common.text :refer [pluralize]]
+            [wh.common.text :as text]
             [wh.components.common :refer [link]]
+            [wh.components.forms :as forms]
             [wh.components.icons :refer [icon] :as icons]
             [wh.components.tag :as tag]
+            [wh.re-frame :as r]
             [wh.routes :as routes]
             [wh.styles.side-card :as style]
-            [wh.util :refer [merge-classes random-uuid]]))
+            [wh.util :as util]))
 
 (defn card-tags [tags]
   [tag/tag-list :a (->> tags
@@ -29,18 +31,18 @@
 (defn connected-entity [{:keys [title title-type subtitle href img-src img-type]}]
   (let [wrapper-tag   (if href :a :div)
         wrapper-class (cond-> style/connected-entity
-                              href (merge-classes style/connected-entity--link))
+                              href (util/mc style/connected-entity--link))
         img-class     (cond-> style/connected-entity__image
-                              (= img-type :rounded) (merge-classes style/connected-entity__image--rounded))
+                              (= img-type :rounded) (util/mc style/connected-entity__image--rounded))
         title-class   (cond->
                         style/connected-entity__title
-                        (= title-type :primary) (merge-classes style/connected-entity__title--primary))]
+                        (= title-type :primary) (util/mc style/connected-entity__title--primary))]
     [wrapper-tag {:class wrapper-class
                   :href  href}
      [:img {:src img-src :class img-class}]
      [:div {:class style/connected-entity__info}
       [:span {:class title-class} title]
-      [:span {:class (merge-classes style/connected-entity__title style/connected-entity__title--minor)} subtitle]]]))
+      [:span {:class (util/mc style/connected-entity__title style/connected-entity__title--minor)} subtitle]]]))
 
 (defn section-title [title]
   [:h3 {:class style/section__title} title])
@@ -58,12 +60,13 @@
        [:div {:key   icon
               :class style/numeric-info__line}
         [icons/icon icon :class style/icon]
-        (str number " " (pluralize number sing plural))]))])
+        (str number " " (text/pluralize number sing plural))]))])
 
 (defn section-button [{:keys [title href type]}]
-  [:a {:class (cond-> style/button
-                      (= :no-border type) (merge-classes style/button--text))
-       :href  href}
+  [(if href :a :button)
+   (merge {:class (cond-> style/button
+                          (= :no-border type) (util/mc style/button--text))}
+          (when href {:href href}))
    title])
 
 (defn card-link [{:keys [title href]}]
@@ -94,7 +97,7 @@
   [:section {:class style/section}
    [section-title "Live Open Source Issues"]
    [section-elements issues card-issue]
-   [:div {:class (merge-classes style/footer style/footer--issues)}
+   [:div {:class (util/mc style/footer style/footer--issues)}
     [section-button {:title "All open source issues"
                      :href  (routes/path :issues)}]
     [footer-link {:text      "Post your"
@@ -138,7 +141,7 @@
 (defn card-job [{:keys [title company-info slug] :as _job}]
   [:section {:class style/section__element}
    (let [jobs-count (:jobs-count company-info)
-         text       (str jobs-count (pluralize jobs-count " live job"))]
+         text       (str jobs-count (text/pluralize jobs-count " live job"))]
      [connected-entity {:title    (:name company-info)
                         :subtitle text
                         :href     (routes/path :company :params {:slug (:slug company-info)})
@@ -150,7 +153,7 @@
   [:section {:class style/section}
    [section-title "Hiring now"]
    [section-elements jobs card-job]
-   [:div {:class (merge-classes style/footer style/footer--jobs)}
+   [:div {:class (util/mc style/footer style/footer--jobs)}
     [section-button {:title "All live jobs"
                      :href  (routes/path :jobsboard)}]
     [footer-link {:text      "Hiring?"
@@ -177,23 +180,62 @@
                    :plural "live open source issues"}]]
    [card-tags tags]])
 
-(defn create-company []
-  [:div
-   [:h3 {:class style/footer__title} "Create a company page"]
-   [:p {:class style/footer__text} "Create a free profile page for your company — hire, contribute and build your engineering capabilities"]
-   [:div {:class style/footer__form}
-    [:input {:placeholder "Email" :class style/input}]
-    [:input {:placeholder "Password" :class style/input}]]
-   [section-button {:title "Create company"
-                    :href  (routes/path :create-company)}]])
+(defn create-company-form-error->error-str
+  [e]
+  (case e
+    "company-with-same-name-already-exists" "A company with this name already exists. Please use a unique company name."
+    "duplicate-user"                        "A user with this email already exists. Please use a unique email address."
+    "invalid-user-name"                     "The name provided is blank or invalid. Please provide a valid name."
+    "invalid-company-name"                  "The company name provided is blank or invalid. Please provide a valid company name."
+    "invalid-email"                         "The email address provided is not valid. Please provide a valid email address."
+    (str "An unknown error occurred (" e "). Please contact support.")))
 
-(defn top-ranking-companies [companies]
-  [:div {:class (merge-classes style/tabs__tab-content style/tabs__tab-content--companies)}
+(defn create-company [_redirect _logged-in? _qps]
+  (let [user-name    (r/atom nil)
+        user-email   (r/atom nil)
+        company-name (r/atom nil)]
+    (fn [redirect logged-in? existing-params]
+      (when-not logged-in?
+        (let [error (some-> (get existing-params "create-company-form__error")
+                            (text/not-blank)
+                            (create-company-form-error->error-str))]
+          [:a {:id "create-company-form"}
+           [:h3 {:class style/footer__title} "Create a company page"]
+           [:p {:class style/footer__text} "Create a free profile page for your company — hire, contribute and build your engineering capabilities"]
+           [:form
+            {:class  style/footer__form
+             :action (routes/path :create-company-form :query-params {:redirect (name redirect)})
+             :method "post"}
+            [:input {:placeholder "Your name"
+                     :class       (util/mc style/input
+                                           (when error style/input--error))
+                     :name        "create-company-form__user-name"
+                     :value       (or @user-name
+                                      (get existing-params "create-company-form__user-name"))}]
+            [:input {:placeholder "Company name"
+                     :class       (util/mc style/input
+                                           (when error style/input--error))
+                     :name        "create-company-form__company-name"
+                     :value       (or @company-name
+                                      (get existing-params "create-company-form__company-name"))}]
+            [:input {:placeholder "Your email"
+                     :class       (util/mc style/input
+                                           (when error style/input--error))
+                     :name        "create-company-form__user-email"
+                     :value       (or @user-email
+                                      (get existing-params "create-company-form__user-email"))}]
+
+            [section-button {:title "Create company"}]]
+           (when error
+             [:p (util/smc style/error-message) error])])))))
+
+(defn top-ranking-companies [companies redirect logged-in? query-params]
+  [:div {:class (util/mc style/tabs__tab-content style/tabs__tab-content--companies)}
    [section-elements companies card-company]
-   [:div {:class (merge-classes style/footer style/footer--companies)}
+   [:div {:class (util/mc style/footer style/footer--companies)}
     [section-button {:title "All companies"
                      :href  (routes/path :companies)}]
-    [create-company]]])
+    [create-company redirect logged-in? query-params]]])
 
 ;; -------------------------------------------
 
@@ -224,38 +266,38 @@
                     :type  :no-border}]])
 
 (defn top-ranking-blogs [blogs]
-  [:div {:class (merge-classes style/tabs__tab-content style/tabs__tab-content--blogs)}
+  [:div {:class (util/mc style/tabs__tab-content style/tabs__tab-content--blogs)}
    [section-elements blogs card-blog]
-   [:div {:class (merge-classes style/footer style/footer--blogs)}
+   [:div {:class (util/mc style/footer style/footer--blogs)}
     [section-button {:title "All articles"
                      :href  (routes/path :learn)}]
     [write-article]]])
 
 ;; -------------------------------------------
 
-(defn top-ranking [{:keys [companies blogs default-tab]
+(defn top-ranking [{:keys [companies blogs default-tab redirect logged-in? query-params]
                     :or   {default-tab :companies}}]
-  (let [input1-id (random-uuid)
-        input2-id (random-uuid)
-        name      (random-uuid)]
-    [:section {:class (merge-classes style/section style/section--with-tabs)}
+  (let [input1-id  (gensym "top-ranking-input")
+        input2-id  (gensym "top-ranking-input")
+        input-name (gensym "top-ranking-name")]
+    [:section {:class (util/mc style/section style/section--with-tabs)}
      [section-title "Top rankings"]
      [:input (cond-> {:id    input1-id
-                      :class (merge-classes style/tabs__input style/tabs__input--companies)
+                      :class (util/mc style/tabs__input style/tabs__input--companies)
                       :type  "radio"
-                      :name  name}
+                      :name  input-name}
                      (= :companies default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:input (cond-> {:id    input2-id
-                      :class (merge-classes style/tabs__input style/tabs__input--blogs)
+                      :class (util/mc style/tabs__input style/tabs__input--blogs)
                       :type  "radio"
-                      :name  name}
+                      :name  input-name}
                      (= :blogs default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:nav {:class style/tabs__wrapper}
       [:ul {:class style/tabs}
        [:li
-        [:label {:for input1-id :class (merge-classes style/tabs__tab style/tabs__tab--companies)} "Companies"]]
+        [:label {:for input1-id :class (util/mc style/tabs__tab style/tabs__tab--companies)} "Companies"]]
        [:li
-        [:label {:for input2-id :class (merge-classes style/tabs__tab style/tabs__tab--blogs)} "Blogs"]]]]
+        [:label {:for input2-id :class (util/mc style/tabs__tab style/tabs__tab--blogs)} "Blogs"]]]]
      [:section {:class style/tabs__content}
-      [top-ranking-companies companies]
+      [top-ranking-companies companies redirect logged-in? query-params]
       [top-ranking-blogs blogs]]]))

@@ -4,115 +4,34 @@
 
 $font-family: Montserrat, serif
 
-@mixin text-light
-  font-weight: 500
-  font-size: 14px
-  line-height: 17px
-
-@mixin text-base
-  font-weight: 600
-  font-size: 14px
-  line-height: 17px
-
-@mixin title-base
-  font-size: 16px
-  font-weight: 600
-  line-height: 22px
-
-@mixin content-centered
-  align-items: center
-  display: flex
-  justify-content: center
-
-@mixin button-highlight
-  &:hover
-    background: $highlight-red
-    color: $primary-red
-    cursor: pointer
-
-@mixin button-text
-  font-family: $font-family
-  font-size: 13px
-  font-weight: bold
-  letter-spacing: 0.02em
-  line-height: 135%
-
-@mixin button-size
-  border-radius: 4px
-  height: 40px
-
-@mixin button-inverted
-  @include button-highlight
-  @include button-text
-  @include content-centered
-  @include button-size
-  background: transparent
-  border: none
-  color: $primary-red
-  padding: 0 40px
-
-@mixin button-full
-  @include button-highlight
-  @include button-text
-  @include content-centered
-  @include button-size
-  background: $primary-red
-  border: 1px solid #EF8374
-  box-sizing: border-box
-  color: $text-white
-  padding: 0 60px
-
-@mixin link-icon
-  display: block
-  margin-right: 22px
-
-
 .card
   background-color: $background-white
   border-radius: 8px
-  box-shadow: 0px 4px 8px $card-shadow-color
+  box-shadow: 0 4px 8px $card-shadow-color
   max-width: 628px
   min-width: 528px
+  overflow: hidden
   padding: 20px
-
-
-.icon-thumbsup
-  @include link-icon
-  height: 22px
-  width: 22px
-
-.icon-save
-  @include link-icon
-  height: 20px
-  width: 16px
-
-.icon-network
-  @include link-icon
-  height: 22px
-  width: 20px
-
-
-.company
-  column-gap: 16px
   display: grid
-  grid-template-columns: 40px 1fr 40px
-  grid-template-rows: 1fr 1fr
-  height: 40px
+  grid-gap: 24px
 
-.company__name
-  @include title-base
+.company-info__logo
+  grid-column: 1
+  grid-row: 1/3
+  height: 40px
+  width: 40px
+  border-radius: 2px
+
+.company-info__name
+  font-size: 16px
+  font-weight: 600
+  line-height: 22px
   color: $text-black
   grid-column: 2
   grid-row: 1
   margin: 0
 
-.company__logo
-  grid-column: 1
-  grid-row: 1/3
-  height: 40px
-  width: 40px
-
-.company__live-jobs
+.company-info__job-count
   bottom: 4px
   color: $text-gray
   font-family: $font-family
@@ -122,93 +41,227 @@ $font-family: Montserrat, serif
   height: 20px
   position: relative
 
-.company__icon
-  grid-column: 3
-  grid-row: 1/3
+.company-info
+  column-gap: 16px
+  display: grid
+  grid-template-columns: 40px 1fr
+  grid-template-rows: 1fr 1fr
   height: 40px
-  width: 40px
+  &:hover
+    .company-info__name,
+    .company-info__job-count
+      color: $primary-red
 
-
-.job-description
-  -webkit-box-orient: vertical
-  -webkit-line-clamp: 2
-  display: -webkit-box
+.description
   font-family: $font-family
   font-size: 14px
-  line-height: 17px
-  margin-bottom: 22px
-  margin-top: 26px
+  line-height: 1.5
   max-height: 44px
-  overflow: hidden
-  text-overflow: ellipsis
+  margin: 0
+  &--cropped
+    -webkit-box-orient: vertical
+    -webkit-line-clamp: 2
+    display: -webkit-box
+    overflow: hidden
+    text-overflow: ellipsis
 
-.job-info
-  border-radius: 4px
-  border: 1px solid $border-gray
-  box-sizing: border-box
-  padding: 24px
-
-.job-info__title
+.title
   color: $text-black
   font-family: $font-family
-  font-size: 18px
-  font-weight: bold
-  line-height: 26px
-  margin: 0 0 16px 0
+  font-size: 16px
+  font-weight: 600
+  line-height: 22px
+  margin: 0
+  &--large
+    font-size: 18px
+    font-weight: 700
+    line-height: 26px
+  &--margin
+    margin-bottom: 8px
 
-.job-info__title__link
+.title__link
   &:hover
     color: $primary-red
 
-.job-details
+.issue__meta-row-wrapper
   display: flex
-  justify-content: flex-start
-  flex-wrap: wrap
+  align-items: center
 
-.job-details__icon
+.issue__tag-primary-language
+  margin-left: auto
+
+.job__salary
+  font-weight: 600
+  font-size: 14px
+  line-height: 17px
+  color: $text-black
+  font-family: $font-family
+  margin-right: 16px
+
+.actions
+  align-items: center
+  display: flex
+
+.actions__action
+  display: block
+  margin-right: 22px
+  &--save
+    height: 20px
+    width: 16px
+
+.button
+  border-radius: 4px
+  height: 40px
+  align-items: center
+  display: flex
+  justify-content: center
+  background: $primary-red
+  border: 1px solid #EF8374
+  box-sizing: border-box
+  color: $text-white
+  padding: 0 60px
+  font-family: $font-family
+  font-size: 13px
+  font-weight: 600
+  letter-spacing: 0.02em
+  line-height: 135%
+  text-transform: capitalize
+  &:hover
+    background: $highlight-red
+    color: $primary-red
+    cursor: pointer
+  &--inverted
+    background: transparent
+    border: none
+    color: $primary-red
+    padding: 0 20px
+
+.article__feature
+  height: 154px
+  margin: -20px -20px 0 -20px
+  overflow: hidden
+
+.article__feature-img
+  height: 100%
+  object-fit: cover
+  width: 100%
+
+.article__boost
+  font-family: $font-family
+  font-size: 12px
+  font-weight: 500
+  grid-column: 1
+  grid-row: 1/4
+  line-height: 18px
+  text-align: center
+  color: $grey400
+  margin-top: 4px
+
+.article__boost-icon
+  height: 22px
+  width: 20px
+  fill: white
+
+.article__boost-icon-wrapper
+  background: $grey400
+  width: 40px
+  height: 40px
+  border-radius: 50%
+  display: flex
+  justify-content: center
+  align-items: center
+  margin-bottom: 8px
+
+.article__content-wrapper
+  display: flex
+  .article__boost
+    margin-right: 24px
+
+.entity-icon
+  align-items: center
+  display: flex
+  justify-content: center
+  background: $iceberg
+  fill: $iceberg-dark
+  border-radius: 50%
+  height: 40px
+  width: 40px
+  min-width: 40px
+  min-height: 40px
+
+.entity-icon__icon
+  height: 1.7rem
+  width: 2rem
+
+.author
+  align-items: center
+  display: flex
+
+.author__img
+  border-radius: 50%
+  height: 24px
+  margin-right: 8px
+  width: 24px
+
+.article__time,
+.author__name
+  font-family: $font-family
+  font-size: 14px
+  line-height: 17px
+
+.footer
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  border-top: 1px solid $border-gray
+  padding-top: 16px
+  &--compound
+    justify-content: space-between
+
+.footer__buttons
+  display: grid
+  grid-template-columns: 1fr 1fr
+  grid-gap: 16px
+
+.header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  .entity-icon
+    margin-left: 8px
+
+.meta-row
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  width: 100%
+  margin-bottom: -6px
+  & > *
+    margin-right: 16px
+    margin-bottom: 6px
+
+.text-with-icon
+  font-weight: 500
+  font-size: 14px
+  line-height: 17px
+  color: $text-black
+  display: flex
+  font-family: $font-family
+
+.text-with-icon__icon
   bottom: 1px
   height: 16px
   margin-right: 8px
   position: relative
   width: 16px
 
-.job-details__remuneration
-  @include text-base
-  color: $text-black
-  font-family: $font-family
-  margin-right: 16px
+.inner-card
+  border-radius: 4px
+  border: 1px solid $border-gray
+  padding: 24px
+  display: grid
+  grid-gap: 18px
 
-.job-details__contract-type,
-.job-details__published-date,
-.job-details__location,
-.job-details__remote,
-.job-details__sponsorship
-  @include text-light
-  color: $text-black
-  display: flex
-  font-family: $font-family
-  margin-bottom: 8px
-  &:not(:last-child)
-    margin-left: 0
-    margin-right: 16px
-
-.job-details__tags
-  margin-top: 18px
-
-
-.links
-  align-items: center
-  border-top: 1px solid $border-gray
-  display: flex
-  margin-left: 3px
-  margin-top: 16px
-  padding-top: 16px
-
-
-.all-jobs
-  @include button-inverted
-  margin-left: auto
-  margin-right: 16px
-
-.see-job
-  @include button-full
+.card-content
+  display: grid
+  grid-gap: 18px

@@ -163,7 +163,8 @@
                    :wh.company/name
                    :wh.company/slug]
           :opt-un [:wh.company/logo
-                   :wh.company/total-published-job-count]))
+                   :wh.company/total-published-job-count
+                   :wh.company/total-published-issue-count]))
 
 (s/def :wh.feed/feed-issue
   (s/keys :req-un [:wh.issue/id
@@ -179,6 +180,7 @@
                    :wh.issue/repo-id
                    :wh.issue.raw/status]
           :opt-un [:wh.gql/tags
+                   :wh.issue/repo
                    :wh.feed.issue/issue-company
                    :wh.issue/pr-count
                    :wh.feed.issue/compensation

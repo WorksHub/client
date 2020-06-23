@@ -42,3 +42,5 @@
 (def button "side_card__button--2WDDa")
 (def button--text "side_card__button--text--2t5cx")
 (def input "side_card__input--2NJgD")
+(def input--error "side_card__input--error--1NG0q")
+(def error-message "side_card__error-message--3n9p1")

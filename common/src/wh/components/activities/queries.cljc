@@ -23,15 +23,16 @@
                                      [:job_company [:name :logo :slug
                                                     :total_published_job_count]]]]
                          [:feed_company [:id :slug :name :description :size
-                                         :total_published_job_count
+                                         :total_published_job_count :logo
                                          [:locations [:city :country :country_code
                                                       :region :sub_region :state]]
                                          [:tags :fragment/tagFields]]]
                          [:feed_issue [:id :title :status :level :body :pr_count
                                        :contributors_count :status :created_at
+                                       [:repo [:primary_language]]
                                        [:compensation [:amount :currency]]
                                        [:issue_company [:id :name :slug :logo
-                                                        :total_published_job_count]]
+                                                        :total_published_issue_count]]
                                        [:tags :fragment/tagFields]]]
                          [:feed_blog [:id :title :author :creator :feature
                                       :reading_time :creation_date :upvote_count
