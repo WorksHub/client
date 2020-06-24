@@ -54,7 +54,7 @@
 (defn tags
   [tags]
   [:ul (util/smc "tags" "tags--inline")
-   (for [tag (take 14 tags)]
+   (for [tag (take 14 tags)] ;; FIXME magic number
      ^{:key (:slug tag)}
      [tag-component tag])])
 

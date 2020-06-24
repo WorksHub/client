@@ -12,3 +12,4 @@
 (def card--company-stats "landing__card--company-stats--2p-JS")
 (def card--issue-started "landing__card--issue-started--OHecJ")
 (def card--matching-jobs "landing__card--matching-jobs--1xlgC")
+(def loader "landing__loader--3T80b")

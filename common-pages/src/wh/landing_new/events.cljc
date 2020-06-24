@@ -9,8 +9,8 @@
 
 (reg-query :recent-activities activities-queries/recent-activities-query)
 
-(defn recent-activities [{:keys [wh.db/page-params] :as _req}]
-  (let [tags (tags/param->tags (:tags page-params))]
+(defn recent-activities [{:keys [wh.db/query-params] :as _db}]
+  (let [tags (tags/param->tags (get query-params "tags"))]
     [:recent-activities {:activities_tags tags}]))
 
 (defquery top-blogs-query

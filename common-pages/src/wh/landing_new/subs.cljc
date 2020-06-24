@@ -82,12 +82,17 @@
           feed-company {:object      feed-company
                         :object-type "company"}
           :else        {}))
-      (update :actor :id)))
+      (update :actor :id)
+      (update :verb  keyword)))
 
 (reg-sub
   ::recent-activities
-  (fn [{:keys [wh.db/query-params] :as db} _]
-    (let [tags (tags/param->tags (get query-params "tags"))]
-      (map normalize-activity
-           (get-in (gqlc/result db :recent-activities {:activities_tags tags})
-                   [:query-activities :activities])))))
+  (fn [db _]
+    (map normalize-activity
+         (get-in (apply gqlc/result db (events/recent-activities db))
+                 [:query-activities :activities]))))
+
+(reg-sub
+  ::recent-activities-loading?
+  (fn [db _]
+    (= :executing (keyword (apply gqlc/state db (events/recent-activities db))))))

@@ -1,8 +1,13 @@
-(ns wh.components.loader)
+(ns wh.components.loader
+  (:require [wh.util :as util]))
 
-(defn loader []
-  [:svg.loader.loader-1
-   [:use {#?(:clj :xlink:href) #?(:cljs :xlink-href) "#loader-1"}]])
+(defn loader
+  ([]
+   (loader nil))
+  ([class]
+   [:svg
+    (util/smc "loader" "loader-1" class)
+    [:use {#?(:clj :xlink:href) #?(:cljs :xlink-href) "#loader-1"}]]))
 
 (defn loader-cover
   "Show a centered loader on top of child if pred is true"
