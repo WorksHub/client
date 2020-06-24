@@ -4,7 +4,7 @@
             [wh.components.tag :as tag]
             [wh.routes :as routes]
             [wh.slug :as slug]
-            [wh.styles.feed-published-cards :as styles]
+            [wh.styles.activities :as styles]
             [wh.util :as util]))
 
 (def button-class

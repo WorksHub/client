@@ -2,7 +2,7 @@
   (:require [wh.interop :as interop]
             [wh.components.activities.components :as components]
             [wh.routes :as routes]
-            [wh.styles.feed-published-cards :as styles]
+            [wh.styles.activities :as styles]
             [wh.util :as util]))
 
 (defn details [{:keys [title slug remote sponsorship-offered display-location display-salary tags role-type display-date]

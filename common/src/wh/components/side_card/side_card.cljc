@@ -1,12 +1,9 @@
 (ns wh.components.side-card.side-card
-  (:require [#?(:cljs cljs-time.coerce
-                :clj clj-time.coerce) :as tc]
-            [#?(:cljs cljs-time.format
+  (:require [#?(:cljs cljs-time.format
                 :clj clj-time.format) :as tf]
             [clojure.string :as str]
             [wh.common.text :as text]
             [wh.components.common :refer [link]]
-            [wh.components.forms :as forms]
             [wh.components.icons :refer [icon] :as icons]
             [wh.components.tag :as tag]
             [wh.re-frame :as r]
@@ -131,16 +128,16 @@
 (defn top-ranking-users [users]
   [:section {:class style/section}
    [section-title "Top Ranking Users"]
-   [section-elements users card-user]]
-  [:div
-   [section-button {:title "Write an Article"
-                    :href  (routes/path :contribute)}]])
+   [section-elements users card-user]
+   [:div
+    [section-button {:title "Write an Article"
+                     :href  (routes/path :contribute)}]]])
 
 ;; -----------------------------------------------
 
 (defn card-job [{:keys [title company-info slug] :as _job}]
   [:section {:class style/section__element}
-   (let [jobs-count (:jobs-count company-info)
+   (let [jobs-count (:total-published-job-count company-info)
          text       (str jobs-count (text/pluralize jobs-count " live job"))]
      [connected-entity {:title    (:name company-info)
                         :subtitle text

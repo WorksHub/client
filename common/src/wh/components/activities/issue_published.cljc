@@ -4,7 +4,7 @@
             [wh.common.data :refer [currency-symbols]]
             [wh.components.tag :as tag]
             [wh.routes :as routes]
-            [wh.styles.feed-published-cards :as styles]
+            [wh.styles.activities :as styles]
             [wh.util :as util]))
 
 (defn tag [tag]

@@ -2,7 +2,7 @@
   (:require [wh.components.activities.components :as components]
             [wh.components.icons :as icons]
             [wh.routes :as routes]
-            [wh.styles.feed-published-cards :as styles]
+            [wh.styles.activities :as styles]
             [wh.util :as util]))
 
 (defn article-time [{:keys [date reading-time]}]

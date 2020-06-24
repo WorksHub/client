@@ -47,3 +47,9 @@
     [signin-button/stack-overflow]
     [signin-button/twitter]
     [signin-button/email]]])
+
+(defn all-cards [{:keys [vertical logged-in?]}]
+  [:div (util/smc style/cards)
+   [intro vertical]
+   [contribute logged-in?]
+   [signin]])

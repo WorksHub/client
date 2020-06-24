@@ -1,27 +1,35 @@
+@import 'mixins'
+
 $black100: rgba(0, 0, 0, .2)
 
 .page
   max-width: 1232px
   margin: 0 auto
-  padding: 32px 16px
   display: grid
   grid-gap: 54px
+  padding: 0
+  +tablet
+    padding: 32px 16px
 
   &__main
     display: grid
-    grid-template-columns: 279px 1fr 279px
+    grid-template-columns: 1fr
+    +tablet
+      grid-template-columns: 279px 1fr
+    +desktop
+      grid-template-columns: 279px 1fr 279px
     grid-gap: 32px
 
-  &__intro
-    display: grid
-    grid-template-columns: repeat(3, 1fr)
-    grid-gap: 17px
-
 .side-column
-  display: grid
   grid-gap: 26px
   align-items: start
   grid-auto-rows: min-content
+  display: none
+  &--left
+    +tablet
+      display: grid
+  +desktop
+    display: grid
 
 .main-column
   display: grid

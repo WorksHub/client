@@ -1,6 +1,7 @@
 @import 'colours'
 @import 'text'
 @import 'vars'
+@import 'mixins'
 
 $intro-card-logo-dim: 48px
 $attract-card-heading-font-size: 18px
@@ -11,9 +12,8 @@ $attract-card-shadow-color: rgba(0, 0, 0, .04)
   background-color: $background-white
   border-radius: 8px
   border: 1px solid $primary-red
-  box-shadow: 0px 4px 8px $attract-card-shadow-color
+  box-shadow: 0 4px 8px $attract-card-shadow-color
   height: 215px
-  max-width: 390px
   padding: 20px
 
 .intro
@@ -121,3 +121,19 @@ $attract-card-shadow-color: rgba(0, 0, 0, .04)
   display: grid
   grid-template-columns: repeat(2, 1fr)
   grid-gap: 8px
+
+.cards
+  display: none
+  grid-gap: 17px
+
+  +tablet
+    display: grid
+    grid-template-columns: repeat(2, 1fr)
+    .intro
+      display: none
+
+  +desktop
+    grid-template-columns: repeat(3, 1fr)
+    .intro
+      display: inherit
+

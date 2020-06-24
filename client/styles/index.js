@@ -28,6 +28,6 @@ import './stream_preview.sass';
 import './branding.sass';
 import './attract_card.sass';
 import './stat_card.sass';
-import './feed_published_cards.sass';
+import './activities.sass';
 import './signin_buttons.sass';
 import './tag_selector.sass'

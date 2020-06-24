@@ -1,0 +1,13 @@
+@import 'vars'
+
+=mobile
+  @media screen and (max-width: $tablet - 1px)
+    @content
+
+=tablet
+  @media screen and (min-width: $tablet), print
+    @content
+
+=desktop
+  @media screen and (min-width: $desktop)
+    @content
