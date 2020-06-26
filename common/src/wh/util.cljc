@@ -63,6 +63,14 @@
   [m]
   (remove-where m nil?))
 
+(defn remove-nil-or-blank
+  "Removes the map entry if the value is nil, blank string.
+  Also walks into nested maps"
+  [m]
+  (remove-where
+    m #(or (nil? %)
+           (and (string? %) (str/blank? %)))))
+
 (defn remove-nil-blank-or-empty
   "Removes the map entry if the value is nil, blank string or empty collection.
   Also walks into nested maps"
