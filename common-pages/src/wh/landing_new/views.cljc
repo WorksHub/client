@@ -8,6 +8,7 @@
             [wh.components.attract-card :as attract-card]
             [wh.components.loader :as loader]
             [wh.components.side-card.side-card :as side-cards]
+            [wh.components.side-card.side-card-mobile :as side-cards-mobile]
             [wh.components.stat-card :as stat-card]
             [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.landing-new.subs :as subs]
@@ -64,6 +65,9 @@
       (if activities-loading?
         [loader/loader styles/loader]
         (into [:div {:class styles/main-column}
+               [side-cards-mobile/top-content {:jobs jobs
+                                               :blogs blogs
+                                               :issues issues}]
                [stat-card/about-applications]
                [stat-card/about-open-source]
                [stat-card/about-salary-increase]]

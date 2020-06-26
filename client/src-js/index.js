@@ -6,4 +6,5 @@ import './code_highlight.js';
 import './button_analytics.js';
 import './newsletter.js';
 import './tags_selector.js'
+import './trending_content.js'
 import './init.js';

@@ -21,7 +21,6 @@
 
 // pages
 import './landing.sass';
-import './side_card.sass';
 import './stream_preview.sass';
 
 // components
@@ -30,4 +29,6 @@ import './attract_card.sass';
 import './stat_card.sass';
 import './activities.sass';
 import './signin_buttons.sass';
-import './tag_selector.sass'
+import './tag_selector.sass';
+import './side_card.sass';
+import './side_card_mobile.sass';
