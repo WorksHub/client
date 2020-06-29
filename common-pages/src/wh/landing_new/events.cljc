@@ -9,9 +9,10 @@
 
 (reg-query :recent-activities activities-queries/recent-activities-query)
 
-(defn recent-activities [{:keys [wh.db/query-params] :as _db}]
+(defn recent-activities [{:keys [wh.db/vertical wh.db/query-params] :as _db}]
   (let [tags (tags/param->tags (get query-params "tags"))]
-    [:recent-activities {:activities_tags tags}]))
+    [:recent-activities {:activities_tags tags
+                         :vertical        vertical}]))
 
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query

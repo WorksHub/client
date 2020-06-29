@@ -9,8 +9,11 @@
    :venia/variables [{:variable/name "activities_tags"
                       :variable/type {:type/kind       :list
                                       :type.list/items {:type/type
-                                                        :activity_tag_input}}}]
-   :venia/queries   [[:query_activities {:activities_tags :$activities_tags}
+                                                        :activity_tag_input}}}
+                     {:variable/name "vertical"
+                      :variable/type :vertical}]
+   :venia/queries   [[:query_activities {:activities_tags :$activities_tags
+                                         :vertical        :$vertical}
                       [[:activities
                         [:id :verb [:actor [:id]] :to :date
                          [:feed_job [:id :title :slug :tagline :remote
