@@ -2,6 +2,7 @@
 @import 'text'
 @import 'vars'
 @import 'mixins'
+@import 'animations'
 
 $font-family: Montserrat, serif
 
@@ -13,6 +14,9 @@ $font-family: Montserrat, serif
   padding: 20px
   display: grid
   grid-gap: 24px
+
+  &--highlight
+    box-shadow: inset 0 0 0 2px $primary-red
 
 .company-info__logo
   grid-column: 1
@@ -118,7 +122,7 @@ $font-family: Montserrat, serif
   border: 1px solid #EF8374
   box-sizing: border-box
   color: $text-white
-  padding: 0 60px
+  padding: 0 45px
   font-family: $font-family
   font-size: 12px
   white-space: nowrap
@@ -129,6 +133,7 @@ $font-family: Montserrat, serif
 
   +tablet
     font-size: 13px
+    padding: 0 60px
 
   &:hover
     background: $highlight-red
@@ -192,6 +197,11 @@ $font-family: Montserrat, serif
   width: 40px
   min-width: 40px
   min-height: 40px
+
+  &--highlight
+    background: $highlight-red
+    fill: $primary-red
+    animation: shake 6s cubic-bezier(.36,.07,.19,.97) infinite
 
 .entity-icon__icon
   height: 1.7rem

@@ -261,13 +261,18 @@
 
 (defn merge-classes
   [& classes]
-  (str/join " " (remove nil? classes)))
+  (->> classes
+       (map #(if (and (vector? %) (first %))
+               (second %)
+               %))
+       (remove nil?)
+       (str/join " ")))
 
 ;; helper alias
 (def mc merge-classes)
 
 (defn smc [& classes]
-  {:class (str/join " " (remove nil? classes))})
+  {:class (apply merge-classes classes)})
 
 (defn ctx->ip [{:keys [remote-addr headers]}]
   (or (get headers "cf-connecting-ip")                      ;This header is added by Cloudflare and has original IP in prod

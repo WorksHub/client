@@ -42,17 +42,17 @@
                                                                               str/capitalize)]
      [:div (util/smc styles/issue__tag-primary-language)
       [tag {:label (:primary-language repo)
-            :type "tech"}]]
+            :type  "tech"}]]
      (let [amount (or (:amount compensation) 0)]
        (when-not (zero? amount)
          [tag {:label (str (currency-symbol compensation) amount)
-               :type "funding"}]))]]])
+               :type  "funding"}]))]]])
 
-(defn card [{:keys [id body] :as issue}]
-  [components/card
+(defn card [{:keys [id body] :as issue} type]
+  [components/card type
    [components/header
     [components/company-info (:issue-company issue)]
-    [components/entity-icon "git"]]
+    [components/entity-icon "git" type]]
    [components/description {:type :cropped} body]
    [details issue]
    [components/footer :default

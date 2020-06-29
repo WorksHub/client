@@ -58,9 +58,14 @@
      ^{:key (:slug tag)}
      [tag-component tag])])
 
-(defn entity-icon [icon-name]
-  [:div (util/smc styles/entity-icon)
-   [icons/icon icon-name :class styles/entity-icon__icon]])
+(defn entity-icon
+  ([icon-name]
+   [entity-icon icon-name :default])
+  ([icon-name type]
+   [:div (util/smc styles/entity-icon
+                   [(= type :highlight) styles/entity-icon--highlight])
+    [icons/icon icon-name :class styles/entity-icon__icon]]))
+
 
 (defn company-info [{:keys [logo name slug] :as company}]
   (let [info-str (cond
@@ -121,8 +126,8 @@
    (for [child children]
      child)])
 
-(defn card [& children]
-  [:div (util/smc styles/card)
+(defn card [type & children]
+  [:div (util/smc styles/card [(= type :highlight) styles/card--highlight])
    (for [child children]
      child)])
 

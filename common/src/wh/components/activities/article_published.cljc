@@ -21,10 +21,11 @@
      [:img {:class (util/mc styles/article__feature-img)
             :src   feature}]]))
 
-(defn card [{:keys [title tags id author
-                    author-info reading-time display-date upvotes]
-             :as   blog}]
-  [components/card
+(defn card
+  [{:keys [title tags id author author-info reading-time display-date upvotes]
+    :as   blog}
+   type]
+  [components/card type
    [image blog]
    [:div (util/smc styles/article__content-wrapper)
     [article-boosts upvotes]
@@ -33,7 +34,7 @@
       [components/title
        {:href (routes/path :blog :params {:id id})}
        title]
-      [components/entity-icon "union"]]
+      [components/entity-icon "union" type]]
      [components/meta-row
       [components/author {:img (:image-url author-info)} author]
       [article-time

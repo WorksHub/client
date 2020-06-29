@@ -6,7 +6,7 @@
             [wh.util :as util]))
 
 (defn details [{:keys [title slug remote sponsorship-offered display-location display-salary tags role-type display-date]
-                :as job}]
+                :as   job}]
   [components/inner-card
    [components/title
     {:href (routes/path :job :params {:slug slug})}
@@ -23,11 +23,12 @@
       [components/text-with-icon {:icon "sponsorship"} "Sponsorship"])]
    [components/tags tags]])
 
-(defn card [{:keys [slug] :as job}]
-  [components/card
+(defn card
+  [{:keys [slug] :as job} type]
+  [components/card type
    [components/header
     [components/company-info (:job-company job)]
-    [components/entity-icon "suitcase"]]
+    [components/entity-icon "suitcase" type]]
    [components/description {:type :cropped} (:tagline job)]
    [details job]
    [components/footer :compound

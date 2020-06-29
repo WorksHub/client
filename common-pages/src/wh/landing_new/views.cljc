@@ -17,14 +17,31 @@
             [wh.util :as util]))
 
 (defmulti activity-card (juxt :verb :object-type))
+
 (defmethod activity-card [:publish "company"] [activity]
-  [company-published/card (:object activity)])
+  [company-published/card (:object activity) :publish])
+
 (defmethod activity-card [:publish "job"] [activity]
-  [job-published/card (:object activity)])
+  [job-published/card (:object activity) :publish])
+
 (defmethod activity-card [:publish "issue"] [activity]
-  [issue-published/card (:object activity)])
+  [issue-published/card (:object activity) :publish])
+
 (defmethod activity-card [:publish "article"] [activity]
-  [article-published/card (:object activity)])
+  [article-published/card (:object activity) :publish])
+
+(defmethod activity-card [:highlight "company"] [activity]
+  [company-published/card (:object activity) :highlight])
+
+(defmethod activity-card [:highlight "job"] [activity]
+  [job-published/card (:object activity) :highlight])
+
+(defmethod activity-card [:highlight "issue"] [activity]
+  [issue-published/card (:object activity) :highlight])
+
+(defmethod activity-card [:highlight "article"] [activity]
+  [article-published/card (:object activity) :highlight])
+
 (defmethod activity-card :default [_activity]
   nil)
 
