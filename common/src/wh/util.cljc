@@ -262,8 +262,9 @@
 (defn merge-classes
   [& classes]
   (->> classes
-       (map #(if (and (vector? %) (first %))
-               (second %)
+       (map #(if (vector? %)
+               (when (first %)
+                 (second %))
                %))
        (remove nil?)
        (str/join " ")))

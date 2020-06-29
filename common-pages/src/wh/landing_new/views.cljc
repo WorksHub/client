@@ -48,6 +48,17 @@
 (defn tag-picker []
   [:div (util/smc styles/card styles/card--tag-picker) "Tag picker"])
 
+(defn split-into-4-groups [elms]
+  (let [group-size (quot (count elms) 4)]
+    [(take group-size elms)
+     (->> elms
+          (drop group-size)
+          (take group-size))
+     (->> elms
+          (drop (* 2 group-size))
+          (take group-size))
+     (drop (* 3 group-size) elms)]))
+
 (defn page []
   (let [blogs        (<sub [::subs/top-blogs])
         users        (<sub [::subs/top-users])
@@ -81,14 +92,18 @@
                                 :query-params query-params}]]
       (if activities-loading?
         [loader/loader styles/loader]
-        (into [:div {:class styles/main-column}
-               [side-cards-mobile/top-content {:jobs jobs
-                                               :blogs blogs
-                                               :issues issues}]
-               [stat-card/about-applications]
-               [stat-card/about-open-source]
-               [stat-card/about-salary-increase]]
-              (map activity-card activities)))
+        (let [groups (split-into-4-groups activities)]
+          (into [:div {:class styles/main-column}
+                 [side-cards-mobile/top-content {:jobs jobs
+                                                 :blogs blogs
+                                                 :issues issues}]
+                 (for [activity (nth groups 0)] ^{:key (:id activity)} [:div (activity-card activity)])
+                 [stat-card/about-applications]
+                 (for [activity (nth groups 1)] ^{:key (:id activity)} [:div (activity-card activity)])
+                 [stat-card/about-open-source]
+                 (for [activity (nth groups 2)] ^{:key (:id activity)} [:div (activity-card activity)])
+                 [stat-card/about-salary-increase]
+                 (for [activity (nth groups 3)] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs]
        [side-cards/recent-issues issues]

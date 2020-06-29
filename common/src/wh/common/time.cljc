@@ -26,4 +26,4 @@
       (< secs 2419200) (let [s (int (/ secs 60 60 24))]
                          (str s " " (text/pluralize s "day") " ago"))
       ;; longer than 28 days
-      :else            (tf/unparse (tf/formatter "yyyy-MM-dd") t))))
+      :else            (tf/unparse (tf/formatter "d MMM, yyyy") t))))

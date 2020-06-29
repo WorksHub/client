@@ -1,13 +1,7 @@
 (ns wh.components.activities.company-published
   (:require [wh.components.activities.components :as components]
-            [wh.routes :as routes]
-            [wh.util :as util]
-            [wh.styles.activities :as styles]))
-
-(def convert {:micro  "1-9"
-              :small  "10-49"
-              :medium "50-250"
-              :large  "250+"})
+            [wh.common.specs.company :as company-spec]
+            [wh.routes :as routes]))
 
 (defn details [{:keys [name tags slug description size locations] :as company}]
   [components/inner-card
@@ -20,7 +14,8 @@
       (let [location (first locations)
             location-str (str (:city location) ", " (:country location))]
         [components/meta-row
-         (when (convert size) [components/text-with-icon {:icon "couple"} (convert size)])
+         (when-let [size-str (company-spec/size->range size)]
+           [components/text-with-icon {:icon "couple"} size-str])
          (when location [components/text-with-icon {:icon "pin"} location-str])]))]
    [components/description {:type :cropped} description]
    [components/tags tags]])

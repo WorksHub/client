@@ -13,7 +13,7 @@
   [:div (util/smc styles/article__boost)
    [:div (util/smc styles/article__boost-icon-wrapper)
     [icons/icon "rocketship" :class styles/article__boost-icon]]
-   [:span (count upvotes)]])
+   [:span upvotes]])
 
 (defn image [{:keys [feature] :as blog}]
   (when feature
@@ -22,13 +22,13 @@
             :src   feature}]]))
 
 (defn card
-  [{:keys [title tags id author author-info reading-time display-date upvotes]
+  [{:keys [title tags id author author-info reading-time display-date upvote-count]
     :as   blog}
    type]
   [components/card type
    [image blog]
    [:div (util/smc styles/article__content-wrapper)
-    [article-boosts upvotes]
+    [article-boosts upvote-count]
     [components/card-content
      [components/header
       [components/title

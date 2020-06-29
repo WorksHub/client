@@ -7,6 +7,12 @@
             [wh.styles.activities :as styles]
             [wh.util :as util]))
 
+(defn keyed-collection [children]
+  (->> children
+       (filter (complement nil?))
+       (map-indexed (fn [idx child]
+                      (with-meta child {:key idx})))))
+
 (def button-class
   {:filled   (util/mc styles/button)
    :inverted (util/mc styles/button styles/button--inverted)})
@@ -55,7 +61,7 @@
   [tags]
   [:ul (util/smc "tags" "tags--inline")
    (for [tag (take 14 tags)] ;; FIXME magic number
-     ^{:key (:slug tag)}
+     ^{:key (:id tag)}
      [tag-component tag])])
 
 (defn entity-icon
@@ -98,23 +104,19 @@
 
 (defn footer [type & children]
   [:div (util/smc styles/footer (when (= type :compound) styles/footer--compound))
-   (for [child children]
-     child)])
+   (keyed-collection children)])
 
 (defn footer-buttons [& children]
   [:div (util/smc styles/footer__buttons)
-   (for [child children]
-     child)])
+   (keyed-collection children)])
 
 (defn header [& children]
   [:div (util/smc styles/header)
-   (for [child children]
-     child)])
+   (keyed-collection children)])
 
 (defn meta-row [& children]
   [:div (util/smc styles/meta-row)
-   (for [child children]
-     child)])
+   (keyed-collection children)])
 
 (defn text-with-icon [{:keys [icon]} children]
   [:div (util/smc styles/text-with-icon)
@@ -123,15 +125,12 @@
 
 (defn inner-card [& children]
   [:div (util/smc styles/inner-card)
-   (for [child children]
-     child)])
+   (keyed-collection children)])
 
 (defn card [type & children]
   [:div (util/smc styles/card [(= type :highlight) styles/card--highlight])
-   (for [child children]
-     child)])
+   (keyed-collection children)])
 
 (defn card-content [& children]
   [:div (util/smc styles/card-content)
-   (for [child children]
-     child)])
+   (keyed-collection children)])

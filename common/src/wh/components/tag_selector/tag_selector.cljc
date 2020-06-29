@@ -39,7 +39,6 @@
                                                       (str/join ",")
                                                       (text/not-blank))]))
                   :interactive? true
-                  :with-icon? false
                   :inverted? (tag-selected? qp-tags-ids tag)
                   :server-side-invert-on-click? true))
          tags)]

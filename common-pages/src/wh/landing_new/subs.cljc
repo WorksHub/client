@@ -48,11 +48,6 @@
   (fn [db _]
     (get-in (apply gqlc/result db (events/recent-issues db)) [:recent-issues :results])))
 
-
-(defn display-month [date]
-  (tf/unparse (tf/formatter "MMM d yyyy")
-              date))
-
 (defn translate-job [job]
   (-> job
       (util/update-in*
@@ -66,7 +61,7 @@
 (defn translate-blog [blog]
   (-> blog
       (assoc
-        :display-date (display-month (time/str->time (:creation-date blog) :date-time)))))
+        :display-date (time/human-time (time/str->time (:creation-date blog) :date-time)))))
 
 (defn normalize-activity
   [{:keys [feed-company feed-issue feed-job feed-blog] :as activity}]
