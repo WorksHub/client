@@ -26,7 +26,7 @@
                                      [:job_company [:name :logo :slug
                                                     :total_published_job_count]]]]
                          [:feed_company [:id :slug :name :description :size
-                                         :total_published_job_count :logo
+                                         :total_published_job_count :logo :creation_date
                                          [:locations [:city :country :country_code
                                                       :region :sub_region :state]]
                                          [:tags :fragment/tagFields]]]
