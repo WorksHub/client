@@ -11,7 +11,8 @@
 
 (defn intro
   [vertical]
-  [:div (util/smc style/attract-card style/intro)
+  [:div (merge (util/smc style/attract-card style/intro)
+               (util/test-selector "intro-attract"))
    [:div (util/smc style/intro__branding)
     [icon vertical :class style/intro__icon]
     [branding/vertical-title vertical
@@ -22,7 +23,8 @@
 
 (defn contribute
   [logged-in?]
-  [:div (util/smc style/attract-card style/contribute)
+  [:div (merge (util/smc style/attract-card style/contribute)
+               (util/test-selector "contribute-attract"))
    [:div (util/smc style/contribute__info)
     [:h2 (util/smc style/contribute__heading) "Write an article"]
     [:p (util/smc style/contribute__copy) "Share your thoughts & expertise with a huge community of users"]
@@ -39,7 +41,8 @@
 
 (defn signin
   []
-  [:div (util/smc style/attract-card style/signin)
+  [:div (merge (util/smc style/attract-card style/signin)
+               (util/test-selector "signin-attract"))
    [:h2 (util/smc style/signin__heading) "Sign in"]
    [:p (util/smc style/signin__copy) "to customize your feed & discover cool stuff"]
    [:div (util/smc style/signin__buttons)

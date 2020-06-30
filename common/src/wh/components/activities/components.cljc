@@ -128,7 +128,8 @@
    (keyed-collection children)])
 
 (defn card [type & children]
-  [:div (util/smc styles/card [(= type :highlight) styles/card--highlight])
+  [:div (merge (util/smc styles/card [(= type :highlight) styles/card--highlight])
+               (util/ts "activity"))
    (keyed-collection children)])
 
 (defn card-content [& children]
