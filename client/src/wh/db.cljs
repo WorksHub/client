@@ -36,13 +36,14 @@
                 :create-job
                 :edit-company
                 :edit-job
-                :get-started
+                :feed
                 :feed-preview
+                :get-started
                 :github-callback
                 :stackoverflow-callback
                 :twitter-callback
                 :homepage
-                :homepage-new
+                :homepage-new ;; TODO [ch4435] remove this once 'feed' is established
                 :homepage-company-dashboard
                 :homepage-dashboard
                 :homepage-not-logged-in

@@ -113,8 +113,21 @@
   [:top-tags {:vertical (:wh.db/vertical db)}])
 
 #?(:cljs
+   ;; TODO [ch4435] remove this once 'feed' is established
    (defmethod on-page-load :homepage-new [db]
-     [(into [:graphql/query] (recent-activities db))
+     [[:wh.pages.core/unset-loader]
+      (into [:graphql/query] (recent-activities db))
+      (into [:graphql/query] (top-blogs db))
+      (into [:graphql/query] (top-companies db))
+      (into [:graphql/query] (top-tags db))
+      (into [:graphql/query] (top-users db))
+      (into [:graphql/query] (recent-issues db))
+      (into [:graphql/query] (recent-jobs db))]))
+
+#?(:cljs
+   (defmethod on-page-load :feed [db]
+     [[:wh.pages.core/unset-loader]
+      (into [:graphql/query] (recent-activities db))
       (into [:graphql/query] (top-blogs db))
       (into [:graphql/query] (top-companies db))
       (into [:graphql/query] (top-tags db))

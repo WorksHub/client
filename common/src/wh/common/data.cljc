@@ -706,7 +706,8 @@
              [:issues    "pr"         "Open Source Issues"]
              [:jobsboard "jobs-board" "Job Board"]
              [:companies "company"    "Companies"]
-             [:metrics   "trends"    "Metrics"]]})
+             [:feed      "feed"       "Feed"]
+             [:metrics   "trends"     "Metrics"]]})
 
 (defn menu
   [type user]
@@ -720,8 +721,7 @@
                 [:candidates                     "profile"      "Candidates"]
                 [:create-job                     "resources"    "Create role"]
                 [:create-company                 "jobs-board"   "Create company"]
-                [:create-candidate               "add-new"      "Create candidate"]
-                [:homepage-new                   "trends"       "New Homepage"]]}
+                [:create-candidate               "add-new"      "Create candidate"]]}
      default-explore-section
      default-for-you-section]
     "company"

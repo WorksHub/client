@@ -7,7 +7,8 @@
     [wh.landing-new.views :as landing]))
 
 (def page-mapping
-  {:homepage-new landing/page})
+  {:homepage-new landing/page ;; TODO [ch4435] remove this once 'feed' is established
+   :feed         landing/page})
 
 (reg-event-db
   ::initialize-page-mapping

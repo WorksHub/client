@@ -23,7 +23,8 @@
                          :pre-set-search
                          :jobsboard
                          :contribute-edit})
-(def no-menu-pages #{:register :register-company :payment-setup :get-started :homepage-new})
+;; TODO [ch4435] remove 'homepage-new' this once 'feed' is established
+(def no-menu-pages #{:register :register-company :payment-setup :get-started :homepage-new :feed})
 (def no-footer-pages no-menu-pages)
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
@@ -43,7 +44,7 @@
           (sort-by count > this)))
   (unmatch-pattern [this {:keys [params] :as s}]
     (if-let [match (first (filter (fn [pattern] (= (set (keys params))
-                                                   (set (filter keyword? pattern))))
+                                                  (set (filter keyword? pattern))))
                                   this))]
       (bidi/unmatch-pattern match s)
       (bidi/unmatch-pattern (first this) s))))
@@ -79,6 +80,7 @@
 (def routes ["/"
              ;;Public SSR Pages - no app.js required
              [["" :homepage]
+              ["feed" :feed]
               ["homepage-new" :homepage-new]
               ["hire-" {[:template] :homepage}]
               ["issues/" {""            :issues
@@ -98,23 +100,23 @@
               ["metrics" :metrics]
 
               ;; Mixed routes
-              ["learn/" {""            :learn               ;;Public SSR
+              ["learn/" {""            :learn ;;Public SSR
                          "create"      :contribute
-                         [:id]         :blog                ;;Public yet to be SSR CH2655
+                         [:id]         :blog  ;;Public yet to be SSR CH2655
                          [:id "/edit"] :contribute-edit}]
-              ["companies/" {""                    :companies    ;;Public SSR
+              ["companies/" {""                    :companies        ;;Public SSR
                              "new"                 :create-company
                              "applications"        :company-applications
-                             [:slug]               :company      ;;Public SSR
-                             [:slug "/jobs"]       :company-jobs ;;Public SSR
+                             [:slug]               :company          ;;Public SSR
+                             [:slug "/jobs"]       :company-jobs     ;;Public SSR
                              [:slug "/articles"]   :company-articles ;;Public SSR
                              [:id "/edit"]         :admin-edit-company
                              [:id "/dashboard"]    :company-dashboard
                              [:id "/applications"] :admin-company-applications
                              [:id "/offer"]        :create-company-offer}]
-              ["jobs/" {""            :jobsboard            ;;Public SSR
+              ["jobs/" {""            :jobsboard ;;Public SSR
                         "new"         :create-job
-                        [:slug]       :job                  ;;Public SSR
+                        [:slug]       :job       ;;Public SSR
                         [:id "/edit"] :edit-job}]
 
               ;; Public pages - app.js required
@@ -141,7 +143,8 @@
 
               ;;Private pages - app.js required
               ["admin/" {"companies" :admin-companies
-                         "learn"     :admin-articles}]
+                         "learn"     :admin-articles
+                         "feed"      :feed-preview}]
               ["candidates/" {""                    :candidates
                               "new"                 :create-candidate
                               [:id]                 :candidate
@@ -190,7 +193,6 @@
                          "process"             :oauth-process
                          "twitter"             :oauth-twitter}]
               ["documents/" {[:access-id "/" :doc-type] :document-access}]
-              ["feed-preview/" :feed-preview]
               ["api/" [["graphql" :graphql]
                        ["graphql-schema" :graphql-schema]
                        ["webhook/" {"github-app" :github-app-webhook}]
@@ -223,8 +225,9 @@
                                                :companies
                                                :company-jobs
                                                :company-articles
+                                               :feed
                                                :homepage
-                                               :homepage-new
+                                               :homepage-new ;; TODO [ch4435] remove this once 'feed' is established
                                                :how-it-works
                                                ;;:issue CH3610
                                                ;;:issues CH3615

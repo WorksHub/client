@@ -29,7 +29,8 @@
    :create-job                 :company
    :edit-company               :company
    :edit-job                   :company
-   :feed-preview               :activities
+   :feed                       :landing-page
+   :feed-preview               :activities ;; TODO [ch4436] move this into admin
    :get-started                :login
    :github-callback            :login
    :stackoverflow-callback     :login

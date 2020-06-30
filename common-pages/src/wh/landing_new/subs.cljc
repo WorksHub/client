@@ -14,11 +14,6 @@
             [wh.util :as util]))
 
 (reg-sub
-  ::sub-db
-  (fn [db _]
-    (:wh.homepage-new.db/sub-db db)))
-
-(reg-sub
   ::top-blogs
   (fn [db _]
     (get-in (apply gqlc/result db (events/top-blogs db)) [:top-blogs :results])))

@@ -2,10 +2,10 @@
   (:require #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
             [wh.components.activities.article-published :as article-published]
             [wh.components.activities.company-published :as company-published]
+            [wh.components.activities.components :as activities]
             [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.job-published :as job-published]
             [wh.components.activities.job-published :as job-published]
-            [wh.components.activities.components :as activities]
             [wh.components.attract-card :as attract-card]
             [wh.components.loader :as loader]
             [wh.components.newsletter :as newsletter]
@@ -59,41 +59,41 @@
      (drop (* 2 group-size) elms)]))
 
 (defn page []
-  (let [blogs        (<sub [::subs/top-blogs])
-        blogs-loading? (<sub [::subs/top-blogs-loading?])
-        companies    (<sub [::subs/top-companies])
-        companies-loading? (<sub [::subs/top-companies-loading?])
-        users        (<sub [::subs/top-users])
-        users-loading? (<sub [::subs/top-users-loading?])
-        jobs         (<sub [::subs/recent-jobs])
-        jobs-loading? (<sub [::subs/recent-jobs-loading?])
-        issues       (<sub [::subs/recent-issues])
-        issues-loading? (<sub [::subs/recent-issues-loading?])
-        tags         (<sub [::subs/top-tags])
-        tags-loading? (<sub [::subs/top-tags-loading?])
-        activities   (<sub [::subs/recent-activities])
+  (let [blogs               (<sub [::subs/top-blogs])
+        blogs-loading?      (<sub [::subs/top-blogs-loading?])
+        companies           (<sub [::subs/top-companies])
+        companies-loading?  (<sub [::subs/top-companies-loading?])
+        users               (<sub [::subs/top-users])
+        users-loading?      (<sub [::subs/top-users-loading?])
+        jobs                (<sub [::subs/recent-jobs])
+        jobs-loading?       (<sub [::subs/recent-jobs-loading?])
+        issues              (<sub [::subs/recent-issues])
+        issues-loading?     (<sub [::subs/recent-issues-loading?])
+        tags                (<sub [::subs/top-tags])
+        tags-loading?       (<sub [::subs/top-tags-loading?])
+        activities          (<sub [::subs/recent-activities])
         activities-loading? (<sub [::subs/recent-activities-loading?])
-        logged-in?   (<sub [:user/logged-in?])
-        vertical     (<sub [:wh/vertical])
-        query-params (<sub [:wh/query-params])]
+        logged-in?          (<sub [:user/logged-in?])
+        vertical            (<sub [:wh/vertical])
+        query-params        (<sub [:wh/query-params])]
     [:div (util/smc styles/page)
      (when-not logged-in?
        [attract-card/all-cards {:logged-in? logged-in?
-                                :vertical vertical}])
+                                :vertical   vertical}])
      [:div (util/smc styles/page__main)
       [:div (util/smc styles/side-column styles/side-column--left)
        [tag-selector/card-with-selector tags tags-loading?]
        [side-cards/top-ranking {:blogs        blogs
                                 :companies    companies
                                 :default-tab  :companies
-                                :redirect     :homepage-new
+                                :redirect     :feed
                                 :logged-in?   logged-in?
                                 :query-params query-params
                                 :loading?     (or blogs-loading? companies-loading?)}]
        [side-cards/top-ranking {:blogs        blogs
                                 :companies    companies
                                 :default-tab  :blogs
-                                :redirect     :homepage-new
+                                :redirect     :feed
                                 :logged-in?   logged-in?
                                 :query-params query-params
                                 :loading?     (or blogs-loading? companies-loading?)}]]
@@ -104,13 +104,13 @@
                  [activities/card-skeleton])])
         (let [groups (split-into-3-groups activities)]
           (into [:div {:class styles/main-column}
-                 [side-cards-mobile/top-content {:jobs jobs
-                                                 :blogs blogs
+                 [side-cards-mobile/top-content {:jobs   jobs
+                                                 :blogs  blogs
                                                  :issues issues}]
                  (for [activity (nth groups 0)] ^{:key (:id activity)} [:div (activity-card activity)])
                  [stat-card/about-applications]
                  [newsletter/newsletter {:logged-in? logged-in?
-                                         :type :landing}]
+                                         :type       :landing}]
                  [stat-card/about-open-source]
                  (for [activity (nth groups 1)] ^{:key (:id activity)} [:div (activity-card activity)])
                  [stat-card/about-salary-increase]
