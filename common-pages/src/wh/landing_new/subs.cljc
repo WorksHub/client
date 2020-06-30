@@ -63,6 +63,11 @@
       (assoc
         :display-date (time/human-time (time/str->time (:creation-date blog) :date-time)))))
 
+(defn translate-company [c]
+  (-> c
+      (assoc
+        :creation-date (time/human-time (time/str->time (:creation-date c) :date-time)))))
+
 (defn normalize-activity
   [{:keys [feed-company feed-issue feed-job feed-blog] :as activity}]
   (-> activity
@@ -74,7 +79,7 @@
                         :object-type "article"}
           feed-issue   {:object      feed-issue
                         :object-type "issue"}
-          feed-company {:object      feed-company
+          feed-company {:object      (translate-company feed-company)
                         :object-type "company"}
           :else        {}))
       (update :actor :id)

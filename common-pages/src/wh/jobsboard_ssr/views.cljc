@@ -70,7 +70,7 @@
         ^{:key (str "col-" (:id job))}
         [job/job-card job (job-card-opts (:company-id job))])]
 
-     [newsletter/newsletter (<sub [:user/logged-in?])]
+     [newsletter/newsletter {:logged-in? (<sub [:user/logged-in?])}]
 
      [:div
       {:class (jobs-container-class view-type)}

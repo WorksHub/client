@@ -97,7 +97,8 @@
                                                  :issues issues}]
                  (for [activity (nth groups 0)] ^{:key (:id activity)} [:div (activity-card activity)])
                  [stat-card/about-applications]
-                 [newsletter/newsletter logged-in? true]
+                 [newsletter/newsletter {:logged-in? logged-in?
+                                         :type :landing}]
                  [stat-card/about-open-source]
                  (for [activity (nth groups 1)] ^{:key (:id activity)} [:div (activity-card activity)])
                  [stat-card/about-salary-increase]

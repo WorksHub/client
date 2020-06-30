@@ -75,8 +75,9 @@
 
 (defn company-info [{:keys [logo name slug] :as company}]
   (let [info-str (cond
-                   (:total-published-issue-count company) (str "Live issues: " (get company :total-published-issue-count 0))
-                   (:total-published-job-count company) (str "Live jobs: " (get company :total-published-job-count 0))
+                   (pos? (:total-published-issue-count company)) (str "Live issues: " (get company :total-published-issue-count 0))
+                   (pos? (:total-published-job-count company)) (str "Live jobs: " (get company :total-published-job-count 0))
+                   (:creation-date company) (str "Joined " (:creation-date company))
                    :else nil)]
     [:a {:class styles/company-info
          :href (routes/path :company :params {:slug slug})}
