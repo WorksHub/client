@@ -19,8 +19,11 @@
     transform: translate3d(0, 0, 0)
 
 .newsletter-subscription
-  border: 4px solid $red
+  border: 2px solid $red
+  border-radius: 8px
   overflow: hidden
+  padding: 22px 18px
+  font-family: Montserrat, serif
   .newsletter-subscription__form
     display: flex
     flex-direction: column
@@ -34,32 +37,42 @@
     color: $steel-gray
     font-weight: 600
     @include form-fieldx
+    border: 1px solid $grey
   .newsletter-subscription__input::placeholder
-    color: $placeholder-grey
+    color: $steel-gray
+    font-weight: 500
+    letter-spacing: 0.2px
   .newsletter-subscription__input:focus
-    border: 2px solid $red
+    border: 1px solid $red
     outline: none
   .newsletter-subscription__button
     height: 40px
-    padding: 6px 12px
+    padding: 6px 24px
+    text-transform: capitalize
+    border-radius: 4px
+    font-size: 13px
   .newsletter-subscription__input-wrapper
     margin-bottom: 6px
     +desktop
       margin-bottom: 0
-      margin-right: 6px
+      margin-right: 18px
       flex: 1
   .newsletter-subscription__label
     display: inline-block
     color: $red
     font-weight: 600
     margin-bottom: 6px
-    font-size: 14px
+    font-size: 15px
   .newsletter-subscription__title
     margin-bottom: 12px
-    font-size: 16px
+    font-size: 18px
+    color: $main-black
   .newsletter-subscription__description
-    margin-bottom: 12px
-    font-size: 15px
+    margin-bottom: 32px
+    line-height: 26px
+    font-size: 18px
+    font-family: Montserrat, serif
+    color: $steel-gray
   .newsletter-subscription__success
     display: flex
     align-items: center
@@ -67,14 +80,19 @@
     text-align: center
     height: 110px
     background-color: $red
+    border-radius: 4px
     +desktop
       height: 64px
   .newsletter-subscription__primary-text
-    color: white
+    color: $wh-white
     font-weight: 600
     font-size: 20px
     animation-duration: 1s
     animation-fill-mode: both
     animation-name: bounceInLeft
     +desktop
-      font-size: 24px
+      font-size: 18px
+
+.pod.newsletter-subscription--no-margin
+  margin-top: 0
+  margin-bottom: 0

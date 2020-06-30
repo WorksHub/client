@@ -7,6 +7,7 @@
             [wh.components.activities.job-published :as job-published]
             [wh.components.attract-card :as attract-card]
             [wh.components.loader :as loader]
+            [wh.components.newsletter :as newsletter]
             [wh.components.side-card.side-card :as side-cards]
             [wh.components.side-card.side-card-mobile :as side-cards-mobile]
             [wh.components.stat-card :as stat-card]
@@ -48,16 +49,13 @@
 (defn tag-picker []
   [:div (util/smc styles/card styles/card--tag-picker) "Tag picker"])
 
-(defn split-into-4-groups [elms]
-  (let [group-size (quot (count elms) 4)]
+(defn split-into-3-groups [elms]
+  (let [group-size (quot (count elms) 3)]
     [(take group-size elms)
      (->> elms
           (drop group-size)
           (take group-size))
-     (->> elms
-          (drop (* 2 group-size))
-          (take group-size))
-     (drop (* 3 group-size) elms)]))
+     (drop (* 2 group-size) elms)]))
 
 (defn page []
   (let [blogs        (<sub [::subs/top-blogs])
@@ -92,18 +90,18 @@
                                 :query-params query-params}]]
       (if activities-loading?
         [loader/loader styles/loader]
-        (let [groups (split-into-4-groups activities)]
+        (let [groups (split-into-3-groups activities)]
           (into [:div {:class styles/main-column}
                  [side-cards-mobile/top-content {:jobs jobs
                                                  :blogs blogs
                                                  :issues issues}]
                  (for [activity (nth groups 0)] ^{:key (:id activity)} [:div (activity-card activity)])
                  [stat-card/about-applications]
-                 (for [activity (nth groups 1)] ^{:key (:id activity)} [:div (activity-card activity)])
+                 [newsletter/newsletter logged-in? true]
                  [stat-card/about-open-source]
-                 (for [activity (nth groups 2)] ^{:key (:id activity)} [:div (activity-card activity)])
+                 (for [activity (nth groups 1)] ^{:key (:id activity)} [:div (activity-card activity)])
                  [stat-card/about-salary-increase]
-                 (for [activity (nth groups 3)] ^{:key (:id activity)} [:div (activity-card activity)])])))
+                 (for [activity (nth groups 2)] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs]
        [side-cards/recent-issues issues]
