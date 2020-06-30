@@ -111,7 +111,7 @@
   [:div {:style {:background "mistyrose"
                  :padding "20px"
                  :width "320px"}}
-        [tag-selector/card-with-selector tags (comp js/console.log clj->js)]])
+        [tag-selector/card-with-selector tags false]])
 
 (ws/defcard tag-selector
             (ct.react/react-card

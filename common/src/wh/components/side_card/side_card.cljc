@@ -27,16 +27,19 @@
         [c/card-tag {:label (str "$" amount)
                      :type  "funding"}]))]])
 
-(defn recent-issues [issues]
+(defn recent-issues [issues loading?]
   [:section {:class style/section}
    [c/section-title "Live Open Source Issues"]
-   [c/section-elements issues card-issue]
-   [:div {:class (util/mc style/footer style/footer--issues)}
-    [c/section-button {:title "All open source issues"
-                       :href  (routes/path :issues)}]
-    [c/footer-link {:text      "Post your"
-                    :bold-text "open source issue here"
-                    :href      (routes/path :create-job)}]]])
+   (if loading?
+     [c/section-elements-skeleton {:type :tags}]
+     [c/section-elements issues card-issue])
+   (when-not loading?
+     [:div {:class (util/mc style/footer style/footer--issues)}
+      [c/section-button {:title "All open source issues"
+                         :href  (routes/path :issues)}]
+      [c/footer-link {:text      "Post your"
+                      :bold-text "open source issue here"
+                      :href      (routes/path :create-job)}]])])
 
 ;; -----------------------------------------------
 
@@ -62,13 +65,16 @@
                      :plural "open source issues started"
                      :icon   "commit"}]]])
 
-(defn top-ranking-users [users]
+(defn top-ranking-users [users loading?]
   [:section {:class style/section}
    [c/section-title "Top Ranking Users"]
-   [c/section-elements users card-user]
-   [:div
-    [c/section-button {:title "Write an Article"
-                       :href  (routes/path :contribute)}]]])
+   (if loading?
+     [c/section-elements-skeleton]
+     [c/section-elements users card-user])
+   (when-not loading?
+     [:div
+      [c/section-button {:title "Write an Article"
+                         :href  (routes/path :contribute)}]])])
 
 ;; -----------------------------------------------
 
@@ -83,16 +89,19 @@
    [c/card-link {:title title
                  :href  (routes/path :job :params {:slug slug})}]])
 
-(defn recent-jobs [jobs]
+(defn recent-jobs [jobs loading?]
   [:section {:class style/section}
    [c/section-title "Hiring now"]
-   [c/section-elements jobs card-job]
-   [:div {:class (util/mc style/footer style/footer--jobs)}
-    [c/section-button {:title "All live jobs"
-                       :href  (routes/path :jobsboard)}]
-    [c/footer-link {:text      "Hiring?"
-                    :bold-text "Post your job here"
-                    :href      (routes/path :create-job)}]]])
+   (if loading?
+     [c/section-elements-skeleton]
+     [c/section-elements jobs card-job])
+   (when-not loading?
+     [:div {:class (util/mc style/footer style/footer--jobs)}
+      [c/section-button {:title "All live jobs"
+                         :href  (routes/path :jobsboard)}]
+      [c/footer-link {:text      "Hiring?"
+                      :bold-text "Post your job here"
+                      :href      (routes/path :create-job)}]])])
 
 ;; -----------------------------------------------
 
@@ -163,13 +172,16 @@
            (when error
              [:p (util/smc style/error-message) error])])))))
 
-(defn top-ranking-companies [companies redirect logged-in? query-params]
+(defn top-ranking-companies [companies redirect logged-in? query-params loading?]
   [:div {:class (util/mc style/tabs__tab-content style/tabs__tab-content--companies)}
-   [c/section-elements companies card-company]
-   [:div {:class (util/mc style/footer style/footer--companies)}
-    [c/section-button {:title "All companies"
-                       :href  (routes/path :companies)}]
-    [create-company redirect logged-in? query-params]]])
+   (if loading?
+     [c/section-elements-skeleton {:type :tags}]
+     [:div
+      [c/section-elements companies card-company]
+      [:div {:class (util/mc style/footer style/footer--companies)}
+       [c/section-button {:title "All companies"
+                          :href  (routes/path :companies)}]
+       [create-company redirect logged-in? query-params]]])])
 
 ;; -------------------------------------------
 
@@ -199,17 +211,20 @@
                       :href  (routes/path :contribute)
                       :type  :no-border}]])
 
-(defn top-ranking-blogs [blogs]
+(defn top-ranking-blogs [blogs loading?]
   [:div {:class (util/mc style/tabs__tab-content style/tabs__tab-content--blogs)}
-   [c/section-elements blogs card-blog]
-   [:div {:class (util/mc style/footer style/footer--blogs)}
-    [c/section-button {:title "All articles"
-                       :href  (routes/path :learn)}]
-    [write-article]]])
+   (if loading?
+     [c/section-elements-skeleton {:type :default}]
+     [:div
+      [c/section-elements blogs card-blog]
+      [:div {:class (util/mc style/footer style/footer--blogs)}
+       [c/section-button {:title "All articles"
+                          :href  (routes/path :learn)}]
+       [write-article]]])])
 
 ;; -------------------------------------------
 
-(defn top-ranking [{:keys [companies blogs default-tab redirect logged-in? query-params]
+(defn top-ranking [{:keys [companies blogs default-tab redirect logged-in? query-params loading?]
                     :or   {default-tab :companies}}]
   (let [input1-id  (gensym "top-ranking-input")
         input2-id  (gensym "top-ranking-input")
@@ -233,5 +248,5 @@
        [:li
         [:label {:for input2-id :class (util/mc style/tabs__tab style/tabs__tab--blogs)} "Blogs"]]]]
      [:section {:class style/tabs__content}
-      [top-ranking-companies companies redirect logged-in? query-params]
-      [top-ranking-blogs blogs]]]))
+      [top-ranking-companies companies redirect logged-in? query-params loading?]
+      [top-ranking-blogs blogs loading?]]]))

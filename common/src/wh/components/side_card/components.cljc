@@ -5,6 +5,7 @@
             [wh.common.text :as text]
             [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon] :as icons]
+            [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
             [wh.re-frame :as r]
             [wh.routes :as routes]
@@ -49,6 +50,22 @@
    (for [elm elements]
      ^{:key (:id elm)}
      [card-component elm])])
+
+(defn card-skeleton
+  ([]
+   (card-skeleton {:type :default}))
+  ([{:keys [type]}]
+   [:section {:class style/section__element}
+    [skeletons/image-with-info]
+    [skeletons/title]
+    (when (= :tags type)
+      [skeletons/tags 3])]))
+
+(defn section-elements-skeleton [{:keys [type]}]
+  [:div {:class style/section__elements}
+   (for [i (range 3)]
+     ^{:key i}
+     [card-skeleton {:type type}])])
 
 (defn numeric-info [lines]
   [:div {:class style/numeric-info}

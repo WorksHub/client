@@ -44,6 +44,7 @@
                                              (when interactive? "tag--interactive")
                                              (when (= :button element-type) "tag--button")
                                              (str "tag--type-" (if t (name type) "skeleton"))
+                                             (when-not t "tag--skeleton")
                                              (when subtype (str "tag--subtype-" (name subtype))))}
             (when href {:href href})
             (when on-click

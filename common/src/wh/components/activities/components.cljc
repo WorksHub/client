@@ -1,6 +1,7 @@
 (ns wh.components.activities.components
   (:require [clojure.string :as str]
             [wh.components.icons :as icons]
+            [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
             [wh.routes :as routes]
             [wh.slug :as slug]
@@ -136,3 +137,14 @@
 (defn card-content [& children]
   [:div (util/smc styles/card-content)
    (keyed-collection children)])
+
+(defn card-skeleton []
+  [card :skeleton
+   [skeletons/image-with-info]
+   [skeletons/text]
+   [inner-card
+    [skeletons/title]
+    [skeletons/text]
+    [skeletons/tags]]
+   [footer :default
+    [skeletons/button]]])

@@ -70,7 +70,7 @@
 
 (defn top-content [{:keys [blogs jobs issues]}]
   [:div (util/smc style/trending)
-   [:span (util/smc style/trending__title) "selected for you"]
+   [:span (util/smc style/trending__title) "Selected for you"]
    [:div (util/smc style/horizontal-scrolling)
     [toggle "case" "Recommended jobs" :jobs]
     [toggle "git" "Live open source issues" :issues]

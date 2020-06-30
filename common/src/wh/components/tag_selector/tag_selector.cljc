@@ -3,6 +3,7 @@
             [wh.common.subs] ;;required for query params sub
             [wh.common.text :as text]
             [wh.components.icons :refer [icon]]
+            [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
             [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch]]
@@ -50,8 +51,10 @@
                                     :cljs #(dispatch [:wh.events/nav--set-query-param "tags" nil]))))
      "Reset selection" [reset-icon]]]])
 
-(defn card-with-selector [tags]
+(defn card-with-selector [tags loading?]
   [:div {:class styles/card}
    [:div {:class styles/title}
     "Show me more of..."]
-   [selector tags (query-params->qp-tags-ids (<sub [:wh/query-params]))]])
+   (if loading?
+     [skeletons/tags 14]
+     [selector tags (query-params->qp-tags-ids (<sub [:wh/query-params]))])])

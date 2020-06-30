@@ -5,6 +5,7 @@
             [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.job-published :as job-published]
             [wh.components.activities.job-published :as job-published]
+            [wh.components.activities.components :as activities]
             [wh.components.attract-card :as attract-card]
             [wh.components.loader :as loader]
             [wh.components.newsletter :as newsletter]
@@ -59,11 +60,17 @@
 
 (defn page []
   (let [blogs        (<sub [::subs/top-blogs])
-        users        (<sub [::subs/top-users])
+        blogs-loading? (<sub [::subs/top-blogs-loading?])
         companies    (<sub [::subs/top-companies])
+        companies-loading? (<sub [::subs/top-companies-loading?])
+        users        (<sub [::subs/top-users])
+        users-loading? (<sub [::subs/top-users-loading?])
         jobs         (<sub [::subs/recent-jobs])
+        jobs-loading? (<sub [::subs/recent-jobs-loading?])
         issues       (<sub [::subs/recent-issues])
+        issues-loading? (<sub [::subs/recent-issues-loading?])
         tags         (<sub [::subs/top-tags])
+        tags-loading? (<sub [::subs/top-tags-loading?])
         activities   (<sub [::subs/recent-activities])
         activities-loading? (<sub [::subs/recent-activities-loading?])
         logged-in?   (<sub [:user/logged-in?])
@@ -75,21 +82,26 @@
                                 :vertical vertical}])
      [:div (util/smc styles/page__main)
       [:div (util/smc styles/side-column styles/side-column--left)
-       [tag-selector/card-with-selector tags]
+       [tag-selector/card-with-selector tags tags-loading?]
        [side-cards/top-ranking {:blogs        blogs
                                 :companies    companies
                                 :default-tab  :companies
                                 :redirect     :homepage-new
                                 :logged-in?   logged-in?
-                                :query-params query-params}]
+                                :query-params query-params
+                                :loading?     (or blogs-loading? companies-loading?)}]
        [side-cards/top-ranking {:blogs        blogs
                                 :companies    companies
                                 :default-tab  :blogs
                                 :redirect     :homepage-new
                                 :logged-in?   logged-in?
-                                :query-params query-params}]]
+                                :query-params query-params
+                                :loading?     (or blogs-loading? companies-loading?)}]]
       (if activities-loading?
-        [loader/loader styles/loader]
+        (into [:div {:class styles/main-column}
+               (for [i (range 6)]
+                 ^{:key i}
+                 [activities/card-skeleton])])
         (let [groups (split-into-3-groups activities)]
           (into [:div {:class styles/main-column}
                  [side-cards-mobile/top-content {:jobs jobs
@@ -104,6 +116,6 @@
                  [stat-card/about-salary-increase]
                  (for [activity (nth groups 2)] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
-       [side-cards/recent-jobs jobs]
-       [side-cards/recent-issues issues]
-       [side-cards/top-ranking-users users]]]]))
+       [side-cards/recent-jobs jobs jobs-loading?]
+       [side-cards/recent-issues issues issues-loading?]
+       [side-cards/top-ranking-users users users-loading?]]]]))

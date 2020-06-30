@@ -24,9 +24,19 @@
     (get-in (apply gqlc/result db (events/top-blogs db)) [:top-blogs :results])))
 
 (reg-sub
+  ::top-blogs-loading?
+  (fn [db _]
+    (= :executing (keyword (apply gqlc/state db (events/top-blogs db))))))
+
+(reg-sub
   ::top-companies
   (fn [db _]
     (get-in (apply gqlc/result db (events/top-companies db)) [:top-companies :results])))
+
+(reg-sub
+  ::top-companies-loading?
+  (fn [db _]
+    (= :executing (keyword (apply gqlc/state db (events/top-companies db))))))
 
 (reg-sub
   ::top-tags
@@ -34,9 +44,19 @@
     (get-in (apply gqlc/result db (events/top-tags db)) [:top-tags :results])))
 
 (reg-sub
+  ::top-tags-loading?
+  (fn [db _]
+    (= :executing (keyword (apply gqlc/state db (events/top-tags db))))))
+
+(reg-sub
   ::top-users
   (fn [db _]
     (get-in (apply gqlc/result db (events/top-users db)) [:top-users :results])))
+
+(reg-sub
+  ::top-users-loading?
+  (fn [db _]
+    (= :executing (keyword (apply gqlc/state db (events/top-users db))))))
 
 (reg-sub
   ::recent-jobs
@@ -44,9 +64,19 @@
     (get-in (apply gqlc/result db (events/recent-jobs db)) [:recent-jobs :results])))
 
 (reg-sub
+  ::recent-jobs-loading?
+  (fn [db _]
+    (= :executing (keyword (apply gqlc/state db (events/recent-jobs db))))))
+
+(reg-sub
   ::recent-issues
   (fn [db _]
     (get-in (apply gqlc/result db (events/recent-issues db)) [:recent-issues :results])))
+
+(reg-sub
+  ::recent-issues-loading?
+  (fn [db _]
+    (= :executing (keyword (apply gqlc/state db (events/recent-issues db))))))
 
 (defn translate-job [job]
   (-> job
