@@ -1,7 +1,7 @@
 (ns wh.components.activities.issue-published
   (:require [clojure.string :as str]
-            [wh.components.activities.components :as components]
             [wh.common.data :refer [currency-symbols]]
+            [wh.components.activities.components :as components]
             [wh.components.tag :as tag]
             [wh.routes :as routes]
             [wh.styles.activities :as styles]

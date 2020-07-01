@@ -84,7 +84,7 @@
                    (str "Joined " (:creation-date company))
                    :else nil)]
     [:a {:class styles/company-info
-         :href (routes/path :company :params {:slug slug})}
+         :href  (routes/path :company :params {:slug slug})}
      [:img {:class styles/company-info__logo
             :src   logo}]
      [:h1 (util/smc styles/company-info__name) name]

@@ -28,3 +28,12 @@
   (->> (str/split (str s) #"\b")
        (map str/capitalize)
        str/join))
+
+(defn escape-html
+  "Change special characters into HTML character entities."
+  [s]
+  (-> s
+      (str/replace #"&" "&amp;")
+      (str/replace #"<" "&lt;")
+      (str/replace #">" "&gt;")
+      (str/replace #"\"" "&quot;")))
