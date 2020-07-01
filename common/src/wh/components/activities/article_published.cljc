@@ -7,7 +7,7 @@
 
 (defn article-time [{:keys [date reading-time]}]
   [:p (util/smc styles/article__time)
-   (str date "  •  " reading-time " min read")])
+   (str date "  •  " (if (zero? reading-time) 1 reading-time) " min read")])
 
 (defn article-boosts [upvotes]
   [:div (util/smc styles/article__boost)
