@@ -632,7 +632,7 @@
                  :description  "Experts in Data Science, Machine Learning, Data Engineering, Artificial Intelligence as well as Scala, Spark, Python and R."
                  :href         "/hire-data-scientists"
                  :description2 "Whether you’re looking to hire data scientists, machine learning experts, or data engineers to work with Spark, Python and R, we've got you covered"}
-   "java"       {:title        "Java developers"
+   "java"       {:title        "Java Developers"
                  :logo         "java"
                  :discover     "Discover the best Java opportunities"
                  :description  "Developers working with Java, Akka, Kafka, Spring and more."
@@ -649,7 +649,13 @@
                  :discover     "Discover the best remote opportunities"
                  :description  "Remote developers working with JavaScript, Go, Scala, Java, Python and more."
                  :href         "/hire-remote-developers"
-                 :description2 "Whether you're looking to hire full stack, frontend or backend remote developers, Data Scientists or Engineers, we've got you covered"}})
+                 :description2 "Whether you're looking to hire full stack, frontend or backend remote developers, Data Scientists or Engineers, we've got you covered"}
+   "www"        {:title        "Software Engineers"
+                 :logo         "www"
+                 :discover     "Discover the best software opportunities"
+                 :description  "Software engineers working with JavaScript, Go, Scala, Java, Python and more."
+                 :href         "/hire-developers"
+                 :description2 "Whether you're looking to hire full stack, frontend or backend developers, we've got you covered"}})
 
 (def in-demand-location-data
   ;; TODO Dedupe with location as below
