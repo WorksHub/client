@@ -121,7 +121,9 @@
 (reg-sub
   ::recent-activities-loading?
   (fn [db _]
-    (= :executing (keyword (apply gqlc/state db (events/recent-activities db))))))
+    (let [state (apply gqlc/state db (events/recent-activities db))]
+      (or (nil? state)
+          (= :executing (keyword state))))))
 
 (reg-sub
   ::selected-tags
