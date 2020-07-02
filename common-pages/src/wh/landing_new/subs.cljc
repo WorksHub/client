@@ -8,6 +8,7 @@
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
             [wh.common.time :as time]
+            [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.graphql-cache :as gqlc]
             [wh.landing-new.events :as events]
             [wh.landing-new.tags :as tags]
@@ -121,3 +122,11 @@
   ::recent-activities-loading?
   (fn [db _]
     (= :executing (keyword (apply gqlc/state db (events/recent-activities db))))))
+
+(reg-sub
+  ::selected-tags
+  :<- [:wh/query-params]
+  (fn [query-params _]
+    (->> query-params
+         tag-selector/query-params->query-params-tags-slugs
+         (map tag-selector/query-params-tag-slug->partial-tag))))

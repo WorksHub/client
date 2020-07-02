@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [wh.components.icons :as icons]
             [wh.components.skeletons.components :as skeletons]
+            [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.components.tag :as tag]
             [wh.routes :as routes]
             [wh.slug :as slug]
@@ -16,6 +17,7 @@
 
 (def button-class
   {:filled   (util/mc styles/button)
+   :filled-short (util/mc styles/button styles/button--short)
    :inverted (util/mc styles/button styles/button--inverted)})
 
 (defn button [{:keys    [type href]
@@ -151,3 +153,23 @@
     [skeletons/tags]]
    [footer :default
     [skeletons/button]]])
+
+(defn card-not-found [selected-tags]
+  (let [[text1 text2] (if (< (count selected-tags) 2)
+                        ["Hmm, looks likes there’s currently no content that features that particular language"
+                         "Be the first to create some content for that language"]
+                        ["Hmm, looks likes there’s currently no content that features these languages"
+                         "Be the first to create some content for these languages"])]
+    [card :not-found
+     [:div (util/smc styles/not-found)
+      [tag/tag-list
+       :li
+       (map #(assoc %
+               :inverted? true
+               :label (:slug %))
+            selected-tags)]
+      [:span (util/smc styles/not-found__title) text1]
+      [:span (util/smc styles/not-found__subtitle) text2]
+      [button {:href (routes/path :contribute) :type :filled-short} "Write an article"]]]))
+
+

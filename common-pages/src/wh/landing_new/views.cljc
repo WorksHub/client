@@ -7,7 +7,6 @@
             [wh.components.activities.job-published :as job-published]
             [wh.components.activities.job-published :as job-published]
             [wh.components.attract-card :as attract-card]
-            [wh.components.loader :as loader]
             [wh.components.newsletter :as newsletter]
             [wh.components.side-card.side-card :as side-cards]
             [wh.components.side-card.side-card-mobile :as side-cards-mobile]
@@ -51,7 +50,11 @@
   [:div (util/smc styles/card styles/card--tag-picker) "Tag picker"])
 
 (defn split-into-3-groups [elms]
-  (let [group-size (quot (count elms) 3)]
+  (let [size (count elms)
+        group-size (cond
+                     (< size 2) 1
+                     (< size 6) 2
+                     :else (quot size 3))]
     [(take group-size elms)
      (->> elms
           (drop group-size)
@@ -75,7 +78,8 @@
         activities-loading? (<sub [::subs/recent-activities-loading?])
         logged-in?          (<sub [:user/logged-in?])
         vertical            (<sub [:wh/vertical])
-        query-params        (<sub [:wh/query-params])]
+        query-params        (<sub [:wh/query-params])
+        selected-tags       (<sub [::subs/selected-tags])]
     [:div (util/smc styles/page)
      (when-not logged-in?
        [attract-card/all-cards {:logged-in? logged-in?
@@ -95,19 +99,23 @@
                (for [i (range 6)]
                  ^{:key i}
                  [activities/card-skeleton])])
-        (let [groups (split-into-3-groups activities)]
+        (let [[group1 group2 group3] (split-into-3-groups activities)
+              display-stat-card? (and (> (count activities) 6) (not logged-in?))]
           (into [:div {:class styles/main-column}
                  [side-cards-mobile/top-content {:jobs   jobs
                                                  :blogs  blogs
                                                  :issues issues}]
-                 (for [activity (nth groups 0)] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when-not logged-in? [stat-card/about-applications])
+                 (when (and (not activities-loading?)
+                            (= 0 (count activities)))
+                   [activities/card-not-found selected-tags])
+                 (for [activity group1] ^{:key (:id activity)} [:div (activity-card activity)])
+                 (when display-stat-card? [stat-card/about-applications])
                  [newsletter/newsletter {:logged-in? logged-in?
                                          :type       :landing}]
-                 (when-not logged-in? [stat-card/about-open-source])
-                 (for [activity (nth groups 1)] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when-not logged-in? [stat-card/about-salary-increase])
-                 (for [activity (nth groups 2)] ^{:key (:id activity)} [:div (activity-card activity)])])))
+                 (when display-stat-card? [stat-card/about-open-source])
+                 (for [activity group2] ^{:key (:id activity)} [:div (activity-card activity)])
+                 (when display-stat-card? [stat-card/about-salary-increase])
+                 (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs jobs-loading?]
        [side-cards/recent-issues issues issues-loading?]
