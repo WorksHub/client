@@ -89,13 +89,6 @@
                                 :redirect     :feed
                                 :logged-in?   logged-in?
                                 :query-params query-params
-                                :loading?     (or blogs-loading? companies-loading?)}]
-       [side-cards/top-ranking {:blogs        blogs
-                                :companies    companies
-                                :default-tab  :blogs
-                                :redirect     :feed
-                                :logged-in?   logged-in?
-                                :query-params query-params
                                 :loading?     (or blogs-loading? companies-loading?)}]]
       (if activities-loading?
         (into [:div {:class styles/main-column}

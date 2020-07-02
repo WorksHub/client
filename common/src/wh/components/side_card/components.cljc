@@ -12,12 +12,22 @@
             [wh.styles.side-card :as style]
             [wh.util :as util]))
 
-(defn card-tags [tags]
-  [tag/tag-list :a (->> tags
-                        (take 3)
-                        (map #(assoc %
-                                :href (routes/path :learn-by-tag :params {:tag (:slug %)})
-                                :with-icon? false)))])
+(defn card-tags [tags type]
+  [tag/tag-list
+   :a
+   (->> tags
+        (take 3)
+        (map #(assoc % :href
+                     (case type
+                       :company (routes/path :companies
+                                             :query-params
+                                             {:tag         (str (:slug %)
+                                                                ":"
+                                                                (name (:type %)))
+                                              :interaction 1})
+                       :article (routes/path :learn-by-tag
+                                             :params {:tag (:slug %)}))
+                     :with-icon? false)))])
 
 (defn card-tag [t]
   [tag/tag :div (assoc t :with-icon? false)])

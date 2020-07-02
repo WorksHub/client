@@ -105,11 +105,11 @@
 
 ;; -----------------------------------------------
 
-(defn card-company [{:keys [name total-published-issue-count total-published-job-count logo slug locations tags] :as _company}]
+(defn card-company [{:keys [total-published-issue-count total-published-job-count logo slug locations tags] :as company}]
   [:section {:class style/section__element}
    (let [location     (first locations)
          location-str (str (:city location) ", " (:country location))]
-     [c/connected-entity {:title    name
+     [c/connected-entity {:title    (:name company)
                           :subtitle location-str
                           :href     (routes/path :company :params {:slug slug})
                           :img-src  logo}])
@@ -121,7 +121,7 @@
                      :icon   "commit"
                      :sing   "live open source issue"
                      :plural "live open source issues"}]]
-   [c/card-tags tags]])
+   [c/card-tags tags :company]])
 
 (defn create-company-form-error->error-str
   [e]
@@ -201,7 +201,7 @@
                                                    (str upvote-count " boosts")])
                         :img-src  (:image-url author-info)
                         :img-type :rounded}]
-   [c/card-tags tags]])
+   [c/card-tags tags :article]])
 
 (defn write-article []
   [:div
@@ -246,7 +246,7 @@
        [:li
         [:label {:for input1-id :class (util/mc style/tabs__tab style/tabs__tab--companies)} "Companies"]]
        [:li
-        [:label {:for input2-id :class (util/mc style/tabs__tab style/tabs__tab--blogs)} "Blogs"]]]]
+        [:label {:for input2-id :class (util/mc style/tabs__tab style/tabs__tab--blogs)} "Articles"]]]]
      [:section {:class style/tabs__content}
       [top-ranking-companies companies redirect logged-in? query-params loading?]
       [top-ranking-blogs blogs loading?]]]))
