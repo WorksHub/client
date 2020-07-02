@@ -25,7 +25,8 @@
                          :contribute-edit})
 ;; TODO [ch4435] remove 'homepage-new' this once 'feed' is established
 (def no-menu-pages #{:register :register-company :payment-setup :get-started :homepage-new :feed})
-(def no-footer-pages no-menu-pages)
+(def no-footer-pages #{:register :register-company :payment-setup :get-started :homepage-new})
+(def no-nav-link-pages #{:register :register-company :payment-setup :get-started :homepage-new})
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation

@@ -399,14 +399,14 @@
   [_args]
   (let [tasks-open? (r/atom false)]
     (fn [{:keys [env vertical logged-in? query-params page user-type] :as args}]
-      (let [args (assoc args
-                        :tasks-open? tasks-open?
-                        :show-tasks? (= user-type "company"))
-            content? (not (contains? routes/no-menu-pages page))
+      (let [args          (assoc args
+                                 :tasks-open? tasks-open?
+                                 :show-tasks? (= user-type "company"))
+            content?      (not (contains? routes/no-nav-link-pages page))
             promo-banner? (and (contains? #{:pricing :how-it-works :issues :homepage} page)
                                (not logged-in?))]
-        [:nav {:class (util/merge-classes "navbar"
-                                          (when promo-banner? "navbar--has-promo-banner"))
+        [:nav {:class      (util/merge-classes "navbar"
+                                               (when promo-banner? "navbar--has-promo-banner"))
                :id         "wh-navbar"
                :role       "navigation"
                :aria-label "main navigation"}
