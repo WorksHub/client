@@ -3,7 +3,9 @@
             [wh.landing-new.tags :as tags]
             [wh.components.activities.queries :as activities-queries]
             #?(:cljs [wh.pages.core :refer [on-page-load]])
-            [wh.graphql.fragments])
+            [wh.graphql.fragments]
+            [re-frame.core :refer [reg-event-fx]]
+            [wh.db :as db])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
 
@@ -112,6 +114,13 @@
 (defn top-tags [db]
   [:top-tags {:vertical (:wh.db/vertical db)}])
 
+(reg-event-fx
+  ::set-page-title
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:page-title {:page-name "Feed"
+                  :vertical  (:wh.db/vertical db)}}))
+
 #?(:cljs
    ;; TODO [ch4435] remove this once 'feed' is established
    (defmethod on-page-load :homepage-new [db]
@@ -127,6 +136,19 @@
 #?(:cljs
    (defmethod on-page-load :feed [db]
      [[:wh.pages.core/unset-loader]
+      (into [:graphql/query] (recent-activities db))
+      (into [:graphql/query] (top-blogs db))
+      (into [:graphql/query] (top-companies db))
+      (into [:graphql/query] (top-tags db))
+      (into [:graphql/query] (top-users db))
+      (into [:graphql/query] (recent-issues db))
+      (into [:graphql/query] (recent-jobs db))]))
+
+#?(:cljs
+   ;; renamed by wh.pages.router
+   (defmethod on-page-load :homepage-not-logged-in [db]
+     [[:wh.pages.core/unset-loader]
+      [::set-page-title]
       (into [:graphql/query] (recent-activities db))
       (into [:graphql/query] (top-blogs db))
       (into [:graphql/query] (top-companies db))

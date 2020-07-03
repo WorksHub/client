@@ -10,7 +10,7 @@
     [wh.components.not-found :as not-found]
     [wh.db :as db]
     [wh.how-it-works.views :as how-it-works]
-    [wh.landing.views :as home]
+    [wh.landing-new.views :as home]
     [wh.pages.core :as pages]
     [wh.subs :as subs :refer [<sub run-sub]]))
 

@@ -12,18 +12,18 @@
 
 (defn probably-homepage-match?
   [target current-page]
-  (let [contains-homepage? (fn [x] (and x (str/includes? (name x) "homepage")))
-        homepage-target? (if (coll? target)
-                           (some contains-homepage? target)
-                           (contains-homepage? target))]
+  (let [contains-homepage? (fn [x] (and x (str/includes? (some-> x name) "homepage")))
+        homepage-target?   (if (coll? target)
+                             (some contains-homepage? target)
+                             (contains-homepage? target))]
     (and homepage-target?
          (contains-homepage? current-page))))
 
 (defn menu-item [current-page target icon-name & description]
   (let [[target target-link] (if (coll? target) target [target target])
-        link-opts (interop/multiple-on-click (interop/set-is-open-on-click data/logged-in-menu-id false)
-                                             (interop/disable-no-scroll-on-click))]
-    [:li (merge {:key (str (name target) "_" icon-name)}
+        link-opts            (interop/multiple-on-click (interop/set-is-open-on-click data/logged-in-menu-id false)
+                                                        (interop/disable-no-scroll-on-click))]
+    [:li (merge {:key (str (some-> target name) "_" icon-name)}
                 (when (or (= target current-page)
                           (and (probably-homepage-match? target current-page)))
                   {:class "current"}))
@@ -68,11 +68,11 @@
                tasks-header-id      "menu__list__tasks-header"
                tasks-id             "menu__list__tasks"
                toggle-section-class "menu__section--no-notifications"
-               tab-opts-fn (fn [show?] (interop/multiple-on-click
-                                         (interop/set-is-open-class-on-click toggle-section-class (not show?))
-                                         (interop/set-is-open-on-click list-id (not show?))
-                                         (interop/set-is-open-on-click tasks-id show?)
-                                         (interop/set-is-open-on-click tasks-header-id show?)))]
+               tab-opts-fn          (fn [show?] (interop/multiple-on-click
+                                                 (interop/set-is-open-class-on-click toggle-section-class (not show?))
+                                                 (interop/set-is-open-on-click list-id (not show?))
+                                                 (interop/set-is-open-on-click tasks-id show?)
+                                                 (interop/set-is-open-on-click tasks-header-id show?)))]
            [:section
             {:class (util/merge-classes class
                                         "menu__section"

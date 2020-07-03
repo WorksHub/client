@@ -82,7 +82,7 @@
              ;;Public SSR Pages - no app.js required
              [["" :homepage]
               ["feed" :feed]
-              ["homepage-new" :homepage-new]
+              ["homepage-new" :homepage-new] ;; TODO [ch4435] remove this once 'feed' is established
               ["hire-" {[:template] :homepage}]
               ["issues/" {""            :issues
                           [:company-id] (bidi/tag :issues :issues-for-company-id)}]

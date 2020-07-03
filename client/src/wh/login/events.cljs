@@ -160,8 +160,8 @@
   db/default-interceptors
   (fn [{db :db} [response]]
     (let [user-db (r/read-string response)]
-      {:db (update db :wh.user.db/sub-db merge user-db)
-       :dispatch [::pages/load-module-and-set-page {:handler :homepage}]})))
+      {:db      (update db :wh.user.db/sub-db merge user-db)
+       :set-url "/"})))
 
 (reg-event-fx
   ::login-as

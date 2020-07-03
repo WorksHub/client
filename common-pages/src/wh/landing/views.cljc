@@ -6,9 +6,9 @@
             [wh.components.button-auth :as button-auth]
             [wh.components.cards :refer [blog-card]]
             [wh.components.carousel :refer [carousel]]
-            [wh.components.job :refer [job-card]]
             [wh.components.common :refer [companies-section link wrap-img img]]
             [wh.components.icons :refer [icon]]
+            [wh.components.job :refer [job-card]]
             [wh.components.www-homepage :as www :refer [animated-hr]]
             [wh.how-it-works.views :as hiw]
             [wh.landing.subs :as subs]
@@ -134,6 +134,7 @@
       [oauth-email]]]]
    [bottom]])
 
+;; TODO [ch4435] remove this once 'feed' is established
 (defn page []
   (cond
     (= "www" (<sub [:wh/vertical]))

@@ -50,11 +50,11 @@
   [:div (util/smc styles/card styles/card--tag-picker) "Tag picker"])
 
 (defn split-into-3-groups [elms]
-  (let [size (count elms)
+  (let [size       (count elms)
         group-size (cond
                      (< size 2) 1
                      (< size 6) 2
-                     :else (quot size 3))]
+                     :else      (quot size 3))]
     [(take group-size elms)
      (->> elms
           (drop group-size)
@@ -80,6 +80,7 @@
         vertical            (<sub [:wh/vertical])
         query-params        (<sub [:wh/query-params])
         selected-tags       (<sub [::subs/selected-tags])
+        page                (<sub [:wh/page])
         company?            (<sub [:user/company?])]
     [:div (util/smc styles/page)
      (when-not logged-in?
@@ -91,7 +92,7 @@
        [side-cards/top-ranking {:blogs        blogs
                                 :companies    companies
                                 :default-tab  :companies
-                                :redirect     :feed
+                                :redirect     page
                                 :logged-in?   logged-in?
                                 :query-params query-params
                                 :loading?     (or blogs-loading? companies-loading?)}]]
@@ -101,7 +102,7 @@
                  ^{:key i}
                  [activities/card-skeleton])])
         (let [[group1 group2 group3] (split-into-3-groups activities)
-              display-stat-card? (and (> (count activities) 6) (not logged-in?))]
+              display-stat-card?     (and (> (count activities) 6) (not logged-in?))]
           (into [:div {:class styles/main-column}
                  [side-cards-mobile/top-content {:jobs   jobs
                                                  :blogs  blogs
