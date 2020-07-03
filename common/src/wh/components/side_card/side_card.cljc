@@ -27,7 +27,7 @@
         [c/card-tag {:label (str "$" amount)
                      :type  "funding"}]))]])
 
-(defn recent-issues [issues loading?]
+(defn recent-issues [issues loading? company?]
   [:section {:class style/section}
    [c/section-title "Live Open Source Issues"]
    (if loading?
@@ -39,7 +39,10 @@
                          :href  (routes/path :issues)}]
       [c/footer-link {:text      "Post your"
                       :bold-text "open source issue here"
-                      :href      (routes/path :create-job)}]])])
+                      :href      (if company?
+                                   (routes/path :company-issues)
+                                   (routes/path :register-company
+                                                :query-params {:redirect (name :company-issues)}))}]])])
 
 ;; -----------------------------------------------
 
@@ -89,7 +92,7 @@
    [c/card-link {:title title
                  :href  (routes/path :job :params {:slug slug})}]])
 
-(defn recent-jobs [jobs loading?]
+(defn recent-jobs [jobs loading? company?]
   [:section {:class style/section}
    [c/section-title "Hiring now"]
    (if loading?
@@ -101,7 +104,10 @@
                          :href  (routes/path :jobsboard)}]
       [c/footer-link {:text      "Hiring?"
                       :bold-text "Post your job here"
-                      :href      (routes/path :create-job)}]])])
+                      :href      (if company?
+                                   (routes/path :create-job)
+                                   (routes/path :register-company
+                                                :query-params {:redirect (name :create-job)}))}]])])
 
 ;; -----------------------------------------------
 

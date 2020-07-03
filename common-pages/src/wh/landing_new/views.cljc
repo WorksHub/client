@@ -79,7 +79,8 @@
         logged-in?          (<sub [:user/logged-in?])
         vertical            (<sub [:wh/vertical])
         query-params        (<sub [:wh/query-params])
-        selected-tags       (<sub [::subs/selected-tags])]
+        selected-tags       (<sub [::subs/selected-tags])
+        company?            (<sub [:user/company?])]
     [:div (util/smc styles/page)
      (when-not logged-in?
        [attract-card/all-cards {:logged-in? logged-in?
@@ -117,6 +118,6 @@
                  (when display-stat-card? [stat-card/about-salary-increase])
                  (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
-       [side-cards/recent-jobs jobs jobs-loading?]
-       [side-cards/recent-issues issues issues-loading?]
+       [side-cards/recent-jobs jobs jobs-loading? company?]
+       [side-cards/recent-issues issues issues-loading? company?]
        [side-cards/top-ranking-users users users-loading?]]]]))
