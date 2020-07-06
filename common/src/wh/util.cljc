@@ -46,7 +46,7 @@
   "If a key in the provided set is nil or blank, remove it entirely."
   [m ks]
   (into {} (remove (fn [[k v]] (and (contains? ks k)
-                                    (or (nil? v) (and (string? v) (str/blank? v))))))
+                                   (or (nil? v) (and (string? v) (str/blank? v))))))
         m))
 
 (defn remove-where
@@ -55,9 +55,9 @@
   [m pred?]
   (postwalk
     (fn [x] (if (map? x)
-              (into {} (remove (fn [[k v]]
-                                 (pred? v))) x)
-              x)) m))
+             (into {} (remove (fn [[k v]]
+                                (pred? v))) x)
+             x)) m))
 
 (defn remove-nils
   "Removes the map entry if the value for the key is nil. Also walks into nested maps"
@@ -115,12 +115,12 @@
   ([remove-value? coll]
    (letfn [(transform [[k v]] [(c/->camelCaseKeyword k) v])]
      (postwalk (fn [x] (if (map? x)
-                         (into {}
-                               (comp (remove (fn [[k v]] (remove-value? v)))
-                                     (map (fn [[k v]] [(keyword (name k)) v]))
-                                     (map transform))
-                               x)
-                         x)) coll))))
+                        (into {}
+                              (comp (remove (fn [[k v]] (remove-value? v)))
+                                    (map (fn [[k v]] [(keyword (name k)) v]))
+                                    (map transform))
+                              x)
+                        x)) coll))))
 
 (defn index-of
   "Returns the zero-based position of x in coll, or nil
@@ -366,10 +366,10 @@
          (subs s 0))))
 
 (s/fdef trunc
-        :args (s/cat :n nat-int?
-                     :s string?)
-        :ret (s/or :success string?
-                   :nil nil?))
+  :args (s/cat :n nat-int?
+               :s string?)
+  :ret (s/or :success string?
+             :nil nil?))
 
 (defn maps-with-id [n]
   (map (partial hash-map :id) (range n)))
