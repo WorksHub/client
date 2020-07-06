@@ -1,5 +1,6 @@
 (ns wh.components.activities.article-published
   (:require [wh.components.activities.components :as components]
+            [wh.components.common :refer [link wrap-img img base-img]]
             [wh.components.icons :as icons]
             [wh.routes :as routes]
             [wh.styles.activities :as styles]
@@ -18,8 +19,7 @@
 (defn image [{:keys [feature] :as blog}]
   (when feature
     [:div (util/smc styles/article__feature)
-     [:img {:class (util/mc styles/article__feature-img)
-            :src   feature}]]))
+     (wrap-img img feature {:w 578 :h 154 :class styles/article__feature-img :crop "center"})]))
 
 (defn card
   [{:keys [title tags id author author-info reading-time display-date upvote-count]

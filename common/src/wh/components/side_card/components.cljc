@@ -3,7 +3,7 @@
                 :clj clj-time.format) :as tf]
             [clojure.string :as str]
             [wh.common.text :as text]
-            [wh.components.common :refer [link]]
+            [wh.components.common :refer [link wrap-img img]]
             [wh.components.icons :refer [icon] :as icons]
             [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
@@ -47,7 +47,7 @@
                         (= title-type :primary) (util/mc style/connected-entity__title--primary))]
     [wrapper-tag {:class wrapper-class
                   :href  href}
-     [:img {:src img-src :class img-class}]
+     (wrap-img img img-src {:w 32 :h 32 :class img-class})
      [:div {:class style/connected-entity__info}
       [:span {:class title-class} title]
       [:span {:class (util/mc style/connected-entity__title style/connected-entity__title--minor)} subtitle]]]))

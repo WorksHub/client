@@ -1,9 +1,10 @@
 (ns wh.components.activities.components
   (:require [clojure.string :as str]
+            [wh.components.common :refer [link wrap-img img base-img]]
             [wh.components.icons :as icons]
             [wh.components.skeletons.components :as skeletons]
-            [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.components.tag :as tag]
+            [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.styles.activities :as styles]
@@ -87,15 +88,14 @@
                    :else nil)]
     [:a {:class styles/company-info
          :href  (routes/path :company :params {:slug slug})}
-     [:img {:class styles/company-info__logo
-            :src   logo}]
+     (wrap-img img logo {:w 40 :h 40 :class styles/company-info__logo})
      [:h1 (util/smc styles/company-info__name) name]
      (when info-str
        [:span (util/smc styles/company-info__job-count)
         info-str])]))
 
-(defn actions [{:keys    [like-opts save-opts share-opts]
-                :or {like-opts {} save-opts {} share-opts {}}}]
+(defn actions [{:keys [like-opts save-opts share-opts]
+                :or   {like-opts {} save-opts {} share-opts {}}}]
   [:div (util/smc styles/actions)
    [:a (merge (util/smc styles/actions__action styles/actions__action--save) save-opts)
     [icons/icon "save"]]])
@@ -165,11 +165,9 @@
       [tag/tag-list
        :li
        (map #(assoc %
-               :inverted? true
-               :label (:slug %))
+                    :inverted? true
+                    :label (:slug %))
             selected-tags)]
       [:span (util/smc styles/not-found__title) text1]
       [:span (util/smc styles/not-found__subtitle) text2]
       [button {:href (routes/path :contribute) :type :filled-short} "Write an article"]]]))
-
-
