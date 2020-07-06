@@ -111,12 +111,12 @@
                             (= 0 (count activities)))
                    [activities/card-not-found selected-tags])
                  (for [activity group1] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when display-stat-card? [stat-card/about-applications])
+                 (when display-stat-card? [stat-card/about-applications vertical])
                  [newsletter/newsletter {:logged-in? logged-in?
                                          :type       :landing}]
-                 (when display-stat-card? [stat-card/about-open-source])
+                 (when display-stat-card? [stat-card/about-open-source vertical])
                  (for [activity group2] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when display-stat-card? [stat-card/about-salary-increase])
+                 (when display-stat-card? [stat-card/about-salary-increase vertical])
                  (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs jobs-loading? company?]

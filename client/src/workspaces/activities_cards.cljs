@@ -1,20 +1,19 @@
 (ns workspaces.activities-cards
   (:require [nubank.workspaces.card-types.react :as ct.react]
             [nubank.workspaces.core :as ws]
-            [workspaces.reagent :as wr]
             [reagent.core :as r]
-            [wh.components.activities.company-published :as company-published]
             [wh.components.activities.article-published :as article-published]
-            [wh.components.activities.job-published :as job-published]
-            [wh.components.activities.issue-published :as issue-published]))
+            [wh.components.activities.company-published :as company-published]
+            [wh.components.activities.issue-published :as issue-published]
+            [wh.components.activities.job-published :as job-published]))
 
 (defn wrapper [children]
-  [:div {:style {:display "grid"
-                 :width "700px"
-                 :justify-content "center"
-                 :padding "16px"
+  [:div {:style {:display          "grid"
+                 :width            "700px"
+                 :justify-content  "center"
+                 :padding          "16px"
                  :background-color "pink"
-                 :grid-gap "20px"}}
+                 :grid-gap         "20px"}}
    children])
 
 (def tags [{:weight  0.029,
@@ -157,15 +156,19 @@
             :body "This has happened a few times now, where flow-bot is using the commit message in place of the name of the original committer. The correct behaviour should be that the user's name is always used. If for some reason it's not available then it should be omitted."})
 
 (ws/defcard company-published
-            (wr/reagent-card [wrapper [company-published/card company]]))
+  (ct.react/react-card
+    (r/as-element [wrapper [company-published/card company]])))
 
 (ws/defcard article-published
-            (wr/reagent-card [wrapper [article-published/card article]]))
+  (ct.react/react-card
+    (r/as-element [wrapper [article-published/card article]])))
 
 (ws/defcard job-published
-            (wr/reagent-card [wrapper [job-published/card job]]))
+  (ct.react/react-card
+    (r/as-element [wrapper [job-published/card job]])))
 
 (ws/defcard issue-published
-            (wr/reagent-card [wrapper [issue-published/card issue]]))
+  (ct.react/react-card
+    (r/as-element [wrapper [issue-published/card issue]])))
 
 (defonce init (ws/mount))
