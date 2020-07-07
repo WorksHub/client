@@ -1,4 +1,4 @@
-(ns wh.activities.subs
+(ns wh.admin.activities.subs
   (:require [re-frame.core :refer [reg-sub]]
             [wh.re-frame.subs :refer [<sub]]))
 
@@ -16,7 +16,8 @@
           feed-company {:object      feed-company
                         :object-type "company"}
           :else        {}))
-      (update :actor :id)))
+      (update :actor :id)
+      (dissoc :feed-job :feed-blog :feed-issue :feed-company)))
 
 (reg-sub
   ::activities

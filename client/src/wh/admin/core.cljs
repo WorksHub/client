@@ -2,6 +2,8 @@
   (:require [cljs.loader :as loader]
             [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
             [reagent.core :as reagent]
+            [wh.admin.activities.events :as activity-events]
+            [wh.admin.activities.views :as activity-views]
             [wh.admin.articles.events :as articles-events]
             [wh.admin.articles.views :as articles]
             [wh.admin.candidates.events :as candidates-events]
@@ -21,7 +23,8 @@
    :admin-companies      {:page companies/page, :can-access? user/admin?}
    :admin-articles       {:page articles/page, :can-access? user/admin?}
    :create-company-offer {:page create-offer/page, :can-access? user/admin?}
-   :tags-edit            {:page tags/page, :can-access? user/admin?}})
+   :tags-edit            {:page tags/page, :can-access? user/admin?}
+   :feed-preview         {:page activity-views/preview :can-access? user/admin?}})
 
 (reg-event-db
   ::initialize-page-mapping

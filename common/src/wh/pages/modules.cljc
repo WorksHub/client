@@ -30,7 +30,7 @@
    :edit-company               :company
    :edit-job                   :company
    :feed                       :landing-page
-   :feed-preview               :activities ;; TODO [ch4436] move this into admin
+   :feed-preview               :admin
    :get-started                :login
    :github-callback            :login
    :stackoverflow-callback     :login
