@@ -43,7 +43,7 @@
                            "ocaml"    "Look for backend roles working with OCaml"
                            "elm"      "Look for front-end and full-stack roles working with Elm"
                            "reasonml" "Look for front-end and full-stack roles working with ReasonML"}
-    :articles-tags         ["scala" "clojure" "elm" "haskell" "ocaml" "rust" "erlang" "elixir" "F#"]}
+    :articles-tags        ["scala" "clojure" "elm" "haskell" "ocaml" "rust" "erlang" "elixir" "F#"]}
    "blockchain"
    {:platform-name        "Blockchain Works"
     :label-name           "Blockchain"
