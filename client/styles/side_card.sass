@@ -12,6 +12,9 @@ $shadow: 0 0 0 2px $primary-red
   border-radius: 6px
   padding: 23px 16px
 
+  &--centered
+    text-align: center
+
 .tabs
   display: grid
   grid-template-columns: 1fr 1fr
@@ -225,6 +228,15 @@ $shadow: 0 0 0 2px $primary-red
       background: $grey100
       color: $primary-red
 
+  &--dark
+    border: 1px solid transparent
+    color: $text-white
+    background: $grey500
+
+    &:hover
+      background: $grey300
+      color: $text-white
+
 .input
   height: 46px
   border: 1px solid $grey200
@@ -244,3 +256,7 @@ $shadow: 0 0 0 2px $primary-red
   color: $error-red
   line-height: 1.4em
   margin: 8px 0
+
+.header-image
+  padding: 0 18px
+  margin-bottom: 12px

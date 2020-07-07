@@ -120,5 +120,6 @@
                  (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs jobs-loading? company?]
+       [side-cards/osi-how-it-works]
        [side-cards/recent-issues issues issues-loading? company?]
        [side-cards/top-ranking-users users users-loading?]]]]))

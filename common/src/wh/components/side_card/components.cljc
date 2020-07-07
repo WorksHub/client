@@ -88,8 +88,11 @@
 
 (defn section-button [{:keys [title href type]}]
   [(if href :a :button)
-   (merge {:class (cond-> style/button
-                          (= :no-border type) (util/mc style/button--text))}
+   (merge {:class (util/mc style/button
+                           (case type
+                             :no-border style/button--text
+                             :dark      style/button--dark
+                             nil))}
           (when href {:href href}))
    title])
 
