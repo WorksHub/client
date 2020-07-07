@@ -20,8 +20,11 @@
   {:venia/operation {:operation/type :query
                      :operation/name "top_blogs"}
    :venia/variables [{:variable/name "vertical"
-                      :variable/type :vertical}]
-   :venia/queries   [[:top_blogs {:vertical :$vertical}
+                      :variable/type :vertical}
+                     {:variable/name "limit"
+                      :variable/type :Int}]
+   :venia/queries   [[:top_blogs {:vertical :$vertical
+                                  :limit    :$limit}
                       [[:results [:id
                                   :title
                                   [:tags :fragment/tagFields]
@@ -33,7 +36,8 @@
 (reg-query :top-blogs top-blogs-query)
 
 (defn top-blogs [db]
-  [:top-blogs {:vertical (:wh.db/vertical db)}])
+  [:top-blogs {:vertical (:wh.db/vertical db)
+               :limit    5}])
 
 (defquery recent-issues-query
   {:venia/operation {:operation/type :query
@@ -51,12 +55,15 @@
 (defn recent-issues [db]
   [:recent-issues {:vertical (:wh.db/vertical db)}])
 
-(defquery top-companies-queries
+(defquery top-companies-query
   {:venia/operation {:operation/type :query
                      :operation/name "top_companies"}
    :venia/variables [{:variable/name "vertical"
-                      :variable/type :vertical}]
-   :venia/queries   [[:top_companies {:vertical :$vertical}
+                      :variable/type :vertical}
+                     {:variable/name "limit"
+                      :variable/type :Int}]
+   :venia/queries   [[:top_companies {:vertical :$vertical
+                                      :limit    :$limit}
                       [[:results [:id
                                   :name
                                   :slug
@@ -65,9 +72,10 @@
                                   :total_published_job_count
                                   [:tags :fragment/tagFields]
                                   [:locations [:city :country]]]]]]]})
-(reg-query :top-companies top-companies-queries)
+(reg-query :top-companies top-companies-query)
 (defn top-companies [db]
-  [:top-companies {:vertical (:wh.db/vertical db)}])
+  [:top-companies {:vertical (:wh.db/vertical db)
+                   :limit    3}])
 
 (defquery top-users-queries
   {:venia/operation {:operation/type :query
