@@ -23,10 +23,10 @@
                          :pre-set-search
                          :jobsboard
                          :contribute-edit})
-;; TODO [ch4435] remove 'homepage-new' this once 'feed' is established
-(def no-menu-pages #{:register :register-company :payment-setup :get-started :homepage-new :feed})
-(def no-footer-pages #{:register :register-company :payment-setup :get-started :homepage-new})
-(def no-nav-link-pages #{:register :register-company :payment-setup :get-started :homepage-new})
+
+(def no-menu-pages #{:register :register-company :payment-setup :get-started :feed})
+(def no-footer-pages #{:register :register-company :payment-setup :get-started})
+(def no-nav-link-pages #{:register :register-company :payment-setup :get-started})
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation
@@ -82,7 +82,6 @@
              ;;Public SSR Pages - no app.js required
              [["" :homepage]
               ["feed" :feed]
-              ["homepage-new" :homepage-new] ;; TODO [ch4435] remove this once 'feed' is established
               ["hire-" {[:template] :homepage}]
               ["issues/" {""            :issues
                           [:company-id] (bidi/tag :issues :issues-for-company-id)}]
@@ -228,7 +227,6 @@
                                                :company-articles
                                                :feed
                                                :homepage
-                                               :homepage-new ;; TODO [ch4435] remove this once 'feed' is established
                                                :how-it-works
                                                ;;:issue CH3610
                                                ;;:issues CH3615

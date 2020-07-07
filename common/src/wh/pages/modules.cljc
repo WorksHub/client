@@ -40,7 +40,6 @@
                                 "company"   :company
                                 "admin"     :company
                                 nil         :landing-page} ;; when there is no user type (i.e. not logged in)
-   :homepage-new               :landing-page
    :homepage-dashboard         :logged-in
    :improve-recommendations    :logged-in
    :issue                      :issues
