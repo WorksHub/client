@@ -118,7 +118,7 @@
 
 (defn pre-execute [db query-id variables ctx]
   #?(:clj
-     (let [query (get-handler :graphql-query query-id true)
+     (let [query  (get-handler :graphql-query query-id true)
            result (try
                     (graphql/execute-query query variables ctx)
                     (catch Exception e

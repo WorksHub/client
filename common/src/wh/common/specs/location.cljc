@@ -29,10 +29,10 @@
                                     :int (s/int-in -180 180)))
 (s/def :wh.location/timezone string?)
 
-(s/def :wh/location (s/keys :req-un [:wh.location/city
-                                     :wh.location/country
+(s/def :wh/location (s/keys :req-un [:wh.location/country
                                      :wh.location/country-code]
-                            :opt-un [:wh.location/sub-region
+                            :opt-un [:wh.location/city
+                                     :wh.location/sub-region
                                      :wh.location/region
                                      :wh.location/latitude
                                      :wh.location/longitude
@@ -51,4 +51,3 @@
                    :wh.location/administrative
                    :wh.location/state
                    :wh.location/timezone]))
-
