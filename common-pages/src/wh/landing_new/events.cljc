@@ -43,8 +43,11 @@
   {:venia/operation {:operation/type :query
                      :operation/name "recent_issues"}
    :venia/variables [{:variable/name "vertical"
-                      :variable/type :vertical}]
-   :venia/queries   [[:recent_issues {:vertical :$vertical}
+                      :variable/type :vertical}
+                     {:variable/name "limit"
+                      :variable/type :Int}]
+   :venia/queries   [[:recent_issues {:vertical :$vertical
+                                      :limit    :$limit}
                       [[:results [:id
                                   [:compensation [:amount]]
                                   :title
@@ -53,7 +56,8 @@
                                   [:company [:name :slug :logo]]]]]]]})
 (reg-query :recent-issues recent-issues-query)
 (defn recent-issues [db]
-  [:recent-issues {:vertical (:wh.db/vertical db)}])
+  [:recent-issues {:vertical (:wh.db/vertical db)
+                   :limit    3}])
 
 (defquery top-companies-query
   {:venia/operation {:operation/type :query
