@@ -101,8 +101,11 @@
   {:venia/operation {:operation/type :query
                      :operation/name "recent_jobs"}
    :venia/variables [{:variable/name "vertical"
-                      :variable/type :vertical}]
-   :venia/queries   [[:recent_jobs {:vertical :$vertical}
+                      :variable/type :vertical}
+                     {:variable/name "limit"
+                      :variable/type :Int}]
+   :venia/queries   [[:recent_jobs {:vertical :$vertical
+                                    :limit    :$limit}
                       [[:results [:id
                                   :title
                                   :slug
@@ -113,7 +116,8 @@
                                                   :total_published_job_count]]]]]]]})
 (reg-query :recent-jobs recent-jobs-query)
 (defn recent-jobs [db]
-  [:recent-jobs {:vertical (:wh.db/vertical db)}])
+  [:recent-jobs {:vertical (:wh.db/vertical db)
+                 :limit    3}])
 
 (defquery top-tags-query
   {:venia/operation {:operation/type :query
