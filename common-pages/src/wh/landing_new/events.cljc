@@ -123,12 +123,16 @@
   {:venia/operation {:operation/type :query
                      :operation/name "top_tags"}
    :venia/variables [{:variable/name "vertical"
-                      :variable/type :vertical}]
-   :venia/queries   [[:top_tags {:vertical :$vertical}
+                      :variable/type :vertical}
+                     {:variable/name "limit"
+                      :variable/type :Int}]
+   :venia/queries   [[:top_tags {:vertical :$vertical
+                                 :limit    :$limit}
                       [[:results :fragment/tagFields]]]]})
 (reg-query :top-tags top-tags-query)
 (defn top-tags [db]
-  [:top-tags {:vertical (:wh.db/vertical db)}])
+  [:top-tags {:vertical (:wh.db/vertical db)
+              :limit    15}])
 
 (reg-event-fx
   ::set-page-title
