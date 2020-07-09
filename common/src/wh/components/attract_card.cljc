@@ -10,34 +10,42 @@
             [wh.verticals :as verticals]))
 
 (defn intro
-  [vertical]
-  [:div (merge (util/smc style/attract-card style/intro)
-               (util/test-selector "intro-attract"))
-   [:div (util/smc style/intro__branding)
-    [icon vertical :class style/intro__icon]
-    [branding/vertical-title vertical
-     {:size :small :multiline? true}]]
-   [:p (util/smc style/intro__description)
-    [:span (str (get-in data/in-demand-hiring-data [vertical :discover]) " with ")]
-    [:span (util/smc style/intro__vertical-title) (verticals/config vertical :platform-name)]]])
+  ([vertical]
+   [intro vertical :default])
+  ([vertical type]
+   [:div (merge (util/smc style/attract-card
+                          style/intro
+                          [(= type :main-column) style/intro--main-column])
+                (util/test-selector "intro-attract"))
+    [:div (util/smc style/intro__branding)
+     [icon vertical :class style/intro__icon]
+     [branding/vertical-title vertical
+      {:size :small :multiline? true}]]
+    [:p (util/smc style/intro__description)
+     [:span (str (get-in data/in-demand-hiring-data [vertical :discover]) " with ")]
+     [:span (util/smc style/intro__vertical-title) (verticals/config vertical :platform-name)]]]))
 
 (defn contribute
-  [logged-in?]
-  [:div (merge (util/smc style/attract-card style/contribute)
-               (util/test-selector "contribute-attract"))
-   [:div (util/smc style/contribute__info)
-    [:h2 (util/smc style/contribute__heading) "Write an article"]
-    [:p (util/smc style/contribute__copy) "Share your thoughts & expertise with a huge community of users"]
-    [:a
-     (merge {:class (util/mc style/button)}
-            #?(:clj (when-not logged-in?
-                      (interop/on-click-fn
-                        (interop/show-auth-popup :contribute [:contribute])))
-               :cljs {:on-click #(dispatch (if logged-in?
-                                             [:wh.events/nav :contribute]
-                                             [:wh.events/contribute]))})) "Write article"]]
-   [:div (util/smc style/contribute__illustration)
-    [:img {:src "/images/hiw/company/benefits/benefit2.svg"}]]])
+  ([logged-in?]
+   [contribute logged-in? :default])
+  ([logged-in? type]
+   [:div (merge (util/smc style/attract-card
+                          style/contribute
+                          [(= type :side-column) style/contribute--side-column])
+                (util/test-selector "contribute-attract"))
+    [:div (util/smc style/contribute__info)
+     [:h2 (util/smc style/contribute__heading) "Write an article"]
+     [:p (util/smc style/contribute__copy) "Share your thoughts & expertise with a huge community of users"]
+     [:a
+      (merge {:class (util/mc style/button)}
+             #?(:clj  (when-not logged-in?
+                        (interop/on-click-fn
+                          (interop/show-auth-popup :contribute [:contribute])))
+                :cljs {:on-click #(dispatch (if logged-in?
+                                              [:wh.events/nav :contribute]
+                                              [:wh.events/contribute]))})) "Write article"]]
+    [:div (util/smc style/contribute__illustration)
+     [:img {:src "/images/hiw/company/benefits/benefit2.svg"}]]]))
 
 (defn signin
   []

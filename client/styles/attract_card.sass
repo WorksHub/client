@@ -21,13 +21,17 @@ $attract-card-shadow-color: rgba(0, 0, 0, .04)
   background-image: url('/images/intro-card-bg.svg')
   display: flex
   flex-direction: column
-  justify-content: space-between
+  justify-content: space-around
   text-align: center
+  &--main-column
+    +tablet
+      display: none
 
 .intro__branding
   align-items: center
   display: flex
   flex-direction: column
+  margin-bottom: 4px
 
 .intro__icon
   height: $intro-card-logo-dim
@@ -74,6 +78,12 @@ $attract-card-shadow-color: rgba(0, 0, 0, .04)
 
 .contribute
   display: flex
+  &--side-column
+    display: none
+  +tablet
+    display: flex
+  +desktop
+    display: none
 
 .contribute__info
   display: flex
@@ -129,11 +139,11 @@ $attract-card-shadow-color: rgba(0, 0, 0, .04)
   +tablet
     display: grid
     grid-template-columns: repeat(2, 1fr)
-    .intro
+    .contribute
       display: none
 
   +desktop
     grid-template-columns: repeat(3, 1fr)
-    .intro
-      display: inherit
+    .contribute
+      display: flex
 

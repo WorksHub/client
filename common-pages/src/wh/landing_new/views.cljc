@@ -89,6 +89,7 @@
      [:div (util/smc styles/page__main)
       [:div (util/smc styles/side-column styles/side-column--left)
        [tag-selector/card-with-selector tags tags-loading?]
+       [attract-card/contribute logged-in? :side-column]
        [side-cards/top-ranking {:blogs        blogs
                                 :companies    companies
                                 :default-tab  :companies
@@ -107,6 +108,7 @@
                  [side-cards-mobile/top-content {:jobs   jobs
                                                  :blogs  blogs
                                                  :issues issues}]
+                 [attract-card/intro vertical :main-column]
                  (when (and (not activities-loading?)
                             (= 0 (count activities)))
                    [activities/card-not-found selected-tags])
