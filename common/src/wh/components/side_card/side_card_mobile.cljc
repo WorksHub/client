@@ -1,5 +1,5 @@
 (ns wh.components.side-card.side-card-mobile
-  (:require [wh.components.common :refer [link]]
+  (:require [wh.components.common :refer [link wrap-img img]]
             [wh.components.icons :as icons]
             [wh.routes :as routes]
             [wh.interop :as interop]
@@ -8,8 +8,9 @@
 
 (defn connected-entity [entity]
   [:div (util/smc style/connected-entity)
-   [:img {:class style/connected-entity__avatar
-          :src (or (:logo entity) (:image-url entity))}]
+   (wrap-img img
+             (or (:logo entity) (:image-url entity))
+             {:w 16 :h 16 :class style/connected-entity__avatar})
    [:span (util/smc style/connected-entity__title)
     (:name entity)]])
 

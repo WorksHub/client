@@ -1,5 +1,5 @@
 const sectionId = {
-    blogs: 'trending-content-jobs',
+    blogs: 'trending-content-blogs',
     issues: 'trending-content-issues',
     jobs: 'trending-content-jobs'
 };
