@@ -3,20 +3,22 @@
             [wh.common.specs.company :as company-spec]
             [wh.routes :as routes]))
 
-(defn details [{:keys [name tags slug description size locations] :as company}]
+(defn details [{:keys [name tags slug description size locations] :as company} entity-type]
   [components/inner-card
-   [:div
-    [components/title
-     {:href   (routes/path :company :params {:slug slug})
-      :margin true}
-     name]
-    (when (or size (first locations))
-      (let [location (first locations)
-            location-str (str (:city location) ", " (:country location))]
-        [components/meta-row
-         (when-let [size-str (company-spec/size->range size)]
-           [components/text-with-icon {:icon "couple"} size-str])
-         (when location [components/text-with-icon {:icon "pin"} location-str])]))]
+   [components/title-with-icon
+    [:div
+     [components/title
+      {:href   (routes/path :company :params {:slug slug})
+       :margin true}
+      name]
+     (when (or size (first locations))
+       (let [location (first locations)
+             location-str (str (:city location) ", " (:country location))]
+         [components/meta-row
+          (when-let [size-str (company-spec/size->range size)]
+            [components/text-with-icon {:icon "couple"} size-str])
+          (when location [components/text-with-icon {:icon "pin"} location-str])]))]
+    [components/entity-icon "union" entity-type]]
    [components/description {:type :cropped} description]
    [components/tags tags]])
 
@@ -25,9 +27,11 @@
   [components/card type
    [components/header
     [components/company-info company]
-    [components/entity-icon "union" type]]
-   [components/description "Recently published their public profile"]
-   [details company]
+    [components/entity-description :company type]]
+   [components/description (if (= type :publish)
+                             "Recently published their public profile"
+                             "Recently had a lot of views")]
+   [details company type]
    [components/footer :default
     [components/footer-buttons
      [components/button

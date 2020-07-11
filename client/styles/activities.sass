@@ -8,15 +8,19 @@ $font-family: Montserrat, serif
 
 .card
   background-color: $background-white
-  border-radius: 8px
   box-shadow: 0 4px 8px $card-shadow-color
   overflow: hidden
-  padding: 20px
+  padding: 16px
   display: grid
   grid-gap: 24px
+  position: relative
 
   &--highlight
     box-shadow: inset 0 0 0 1px $primary-red
+
+  +tablet
+    padding: 20px
+    border-radius: 8px
 
 .company-info__logo
   grid-column: 1
@@ -45,12 +49,25 @@ $font-family: Montserrat, serif
   height: 20px
   position: relative
 
+.title-with-icon
+  display: grid
+  grid-gap: 8px
+  grid-template-columns: 1fr auto
+  align-items: start
+  position: relative
+  &::after
+    content: ""
+    width: 40px
+    height: 20px
+
 .company-info
   column-gap: 16px
   display: grid
   grid-template-columns: 40px 1fr
-  grid-template-rows: 1fr 1fr
-  height: 40px
+  grid-template-rows: 1fr 18px
+  padding-right: 40px
+  +tablet
+    padding-right: 148px
   &:hover
     .company-info__name,
     .company-info__job-count
@@ -76,10 +93,12 @@ $font-family: Montserrat, serif
   font-weight: 600
   line-height: 22px
   margin: 0
+  align-self: center
   &--large
-    font-size: 18px
     font-weight: 700
-    line-height: 26px
+    +tablet
+      font-size: 18px
+      line-height: 26px
   &--margin
     margin-bottom: 8px
 
@@ -135,7 +154,7 @@ $font-family: Montserrat, serif
 
   +tablet
     font-size: 13px
-    padding: 0 60px
+    padding: 0 40px
 
   &:hover
     background: $highlight-red
@@ -159,6 +178,7 @@ $font-family: Montserrat, serif
   width: 100%
 
 .article__boost
+  display: none
   font-family: $font-family
   font-size: 12px
   font-weight: 500
@@ -168,6 +188,8 @@ $font-family: Montserrat, serif
   text-align: center
   color: $grey400
   margin-top: 4px
+  +tablet
+    display: block
 
 .article__boost-icon
   height: 22px
@@ -196,19 +218,73 @@ $font-family: Montserrat, serif
   background: $iceberg
   fill: $iceberg-dark
   border-radius: 50%
-  height: 40px
-  width: 40px
-  min-width: 40px
-  min-height: 40px
+  height: 30px
+  width: 30px
+  min-width: 30px
+  min-height: 30px
+  position: absolute
+  right: 0
+  top: -1px
+  +tablet
+    height: 36px
+    width: 36px
+    min-width: 36px
+    min-height: 36px
 
   &--highlight
     background: $highlight-red
     fill: $primary-red
     animation: shake 6s cubic-bezier(.36,.07,.19,.97) infinite
 
-.entity-icon__icon
-  height: 1.7rem
-  width: 2rem
+  &__icon
+    height: 1.3rem
+    width: 1.4rem
+    +tablet
+      height: 1.5rem
+      width: 2rem
+
+.entity-description
+  background: $iceberg
+  color: $iceberg-dark
+  padding: 0 6px 0 8px
+  border-top-left-radius: 4px
+  border-bottom-left-radius: 4px
+  font-weight: 700
+  text-transform: capitalize
+  white-space: nowrap
+  font-size: 10px
+  line-height: 22px
+  margin-left: 4px
+  letter-spacing: 0.02em
+  position: absolute
+  right: 0
+  top: 16px
+  +tablet
+    font-size: 12px
+    padding: 0 12px
+    line-height: 28px
+
+  &--highlight
+    border-right: 1px solid $primary-red
+    background: $highlight-red
+    color: $primary-red
+
+  &--adjective
+    display: none
+    +tablet
+      display: inline-block
+      margin-right: 4px
+
+  &--icon-wrapper
+    display: flex
+    align-items: center
+
+  &--icon
+    width: 13px
+    height: 13px
+    margin-right: 4px
+    +tablet
+      display: none
 
 .author
   align-items: center
@@ -230,10 +306,13 @@ $font-family: Montserrat, serif
   display: flex
   align-items: center
   justify-content: flex-end
-  border-top: 1px solid $border-gray
-  padding-top: 16px
+  padding-top: 8px
   &--compound
     justify-content: space-between
+
+  +tablet
+    border-top: 1px solid $border-gray
+    padding-top: 16px
 
 .footer__buttons
   display: grid
@@ -275,9 +354,11 @@ $font-family: Montserrat, serif
 .inner-card
   border-radius: 4px
   border: 1px solid $border-gray
-  padding: 24px
+  padding: 16px
   display: grid
   grid-gap: 18px
+  +tablet
+    padding: 24px
 
 .card-content
   display: grid

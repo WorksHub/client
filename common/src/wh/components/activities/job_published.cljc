@@ -6,11 +6,14 @@
             [wh.util :as util]))
 
 (defn details [{:keys [title slug remote sponsorship-offered display-location display-salary tags role-type display-date]
-                :as   job}]
+                :as   job}
+               entity-type]
   [components/inner-card
-   [components/title
-    {:href (routes/path :job :params {:slug slug})}
-    title]
+   [components/title-with-icon
+    [components/title
+     {:href (routes/path :job :params {:slug slug})}
+     title]
+    [components/entity-icon "suitcase" entity-type]]
    [components/meta-row
     [:p (util/smc styles/job__salary) display-salary]
     [components/text-with-icon {:icon "clock"} role-type]
@@ -28,9 +31,9 @@
   [components/card type
    [components/header
     [components/company-info (:job-company job)]
-    [components/entity-icon "suitcase" type]]
+    [components/entity-description :job type]]
    [components/description {:type :cropped} (:tagline job)]
-   [details job]
+   [details job type]
    [components/footer :compound
     [components/actions
      {:save-opts (interop/on-click-fn

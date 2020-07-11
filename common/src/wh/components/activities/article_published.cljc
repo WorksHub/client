@@ -34,7 +34,7 @@
       [components/title
        {:href (routes/path :blog :params {:id id})}
        title]
-      [components/entity-icon "union" type]]
+      [components/entity-description :blog type]]
      [components/meta-row
       [components/author {:img (:image-url author-info)} author]
       [article-time

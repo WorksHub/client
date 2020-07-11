@@ -76,6 +76,18 @@
                    [(= type :highlight) styles/entity-icon--highlight])
     [icons/icon icon-name :class styles/entity-icon__icon]]))
 
+(defn entity-description [type entity-type]
+   [:div (util/smc styles/entity-description
+                   [(= entity-type :highlight) styles/entity-description--highlight])
+    (cond->> (case type
+               :blog "Article"
+               :issue "Issue"
+               :company "Company"
+               :job "Job")
+             (= :publish entity-type) (str "New ")
+             (= :highlight entity-type) (conj [:span (util/smc styles/entity-description--icon-wrapper)
+                                               [:span (util/smc styles/entity-description--adjective) "Trending "]
+                                               [icons/icon "trends" :class styles/entity-description--icon]]))])
 
 (defn company-info [{:keys [logo name slug] :as company}]
   (let [info-str (cond
@@ -125,10 +137,15 @@
   [:div (util/smc styles/meta-row)
    (keyed-collection children)])
 
+(defn title-with-icon [& children]
+  [:div (util/smc styles/title-with-icon)
+   (keyed-collection children)])
+
 (defn text-with-icon [{:keys [icon]} children]
-  [:div (util/smc styles/text-with-icon)
-   [:div (util/smc styles/text-with-icon__icon) [icons/icon icon]]
-   [:span children]])
+  (when children
+    [:div (util/smc styles/text-with-icon)
+     [:div (util/smc styles/text-with-icon__icon) [icons/icon icon]]
+     [:span children]]))
 
 (defn inner-card [& children]
   [:div (util/smc styles/inner-card)

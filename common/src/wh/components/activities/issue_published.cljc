@@ -24,12 +24,14 @@
           name
           currency-symbols))
 
-(defn details [{:keys [id title contributors-count level pr-count repo compensation] :as issue}]
+(defn details [{:keys [id title contributors-count level pr-count repo compensation] :as issue} entity-type]
   [components/inner-card
-   [components/title
-    {:href (routes/path :issue :params {:id id})
-     :type :medium}
-    title]
+   [components/title-with-icon
+    [components/title
+     {:href (routes/path :issue :params {:id id})
+      :type :medium}
+     title]
+    [components/entity-icon "git" entity-type]]
    [:div (util/smc styles/issue__meta-row-wrapper)
     [components/meta-row
      [components/text-with-icon {:icon "issue-state"} (-> issue
@@ -52,9 +54,9 @@
   [components/card type
    [components/header
     [components/company-info (:issue-company issue)]
-    [components/entity-icon "git" type]]
+    [components/entity-description :issue type]]
    [components/description {:type :cropped} body]
-   [details issue]
+   [details issue type]
    [components/footer :default
     [components/footer-buttons
      [components/button
