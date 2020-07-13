@@ -81,21 +81,25 @@
   [:top-companies {:vertical (:wh.db/vertical db)
                    :limit    3}])
 
-(defquery top-users-queries
+(defquery top-users-query
   {:venia/operation {:operation/type :query
                      :operation/name "top_users"}
    :venia/variables [{:variable/name "vertical"
-                      :variable/type :vertical}]
-   :venia/queries   [[:top_users {:vertical :$vertical}
+                      :variable/type :vertical}
+                     {:variable/name "limit"
+                      :variable/type :Int}]
+   :venia/queries   [[:top_users {:vertical :$vertical
+                                  :limit    :$limit}
                       [[:results [:id
                                   :name
                                   :created
                                   :image_url
                                   :blog_count
                                   :issue_count]]]]]})
-(reg-query :top-users top-users-queries)
+(reg-query :top-users top-users-query)
 (defn top-users [db]
-  [:top-users {:vertical (:wh.db/vertical db)}])
+  [:top-users {:vertical (:wh.db/vertical db)
+               :limit    3}])
 
 (defquery recent-jobs-query
   {:venia/operation {:operation/type :query
