@@ -114,6 +114,18 @@ $attract-card-shadow-color: rgba(0, 0, 0, .04)
   flex-direction: column
   justify-content: space-between
 
+  &--side-column
+    height: auto
+    position: sticky
+    top: 64px
+    +desktop
+      top: 94px
+    .signin__buttons
+      grid-template-columns: auto
+    .signin__copy
+      padding-top: 8px
+      padding-bottom: 8px
+
 .signin__heading
   color: $attract-card-heading-color
   font-size: $attract-card-heading-font-size

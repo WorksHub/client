@@ -48,16 +48,20 @@
      [:img {:src "/images/hiw/company/benefits/benefit2.svg"}]]]))
 
 (defn signin
-  []
-  [:div (merge (util/smc style/attract-card style/signin)
-               (util/test-selector "signin-attract"))
-   [:h2 (util/smc style/signin__heading) "Sign in"]
-   [:p (util/smc style/signin__copy) "to customize your feed & discover cool stuff"]
-   [:div (util/smc style/signin__buttons)
-    [signin-button/github]
-    [signin-button/stack-overflow]
-    [signin-button/twitter]
-    [signin-button/email]]])
+  ([]
+   [signin :default])
+  ([type]
+   [:div (merge (util/smc style/attract-card
+                          style/signin
+                          [(= type :side-column) style/signin--side-column])
+                (util/test-selector "signin-attract"))
+    [:h2 (util/smc style/signin__heading) "Sign in"]
+    [:p (util/smc style/signin__copy) "to customize your feed & discover cool stuff"]
+    [:div (util/smc style/signin__buttons)
+     [signin-button/github]
+     [signin-button/stack-overflow]
+     [signin-button/twitter]
+     [signin-button/email]]]))
 
 (defn all-cards [{:keys [vertical logged-in?]}]
   [:div (util/smc style/cards)

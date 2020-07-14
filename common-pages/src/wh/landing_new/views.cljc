@@ -49,17 +49,18 @@
 (defn tag-picker []
   [:div (util/smc styles/card styles/card--tag-picker) "Tag picker"])
 
-(defn split-into-3-groups [elms]
-  (let [size       (count elms)
-        group-size (cond
-                     (< size 2) 1
-                     (< size 6) 2
-                     :else      (quot size 3))]
-    [(take group-size elms)
-     (->> elms
-          (drop group-size)
-          (take group-size))
-     (drop (* 2 group-size) elms)]))
+(def additional-info-threshold 6)
+(defn split-into-4-groups [elms]
+    (if (> (count elms) additional-info-threshold)
+      [(take 2 elms)
+       (->> elms
+            (drop 2)
+            (take 2))
+       (->> elms
+            (drop 4)
+            (take 2))
+       (drop 6 elms)]
+      [elms nil nil nil]))
 
 (defn page []
   (let [blogs               (<sub [::subs/top-blogs])
@@ -96,14 +97,16 @@
                                 :redirect     page
                                 :logged-in?   logged-in?
                                 :query-params query-params
-                                :loading?     (or blogs-loading? companies-loading?)}]]
+                                :loading?     (or blogs-loading? companies-loading?)}]
+       [attract-card/signin :side-column]]
       (if activities-loading?
         (into [:div {:class styles/main-column}
                (for [i (range 6)]
                  ^{:key i}
                  [activities/card-skeleton])])
-        (let [[group1 group2 group3] (split-into-3-groups activities)
-              display-stat-card?     (and (> (count activities) 6) (not logged-in?))]
+        (let [[group1 group2 group3 group4] (split-into-4-groups activities)
+              display-additional-info? (and (> (count activities) additional-info-threshold)
+                                            (not logged-in?))]
           (into [:div {:class styles/main-column}
                  [side-cards-mobile/top-content {:jobs   jobs
                                                  :blogs  blogs
@@ -113,13 +116,15 @@
                             (= 0 (count activities)))
                    [activities/card-not-found selected-tags])
                  (for [activity group1] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when display-stat-card? [stat-card/about-applications vertical])
+                 (when display-additional-info? [stat-card/about-applications vertical])
+                 (for [activity group2] ^{:key (:id activity)} [:div (activity-card activity)])
+                 (when display-additional-info? [attract-card/signin])
+                 (when display-additional-info? [stat-card/about-open-source vertical])
+                 (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])
+                 (when display-additional-info? [stat-card/about-salary-increase vertical])
                  [newsletter/newsletter {:logged-in? logged-in?
                                          :type       :landing}]
-                 (when display-stat-card? [stat-card/about-open-source vertical])
-                 (for [activity group2] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when display-stat-card? [stat-card/about-salary-increase vertical])
-                 (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])])))
+                 (for [activity group4] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
        [side-cards/recent-jobs jobs jobs-loading? company?]
        [side-cards/osi-how-it-works]
