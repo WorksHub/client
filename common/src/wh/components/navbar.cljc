@@ -24,6 +24,7 @@
 (def candidates-menu-id             "candidates-menu")
 ;;
 (def mobile-search-id               "mobile-search")
+(def promo-banner-id                "promo-banner")
 
 ;; the ids that represent
 (def navbar-ids #{logged-out-menu-id
@@ -333,7 +334,8 @@
   (let [el-id (if logged-in? data/logged-in-menu-id logged-out-menu-id)
         menu-roll-down [:div.navbar-item.is-hidden-desktop.navbar-item--menu
                         (interop/multiple-on-click (interop/toggle-is-open-on-click el-id)
-                                                   (interop/toggle-no-scroll-on-click el-id))
+                                                   (interop/toggle-no-scroll-on-click el-id)
+                                                   (interop/set-is-open-on-click promo-banner-id false))
                         [:span "MENU"]
                         (when show-tasks?
                           (let [utc (unfinished-task-count)]
@@ -395,6 +397,13 @@
                base-opts)
         "For Employers"]])))
 
+(defn promo-banner [{:keys [page logged-in?]}]
+  (when (and (contains? #{:pricing :how-it-works :issues :homepage :homepage-not-logged-in} page)
+             (not logged-in?))
+    [:div.navbar__promo-banner.is-open
+     {:id "promo-banner"}
+     [link "Hiring? Sign up and post your first job for FREE!" :register-company]]))
+
 (defn top-bar
   [_args]
   (let [tasks-open? (r/atom false)]
@@ -402,20 +411,11 @@
       (let [args          (assoc args
                                  :tasks-open? tasks-open?
                                  :show-tasks? (= user-type "company"))
-            content?      (not (contains? routes/no-nav-link-pages page))
-            promo-banner? (and (contains? #{:pricing :how-it-works :issues :homepage} page)
-                               (not logged-in?))]
-        [:nav {:class      (util/merge-classes "navbar"
-                                               (when promo-banner? "navbar--has-promo-banner"))
+            content?      (not (contains? routes/no-nav-link-pages page))]
+        [:nav {:class      (util/merge-classes "navbar")
                :id         "wh-navbar"
                :role       "navigation"
                :aria-label "main navigation"}
-         (when promo-banner?
-           [:div.navbar__promo-banner
-            {:id "promo-banner"}
-            [link "Hiring? Sign up and post your first job for FREE!" :register-company]
-            [:script {:type "text/javascript"}
-             "initPromoBanner(\"promo-banner\", \"wh-navbar\")"]])
          [:div.navbar__content
           [:div.navbar-item.navbar__logo-container
            [:svg.icon.navbar__logo [icon vertical]]

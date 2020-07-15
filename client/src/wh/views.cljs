@@ -44,6 +44,8 @@
       [version-mismatch]
       (do
         [:div.main-panel
+         [navbar/promo-banner {:page page
+                               :logged-in? logged-in?}]
          [navbar/top-bar
           {:env               (<sub [::subs/env])
            :vertical          (<sub [::subs/vertical])

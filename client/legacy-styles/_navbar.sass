@@ -23,6 +23,7 @@ $navbar-overlay-content-width: 260px
     height: $navbar-mobile-height + $promo-banner-height
 
 .navbar__promo-banner
+  display: none
   height: $promo-banner-height
   right: 0
   line-height: $promo-banner-height
@@ -34,6 +35,9 @@ $navbar-overlay-content-width: 260px
   font-size: 16px
   +mobile
     font-size: 11px
+  &.is-open
+    display: block
+
 
 .navbar__promo-banner.scrolled + .navbar__content
   .navbar-overlay--candidates
