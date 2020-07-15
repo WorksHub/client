@@ -35,6 +35,27 @@
 
 (reg-query :top-blogs top-blogs-query)
 
+(defquery recommended-jobs-for-user
+  {:venia/operation {:operation/type :query
+                     :operation/name "recommended_jobs_for_user"}
+   :venia/variables [{:variable/name "page_size" :variable/type :Int}
+                     {:variable/name "page_number" :variable/type :Int}]
+   :venia/queries   [[:jobs {:filter_type "recommended"
+                             :entity_type "user"
+                             :page_size   :$page_size
+                             :page_number :$page_number}
+                      [:id
+                       :title
+                       :slug
+                       :userScore
+                       [:company [:id
+                                  :name
+                                  :slug
+                                  :logo
+                                  :totalPublishedJobCount]]]]]})
+
+(reg-query :recommended-jobs-for-user recommended-jobs-for-user)
+
 (defn top-blogs [db]
   [:top-blogs {:vertical (:wh.db/vertical db)
                :limit    5}])
@@ -138,6 +159,10 @@
   [:top-tags {:vertical (:wh.db/vertical db)
               :limit    15}])
 
+(defn recommended-jobs [db]
+  [:recommended-jobs-for-user {:page_size   3
+                               :page_number 1}])
+
 (reg-event-fx
   ::set-page-title
   db/default-interceptors
@@ -145,26 +170,26 @@
     {:page-title {:page-name "Feed"
                   :vertical  (:wh.db/vertical db)}}))
 
+(defn queries
+  [db]
+  (conj [recent-activities
+         top-blogs
+         top-companies
+         top-tags
+         top-users
+         recent-issues]
+        (if (= "candidate" (get-in db [:wh.user.db/sub-db :wh.user.db/type]))
+          recommended-jobs
+          recent-jobs)))
+
 #?(:cljs
    (defmethod on-page-load :feed [db]
-     [[:wh.pages.core/unset-loader]
-      (into [:graphql/query] (recent-activities db))
-      (into [:graphql/query] (top-blogs db))
-      (into [:graphql/query] (top-companies db))
-      (into [:graphql/query] (top-tags db))
-      (into [:graphql/query] (top-users db))
-      (into [:graphql/query] (recent-issues db))
-      (into [:graphql/query] (recent-jobs db))]))
+     (into [[:wh.pages.core/unset-loader]]
+           (map #(into [:graphql/query] (% db)) (queries db)))))
 
 #?(:cljs
    ;; renamed by wh.pages.router
    (defmethod on-page-load :homepage-not-logged-in [db]
-     [[:wh.pages.core/unset-loader]
-      [::set-page-title]
-      (into [:graphql/query] (recent-activities db))
-      (into [:graphql/query] (top-blogs db))
-      (into [:graphql/query] (top-companies db))
-      (into [:graphql/query] (top-tags db))
-      (into [:graphql/query] (top-users db))
-      (into [:graphql/query] (recent-issues db))
-      (into [:graphql/query] (recent-jobs db))]))
+     (into [[:wh.pages.core/unset-loader]
+            [::set-page-title]]
+           (map #(into [:graphql/query] (% db)) (queries db)))))

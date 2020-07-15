@@ -3,6 +3,7 @@
                 :clj clj-time.format) :as tf]
             [clojure.string :as str]
             [wh.common.text :as text]
+            [wh.components.cards :refer [match-circle]]
             [wh.components.common :refer [link]]
             [wh.components.side-card.components :as c]
             [wh.re-frame :as r]
@@ -81,7 +82,7 @@
 
 ;; -----------------------------------------------
 
-(defn card-job [{:keys [title company-info slug] :as _job}]
+(defn card-job [{:keys [title company-info slug user-score] :as _job}]
   [:section {:class style/section__element}
    (let [jobs-count (:total-published-job-count company-info)
          text       (str jobs-count (text/pluralize jobs-count " live job"))]
@@ -90,11 +91,16 @@
                           :href     (routes/path :company :params {:slug (:slug company-info)})
                           :img-src  (:logo company-info)}])
    [c/card-link {:title title
-                 :href  (routes/path :job :params {:slug slug})}]])
+                 :href  (routes/path :job :params {:slug slug})}]
+   (when user-score
+     [:a {:href (routes/path :job :params {:slug slug})}
+      [match-circle {:score user-score
+                     :text? true
+                     :size  18}]])])
 
-(defn recent-jobs [jobs loading? company?]
+(defn jobs [{:keys [jobs loading? company? show-recommendations?]}]
   [:section {:class style/section}
-   [c/section-title "Hiring now"]
+   [c/section-title (if show-recommendations? "Recommended jobs" "Hiring now")]
    (if loading?
      [c/section-elements-skeleton]
      [c/section-elements jobs card-job])

@@ -3,6 +3,7 @@
 (def page__main "landing__page__main--2aEJv")
 (def side-column "landing__side-column--1krwu")
 (def side-column--left "landing__side-column--left--1Ucjl")
+(def tablet-only "landing__tablet-only--18Cc3")
 (def main-column "landing__main-column--3d3VB")
 (def card "landing__card--1Kley")
 (def card--tag-picker "landing__card--tag-picker--2fgJO")

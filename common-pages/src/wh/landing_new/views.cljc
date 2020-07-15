@@ -63,26 +63,31 @@
       [elms nil nil nil]))
 
 (defn page []
-  (let [blogs               (<sub [::subs/top-blogs])
-        blogs-loading?      (<sub [::subs/top-blogs-loading?])
-        companies           (<sub [::subs/top-companies])
-        companies-loading?  (<sub [::subs/top-companies-loading?])
-        users               (<sub [::subs/top-users])
-        users-loading?      (<sub [::subs/top-users-loading?])
-        jobs                (<sub [::subs/recent-jobs])
-        jobs-loading?       (<sub [::subs/recent-jobs-loading?])
-        issues              (<sub [::subs/recent-issues])
-        issues-loading?     (<sub [::subs/recent-issues-loading?])
-        tags                (<sub [::subs/top-tags])
-        tags-loading?       (<sub [::subs/top-tags-loading?])
-        activities          (<sub [::subs/recent-activities])
-        activities-loading? (<sub [::subs/recent-activities-loading?])
-        logged-in?          (<sub [:user/logged-in?])
-        vertical            (<sub [:wh/vertical])
-        query-params        (<sub [:wh/query-params])
-        selected-tags       (<sub [::subs/selected-tags])
-        page                (<sub [:wh/page])
-        company?            (<sub [:user/company?])]
+  (let [logged-in?            (<sub [:user/logged-in?])
+        show-recommendations? (<sub [:user/has-recommendations?])
+        blogs                 (<sub [::subs/top-blogs])
+        blogs-loading?        (<sub [::subs/top-blogs-loading?])
+        companies             (<sub [::subs/top-companies])
+        companies-loading?    (<sub [::subs/top-companies-loading?])
+        users                 (<sub [::subs/top-users])
+        users-loading?        (<sub [::subs/top-users-loading?])
+        jobs                  (<sub [(if show-recommendations?
+                                       ::subs/recommended-jobs
+                                       ::subs/recent-jobs)])
+        jobs-loading?         (<sub [(if show-recommendations?
+                                       ::subs/recommended-jobs-loading?
+                                       ::subs/recent-jobs-loading?)])
+        issues                (<sub [::subs/recent-issues])
+        issues-loading?       (<sub [::subs/recent-issues-loading?])
+        tags                  (<sub [::subs/top-tags])
+        tags-loading?         (<sub [::subs/top-tags-loading?])
+        activities            (<sub [::subs/recent-activities])
+        activities-loading?   (<sub [::subs/recent-activities-loading?])
+        vertical              (<sub [:wh/vertical])
+        query-params          (<sub [:wh/query-params])
+        selected-tags         (<sub [::subs/selected-tags])
+        page                  (<sub [:wh/page])
+        company?              (<sub [:user/company?])]
     [:div (util/smc styles/page)
      (when-not logged-in?
        [attract-card/all-cards {:logged-in? logged-in?
@@ -91,6 +96,14 @@
       [:div (util/smc styles/side-column styles/side-column--left)
        [tag-selector/card-with-selector tags tags-loading?]
        [attract-card/contribute logged-in? :side-column]
+       [:div (util/smc styles/side-column styles/tablet-only)
+        [side-cards/jobs {:jobs                  jobs
+                          :jobs-loading?         jobs-loading?
+                          :company?              company?
+                          :show-recommendations? show-recommendations?}]
+        [side-cards/osi-how-it-works]
+        [side-cards/recent-issues issues issues-loading? company?]
+        [side-cards/top-ranking-users users users-loading?]]
        [side-cards/top-ranking {:blogs        blogs
                                 :companies    companies
                                 :default-tab  :companies
@@ -98,19 +111,22 @@
                                 :logged-in?   logged-in?
                                 :query-params query-params
                                 :loading?     (or blogs-loading? companies-loading?)}]
-       [attract-card/signin :side-column]]
+       (when-not logged-in?
+         [attract-card/signin :side-column])]
       (if activities-loading?
         (into [:div {:class styles/main-column}
                (for [i (range 6)]
                  ^{:key i}
                  [activities/card-skeleton])])
         (let [[group1 group2 group3 group4] (split-into-4-groups activities)
-              display-additional-info? (and (> (count activities) additional-info-threshold)
-                                            (not logged-in?))]
+              display-additional-info?      (and (> (count activities) additional-info-threshold)
+                                                 (not logged-in?))]
           (into [:div {:class styles/main-column}
-                 [side-cards-mobile/top-content {:jobs   jobs
-                                                 :blogs  blogs
-                                                 :issues issues}]
+                 [side-cards-mobile/top-content
+                  {:jobs                  jobs
+                   :blogs                 blogs
+                   :issues                issues
+                   :show-recommendations? show-recommendations?}]
                  [attract-card/intro vertical :main-column]
                  (when (and (not activities-loading?)
                             (= 0 (count activities)))
@@ -118,7 +134,7 @@
                  (for [activity group1] ^{:key (:id activity)} [:div (activity-card activity)])
                  (when display-additional-info? [stat-card/about-applications vertical])
                  (for [activity group2] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when display-additional-info? [attract-card/signin])
+                 (when (and display-additional-info? (not logged-in?)) [attract-card/signin])
                  (when display-additional-info? [stat-card/about-open-source vertical])
                  (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])
                  (when display-additional-info? [stat-card/about-salary-increase vertical])
@@ -126,7 +142,10 @@
                                          :type       :landing}]
                  (for [activity group4] ^{:key (:id activity)} [:div (activity-card activity)])])))
       [:div {:class styles/side-column}
-       [side-cards/recent-jobs jobs jobs-loading? company?]
+       [side-cards/jobs {:jobs                  jobs
+                         :jobs-loading?         jobs-loading?
+                         :company?              company?
+                         :show-recommendations? show-recommendations?}]
        [side-cards/osi-how-it-works]
        [side-cards/recent-issues issues issues-loading? company?]
        [side-cards/top-ranking-users users users-loading?]]]]))

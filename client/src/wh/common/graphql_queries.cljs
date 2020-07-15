@@ -46,17 +46,21 @@
 (def set-application-note-mutation
   {:venia/operation {:operation/type :mutation
                      :operation/name "set_application_note"}
-   :venia/variables [{:variable/name "job_id"  :variable/type :String!}
+   :venia/variables [{:variable/name "job_id" :variable/type :String!}
                      {:variable/name "user_id" :variable/type :ID!}
-                     {:variable/name "note"    :variable/type :String!}]
+                     {:variable/name "note" :variable/type :String!}]
    :venia/queries   [[:set_application_note {:job_id  :$job_id
                                              :user_id :$user_id
                                              :note    :$note}
                       [:jobId :userId]]]})
 
 (def recommended-jobs-for-user
-  {:venia/queries [[:jobs {:filter_type "recommended"
-                           :entity_type "user"
-                           :page_size 3
-                           :page_number 1}
-                    (conj jobs/job-card-fields :score)]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "recommended_jobs_for_user"}
+   :venia/variables [{:variable/name "page_size" :variable/type :Int}
+                     {:variable/name "page_number" :variable/type :Int}]
+   :venia/queries   [[:jobs {:filter_type "recommended"
+                             :entity_type "user"
+                             :page_size   :$page_size
+                             :page_number :$page_number}
+                      (conj jobs/job-card-fields :score)]]})

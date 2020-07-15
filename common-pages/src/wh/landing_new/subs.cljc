@@ -14,65 +14,84 @@
             [wh.landing-new.tags :as tags]
             [wh.util :as util]))
 
+(defn cache-results
+  [query-fn db ks]
+  (get-in (apply gqlc/result db (query-fn db)) ks))
+
+(defn cache-loading?
+  [query-fn db]
+  (= "executing" (apply gqlc/state db (query-fn db))))
+
 (reg-sub
   ::top-blogs
   (fn [db _]
-    (get-in (apply gqlc/result db (events/top-blogs db)) [:top-blogs :results])))
+    (cache-results events/top-blogs db [:top-blogs :results])))
 
 (reg-sub
   ::top-blogs-loading?
   (fn [db _]
-    (= :executing (keyword (apply gqlc/state db (events/top-blogs db))))))
+    (cache-loading? events/top-blogs db)))
 
 (reg-sub
   ::top-companies
   (fn [db _]
-    (get-in (apply gqlc/result db (events/top-companies db)) [:top-companies :results])))
+    (cache-results events/top-companies db [:top-companies :results])))
 
 (reg-sub
   ::top-companies-loading?
   (fn [db _]
-    (= :executing (keyword (apply gqlc/state db (events/top-companies db))))))
+    (cache-loading? events/top-companies db)))
 
 (reg-sub
   ::top-tags
   (fn [db _]
-    (get-in (apply gqlc/result db (events/top-tags db)) [:top-tags :results])))
+    (cache-results events/top-tags db [:top-tags :results])))
 
 (reg-sub
   ::top-tags-loading?
   (fn [db _]
-    (= :executing (keyword (apply gqlc/state db (events/top-tags db))))))
+    (cache-loading? events/top-tags db)))
 
 (reg-sub
   ::top-users
   (fn [db _]
-    (get-in (apply gqlc/result db (events/top-users db)) [:top-users :results])))
+    (cache-results events/top-users db [:top-users :results])))
 
 (reg-sub
   ::top-users-loading?
   (fn [db _]
-    (= :executing (keyword (apply gqlc/state db (events/top-users db))))))
+    (cache-loading? events/top-users db)))
 
 (reg-sub
   ::recent-jobs
   (fn [db _]
-    (get-in (apply gqlc/result db (events/recent-jobs db)) [:recent-jobs :results])))
+    (cache-results events/recent-jobs db [:recent-jobs :results])))
 
 (reg-sub
   ::recent-jobs-loading?
   (fn [db _]
-    (= :executing (keyword (apply gqlc/state db (events/recent-jobs db))))))
+    (cache-loading? events/recent-jobs db)))
 
 (reg-sub
   ::recent-issues
   (fn [db _]
-    (get-in (apply gqlc/result db (events/recent-issues db)) [:recent-issues :results])))
+    (cache-results events/recent-issues db [:recent-issues :results])))
 
 (reg-sub
   ::recent-issues-loading?
   (fn [db _]
-    (= :executing (keyword (apply gqlc/state db (events/recent-issues db))))))
+    (cache-loading? events/recent-issues db)))
+
+(reg-sub
+  ::recommended-jobs
+  (fn [db _]
+    (some->> (cache-results events/recommended-jobs db [:jobs])
+             (map #(assoc % :company-info (:company %))))))
+
+(reg-sub
+  ::recommended-jobs-loading?
+  (fn [db _]
+    (cache-loading? events/recommended-jobs db)))
 
 (defn translate-job [job]
   (-> job

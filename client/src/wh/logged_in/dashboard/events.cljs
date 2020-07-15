@@ -35,25 +35,28 @@
   ::fetch-recommended-jobs
   dashboard-interceptors
   (fn [{db :db} _]
-    {:db (assoc db ::dashboard/loading-recommended? true)
-     :graphql {:query queries/recommended-jobs-for-user
+    {:db      (assoc db ::dashboard/loading-recommended? true)
+     :graphql {:query      queries/recommended-jobs-for-user
+               :variables  {:page_size   3
+                            :page_number 1}
                :on-success [::fetch-recommended-jobs-success]}}))
 
 (defquery dashboard-data-query
   {:venia/operation {:operation/type :query
                      :operation/name "dashboard"}
-   :venia/queries [[:blogs {:filter_type "recommended"
-                            :page_size 3
-                            :page_number 1}
-                    [[:blogs [:id :title :feature :author
-                              :formattedCreationDate :score
-                              :readingTime :published :upvoteCount
-                              [:tags :fragment/tagFields]]]]]
-                   [:me [:onboardingMsgs]]
-                   [:jobs {:filter_type "recommended"
-                           :entity_type "user"
-                           :page_size 3}
-                    :fragment/jobCardFields]]})
+   :venia/queries   [[:blogs {:filter_type "recommended"
+                              :page_size   3
+                              :page_number 1}
+                      [[:blogs [:id :title :feature :author
+                                :formattedCreationDate :score
+                                :readingTime :published :upvoteCount
+                                [:tags :fragment/tagFields]]]]]
+                     [:me [:onboardingMsgs]]
+                     [:jobs {:filter_type "recommended"
+                             :entity_type "user"
+                             :page_number 1
+                             :page_size   3}
+                      :fragment/jobCardFields]]})
 
 (reg-event-fx
   ::fetch-initial-data

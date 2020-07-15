@@ -1,8 +1,8 @@
 (ns wh.components.side-card.side-card-mobile
   (:require [wh.components.common :refer [link wrap-img img]]
             [wh.components.icons :as icons]
-            [wh.routes :as routes]
             [wh.interop :as interop]
+            [wh.routes :as routes]
             [wh.styles.side-card-mobile :as style]
             [wh.util :as util]))
 
@@ -28,7 +28,7 @@
 
 (defn blog-card [blog]
   [:a {:class style/card
-       :href (routes/path :blog :params {:id (:id blog)})}
+       :href  (routes/path :blog :params {:id (:id blog)})}
    [:div (util/smc style/card__content)
     [title (:title blog) :extended]
     [connected-entity (:author-info blog)]]
@@ -36,7 +36,7 @@
 
 (defn job-card [{:keys [slug company-info] :as job}]
   [:a {:class style/card
-       :href (routes/path :job :params {:slug slug})}
+       :href  (routes/path :job :params {:slug slug})}
    [:div (util/smc style/card__content)
     [connected-entity company-info]
     [title (:title job)]]
@@ -44,7 +44,7 @@
 
 (defn issue-card [issue]
   [:a {:class style/card
-       :href (routes/path :issue :params {:id (:id issue)})}
+       :href  (routes/path :issue :params {:id (:id issue)})}
    [:div (util/smc style/card__content)
     [connected-entity (:company issue)]
     [title (:title issue) :extended]]
@@ -65,20 +65,20 @@
                    (interop/on-click-fn #?(:clj (format "toggleDisplay(\"%s\")" (name type))
                                            :cljs #(js/toggleDisplay (name type)))))
     "Hide"]
-   [:a {:href href
+   [:a {:href  href
         :class style/trending__all-link}
     text]])
 
-(defn top-content [{:keys [blogs jobs issues]}]
+(defn top-content [{:keys [blogs jobs issues show-recommendations?]}]
   [:div (util/smc style/trending)
    [:span (util/smc style/trending__title) "Selected for you"]
    [:div (util/smc style/horizontal-scrolling)
-    [toggle "case" "Recommended jobs" :jobs]
+    [toggle "case" (if show-recommendations? "Recommended jobs" "Hiring now") :jobs]
     [toggle "git" "Live open source issues" :issues]
     [toggle "document" "Trending articles" :blogs]]
    [:div
     [:div {:class style/trending__content
-           :id "trending-content-blogs"}
+           :id    "trending-content-blogs"}
      (for [elm blogs]
        ^{:key (:id elm)}
        [blog-card elm])
@@ -86,7 +86,7 @@
                                :text "See all articles"
                                :type :blogs}]]
     [:div {:class style/trending__content
-           :id "trending-content-jobs"}
+           :id    "trending-content-jobs"}
      (for [elm jobs]
        ^{:key (:id elm)}
        [job-card elm])
@@ -94,7 +94,7 @@
                                :text "See all jobs"
                                :type :jobs}]]
     [:div {:class style/trending__content
-           :id "trending-content-issues"}
+           :id    "trending-content-issues"}
      (for [elm issues]
        ^{:key (:id elm)}
        [issue-card elm])

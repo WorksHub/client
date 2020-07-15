@@ -7,8 +7,8 @@
     [clojure.string :as str]
     [wh.common.text :refer [pluralize]]
     [wh.components.common :refer [link wrap-img blog-card-hero-img]]
-    [wh.routes :as routes]
     [wh.components.tag :as tag]
+    [wh.routes :as routes]
     [wh.util :as util]))
 
 (def PI
@@ -30,17 +30,17 @@
     {:x (+ center-x (* radius (cos angle-in-radians)))
      :y (+ center-y (* radius (sin angle-in-radians)))}))
 
-(defn draw-shape [score]
-  (let [x 9
-        y 9
-        radius 9
+(defn draw-shape [score size]
+  (let [x           (/ size 2)
+        y           (/ size 2)
+        radius      (/ size 2)
         start-angle 0
-        end-angle (* 360 score)
-        start (polar->cartesian x y radius end-angle)
-        end (polar->cartesian x y radius start-angle)
-        arc-sweep (if (<= (- end-angle start-angle) 180)
-                    "0"
-                    "1")]
+        end-angle   (* 360 score)
+        start       (polar->cartesian x y radius end-angle)
+        end         (polar->cartesian x y radius start-angle)
+        arc-sweep   (if (<= (- end-angle start-angle) 180)
+                      "0"
+                      "1")]
     (->> ["M" (:x start) (:y start)
           "A" radius radius 0 arc-sweep 0 (:x end) (:y end)
           "L" x y
@@ -48,24 +48,25 @@
          (str/join " "))))
 
 (defn match-circle
-  [{:keys [score text? percentage?]
-    :or   {text? false
-           percentage? false}}]
-  (let [percentage (* score 100)
+  [{:keys [score text? percentage? size]
+    :or   {text?       false
+           percentage? false
+           size        18}}]
+  (let [percentage     (* score 100)
         percentage-fmt #?(:cljs (gstring/format "%d%%" percentage)
                           :clj (format "%s%%" (int percentage)))]
     [:div.match-circle-container
-      (if (= score 1.0)
-        [:div.match-circle
-         [:div.foreground]]
-        [:div.match-circle
-         [:svg.circle-value
-          [:path.circle {:d (draw-shape score)}]]
-         [:div.background]])
-      (when text?
-        [:div.text (str percentage-fmt " Match")])
-      (when percentage?
-        [:div.text percentage-fmt])]))
+     (if (= score 1.0)
+       [:div.match-circle
+        [:div.foreground]]
+       [:div.match-circle
+        [:svg.circle-value
+         [:path.circle {:d (draw-shape score size)}]]
+        [:div.background]])
+     (when text?
+       [:div.text (str percentage-fmt " Match")])
+     (when percentage?
+       [:div.text percentage-fmt])]))
 
 (defn blog-card
   [{:keys [id title feature author formatted-creation-date reading-time upvote-count tags creator published] :as blog}]
