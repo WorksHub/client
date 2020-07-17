@@ -5,14 +5,17 @@
             [wh.components.activities.components :as activities]
             [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.job-published :as job-published]
-            [wh.components.activities.job-published :as job-published]
             [wh.components.attract-card :as attract-card]
+            [wh.components.icons :as icons]
             [wh.components.newsletter :as newsletter]
             [wh.components.side-card.side-card :as side-cards]
             [wh.components.side-card.side-card-mobile :as side-cards-mobile]
             [wh.components.stat-card :as stat-card]
             [wh.components.tag-selector.tag-selector :as tag-selector]
+            [wh.interop :as interop]
+            [wh.landing-new.events :as events]
             [wh.landing-new.subs :as subs]
+            [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.styles.landing :as styles]
             [wh.util :as util]))
@@ -62,6 +65,37 @@
        (drop 6 elms)]
       [elms nil nil nil]))
 
+(defn prev-next-buttons [newer-than older-than]
+  (let [next-page (<sub [::subs/recent-activities-next-page])
+        prev-page (<sub [::subs/recent-activities-prev-page])]
+    [:div {:class styles/prev-next-buttons}
+
+     ;; This wrapping :div stays here, because even if prev-page button
+     ;; is not present we need some element to fill grid-column and
+     ;; keep layout intact
+     [:div
+      (when prev-page
+        [activities/button
+         {:type :dark
+          :event-handlers
+          (interop/on-click-fn
+            #?(:clj  (format "setBeforeIdAndRedirect('%s');" newer-than)
+               :cljs #(dispatch [::events/set-newer-than newer-than])))}
+         [:span {:class styles/prev-next-button__text}
+          [icons/icon "chevron_left"]
+          [:span "Prev"]]])]
+
+     (when next-page
+       [activities/button
+        {:type :dark
+         :event-handlers
+         (interop/on-click-fn
+           #?(:clj  (format "setAfterIdAndRedirect('%s');" older-than)
+              :cljs #(dispatch [::events/set-older-than older-than])))}
+        [:span {:class styles/prev-next-button__text}
+         [:span "Next"]
+         [icons/icon "chevron_right"]]])]))
+
 (defn page []
   (let [logged-in?            (<sub [:user/logged-in?])
         show-recommendations? (<sub [:user/has-recommendations?])
@@ -88,6 +122,7 @@
         selected-tags         (<sub [::subs/selected-tags])
         page                  (<sub [:wh/page])
         company?              (<sub [:user/company?])]
+
     [:div (util/smc styles/page)
      (when-not logged-in?
        [attract-card/all-cards {:logged-in? logged-in?
@@ -120,7 +155,9 @@
                  [activities/card-skeleton])])
         (let [[group1 group2 group3 group4] (split-into-4-groups activities)
               display-additional-info?      (and (> (count activities) additional-info-threshold)
-                                                 (not logged-in?))]
+                                                 (not logged-in?))
+              older-than                      (:id (last activities))
+              newer-than                     (:id (first activities))]
           (into [:div {:class styles/main-column}
                  [side-cards-mobile/top-content
                   {:jobs                  jobs
@@ -128,6 +165,7 @@
                    :issues                issues
                    :show-recommendations? show-recommendations?}]
                  [attract-card/intro vertical :main-column]
+
                  (when (and (not activities-loading?)
                             (= 0 (count activities)))
                    [activities/card-not-found selected-tags])
@@ -140,7 +178,10 @@
                  (when display-additional-info? [stat-card/about-salary-increase vertical])
                  [newsletter/newsletter {:logged-in? logged-in?
                                          :type       :landing}]
-                 (for [activity group4] ^{:key (:id activity)} [:div (activity-card activity)])])))
+                 (for [activity group4] ^{:key (:id activity)} [:div (activity-card activity)])
+
+
+                 [prev-next-buttons newer-than older-than]])))
       [:div {:class styles/side-column}
        [side-cards/jobs {:jobs                  jobs
                          :jobs-loading?         jobs-loading?

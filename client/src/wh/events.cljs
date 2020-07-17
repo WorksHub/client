@@ -131,15 +131,29 @@
                 :params (:wh.db/page-params db)
                 :query-params (util/remove-nils query-params)]}))
 
+(defn set-query-param [params key value]
+  (if (nil? value)
+    (dissoc params key)
+    (assoc params key value)))
+
 (reg-event-fx
   ::nav--set-query-param
   db/default-interceptors
   (fn [{db :db} [key value]]
     {:navigate [(:wh.db/page db)
                 :params (:wh.db/page-params db)
-                :query-params (if (nil? value)
-                                (dissoc (:wh.db/query-params db) key)
-                                (assoc (:wh.db/query-params db) key value))]}))
+                :query-params (set-query-param (:wh.db/query-params db) key value)]}))
+
+(reg-event-fx
+  ::nav--set-query-params
+  db/default-interceptors
+  (fn [{db :db} [m]]
+    {:navigate [(:wh.db/page db)
+                :params (:wh.db/page-params db)
+                :query-params (reduce-kv
+                                set-query-param
+                                (:wh.db/query-params db)
+                                m)]}))
 
 (reg-event-fx
   ::contribute

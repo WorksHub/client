@@ -14,3 +14,5 @@
 (def card--issue-started "landing__card--issue-started--OHecJ")
 (def card--matching-jobs "landing__card--matching-jobs--1xlgC")
 (def loader "landing__loader--3T80b")
+(def prev-next-buttons "landing__prev-next-buttons--NZ9Q3")
+(def prev-next-button__text "landing__prev-next-button__text---fDJ8")

@@ -138,6 +138,28 @@
                  [:query-activities :activities]))))
 
 (reg-sub
+  ::recent-activities-last-page
+  (fn [db _]
+    (cache-results events/recent-activities db [:query-activities :last-page])))
+
+(reg-sub
+  ::recent-activities-first-page
+  (fn [db _]
+    (cache-results events/recent-activities db [:query-activities :first-page])))
+
+(reg-sub
+  ::recent-activities-next-page
+  :<- [::recent-activities-last-page]
+  (fn [last-page _]
+    (not last-page)))
+
+(reg-sub
+  ::recent-activities-prev-page
+  :<- [::recent-activities-first-page]
+  (fn [first-page _]
+    (not first-page)))
+
+(reg-sub
   ::recent-activities-loading?
   (fn [db _]
     (let [state (apply gqlc/state db (events/recent-activities db))]

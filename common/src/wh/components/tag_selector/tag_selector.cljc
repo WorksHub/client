@@ -32,6 +32,7 @@
 (defn reset-icon []
   [icon "reset" :class styles/reset-button__icon])
 
+
 (defn selector [tags query-params-tags-slugs]
   [:div
    [tag/tag-list
@@ -39,11 +40,15 @@
     (map (fn [tag]
            (assoc tag
              :on-click #?(:clj  (format "toggleTagAndRedirect('%s');" (tag->query-params-tag-id tag))
-                          :cljs #(dispatch [:wh.events/nav--set-query-param "tags"
-                                            (->> (tag->query-params-tag-id tag)
-                                                 (util/toggle (set query-params-tags-slugs))
-                                                 (str/join ",")
-                                                 (text/not-blank))]))
+                          :cljs #(dispatch [:wh.events/nav--set-query-params
+                                            {"tags"
+                                             (->> (tag->query-params-tag-id tag)
+                                                  (util/toggle (set query-params-tags-slugs))
+                                                  (str/join ",")
+                                                  (text/not-blank))
+
+                                             "older-than" nil
+                                             "newer-than" nil}]))
              :interactive? true
              :inverted? (tag-selected? query-params-tags-slugs tag)
              :server-side-invert-on-click? true))

@@ -21,6 +21,7 @@
 (def button "activities__button--1Nq_Y")
 (def button--inverted "activities__button--inverted--1BM0H")
 (def button--short "activities__button--short--1-pEH")
+(def button--dark "activities__button--dark--1pdNs")
 (def article__feature "activities__article__feature--2e8wB")
 (def article__feature-img "activities__article__feature-img--GRf7b")
 (def article__boost "activities__article__boost--fIeku")

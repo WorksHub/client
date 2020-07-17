@@ -12,9 +12,17 @@
 (reg-query :recent-activities activities-queries/recent-activities-query)
 
 (defn recent-activities [{:keys [wh.db/vertical wh.db/query-params] :as _db}]
-  (let [tags (tags/param->tags (get query-params "tags"))]
-    [:recent-activities {:activities_tags tags
-                         :vertical        vertical}]))
+  (let [tags       (tags/param->tags (get query-params "tags"))
+        older-than (get query-params "older-than")
+        newer-than (get query-params "newer-than")]
+
+    [:recent-activities (merge
+                          {:activities_tags tags
+                           :vertical        vertical}
+                          (cond
+                            older-than {:older_than older-than}
+                            newer-than {:newer_than newer-than}
+                            :else      {}))]))
 
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query
@@ -193,3 +201,21 @@
      (into [[:wh.pages.core/unset-loader]
             [::set-page-title]]
            (map #(into [:graphql/query] (% db)) (queries db)))))
+
+(reg-event-fx
+  ::set-older-than
+  db/default-interceptors
+  (fn [{db :db} [older-than]]
+    {:scroll-to-top true
+     :dispatch      [:wh.events/nav--set-query-params
+                     {"older-than"  older-than
+                      "newer-than" nil}]}))
+
+(reg-event-fx
+  ::set-newer-than
+  db/default-interceptors
+  (fn [{db :db} [newer-than]]
+    {:scroll-to-top true
+     :dispatch      [:wh.events/nav--set-query-params
+                     {"older-than"  nil
+                      "newer-than" newer-than}]}))

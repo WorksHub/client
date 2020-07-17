@@ -1,7 +1,6 @@
 (ns wh.common.fx.scroll
-  (:require
-    [re-frame.core :refer [reg-fx]]
-    [wh.pages.core :refer [force-scroll-to-top!]]))
+  (:require [re-frame.core :refer [reg-fx]]
+            [wh.pages.core :refer [force-scroll-to-top!]]))
 
 (defn scroll-to-top
   ([]

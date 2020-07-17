@@ -17,15 +17,18 @@
                       (with-meta child {:key idx})))))
 
 (def button-class
-  {:filled   (util/mc styles/button)
+  {:filled       (util/mc styles/button)
    :filled-short (util/mc styles/button styles/button--short)
-   :inverted (util/mc styles/button styles/button--inverted)})
+   :dark         (util/mc styles/button styles/button--dark)
+   :inverted     (util/mc styles/button styles/button--inverted)})
 
-(defn button [{:keys    [type href]
-                    :or {type :filled}}
+(defn button [{:keys [type href event-handlers]
+               :or   {type :filled event-handlers {}}}
               children]
-  [:a {:class (button-class type)
-       :href  href}
+  [:a (merge {:class (button-class type)}
+             (when href
+               {:href href})
+             event-handlers)
    children])
 
 (def title-class
@@ -77,17 +80,17 @@
     [icons/icon icon-name :class styles/entity-icon__icon]]))
 
 (defn entity-description [type entity-type]
-   [:div (util/smc styles/entity-description
-                   [(= entity-type :highlight) styles/entity-description--highlight])
-    (cond->> (case type
-               :blog "Article"
-               :issue "Issue"
-               :company "Company"
-               :job "Job")
-             (= :publish entity-type) (str "New ")
-             (= :highlight entity-type) (conj [:span (util/smc styles/entity-description--icon-wrapper)
-                                               [:span (util/smc styles/entity-description--adjective) "Trending "]
-                                               [icons/icon "trends" :class styles/entity-description--icon]]))])
+  [:div (util/smc styles/entity-description
+                  [(= entity-type :highlight) styles/entity-description--highlight])
+   (cond->> (case type
+              :blog "Article"
+              :issue "Issue"
+              :company "Company"
+              :job "Job")
+            (= :publish entity-type) (str "New ")
+            (= :highlight entity-type) (conj [:span (util/smc styles/entity-description--icon-wrapper)
+                                              [:span (util/smc styles/entity-description--adjective) "Trending "]
+                                              [icons/icon "trends" :class styles/entity-description--icon]]))])
 
 (defn company-info [{:keys [logo name slug] :as company}]
   (let [info-str (cond

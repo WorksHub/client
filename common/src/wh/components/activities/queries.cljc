@@ -11,10 +11,17 @@
                                       :type.list/items {:type/type
                                                         :activity_tag_input}}}
                      {:variable/name "vertical"
-                      :variable/type :vertical}]
+                      :variable/type :vertical}
+                     {:variable/name "older_than"
+                      :variable/type :ID}
+                     {:variable/name "newer_than"
+                      :variable/type :ID}]
    :venia/queries   [[:query_activities {:activities_tags :$activities_tags
+                                         :older_than      :$older_than
+                                         :newer_than      :$newer_than
                                          :vertical        :$vertical}
-                      [[:activities
+                      [:first_page :last_page
+                       [:activities
                         [:id :verb [:actor [:id]] :to :date
                          [:feed_job [:id :title :slug :tagline :remote
                                      :sponsorship_offered :role_type :first_published
