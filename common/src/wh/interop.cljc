@@ -105,6 +105,11 @@
   #?(:clj  {:onClick (->jsfn "disableNoScroll")}
      :cljs {:on-click (fn [_] (js/disableNoScroll))}))
 
+(defn toggle-menu-display
+  []
+  #?(:clj  {:onClick (->jsfn "toggleMenuDisplay")}
+     :cljs {:on-click (fn [_] (js/toggleMenuDisplay))}))
+
 (defn toggle-no-scroll-on-click
   [id]
   #?(:clj  {:onClick (->jsfn "toggleNoScroll" id)}

@@ -34,13 +34,11 @@
                  {:title "Metrics"
                   :route [:metrics]}]
                 (vertical-links))
-   :employers [(if (= "www" vertical)
-                 {:title "Get Started"
-                  :route [:register-company]}
-                 {:title "Employers"
-                  :href  (str routes/company-landing-page
-                              (get-in data/in-demand-hiring-data [vertical :href]))})
-               {:title "Our plans and pricing"
+   :employers [{:title "For employers"
+                :route  [:employers]}
+               {:title "Register company"
+                :route [:register-company]}
+               {:title "Pricing and plans"
                 :href  (str routes/company-landing-page "/pricing")}
                {:title "Request a demo"
                 :href  verticals/demo-link}
@@ -126,11 +124,11 @@
          (str tag " articles")])]]))
 
 (defn social-links [vertical]
-  [{:logo "linkedin"
+  [{:logo "linkedin-circle"
     :href (verticals/config vertical :linkedin)}
-   {:logo "twitter"
+   {:logo "twitter-circle"
     :href (str "https://twitter.com/" (verticals/config vertical :twitter))}
-   {:logo "facebook"
+   {:logo "facebook-circle"
     :href "https://business.facebook.com/weareworkshub/"}
    {:logo "github"
     :href "https://github.com/workshub"}])
@@ -171,6 +169,6 @@
             :rel    "noopener"}
         (icon logo)])]
     [:div.footer__legal
-     [:div.footer__legal__item "© 2019 WorksHub"]
+     [:div.footer__legal__item "© 2020 WorksHub"]
      [:div.footer__legal__item [:a {:href (routes/path :privacy-policy)} [:span "Privacy Policy"]]]
      [:div.footer__legal__item [:a {:href "https://www.works-hub.com"} [:span "Developed by WorksHub"]]]]]])

@@ -95,6 +95,7 @@
               ["privacy-policy" :privacy-policy]
               ["terms-of-service" :terms-of-service]
               ["pricing" :pricing]
+              ["hiring" :employers]
               ["sitemap" :sitemap]
               ["invalid-magic-link" :invalid-magic-link]
               ["metrics" :metrics]

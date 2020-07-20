@@ -7,6 +7,7 @@
             [wh.components.icons :refer [icon]]
             [wh.login.events :as events]
             [wh.login.subs :as subs]
+            [wh.routes :as routes]
             [wh.subs :refer [<sub]]))
 
 (defmulti status-message identity) ;; TODO: move to a subscription
@@ -80,5 +81,7 @@
         [:h1 "Login"]
         [:h2 "to continue to " (<sub [::subs/continue-to])]
         (if (<sub [::subs/show-magic-form?])
-          [magic-form]
+          [:div
+           [magic-form]
+           [:a {:href (routes/path :get-started)} "Don't have an account? Sign up"]]
           [login-buttons])])])

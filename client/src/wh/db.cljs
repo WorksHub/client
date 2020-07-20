@@ -36,6 +36,7 @@
                 :create-job
                 :edit-company
                 :edit-job
+                :employers
                 :feed
                 :feed-preview
                 :get-started

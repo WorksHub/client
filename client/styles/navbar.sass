@@ -1,0 +1,278 @@
+@import 'colours'
+@import 'vars'
+@import 'mixins'
+
+$font-family: Montserrat, serif
+
+=desktop-plus
+  @media screen and (min-width: 1600px), print
+    @content
+
+.navbar
+  max-width: $global-max-width
+  margin: 0 auto
+  display: flex
+  align-items: center
+  height: $header-height-desktop
+  padding: 0 20px 0 0
+
+  &__wrapper
+    background-color: $background-white
+    border-bottom: 1px solid $grey200
+    position: sticky
+    top: 0
+    z-index: 1
+
+  &__right
+    display: grid
+    grid-gap: 40px
+    margin-left: auto
+    align-items: center
+    grid-auto-flow: column
+
+  &__buttons
+    display: grid
+    grid-gap: 16px
+    grid-auto-flow: column
+
+.desktop-plus-only
+  display: none
+  +desktop-plus
+    display: block
+
+.search
+  border: 1px solid $grey300
+  width: 351px
+  border-radius: 4px
+  height: 40px
+  font-size: 14px
+  padding-left: 36px
+  outline-color: $primary-red
+
+  &::placeholder
+    font-size: 14px
+
+  &__wrapper
+    position: relative
+
+  &__icon
+    position: absolute
+    top: 10px
+    left: 10px
+    width: 20px
+    height: 20px
+    fill: $grey300
+
+  &__desktop-plus
+    display: none
+    +desktop-plus
+      display: block
+
+  &__small-menu
+    display: flex
+    width: 100%
+
+.links
+  display: none
+  padding: 0
+  margin: 0
+  height: 100%
+
+  +desktop
+    display: flex
+
+.small-menu
+  display: grid
+  grid-template-columns: 1fr
+  grid-auto-rows: 42px
+  align-content: center
+  margin-bottom: 32px
+  +tablet
+    grid-template-columns: 1fr 1fr
+    padding-left: 24px
+    border-left: 1px solid $grey200
+    margin-bottom: 0
+
+  &__wrapper
+    position: relative
+    flex-direction: column-reverse
+    display: none
+    justify-content: center
+    background-color: $background-white
+    border-top: 1px solid $grey200
+    max-height: calc(100vh - 76px)
+    overflow-y: scroll
+    +tablet
+      padding: 32px
+      flex-direction: row
+
+  &__signin
+    display: grid
+    grid-gap: 24px
+    padding: 0 16px 24px
+    +tablet
+      padding: 0 42px 0 0
+
+  &__signin-title
+    font-size: 16px
+    line-height: 16px
+    font-weight: 600
+    letter-spacing: 0.3px
+    text-align: center
+
+  &__search-wrapper
+    padding: 16px 16px 0
+    margin-bottom: 32px
+    +tablet
+      display: none
+
+.link
+  height: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 0 16px
+  font-family: $font-family
+  font-size: 14px
+  line-height: 1.35
+  letter-spacing: 0.3px
+  font-weight: 600
+
+  white-space: nowrap
+
+  &:hover
+    background-color: $grey100
+
+  &__wrapper
+    height: 100%
+    width: 100%
+    display: inline-flex
+    color: $text-black
+
+  &__wrapper-active
+    box-shadow: inset 0px -3px 0px 0px $primary-red
+    .link
+      color: $primary-red
+
+  &__icon
+    margin-right: 16px
+    fill: $grey500
+
+  &--with-icon
+    justify-content: start
+    width: 100%
+
+.button
+  border-radius: 4px
+  height: 40px
+  align-items: center
+  display: flex
+  justify-content: center
+  background: $primary-red
+  border: 1px solid #EF8374
+  box-sizing: border-box
+  color: $text-white
+  padding: 0 20px
+
+  font-family: $font-family
+  font-size: 12px
+  white-space: nowrap
+  font-weight: 600
+  letter-spacing: 0.02em
+  line-height: 135%
+  text-transform: capitalize
+
+  +tablet
+    font-size: 13px
+    padding: 0 40px
+
+  &:hover
+    background: $highlight-red
+    color: $primary-red
+    cursor: pointer
+  &--desktop
+    display: none
+    +desktop-plus
+      display: flex
+  &--signup
+    background: transparent
+    border: 1px solid $primary-red
+    color: $primary-red
+    display: none
+    +tablet
+      display: flex
+  &--signin
+    display: none
+    +tablet
+      display: flex
+
+.logo
+  &__wrapper
+    display: grid
+    height: 100%
+    align-items: center
+    justify-content: center
+    grid-gap: 12px
+    grid-auto-flow: column
+    text-transform: uppercase
+    letter-spacing: 3px
+    font-weight: 500
+    vertical-align: text-bottom
+    padding: 0 16px
+    font-size: 13px
+    line-height: 17px
+    +tablet
+      font-size: 16px
+      line-height: 20px
+
+    &:hover
+      background-color: $grey100
+
+  &__icon
+    width: 36px
+    height: 36px
+
+.toggle-navigation
+  padding: 8px
+  height: 37px
+  border: none
+  background: transparent
+  width: 50px
+  margin-right: -18px
+  display: flex
+  align-items: center
+  justify-content: center
+  +desktop
+    display: none
+
+  &:focus
+    outline-color: $primary-red
+
+  &__menu-icon
+    width: 24px
+    height: 24px
+
+  &__close-icon
+    display: none
+    width: 24px
+    height: 24px
+
+.close-navigation
+  display: flex
+  align-items: center
+  position: absolute
+  right: 0
+  top: 50%
+  background: $grey500
+  padding: 12px 6px 12px 18px
+  border: none
+  border-top-left-radius: 50%
+  border-bottom-left-radius: 50%
+
+  +tablet
+    display: none
+
+  &__icon
+    width: 32px
+    height: 32px
+    fill: white

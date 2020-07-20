@@ -6,6 +6,7 @@
             [wh.common.data.company-profile :as company-data]
             [wh.common.url :as url]
             [wh.components.common :refer [link]]
+            [wh.components.navbar.navbar :as navbar]
             [wh.components.icons :refer [icon]]
             [wh.interop :as interop]
             [wh.re-frame :as r]
@@ -416,24 +417,30 @@
                :id         "wh-navbar"
                :role       "navigation"
                :aria-label "main navigation"}
-         [:div.navbar__content
-          [:div.navbar-item.navbar__logo-container
-           [:svg.icon.navbar__logo [icon vertical]]
-           (logo-title vertical env)]
-          (when content?
-            [navbar-content args])
-          (when content?
-            [navbar-end args])
-          (when (and content? (not logged-in?))
-            [mobile-logged-out-menu args])
-          (when content?
-            [candidates-menu args])
-          (when content?
-            [resources-menu args])
-          (when content?
-            [looking-to-hire-menu args])
-          (when content?
-            [mobile-search (:search query-params) query-params])
-          (when @tasks-open?
-            [:div.navbar__fullscreen-intercept.is-hidden-mobile
-             {:on-click #(reset! tasks-open? false)}])]]))))
+         (if logged-in?
+           [:div.navbar__content
+            [:div.navbar-item.navbar__logo-container
+             [:svg.icon.navbar__logo [icon vertical]]
+             (logo-title vertical env)]
+            (when content?
+              [navbar-content args])
+            (when content?
+              [navbar-end args])
+            (when (and content? (not logged-in?))
+              [mobile-logged-out-menu args])
+            (when content?
+              [candidates-menu args])
+            (when content?
+              [resources-menu args])
+            (when content?
+              [looking-to-hire-menu args])
+            (when content?
+              [mobile-search (:search query-params) query-params])
+            (when @tasks-open?
+              [:div.navbar__fullscreen-intercept.is-hidden-mobile
+               {:on-click #(reset! tasks-open? false)}])]
+           [navbar/navbar {:vertical vertical
+                           :page page
+                           :content? content?
+                           :env env
+                           :query-params query-params}])]))))

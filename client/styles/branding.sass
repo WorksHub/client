@@ -1,22 +1,28 @@
 @import 'colours'
+@import 'mixins'
 
 .vertical-title
+  display: flex
+  flex-direction: column
   color: $grey500
   font-weight: 500
   letter-spacing: 2px
   line-height: 1em
   text-transform: uppercase
   vertical-align: text-bottom
+  +tablet
+    flex-direction: row
 
 .vertical-title__line:first-child:not(:last-child)
   font-weight: 800
   margin-right: 2px
-  margin-bottom: 3px
 
 .vertical-title--multiline
   align-items: center
   display: flex
   flex-direction: column
+  .vertical-title__line:first-child:not(:last-child)
+    margin-bottom: 3px
 
 .vertical-title--small
   font-size: 12px

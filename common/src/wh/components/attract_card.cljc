@@ -19,8 +19,7 @@
                 (util/test-selector "intro-attract"))
     [:div (util/smc style/intro__branding)
      [icon vertical :class style/intro__icon]
-     [branding/vertical-title vertical
-      {:size :small :multiline? true}]]
+     [branding/vertical-title vertical {:size :small :multiline? true}]]
     [:p (util/smc style/intro__description)
      [:span (str (get-in data/in-demand-hiring-data [vertical :discover]) " with ")]
      [:span (util/smc style/intro__vertical-title) (verticals/config vertical :platform-name)]]]))
@@ -47,6 +46,13 @@
     [:div (util/smc style/contribute__illustration)
      [:img {:src "/images/hiw/company/benefits/benefit2.svg"}]]]))
 
+(defn signin-buttons []
+  [:div (util/smc style/signin__buttons)
+   [signin-button/github]
+   [signin-button/stack-overflow]
+   [signin-button/twitter]
+   [signin-button/email]])
+
 (defn signin
   ([]
    [signin :default])
@@ -55,13 +61,9 @@
                           style/signin
                           [(= type :side-column) style/signin--side-column])
                 (util/test-selector "signin-attract"))
-    [:h2 (util/smc style/signin__heading) "Sign in"]
-    [:p (util/smc style/signin__copy) "to customize your feed & discover cool stuff"]
-    [:div (util/smc style/signin__buttons)
-     [signin-button/github]
-     [signin-button/stack-overflow]
-     [signin-button/twitter]
-     [signin-button/email]]]))
+    [:h2 (util/smc style/signin__heading) "Continue with"]
+    [:p (util/smc style/signin__copy) "customize your feed & discover cool stuff"]
+    [signin-buttons]]))
 
 (defn all-cards [{:keys [vertical logged-in?]}]
   [:div (util/smc style/cards)
