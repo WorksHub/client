@@ -151,7 +151,8 @@
            [text-field nil (field ::create-job/location__post-code
                                   :label "Postcode / Zipcode")]
            [text-field nil (field ::create-job/location__state
-                                  :label "State")]
+                                  :label "State"
+                                  :help "USA only")]
            [text-field nil (field ::create-job/location__country
                                   :label "* Country"
                                   :hide-icon? true

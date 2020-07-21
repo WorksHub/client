@@ -30,6 +30,7 @@
 (def error-msgs {::p/non-empty-string "This field can't be empty."
                  ::create-job/country "This field can't be empty."
                  ::create-job/city "This must be a valid city."
+                 ::create-job/state "This must be a valid state: CA, WA, AK, etc. Leave the field blank if the company is not located in the USA."
                  ::p/email "This is not a valid email."
                  ::create-job/selected-tags "One or more skills required."
                  ::create-job/currency "Invalid currency"
