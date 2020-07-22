@@ -1,0 +1,140 @@
+@import 'mixins'
+
+.dashboard
+  background: $background-white
+  border-radius: 8px
+  box-shadow: 0px 4px 8px $card-shadow-color
+  display: grid
+  grid-template-columns: 1fr
+  /* https://css-tricks.com/equal-width-columns-in-css-grid-are-kinda-weird/
+  grid-template-rows: 52px repeat(3, minmax(min-content, max-content)) 1fr
+  padding: 24px
+  +mobile
+    grid-row-gap: 16px
+    padding-bottom: 30px
+  +tablet
+    grid-column-gap: 55px
+    grid-template-rows: 73px minmax(min-content, max-content) 1fr
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+
+.user-image
+  height: 41px
+  width: 41px
+  margin-right: 16px
+  border-radius: 50%
+
+.dashboard-header
+  grid-row: 1
+  display: flex
+  +tablet
+    grid-column: 1/4
+
+.user-profile
+  display: flex
+  justify-content: space-between
+  flex-direction: column
+  height: 41px
+
+.user-name
+  font-weight: 600
+  font-size: 18px
+  line-height: 22px
+  color: $text-black
+
+.edit-profile
+  font-weight: 600
+  font-size: 13px
+  line-height: 16px
+  color: $primary-red
+  display: flex
+
+.edit-profile__icon
+  width: 14px
+  height: 13px
+  margin-left: 8px
+
+.save-icon
+  fill: $grey500
+  width: 13px
+  height: 16px
+
+.section
+  +mobile
+    margin-bottom: 0
+
+.section-title
+  align-items: center
+  color: $text-black
+  display: flex
+  font-size: 14px
+  font-weight: 600
+  letter-spacing: -0.01em
+  line-height: 18px
+  margin: 0 0 16px 0
+
+.section-row
+  font-size: 13px
+  line-height: 15px
+  color: $text-black
+  margin: 8px 0
+  display: flex
+
+.section-row__value
+  color: $primary-red
+  font-weight: 600
+  margin-left: auto
+
+.job-applications
+  grid-row: 2
+  grid-column: 1
+
+.articles
+  grid-column: 1
+  grid-row: 3
+  +tablet
+    grid-row: 2
+    grid-column: 2
+
+.issues
+  grid-column: 1
+  grid-row: 4
+  +tablet
+    grid-row: 2
+    grid-column: 3
+
+.cta
+  border-top: 1px solid $border-gray
+  grid-column: 1/4
+  grid-row: 5
+  padding-top: 16px
+  margin-top: 16px
+  +tablet
+    margin-top: 8px
+    grid-row: 3
+
+.cta__link
+  color: $text-black
+  font-size: 13px
+  font-weight: 500
+  line-height: 15px
+  display: flex
+  align-items: center
+  white-space: pre
+  flex-wrap: wrap
+  margin: 8px 0
+  padding: 4px 4px
+  +tablet
+    margin: 4px 0
+    padding: 4px 8px
+  &:hover
+    color: $primary-red
+    background-color: $grey100
+    .save-icon
+      fill: $primary-red
+  &:last-child
+    margin: 0
+
+.cta__link__accent
+  color: $primary-red
+  font-weight: 600
+  letter-spacing: -0.01em

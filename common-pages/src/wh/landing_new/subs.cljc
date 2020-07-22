@@ -8,6 +8,7 @@
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
             [wh.common.time :as time]
+            [wh.common.user :as user-common]
             [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.graphql-cache :as gqlc]
             [wh.landing-new.events :as events]
@@ -173,3 +174,19 @@
     (->> query-params
          tag-selector/query-params->query-params-tags-slugs
          (map tag-selector/query-params-tag-slug->partial-tag))))
+
+(reg-sub
+  ::user-image
+  :<- [:user/sub-db]
+  (fn [user _]
+    (:wh.user.db/image-url user)))
+
+(reg-sub
+  ::candidate?
+  (fn [db _]
+    (user-common/candidate? db)))
+
+(reg-sub
+  ::user-details
+  (fn [db _]
+    (cache-results events/user-stats db [:query-user-stats])))

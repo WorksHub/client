@@ -1,13 +1,12 @@
 (ns wh.user.db
-  (:require
-    [cljs-time.coerce :as tc]
-    [cljs-time.core :as t]
-    [cljs.spec.alpha :as s]
-    [clojure.string :as str]
-    [wh.common.cases :as cases]
-    [wh.common.data :as data]
-    [wh.common.user :as user]
-    [wh.util :as util]))
+  (:require [cljs-time.coerce :as tc]
+            [cljs-time.core :as t]
+            [cljs.spec.alpha :as s]
+            [clojure.string :as str]
+            [wh.common.cases :as cases]
+            [wh.common.data :as data]
+            [wh.common.user :as user]
+            [wh.util :as util]))
 
 (defn has-cv? [db]
   (or (get-in db [::sub-db ::cv :link])
@@ -36,12 +35,6 @@
 
 (defn company-id [db]
   (get-in db [::sub-db ::company-id]))
-
-(defn candidate-type? [type]
-  (= type "candidate"))
-
-(defn candidate? [db]
-  (candidate-type? (get-in db [::sub-db ::type])))
 
 (defn prospect-type? [type]
   (= type "prospect"))

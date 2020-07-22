@@ -1,15 +1,14 @@
 (ns wh.logged-in.profile.subs
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [reg-sub]]
-    [wh.common.data :as data]
-    [wh.common.specs.primitives]
-    [wh.common.text :as text]
-    [wh.common.url :as url]
-    [wh.logged-in.profile.db :as profile]
-    [wh.subs :refer [with-unspecified-option]]
-    [wh.user.db :as user]
-    [wh.util :as util])
+  (:require [clojure.string :as str]
+            [re-frame.core :refer [reg-sub]]
+            [wh.common.data :as data]
+            [wh.common.specs.primitives]
+            [wh.common.text :as text]
+            [wh.common.url :as url]
+            [wh.logged-in.profile.db :as profile]
+            [wh.subs :refer [with-unspecified-option]]
+            [wh.user.db :as user]
+            [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (reg-sub

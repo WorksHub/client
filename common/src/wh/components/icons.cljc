@@ -1,7 +1,6 @@
 (ns wh.components.icons
-  (:require
-    [wh.common.url :as url]
-    [wh.util :as util]))
+  (:require [wh.common.url :as url]
+            [wh.util :as util]))
 
 (defn icon [name & {:keys [tooltip] :as opts}]
   (let [svg [:svg (-> (dissoc opts :title :tooltip)

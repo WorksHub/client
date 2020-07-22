@@ -1,7 +1,6 @@
 (ns wh.common.user
-  (:require
-    [clojure.string :as str]
-    [wh.util :as util]))
+  (:require [clojure.string :as str]
+            [wh.util :as util]))
 
 (defn absolute-image-url [image-url]
   (if (and (not (str/blank? image-url))
@@ -67,3 +66,10 @@
                          :company-vertical (:vertical company)
                          :package (:package company))
           true util/remove-nil-blank-or-empty))
+
+
+(defn candidate-type? [type]
+  (= type "candidate"))
+
+(defn candidate? [db]
+  (candidate-type? (get-in db [:wh.user.db/sub-db :wh.user.db/type])))

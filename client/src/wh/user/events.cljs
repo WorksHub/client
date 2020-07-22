@@ -1,13 +1,12 @@
 (ns wh.user.events
-  (:require
-    [ajax.formats :as ajax-formats]
-    [cljs-time.coerce :as time-coerce]
-    [goog.net.cookies]
-    [re-frame.core :refer [dispatch path reg-event-db reg-event-fx reg-fx]]
-    [wh.common.graphql-queries :as graphql]
-    [wh.db :as db]
-    [wh.user.db :as user]
-    [wh.util :as util]))
+  (:require [ajax.formats :as ajax-formats]
+            [cljs-time.coerce :as time-coerce]
+            [goog.net.cookies]
+            [re-frame.core :refer [dispatch path reg-event-db reg-event-fx reg-fx]]
+            [wh.common.graphql-queries :as graphql]
+            [wh.db :as db]
+            [wh.user.db :as user]
+            [wh.util :as util]))
 
 (reg-event-db
   ::logged-out

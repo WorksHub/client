@@ -4,6 +4,7 @@
             [wh.components.activities.queries :as activities-queries]
             #?(:cljs [wh.pages.core :refer [on-page-load]])
             [wh.graphql.fragments]
+            [wh.common.user :as user-common]
             [re-frame.core :refer [reg-event-fx]]
             [wh.db :as db])
   (#?(:clj :require :cljs :require-macros)
@@ -171,6 +172,20 @@
   [:recommended-jobs-for-user {:page_size   3
                                :page_number 1}])
 
+(defquery user-stats-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "user_stats"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID}]
+   :venia/queries   [[:query_user_stats {:id :$id}
+                      [[:blogs_counted [:in_progress :published]]
+                       [:applications_counted
+                        [:in_progress :interview_stage :submitted]]
+                       [:issues_counted [:in_progress :completed]]]]]})
+(reg-query :user-stats user-stats-query)
+(defn user-stats [db]
+  [:user-stats {}])
+
 (reg-event-fx
   ::set-page-title
   db/default-interceptors
@@ -180,15 +195,16 @@
 
 (defn queries
   [db]
-  (conj [recent-activities
-         top-blogs
-         top-companies
-         top-tags
-         top-users
-         recent-issues]
-        (if (= "candidate" (get-in db [:wh.user.db/sub-db :wh.user.db/type]))
-          recommended-jobs
-          recent-jobs)))
+  (concat [recent-activities
+           top-blogs
+           top-companies
+           top-tags
+           top-users
+           recent-issues]
+          (if (user-common/candidate? db)
+            [recommended-jobs
+             user-stats]
+            [recent-jobs])))
 
 #?(:cljs
    (defmethod on-page-load :feed [db]

@@ -1,7 +1,6 @@
 (ns wh.common.subs
-  (:require
-    [re-frame.core :refer [reg-sub]]
-    [wh.verticals :as verticals]))
+  (:require [re-frame.core :refer [reg-sub]]
+            [wh.verticals :as verticals]))
 
 ;; This file should be where all 'core' subs are eventually migrated so that
 ;; they can be used in both client and server

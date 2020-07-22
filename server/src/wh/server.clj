@@ -98,15 +98,15 @@
       resp/response
       (resp/content-type "text/html; charset=utf-8")))
 
-(defn initial-app-db
+(defn- initial-app-db
   [{:keys [vertical api-server] :as config} request]
-  {:wh.settings/environment :dev
-   :wh.db/api-server api-server
-   :wh.db/vertical vertical
-   :wh.db/query-params (:query-params request)
-   :wh.db/page-params {}
-   :wh.db/uri (:uri request)
-   :wh.db/initial-load? true
+  {:wh.settings/environment    :dev
+   :wh.db/api-server           api-server
+   :wh.db/vertical             vertical
+   :wh.db/query-params         (:query-params request)
+   :wh.db/page-params          {}
+   :wh.db/uri                  (:uri request)
+   :wh.db/initial-load?        true
    :wh.db/default-technologies (verticals/config vertical :default-technologies)})
 
 (defn index-handler [request]

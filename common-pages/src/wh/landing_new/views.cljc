@@ -6,16 +6,13 @@
             [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.job-published :as job-published]
             [wh.components.attract-card :as attract-card]
-            [wh.components.icons :as icons]
             [wh.components.newsletter :as newsletter]
             [wh.components.side-card.side-card :as side-cards]
             [wh.components.side-card.side-card-mobile :as side-cards-mobile]
+            [wh.landing-new.components :as components]
             [wh.components.stat-card :as stat-card]
             [wh.components.tag-selector.tag-selector :as tag-selector]
-            [wh.interop :as interop]
-            [wh.landing-new.events :as events]
             [wh.landing-new.subs :as subs]
-            [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.styles.landing :as styles]
             [wh.util :as util]))
@@ -65,36 +62,94 @@
        (drop 6 elms)]
       [elms nil nil nil]))
 
-(defn prev-next-buttons [newer-than older-than]
-  (let [next-page (<sub [::subs/recent-activities-next-page])
-        prev-page (<sub [::subs/recent-activities-prev-page])]
-    [:div {:class styles/prev-next-buttons}
+(defn left-column [tags tags-loading? logged-in? jobs jobs-loading?
+                   show-recommendations? issues issues-loading? company?
+                   blogs-loading? companies-loading? users users-loading? blogs
+                   companies page query-params]
+  [:div (util/smc styles/side-column styles/side-column--left)
+   [tag-selector/card-with-selector tags tags-loading?]
+   [attract-card/contribute logged-in? :side-column]
+   [:div (util/smc styles/side-column styles/tablet-only)
+    [side-cards/jobs {:jobs                  jobs
+                      :jobs-loading?         jobs-loading?
+                      :company?              company?
+                      :show-recommendations? show-recommendations?}]
+    [side-cards/osi-how-it-works]
+    [side-cards/recent-issues issues issues-loading? company?]
+    [side-cards/top-ranking-users users users-loading?]]
+   [side-cards/top-ranking {:blogs        blogs
+                            :companies    companies
+                            :default-tab  :companies
+                            :redirect     page
+                            :logged-in?   logged-in?
+                            :query-params query-params
+                            :loading?     (or blogs-loading? companies-loading?)}]
+   (when-not logged-in?
+     [attract-card/signin :side-column])])
 
-     ;; This wrapping :div stays here, because even if prev-page button
-     ;; is not present we need some element to fill grid-column and
-     ;; keep layout intact
-     [:div
-      (when prev-page
-        [activities/button
-         {:type :dark
-          :event-handlers
-          (interop/on-click-fn
-            #?(:clj  (format "setBeforeIdAndRedirect('%s');" newer-than)
-               :cljs #(dispatch [::events/set-newer-than newer-than])))}
-         [:span {:class styles/prev-next-button__text}
-          [icons/icon "chevron_left"]
-          [:span "Prev"]]])]
+(defn right-column [jobs jobs-loading? show-recommendations? issues issues-loading?
+                    company? users users-loading?]
+  [:div {:class styles/side-column}
+   [side-cards/jobs {:jobs                  jobs
+                     :jobs-loading?         jobs-loading?
+                     :company?              company?
+                     :show-recommendations? show-recommendations?}]
+   [side-cards/osi-how-it-works]
+   [side-cards/recent-issues issues issues-loading? company?]
+   [side-cards/top-ranking-users users users-loading?]])
 
-     (when next-page
-       [activities/button
-        {:type :dark
-         :event-handlers
-         (interop/on-click-fn
-           #?(:clj  (format "setAfterIdAndRedirect('%s');" older-than)
-              :cljs #(dispatch [::events/set-older-than older-than])))}
-        [:span {:class styles/prev-next-button__text}
-         [:span "Next"]
-         [icons/icon "chevron_right"]]])]))
+
+(defn main-column [activities-loading? activities logged-in? jobs blogs
+                   issues show-recommendations? vertical selected-tags
+                   candidate?]
+  (if activities-loading?
+    (into [:div {:class styles/main-column}
+           (when candidate?
+             (list [components/user-dashboard] [:hr]))
+
+           (for [i (range 6)]
+             ^{:key i}
+             [activities/card-skeleton])])
+
+    (let [[group1 group2 group3 group4] (split-into-4-groups activities)
+          display-additional-info?      (and (> (count activities)
+                                                additional-info-threshold)
+                                             (not logged-in?))
+          older-than                    (:id (last activities))
+          newer-than                    (:id (first activities))]
+      (into [:div {:class styles/main-column}
+             (when candidate?
+               (list [components/user-dashboard] [:hr]))
+
+             [side-cards-mobile/top-content
+              {:jobs                  jobs
+               :blogs                 blogs
+               :issues                issues
+               :show-recommendations? show-recommendations?}]
+             [attract-card/intro vertical :main-column]
+             (when (and (not activities-loading?)
+                        (= 0 (count activities)))
+               [activities/card-not-found selected-tags])
+             (for [activity group1]
+               ^{:key (:id activity)} [:div (activity-card activity)])
+             (when display-additional-info?
+               [stat-card/about-applications vertical])
+             (for [activity group2]
+               ^{:key (:id activity)} [:div (activity-card activity)])
+             (when (and display-additional-info? (not logged-in?))
+               [attract-card/signin])
+             (when display-additional-info?
+               [stat-card/about-open-source vertical])
+             (for [activity group3]
+               ^{:key (:id activity)} [:div (activity-card activity)])
+             (when display-additional-info?
+               [stat-card/about-salary-increase vertical])
+             [newsletter/newsletter {:logged-in? logged-in?
+                                     :type       :landing}]
+             (for [activity group4]
+               ^{:key (:id activity)} [:div (activity-card activity)])
+
+             [components/prev-next-buttons newer-than older-than]]))))
 
 (defn page []
   (let [logged-in?            (<sub [:user/logged-in?])
@@ -121,72 +176,25 @@
         query-params          (<sub [:wh/query-params])
         selected-tags         (<sub [::subs/selected-tags])
         page                  (<sub [:wh/page])
-        company?              (<sub [:user/company?])]
+        company?              (<sub [:user/company?])
+        candidate?            (<sub [::subs/candidate?])]
 
     [:div (util/smc styles/page)
      (when-not logged-in?
        [attract-card/all-cards {:logged-in? logged-in?
                                 :vertical   vertical}])
      [:div (util/smc styles/page__main)
-      [:div (util/smc styles/side-column styles/side-column--left)
-       [tag-selector/card-with-selector tags tags-loading?]
-       [attract-card/contribute logged-in? :side-column]
-       [:div (util/smc styles/side-column styles/tablet-only)
-        [side-cards/jobs {:jobs                  jobs
-                          :jobs-loading?         jobs-loading?
-                          :company?              company?
-                          :show-recommendations? show-recommendations?}]
-        [side-cards/osi-how-it-works]
-        [side-cards/recent-issues issues issues-loading? company?]
-        [side-cards/top-ranking-users users users-loading?]]
-       [side-cards/top-ranking {:blogs        blogs
-                                :companies    companies
-                                :default-tab  :companies
-                                :redirect     page
-                                :logged-in?   logged-in?
-                                :query-params query-params
-                                :loading?     (or blogs-loading? companies-loading?)}]
-       (when-not logged-in?
-         [attract-card/signin :side-column])]
-      (if activities-loading?
-        (into [:div {:class styles/main-column}
-               (for [i (range 6)]
-                 ^{:key i}
-                 [activities/card-skeleton])])
-        (let [[group1 group2 group3 group4] (split-into-4-groups activities)
-              display-additional-info?      (and (> (count activities) additional-info-threshold)
-                                                 (not logged-in?))
-              older-than                      (:id (last activities))
-              newer-than                     (:id (first activities))]
-          (into [:div {:class styles/main-column}
-                 [side-cards-mobile/top-content
-                  {:jobs                  jobs
-                   :blogs                 blogs
-                   :issues                issues
-                   :show-recommendations? show-recommendations?}]
-                 [attract-card/intro vertical :main-column]
+      [left-column
+       tags tags-loading? logged-in? jobs jobs-loading?
+       show-recommendations? issues issues-loading? company?
+       blogs-loading? companies-loading? users users-loading? blogs
+       companies page query-params]
 
-                 (when (and (not activities-loading?)
-                            (= 0 (count activities)))
-                   [activities/card-not-found selected-tags])
-                 (for [activity group1] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when display-additional-info? [stat-card/about-applications vertical])
-                 (for [activity group2] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when (and display-additional-info? (not logged-in?)) [attract-card/signin])
-                 (when display-additional-info? [stat-card/about-open-source vertical])
-                 (for [activity group3] ^{:key (:id activity)} [:div (activity-card activity)])
-                 (when display-additional-info? [stat-card/about-salary-increase vertical])
-                 [newsletter/newsletter {:logged-in? logged-in?
-                                         :type       :landing}]
-                 (for [activity group4] ^{:key (:id activity)} [:div (activity-card activity)])
+      [main-column
+       activities-loading? activities logged-in? jobs blogs
+       issues show-recommendations? vertical selected-tags
+       candidate?]
 
-
-                 [prev-next-buttons newer-than older-than]])))
-      [:div {:class styles/side-column}
-       [side-cards/jobs {:jobs                  jobs
-                         :jobs-loading?         jobs-loading?
-                         :company?              company?
-                         :show-recommendations? show-recommendations?}]
-       [side-cards/osi-how-it-works]
-       [side-cards/recent-issues issues issues-loading? company?]
-       [side-cards/top-ranking-users users users-loading?]]]]))
+      [right-column
+       jobs jobs-loading? show-recommendations? issues
+       issues-loading? company? users users-loading?]]]))

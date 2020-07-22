@@ -17,9 +17,9 @@
 (s/def ::sub-db (s/keys :req [::editing ::predefined-avatar ::custom-avatar-mode]
                         :opt [::contributions]))
 
-(def default-db {::editing nil
-                 ::predefined-avatar 1
-                 ::custom-avatar-mode false
+(def default-db {::editing              nil
+                 ::predefined-avatar    1
+                 ::custom-avatar-mode   false
                  ::location-suggestions {}})
 
 (defn ->sub-db [data]

@@ -1,20 +1,20 @@
 (ns wh.job.events
-  (:require
-    [#?(:cljs cljs-time.core :clj clj-time.core) :as t]
-    [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
-    [clojure.string :as str]
-    [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    #?(:cljs [wh.common.fx.google-maps])
-    [wh.common.issue :refer [gql-issue->issue]]
-    [wh.common.job :as common-job]
-    [wh.db :as db]
-    [wh.graphql.jobs :as graphql-jobs]
-    [wh.components.tag :as tag]
-    [wh.job.db :as job]
-    #?(:cljs [wh.pages.core :refer [on-page-load]])
-    #?(:cljs [wh.user.db :as user])
-    [wh.util :as util])
+  (:require [#?(:cljs cljs-time.core :clj clj-time.core) :as t]
+            [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
+            [clojure.string :as str]
+            [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            #?(:cljs [wh.common.fx.google-maps])
+            [wh.common.issue :refer [gql-issue->issue]]
+            [wh.common.job :as common-job]
+            [wh.db :as db]
+            [wh.graphql.jobs :as graphql-jobs]
+            [wh.components.tag :as tag]
+            [wh.job.db :as job]
+            [wh.common.user :as user-common]
+            #?(:cljs [wh.pages.core :refer [on-page-load]])
+            #?(:cljs [wh.user.db :as user])
+            [wh.util :as util])
   (#?(:cljs :require-macros :clj :require)
     [clojure.core.strint :refer [<<]]
     [wh.graphql-macros :refer [defquery]]))
@@ -34,7 +34,7 @@
   #?(:cljs
      (cond
        (user/company? db) graphql-jobs/job-query--company
-       (or (user/candidate? db)
+       (or (user-common/candidate? db)
            (user/prospect? db)) graphql-jobs/job-query--candidate
        :otherwise graphql-jobs/job-query--default)))
 

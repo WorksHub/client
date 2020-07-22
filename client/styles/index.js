@@ -33,4 +33,5 @@ import './tag_selector.sass';
 import './side_card.sass';
 import './side_card_mobile.sass';
 import './skeletons.sass';
+import './landing_user_dashboard.sass';
 import './navbar.sass';
