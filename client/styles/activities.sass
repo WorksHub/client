@@ -39,6 +39,7 @@ $font-family: Montserrat, serif
   grid-row: 1
   margin: 0
 
+
 .company-info__job-count
   bottom: 4px
   color: $text-gray
@@ -370,6 +371,13 @@ $font-family: Montserrat, serif
   +tablet
     padding: 24px
 
+  &--started-issue
+    background-color: $grey100
+    border-color: $grey100
+    padding: 12px 24px
+    &:hover
+      border-color: $primary-red
+
 .card-content
   display: grid
   grid-gap: 18px
@@ -393,3 +401,68 @@ $font-family: Montserrat, serif
     color: $text-black
     font-weight: 500
     text-align: center
+
+.issue-company
+  display: grid
+  grid-template-columns: 26px auto
+  grid-gap: 8px
+  align-items: center
+
+  &__name
+    font-size: 13px
+    line-height: 16px
+
+  &__logo
+    border-radius: 2px
+    width: 26px
+    height: 26px
+
+.issue-tags
+  display: inline-grid
+  grid-template-columns: repeat(2, min-content)
+  grid-gap: 8px
+
+  &__wrapper
+    display: inline-grid
+    grid-gap: 8px
+    justify-content: space-between
+    +tablet
+      grid-template-columns: auto auto
+
+.issue-contributor
+  display: grid
+  grid-template-columns: 48px auto
+  grid-gap: 16px
+  position: relative
+
+  &__title
+    font-size: 14px
+    line-height: 20px
+    letter-spacing: 0.02em
+    max-width: 290px
+    +tablet
+      font-size: 16px
+      line-height: 22px
+
+
+  &__title--bold
+    font-weight: 600
+    &:first-of-type
+      margin-right: 6px
+      font-weight: 700
+    &:not(:first-of-type)
+      margin-left: 6px
+
+  &__avatar
+    border-radius: 50%
+    width: 48px
+    height: 48px
+
+  &__img
+    position: absolute
+    height: 110%
+    top: -4px
+    right: 0
+    display: none
+    +tablet
+      display: block

@@ -5,6 +5,7 @@
             [wh.components.activities.components :as activities]
             [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.job-published :as job-published]
+            [wh.components.activities.issue-started :as issue-started]
             [wh.components.attract-card :as attract-card]
             [wh.components.newsletter :as newsletter]
             [wh.components.side-card.side-card :as side-cards]
@@ -42,6 +43,9 @@
 
 (defmethod activity-card [:highlight "article"] [activity]
   [article-published/card (:object activity) :highlight])
+
+(defmethod activity-card [:start_issue "issue"] [activity]
+  [issue-started/card (:object activity) :start_issue])
 
 (defmethod activity-card :default [_activity]
   nil)

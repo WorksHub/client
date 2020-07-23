@@ -166,6 +166,11 @@
                    :wh.company/total-published-job-count
                    :wh.company/total-published-issue-count]))
 
+(s/def :wh.feed.issue/issue-contributor
+  (s/keys :req-un [:wh.user/id
+                   :wh.user/name]
+          :opt-un [:wh.spec.user/image-url]))
+
 (s/def :wh.feed/feed-issue
   (s/keys :req-un [:wh.issue/id
                    :wh.issue/body
@@ -182,6 +187,7 @@
           :opt-un [:wh.gql/tags
                    :wh.issue/repo
                    :wh.feed.issue/issue-company
+                   :wh.feed.issue/issue-contributor
                    :wh.issue/pr-count
                    :wh.feed.issue/compensation
                    :wh.feed.issue/contributors-count]))

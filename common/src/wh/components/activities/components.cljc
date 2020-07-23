@@ -1,10 +1,10 @@
 (ns wh.components.activities.components
   (:require [clojure.string :as str]
+            [wh.common.data :refer [currency-symbols]]
             [wh.components.common :refer [link wrap-img img base-img]]
             [wh.components.icons :as icons]
             [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
-            [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.styles.activities :as styles]
@@ -191,3 +191,20 @@
       [:span (util/smc styles/not-found__title) text1]
       [:span (util/smc styles/not-found__subtitle) text2]
       [button {:href (routes/path :contribute) :type :filled-short} "Write an article"]]]))
+
+(defn currency-symbol [compensation]
+  (some-> compensation
+          :currency
+          name
+          currency-symbols))
+
+(defn compensation-amount [compensation]
+  (let [amount (or (:amount compensation) 0)]
+    (when-not (zero? amount)
+      [tag/tag :div  {:label (str (currency-symbol compensation) amount)
+                      :type  "funding"}])))
+
+(defn primary-language [repo]
+  [:div (util/smc styles/issue__tag-primary-language)
+   [tag/tag :div  {:label (:primary-language repo)
+                   :type  "tech"}]])

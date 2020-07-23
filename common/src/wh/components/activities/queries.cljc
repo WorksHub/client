@@ -43,6 +43,7 @@
                                        [:compensation [:amount :currency]]
                                        [:issue_company [:id :name :slug :logo
                                                         :total_published_issue_count]]
+                                       [:issue_contributor [:id :name :image_url]]
                                        [:tags :fragment/tagFields]]]
                          [:feed_blog [:id :title :author :creator :feature
                                       :reading_time :creation_date :upvote_count
