@@ -19,8 +19,7 @@
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
             [wh.routes :as routes]
-            [wh.subs :refer [<sub]]
-            [wh.user.subs :as user-subs]))
+            [wh.subs :refer [<sub]]))
 
 ;; Profile header – view
 
@@ -281,6 +280,11 @@
            {:on-click #(dispatch [::events/remove-cover-letter])}
            "Remove cover letter"]))])]))
 
+(defn notifications-view []
+  [:section.profile-section
+   [:a.a--underlined {:href (routes/path :notifications-settings)}
+    [:h2 "Notifications Settings"]]])
+
 ;; Private section – view
 
 (defn itemize [items & {:keys [class no-data-message]}]
@@ -416,14 +420,6 @@
                                                   (dispatch [::events/save-private]))} "Save"]
     [cancel-link]]])
 
-(defn company-user-view
-  [{:keys [email name]}]
-  [:section.profile-section.private
-   [link "Edit" :profile-edit-company-user :class "button toggle-edit"]
-   [:h2.private__disclaimer "Profile"]
-   [view-field "Name:" name]
-   [view-field "Email:" [email-link email]]])
-
 (defn company-user-edit []
   [:form.wh-formx.private-edit.wh-formx__layout
    [:h1 "Edit your profile"]
@@ -443,18 +439,17 @@
 
 (defn main-view []
   [:div
-   (if (<sub [:user/company?])
-     [company-user-view (<sub [::subs/company-data])]
+   (let [is-company? (<sub [:user/company?])]
      [:div
       [header-view :owner (<sub [::subs/header-data])]
       [error-box]
-      [cv-section-view (<sub [::subs/cv-data])]
-      [cover-letter-section-view (<sub [::subs/cover-letter-data])]
-      [private-section-view (<sub [::subs/private-data])]])
-
+      (when-not is-company? [notifications-view])
+      (when-not is-company? [cv-section-view (<sub [::subs/cv-data])])
+      (when-not is-company? [cover-letter-section-view (<sub [::subs/cover-letter-data])])
+      (when-not is-company? [private-section-view (<sub [::subs/private-data])])])
    [:a.button
     {:data-pushy-ignore "true"
-     :href (routes/path :logout)}
+     :href              (routes/path :logout)}
     "Logout"]])
 
 (defn view-page []

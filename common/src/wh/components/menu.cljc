@@ -1,14 +1,14 @@
 (ns wh.components.menu
-  (:require
-    [clojure.string :as str]
-    [wh.common.data :as data]
-    [wh.common.data.company-profile :as company-data]
-    [wh.components.common :refer [link]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.navbar :as navbar]
-    [wh.interop :as interop]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.util :as util]))
+  (:require [clojure.string :as str]
+            [wh.common.data :as data]
+            [wh.common.data.company-profile :as company-data]
+            [wh.common.user :as user-common]
+            [wh.components.common :refer [link]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.navbar :as navbar]
+            [wh.interop :as interop]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.util :as util]))
 
 (defn probably-homepage-match?
   [target current-page]
@@ -97,8 +97,8 @@
                  (apply item (assoc i 0 nil))
                  (apply item i)))]])))]))
 
-(defn menu
-  [type user current-page restricted-links]
-  [:div.menu-container
-   {:id data/logged-in-menu-id}
-   [render-menu (data/menu type user) current-page restricted-links]])
+(defn menu [type user current-page restricted-links]
+  (when-not (user-common/candidate-type? type)
+    [:div.menu-container
+     {:id data/logged-in-menu-id}
+     [render-menu (data/menu type user) current-page restricted-links]]))

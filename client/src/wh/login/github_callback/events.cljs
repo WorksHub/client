@@ -69,8 +69,9 @@
    :venia/variables [{:variable/name "githubCode"
                       :variable/type :String!}]
    :venia/queries   [[:githubUserSession {:githubCode :$githubCode}
-                      [:id :name :visaStatus :visaStatusOther [:approval [:status]] :type :email :new :githubId
-                       :consented
+                      [:id :name :visaStatus :visaStatusOther
+                       [:approval [:status]] :type :email :new :githubId
+                       :consented :imageUrl
                        [:githubInfo [:name [:skills [:name]]]]
                        [:twitterInfo [:id]]
                        [:cv [:link

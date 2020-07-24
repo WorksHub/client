@@ -135,7 +135,7 @@
 (defn change-to-url
   [options]
   #?(:clj (str "let v=" (str (unparse-arg (map :url options)) "[this.value];")
-               "window.location.href = " 'v )))
+               "window.location.href = " 'v)))
 
 (defn vertical-selector []
   [forms/select-field

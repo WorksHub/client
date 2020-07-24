@@ -1,15 +1,16 @@
 (ns wh.components.navbar
   (:require #?(:cljs [wh.pages.core :as pages])
-            [wh.re-frame.events :refer [dispatch]]
             [clojure.string :as str]
             [wh.common.data :as data]
             [wh.common.data.company-profile :as company-data]
             [wh.common.url :as url]
+            [wh.common.user :as user-common]
             [wh.components.common :refer [link]]
-            [wh.components.navbar.navbar :as navbar]
             [wh.components.icons :refer [icon]]
+            [wh.components.navbar.navbar :as navbar]
             [wh.interop :as interop]
             [wh.re-frame :as r]
+            [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.util :as util]
@@ -409,38 +410,41 @@
   [_args]
   (let [tasks-open? (r/atom false)]
     (fn [{:keys [env vertical logged-in? query-params page user-type] :as args}]
-      (let [args          (assoc args
-                                 :tasks-open? tasks-open?
-                                 :show-tasks? (= user-type "company"))
-            content?      (not (contains? routes/no-nav-link-pages page))]
+      (let [candidate? (user-common/candidate-type? user-type)
+            args       (assoc args
+                              :tasks-open? tasks-open?
+                              :show-tasks? (= user-type "company"))
+            content?   (not (contains? routes/no-nav-link-pages page))]
         [:nav {:class      (util/merge-classes "navbar")
                :id         "wh-navbar"
                :role       "navigation"
                :aria-label "main navigation"}
-         (if logged-in?
+         (if (and logged-in? (not candidate?))
            [:div.navbar__content
-            [:div.navbar-item.navbar__logo-container
-             [:svg.icon.navbar__logo [icon vertical]]
-             (logo-title vertical env)]
-            (when content?
-              [navbar-content args])
-            (when content?
-              [navbar-end args])
-            (when (and content? (not logged-in?))
-              [mobile-logged-out-menu args])
-            (when content?
-              [candidates-menu args])
-            (when content?
-              [resources-menu args])
-            (when content?
-              [looking-to-hire-menu args])
-            (when content?
-              [mobile-search (:search query-params) query-params])
-            (when @tasks-open?
-              [:div.navbar__fullscreen-intercept.is-hidden-mobile
-               {:on-click #(reset! tasks-open? false)}])]
-           [navbar/navbar {:vertical vertical
-                           :page page
-                           :content? content?
-                           :env env
+              [:div.navbar-item.navbar__logo-container
+               [:svg.icon.navbar__logo [icon vertical]]
+               (logo-title vertical env)]
+              (when content?
+                [navbar-content args])
+              (when content?
+                [navbar-end args])
+              (when (and content? (not logged-in?))
+                [mobile-logged-out-menu args])
+              (when content?
+                [candidates-menu args])
+              (when content?
+                [resources-menu args])
+              (when content?
+                [looking-to-hire-menu args])
+              (when content?
+                [mobile-search (:search query-params) query-params])
+              (when @tasks-open?
+                [:div.navbar__fullscreen-intercept.is-hidden-mobile
+                 {:on-click #(reset! tasks-open? false)}])]
+
+           [navbar/navbar {:vertical     vertical
+                           :page         page
+                           :content?     content?
+                           :env          env
+                           :candidate?   candidate?
                            :query-params query-params}])]))))

@@ -52,7 +52,8 @@
   {:venia/operation {:operation/type :query
                      :operation/name "Me"}
    :venia/queries   [[:me
-                      [:id :name :visaStatus :visaStatusOther [:approval [:status]] :type :email :new :githubId
+                      [:id :name :visaStatus :visaStatusOther :imageUrl
+                       [:approval [:status]] :type :email :new :githubId
                        :consented
                        [:githubInfo [:name [:skills [:name]]]]
                        [:twitterInfo [:id]]
@@ -61,7 +62,9 @@
                        [:salary [:min :currency]]
                        [:likes [:id]]
                        [:applied [:jobId]]
-                       [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]]})
+                       [:preferredLocations
+                        [:city :administrative :country :countryCode :subRegion
+                         :region :longitude :latitude]]]]]})
 
 (reg-event-fx
   ::twitter-auth-success
@@ -99,6 +102,7 @@
                          :name
                          :new
                          :email
+                         :image_url
                          [:twitter_info
                           [:id]]]]]]]})
 

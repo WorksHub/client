@@ -102,7 +102,7 @@
                            :account_id
                            :tags]]]]
                        [:user
-                        [:id]]]]]})
+                        [:id :image_url]]]]]})
 
 (reg-event-fx
   ::stackoverflow-callback

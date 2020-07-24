@@ -1,11 +1,11 @@
 (ns wh.subs
-  (:require
-    [re-frame.core :refer [reg-sub]]
-    [re-frame.registrar :as rf-registrar]
-    [wh.common.subs] ;; required for inclusion
-    [wh.db :as db]
-    [wh.routes :as routes]
-    [wh.user.db :as user])
+  (:require [re-frame.core :refer [reg-sub]]
+            [re-frame.registrar :as rf-registrar]
+            [wh.common.subs] ;; required for inclusion
+            [wh.db :as db]
+            [wh.routes :as routes]
+            [wh.user.db :as user]
+            [wh.common.user :as user-common])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 ;;; Functions useful in subscriptions
@@ -101,6 +101,7 @@
 (reg-sub ::show-left-menu?
          (fn [db _]
            (and (db/logged-in? db)
+                (not (user-common/candidate? db))
                 (not (contains? routes/no-menu-pages (::db/page db)))
                 (not (menu-hidden-due-to-special-circumstances? db)))))
 
