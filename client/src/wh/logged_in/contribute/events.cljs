@@ -180,7 +180,7 @@
                               :variable/type :ID!}]
            :venia/queries [[:blog {:id :$id}
                             [:id :title :feature :author :authorId
-                             :published :body :creator :originalSource
+                             :published :archived :body :creator :originalSource
                              :verticals :primaryVertical :associatedJobs
                              [:company [:name :id]]
                              [:tags :fragment/tagFields]]]]})
@@ -196,15 +196,12 @@
                :variables {:id id}}}))
 
 (defn translate-blog [blog]
-  (-> (util/namespace-map "wh.logged-in.contribute.db"
-                          (cases/->kebab-case blog))
-      (assoc ::contribute/selected-tag-ids (->> blog
-                                                :tags
-                                                (map :id)
-                                                set))
+  (-> (util/namespace-map "wh.logged-in.contribute.db" (cases/->kebab-case blog))
+      (assoc ::contribute/selected-tag-ids (->> blog :tags (map :id) set)
+             ::contribute/company-id (get-in blog [:company :id])
+             ::contribute/company-name (get-in blog [:company :name])
+             ::contribute/archived (:archived blog))
       (update ::contribute/verticals (fnil set []))
-      (assoc  ::contribute/company-id (get-in blog [:company :id]))
-      (assoc  ::contribute/company-name (get-in blog [:company :name]))
       (dissoc ::contribute/company)
       (util/remove-nils)))
 
@@ -298,6 +295,14 @@
                                 :avatar-url))
           (util/remove-nil-blank-or-empty)))))
 
+(defn add-archived-field
+  "add archived field only during blog update"
+  [blog db]
+  (let [updating-blog? (get-in db [::contribute/sub-db ::contribute/id])]
+    (if updating-blog?
+      (assoc blog "archived" (get-in db [::contribute/sub-db ::contribute/archived]))
+      blog)))
+
 (reg-event-fx
   ::save-blog
   db/default-interceptors
@@ -313,10 +318,9 @@
         (let [id (get-in db [::contribute/sub-db ::contribute/id])
               selected-tag-ids (get-in db [::contribute/sub-db ::contribute/selected-tag-ids])
               save-blog-fields [:id :title :feature :author :authorId
-                                :published :body :creator :originalSource
+                                :published :archived :body :creator :originalSource
                                 :verticals :primaryVertical :companyId :tagIds
                                 :associatedJobs :authorInfo]
-              author-id (get-in db [::contribute/sub-db ::contribute/author-id])
               blog (-> db
                        ::contribute/sub-db
                        (dissoc ::contribute/tags)
@@ -327,7 +331,9 @@
                        (select-keys (map name save-blog-fields))
                        (dissoc (when id "creator"))
                        (util/remove-nils)
-                       (assoc :authorId author-id))]
+                       ;; authorId should be nil sometimes
+                       (assoc "authorId" (get-in db [::contribute/sub-db ::contribute/author-id]))
+                       (add-archived-field db))]
           {:graphql {:query      (if id update-blog-mutation create-blog-mutation)
                      :variables  (if id {:update_blog blog} {:create_blog blog})
                      :on-success (if id [::save-success] [::create-success])
@@ -341,6 +347,12 @@
   contribute-interceptors
   (fn [db [published?]]
     (assoc db ::contribute/published published?)))
+
+(reg-event-db
+  ::toggle-archived
+  contribute-interceptors
+  (fn [db _]
+    (update db ::contribute/archived #(when-not % (js/Date.)))))
 
 (reg-event-db
   ::init-contribute-db

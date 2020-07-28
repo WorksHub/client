@@ -251,6 +251,12 @@
     (::contribute/published db)))
 
 (reg-sub
+  ::archived?
+  :<- [::contribute]
+  (fn [db]
+    (boolean (::contribute/archived db))))
+
+(reg-sub
   ::creator
   :<- [::contribute]
   (fn [db]

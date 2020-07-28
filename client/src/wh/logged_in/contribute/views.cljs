@@ -233,8 +233,16 @@
          [:div.control
           [labelled-checkbox
            (<sub [::subs/published?])
-           {:label     "Published"
+           {:label     "Published?"
             :on-change [::events/set-published]}]])
+
+       (when admin?
+         [:div.control
+          [labelled-checkbox
+           (<sub [::subs/archived?])
+           {:label     "Archived?"
+            :on-change [::events/toggle-archived]}]])
+
        [:div.contribute__checklist
         [:strong [:i "Before you submit..."]]
         [:p "Check that there are no h1's (" [:code "#"] ") in body of the blog - the biggest heading in body should be h2 (" [:code "##"] ")."]
