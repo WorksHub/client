@@ -418,7 +418,8 @@
         "nicole"          "Nicole Sadozai"
         "sheryl"          "Sheryl Martin"
         "nikolaus"        "Nikolaus Krahé"
-        "chelsea"         "Chelsea Terry"}
+        "chelsea"         "Chelsea Terry"
+        "amelia"          "Amelia Parker"}
        (map (fn [[k v]] [(->email k) v]))
        (into {})))
 
