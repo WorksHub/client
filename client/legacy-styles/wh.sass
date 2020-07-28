@@ -203,6 +203,13 @@ $loader-z-index: 800
     align-items: center
     justify-content: center
 
+.visually-hidden
+  position: absolute
+  clip: rect(0 0 0 0)
+  width: 1px
+  height: 1px
+  margin: -1px
+
 #app, #app-ssr
   background-color: $app-bg
   &.app--hidden

@@ -384,8 +384,7 @@
        [main-form admin?]]
       [:div.job-edit__side-pods.split-content__side
        [vertical-views/verticals-pod
-        {:toggleable? true
-         :on-verticals (<sub [::subs/verticals])
+        {:on-verticals (<sub [::subs/verticals])
          :off-verticals (set/difference (set verticals/future-job-verticals) (<sub [::subs/verticals]))
          :toggle-event [::events/toggle-vertical]
          :class-prefix "job-edit"}]

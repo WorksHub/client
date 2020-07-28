@@ -247,8 +247,7 @@
         (<sub [::subs/show-vertical-selector?])
         [:div.vertical-selector
          [vertical-views/verticals-pod
-          {:toggleable?   true
-           :on-verticals  (<sub [::subs/verticals])
+          {:on-verticals  (<sub [::subs/verticals])
            :off-verticals (<sub [::subs/off-verticals])
            :toggle-event  [::events/toggle-vertical]
            :class-prefix  "contribute"}]

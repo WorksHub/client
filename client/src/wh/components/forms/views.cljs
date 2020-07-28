@@ -201,9 +201,9 @@
      [:input
       (merge
         {:type "checkbox"
+         :class "visually-hidden"
          :id id
          :disabled disabled
-
          :checked (if (nil? value) (:value options) value)}
         (when on-change
           {:on-change #(when (not disabled)

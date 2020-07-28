@@ -43,7 +43,8 @@
          [:li "Segment"]
          [:li "Sendgrid"]
          [:li "Sentry"]
-         [:li "Slack"]]]
+         [:li "Slack"]
+         [:li "Stream (gotstream.io)"]]]
        [:li "We may also share your information with third parties if required by a court order or any legal or regulatory requirement."]]]
 
      [:li

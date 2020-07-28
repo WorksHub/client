@@ -59,6 +59,14 @@
             (if ( = env :prod) "workshub" "workshub-dev")
             ".imgix.net/" img-hash "?" (routes/serialize-query-params params))))))
 
+(defn og-img [src]
+  (some-> (base-img src)
+          (str "&w=128")))
+
+(defn og-img-blog [src]
+  (some-> (base-img src)
+          (str "&w=512&ar=1.9")))
+
 (defn img [src {:keys [alt w h class attrs] :or {alt "Missing alt" w 1.0 h 1.0 class ""} :as opts}]
   (let [url (base-img src opts)]
     [:img (merge {#?(:clj :srcset) #?(:cljs :src-set) (generate-srcset (str url "&" (routes/serialize-query-params {:w w :h h})))
