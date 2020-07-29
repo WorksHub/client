@@ -84,7 +84,7 @@
 (defn showing-company-onboarding-dashboard-welcome?
   [db]
   (and (= :company-dashboard (::db/page db))
-       (user/company? db)
+       (user-common/company? db)
        (user/company-onboarding-msg-not-seen? db :dashboard_welcome)))
 
 (defn menu-hidden-due-to-special-circumstances?
@@ -102,6 +102,7 @@
          (fn [db _]
            (and (db/logged-in? db)
                 (not (user-common/candidate? db))
+                (not (user-common/company? db))
                 (not (contains? routes/no-menu-pages (::db/page db)))
                 (not (menu-hidden-due-to-special-circumstances? db)))))
 

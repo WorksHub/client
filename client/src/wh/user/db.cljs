@@ -27,12 +27,6 @@
 (defn admin? [db]
   (admin-type? (get-in db [::sub-db ::type])))
 
-(defn company-type? [type]
-  (= type "company"))
-
-(defn company? [db]
-  (company-type? (get-in db [::sub-db ::type])))
-
 (defn company-id [db]
   (get-in db [::sub-db ::company-id]))
 

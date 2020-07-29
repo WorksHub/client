@@ -7,6 +7,7 @@
             [wh.common.data :as data :refer [get-manager-email get-manager-name]]
             [wh.common.errors :as common-errors]
             [wh.common.location :as location]
+            [wh.common.user :as user-common]
             [wh.company.create-job.db :as create-job]
             [wh.components.tag :as tag]
             [wh.db :as db]
@@ -119,7 +120,7 @@
   create-job-interceptors
   (fn [db [new-value]]
     (let  [new-db (update db ::create-job/verticals util/toggle-unless-empty new-value)
-          remote-vertical? (contains? (::create-job/verticals new-db) "remote")]
+           remote-vertical? (contains? (::create-job/verticals new-db) "remote")]
       (assoc new-db ::create-job/remote remote-vertical?))))
 
 (reg-event-db
@@ -211,7 +212,7 @@
   create-job-interceptors
   (fn [db [resp]]
     (assoc db ::create-job/saving? false
-              ::create-job/error (util/gql-errors->error-key resp))))
+           ::create-job/error (util/gql-errors->error-key resp))))
 
 (reg-event-fx
   ::create-job-success
@@ -375,7 +376,7 @@
         [:google/load-maps]
         [::fetch-tags]
         [::fetch-benefit-tags]
-        (when (user/company? db)
+        (when (user-common/company? db)
           [::fetch-company (user/company-id db)])))
 
 (defmethod on-page-load :edit-job [db]

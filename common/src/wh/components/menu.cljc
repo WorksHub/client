@@ -5,7 +5,6 @@
             [wh.common.user :as user-common]
             [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon]]
-            [wh.components.navbar :as navbar]
             [wh.interop :as interop]
             [wh.re-frame.subs :refer [<sub]]
             [wh.util :as util]))
@@ -62,9 +61,8 @@
   (let [item (partial menu-item current-page)]
     [:nav.menu.wh-menu
      (doall
-       (for [{:keys [section class items show-notifications?]} data]
-         (let [show-notifications?  (and show-notifications? (<sub [:user/company?]))
-               list-id              (str "menu__list__" section)
+       (for [{:keys [section class items]} data]
+         (let [list-id              (str "menu__list__" section)
                tasks-header-id      "menu__list__tasks-header"
                tasks-id             "menu__list__tasks"
                toggle-section-class "menu__section--no-notifications"
@@ -76,20 +74,8 @@
            [:section
             {:class (util/merge-classes class
                                         "menu__section"
-                                        "is-open"
-                                        (when (not show-notifications?)
-                                          toggle-section-class))
+                                        "is-open")
              :key   section}
-            (if show-notifications?
-              [:div.menu__split-header
-               [:header (tab-opts-fn false)
-                section]
-               [notifications-header tasks-header-id (tab-opts-fn true)]]
-              [:header section])
-            (when show-notifications?
-              [:ul.is-hidden-desktop
-               {:id tasks-id}
-               [navbar/task-notifications-content (atom true)]])
             [:ul.menu__list.is-open
              {:id list-id}
              (for [i items]
@@ -98,7 +84,9 @@
                  (apply item i)))]])))]))
 
 (defn menu [type user current-page restricted-links]
-  (when-not (user-common/candidate-type? type)
+  (when-not (or
+              (user-common/candidate-type? type)
+              (user-common/company-type? type))
     [:div.menu-container
      {:id data/logged-in-menu-id}
      [render-menu (data/menu type user) current-page restricted-links]]))

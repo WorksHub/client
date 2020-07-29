@@ -1,20 +1,24 @@
 (ns wh.issues.core
-  (:require [shadow.loader :as loader]
-            [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
+  (:require [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
+            [shadow.loader :as loader]
+            [wh.common.user :as user-common]
             [wh.db :as db]
-            [wh.pages.issue.edit.events :as edit-issue]
-            [wh.pages.issue.views :as issue]
             [wh.issues.manage.views :as manage-issues]
             [wh.issues.views :as issues]
+            [wh.pages.issue.edit.events :as edit-issue]
+            [wh.pages.issue.views :as issue]
             [wh.user.db :as user]))
 
 (def page-mapping
-  {:company-issues {:page issues/page :can-access? user/company?}
-   :manage-issues {:page manage-issues/page :can-access? user/company?}
-   :manage-repository-issues {:page manage-issues/issues-page :can-access? user/company?}
-   :issue issue/page
-   :issues issues/page
-   :issues-by-language issues/page})
+  {:company-issues           {:page        issues/page
+                              :can-access? user-common/company?}
+   :manage-issues            {:page        manage-issues/page
+                              :can-access? user-common/company?}
+   :manage-repository-issues {:page        manage-issues/issues-page
+                              :can-access? user-common/company?}
+   :issue                    issue/page
+   :issues                   issues/page
+   :issues-by-language       issues/page})
 
 (reg-event-db
   ::initialize-page-mapping

@@ -73,3 +73,9 @@
 
 (defn candidate? [db]
   (candidate-type? (get-in db [:wh.user.db/sub-db :wh.user.db/type])))
+
+(defn company-type? [type]
+  (= type "company"))
+
+(defn company? [db]
+  (company-type? (get-in db [:wh.user.db/sub-db :wh.user.db/type])))

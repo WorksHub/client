@@ -33,7 +33,7 @@
 (defn job-query [db]
   #?(:cljs
      (cond
-       (user/company? db) graphql-jobs/job-query--company
+       (user-common/company? db) graphql-jobs/job-query--company
        (or (user-common/candidate? db)
            (user/prospect? db)) graphql-jobs/job-query--candidate
        :otherwise graphql-jobs/job-query--default)))
@@ -55,7 +55,7 @@
 (defn admin-or-job-owner? [db]
   #?(:cljs
      (or (user/admin? db)
-         (and (user/company? db)
+         (and (user-common/company? db)
               (= (get-in db [::job/sub-db ::job/company-id]) (user/company-id db))))))
 
 (reg-event-fx
@@ -538,7 +538,7 @@
   db/default-interceptors
   (fn [{db :db} _]
     #?(:cljs
-       (if (or (user/admin? db) (user/company? db))
+       (if (or (user/admin? db) (user-common/company? db))
          {:load-and-dispatch [:company]}
          {}))))
 

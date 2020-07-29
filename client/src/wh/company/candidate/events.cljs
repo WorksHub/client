@@ -1,15 +1,14 @@
 (ns wh.company.candidate.events
-  (:require
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.common.graphql-queries :as queries]
-    [wh.company.candidate.db :as candidate]
-    [wh.db :as db]
-    [wh.logged-in.profile.db :as profile]
-    [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.user.db :as user]
-    [wh.util :as util])
-  (:require-macros
-    [wh.graphql-macros :refer [defquery]]))
+  (:require [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.graphql-queries :as queries]
+            [wh.common.user :as user-common]
+            [wh.company.candidate.db :as candidate]
+            [wh.db :as db]
+            [wh.logged-in.profile.db :as profile]
+            [wh.pages.core :as pages :refer [on-page-load]]
+            [wh.user.db :as user]
+            [wh.util :as util])
+  (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (def candidate-interceptors (into db/default-interceptors
                                   [(path ::candidate/sub-db)]))
@@ -203,7 +202,8 @@
 
 (defmethod on-page-load :candidate [db]
   (if (db/logged-in? db)
-    (if (and (user/company? db) (not (user/has-permission? db :can_see_applications)))
+    (if (and (user-common/company? db)
+             (not (user/has-permission? db :can_see_applications)))
       [[::send-to-payment-flow (candidate-id db)]]
       [[::initialize-db]
        [::load-candidate]])

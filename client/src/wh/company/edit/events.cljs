@@ -1,28 +1,34 @@
 (ns wh.company.edit.events
-  (:require
-    [ajax.json :as ajax-json]
-    [camel-snake-kebab.core :as c]
-    [cljs-time.coerce :as tc]
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [clojure.set :as set]
-    [clojure.string :as str]
-    [goog.Uri :as uri]
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.common.errors :as errors]
-    [wh.common.data :refer [get-manager-email get-manager-name]]
-    [wh.common.logo]
-    [wh.common.upload :as upload]
-    [wh.company.common :as company]
-    [wh.company.edit.db :as edit]
-    [wh.company.payment.db :as payment]
-    [wh.company.payment.events :as payment-events]
-    [wh.db :as db]
-    [wh.graphql.company :refer [create-company-mutation update-company-mutation update-company-mutation-with-fields add-new-company-user-mutation delete-user-mutation company-query-with-payment-details all-company-jobs-query update-job-mutation publish-company-profile-mutation delete-integration-mutation]]
-    [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.user.db :as user]
-    [wh.util :as util]))
+  (:require [ajax.json :as ajax-json]
+            [camel-snake-kebab.core :as c]
+            [cljs-time.coerce :as tc]
+            [cljs-time.core :as t]
+            [cljs-time.format :as tf]
+            [clojure.set :as set]
+            [clojure.string :as str]
+            [goog.Uri :as uri]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.data :refer [get-manager-email get-manager-name]]
+            [wh.common.errors :as errors]
+            [wh.common.logo]
+            [wh.common.upload :as upload]
+            [wh.common.user :as user-common]
+            [wh.company.common :as company]
+            [wh.company.edit.db :as edit]
+            [wh.company.payment.db :as payment]
+            [wh.company.payment.events :as payment-events]
+            [wh.db :as db]
+            [wh.graphql.company
+             :refer [create-company-mutation update-company-mutation
+                     update-company-mutation-with-fields
+                     add-new-company-user-mutation delete-user-mutation
+                     company-query-with-payment-details
+                     all-company-jobs-query update-job-mutation
+                     publish-company-profile-mutation delete-integration-mutation]]
+            [wh.pages.core :as pages :refer [on-page-load]]
+            [wh.user.db :as user]
+            [wh.util :as util]))
 
 (defn company-id
   [db]
@@ -263,7 +269,7 @@
   db/default-interceptors
   (fn [db [{:keys [package] :as delta} _resp]]
     (let [db (assoc-in db [::edit/sub-db ::edit/disable-loading?] false)]
-      (if (user/company? db)
+      (if (user-common/company? db)
         (update-in db [::user/sub-db ::user/company] merge delta)
         (if (and (user/admin? db) package)
           (assoc-in db [::edit/sub-db ::edit/package] (keyword package))

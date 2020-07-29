@@ -1,20 +1,21 @@
 (ns wh.company.dashboard.events
-  (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [cljs.reader :as reader]
-    [clojure.string :as str]
-    [goog.crypt.base64 :as base64]
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.common.job :as common-job]
-    [wh.company.dashboard.db :as sub-db]
-    [wh.db :as db]
-    [wh.graphql.company :refer [update-company-mutation]]
-    [wh.job.events :refer [publish-job navigate-to-payment-setup process-publish-role-intention]]
-    [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.user.db :as user]
-    [wh.util :as util])
+  (:require [cljs-time.core :as t]
+            [cljs-time.format :as tf]
+            [cljs.reader :as reader]
+            [clojure.string :as str]
+            [goog.crypt.base64 :as base64]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.job :as common-job]
+            [wh.common.user :as user-common]
+            [wh.company.dashboard.db :as sub-db]
+            [wh.db :as db]
+            [wh.graphql.company :refer [update-company-mutation]]
+            [wh.job.events :refer [publish-job navigate-to-payment-setup
+                                   process-publish-role-intention]]
+            [wh.pages.core :as pages :refer [on-page-load]]
+            [wh.user.db :as user]
+            [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (def company-interceptors (into db/default-interceptors
@@ -111,7 +112,7 @@
 (defn company-id
   [db]
   (cond
-    (user/company? db) (get-in db [::user/sub-db ::user/company-id])
+    (user-common/company? db) (get-in db [::user/sub-db ::user/company-id])
     (user/admin? db) (get-in db [::db/page-params :id])))
 
 (reg-event-fx
@@ -169,7 +170,7 @@
            (-> db
                (assoc :wh.company.dashboard.db/sub-db company-db)
                (util/update-in* [:wh.user.db/sub-db :wh.user.db/company]
-                                (if (user/company? db)
+                                (if (user-common/company? db)
                                   #(merge % company)
                                   identity))
                (assoc-in [:wh.user.db/sub-db :wh.user.db/onboarding-msgs] (set (get-in resp [:data :me :onboardingMsgs])))))

@@ -2,16 +2,14 @@
   (:require #?(:cljs [wh.pages.core :as pages])
             [clojure.string :as str]
             [wh.common.data :as data]
-            [wh.common.data.company-profile :as company-data]
             [wh.common.url :as url]
             [wh.common.user :as user-common]
             [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon]]
             [wh.components.navbar.navbar :as navbar]
+            [wh.components.navbar.tasks :as navbar-tasks]
             [wh.interop :as interop]
             [wh.re-frame :as r]
-            [wh.re-frame.events :refer [dispatch]]
-            [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.util :as util]
             [wh.verticals :as verticals]))
@@ -265,71 +263,6 @@
       :defaultValue default-value
       :placeholder "Tap here to type..."}]]])
 
-(defn task->path
-  [task]
-  (case task
-    :complete_profile [:company :slug (some-> (<sub [:user/company]) :slug)]
-    :add_job          [:create-job]
-    :add_integration  [:edit-company]
-    :add_issue        [:company-issues]))
-
-(defn task
-  [id {:keys [title subtitle] :as task} tasks-open?]
-  (let [state (<sub [:user/company-onboarding-task-state id])
-        [handler & {:as link-options}] (task->path id)]
-    [:div
-     {:key id
-      :class (util/merge-classes "navbar__task"
-                                 (when state (str "navbar__task--" (name state))))}
-     [link {:text [:div
-                   [:div.is-flex
-                    [icon (:icon task)]
-                    [:div.title title
-                     [icon "cutout-tick"]]]
-                   [:p subtitle]]
-            :handler handler
-            :options (assoc link-options
-                            :on-click #(do (reset! tasks-open? false)
-                                           #?(:cljs (js/setClass data/logged-in-menu-id "is-open" false))
-                                           #?(:cljs (js/disableNoScroll))
-                                           (dispatch [:company/set-task-as-read id])))}]]))
-
-(defn unfinished-task-count
-  []
-  (->> company-data/company-onboarding-tasks
-       (keys)
-       (remove #(= :complete (<sub [:user/company-onboarding-task-state %])))
-       (count)))
-
-(defn task-notifications-content
-  [tasks-open?]
-  [:div.navbar-overlay__content
-   [:div.navbar__tasks-header
-    "Get more out of WorksHub"]
-   (doall
-     (for [[id t] company-data/company-onboarding-tasks]
-       [:div.navbar__task-container
-        {:key id}
-        [task id t tasks-open?]]))])
-
-(defn task-notifications
-  [tasks-open?]
-  (let [utc (unfinished-task-count)]
-    [:div.navbar__tasks
-     [icon "codi"
-      :class #?(:cljs "navbar__tasks--clickable")
-      :on-click #?(:cljs #(do
-                            (when (swap! tasks-open? not)
-                              (dispatch [:company/refresh-tasks]))))]
-     #?(:cljs (when (pos? utc)
-                [:small.navbar__unfinished-task-count utc]))
-     (when @tasks-open?
-       [:div.navbar__tasks__inner
-        [:div.navbar-overlay__inner
-         [:div.navbar-overlay__bg]
-         [task-notifications-content tasks-open?]
-         [:img {:src "/images/homepage/triangle2.svg"
-                :alt ""}]]])]))
 
 (defn navbar-end
   [{:keys [logged-in? query-params vertical show-navbar-menu? hide-search? tasks-open? show-tasks?]}]
@@ -340,7 +273,7 @@
                                                    (interop/set-is-open-on-click promo-banner-id false))
                         [:span "MENU"]
                         (when show-tasks?
-                          (let [utc (unfinished-task-count)]
+                          (let [utc (navbar-tasks/unfinished-task-count)]
                             (when (pos? utc)
                               [:small.navbar__unfinished-task-count utc])))]
         base-opts (reset-base-opts true)]
@@ -348,8 +281,6 @@
       [:div.navbar-search-end-wrapper
        (when-not hide-search?
          [:div.navbar-search-end.is-hidden-mobile
-          (when show-tasks?
-            [task-notifications tasks-open?])
           [search (:search query-params) query-params tasks-open?]])
        [:div.navbar-end.is-hidden-desktop
         (when-not hide-search? [search (:search query-params) query-params tasks-open?])
@@ -411,6 +342,7 @@
   (let [tasks-open? (r/atom false)]
     (fn [{:keys [env vertical logged-in? query-params page user-type] :as args}]
       (let [candidate? (user-common/candidate-type? user-type)
+            company?   (user-common/company-type? user-type)
             args       (assoc args
                               :tasks-open? tasks-open?
                               :show-tasks? (= user-type "company"))
@@ -419,32 +351,35 @@
                :id         "wh-navbar"
                :role       "navigation"
                :aria-label "main navigation"}
-         (if (and logged-in? (not candidate?))
+
+         ;; Last missing type to handle is admin
+         (if (and logged-in? (not candidate?) (not company?))
            [:div.navbar__content
-              [:div.navbar-item.navbar__logo-container
-               [:svg.icon.navbar__logo [icon vertical]]
-               (logo-title vertical env)]
-              (when content?
-                [navbar-content args])
-              (when content?
-                [navbar-end args])
-              (when (and content? (not logged-in?))
-                [mobile-logged-out-menu args])
-              (when content?
-                [candidates-menu args])
-              (when content?
-                [resources-menu args])
-              (when content?
-                [looking-to-hire-menu args])
-              (when content?
-                [mobile-search (:search query-params) query-params])
-              (when @tasks-open?
-                [:div.navbar__fullscreen-intercept.is-hidden-mobile
-                 {:on-click #(reset! tasks-open? false)}])]
+            [:div.navbar-item.navbar__logo-container
+             [:svg.icon.navbar__logo [icon vertical]]
+             (logo-title vertical env)]
+            (when content?
+              [navbar-content args])
+            (when content?
+              [navbar-end args])
+            (when (and content? (not logged-in?))
+              [mobile-logged-out-menu args])
+            (when content?
+              [candidates-menu args])
+            (when content?
+              [resources-menu args])
+            (when content?
+              [looking-to-hire-menu args])
+            (when content?
+              [mobile-search (:search query-params) query-params])
+            (when @tasks-open?
+              [:div.navbar__fullscreen-intercept.is-hidden-mobile
+               {:on-click #(reset! tasks-open? false)}])]
 
            [navbar/navbar {:vertical     vertical
                            :page         page
                            :content?     content?
                            :env          env
                            :candidate?   candidate?
+                           :company?     company?
                            :query-params query-params}])]))))

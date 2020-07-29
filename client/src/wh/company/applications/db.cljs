@@ -1,7 +1,7 @@
 (ns wh.company.applications.db
-  (:require
-    [wh.db :as db]
-    [wh.user.db :as user]))
+  (:require [wh.common.user :as user-common]
+            [wh.db :as db]
+            [wh.user.db :as user]))
 
 (def apps-page-size 18)
 (def jobs-page-size 300) ;; TODO desperately need pagination details returned from job query
@@ -18,10 +18,10 @@
 (defn update-applications-by-job
   [sub-db job-id f]
   (update-in
-   sub-db
-   [::applications-by-job job-id]
-   (fn [applications]
-     (update applications :applications #(map f %)))))
+    sub-db
+    [::applications-by-job job-id]
+    (fn [applications]
+      (update applications :applications #(map f %)))))
 
 (defn tab->states
   [tab admin?]
@@ -35,7 +35,7 @@
     nil))
 
 (defn company-id [db]
-  (if (user/company? db)
+  (if (user-common/company? db)
     (get-in db [::user/sub-db ::user/company-id])
     (get-in db [::db/page-params :id])))
 
@@ -43,7 +43,7 @@
   [db]
   (cond (and (user/admin? db) (not (company-id db))) :homepage ;; :admin-applications
         (user/admin? db)                             :admin-company-applications
-        (user/company? db)                           :company-applications ))
+        (user-common/company? db)                    :company-applications ))
 
 (defn company-view?
   [db]
@@ -53,12 +53,12 @@
 (defn default-db
   [db]
   (merge (::sub-db db)
-         {::current-page 1
+         {::current-page        1
           ::applications-by-job nil
           ::latest-applied-jobs nil
-          ::has-permission? true
-          ::current-tab (keyword (get-in db [::db/query-params "tab"] "pending"))
-          ::applications nil}
+          ::has-permission?     true
+          ::current-tab         (keyword (get-in db [::db/query-params "tab"] "pending"))
+          ::applications        nil}
          ;; when in company view, we never need to keep the jobs
          (when (company-view? db)
            {::jobs nil})))

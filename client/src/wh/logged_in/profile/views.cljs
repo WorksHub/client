@@ -280,11 +280,6 @@
            {:on-click #(dispatch [::events/remove-cover-letter])}
            "Remove cover letter"]))])]))
 
-(defn notifications-view []
-  [:section.profile-section
-   [:a.a--underlined {:href (routes/path :notifications-settings)}
-    [:h2 "Notifications Settings"]]])
-
 ;; Private section – view
 
 (defn itemize [items & {:keys [class no-data-message]}]
@@ -443,7 +438,6 @@
      [:div
       [header-view :owner (<sub [::subs/header-data])]
       [error-box]
-      (when-not is-company? [notifications-view])
       (when-not is-company? [cv-section-view (<sub [::subs/cv-data])])
       (when-not is-company? [cover-letter-section-view (<sub [::subs/cover-letter-data])])
       (when-not is-company? [private-section-view (<sub [::subs/private-data])])])

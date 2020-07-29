@@ -1,9 +1,9 @@
 (ns wh.logged-in.contribute.db
-  (:require
-    [cljs.spec.alpha :as s]
-    [wh.common.specs.primitives :as primitives]
-    [wh.db :as db]
-    [wh.user.db :as user]))
+  (:require [cljs.spec.alpha :as s]
+            [wh.common.specs.primitives :as primitives]
+            [wh.common.user :as user-common]
+            [wh.db :as db]
+            [wh.user.db :as user]))
 
 (defn has-error? [k db]
   (not (s/valid? k (get db k))))
@@ -79,5 +79,5 @@
                                          :avatar-url nil}}
          (when-not (user/admin? db)
            {::author (user/user-name db)})
-         (when (user/company? db)
+         (when (user-common/company? db)
            {::company-id (user/company-id db)})))
