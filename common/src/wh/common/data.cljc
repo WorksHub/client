@@ -7,7 +7,7 @@
 
 (def default-contact-email "hello@works-hub.com")
 
-(def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN"])
+(def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN" "YEN"])
 (def time-periods ["Yearly" "Daily"])
 
 (def visa-options #{"US Citizenship" "US Greencard" "US H1B" "EU Citizenship" "EU Visa" "Other"})
@@ -21,7 +21,8 @@
    "SGD" "S$"
    "CAD" "C$"
    "HKD" "HK$"
-   "PLN" "zł"})
+   "PLN" "zł"
+   "YEN" "¥"})
 
 ;; TODO there are far too few cities on this list
 (def cities
@@ -435,24 +436,25 @@
 (s/def ::manager (set (vals managers)))
 
 (def salary-ranges
-  {["CAD" "Yearly"] {:min 70000,  :max 165000},
-   ["USD" "Yearly"] {:min 30000,  :max 300000},
+  {["CAD" "Yearly"] {:min 70000, :max 165000},
+   ["USD" "Yearly"] {:min 30000, :max 300000},
    ["CHF" "Yearly"] {:min 100000, :max 200000},
-   ["USD" "Daily"]  {:min 600,    :max 1000},
+   ["USD" "Daily"]  {:min 600, :max 1000},
    ["NOK" "Yearly"] {:min 550000, :max 650000},
-   ["EUR" "Yearly"] {:min 20000,  :max 180000},
+   ["EUR" "Yearly"] {:min 20000, :max 180000},
    ["SEK" "Yearly"] {:min 420000, :max 960000},
-   ["GBP" "Daily"]  {:min 350,    :max 850},
-   ["GBP" "Yearly"] {:min 20000,  :max 175000},
-   ["SGD" "Yearly"] {:min 80000,  :max 180000}
-   ["PLN" "Yearly"] {:min 10000,  :max 500000}})
+   ["GBP" "Daily"]  {:min 350, :max 850},
+   ["GBP" "Yearly"] {:min 20000, :max 175000},
+   ["SGD" "Yearly"] {:min 80000, :max 180000}
+   ["PLN" "Yearly"] {:min 10000, :max 500000}
+   ["YEN" "Yearly"] {:min 5000000 :max 30000000}})
 
 (defn get-min-salary
   [currency tp]
   (or (:min (get salary-ranges [currency tp]))
       (case tp
         "Yearly" 8000
-        "Daily" 350
+        "Daily"  350
         1)))
 
 (defn get-max-salary
