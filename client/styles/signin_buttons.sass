@@ -19,9 +19,30 @@
   text-align: center
 
   &:hover
-    background: $highlight-red
-    color: $primary-red
+    background: $primary-red
+    color: $white
     cursor: pointer
+    border-color: transparent
+    .icon--email
+      color: $white
+
+  &--github:hover
+    background: $github-black
+    color: $text-white
+    fill: $text-white
+
+  &--twitter:hover
+    background: $twitter-blue
+    color: $text-white
+    .icon--twitter
+      fill: $text-white
+
+  &--stackoverflow:hover
+    background: $stackoverflow-orange
+    border-color: $stackoverflow-orange
+    color: $white
+    .icon--stackoverflow
+      fill: $white
 
   &:focus
     box-shadow: inset 0 0 0 2px $primary-red
@@ -35,3 +56,6 @@
 
 .icon--email
   color: $primary-red
+
+.icon--stackoverflow
+  fill: $stackoverflow-orange
