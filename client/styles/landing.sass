@@ -39,10 +39,13 @@ $black100: rgba(0, 0, 0, .2)
     display: none
 
 .main-column
+  overflow: hidden
   display: grid
   grid-gap: 24px
   grid-auto-rows: min-content
   grid-template-columns: 100%
+  +tablet
+    overflow: auto
 
 .card
   padding: 24px 16px
