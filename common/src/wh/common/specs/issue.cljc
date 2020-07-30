@@ -62,8 +62,8 @@
 (s/def :wh.issue/repo :wh/repo)
 
 (s/def :wh.issue.compensation/amount nat-int?)
-(s/def :wh.issue.compensation/currency #{:EUR :GBP :USD :BTC :AUD :CAD :CHF :KHD :NOK :SEK :SGD})
-(s/def :wh.issue.raw.compensation/currency #{"CHF" "SGD" "GBP" "BTC" "SEK" "USD" "CAD" "KHD" "EUR" "NOK" "AUD"})
+(s/def :wh.issue.compensation/currency     #{:EUR  :GBP  :USD  :BTC  :AUD  :CAD  :CHF  :KHD  :NOK  :SEK  :SGD  :PLN  :YEN})
+(s/def :wh.issue.raw.compensation/currency #{"EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN" "YEN"})
 
 (s/def :wh.issue/compensation (s/keys :req-un [:wh.issue.compensation/amount
                                                :wh.issue.compensation/currency]))
