@@ -1,14 +1,11 @@
 (ns wh.company.applications.subs
-  (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [clojure.set :as set]
-    [clojure.string :as str]
-    [goog.string :as gstr]
-    [re-frame.core :refer [reg-sub]]
-    [wh.company.applications.db :as sub-db]
-    [wh.db :as db]
-    [wh.user.db :as user]))
+  (:require [cljs-time.format :as tf]
+            [clojure.string :as str]
+            [goog.string :as gstr]
+            [re-frame.core :refer [reg-sub]]
+            [wh.common.user :as user-common]
+            [wh.company.applications.db :as sub-db]
+            [wh.db :as db]))
 
 (defn action->state
   [a]
@@ -299,7 +296,7 @@
   ::admin-dashboard?
   (fn [db _]
     (and (not (sub-db/company-id db))
-         (user/admin? db))))
+         (user-common/admin? db))))
 
 (reg-sub
   ::latest-applied-jobs

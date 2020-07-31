@@ -7,6 +7,7 @@
             [wh.common.specs.company :as company-spec]
             [wh.common.specs.location]
             [wh.common.specs.primitives :as p]
+            [wh.common.user :as user-common]
             [wh.components.forms.db :as forms]
             [wh.components.tag :as tag]
             [wh.db :as db]
@@ -85,7 +86,7 @@
 (defn relevant-fields
   [db]
   (letfn [(remove-admin-fields [f]
-            (if-not (user/admin? db)
+            (if-not (user-common/admin? db)
               (disj f
                     ::manager
                     ::promoted

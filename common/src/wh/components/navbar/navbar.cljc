@@ -3,6 +3,7 @@
             [wh.components.attract-card :as attract-card]
             [wh.components.branding :as branding]
             [wh.components.icons :as icons :refer [icon]]
+            [wh.components.navbar.admin :as admin]
             [wh.components.navbar.candidate :as candidate]
             [wh.components.navbar.company :as company]
             [wh.components.navbar.components :as components]
@@ -24,16 +25,16 @@
   [:form {:method :get
           :action (routes/path :jobsboard)
           :class  (util/mc
-                    styles/search__wrapper
-                    [(= type :small-menu-no-mobile) styles/no-mobile]
-                    [(= type :desktop-plus-only) styles/desktop-plus-only])}
+                   styles/search__wrapper
+                   [(= type :small-menu-no-mobile) styles/no-mobile]
+                   [(= type :desktop-plus-only) styles/desktop-plus-only])}
    [icon "search-new" :class styles/search__icon]
    [:input {:class       (util/mc
-                           styles/search
-                           [(or
-                              (= type :small-menu)
-                              (= type :small-menu-no-mobile))
-                            styles/search__small-menu])
+                          styles/search
+                          [(or
+                            (= type :small-menu)
+                            (= type :small-menu-no-mobile))
+                           styles/search__small-menu])
             :data-test   "job-search"
             :type        "text"
             :name        "search"
@@ -56,13 +57,13 @@
 (defn button-signin []
   [:a {:class (util/mc styles/button styles/button--signin)
        :href  (routes/path :login :params {:step :root})}
-   "Sign In"])
+   "Login"])
 
 (defn mobile-toggle-navigation-button []
   [:button (merge (util/smc styles/toggle-navigation)
                   (interop/multiple-on-click
-                    (interop/toggle-menu-display)
-                    (interop/set-is-open-on-click "promo-banner" false)))
+                   (interop/toggle-menu-display)
+                   (interop/set-is-open-on-click "promo-banner" false)))
    [icon "menu" :id "toggle-button-menu-icon"]
    [icon "close"
     :id "toggle-button-close-icon"
@@ -71,8 +72,8 @@
 (defn close-navigation-button []
   [:button (merge (util/smc styles/close-navigation)
                   (interop/multiple-on-click
-                    (interop/toggle-menu-display)
-                    (interop/set-is-open-on-click "promo-banner" false)))
+                   (interop/toggle-menu-display)
+                   (interop/set-is-open-on-click "promo-banner" false)))
    [icon "close" :class styles/close-navigation__icon]])
 
 
@@ -109,27 +110,29 @@
      :route     :employers}
     {:mobile? true}]])
 
-(defn menu-for-mobile-and-tablet [{:keys [candidate? company?]}]
-  (let [user? (or candidate? company?)]
-    [:div {:class (util/mc styles/small-menu__wrapper)
-           :id    "navigation"}
-     [close-navigation-button]
+(defn menu-for-mobile-and-tablet [{:keys [candidate? company? admin? logged-in?]}]
+  [:div {:class (util/mc styles/small-menu__wrapper)
+         :id    "navigation"}
+   [close-navigation-button]
 
-     (when-not user?
-       [:div (util/smc styles/small-menu__signin)
-        [:div (util/smc styles/small-menu__signin-title) "Continue with"]
-        [attract-card/signin-buttons]])
+   (when-not logged-in?
+     [:div (util/smc styles/small-menu__signin)
+      [:div (util/smc styles/small-menu__signin-title) "Continue with"]
+      [attract-card/signin-buttons]])
 
-     (cond candidate?
-           [candidate/candidate-mobile-menu]
+   (cond candidate?
+         [candidate/candidate-mobile-menu]
 
-           company?
-           [company/company-mobile-menu]
+         company?
+         [company/company-mobile-menu]
 
-           :else [public-mobile-menu])
+         admin?
+         [admin/admin-mobile-menu]
 
-     [:div (util/smc styles/small-menu__search-wrapper)
-      [search :small-menu]]]))
+         :else [public-mobile-menu])
+
+   [:div (util/smc styles/small-menu__search-wrapper)
+    [search :small-menu]]])
 
 
 (defn profile-menu [{:keys [candidate? company?]}]
@@ -152,9 +155,9 @@
        [components/dropdown-list
         candidate/candidate-profile-submenu-list])]))
 
-(defn navbar-right [{:keys [content? candidate? company?]}]
+(defn navbar-right [{:keys [logged-in? content? candidate? company? admin?]}]
   (cond
-    (or candidate? company?)
+    logged-in?
     [:div (util/smc styles/navbar__right)
      (when company? [company/notifications {:class styles/no-desktop}])
 
@@ -167,7 +170,10 @@
         [company/profile-menu]
 
         candidate?
-        [candidate/profile-menu])
+        [candidate/profile-menu]
+
+        admin?
+        [admin/profile-menu])
 
       [mobile-toggle-navigation-button]]]
 
@@ -205,8 +211,9 @@
      :page  page}]])
 
 
-(defn navbar [{:keys [vertical env content? page query-params candidate? company?]
-               :as opts}]
+(defn navbar [{:keys [vertical env content? page query-params
+                      candidate? company? admin? logged-in?]
+               :as   opts}]
   [:div {:class     styles/navbar__wrapper
          :data-test "navbar"}
    [:div (util/smc styles/navbar)
@@ -216,6 +223,9 @@
       (cond
         company?
         [company/company-menu opts]
+
+        admin?
+        [admin/admin-menu opts]
 
         candidate?
         [candidate/candidate-menu page]

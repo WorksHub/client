@@ -1,23 +1,20 @@
 (ns wh.logged-in.contribute.events
-  (:require
-    [clojure.spec.alpha :as spec]
-    [clojure.string :as str]
-    [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.common.errors :as errors]
-    [wh.common.upload :as upload]
-    [wh.components.forms.events :as form-events]
-    [wh.db :as db]
-    [wh.graphql-cache :refer [reg-query]]
-    [wh.graphql-cache]
-    [wh.graphql.fragments]
-    [wh.logged-in.contribute.db :as contribute]
-    [wh.pages.core :refer [on-page-load] :as pages]
-    [wh.user.db :as user]
-    [wh.util :as util])
-  (:require-macros
-    [clojure.core.strint :refer [<<]]
-    [wh.graphql-macros :refer [defquery]]))
+  (:require [clojure.spec.alpha :as spec]
+            [clojure.string :as str]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.errors :as errors]
+            [wh.common.upload :as upload]
+            [wh.common.user :as user-common]
+            [wh.components.forms.events :as form-events]
+            [wh.db :as db]
+            [wh.graphql-cache]
+            [wh.graphql.fragments]
+            [wh.logged-in.contribute.db :as contribute]
+            [wh.pages.core :refer [on-page-load] :as pages]
+            [wh.util :as util])
+  (:require-macros [clojure.core.strint :refer [<<]]
+                   [wh.graphql-macros :refer [defquery]]))
 
 (def contribute-interceptors (into db/default-interceptors
                                    [(path ::contribute/sub-db)]))
@@ -39,7 +36,7 @@
       {:db (-> db
                (assoc-in [::contribute/sub-db ::contribute/author] author)
                (assoc-in [::contribute/sub-db ::contribute/author-id] nil))}
-      (when (user/admin? db)
+      (when (user-common/admin? db)
         {:dispatch [::search-authors author]}))))
 
 (defn set-company-name
@@ -56,7 +53,7 @@
       {:db (-> db
                (assoc-in [::contribute/sub-db ::contribute/company-id] nil)
                (set-company-name company-name))}
-      (when (user/admin? db)
+      (when (user-common/admin? db)
         {:dispatch [::search-companies company-name]}))))
 
 (reg-event-db
@@ -278,9 +275,9 @@
 
 (defn prepare-author-info [db]
   (let [contribute-db (::contribute/sub-db db)
-        author-name (::contribute/author contribute-db)
-        author-id (::contribute/author-id contribute-db)
-        user-admin? (user/admin? db)]
+        author-name   (::contribute/author contribute-db)
+        author-id     (::contribute/author-id contribute-db)
+        user-admin?   (user-common/admin? db)]
     (when (and (not author-id)
                user-admin?)
       (-> contribute-db

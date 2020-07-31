@@ -79,3 +79,9 @@
 
 (defn company? [db]
   (company-type? (get-in db [:wh.user.db/sub-db :wh.user.db/type])))
+
+(defn admin-type? [type]
+  (= type "admin"))
+
+(defn admin? [db]
+  (admin-type? (get-in db [:wh.user.db/sub-db :wh.user.db/type])))

@@ -97,6 +97,7 @@ $font-family: Montserrat, serif
     display: flex
 
 .small-menu
+  order: 2
   display: grid
   grid-template-columns: 1fr
   grid-auto-rows: minmax(42px, max-content)
@@ -119,12 +120,14 @@ $font-family: Montserrat, serif
 
   &__wrapper
     position: relative
-    flex-direction: column-reverse
+    flex-direction: column
     display: none
     background-color: $background-white
     border-top: 1px solid $grey200
     max-height: calc(100vh - 76px)
     overflow-y: auto
+    +desktop
+      display: none!important
     +tablet
       justify-content: center
       padding: 32px
@@ -145,6 +148,7 @@ $font-family: Montserrat, serif
     text-align: center
 
   &__search-wrapper
+    order: 1
     padding: 16px 16px 0
     margin-bottom: 32px
     +tablet
@@ -354,9 +358,6 @@ $font-family: Montserrat, serif
     +desktop-plus
       display: flex
   &--signup
-    background: transparent
-    border: 1px solid $primary-red
-    color: $primary-red
     display: none
     +tablet
       display: flex
@@ -370,6 +371,9 @@ $font-family: Montserrat, serif
     +desktop-plus
       display: flex
   &--signin
+    background: transparent
+    border: 1px solid $primary-red
+    color: $primary-red
     display: none
     +tablet
       display: flex
@@ -453,6 +457,7 @@ $font-family: Montserrat, serif
 
 .user-profile-container
   height: 100%
+  position: relative
 
 .user-profile
   width: 48px
@@ -474,6 +479,7 @@ $font-family: Montserrat, serif
 .profile-image
   width: 48px
   height: 48px
+  object-fit: cover
   +mobile
     width: 32px
     height: 32px
@@ -519,6 +525,8 @@ $font-family: Montserrat, serif
     cursor: pointer
     white-space: nowrap
     user-select: none
+    &:hover
+      background: $grey100
 
 .notification
   height: 100%

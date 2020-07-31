@@ -5,7 +5,7 @@
     #?(:cljs [wh.user.db :as user])
     #?(:cljs [goog.Uri :as uri])
     #?(:cljs [ajax.json :as ajax-json])
-    #?(:cljs [wh.common.fx.google-maps :as google-maps])
+    #?(:cljs [wh.common.fx.google-maps])
     #?(:cljs [wh.common.location :as location])
     #?(:cljs [cljs.spec.alpha :as s]
        :clj  [clojure.spec.alpha :as s])
@@ -13,17 +13,16 @@
     [wh.company.profile.db :as profile]
     [wh.db :as db]
     [wh.components.tag :as tag]
-    [wh.graphql-cache :as cache :refer [reg-query]]
-    [wh.graphql.company :refer [update-company-mutation update-company-mutation-with-fields publish-company-profile-mutation]]
+    [wh.graphql-cache :as cache]
+    [wh.graphql.company :refer [update-company-mutation-with-fields publish-company-profile-mutation]]
     [wh.graphql.jobs]
     [wh.graphql.tag :as tag-gql :refer [tag-query]]
     [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
+    [wh.common.user :as user-common]
     [wh.common.cases :as cases]
     [wh.common.errors :as errors]
     [wh.util :as util]
-    [clojure.string :as str])
-  (#?(:clj :require :cljs :require-macros)
-    [wh.graphql-macros :refer [defquery]]))
+    [clojure.string :as str]))
 
 (def profile-interceptors (into db/default-interceptors
                                 [(path ::profile/sub-db)]))
@@ -54,7 +53,7 @@
            [::load-photoswipe]
            [:google/load-maps]
            (into [:graphql/query] (extra-data-query db))
-           (when (or (user/admin? db)
+           (when (or (user-common/admin? db)
                      (user/owner? db (:id (cached-company db)))
                      (user/owner-by-slug? db (company-slug db)))
              [::fetch-all-tags])))) ;; TODO for now we get all tags and filter client-side

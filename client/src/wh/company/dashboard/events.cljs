@@ -113,7 +113,7 @@
   [db]
   (cond
     (user-common/company? db) (get-in db [::user/sub-db ::user/company-id])
-    (user/admin? db) (get-in db [::db/page-params :id])))
+    (user-common/admin? db) (get-in db [::db/page-params :id])))
 
 (reg-event-fx
   ::fetch-company

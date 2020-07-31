@@ -54,7 +54,7 @@
 
 (defn admin-or-job-owner? [db]
   #?(:cljs
-     (or (user/admin? db)
+     (or (user-common/admin? db)
          (and (user-common/company? db)
               (= (get-in db [::job/sub-db ::job/company-id]) (user/company-id db))))))
 
@@ -236,9 +236,9 @@
   [db job-id {:keys [success failure retry]}]
   {:graphql {:query      update-job-mutation
              :variables  {:update_job
-                          (cond-> {:id job-id
+                          (cond-> {:id        job-id
                                    :published true}
-                                  #?(:cljs (user/admin? db)
+                                  #?(:cljs (user-common/admin? db)
                                      :clj false) (assoc :approved true))}
              :on-success [::publish-job-success-internal success]
              :on-failure [::publish-job-failure-internal job-id failure retry]}})
@@ -262,7 +262,7 @@
            :invalid-job     redirect-to-job
            :invalid-company redirect-to-job
            :missing-permission
-           (if (user/admin? db)
+           (if (user-common/admin? db)
              ;; TODO admin popup could go here instead...
              (do (js/alert "Company does not have permission to publish this role. Check their package.")
                  {:dispatch failure-event})
@@ -286,11 +286,11 @@
   #?(:cljs
      (cond
        (or (contains? permissions :can_publish)
-           (and (user/admin? db) pending-offer))
+           (and (user-common/admin? db) pending-offer))
        (merge (publish-job db job-id publish-events)
               {:db (on-publish db)})
 
-       (user/admin? db)
+       (user-common/admin? db)
        (show-admin-publish-prompt!)
 
        :else
@@ -538,7 +538,7 @@
   db/default-interceptors
   (fn [{db :db} _]
     #?(:cljs
-       (if (or (user/admin? db) (user-common/company? db))
+       (if (or (user-common/admin? db) (user-common/company? db))
          {:load-and-dispatch [:company]}
          {}))))
 

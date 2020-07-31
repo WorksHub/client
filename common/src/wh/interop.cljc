@@ -1,5 +1,10 @@
 (ns wh.interop
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            #?(:clj [net.cgrand.macrovich :as macros]))
+  #?(:cljs
+     (:require-macros [net.cgrand.macrovich :as macros]
+                      ;; must self refer macros
+                      [wh.interop :refer [jsf]])))
 
 (defn unparse-arg
   [arg]
@@ -22,6 +27,14 @@
                     (apply str))]
     (str fn-name "(" params ")")))
 
+(defmacro jsf [form]
+  (let [[f args] ((juxt first rest) form)
+        fname    (name f)]
+    (macros/case
+        :clj `(~->jsfn ~fname ~@args)
+        :cljs (let [f (symbol "js" fname)]
+                `(fn [_#] (~f ~@args))))))
+
 (defn do
   [& fns]
   #?(:clj
@@ -36,35 +49,29 @@
 
 (defn set-is-open
   [id on?]
-  #?(:clj  (->jsfn "setClass" id "is-open" on?)
-     :cljs (fn [_] (js/setClass id "is-open" on?))))
+  (jsf (setClass id "is-open" on?)))
 
 (defn set-is-open-class
   [class on?]
-  #?(:clj  (->jsfn "setClassOnClass" class "is-open" on?)
-     :cljs (fn [_] (js/setClassOnClass class "is-open" on?))))
+  (jsf (setClassOnClass class "is-open" on?)))
 
 (defn analytics-track
   [evt prps]
-  #?(:clj  (->jsfn "submitAnalyticsTrack" evt prps)
-     :cljs (fn [_] (js/submitAnalyticsTrack evt prps))))
+  (jsf (submitAnalyticsTrack evt prps)))
 
 (defn show-auth-popup
   [context & [redirect]]
   (let [c (when context (name context))
         r (when redirect (pr-str redirect))]
-    #?(:clj  (->jsfn "showAuthPopUp" c r)
-       :cljs (fn [_] (js/showAuthPopUp c r)))))
+    (jsf (showAuthPopUp c r))))
 
 (defn hide-auth-popup
   []
-  #?(:clj  (->jsfn "hideAuthPopUp")
-     :cljs (fn [_] (js/hideAuthPopUp))))
+  (jsf (hideAuthPopUp)))
 
 (defn open-video-player
   [youtube-id]
-  #?(:clj  (->jsfn "openVideoPlayer" youtube-id)
-     :cljs (fn [_] (js/openVideoPlayer youtube-id))))
+  (jsf (openVideoPlayer youtube-id)))
 
 (defn open-photo-gallery
   [index images]
@@ -80,13 +87,11 @@
 
 (defn toggle-class-on-click
   [id cls]
-  #?(:clj  {:onClick (->jsfn "toggleClass" id cls)}
-     :cljs {:on-click (fn [_] (js/toggleClass id cls))}))
+  (on-click-fn (jsf (toggleClass id cls))))
 
 (defn click-tag
   [tag type]
-  #?(:clj  (->jsfn "clickOnTag" tag type)
-     :cljs (fn [_] (js/clickOnTag tag type))))
+  (jsf (clickOnTag tag type)))
 
 (defn toggle-is-open-on-click
   [id]
@@ -102,28 +107,23 @@
 
 (defn disable-no-scroll-on-click
   []
-  #?(:clj  {:onClick (->jsfn "disableNoScroll")}
-     :cljs {:on-click (fn [_] (js/disableNoScroll))}))
-
-(defn toggle-menu-display
-  []
-  #?(:clj  {:onClick (->jsfn "toggleMenuDisplay")}
-     :cljs {:on-click (fn [_] (js/toggleMenuDisplay))}))
+  (on-click-fn (jsf (disableNoScroll)))  )
 
 (defn toggle-no-scroll-on-click
   [id]
-  #?(:clj  {:onClick (->jsfn "toggleNoScroll" id)}
-     :cljs {:on-click (fn [_] (js/toggleNoScroll id))}))
+  (on-click-fn (jsf (toggleNoScroll id))))
 
 (defn set-no-scroll-on-click
   [id on?]
-  #?(:clj  {:onClick (->jsfn "setNoScroll" id on?)}
-     :cljs {:on-click (fn [_] (js/setNoScroll id on?))}))
+  (on-click-fn (jsf (setNoScroll id on?))))
+
+(defn toggle-menu-display
+  []
+  (on-click-fn (jsf (toggleMenuDisplay))))
 
 (defn agree-to-tracking-on-click
   []
-  #?(:clj  {:onClick (->jsfn "agreeToTracking")}
-     :cljs {:on-click (fn [_] (js/agreeToTracking))}))
+  (on-click-fn (jsf (agreeToTracking))))
 
 (defn multiple-on-click
   [& fns]
@@ -137,10 +137,8 @@
 
 (defn listen-newsletter-form
   []
-  #?(:clj  (->jsfn "listenNewsletterForm")
-     :cljs (fn [_] (js/listenNewsletterForm))))
+  (jsf (listenNewsletterForm)))
 
 (defn highlight-code-snippets
   []
-  #?(:clj  (->jsfn "highlightCodeSnippets")
-     :cljs (js/highlightCodeSnippets)))
+  (jsf (highlightCodeSnippets)))

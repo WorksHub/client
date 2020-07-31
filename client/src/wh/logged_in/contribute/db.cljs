@@ -77,7 +77,7 @@
                                          :skills     []
                                          :avatar-uploading? false
                                          :avatar-url nil}}
-         (when-not (user/admin? db)
+         (when-not (user-common/admin? db)
            {::author (user/user-name db)})
          (when (user-common/company? db)
            {::company-id (user/company-id db)})))

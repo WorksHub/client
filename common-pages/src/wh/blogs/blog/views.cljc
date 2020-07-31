@@ -91,7 +91,7 @@
            {:class "upvote__circle upvote__circle--pulsing"}
            (interop/on-click-fn
              #?(:cljs #(dispatch [::events/upvote])
-                :clj (interop/show-auth-popup :blog
+                :clj (interop/show-auth-popup :upvote
                                               [:blog
                                                :params {:id (:id (<sub [::subs/blog]))}
                                                :query-params {:upvote true}]))))

@@ -1,9 +1,8 @@
 (ns wh.common.data
-  (:require
-    #?(:clj  [clojure.spec.alpha :as s]
-       :cljs [cljs.spec.alpha :as s])
-    [clojure.string :as str]
-    [wh.common.text :as txt]))
+  (:require #?(:clj  [clojure.spec.alpha :as s]
+               :cljs [cljs.spec.alpha :as s])
+            [clojure.string :as str]
+            [wh.common.text :as txt]))
 
 (def default-contact-email "hello@works-hub.com")
 
@@ -696,59 +695,6 @@
     :answer "With one click you can connect your company GitHub account, allowing you to test, engage, and develop your own community of Software Engineers. With 84% of our users more open to joining a company whose open source they had already contributed to and 90% more likely to consider companies with open source code it’s a great way to increase your hiring pipeline. You can find out how to get started with connecting your GitHub and posting open source issues here."}
    {:title "How does WorksHub compare with Hired, Vettery, Triplebyte, and others?"
     :answer "Whether it’s hiring managers or CTOs looking to hire Software Engineers, our aim is to connect the right engineers with the right companies. When we decided to build WorksHub, we knew that in order to tackle the hiring problem, we needed a tech-first platform with a human touch for understanding nuance. Unlike competitors, we have built our hubs around specific technologies, ensuring you have no delay in gaining instant visibility for your company into the right (vetted) talent pools. With one account, you will be able to test, hire and engage candidates across all of our hubs."}])
-
-(def default-for-you-section
-  {:section "For You"
-   :class   "for-you"
-   :items   [[:homepage               "dashboard"  "Dashboard"]
-             [:recommended            "recommend"  "Recommended"]
-             [:liked                  "bookmark"   "Saved Jobs"]
-             [:applied                "applications" "Applied"]
-             [:notifications-settings "resources"  "Notifications"]
-             [:contribute             "contribute" "Create Article"]
-             [:profile                "profile"    "Profile & Preferences"]]})
-
-(def default-explore-section
-  {:section "Explore"
-   :class   "explore"
-   :items   [[:learn     "resources"  "Articles"]
-             [:issues    "pr"         "Open Source Issues"]
-             [:jobsboard "jobs-board" "Job Board"]
-             [:companies "company"    "Companies"]
-             [:feed      "feed"       "Feed"]
-             [:metrics   "trends"     "Metrics"]]})
-
-(defn menu
-  [type user]
-  (case type
-    "admin"
-    [{:section "Admin"
-      :class   "admin"
-      :items   [[[:admin-applications :homepage] "applications" "Applications"]
-                [:admin-companies                "recommend"    "Companies"]
-                [:admin-articles                 "resources"    "Articles"]
-                [:candidates                     "profile"      "Candidates"]
-                [:create-job                     "resources"    "Create role"]
-                [:create-company                 "jobs-board"   "Create company"]
-                [:create-candidate               "add-new"      "Create candidate"]]}
-     default-explore-section
-     default-for-you-section]
-    "company"
-    [{:section             "For You"
-      :class               "for-you"
-      :show-notifications? true
-      :items               [[[:company-dashboard :homepage] "dashboard" "Dashboard"]
-                            [[:company [:slug (get-in user [:wh.user.db/company :slug])]]
-                             "company" "Company Profile"]
-                            [:company-applications "applications" "Applications"]
-                            [:create-job "add-new" "Add new role"]
-                            [:company-issues "pr" "Your issues"]
-                            [:edit-company "settings" "Settings"]
-                            [:profile "profile" "Your Profile"]]}
-     default-explore-section]
-    ;; default
-    [default-for-you-section
-     default-explore-section]))
 
 (def how-it-works-benefits
   {:company

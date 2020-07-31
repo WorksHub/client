@@ -271,7 +271,7 @@
     (let [db (assoc-in db [::edit/sub-db ::edit/disable-loading?] false)]
       (if (user-common/company? db)
         (update-in db [::user/sub-db ::user/company] merge delta)
-        (if (and (user/admin? db) package)
+        (if (and (user-common/admin? db) package)
           (assoc-in db [::edit/sub-db ::edit/package] (keyword package))
           (update db ::edit/sub-db merge delta))))))
 

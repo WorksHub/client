@@ -1,20 +1,19 @@
 (ns wh.company.applications.events
-  (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [clojure.string :as str]
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.common.graphql-queries :as queries]
-    [wh.common.job :refer [format-job-location]]
-    [wh.common.url :as url]
-    [wh.company.applications.db :as sub-db]
-    [wh.company.applications.subs :refer [action->state]]
-    [wh.db :as db]
-    [wh.graphql.company :refer [all-company-jobs-query-fragment]]
-    [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.user.db :as user]
-    [wh.util :as util]))
+  (:require [cljs-time.format :as tf]
+            [clojure.string :as str]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.graphql-queries :as queries]
+            [wh.common.job :refer [format-job-location]]
+            [wh.common.url :as url]
+            [wh.common.user :as user-common]
+            [wh.company.applications.db :as sub-db]
+            [wh.company.applications.subs :refer [action->state]]
+            [wh.db :as db]
+            [wh.graphql.company :refer [all-company-jobs-query-fragment]]
+            [wh.pages.core :as pages :refer [on-page-load]]
+            [wh.user.db :as user]
+            [wh.util :as util]))
 
 (def company-interceptors (into db/default-interceptors
                                 [(path ::sub-db/sub-db)]))
@@ -133,9 +132,9 @@
   ::fetch-company-success
   db/default-interceptors
   (fn [{db :db} [resp]]
-    (let [company (get-in resp [:data :company])
-          perms (set (map keyword (:permissions company)))
-          has-permission? (or (user/admin? db) (contains? perms :can_see_applications))]
+    (let [company         (get-in resp [:data :company])
+          perms           (set (map keyword (:permissions company)))
+          has-permission? (or (user-common/admin? db) (contains? perms :can_see_applications))]
       (merge {:db (update db ::sub-db/sub-db
                           #(assoc %
                                   ::sub-db/has-permission? has-permission?
@@ -218,7 +217,7 @@
   db/default-interceptors
   (fn [{db :db} [job-id-or-nil]]
     (let [company-id          (sub-db/company-id db)
-          admin?              (user/admin? db)
+          admin?              (user-common/admin? db)
           page-number         (get-in db [::sub-db/sub-db ::sub-db/current-page])
           states              (sub-db/tab->states (get-in db [::sub-db/sub-db ::sub-db/current-tab]) admin?)
           admin-applications? (and admin?  (not company-id))
@@ -309,7 +308,7 @@
   db/default-interceptors
   (fn [{db :db} [job-id]]
     {:db (update-in db [::sub-db/sub-db ::sub-db/applications-by-job job-id] merge {:loading? true})
-     :graphql {:query      (fetch-applications-by-job-query job-id (sub-db/company-id db) (user/admin? db))
+     :graphql {:query      (fetch-applications-by-job-query job-id (sub-db/company-id db) (user-common/admin? db))
                :on-success [::fetch-applications-by-job-success job-id]
                :on-failure [::fetch-applications-by-job-failure job-id]}}))
 
@@ -424,7 +423,7 @@
                                     ;; we only want state frequencies for this job, but ::fetch-applications-by-job
                                     ;; is a special event, only to be used on the company view (epic fail?)
                                     [[::fetch-application-state-frequencies]])
-                                  (when (and job-id-or-ids (= state "get_in_touch") (not (user/admin? db)))
+                                  (when (and job-id-or-ids (= state "get_in_touch") (not (user-common/admin? db)))
                                     [[::show-get-in-touch-overlay user-and-job]]))}))))
 
 (reg-event-fx

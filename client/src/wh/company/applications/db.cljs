@@ -41,9 +41,9 @@
 
 (defn get-current-page
   [db]
-  (cond (and (user/admin? db) (not (company-id db))) :homepage ;; :admin-applications
-        (user/admin? db)                             :admin-company-applications
-        (user-common/company? db)                    :company-applications ))
+  (cond (and (user-common/admin? db) (not (company-id db))) :homepage ;; :admin-applications
+        (user-common/admin? db)                             :admin-company-applications
+        (user-common/company? db)                           :company-applications ))
 
 (defn company-view?
   [db]

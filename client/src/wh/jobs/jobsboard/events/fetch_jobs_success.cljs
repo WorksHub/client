@@ -1,13 +1,13 @@
 (ns wh.jobs.jobsboard.events.fetch-jobs-success
-  (:require [wh.algolia]
+  (:require [clojure.string :as str]
+            [wh.algolia]
             [wh.common.cases :as cases]
             [wh.common.job :as job]
+            [wh.common.user :as user-common]
             [wh.db :as db]
             [wh.graphql.jobs]
             [wh.jobs.jobsboard.db :as jobsboard]
-            [wh.pages.core :as pages]
-            [wh.user.db :as user-db]
-            [clojure.string :as str]))
+            [wh.pages.core :as pages]))
 
 (defn- ui-tags [tags]
   (map (fn [{:keys [value count]}]
@@ -43,7 +43,7 @@
                   :available-countries  (facets "location.country-code")
                   :remote-count         (->> (facets "remote") (filter #(= (:value %) "true")) first :count)
                   :sponsorship-count    (->> (facets "sponsorship-offered") (filter #(= (:value %) "true")) first :count)}
-    (user-db/admin? db) (assoc :wh.search/mine-count (->> (facets "manager") (filter #(= (:value %) user-email)) first :count)
+    (user-common/admin? db) (assoc :wh.search/mine-count (->> (facets "manager") (filter #(= (:value %) user-email)) first :count)
                                :wh.search/published-count (facets "published"))
     city-info           (assoc :wh.search/city-info
                                (mapv (fn [loc]

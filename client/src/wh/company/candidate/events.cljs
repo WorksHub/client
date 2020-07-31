@@ -40,7 +40,7 @@
                         :remote
                         [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
                         [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]
-                       (if (user/admin? db)
+                       (if (user-common/admin? db)
                          [[:companyPerks [:name]]
                           [:approval [:status :source :time]]
                           [:likes [:id :slug :title [:company [:name]]]]

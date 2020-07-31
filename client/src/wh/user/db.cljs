@@ -21,12 +21,6 @@
 (defn has-visa? [db]
   (not (empty? (get-in db [::sub-db ::visa-status]))))
 
-(defn admin-type? [type]
-  (= type "admin"))
-
-(defn admin? [db]
-  (admin-type? (get-in db [::sub-db ::type])))
-
 (defn company-id [db]
   (get-in db [::sub-db ::company-id]))
 
