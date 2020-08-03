@@ -58,10 +58,10 @@
   ::magic-link-handler
   login-interceptors
   (fn [{db :db} [success? resp]]
-    {:db (assoc db ::login/magic-status (if success?
-                                          :success
-                                          (util/gql-errors->error-key resp)))
-     :dispatch [::pages/unset-loader]}))
+    (if success?
+      {:navigate [:login :params {:step :email} :query-params {:sent true}]}
+      {:db (assoc db ::login/magic-status (util/gql-errors->error-key resp))
+       :dispatch [::pages/unset-loader]})))
 
 ;; Github login
 

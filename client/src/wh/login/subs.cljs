@@ -38,6 +38,5 @@
 
 (reg-sub
   ::magic-success?
-  :<- [::magic-status]
-  (fn [status]
-    (= :success status)))
+  (fn [db _]
+    (get-in db [::db/query-params "sent"])))
