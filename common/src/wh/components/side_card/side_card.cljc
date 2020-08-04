@@ -274,3 +274,16 @@
    [c/section-button {:title "Find out now"
                       :href  (routes/path :how-it-works)
                       :type  :dark}]])
+
+;; ─────────────────────────────────────────────────────────────────────────────
+
+(defn improve-your-recommendations
+  [logged-in?]
+  (when logged-in?
+    [:section (util/smc style/section style/section--centered)
+     [:img {:class (util/mc style/header-image)
+            :src   "/images/hiw/card.svg"}]
+     [:h3 (util/smc style/footer__title) "Want to improve your feed recommendations?"]
+     [c/section-button {:title "Improve Recommendations"
+                        :href  (routes/path :improve-recommendations)
+                        :type  :dark}]]))

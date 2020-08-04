@@ -12,7 +12,7 @@
 
 (defn issue-contributor-component [{:keys [name image-url] :as user}]
   [:div (util/smc styles/issue-contributor)
-   (wrap-img img image-url {:w 48 :h 48 :crop "center"})
+   (wrap-img img image-url {:w 48 :h 48 :crop "center" :class styles/issue-contributor__avatar})
    [:span (util/smc styles/issue-contributor__title)
     [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) name]
     [:span "has just started to work on an"]

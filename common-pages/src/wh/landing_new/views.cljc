@@ -72,6 +72,7 @@
                    companies page query-params]
   [:div (util/smc styles/side-column styles/side-column--left)
    [tag-selector/card-with-selector tags tags-loading?]
+   [side-cards/improve-your-recommendations logged-in?]
    [attract-card/contribute logged-in? :side-column]
    [:div (util/smc styles/side-column styles/tablet-only)
     [side-cards/jobs {:jobs                  jobs
