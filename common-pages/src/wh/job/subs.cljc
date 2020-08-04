@@ -221,10 +221,8 @@
   ::like-icon-shown?
   :<- [::loaded?]
   :<- [:user/candidate?]
-  :<- [:user/prospect?]
-  (fn [[loaded? candidate? prospect?] _]
-    (and (or candidate? prospect?)
-         loaded?)))
+  (fn [[loaded? candidate?] _]
+    (and candidate? loaded?)))
 
 (reg-sub
   ::loaded?

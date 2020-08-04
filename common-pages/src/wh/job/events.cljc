@@ -33,9 +33,8 @@
 (defn job-query [db]
   #?(:cljs
      (cond
-       (user-common/company? db) graphql-jobs/job-query--company
-       (or (user-common/candidate? db)
-           (user/prospect? db)) graphql-jobs/job-query--candidate
+       (user/company? db) graphql-jobs/job-query--company
+       (user-common/candidate? db) graphql-jobs/job-query--candidate
        :otherwise graphql-jobs/job-query--default)))
 
 (defquery company-query

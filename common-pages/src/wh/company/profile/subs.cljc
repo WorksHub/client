@@ -409,12 +409,11 @@
 (reg-sub
   ::show-jobs-link?
   :<- [:user/candidate?]
-  :<- [:user/prospect?]
   :<- [::jobs]
-  (fn [[candidate? prospect? jobs] _]
+  (fn [[candidate? jobs] _]
     ;; we only hide the job link if
     ;; user is a candidate and there are no jobs to show
-    (not (and (or candidate? prospect?) (not jobs)))))
+    (not (and candidate? (not jobs)))))
 
 (reg-sub
   ::error-message

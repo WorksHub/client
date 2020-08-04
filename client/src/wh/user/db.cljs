@@ -24,15 +24,15 @@
 (defn company-id [db]
   (get-in db [::sub-db ::company-id]))
 
-(defn prospect-type? [type]
-  (= type "prospect"))
-
-(defn prospect? [db]
-  (prospect-type? (get-in db [::sub-db ::type])))
-
 (defn approved? [db]
   (= (get-in db [::sub-db ::approval :status])
      "approved"))
+
+(defn company-type? [type]
+  (= type "company"))
+
+(defn company? [db]
+  (company-type? (get-in db [::sub-db ::type])))
 
 (defn has-permission? [db permission]
   (contains? (get-in db [::sub-db ::company :permissions]) permission))

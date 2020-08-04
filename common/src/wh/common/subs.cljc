@@ -43,16 +43,10 @@
     (= (get-in db [:wh.user.db/sub-db :wh.user.db/type]) "candidate")))
 
 (reg-sub
-  :user/prospect?
-  (fn [db _]
-    (= (get-in db [:wh.user.db/sub-db :wh.user.db/type]) "prospect")))
-
-(reg-sub
   :user/has-recommendations?
   :<- [:user/candidate?]
-  :<- [:user/prospect?]
-  (fn [[candidate? prospect?] _]
-    (or candidate? prospect?)))
+  (fn [candidate? _]
+    candidate?))
 
 (reg-sub
   :user/email

@@ -36,7 +36,6 @@
    :stackoverflow-callback     :login
    :twitter-callback           :login
    :homepage                   {"candidate" :logged-in
-                                "prospect"  :logged-in
                                 "company"   :company
                                 "admin"     :company
                                 nil         :landing-page} ;; when there is no user type (i.e. not logged in)
