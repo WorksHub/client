@@ -5,10 +5,11 @@
             [wh.verticals :as verticals]))
 
 (defn vertical-title
-  [vertical {:keys [size multiline?]
+  [vertical {:keys [size type]
              :or   {size :medium}}]
   [:div (util/smc branding-style/vertical-title
-                  (when multiline? branding-style/vertical-title--multiline)
+                  [(= type :multiline) branding-style/vertical-title--multiline]
+                  [(= type :navigation) branding-style/vertical-title--navigation]
                   (case size
                     :small  branding-style/vertical-title--small
                     :medium branding-style/vertical-title--medium))

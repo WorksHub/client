@@ -49,35 +49,44 @@ $font-family: Montserrat, serif
 
 .search
   border: 1px solid $grey300
-  width: 351px
+  width: 100%
   border-radius: 4px
   height: 40px
   font-size: 14px
   padding-left: 36px
   outline-color: $primary-red
+  font-weight: 500
+  color: $grey300
 
   &::placeholder
     font-size: 14px
+    font-weight: 500
 
   &__wrapper
     position: relative
 
-  &__icon
+  &__search-icon
     position: absolute
     top: 10px
     left: 10px
-    width: 20px
-    height: 20px
+    width: 18px
+    height: 18px
     fill: $grey300
 
-  &__desktop-plus
-    display: none
-    +desktop-plus
-      display: block
+  &__clear-icon
+    position: absolute
+    top: 10px
+    right: 10px
+    width: 18px
+    height: 18px
+    fill: $grey300
 
   &__small-menu
     display: flex
     width: 100%
+
+.search__wrapper
+  position: relative
 
 .no-mobile
   +mobile
@@ -347,7 +356,7 @@ $font-family: Montserrat, serif
 
   +tablet
     font-size: 13px
-    padding: 0 40px
+    padding: 0 32px
 
   &:hover
     background: $highlight-red

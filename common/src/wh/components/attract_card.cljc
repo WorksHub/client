@@ -19,7 +19,7 @@
                 (util/test-selector "intro-attract"))
     [:div (util/smc style/intro__branding)
      [icon vertical :class style/intro__icon]
-     [branding/vertical-title vertical {:size :small :multiline? true}]]
+     [branding/vertical-title vertical {:size :small :type :multiline}]]
     [:p (util/smc style/intro__description)
      [:span (str (get-in data/in-demand-hiring-data [vertical :discover]) " with ")]
      [:span (util/smc style/intro__vertical-title) (verticals/config vertical :platform-name)]]]))
