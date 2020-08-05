@@ -407,19 +407,16 @@
 
 (def managers
   (->> {"alex"            "Alex Mesropians"
+        "amelia"          "Amelia Parker"
+        "andrei"          "Andrei Barbu"
         "charlie"         "Charlie Gower"
-        "josh"            "Josh Gretton"
+        "daniel.earnshaw" "Daniel Earnshaw"
+        "natasha"         "Tash Laybourne"
         "nick"            "Nick Maraj"
         "nick.walker"     "Nick Walker"
-        "patrick"         "Patrick Gubbey"
-        "ken.cadima"      "Ken Cadima"
-        "daniel.earnshaw" "Daniel Earnshaw"
-        "quan"            "Quan Truc"
-        "nicole"          "Nicole Sadozai"
-        "sheryl"          "Sheryl Martin"
         "nikolaus"        "Nikolaus Krahé"
-        "chelsea"         "Chelsea Terry"
-        "amelia"          "Amelia Parker"}
+        "patrick"         "Patrick Gubbey"
+        "sheryl"          "Sheryl Martin"}
        (map (fn [[k v]] [(->email k) v]))
        (into {})))
 

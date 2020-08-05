@@ -36,7 +36,8 @@
   ::time-period
   :<- [::data]
   (fn [data _]
-    (-> data :time-period)))
+    (or (-> data :time-period)
+        (-> data :data :time-periods first))))
 
 (reg-sub
   ::total-registrations
