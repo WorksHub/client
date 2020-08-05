@@ -208,7 +208,8 @@
                                         ["/" :filename] :cover-letter-file}]
                        ["reset-fixtures" :reset-fixtures]
                        ["admin/" {[:command] :admin-command}]
-                       ["prospect" :prospect]]]]])
+                       ["prospect" :prospect]]]
+              ["health/" {[:commit-sha] :health-by-commit-sha}]]])
 
 ;;TODO this config should pulled partially from wh.response.ssr/page-content map
 (def server-side-only-pages #{:invalid-magic-link
