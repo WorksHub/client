@@ -240,6 +240,7 @@
         <rect x="22" y="18.0344" width="15.3913" height="53.4596" fill="#1AAEA8" fill-opacity="0.25"/>
         <rect y="32.8486" width="15.3913" height="38.6455" fill="#1AAEA8" fill-opacity="0.25"/>
         <rect x="44.0605" width="14.8783" height="71.4942" fill="#1AAEA8"/>
+    </symbol>
     <symbol id="case" viewBox="0 0 20 20">
         <path  fill-rule="evenodd" clip-rule="evenodd" d="M14.282 0H5.718v2.736H1c-.552 0-1 .45-1 1.005v13.255C0 17.55.448 18 1 18h18c.552 0 1-.45 1-1.004V3.74c0-.555-.448-1.005-1-1.005h-4.718V0zm-1.85 2.736v-.878H7.568v.878h4.864zM5 9.092L1.85 6.546v9.596h16.3V6.546L15 9.092v3.285H5V9.092zm8.95-1.535l3.664-2.963H2.386L6.05 7.557h7.899zm-.8 1.857h-6.3v1.105h6.3V9.414z"/>
     </symbol>
