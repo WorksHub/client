@@ -33,9 +33,9 @@
 (defn job-query [db]
   #?(:cljs
      (cond
-       (user/company? db) graphql-jobs/job-query--company
+       (user-common/company? db)   graphql-jobs/job-query--company
        (user-common/candidate? db) graphql-jobs/job-query--candidate
-       :otherwise graphql-jobs/job-query--default)))
+       :else                       graphql-jobs/job-query--default)))
 
 (defquery company-query
   {:venia/operation {:operation/name "jobCompany"
