@@ -1,7 +1,6 @@
 (ns wh.slug
-  (:require
-    [bidi.bidi :as bidi]
-    [clojure.string :as str]))
+  (:require [bidi.bidi :as bidi]
+            [clojure.string :as str]))
 
 (defn slug [s]
   "We currently have this function and wh.url/slugify (clojure only).

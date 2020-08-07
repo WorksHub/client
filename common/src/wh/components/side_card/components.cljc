@@ -86,14 +86,16 @@
         [icons/icon icon :class style/icon]
         (str number " " (text/pluralize number sing plural))]))])
 
-(defn section-button [{:keys [title href type]}]
+(defn section-button [{:keys [title href type on-click]}]
   [(if href :a :button)
    (merge {:class (util/mc style/button
                            (case type
                              :no-border style/button--text
                              :dark      style/button--dark
+                             :filled    style/button--filled
                              nil))}
-          (when href {:href href}))
+          (when href {:href href})
+          (when on-click on-click))
    title])
 
 (defn card-link [{:keys [title href]}]

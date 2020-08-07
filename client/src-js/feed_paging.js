@@ -40,5 +40,18 @@ function setAfterIdAndRedirect(id) {
     redirect(newUrl);
 }
 
+function setPublicFeed(id) {
+  const searchString = getCurrentSearchString(window);
+  const newSearchString = setParamValue(searchString, 'public', 'true');
+  const newSearchStringWithInteraction = setParamValue(
+    newSearchString,
+    'interaction',
+    1
+  );
+  const newUrl = urlWithNewSearchString(window, newSearchStringWithInteraction);
+  redirect(newUrl);
+}
+
 window.setBeforeIdAndRedirect = setBeforeIdAndRedirect;
 window.setAfterIdAndRedirect = setAfterIdAndRedirect;
+window.setPublicFeed = setPublicFeed;

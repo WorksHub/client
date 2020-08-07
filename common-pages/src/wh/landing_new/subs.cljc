@@ -168,6 +168,15 @@
           (= :executing (keyword state))))))
 
 (reg-sub
+  ::not-enough-activities?
+  :<- [::user-skills]
+  :<- [::recent-activities-first-page]
+  :<- [::recent-activities]
+  (fn [[skills first-page activities] _]
+    (boolean
+      (and (seq skills) first-page (< (count activities) 10)))))
+
+(reg-sub
   ::selected-tags
   :<- [:wh/query-params]
   (fn [query-params _]
@@ -190,3 +199,9 @@
   ::user-details
   (fn [db _]
     (cache-results events/user-stats db [:query-user-stats])))
+
+(reg-sub
+  ::user-skills
+  :<- [:user/sub-db]
+  (fn [user _]
+    (:wh.user.db/skills user)))

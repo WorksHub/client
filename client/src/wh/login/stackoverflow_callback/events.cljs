@@ -53,8 +53,8 @@
   {:venia/operation {:operation/type :query
                      :operation/name "Me"}
    :venia/queries   [[:me
-                      [:id :name :visaStatus :visaStatusOther [:approval [:status]] :type :email :new :githubId
-                       :consented
+                      [:id :name :visaStatus :visaStatusOther [:approval [:status]]
+                       :type :email :new :githubId :consented [:skills [:name]]
                        [:githubInfo [:name [:skills [:name]]]]
                        [:twitterInfo [:id]]
                        [:cv [:link

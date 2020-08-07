@@ -54,7 +54,7 @@
    :venia/queries   [[:me
                       [:id :name :visaStatus :visaStatusOther :imageUrl
                        [:approval [:status]] :type :email :new :githubId
-                       :consented
+                       :consented [:skills [:name]]
                        [:githubInfo [:name [:skills [:name]]]]
                        [:twitterInfo [:id]]
                        [:cv [:link

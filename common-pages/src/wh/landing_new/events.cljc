@@ -5,7 +5,9 @@
             #?(:cljs [wh.pages.core :refer [on-page-load]])
             [wh.graphql.fragments]
             [wh.common.user :as user-common]
+            [wh.slug :as slug]
             [re-frame.core :refer [reg-event-fx]]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.db :as db])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
@@ -13,17 +15,30 @@
 (reg-query :recent-activities activities-queries/recent-activities-query)
 
 (defn recent-activities [{:keys [wh.db/vertical wh.db/query-params] :as _db}]
-  (let [tags       (tags/param->tags (get query-params "tags"))
-        older-than (get query-params "older-than")
-        newer-than (get query-params "newer-than")]
+  (let [selected-tags (tags/param->tags (get query-params "tags"))
+        public-feed   (get query-params "public")
+        older-than    (get query-params "older-than")
+        newer-than    (get query-params "newer-than")
+        skills        (map (fn [{:keys [name]}]
+                             {:slug (slug/tag-label->slug name)
+                              :type "tech"})
+                           (<sub [:wh.landing-new.subs/user-skills]))
+        ;; Selected tags have precedence over skills so once user selected
+        ;; tags we don't need to send skills anymore. If tags are not present
+        ;; we need only skills and/or vertical to create proper feed
+        tags-opts     {:activities_tags (if (and (not public-feed)
+                                                 (not (seq selected-tags))
+                                                 (seq skills))
+                                          skills selected-tags)}
+        paging-opts   (cond
+                        older-than {:older_than older-than}
+                        newer-than {:newer_than newer-than}
+                        :else      {})]
 
     [:recent-activities (merge
-                          {:activities_tags tags
-                           :vertical        vertical}
-                          (cond
-                            older-than {:older_than older-than}
-                            newer-than {:newer_than newer-than}
-                            :else      {}))]))
+                          {:vertical vertical}
+                          tags-opts
+                          paging-opts)]))
 
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query
@@ -235,3 +250,10 @@
      :dispatch      [:wh.events/nav--set-query-params
                      {"older-than"  nil
                       "newer-than" newer-than}]}))
+
+(reg-event-fx
+  ::set-public-feed
+  db/default-interceptors
+  (fn [{db :db} [newer-than]]
+    {:scroll-to-top true
+     :dispatch      [:wh.events/nav--set-query-param "public" true]}))

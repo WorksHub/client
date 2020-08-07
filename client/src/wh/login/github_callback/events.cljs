@@ -71,7 +71,7 @@
    :venia/queries   [[:githubUserSession {:githubCode :$githubCode}
                       [:id :name :visaStatus :visaStatusOther
                        [:approval [:status]] :type :email :new :githubId
-                       :consented :imageUrl
+                       :consented :imageUrl [:skills [:name]]
                        [:githubInfo [:name [:skills [:name]]]]
                        [:twitterInfo [:id]]
                        [:cv [:link

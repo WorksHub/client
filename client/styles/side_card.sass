@@ -1,4 +1,5 @@
 @import 'colours'
+@import 'mixins'
 
 $shadow: 0 0 0 2px $primary-red
 
@@ -50,15 +51,20 @@ $shadow: 0 0 0 2px $primary-red
   color: $text-white
 
 .section__title
-  font-family: Montserrat, serif
-  font-style: normal
   font-weight: bold
   font-size: 18px
   line-height: 26px
   color: #454E54
-  padding-bottom: 31px
   margin: 0
+  margin-bottom: 31px
   text-transform: capitalize
+
+.section__text
+  font-weight: 600
+  font-size: 14px
+  line-height: 24px
+  margin: 16px 0
+  color: $grey500
 
 .section__elements
   display: grid
@@ -228,6 +234,15 @@ $shadow: 0 0 0 2px $primary-red
       background: $grey100
       color: $primary-red
 
+  &--filled
+    border: 1px solid $border-red
+    color: $text-white
+    background: $primary-red
+
+    &:hover
+      background: $highlight-red
+      color: $primary-red
+
   &--dark
     border: 1px solid transparent
     color: $text-white
@@ -260,3 +275,53 @@ $shadow: 0 0 0 2px $primary-red
 .header-image
   padding: 0 18px
   margin-bottom: 12px
+
+.improve-feed__header-image
+  padding: 16px 54px
+  margin-bottom: 12px
+  width: 70%
+
+.improve-feed__button--cta
+  margin-top: 16px
+
+.improve-feed__codi
+  height: 40px
+  width: 40px
+  position: relative
+  top: -16px
+  left: -2px
+
+.improve-feed__buttons
+  display: grid
+  grid-template-columns: 1fr 1fr
+  grid-template-rows: 1fr
+  grid-gap: 16px
+  margin-top: 24px
+
+.section--improve-feed
+  padding: 20px
+  box-shadow: 0px 4px 8px $card-shadow-color
+
+.section--improve-feed__title
+  margin-bottom: 16px
+
+.cta__link
+  color: $text-black
+  font-size: 13px
+  font-weight: 500
+  line-height: 21px
+  white-space: pre-wrap
+  cursor: pointer
+  margin: 0 -4px 16px -4px
+  padding: 4px 4px
+  +tablet
+    margin: 4px -8px
+    padding: 4px 8px
+  &:hover
+    color: $primary-red
+    background-color: $grey100
+
+.cta__link__accent
+  color: $primary-red
+  font-weight: 600
+  letter-spacing: -0.01em
