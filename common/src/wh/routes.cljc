@@ -157,7 +157,6 @@
               ["company-issues/" {""                                      :company-issues
                                   "repositories"                          :manage-issues
                                   ["repositories/" :owner "/" :repo-name] :manage-repository-issues}]
-              ["dashboard" :homepage-dashboard]
               ["saved" :liked]
               ["liked" :liked] ;; deprecated
               ["recommended" :recommended]

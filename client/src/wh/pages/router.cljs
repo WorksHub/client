@@ -15,16 +15,16 @@
     [wh.subs :as subs :refer [<sub run-sub]]))
 
 (defn homepage-redirect [db]
-  (cond (not (db/logged-in? db)) :homepage-not-logged-in
+  (cond (not (db/logged-in? db))      :homepage-not-logged-in
         (run-sub db [:user/company?]) :company-dashboard
-        (run-sub db [:user/admin?]) :admin-applications
-        :otherwise :homepage-dashboard))
+        (run-sub db [:user/admin?])   :admin-applications
+        :otherwise                    :homepage-dashboard))
 
 (def initial-page-mapping
-  {:homepage {:redirect-fn homepage-redirect}
+  {:homepage               {:redirect-fn homepage-redirect}
    :homepage-not-logged-in home/page
-   :how-it-works how-it-works/page
-   :not-found not-found/not-found-page})
+   :how-it-works           how-it-works/page
+   :not-found              not-found/not-found-page})
 
 (reg-event-db
   ::initialize-page-mapping

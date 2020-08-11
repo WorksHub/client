@@ -153,7 +153,7 @@
     :uri url))
 
 (defn load-and-dispatch [[module event]]
-  (let [db @re-frame.db/app-db
+  (let [db           @re-frame.db/app-db
         skip-loader? (or (= (first event) :github/call) ;; this is to avoid loader flickering when logging in via GitHub
                          (= (:wh.db/page db) :github-callback) ;; hacky, but we're not in an event
                          (= (:wh.db/page db) :stackoverflow-callback)

@@ -8,6 +8,7 @@
             [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
             [wh.styles.tag-selector :as styles]
             [wh.util :as util]))
 
@@ -33,39 +34,41 @@
   [icon "reset" :class styles/reset-button__icon])
 
 
-(defn selector [tags query-params-tags-slugs]
+(defn selector [tags query-params-tags-slugs {:keys [admin? company?]}]
   [:div
    [tag/tag-list
     :button
     (map (fn [tag]
            (assoc tag
-             :on-click #?(:clj  (format "toggleTagAndRedirect('%s');" (tag->query-params-tag-id tag))
-                          :cljs #(dispatch [:wh.events/nav--set-query-params
-                                            {"tags"
-                                             (->> (tag->query-params-tag-id tag)
-                                                  (util/toggle (set query-params-tags-slugs))
-                                                  (str/join ",")
-                                                  (text/not-blank))
+                  :on-click #?(:clj  (format "toggleTagAndRedirect('%s');" (tag->query-params-tag-id tag))
+                               :cljs #(dispatch [:wh.events/nav--set-query-params
+                                                 {"tags"
+                                                  (->> (tag->query-params-tag-id tag)
+                                                       (util/toggle (set query-params-tags-slugs))
+                                                       (str/join ",")
+                                                       (text/not-blank))
 
-                                             "older-than" nil
-                                             "newer-than" nil}]))
-             :interactive? true
-             :inverted? (tag-selected? query-params-tags-slugs tag)
-             :server-side-invert-on-click? true))
+                                                  "older-than" nil
+                                                  "newer-than" nil}]))
+                  :interactive? true
+                  :inverted? (tag-selected? query-params-tags-slugs tag)
+                  :server-side-invert-on-click? true))
          tags)]
    [:div {:class styles/status}
     [:span {:class styles/selected-counter} (str (count query-params-tags-slugs) " selected")]
-    [:button
-     (merge {:class styles/reset-button}
-            (interop/on-click-fn #?(:clj "removeSelectedTagsAndRedirect()"
-                                    :cljs #(dispatch [:wh.events/nav--set-query-params
-                                                      {"tags" nil "public" nil}]))))
-     "Reset selection" [reset-icon]]]])
+    (let [path (if (or admin? company?)
+                 (routes/path :feed)
+                 (routes/path :homepage))]
+      [:a {:class styles/reset-button
+           :href  path}
+       "Reset selection" [reset-icon]])]])
 
-(defn card-with-selector [tags loading?]
+(defn card-with-selector [tags loading? user-types]
   [:div {:class styles/card}
    [:div {:class styles/title}
     "Show me more of..."]
    (if loading?
      [skeletons/tags 14]
-     [selector tags (query-params->query-params-tags-slugs (<sub [:wh/query-params]))])])
+     [selector
+      tags (query-params->query-params-tags-slugs (<sub [:wh/query-params]))
+      user-types])])

@@ -8,7 +8,7 @@
 
 (defn get-icons []
   (->> (array-seq (js/document.querySelectorAll ".svg-container"))
-       (map (fn [elm] (. elm -innerHTML))
+       (map (fn [elm] (. elm -innerHTML)))
        (apply str)
        (re-seq #"symbol id=\"(.+?)\"\s")
        (map second)))
@@ -25,10 +25,9 @@
                                   [:span icon-name]])])})))
 
 (ws/defcard all-icons
-   {::wsm/card-width 12
-    ::wsm/card-height 20}
-   (ct.react/react-card
-     (r/as-element [all-icons])))
+  {::wsm/card-width 12
+   ::wsm/card-height 20}
+  (ct.react/react-card
+    (r/as-element [all-icons])))
 
 (defonce init (ws/mount))
-

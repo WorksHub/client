@@ -69,14 +69,15 @@
 
 (defn left-column [logged-in? jobs jobs-loading?
                    show-recommendations? issues issues-loading? company?
-                   blogs-loading? users users-loading? blogs page]
+                   admin? blogs-loading? users users-loading? blogs page]
   (let [companies          (<sub [::subs/top-companies])
         companies-loading? (<sub [::subs/top-companies-loading?])
         tags               (<sub [::subs/top-tags])
         tags-loading?      (<sub [::subs/top-tags-loading?])
         query-params       (<sub [:wh/query-params])]
     [:div (util/smc styles/side-column styles/side-column--left)
-     [tag-selector/card-with-selector tags tags-loading?]
+     [tag-selector/card-with-selector
+      tags tags-loading? {:admin? admin? :company? company?}]
      [side-cards/improve-your-recommendations logged-in?]
      [attract-card/contribute logged-in? :side-column]
      [:div (merge (util/smc styles/side-column styles/tablet-only)
@@ -203,7 +204,8 @@
         issues-loading?       (<sub [::subs/recent-issues-loading?])
         vertical              (<sub [:wh/vertical])
         page                  (<sub [:wh/page])
-        company?              (<sub [:user/company?])]
+        company?              (<sub [:user/company?])
+        admin?                (<sub [:user/admin?])]
 
     [:div (util/smc styles/page)
      (when-not logged-in?
@@ -213,7 +215,7 @@
       [left-column
        logged-in? jobs jobs-loading?
        show-recommendations? issues issues-loading? company?
-       blogs-loading? users users-loading? blogs page]
+       admin? blogs-loading? users users-loading? blogs page]
 
       [main-column
        logged-in? jobs blogs issues show-recommendations? vertical]

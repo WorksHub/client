@@ -109,13 +109,13 @@
 
 (defn card []
   [:div {:style {:background "mistyrose"
-                 :padding "20px"
-                 :width "320px"}}
-        [tag-selector/card-with-selector tags false]])
+                 :padding    "20px"
+                 :width      "320px"}}
+   [tag-selector/card-with-selector tags false {}]])
 
 (ws/defcard tag-selector
-            (ct.react/react-card
-              (r/as-element (card))))
+  (ct.react/react-card
+    (r/as-element (card))))
 
 (defonce init (ws/mount))
 

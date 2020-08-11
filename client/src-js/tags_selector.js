@@ -30,15 +30,4 @@ function toggleTagAndRedirect(tagId) {
     redirect(newUrl);
 }
 
-function removeSelectedTagsAndRedirect() {
-    const searchString = getCurrentSearchString(window);
-    const newSearchString = removeParam(
-        removeParam(searchString, 'tags'),
-        'public'
-    );
-    const newUrl = urlWithNewSearchString(window, newSearchString);
-    redirect(newUrl);
-}
-
 window.toggleTagAndRedirect = toggleTagAndRedirect;
-window.removeSelectedTagsAndRedirect = removeSelectedTagsAndRedirect;
