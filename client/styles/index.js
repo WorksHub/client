@@ -23,6 +23,7 @@
 import './landing.sass';
 import './stream_preview.sass';
 import './iconsset.sass';
+import './register.sass';
 
 // components
 import './branding.sass';

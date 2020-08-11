@@ -6,4 +6,5 @@
 (def icon--twitter "signin_buttons__icon--twitter--_mlZ7")
 (def button--stackoverflow "signin_buttons__button--stackoverflow--3SX4l")
 (def icon--stackoverflow "signin_buttons__icon--stackoverflow--4WQo1")
+(def button--signup "signin_buttons__button--signup--3FuEs")
 (def icon "signin_buttons__icon--32o81")

@@ -24,9 +24,9 @@
                          :jobsboard
                          :contribute-edit})
 
-(def no-menu-pages #{:register :register-company :payment-setup :get-started :feed})
-(def no-footer-pages #{:register :register-company :payment-setup :get-started})
-(def no-nav-link-pages #{:register :register-company :payment-setup :get-started})
+(def no-menu-pages #{:register :register-new :register-company :payment-setup :get-started :feed})
+(def no-footer-pages #{:register :register-new :register-company :payment-setup :get-started})
+(def no-nav-link-pages #{:register :register-new :register-company :payment-setup :get-started})
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation
@@ -130,6 +130,7 @@
                             "verify"       (with-params :register :step :verify)
                             "test"         (with-params :register :step :test)
                             "email"        (with-params :register :step :email)}]
+              ["register-new" :register-new]
               ["company-registration" :register-company]
               ["login" {""               (with-params :login :step :root)
                         "/"              (with-params :login :step :root)

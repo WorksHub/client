@@ -1,0 +1,111 @@
+@import 'mixins'
+@import 'colours'
+@import 'vars'
+
+=small-mobile
+  @media screen and (min-width: 350px), print
+    @content
+
+.container
+  padding: 5% 8px 8px
+
+.card
+  background: $background-white
+  box-shadow: 0 4px 8px $card-shadow-color
+  max-width: 425px
+  padding: 24px
+  border-radius: 4px
+  margin: 0 auto
+  display: grid
+  grid-gap: 22px
+
+.title
+  font-size: 24px
+  line-height: 24px
+  font-weight: 700
+  color: $grey500
+  letter-spacing: 0.2px
+
+.paragraph
+  font-size: 14px
+  line-height: 1.6
+  letter-spacing: 0.2px
+  color: $grey500
+
+.auth-buttons
+  display: grid
+  grid-gap: 8px
+
+.button
+  border-radius: 4px
+  height: 48px
+  width: 100%
+  align-items: center
+  display: flex
+  justify-content: center
+  box-sizing: border-box
+  padding: 0 20px
+  border: 1px solid transparent
+  color: $text-white
+  background: $grey500
+
+  font-family: $font-family
+  font-size: 14px
+  white-space: nowrap
+  font-weight: 600
+  letter-spacing: 0.02em
+  line-height: 135%
+  text-transform: capitalize
+
+  &:hover
+    background: $grey300
+    color: $text-white
+    cursor: pointer
+
+
+.input
+  height: 48px
+  border: 1px solid $grey400
+  border-radius: 4px
+  padding: 0 16px
+  color: $grey500
+  font-weight: 500
+  font-size: 14px
+  letter-spacing: 0.02em
+  &:focus
+    outline: none
+    border-color: transparent
+    box-shadow: 0 0 0 2px $grey500
+
+.label
+  font-size: 14px
+  font-weight: 600
+  letter-spacing: 0.02em
+  color: $grey500
+  display: flex
+  flex-direction: column
+  &--email
+    margin-top: 4px
+    margin-bottom: 14px
+
+.link
+  font-weight: 600
+  &:hover
+    color: $primary-red
+
+.separator
+  padding: 0
+  margin: 4px 0
+
+.reasons-to-apply
+  list-style-type: initial
+  padding-left: 18px
+
+.display-mobile
+  +small-mobile
+    display: none
+
+.display-not-mobile
+  display: none
+  +small-mobile
+    display: block

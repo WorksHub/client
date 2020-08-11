@@ -4,26 +4,47 @@
             [wh.styles.signin-buttons :as style]
             [wh.util :as util]))
 
-(defn github []
-  [:a {:class (util/mc style/button style/button--github)
-       :href  (routes/path :login :params {:step :github})}
-   [icon "github" :class style/icon]
-   [:span "GitHub"]])
+(defn github
+  ([]
+   [github {:text "Github"}])
+  ([{:keys [text type]}]
+   [:a {:class (util/mc
+                 style/button
+                 style/button--github
+                 [(= type :signup) style/button--signup])
+        :href  (routes/path :login :params {:step :github})}
+    [icon "github" :class style/icon]
+    [:span text]]))
 
-(defn stack-overflow []
-  [:a {:class (util/mc style/button style/button--stackoverflow)
-       :href  (routes/path :login :params {:step :stackoverflow})}
-   [icon "stackoverflow" :class (util/mc style/icon style/icon--stackoverflow)]
-   [:span "Stack Overflow"]])
+(defn stack-overflow
+  ([]
+   [stack-overflow {:text "Stack Overflow"}])
+  ([{:keys [text type]}]
+   [:a {:class (util/mc
+                 style/button
+                 style/button--stackoverflow
+                 [(= type :signup) style/button--signup])
+        :href  (routes/path :login :params {:step :stackoverflow})}
+    [icon "stackoverflow" :class (util/mc style/icon style/icon--stackoverflow)]
+    [:span text]]))
 
-(defn twitter []
-  [:a {:class (util/mc style/button style/button--twitter)
-       :href  (routes/path :login :params {:step :twitter})}
-   [icon "twitter" :class (util/mc style/icon style/icon--twitter)]
-   [:span "Twitter"]])
+(defn twitter
+  ([]
+   [twitter {:text "Twitter"}])
+  ([{:keys [text type]}]
+   [:a {:class (util/mc
+                 style/button
+                 style/button--twitter
+                 [(= type :signup) style/button--signup])
+        :href  (routes/path :login :params {:step :twitter})}
+    [icon "twitter" :class (util/mc style/icon style/icon--twitter)]
+    [:span text]]))
 
-(defn email []
-  [:a {:class (util/mc style/button)
-       :href  (routes/path :login :params {:step :email})}
-   [icon "mail" :class (util/mc style/icon style/icon--email)]
-   [:span "Email"]])
+(defn email
+  ([]
+   [email {:text "Email"}])
+  ([{:keys [text]}]
+   [:a {:class (util/mc style/button)
+        :href  (routes/path :login :params {:step :email})}
+    [icon "mail" :class (util/mc style/icon style/icon--email)]
+    [:span text]]))
