@@ -1,21 +1,22 @@
 (ns wh.logged-in.apply.views
-  (:require
-    [re-frame.core :refer [dispatch dispatch-sync]]
-    [reagent.core :as r]
-    [wh.common.data :as data]
-    [wh.common.upload :as upload]
-    [wh.common.user :as user]
-    [wh.components.common :refer [link]]
-    [wh.components.conversation.views :refer [codi-message error-message button]]
-    [wh.components.forms.views :refer [labelled-checkbox multiple-checkboxes select-field text-input text-field radio-buttons]]
-    [wh.components.icons :refer [icon]]
-    [wh.logged-in.apply.events :as events]
-    [wh.logged-in.apply.subs :as subs]
-    [wh.logged-in.profile.events :as profile-events]
-    [wh.subs :refer [<sub]]
-    [wh.user.subs :as user-subs]
-    [wh.util :as util]
-    [wh.views]))
+  (:require [re-frame.core :refer [dispatch dispatch-sync]]
+            [reagent.core :as r]
+            [wh.common.data :as data]
+            [wh.common.upload :as upload]
+            [wh.common.user :as user]
+            [wh.components.common :refer [link]]
+            [wh.components.conversation.views :refer [codi-message error-message button]]
+            [wh.components.forms.views :refer
+             [labelled-checkbox multiple-checkboxes select-field text-input
+              text-field radio-buttons]]
+            [wh.components.icons :refer [icon]]
+            [wh.logged-in.apply.events :as events]
+            [wh.logged-in.apply.subs :as subs]
+            [wh.logged-in.profile.events :as profile-events]
+            [wh.subs :refer [<sub]]
+            [wh.user.subs :as user-subs]
+            [wh.util :as util]
+            [wh.views]))
 
 (defn add-full-name-step []
   (let [full-name (r/atom (<sub [::user-subs/name]))
@@ -144,10 +145,10 @@
                           :name      "avatar"
                           :disabled  updating?
                           :on-change (upload/handler
-                                      :launch [::profile-events/cover-letter-upload]
-                                      :on-upload-start [::events/cover-letter-upload-start]
-                                      :on-success [::events/cover-letter-upload-success]
-                                      :on-failure [::events/cover-letter-upload-failure])}]
+                                       :launch [::profile-events/cover-letter-upload]
+                                       :on-upload-start [::events/cover-letter-upload-start]
+                                       :on-success [::events/cover-letter-upload-success]
+                                       :on-failure [::events/cover-letter-upload-failure])}]
 
       [:span.file-cta.conversation-button
        [:span {:class (if updating?

@@ -1,10 +1,9 @@
 (ns wh.user.subs
-  (:require
-    [re-frame.core :refer [reg-sub]]
-    [wh.common.data :refer [super-admins]]
-    [wh.common.data :as data]
-    [wh.db :as db]
-    [wh.user.db :as user]))
+  (:require [re-frame.core :refer [reg-sub]]
+            [wh.common.data :refer [super-admins]]
+            [wh.common.data :as data]
+            [wh.db :as db]
+            [wh.user.db :as user]))
 
 (reg-sub ::user
          (fn [db _]

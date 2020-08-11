@@ -79,7 +79,8 @@
      [tag-selector/card-with-selector tags tags-loading?]
      [side-cards/improve-your-recommendations logged-in?]
      [attract-card/contribute logged-in? :side-column]
-     [:div (util/smc styles/side-column styles/tablet-only)
+     [:div (merge (util/smc styles/side-column styles/tablet-only)
+                  (util/ts "recommended-jobs-mobile"))
       [side-cards/jobs {:jobs                  jobs
                         :jobs-loading?         jobs-loading?
                         :company?              company?
@@ -99,7 +100,8 @@
 
 (defn right-column [jobs jobs-loading? show-recommendations? issues issues-loading?
                     company? users users-loading?]
-  [:div {:class styles/side-column}
+  [:div (merge (util/smc styles/side-column)
+               (util/ts "recommended-jobs-desktop"))
    [side-cards/jobs {:jobs                  jobs
                      :loading?              jobs-loading?
                      :company?              company?
@@ -111,7 +113,9 @@
 (defn activities-loading [candidate?]
   (into [:div {:class styles/main-column}
          (when candidate?
-           (list [components/user-dashboard] [:hr]))
+           [:<>
+            [components/user-dashboard]
+            [:hr]])
 
          (for [i (range 6)]
            ^{:key i}
@@ -129,7 +133,9 @@
         newer-than                    (:id (first activities))]
     [:div {:class styles/main-column}
      (when candidate?
-       (list [components/user-dashboard] [:hr]))
+       [:<>
+        [components/user-dashboard]
+        [:hr]])
 
      [side-cards-mobile/top-content
       {:jobs                  jobs
@@ -160,8 +166,9 @@
        ^{:key (:id activity)} [:div (activity-card activity)])
 
      (when not-enough-activities?
-       (list [:hr]
-             [side-cards/improve-feed-recommendations]))
+       [:<>
+        [:hr]
+        [side-cards/improve-feed-recommendations]])
 
      [components/prev-next-buttons newer-than older-than]]))
 
@@ -177,6 +184,7 @@
       [activities-list
        logged-in? candidate? jobs blogs issues show-recommendations? vertical
        activities activities-loading? selected-tags not-enough-activities?])))
+
 
 (defn page []
   (let [logged-in?            (<sub [:user/logged-in?])

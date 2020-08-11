@@ -1,6 +1,5 @@
 (ns wh.logged-in.apply.db
-  (:require
-    [cljs.spec.alpha :as s]))
+  (:require [cljs.spec.alpha :as s]))
 
 ;; Using namespaced keywords to make them more direct and understandable
 (def steps #{:step/name :step/cv-upload :step/thanks :step/current-location

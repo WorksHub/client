@@ -55,11 +55,16 @@
 (defn section-title [title]
   [:h3 {:class style/section__title} title])
 
-(defn section-elements [elements card-component]
-  [:div {:class style/section__elements}
-   (for [elm elements]
-     ^{:key (:id elm)}
-     [card-component elm])])
+(defn section-elements
+  ([elements card-component]
+   (section-elements elements card-component nil))
+
+  ([elements card-component opts]
+   [:div (cond-> {:class style/section__elements}
+                 opts (merge opts))
+    (for [elm elements]
+      ^{:key (:id elm)}
+      [card-component elm])]))
 
 (defn card-skeleton
   ([]
@@ -98,7 +103,8 @@
           (when on-click on-click))
    title])
 
-(defn card-link [{:keys [title href]}]
-  [:a {:href  href
-       :class style/element__link}
+(defn card-link [{:keys [title href data-test]}]
+  [:a (cond-> {:href  href
+               :class style/element__link}
+              data-test (merge (util/ts data-test)))
    title])

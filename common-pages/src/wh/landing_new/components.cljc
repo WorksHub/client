@@ -60,28 +60,29 @@
                 applications-counted
                 issues-counted]} (<sub [::subs/user-details])]
 
-    [:div {:class dashboard-styles/dashboard}
+    [:div (merge (util/smc dashboard-styles/dashboard)
+                 (util/ts "user-dashboard"))
      [dashboard-header {:user-image user-image
                         :user-name  user-name}]
 
      [stats-section {:title "Job Applications"
                      :class dashboard-styles/job-applications}
-      (list
-        [stats-row "Submitted" (:submitted applications-counted)]
-        [stats-row "In progress" (:in-progress applications-counted)]
-        [stats-row "Interview stage" (:interview-stage applications-counted)])]
+      [:<>
+       [stats-row "Submitted" (:submitted applications-counted)]
+       [stats-row "In progress" (:in-progress applications-counted)]
+       [stats-row "Interview stage" (:interview-stage applications-counted)]]]
 
      [stats-section {:title "Articles"
                      :class dashboard-styles/articles}
-      (list
-        [stats-row "Published" (:published blogs-counted)]
-        [stats-row "In progress" (:in-progress blogs-counted)])]
+      [:<>
+       [stats-row "Published" (:published blogs-counted)]
+       [stats-row "In progress" (:in-progress blogs-counted)]]]
 
      [stats-section {:title "Open Source Issues"
                      :class dashboard-styles/issues}
-      (list
-        [stats-row "Completed" (:completed issues-counted)]
-        [stats-row "In progress" (:in-progress issues-counted)])]
+      [:<>
+       [stats-row "Completed" (:completed issues-counted)]
+       [stats-row "In progress" (:in-progress issues-counted)]]]
 
      [ctas]]))
 

@@ -1,9 +1,8 @@
 (ns wh.db
-  (:require
-    [cljs.spec.alpha :as s]
-    [wh.interceptors :as interceptors]
-    [wh.login.github-callback.db :as github-callback]
-    [wh.user.db :as user]))
+  (:require [cljs.spec.alpha :as s]
+            [wh.interceptors :as interceptors]
+            [wh.login.github-callback.db :as github-callback]
+            [wh.user.db :as user]))
 
 (s/def ::vertical string?)
 (s/def ::platform-name string?)

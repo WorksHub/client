@@ -58,7 +58,8 @@
     [:button
      (merge {:class styles/reset-button}
             (interop/on-click-fn #?(:clj "removeSelectedTagsAndRedirect()"
-                                    :cljs #(dispatch [:wh.events/nav--set-query-param "tags" nil]))))
+                                    :cljs #(dispatch [:wh.events/nav--set-query-params
+                                                      {"tags" nil "public" nil}]))))
      "Reset selection" [reset-icon]]]])
 
 (defn card-with-selector [tags loading?]

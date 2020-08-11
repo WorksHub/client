@@ -92,8 +92,9 @@
                           :subtitle text
                           :href     (routes/path :company :params {:slug (:slug company-info)})
                           :img-src  (:logo company-info)}])
-   [c/card-link {:title title
-                 :href  (routes/path :job :params {:slug slug})}]
+   [c/card-link {:title     title
+                 :href      (routes/path :job :params {:slug slug})
+                 :data-test "recommended-job-link"}]
    (when user-score
      [:a {:href (routes/path :job :params {:slug slug})}
       [match-circle {:score user-score
@@ -105,7 +106,7 @@
    [c/section-title (if show-recommendations? "Recommended jobs" "Hiring now")]
    (if loading?
      [c/section-elements-skeleton]
-     [c/section-elements jobs card-job])
+     [c/section-elements jobs card-job (util/ts "recommended-jobs")])
    (when-not loading?
      [:div {:class (util/mc style/footer style/footer--jobs)}
       [c/section-button {:title "All live jobs"

@@ -1,19 +1,17 @@
 (ns wh.events
-  (:require
-    [cljs.reader :as r]
-    [com.smxemail.re-frame-cookie-fx]
-    [re-frame.core :refer [dispatch reg-fx reg-event-db reg-event-fx reg-cofx inject-cofx]]
-    [re-frame.db :refer [app-db]]
-    [wh.common.fx]
-    [wh.common.url :as url]
-    [wh.components.error.events]
-    [wh.db :as db]
-    [wh.logged-in.apply.common-events]
-    [wh.pages.core :as pages]
-    [wh.util :as util])
-  (:require-macros
-    [clojure.core.strint :refer [<<]]
-    [wh.graphql-macros :refer [defquery]]))
+  (:require [cljs.reader :as r]
+            [com.smxemail.re-frame-cookie-fx]
+            [re-frame.core :refer [dispatch reg-fx reg-event-db reg-event-fx reg-cofx inject-cofx]]
+            [re-frame.db :refer [app-db]]
+            [wh.common.fx]
+            [wh.common.url :as url]
+            [wh.components.error.events]
+            [wh.db :as db]
+            [wh.logged-in.apply.common-events]
+            [wh.pages.core :as pages]
+            [wh.util :as util])
+  (:require-macros [clojure.core.strint :refer [<<]]
+                   [wh.graphql-macros :refer [defquery]]))
 
 ;; This is for external URLs only (e.g., GitHub callouts). For
 ;; internal navigation, see :navigate.

@@ -1,24 +1,21 @@
 (ns wh.logged-in.profile.events
-  (:require
-    [cljs.spec.alpha :as s]
-    [clojure.string :as str]
-    [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.common.errors :as errors]
-    [wh.common.data :as data]
-    [wh.common.graphql-queries :as graphql]
-    [wh.common.specs.primitives :as specs]
-    [wh.common.upload :as upload]
-    [wh.common.user :as common-user]
-    [wh.components.forms.events :as form-events]
-    [wh.db :as db]
-    [wh.logged-in.dashboard.db :as dashboard]
-    [wh.logged-in.profile.db :as profile]
-    [wh.logged-in.profile.location-events :as location-events]
-    [wh.pages.core :refer [on-page-load] :as pages]
-    [wh.user.db :as user]
-    [wh.util :as util])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+  (:require [cljs.spec.alpha :as s]
+            [clojure.string :as str]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.errors :as errors]
+            [wh.common.data :as data]
+            [wh.common.graphql-queries :as graphql]
+            [wh.common.specs.primitives :as specs]
+            [wh.common.upload :as upload]
+            [wh.common.user :as common-user]
+            [wh.components.forms.events :as form-events]
+            [wh.db :as db]
+            [wh.logged-in.profile.db :as profile]
+            [wh.logged-in.profile.location-events :as location-events]
+            [wh.pages.core :refer [on-page-load] :as pages]
+            [wh.user.db :as user]
+            [wh.util :as util]))
 
 (def profile-interceptors (into db/default-interceptors
                                 [(path ::profile/sub-db)]))
@@ -90,7 +87,6 @@
   (fn [{db :db} [{{me :me blogs :blogs} :data}]]
     (let [user (user/translate-user me)]
       {:db       (merge-with merge
-                             {::dashboard/sub-db dashboard/default-db}
                              db
                              {::user/sub-db    user
                               ::profile/sub-db (merge (profile-data user (:blogs blogs))
@@ -404,10 +400,13 @@
     {:dispatch [::pages/clear-errors]
      :navigate (cond (> (count res) 1)
                      (first res)
-                     (contains? #{:candidate :candidate-edit-header :candidate-edit-cv :candidate-edit-private} (:wh.db/page db))
+
+                     (contains? #{:candidate :candidate-edit-header
+                                  :candidate-edit-cv :candidate-edit-private}
+                                (:wh.db/page db))
                      [:candidate :params (:wh.db/page-params db)]
-                     :otherwise
-                     [:profile])}))
+
+                     :else [:profile])}))
 
 (reg-event-fx
   ::save-failure

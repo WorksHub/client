@@ -14,31 +14,34 @@
 
 (reg-query :recent-activities activities-queries/recent-activities-query)
 
-(defn recent-activities [{:keys [wh.db/vertical wh.db/query-params] :as _db}]
-  (let [selected-tags (tags/param->tags (get query-params "tags"))
-        public-feed   (get query-params "public")
-        older-than    (get query-params "older-than")
-        newer-than    (get query-params "newer-than")
+(defn- get-activities-tags [{:keys [wh.db/query-params] :as _db}]
+  (let [public-feed   (get query-params "public")
         skills        (map (fn [{:keys [name]}]
                              {:slug (slug/tag-label->slug name)
                               :type "tech"})
                            (<sub [:wh.landing-new.subs/user-skills]))
-        ;; Selected tags have precedence over skills so once user selected
-        ;; tags we don't need to send skills anymore. If tags are not present
-        ;; we need only skills and/or vertical to create proper feed
-        tags-opts     {:activities_tags (if (and (not public-feed)
-                                                 (not (seq selected-tags))
-                                                 (seq skills))
-                                          skills selected-tags)}
-        paging-opts   (cond
-                        older-than {:older_than older-than}
-                        newer-than {:newer_than newer-than}
-                        :else      {})]
+        selected-tags (tags/param->tags (get query-params "tags"))]
+    ;; Selected tags have precedence over skills so once user selected
+    ;; tags we don't need to send skills anymore. If tags are not present
+    ;; we need only vertical or skills to create proper feed
+    {:activities_tags (if (and (not public-feed)
+                               (not (seq selected-tags))
+                               (seq skills))
+                        skills selected-tags)}))
 
-    [:recent-activities (merge
-                          {:vertical vertical}
-                          tags-opts
-                          paging-opts)]))
+(defn get-paging [{:keys [wh.db/query-params]}]
+  (let [older-than  (get query-params "older-than")
+        newer-than  (get query-params "newer-than")]
+    (cond
+      older-than {:older_than older-than}
+      newer-than {:newer_than newer-than}
+      :else      {})))
+
+(defn recent-activities [{:keys [wh.db/vertical] :as db}]
+  [:recent-activities (merge
+                        {:vertical vertical}
+                        (get-activities-tags db)
+                        (get-paging db))])
 
 (defquery top-blogs-query
   {:venia/operation {:operation/type :query
@@ -183,7 +186,7 @@
   [:top-tags {:vertical (:wh.db/vertical db)
               :limit    15}])
 
-(defn recommended-jobs [db]
+(defn recommended-jobs [_db]
   [:recommended-jobs-for-user {:page_size   3
                                :page_number 1}])
 
@@ -198,7 +201,7 @@
                         [:in_progress :interview_stage :submitted]]
                        [:issues_counted [:in_progress :completed]]]]]})
 (reg-query :user-stats user-stats-query)
-(defn user-stats [db]
+(defn user-stats [_db]
   [:user-stats {}])
 
 (reg-event-fx
@@ -209,20 +212,25 @@
                   :vertical  (:wh.db/vertical db)}}))
 
 (defn queries
-  [db]
-  (concat [recent-activities
-           top-blogs
-           top-companies
-           top-tags
-           top-users
-           recent-issues]
-          (if (user-common/candidate? db)
-            [recommended-jobs
-             user-stats]
-            [recent-jobs])))
+  ([db]
+   (concat [recent-activities
+            top-blogs
+            top-companies
+            top-tags
+            top-users
+            recent-issues]
+           (if (user-common/candidate? db)
+             [recommended-jobs
+              user-stats]
+             [recent-jobs]))))
 
 #?(:cljs
    (defmethod on-page-load :feed [db]
+     (into [[:wh.pages.core/unset-loader]]
+           (map #(into [:graphql/query] (% db)) (queries db)))))
+
+#?(:cljs
+   (defmethod on-page-load :homepage-dashboard [db]
      (into [[:wh.pages.core/unset-loader]]
            (map #(into [:graphql/query] (% db)) (queries db)))))
 
@@ -236,16 +244,16 @@
 (reg-event-fx
   ::set-older-than
   db/default-interceptors
-  (fn [{db :db} [older-than]]
+  (fn [{_db :db} [older-than]]
     {:scroll-to-top true
      :dispatch      [:wh.events/nav--set-query-params
-                     {"older-than"  older-than
+                     {"older-than" older-than
                       "newer-than" nil}]}))
 
 (reg-event-fx
   ::set-newer-than
   db/default-interceptors
-  (fn [{db :db} [newer-than]]
+  (fn [{_db :db} [newer-than]]
     {:scroll-to-top true
      :dispatch      [:wh.events/nav--set-query-params
                      {"older-than"  nil
@@ -254,6 +262,6 @@
 (reg-event-fx
   ::set-public-feed
   db/default-interceptors
-  (fn [{db :db} [newer-than]]
+  (fn [{_db :db} []]
     {:scroll-to-top true
      :dispatch      [:wh.events/nav--set-query-param "public" true]}))

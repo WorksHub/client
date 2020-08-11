@@ -1,9 +1,8 @@
 ;; Contains apply-related events that need to be there for not-logged-in users.
 
 (ns wh.logged-in.apply.common-events
-  (:require
-    [re-frame.core :refer [reg-event-fx]]
-    [wh.db :as db]))
+  (:require [re-frame.core :refer [reg-event-fx]]
+            [wh.db :as db]))
 
 (reg-event-fx
   :apply/try-apply

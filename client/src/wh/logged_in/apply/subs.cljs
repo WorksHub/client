@@ -1,7 +1,6 @@
 (ns wh.logged-in.apply.subs
-  (:require
-    [re-frame.core :refer [reg-sub]]
-    [wh.logged-in.apply.db :as apply]))
+  (:require [re-frame.core :refer [reg-sub]]
+            [wh.logged-in.apply.db :as apply]))
 
 (reg-sub ::sub-db (fn [db _] (::apply/sub-db db)))
 

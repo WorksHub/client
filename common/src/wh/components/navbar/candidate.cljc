@@ -67,12 +67,8 @@
       :route     :metrics}
      {:mobile? true}]
 
-    [components/link-with-icon
-     {:icon-name "feed"
-      :text      "Feed"
-      :route     :feed}
-     {:mobile? true}]
     (for [element candidate-profile-submenu-list]
+      ^{:key (:text element)}
       [components/link-with-icon element
        {:mobile? true}])]])
 
@@ -103,10 +99,6 @@
    [components/link
     {:text  "Companies"
      :route :companies
-     :page  page}]
-   [components/link
-    {:text  "Feed"
-     :route :feed
      :page  page}]])
 
 (defn profile-menu []

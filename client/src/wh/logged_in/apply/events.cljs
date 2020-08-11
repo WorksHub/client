@@ -1,14 +1,13 @@
 (ns wh.logged-in.apply.events
-  (:require
-    [re-frame.core :refer [reg-event-db reg-event-fx dispatch path]]
-    [wh.common.cases :as cases]
-    [wh.common.graphql-queries :as graphql]
-    [wh.db :as db]
-    [wh.graphql.jobs :as graphql-jobs]
-    [wh.logged-in.apply.db :as apply]
-    [wh.logged-in.profile.location-events :as location-events]
-    [wh.user.db :as user]
-    [wh.util :as util])
+  (:require [re-frame.core :refer [reg-event-db reg-event-fx dispatch path]]
+            [wh.common.cases :as cases]
+            [wh.common.graphql-queries :as graphql]
+            [wh.db :as db]
+            [wh.graphql.jobs :as graphql-jobs]
+            [wh.logged-in.apply.db :as apply]
+            [wh.logged-in.profile.location-events :as location-events]
+            [wh.user.db :as user]
+            [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
 (def apply-interceptors (into db/default-interceptors
