@@ -79,10 +79,16 @@
           base-dispatch (cond-> [[::pages/unset-loader]]
                                 new (conj [:register/track-account-created {:source :stackoverflow :id account-id}])
                                 (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
-      (if (:new user)
+      (cond
+        (:wh.register-new.db/sub-db db)
+        {:db db
+         :dispatch-n base-dispatch
+         :navigate [:register-new]}
+        (:new user)
         {:db db
          :dispatch-n base-dispatch
          :navigate [:register :params {:step :email}]}
+        :else
         {:db      db
          :graphql {:query      user-details
                    :on-success [::user-details-success]

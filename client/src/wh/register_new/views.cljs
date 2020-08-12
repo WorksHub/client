@@ -3,13 +3,13 @@
             [wh.components.signin-buttons :as signin-button]
             [wh.routes :as routes]
             [wh.styles.register :as styles]
-            [wh.util :as util]))
+            [wh.util :as util]
+            [wh.subs :refer [<sub]]
+            [wh.register-new.subs :as subs]
+            [wh.register-new.events :as events]))
 
 (defn title []
   [:div (util/smc styles/title) "Sign Up"])
-
-(defn button [{:keys [text]}]
-  [:a (util/smc styles/button) text])
 
 (def stackoverflow-button-content
   [:div [:div (util/smc styles/display-not-mobile) "Continue with Stack Overflow"]
@@ -21,26 +21,53 @@
    [signin-button/twitter {:text "Continue with Twitter" :type :signup}]
    [signin-button/stack-overflow {:text stackoverflow-button-content :type :signup}]])
 
-(defn input []
-  [:label (util/smc styles/label)
-   "Email"
-   [:input {:type "email"
-            :placeholder "Email"
-            :class styles/input}]])
+(defn error-message [text]
+  [:span (util/smc styles/error) text])
+
+(defn field-name []
+  (let [error (<sub [::subs/error-name])]
+    [:label (util/smc styles/label)
+     "Name"
+     [:input
+      {:type       :text
+       :value      (<sub [::subs/name])
+       :on-change  #(dispatch-sync [::events/set-name (-> % .-target .-value)])
+       :aria-label "Name"
+       :placeholder "Name"
+       :class (util/mc styles/input [error styles/input--error])}]
+     [error-message error]]))
+
+(defn field-email []
+  (let [error (<sub [::subs/error-email])]
+    [:label (util/smc styles/label styles/label--email)
+     "Email"
+     [:input {:type :email
+              :placeholder "Email"
+              :aria-label "Email"
+              :class (util/mc styles/input [error styles/input--error])
+              :value      (<sub [::subs/email])
+              :on-change  #(dispatch-sync [::events/set-email (-> % .-target .-value)])}]
+     [error-message error]]))
+
+(defn submit-button []
+  (let [submitting? (<sub [::subs/submitting?])]
+    [:button {:class styles/button
+              :on-click #(dispatch [::events/create-user])
+              :type "button"
+              :disabled submitting?}
+     (if submitting? "Continue..." "Continue")]))
+
+
+(defn error-unhandled []
+  (when-let [error-unhandled (<sub [::subs/error-unhandled])]
+    [error-message error-unhandled]))
 
 (defn form []
   [:form
-   [:label (util/smc styles/label)
-    "Name"
-    [:input {:type "text"
-             :placeholder "Name"
-             :class styles/input}]]
-   [:label (util/smc styles/label styles/label--email)
-    "Email"
-    [:input {:type "email"
-             :placeholder "Email"
-             :class styles/input}]]
-   [button {:text "Continue"}]])
+   [field-name]
+   [field-email]
+   [error-unhandled]
+   [submit-button]])
 
 (defn link [{:keys [text href]}]
   [:a {:class styles/link :href href} text])
@@ -58,12 +85,18 @@
    [link {:text " Login"
           :href (routes/path :login :params {:step :root})}]])
 
+(defn stackoverflow-message []
+  [:div (util/smc styles/paragraph styles/stackoverflow)
+   "Stack Overflow doesn't provide your email information, please fill it in. Thank you"])
+
 (defn card-signup []
-  [:div {:class styles/container}
-   [:div {:class styles/card}
-    [title]
-    [auth-buttons]
-    [form]
-    [message-user-agreement]
-    [:hr (util/smc styles/separator)]
-    [message-existing-account]]])
+  (let [stackoverflow-signup? (<sub [::subs/stackoverflow-signup?])]
+    [:div {:class styles/container}
+     [:div {:class styles/card}
+      [title]
+      (when stackoverflow-signup? [stackoverflow-message])
+      (when-not stackoverflow-signup? [auth-buttons])
+      [form]
+      [message-user-agreement]
+      [:hr (util/smc styles/separator)]
+      [message-existing-account]]]))

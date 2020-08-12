@@ -79,7 +79,7 @@
           base-dispatch (cond-> []
                                 new (conj [:register/track-account-created {:source :twitter :id account-id}])
                                 (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
-      (if (:new user)
+      (if (and (:new user) (not (:wh.register-new.db/sub-db db)))
         {:db db
          :dispatch-n base-dispatch
          :navigate [:register :params {:step :email}]}

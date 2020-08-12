@@ -113,7 +113,7 @@
   [{:keys [user-id timestamp display-location other-urls email skills score cv cover-letter state note job] :as app} job-id]
   (let [admin?    (<sub [:user/admin?])
         skeleton? (empty? app)
-        job-id (or job-id (:job-id app))]
+        job-id    (or job-id (:job-id app))]
     [:div.card.company-application
      {:class (when skeleton? "skeleton")}
      [:div.company-application__name
@@ -197,41 +197,41 @@
   ;; TODO PACKAGES replace this logic with perms?
   [& {:keys [job candidate-name candidate-email on-ok]}]
   (let [{:keys [package manager]} (<sub [:wh.user.subs/company])
-        manager-name (when manager (get-manager-name manager))]\
-       [popup-wrapper
-        {:id :get-in-touch
-         :on-ok on-ok
-         :class "company-applications"}
-        [:h1 "Great!"]
-        [:p (if (= "take_off" package)
-              (if manager
-                [:span "Your manager "
-                 [:a.a--underlined
-                  {:href (str "mailto:" manager "?subject=Requesting interview with " candidate-name " regarding "
-                              (if (:title job)
-                                (str (:title job) " role")
-                                "multiple roles"))}
-                  manager-name]
-                 " will be in touch about this candidate \uD83D\uDCAB"]
-                "Your manager will be in touch about this candidate \uD83D\uDCAB")
-              [:span [:span "This is " [:strong (str candidate-name "'s")] " email address."]
-               [:br]
-               [:span "Please introduce yourself \uD83E\uDD1D"]])]
-        (when (not= "take_off" package)
-          [:p
-           [:a.a--underlined
-            {:href (str "mailto:" candidate-email "?subject=Requesting interview regarding "
-                        (if (:title job)
-                          (str (:title job) " role")
-                          "multiple roles"))}
-            candidate-email]])]))
+        manager-name              (when manager (get-manager-name manager))]
+    [popup-wrapper
+     {:id    :get-in-touch
+      :on-ok on-ok
+      :class "company-applications"}
+     [:h1 "Great!"]
+     [:p (if (= "take_off" package)
+           (if manager
+             [:span "Your manager "
+              [:a.a--underlined
+               {:href (str "mailto:" manager "?subject=Requesting interview with " candidate-name " regarding "
+                           (if (:title job)
+                             (str (:title job) " role")
+                             "multiple roles"))}
+               manager-name]
+              " will be in touch about this candidate \uD83D\uDCAB"]
+             "Your manager will be in touch about this candidate \uD83D\uDCAB")
+           [:span [:span "This is " [:strong (str candidate-name "'s")] " email address."]
+            [:br]
+            [:span "Please introduce yourself \uD83E\uDD1D"]])]
+     (when (not= "take_off" package)
+       [:p
+        [:a.a--underlined
+         {:href (str "mailto:" candidate-email "?subject=Requesting interview regarding "
+                     (if (:title job)
+                       (str (:title job) " role")
+                       "multiple roles"))}
+         candidate-email]])]))
 
 (defn state->verb
   [s]
   (case s
-    "pass" "pass on"
+    "pass"         "pass on"
     "get_in_touch" "discuss"
-    "hire" "hire for"
+    "hire"         "hire for"
     s))
 
 (defn job-selection-overlay

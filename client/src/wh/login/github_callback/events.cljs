@@ -49,7 +49,7 @@
           base-dispatch (cond-> [[::pages/unset-loader]]
                                 new (conj [:register/track-account-created {:source :github :email email}])
                                 (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
-      (if new
+      (if (and new (not (:wh.register-new.db/sub-db db)))
         (continue-to-registration db base-dispatch user new)
         (complete-login db base-dispatch)))))
 
