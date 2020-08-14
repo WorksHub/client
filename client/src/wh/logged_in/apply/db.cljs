@@ -1,7 +1,6 @@
 (ns wh.logged-in.apply.db
   (:require [cljs.spec.alpha :as s]))
 
-;; Using namespaced keywords to make them more direct and understandable
 (def steps #{:step/name :step/cv-upload :step/thanks :step/current-location
              :step/visa :step/rejection :step/cover-letter})
 
@@ -32,3 +31,9 @@
                                  ::cv-upload-failed?]))
 
 (def default-db {::steps-taken #{}})
+
+(defn update-taken-steps [db step]
+  (update-in db [::sub-db ::steps-taken] (fnil conj #{}) step))
+
+(defn update-current-step [db step]
+  (assoc-in db [::sub-db ::current-step] step))

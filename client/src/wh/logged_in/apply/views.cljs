@@ -161,22 +161,6 @@
      [button "I'm good, thanks :)" [::events/discard-cover-letter]
       :disabled updating?]]))
 
-(defn pre-application []
-  (if (<sub [:user/rejected?])
-    [:div.multiple-conversations
-     [:div
-      [codi-message "Unfortunately you're unable to apply for this role until your profile has been approved \uD83D\uDE41"]]]
-
-    [:div.multiple-conversations
-     [:div
-      [codi-message "Oh, snap! \uD83E\uDD14 We need a few more details about you"]]
-     (when (<sub [::subs/step-taken? :step/name])
-       [add-full-name-step])
-     (when (<sub [::subs/step-taken? :step/current-location])
-       [current-location-step])
-     (when (<sub [::subs/step-taken? :step/cv-upload])
-       [cv-upload-step])]))
-
 (defn visa-step []
   (let [selected-options (r/atom #{})
         other (r/atom nil)]
@@ -214,13 +198,28 @@
           :on-click #(dispatch [::events/update-visa @selected-options @other])}
          "Next"]]])))
 
+(defn pre-application []
+  (if (<sub [:user/rejected?])
+    [:div.multiple-conversations
+     [:div
+      [codi-message "Unfortunately you're unable to apply for this role until your profile has been approved \uD83D\uDE41"]]]
+
+    [:div.multiple-conversations
+     [:div
+      [codi-message "Oh, snap! \uD83E\uDD14 We need a few more details about you"]]
+     (when (<sub [::subs/step-taken? :step/name])
+       [add-full-name-step])
+     (when (<sub [::subs/step-taken? :step/current-location])
+       [current-location-step])
+     (when (<sub [::subs/step-taken? :step/cv-upload])
+       [cv-upload-step])]))
+
 (defn chatbot []
   [:div.chatbot
    [icon "close"
     :class "close is-pulled-right"
     :id "application-bot_close-bot"
     :on-click #(dispatch [::events/close-chatbot])]
-
    (case (<sub [::subs/current-step])
      :step/thanks       [thanks-step]
      :step/cover-letter [cover-letter-step]
@@ -233,6 +232,5 @@
              (<sub [::subs/current-step]))
     [chatbot]))
 
-;; TODO: find a way to remove extra-overlays from codebase and implement
-;; overlays in more sane manner
+;; TODO: CH4623, find a way to remove extra-overlays from codebase and implement overlays in more sane manner
 (swap! wh.views/extra-overlays conj [overlay-apply])
