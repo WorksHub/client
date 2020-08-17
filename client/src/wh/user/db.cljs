@@ -8,6 +8,27 @@
             [wh.common.user :as user]
             [wh.util :as util]))
 
+(defn update-visa-status [db visa-status]
+  (assoc-in db [::sub-db ::visa-status] visa-status))
+
+(defn update-visa-status-other [db visa-status-other]
+  (assoc-in db [::sub-db ::visa-status-other] visa-status-other))
+
+(defn update-name [db name]
+  (assoc-in db [::sub-db ::name] name))
+
+(defn update-cv [db file]
+  (assoc-in db [::sub-db ::cv :file] file))
+
+(defn update-skills [db skills]
+  (assoc-in db [::sub-db ::skills] skills))
+
+(defn id [db]
+  (get-in db [::sub-db ::id]))
+
+(defn has-skills? [db]
+  (seq (get-in db [::sub-db ::skills])))
+
 (defn has-cv? [db]
   (or (get-in db [::sub-db ::cv :link])
       (not (str/blank? (get-in db [::sub-db ::cv :file :url])))))

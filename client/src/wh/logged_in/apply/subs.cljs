@@ -129,3 +129,27 @@
   :<- [::sub-db]
   (fn [db _]
     (::apply/company-name db)))
+
+;; SKILLS ------------------------------------------------------------------------
+
+(reg-sub
+  ::required-skills
+  (fn [db _]
+    (apply/required-skills db)))
+
+(reg-sub
+  ::selected-skills
+  :<- [::sub-db]
+  (fn [db _]
+    (apply/selected-skills db)))
+
+(reg-sub
+  ::skill-selected?
+  :<- [::selected-skills]
+  (fn [selected-skills [skill]]
+    (apply/skill-selected? selected-skills skill)))
+
+(reg-sub
+  ::skill-update-failed?
+  (fn [db _]
+    (apply/skills-update-failed? db)))

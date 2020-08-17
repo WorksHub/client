@@ -14,8 +14,8 @@
 
 (def-query-from-template update-user-mutation--upsert update-user-mutation
   {:fields [:id [:approval [:status]] :email :name :consented :phone
-          [:skills [:name]]
-          [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]})
+            [:skills [:name]]
+            [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]})
 
 (def-query-from-template update-user-mutation--cv update-user-mutation
   {:fields [[:cv [:link [:file [:type :name :url]]]]]})
@@ -34,6 +34,9 @@
 
 (def-query-from-template update-user-mutation--current-location update-user-mutation
   {:fields [[:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]})
+
+(def-query-from-template update-user-mutation--skills update-user-mutation
+  {:fields [[:skills [:name :rating]]]})
 
 (def set-application-state-mutation
   {:venia/operation {:operation/type :mutation

@@ -69,23 +69,23 @@
   db/default-interceptors
   (fn [{db :db} [_]]
     (if (user/has-cv? db)
-      {:dispatch [::apply]}
+      {:dispatch [::check-skills]}
       {:db (-> db
                (apply/update-current-step :step/cv-upload)
                (apply/update-taken-steps :step/cv-upload))})))
 
 (reg-event-db
   ::cv-upload-start
-  apply-interceptors
+  db/default-interceptors
   (fn [db _]
-    (assoc db ::apply/updating? true)))
+    (apply/set-loading db)))
 
 (reg-event-fx
   ::cv-upload-success
   db/default-interceptors
   (fn [{db :db} [filename {:keys [url hash]}]]
     {:graphql {:query      graphql/update-user-mutation--cv
-               :variables  {:update_user {:id (get-in db [::user/sub-db ::user/id])
+               :variables  {:update_user {:id (user/id db)
                                           :cv {:file {:name filename :url url :hash hash}}}}
                :on-success [::cv-update-url-success]
                :on-failure [::cv-upload-failure]}}))
@@ -95,8 +95,8 @@
   db/default-interceptors
   (fn [{db :db} [resp]]
     {:db       (-> db
-                   (assoc-in [::user/sub-db ::user/cv :file] (get-in resp [:data :update_user :cv :file]))
-                   (assoc-in [::apply/sub-db ::apply/updating?] false)
+                   (user/update-cv (get-in resp [:data :update_user :cv :file]))
+                   (apply/unset-loading)
                    (assoc-in [::apply/sub-db ::apply/cv-upload-failed?] false))
      :dispatch [::check-cv]}))
 
@@ -124,9 +124,9 @@
   ::update-name
   db/default-interceptors
   (fn [{db :db} [name]]
-    {:db      (assoc-in db [::apply/sub-db ::apply/updating?] true)
+    {:db      (apply/set-loading db)
      :graphql {:query      graphql/update-user-mutation--name
-               :variables  {:update_user {:id   (get-in db [::user/sub-db ::user/id])
+               :variables  {:update_user {:id   (user/id db)
                                           :name name}}
                :on-success [::update-name-success]
                :on-failure [::update-name-failure]}}))
@@ -136,8 +136,8 @@
   db/default-interceptors
   (fn [{db :db} [resp]]
     {:db       (-> db
-                   (assoc-in [::user/sub-db ::user/name] (get-in resp [:data :update_user :name]))
-                   (assoc-in [::apply/sub-db ::apply/updating?] false))
+                   (user/update-name (get-in resp [:data :update_user :name]))
+                   (apply/unset-loading))
      :dispatch [::check-name]}))
 
 (reg-event-db
@@ -163,9 +163,9 @@
   db/default-interceptors
   (fn [{db :db} [resp]]
     {:db       (-> db
-                   (assoc-in [::user/sub-db ::user/visa-status] (get-in resp [:data :update_user :visaStatus]))
-                   (assoc-in [::user/sub-db ::user/visa-status-other] (get-in resp [:data :update_user :visaStatusOther]))
-                   (assoc-in [::apply/sub-db ::apply/updating?] false))
+                   (user/update-visa-status (get-in resp [:data :update_user :visaStatus]))
+                   (user/update-visa-status-other (get-in resp [:data :update_user :visaStatusOther]))
+                   (apply/unset-loading))
      :dispatch [::check-visa]}))
 
 (reg-event-db
@@ -183,7 +183,7 @@
   (fn [{db :db} [visa-status visa-other]]
     {:db      (assoc-in db [::apply/sub-db ::apply/updating?] true)
      :graphql {:query      graphql/update-user-mutation--visa-status
-               :variables  {:update_user (cond-> {:id         (get-in db [::user/sub-db ::user/id])
+               :variables  {:update_user (cond-> {:id         (user/id db)
                                                   :visaStatus visa-status}
                                                  (contains? visa-status "Other") (merge {:visaStatusOther visa-other}))}
                :on-success [::update-visa-success]
@@ -232,7 +232,7 @@
   db/default-interceptors
   (fn [db]
     (-> db
-        (assoc-in [::apply/sub-db ::apply/updating?] false)
+        (apply/unset-loading)
         (assoc-in [::apply/sub-db ::apply/cover-letter-upload-failed?] true))))
 
 (reg-event-fx
@@ -247,7 +247,7 @@
                               :cover_letter cover-letter}
                  :on-success [::set-cover-letter-success]
                  :on-failure [::set-cover-letter-failure]}
-       :db      (assoc db ::apply/updating? true)})))
+       :db      (apply/set-loading db)})))
 
 (reg-event-db
   ::set-cover-letter-success
@@ -281,7 +281,7 @@
   (fn [{db :db} [resp]]
     {:db       (-> db
                    (assoc-in [::user/sub-db ::user/current-location] (get-in resp [:data :update_user :currentLocation]))
-                   (assoc-in [::apply/sub-db ::apply/updating?] false))
+                   (apply/unset-loading))
      :dispatch [::check-current-location]}))
 
 (reg-event-db
@@ -297,9 +297,9 @@
   db/default-interceptors
   (fn [{db :db} _]
     (let [current-location (get-in db [::apply/sub-db ::apply/current-location])]
-      {:db      (assoc-in db [::apply/sub-db ::apply/updating?] true)
+      {:db      (apply/set-loading db)
        :graphql {:query      graphql/update-user-mutation--current-location
-                 :variables  {:update_user (util/transform-keys {:id               (get-in db [::user/sub-db ::user/id])
+                 :variables  {:update_user (util/transform-keys {:id               (user/id db)
                                                                  :current-location current-location})}
                  :on-success [::update-current-location-success]
                  :on-failure [::update-current-location-failure]}})))
@@ -370,6 +370,58 @@
         (-> db
             (assoc ::apply/updating? false)
             (assoc ::apply/current-step :step/cover-letter))))))
+
+;; SKILLS ─────────────────────────────────────────────────────────────────────────────
+
+(reg-event-fx
+  ::check-skills
+  db/default-interceptors
+  (fn [{db :db} [_]]
+    (if (user/has-skills? db)
+      {:dispatch [::apply]}
+      {:db (-> db
+               (apply/update-current-step :step/skills)
+               (apply/update-taken-steps :step/skills))})))
+
+(reg-event-fx
+  ::update-skills
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:graphql {:query      graphql/update-user-mutation--skills
+               :variables  {:update_user
+                            (util/transform-keys {:id     (user/id db)
+                                                  :skills (->> db
+                                                               apply/sub-db
+                                                               apply/selected-skills
+                                                               (map #(hash-map :name %)))})}
+               :on-success [::update-skills-success]
+               :on-failure [::update-skills-failure]}
+     :db      (-> db
+                  apply/unset-skills-update-failed
+                  apply/set-loading)}))
+
+(reg-event-fx
+  ::update-skills-success
+  db/default-interceptors
+  (fn [{db :db} [resp]]
+    {:db (-> db
+             (user/update-skills (get-in resp [:data :update_user :skills]))
+             apply/unset-loading)
+     :dispatch [::check-skills]}))
+
+(reg-event-db
+  ::update-skills-failure
+  db/default-interceptors
+  (fn [db _]
+    (-> db
+        apply/set-skills-update-failed
+        apply/unset-loading)))
+
+(reg-event-db
+  ::toggle-skill
+  apply-interceptors
+  (fn [db [skill]]
+    (apply/toggle-skill db skill)))
 
 ;; APPLY ─────────────────────────────────────────────────────────────────────────────
 

@@ -180,9 +180,6 @@
  ::fetch-company-failure
  company-interceptors
  (fn [db data]
-   (js/console.log data)
-   (tap> data)
-
    (assoc db ::sub-db/error :failed-to-fetch-company)))
 
 (reg-event-fx

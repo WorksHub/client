@@ -198,6 +198,30 @@
           :on-click #(dispatch [::events/update-visa @selected-options @other])}
          "Next"]]])))
 
+(defn skills-step []
+  (let [required-skills (<sub [::subs/required-skills])
+        selected-skills (<sub [::subs/selected-skills])]
+    [:div.add-visa
+     (if (<sub [::subs/skill-update-failed?])
+       [error-message "There was an error updating your skills, please try again."]
+       [codi-message "Please select your skills"])
+     [:div.animatable.visa-options
+      [:div.multiple-buttons
+       (for [skill required-skills
+             :let [selected? (some #(= % skill) selected-skills)]]
+         [:button.button.visa-option
+          {:key      skill
+           :class    (when-not selected?
+                       "button--light")
+           :on-click #(dispatch [::events/toggle-skill skill])}
+          skill])]]
+     [:div.animatable
+      [:button.conversation-button.update-visa
+       {:class    (when (<sub [::subs/updating?]) "button--loading")
+        :disabled (empty? selected-skills)
+        :on-click #(dispatch [::events/update-skills])}
+       "Update skills"]]]))
+
 (defn pre-application []
   (if (<sub [:user/rejected?])
     [:div.multiple-conversations
@@ -212,7 +236,9 @@
      (when (<sub [::subs/step-taken? :step/current-location])
        [current-location-step])
      (when (<sub [::subs/step-taken? :step/cv-upload])
-       [cv-upload-step])]))
+       [cv-upload-step])
+     (when (<sub [::subs/step-taken? :step/skills])
+       [skills-step])]))
 
 (defn chatbot []
   [:div.chatbot
@@ -226,6 +252,7 @@
      :step/rejection    [rejection-step]
      :step/visa         [visa-step]
      [pre-application])])
+
 
 (defn overlay-apply []
   (when (and (<sub [::subs/display-chatbot?])
