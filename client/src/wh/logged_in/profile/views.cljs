@@ -48,9 +48,9 @@
           (when (and (= type :stackoverflow)
                      so-reputation)
             [:span.linkbox__reputation-badge so-reputation])
-          [:a.linkbox__link {:href url
+          [:a.linkbox__link {:href   url
                              :target "_blank"
-                             :rel "noopener"} display]])))))
+                             :rel    "noopener"} display]])))))
 
 (defn owner? [user-type] (= user-type :owner))
 (defn admin? [user-type] (= user-type :admin))
@@ -145,9 +145,10 @@
    (when label [:label.label label])
    [:div.control
     [:div.text-field-control
-     [:input.input {:value name
+     [:input.input {:value       name
                     :placeholder "Type in a new skill"
-                    :on-change #(dispatch-sync [::events/edit-skill i (-> % .-target .-value)])}]]
+                    :on-change   #(dispatch-sync
+                                    [::events/edit-skill i (-> % .-target .-value)])}]]
     [skill-rating i rating]]])
 
 (defn header-edit []
@@ -165,19 +166,19 @@
                                             :on-success [::events/avatar-upload-success]
                                             :on-failure [::events/avatar-upload-failure])}]
    [text-field (<sub [::subs/name])
-    {:label "Your name"
+    {:label     "Your name"
      :on-change [::events/edit-name]}]
    [multi-edit
     (<sub [::subs/rated-skills])
-    {:label [:div "Skills"
-             [:br]
-             [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]
+    {:label     [:div "Skills"
+                 [:br]
+                 [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]
      :component skill-field}]
    [multi-edit
     (<sub [::subs/editable-urls])
-    {:label "Websites"
+    {:label       "Websites"
      :placeholder "Link to your web page, profile, portfolio, etc..."
-     :on-change [::events/edit-url]}]
+     :on-change   [::events/edit-url]}]
    [text-field
     (<sub [::subs/summary])
     {:type        :textarea

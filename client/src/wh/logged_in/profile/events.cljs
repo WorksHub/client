@@ -3,8 +3,8 @@
             [clojure.string :as str]
             [re-frame.core :refer [path reg-event-db reg-event-fx]]
             [wh.common.cases :as cases]
-            [wh.common.errors :as errors]
             [wh.common.data :as data]
+            [wh.common.errors :as errors]
             [wh.common.graphql-queries :as graphql]
             [wh.common.specs.primitives :as specs]
             [wh.common.upload :as upload]
@@ -215,13 +215,15 @@
     (let [old-skills (vec (::profile/skills db))
           new-skills (cond-> old-skills
                              (= i (count old-skills)) (conj {:name ""})
-                             true (assoc-in [i :rating] rating))]
+                             true                     (assoc-in [i :rating] rating))]
       (assoc db ::profile/skills new-skills))))
 
 (defn graphql-header-update
   [profile]
-  (-> (select-keys profile [::profile/id ::profile/name ::profile/skills ::profile/summary ::profile/other-urls ::profile/image-url])
-      (util/transform-keys)))
+  (-> profile
+      (select-keys [::profile/id ::profile/name ::profile/skills
+                    ::profile/summary ::profile/other-urls ::profile/image-url])
+      util/transform-keys))
 
 (defn graphql-company-user-update
   [db]
