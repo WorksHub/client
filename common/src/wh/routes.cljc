@@ -187,11 +187,13 @@
               ["github-app-connect" :connect-github-app]
               ["oauth/" {"greenhouse"          :oauth-greenhouse
                          "greenhouse-callback" :oauth-greenhouse-callback
+                         "greenhouse-landing"  :oauth-greenhouse-landing
                          "workable"            :oauth-workable
                          "workable-callback"   :oauth-workable-callback
+                         "workable-landing"    :oauth-workable-landing
                          "slack"               :oauth-slack
                          "slack-callback"      :oauth-slack-callback
-                         "process"             :oauth-process
+                         "slack-landing"       :oauth-slack-landing
                          "twitter"             :oauth-twitter}]
               ["documents/" {[:access-id "/" :doc-type] :document-access}]
               ["api/" [["graphql" :graphql]
