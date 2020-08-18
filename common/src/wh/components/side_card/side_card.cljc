@@ -106,7 +106,7 @@
    [c/section-title (if show-recommendations? "Recommended jobs" "Hiring now")]
    (if loading?
      [c/section-elements-skeleton]
-     [c/section-elements jobs card-job (util/ts "recommended-jobs")])
+     [c/section-elements jobs card-job {:data-test "recommended-jobs"}])
    (when-not loading?
      [:div {:class (util/mc style/footer style/footer--jobs)}
       [c/section-button {:title "All live jobs"

@@ -81,7 +81,7 @@
      [side-cards/improve-your-recommendations logged-in?]
      [attract-card/contribute logged-in? :side-column]
      [:div (merge (util/smc styles/side-column styles/tablet-only)
-                  (util/ts "recommended-jobs-mobile"))
+                  {:data-test "recommended-jobs-mobile"})
       [side-cards/jobs {:jobs                  jobs
                         :jobs-loading?         jobs-loading?
                         :company?              company?
@@ -101,8 +101,8 @@
 
 (defn right-column [jobs jobs-loading? show-recommendations? issues issues-loading?
                     company? users users-loading?]
-  [:div (merge (util/smc styles/side-column)
-               (util/ts "recommended-jobs-desktop"))
+  [:div {:class styles/side-column
+         :data-test "recommended-jobs-desktop"}
    [side-cards/jobs {:jobs                  jobs
                      :loading?              jobs-loading?
                      :company?              company?

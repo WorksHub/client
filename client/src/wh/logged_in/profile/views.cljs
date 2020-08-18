@@ -147,6 +147,7 @@
     [:div.text-field-control
      [:input.input {:value       name
                     :placeholder "Type in a new skill"
+                    :data-test   "skill"
                     :on-change   #(dispatch-sync
                                     [::events/edit-skill i (-> % .-target .-value)])}]]
     [skill-rating i rating]]])
@@ -187,7 +188,8 @@
      :on-change   [::events/edit-summary]}]
    [error-box]
    [:div.buttons-container.is-flex
-    [:button.button.button--small {:on-click #(do (.preventDefault %)
+    [:button.button.button--small {:data-test "save"
+                                   :on-click #(do (.preventDefault %)
                                                   (dispatch [::events/save-header]))} "Save"]
     [cancel-link]]])
 
@@ -337,6 +339,7 @@
 (defn current-location-field []
   [text-field (<sub [::subs/current-location-label])
    {:label "Current location"
+    :data-test "current-location"
     :suggestions (<sub [::subs/current-location-suggestions])
     :on-change [::events/edit-current-location]
     :on-select-suggestion [::events/select-current-location-suggestion]
@@ -412,7 +415,8 @@
      :on-change [::events/set-remote]}]
    [error-box]
    [:div.buttons-container
-    [:button.button.button--small {:on-click #(do (.preventDefault %)
+    [:button.button.button--small {:data-test "save"
+                                   :on-click #(do (.preventDefault %)
                                                   (dispatch [::events/save-private]))} "Save"]
     [cancel-link]]])
 

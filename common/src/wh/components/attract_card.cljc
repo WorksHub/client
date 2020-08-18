@@ -16,7 +16,7 @@
    [:div (merge (util/smc style/attract-card
                           style/intro
                           [(= type :main-column) style/intro--main-column])
-                (util/test-selector "intro-attract"))
+                {:data-test "intro-attract"})
     [:div (util/smc style/intro__branding)
      [icon vertical :class style/intro__icon]
      [branding/vertical-title vertical {:size :small :type :multiline}]]
@@ -31,7 +31,7 @@
    [:div (merge (util/smc style/attract-card
                           style/contribute
                           [(= type :side-column) style/contribute--side-column])
-                (util/test-selector "contribute-attract"))
+                {:data-test "contribute-attract"})
     [:div (util/smc style/contribute__info)
      [:h2 (util/smc style/contribute__heading) "Write an article"]
      [:p (util/smc style/contribute__copy) "Share your thoughts & expertise with a huge community of users"]
@@ -60,7 +60,7 @@
    [:div (merge (util/smc style/attract-card
                           style/signin
                           [(= type :side-column) style/signin--side-column])
-                (util/test-selector "signin-attract"))
+                {:data-test "signin-attract"})
     [:h2 (util/smc style/signin__heading) "Continue with"]
     [:p (util/smc style/signin__copy) "customize your feed & discover cool stuff"]
     [signin-buttons]]))

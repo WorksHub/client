@@ -11,11 +11,6 @@
   (:require-macros
     [wh.graphql-macros :refer [defquery]]))
 
-(defn complete-login [db base-dispatch]
-  {:db         db
-   :analytics/identify db
-   :dispatch-n (into base-dispatch (login/redirect-post-login-or-registration db))})
-
 (defn- initialize-associated-jobs
   [{:keys [likes applied] :as user}]
   (-> user
@@ -32,10 +27,12 @@
 (reg-event-fx
   ::user-details-success
   db/default-interceptors
-  (fn [{db :db} [resp]]
+  (fn [{db :db} [base-dispatch resp]]
     (let [user (get-in resp [:data :me])
           db (update db ::user/sub-db #(merge % (prepare-user user)))]
-      (complete-login db [[::pages/unset-loader]]))))
+      {:db         db
+       :analytics/identify db
+       :dispatch-n (into base-dispatch (login/redirect-post-login-or-registration db))})))
 
 (reg-event-fx
   ::request-fail
@@ -72,21 +69,17 @@
   (fn [{db :db} [resp]]
     (let [user (get-in resp [:data :twitter_auth :user])
           account-id (get-in user [:twitter_info :id])
-          new (:new user)
+          new-user? (:new user)
           db (-> db
                  (update ::user/sub-db merge (prepare-user user))
                  (assoc-in [::twitter-callback/sub-db :callback-status] :success))
-          base-dispatch (cond-> []
-                                new (conj [:register/track-account-created {:source :twitter :id account-id}])
-                                (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
-      (if (and (:new user) (not (:wh.register-new.db/sub-db db)))
-        {:db db
-         :dispatch-n base-dispatch
-         :navigate [:register :params {:step :email}]}
-        {:db      db
-         :graphql {:query      user-details
-                   :on-success [::user-details-success]
-                   :on-failure [::request-fail]}}))))
+          base-dispatch (cond-> [[::pages/unset-loader]]
+                                new-user? (conj [:register/track-account-created {:source :twitter :id account-id}])
+                                (and new-user? (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
+      {:db      db
+       :graphql {:query      user-details
+                 :on-success [::user-details-success base-dispatch]
+                 :on-failure [::request-fail]}})))
 
 (defquery twitter-auth-mutation
   {:venia/operation {:operation/type :mutation

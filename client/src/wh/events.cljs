@@ -160,15 +160,6 @@
     {:show-auth-popup {:context :homepage-contribute
                        :redirect [:contribute]}}))
 
-(reg-event-fx
-  :register/get-started
-  db/default-interceptors
-  (fn [{db :db} [track-data]]
-    (merge {:navigate [:register :params {:step :email}]}
-           {:dispatch-n (cond-> []
-                                (contains? db :wh.register.db/sub-db) (conj [:wh.register.events/initialize-db true])
-                                track-data (conj [:register/track-start track-data]))})))
-
 ;; Defined here rather than in wh.register.events because we need to trigger this before loading register module.
 (reg-event-fx
   :register/track-start

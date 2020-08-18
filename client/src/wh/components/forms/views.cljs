@@ -77,13 +77,14 @@
   If supplied, the `dirty` option should be an atom which holds
   a boolean value; it will be reset to true upon first change of
   the input. This is used by text-field."
-  [value {:keys [type on-change placeholder on-scroll rows dirty]
+  [value {:keys [type on-change placeholder on-scroll rows dirty data-test]
           :or {type :text}
           :as options}]
   [(if (= type :textarea)
      :textarea.textarea
      :input.input)
    (merge (when-not (= type :textarea) {:type type})
+          (when data-test {:data-test data-test})
           {:value value :placeholder placeholder}
           (when on-change
             {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) % options)]
@@ -94,8 +95,7 @@
                              (dispatch-sync (conj on-change new-value))))})
           (when on-scroll
             {:on-scroll #(dispatch on-scroll)})
-          (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press
-                                :step])
+          (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press :step])
           (when (and rows (= type :textarea))
             {:rows rows}))])
 

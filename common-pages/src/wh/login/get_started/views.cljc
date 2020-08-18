@@ -7,7 +7,7 @@
    [:h2 "Please tell us if you're a"]
    [:div.get-started__choices
     [:a.get-started__choice
-     {:href (routes/path :register :params {:step :email})
+     {:href (routes/path :register-new)
       :id "get-started__candidate"}
      [:img {:src "/images/get_started/candidate.svg"}]
      [:button.button.button--public "Candidate"]]

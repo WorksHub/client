@@ -24,11 +24,6 @@
      :dispatch-n base-dispatch
      :navigate [:register :params {:step new-step}]}))
 
-(defn complete-login [db base-dispatch]
-  {:db         db
-   :analytics/identify db
-   :dispatch-n (into base-dispatch (login/redirect-post-login-or-registration db))})
-
 (defn- initialize-associated-jobs
   [{:keys [likes applied] :as user}]
   (-> user
@@ -49,9 +44,9 @@
           base-dispatch (cond-> [[::pages/unset-loader]]
                                 new (conj [:register/track-account-created {:source :github :email email}])
                                 (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
-      (if (and new (not (:wh.register-new.db/sub-db db)))
-        (continue-to-registration db base-dispatch user new)
-        (complete-login db base-dispatch)))))
+      {:db         db
+       :analytics/identify db
+       :dispatch-n (into base-dispatch (login/redirect-post-login-or-registration db))})))
 
 (reg-event-fx
   ::gh-auth-fail

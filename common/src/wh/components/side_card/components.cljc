@@ -106,5 +106,5 @@
 (defn card-link [{:keys [title href data-test]}]
   [:a (cond-> {:href  href
                :class style/element__link}
-              data-test (merge (util/ts data-test)))
+              data-test (merge {:data-test data-test}))
    title])

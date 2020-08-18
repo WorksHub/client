@@ -33,6 +33,7 @@
        :value      (<sub [::subs/name])
        :on-change  #(dispatch-sync [::events/set-name (-> % .-target .-value)])
        :aria-label "Name"
+       :data-test "name"
        :placeholder "Name"
        :class (util/mc styles/input [error styles/input--error])}]
      [error-message error]]))
@@ -44,6 +45,7 @@
      [:input {:type :email
               :placeholder "Email"
               :aria-label "Email"
+              :data-test "email"
               :class (util/mc styles/input [error styles/input--error])
               :value      (<sub [::subs/email])
               :on-change  #(dispatch-sync [::events/set-email (-> % .-target .-value)])}]
@@ -54,6 +56,7 @@
     [:button {:class styles/button
               :on-click #(dispatch [::events/create-user])
               :type "button"
+              :data-test "signup"
               :disabled submitting?}
      (if submitting? "Continue..." "Continue")]))
 
@@ -92,7 +95,8 @@
 (defn card-signup []
   (let [stackoverflow-signup? (<sub [::subs/stackoverflow-signup?])]
     [:div {:class styles/container}
-     [:div {:class styles/card}
+     [:div {:class styles/card
+            :data-test "form-signup"}
       [title]
       (when stackoverflow-signup? [stackoverflow-message])
       (when-not stackoverflow-signup? [auth-buttons])

@@ -72,23 +72,17 @@
           user (or (:user_info_stackoverflow resp-data)
                    (:user resp-data))
           account-id (get-in user [:stackoverflow_info :account_id])
-          new (:new user)
+          new-user? (:new user)
           db (-> db
                  (update ::user/sub-db merge (prepare-user user))
                  (assoc-in [::stackoverflow-callback/sub-db :callback-status] :success))
           base-dispatch (cond-> [[::pages/unset-loader]]
-                                new (conj [:register/track-account-created {:source :stackoverflow :id account-id}])
-                                (and new (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
-      (cond
-        (:wh.register-new.db/sub-db db)
+                                new-user? (conj [:register/track-account-created {:source :stackoverflow :id account-id}])
+                                (and new-user? (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
+      (if new-user?
         {:db db
          :dispatch-n base-dispatch
          :navigate [:register-new]}
-        (:new user)
-        {:db db
-         :dispatch-n base-dispatch
-         :navigate [:register :params {:step :email}]}
-        :else
         {:db      db
          :graphql {:query      user-details
                    :on-success [::user-details-success]

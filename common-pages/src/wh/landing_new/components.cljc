@@ -61,7 +61,7 @@
                 issues-counted]} (<sub [::subs/user-details])]
 
     [:div (merge (util/smc dashboard-styles/dashboard)
-                 (util/ts "user-dashboard"))
+                 {:data-test "user-dashboard"})
      [dashboard-header {:user-image user-image
                         :user-name  user-name}]
 

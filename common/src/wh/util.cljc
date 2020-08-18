@@ -3,8 +3,7 @@
             [camel-snake-kebab.core :as c]
             [clojure.spec.alpha :as s]
             [clojure.string :as str]
-            [clojure.walk :refer [postwalk]]
-            [wh.util-macros :as utilm])
+            [clojure.walk :refer [postwalk]])
   (:refer-clojure :exclude [random-uuid]))
 
 (defn now []
@@ -275,15 +274,6 @@
 
 (defn smc [& classes]
   {:class (apply merge-classes classes)})
-
-(defn test-selector
-  "create a test selector map"
-  [selector]
-  (utilm/when-not-prod
-    {:data-test-selector selector}))
-
-;; helper alias
-(def ts test-selector)
 
 (defn ctx->ip [{:keys [remote-addr headers]}]
   (or (get headers "cf-connecting-ip")                      ;This header is added by Cloudflare and has original IP in prod

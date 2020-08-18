@@ -156,7 +156,7 @@
 
 (defn card [type & children]
   [:div (merge (util/smc styles/card [(= type :highlight) styles/card--highlight])
-               (util/ts "activity"))
+               {:data-test "activity"})
    (keyed-collection children)])
 
 (defn card-content [& children]
