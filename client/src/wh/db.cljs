@@ -71,7 +71,6 @@
                 :profile-edit-private
                 :recommended
                 :register
-                :register-new
                 :register-company
                 :tags-edit})
 

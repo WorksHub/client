@@ -8,6 +8,10 @@
 
 .container
   padding: 5% 8px 8px
+  background-image: url('/images/waves.svg')
+  background-size: cover
+  // add -1px to kill scroll
+  min-height: calc(100vh - #{$header-height-desktop} - 1px)
 
 .card
   background: $background-white

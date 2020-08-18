@@ -82,7 +82,7 @@
       (if new-user?
         {:db db
          :dispatch-n base-dispatch
-         :navigate [:register-new]}
+         :navigate [:register]}
         {:db      db
          :graphql {:query      user-details
                    :on-success [::user-details-success]

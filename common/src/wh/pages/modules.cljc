@@ -62,7 +62,6 @@
    :register-company           :company
    :payment-setup              :company
    :register                   :register
-   :register-new               :register-new
    :liked                      :logged-in
    :recommended                :logged-in
    :applied                    :logged-in

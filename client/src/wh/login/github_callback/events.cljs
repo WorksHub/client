@@ -11,19 +11,6 @@
   (:require-macros
     [wh.graphql-macros :refer [defquery]]))
 
-(defn continue-to-registration [db base-dispatch user new]
-  ;; Even though by the time we're here the register module is not
-  ;; loaded, we have an app-db that contains the relevant sub-db,
-  ;; because it's been fetched from local storage.
-  (let [old-step (get-in db [:wh.register.db/sub-db :wh.register.db/step])
-        new-step (case old-step
-                   :skills :skills
-                   :verify :verify
-                   :email)]
-    {:db db
-     :dispatch-n base-dispatch
-     :navigate [:register :params {:step new-step}]}))
-
 (defn- initialize-associated-jobs
   [{:keys [likes applied] :as user}]
   (-> user

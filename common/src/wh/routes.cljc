@@ -24,9 +24,9 @@
                          :jobsboard
                          :contribute-edit})
 
-(def no-menu-pages #{:register :register-new :register-company :payment-setup :get-started :feed})
-(def no-footer-pages #{:register :register-new :register-company :payment-setup :get-started})
-(def no-nav-link-pages #{:register :register-new :register-company :payment-setup :get-started})
+(def no-menu-pages #{:register :register-company :payment-setup :get-started :feed})
+(def no-footer-pages #{:register :register-company :payment-setup :get-started})
+(def no-nav-link-pages #{:register :register-company :payment-setup :get-started})
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation
@@ -121,16 +121,7 @@
                         [:id "/edit"] :edit-job}]
 
               ;; Public pages - app.js required
-              ["register/" {"name"         (with-params :register :step :name)
-                            "thanks"       (with-params :register :step :thanks)
-                            "skills"       (with-params :register :step :skills)
-                            "company-info" (with-params :register :step :company-info)
-                            "company"      (with-params :register :step :company)
-                            "location"     (with-params :register :step :location)
-                            "verify"       (with-params :register :step :verify)
-                            "test"         (with-params :register :step :test)
-                            "email"        (with-params :register :step :email)}]
-              ["register-new" :register-new]
+              ["register" :register]
               ["company-registration" :register-company]
               ["login" {""               (with-params :login :step :root)
                         "/"              (with-params :login :step :root)
