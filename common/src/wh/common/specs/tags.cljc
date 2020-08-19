@@ -45,6 +45,7 @@
                                        :wh.tag.db/type]
                               :opt-un [:wh.tag.db/subtype]))
 (s/def :wh/tags (s/coll-of :wh/tag))
+(s/def :wh.db/tags (s/coll-of :wh.tag/db-tag))
 
 (def string-types (set (map name types-with-size)))
 (s/def :wh.gql.tag/type string-types)
