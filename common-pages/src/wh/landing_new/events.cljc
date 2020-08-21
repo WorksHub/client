@@ -75,6 +75,7 @@
                        :title
                        :slug
                        :userScore
+                       :remote
                        [:company [:id
                                   :name
                                   :slug
@@ -161,6 +162,7 @@
                       [[:results [:id
                                   :title
                                   :slug
+                                  :remote
                                   [:company_info [:id
                                                   :name
                                                   :slug

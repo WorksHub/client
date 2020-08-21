@@ -4,6 +4,7 @@
             [clojure.string :as str]
             [wh.common.text :as text]
             [wh.components.cards :refer [match-circle]]
+            [wh.components.icons :refer [icon]]
             [wh.components.side-card.components :as c]
             [wh.interop :as interop]
             [wh.landing-new.events :as events]
@@ -84,7 +85,7 @@
 
 ;; -----------------------------------------------
 
-(defn card-job [{:keys [title company-info slug user-score] :as _job}]
+(defn card-job [{:keys [title company-info slug user-score remote] :as _job}]
   [:section {:class style/section__element}
    (let [jobs-count (:total-published-job-count company-info)
          text       (str jobs-count (text/pluralize jobs-count " live job"))]
@@ -95,11 +96,16 @@
    [c/card-link {:title     title
                  :href      (routes/path :job :params {:slug slug})
                  :data-test "recommended-job-link"}]
-   (when user-score
-     [:a {:href (routes/path :job :params {:slug slug})}
-      [match-circle {:score user-score
-                     :text? true
-                     :size  18}]])])
+   [:div (util/smc style/section__horizontal-element)
+    (when user-score
+      [:a {:href (routes/path :job :params {:slug slug})}
+       [match-circle {:score user-score
+                      :text? true
+                      :size  16}]])
+    (when remote
+      [:div (util/smc style/section__perk)
+       [icon "globe" :class style/section__perk--icon]
+       "Remote"])]])
 
 (defn jobs [{:keys [jobs loading? company? show-recommendations?]}]
   [:section {:class style/section}
