@@ -47,23 +47,23 @@
       #_{:navigate [:login :params {:step :email} :query-params {:sent true}]}
       (cond
         (not (login/valid-email? email)) {:db (login/set-error db :invalid-arguments)}
-        (login/is-dev-env? db) {:dispatch [::login-as email]}
-        :always {:db (login/set-submitting db)
-                 :graphql {:query magic-link-mutation
-                           :variables {:email email
-                                       :redirect (login/redirect-link db)}
-                           :on-success [::send-login-link-handler true]
-                           :on-failure [::send-login-link-handler false]}}))))
+        (login/is-dev-env? db)           {:dispatch [::login-as email]}
+        :always                          {:db      (login/set-submitting db)
+                                          :graphql {:query      magic-link-mutation
+                                                    :variables  {:email    email
+                                                                 :redirect (login/redirect-link db)}
+                                                    :on-success [::send-login-link-handler true]
+                                                    :on-failure [::send-login-link-handler false]}}))))
 
 (reg-event-fx
   ::send-login-link-handler
   (fn [{db :db} [success? resp]]
     (if success?
       {:navigate [:login :params {:step :email} :query-params {:sent true}]
-       :db (login/unset-submitting db)}
-      {:db (-> db
-               login/unset-submitting
-               (login/set-error (util/gql-errors->error-key resp)))
+       :db       (login/unset-submitting db)}
+      {:db       (-> db
+                     login/unset-submitting
+                     (login/set-error (util/gql-errors->error-key resp)))
        :dispatch [::pages/unset-loader]})))
 
 (reg-event-fx
@@ -91,7 +91,7 @@
                   :on-failure       [::login-as-handler false]}}))
 
 (reg-event-fx
-  ::login-as-success
+  ::login-as-handler
   db/default-interceptors
   (fn [{db :db} [success? response]]
     (if success?
@@ -112,7 +112,7 @@
 
 (defn stackoverflow-authorize-url
   [client-id env vertical]
-  (let [base "https://stackoverflow.com/oauth"
+  (let [base         "https://stackoverflow.com/oauth"
         redirect-uri (stackoverflow-redirect-url js/window.location.href env vertical)]
     (str base
          "?client_id=" client-id
@@ -131,19 +131,19 @@
   :stackoverflow/call
   db/default-interceptors
   (fn [{db :db} [track-context]]
-    {:dispatch-n [[::pages/set-loader]
-                  [::go-stackoverflow]]
+    {:dispatch-n    [[::pages/set-loader]
+                     [::go-stackoverflow]]
      :persist-state (cond-> db
-                            track-context (assoc :register/track-context track-context)
-                            true (assoc ::db/loading? true
-                                        :google/maps-loaded? false) ; reload google maps when we return here
-                            true (dissoc ::db/page-mapping))}))
+                            track-context                                                                                                 (assoc :register/track-context track-context)
+                            true                                                                                                          (assoc ::db/loading? true
+                                                                                                                                                 :google/maps-loaded? false) ; reload google maps when we return here
+                            true                                                                                                          (dissoc ::db/page-mapping))}))
 
 ;; GITHUB
 
 (defn github-authorize-url
   [client-id env vertical]
-  (let [base (<< "https://github.com/login/oauth/authorize?client_id=~{client-id}&scope=user:email")
+  (let [base      (<< "https://github.com/login/oauth/authorize?client_id=~{client-id}&scope=user:email")
         pr-number (re-find #"-\d+" js/window.location.href)]
     (case env
       :prod  (<< "~{base}&redirect_uri=https://functional.works-hub.com/github-dispatch/~{vertical}")
@@ -162,13 +162,13 @@
   :github/call
   db/default-interceptors
   (fn [{db :db} [track-context]]
-    {:dispatch-n [[::pages/set-loader]
-                  [::go-github]]
+    {:dispatch-n    [[::pages/set-loader]
+                     [::go-github]]
      :persist-state (cond-> db
-                            track-context (assoc :register/track-context track-context)
-                            true (assoc ::db/loading? true
-                                        :google/maps-loaded? false) ; reload google maps when we return here
-                            true (dissoc ::db/page-mapping))}))
+                            track-context                                                                                                 (assoc :register/track-context track-context)
+                            true                                                                                                          (assoc ::db/loading? true
+                                                                                                                                                 :google/maps-loaded? false) ; reload google maps when we return here
+                            true                                                                                                          (dissoc ::db/page-mapping))}))
 
 ;; TWITTER
 
@@ -182,20 +182,20 @@
   :twitter/call
   db/default-interceptors
   (fn [{db :db} [track-context]]
-    {:dispatch-n [[::pages/set-loader]
-                  [::go-twitter]]
+    {:dispatch-n    [[::pages/set-loader]
+                     [::go-twitter]]
      :persist-state (cond-> db
-                            track-context (assoc :register/track-context track-context)
-                            true (assoc ::db/loading? true
-                                        :google/maps-loaded? false) ; reload google maps when we return here
-                            true (dissoc ::db/page-mapping))}))
+                            track-context                                                                                                 (assoc :register/track-context track-context)
+                            true                                                                                                          (assoc ::db/loading? true
+                                                                                                                                                 :google/maps-loaded? false) ; reload google maps when we return here
+                            true                                                                                                          (dissoc ::db/page-mapping))}))
 
 (reg-event-fx
   ::redirect-to-twitter-callback
   db/default-interceptors
   (fn [{db :db}]
-    {:navigate   [:twitter-callback
-                  :query-params (::db/query-params db)]}))
+    {:navigate [:twitter-callback
+                :query-params (::db/query-params db)]}))
 
 
 ;; ON PAGE LOAD

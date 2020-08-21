@@ -19,6 +19,12 @@
    {:route     :profile
     :icon-name "person"
     :text      "My profile"}
+   {:route     :feed
+    :icon-name "feed"
+    :text      "Feed"}
+   {:route     :metrics
+    :icon-name "rocketship"
+    :text      "Metrics"}
    {:route             :logout
     :data-pushy-ignore "true"
     :icon-name         "logout"
@@ -92,11 +98,6 @@
         :dropdown  articles-company-submenu-list}]]
 
      [:div (util/smc styles/small-menu__column)
-      [components/link-with-icon
-       {:icon-name "rocketship"
-        :text      "Metrics"
-        :route     :metrics}]
-
       [components/dropdown-list
        (company-profile-submenu-list company-slug)
        {:mobile? true}]]]))
@@ -142,11 +143,6 @@
      :route    :learn
      :page     page
      :dropdown articles-company-submenu-list}]
-
-   [components/link
-    {:text  "Metrics"
-     :route :metrics
-     :page  page}]
 
    [notifications {}]])
 
