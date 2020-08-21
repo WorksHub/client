@@ -7,12 +7,13 @@
 (defn github
   ([]
    [github {:text "Github"}])
-  ([{:keys [text type]}]
+  ([{:keys [text type data-test]}]
    [:a {:class (util/mc
                  style/button
                  style/button--github
-                 [(= type :signup) style/button--signup])
-        :href  (routes/path :login :params {:step :github})}
+                 [(= type :auth) style/button--auth])
+        :href  (routes/path :login :params {:step :github})
+        :data-test data-test}
     [icon "github" :class style/icon]
     [:span text]]))
 
@@ -23,7 +24,7 @@
    [:a {:class (util/mc
                  style/button
                  style/button--stackoverflow
-                 [(= type :signup) style/button--signup])
+                 [(= type :auth) style/button--auth])
         :href  (routes/path :login :params {:step :stackoverflow})}
     [icon "stackoverflow" :class (util/mc style/icon style/icon--stackoverflow)]
     [:span text]]))
@@ -35,7 +36,7 @@
    [:a {:class (util/mc
                  style/button
                  style/button--twitter
-                 [(= type :signup) style/button--signup])
+                 [(= type :auth) style/button--auth])
         :href  (routes/path :login :params {:step :twitter})}
     [icon "twitter" :class (util/mc style/icon style/icon--twitter)]
     [:span text]]))

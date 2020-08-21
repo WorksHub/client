@@ -25,7 +25,7 @@
                          :contribute-edit})
 
 (def no-menu-pages #{:register :register-company :payment-setup :get-started :feed})
-(def no-footer-pages #{:register :register-company :payment-setup :get-started})
+(def no-footer-pages #{:register :register-company :payment-setup :get-started :login :invalid-magic-link})
 (def no-nav-link-pages #{:register :register-company :payment-setup :get-started})
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.

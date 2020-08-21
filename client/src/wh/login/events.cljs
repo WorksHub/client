@@ -34,36 +34,112 @@
    :venia/queries [[:create_magic_link {:email :$email :redirect :$redirect}]]})
 
 (reg-event-db
-  ::set-magic-email
+  ::set-email
   login-interceptors
   (fn [db [email]]
-    (assoc db ::login/magic-email email ::login/magic-status :not-posted)))
+    (login/set-email db email)))
 
 (reg-event-fx
-  ::send-magic-email
+  ::send-login-link
   (fn [{db :db} _]
-    (let [email (str/trim (get-in db [::login/sub-db ::login/magic-email]))]
+    (let [email (login/email db)]
       ;; NOTE set this condition to `false` if you want to send magic emails in dev
-      (if (= (:wh.settings/environment db) :dev)
-        {:dispatch [::login-as email]}
-        {:dispatch [::pages/set-loader]
-         :graphql {:query magic-link-mutation
-                   :variables {:email (str/trim email)
-                               :redirect (when-let [path (get-in db [::login/sub-db ::login/redirect])]
-                                           (apply routes/path path))}
-                   :on-success [::magic-link-handler true]
-                   :on-failure [::magic-link-handler false]}}))))
+      #_{:navigate [:login :params {:step :email} :query-params {:sent true}]}
+      (cond
+        (not (login/valid-email? email)) {:db (login/set-error db :invalid-arguments)}
+        (login/is-dev-env? db) {:dispatch [::login-as email]}
+        :always {:db (login/set-submitting db)
+                 :graphql {:query magic-link-mutation
+                           :variables {:email email
+                                       :redirect (login/redirect-link db)}
+                           :on-success [::send-login-link-handler true]
+                           :on-failure [::send-login-link-handler false]}}))))
 
 (reg-event-fx
-  ::magic-link-handler
-  login-interceptors
+  ::send-login-link-handler
   (fn [{db :db} [success? resp]]
     (if success?
-      {:navigate [:login :params {:step :email} :query-params {:sent true}]}
-      {:db (assoc db ::login/magic-status (util/gql-errors->error-key resp))
+      {:navigate [:login :params {:step :email} :query-params {:sent true}]
+       :db (login/unset-submitting db)}
+      {:db (-> db
+               login/unset-submitting
+               (login/set-error (util/gql-errors->error-key resp)))
        :dispatch [::pages/unset-loader]})))
 
-;; Github login
+(reg-event-fx
+  ::go-profile
+  db/default-interceptors
+  (fn [_ _]
+    {:navigate [:profile]}))
+
+;; DEVELOPMENT LOGIN
+
+(reg-event-fx
+  ::login-as
+  db/default-interceptors
+  (fn [{db :db} [email]]
+    {:dispatch   [::pages/set-loader]
+     :http-xhrio {:method           :post
+                  :headers          {"Accept" "application/edn"}
+                  :uri              (str (::db/api-server db)
+                                         (routes/path :login-as :query-params {"email" email}))
+                  :format           (text-request-format)
+                  :response-format  (raw-response-format)
+                  :with-credentials true
+                  :timeout          10000
+                  :on-success       [::login-as-handler true]
+                  :on-failure       [::login-as-handler false]}}))
+
+(reg-event-fx
+  ::login-as-success
+  db/default-interceptors
+  (fn [{db :db} [success? response]]
+    (if success?
+      (let [user-db (r/read-string response)]
+        {:db      (update db :wh.user.db/sub-db merge user-db)
+         :set-url "/"})
+      {:db (login/set-error db :invalid-arguments)})))
+
+;; STACKOVERFLOW
+
+;; copy of integration.stackoverflow/stackoverflow-redirect-url
+(defn stackoverflow-redirect-url [url env vertical]
+  (let [pr-number (re-find #"-\d+" url)]
+    (case env
+      :prod  (str "https://" vertical ".works-hub.com/stackoverflow-callback")
+      :stage (str "https://works-hub-stage.herokuapp.com/stackoverflow-dispatch/" vertical pr-number)
+      :dev   (str "http://" vertical ".localdomain:3449/stackoverflow-callback"))))
+
+(defn stackoverflow-authorize-url
+  [client-id env vertical]
+  (let [base "https://stackoverflow.com/oauth"
+        redirect-uri (stackoverflow-redirect-url js/window.location.href env vertical)]
+    (str base
+         "?client_id=" client-id
+         "&scope=no_expiry"
+         "&redirect_uri=" redirect-uri)))
+
+(reg-event-fx
+  ::go-stackoverflow
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:set-url (stackoverflow-authorize-url (:wh.settings/stackoverflow-client-id db)
+                                           (:wh.settings/environment db)
+                                           (::db/vertical db))}))
+
+(reg-event-fx
+  :stackoverflow/call
+  db/default-interceptors
+  (fn [{db :db} [track-context]]
+    {:dispatch-n [[::pages/set-loader]
+                  [::go-stackoverflow]]
+     :persist-state (cond-> db
+                            track-context (assoc :register/track-context track-context)
+                            true (assoc ::db/loading? true
+                                        :google/maps-loaded? false) ; reload google maps when we return here
+                            true (dissoc ::db/page-mapping))}))
+
+;; GITHUB
 
 (defn github-authorize-url
   [client-id env vertical]
@@ -94,48 +170,7 @@
                                         :google/maps-loaded? false) ; reload google maps when we return here
                             true (dissoc ::db/page-mapping))}))
 
-;; copy of integration.stackoverflow/stackoverflow-redirect-url
-(defn stackoverflow-redirect-url [url env vertical]
-  (let [pr-number (re-find #"-\d+" url)]
-    (case env
-      :prod  (str "https://" vertical ".works-hub.com/stackoverflow-callback")
-      :stage (str "https://works-hub-stage.herokuapp.com/stackoverflow-dispatch/" vertical pr-number)
-      :dev   (str "http://" vertical ".localdomain:3449/stackoverflow-callback"))))
-
-(defn stackoverflow-authorize-url
-  [client-id env vertical]
-  (let [base "https://stackoverflow.com/oauth"
-        redirect-uri (stackoverflow-redirect-url js/window.location.href env vertical)]
-    (str base
-         "?client_id=" client-id
-         "&scope=no_expiry"
-         "&redirect_uri=" redirect-uri)))
-
-(reg-event-fx
-  ::go-stackoverflow
-  db/default-interceptors
-  (fn [{db :db} _]
-    {:set-url (stackoverflow-authorize-url (:wh.settings/stackoverflow-client-id db)
-                                           (:wh.settings/environment db)
-                                           (::db/vertical db))}))
-
-(reg-event-fx
-  ::go-profile
-  db/default-interceptors
-  (fn [_ _]
-    {:navigate [:profile]}))
-
-(reg-event-fx
-  :stackoverflow/call
-  db/default-interceptors
-  (fn [{db :db} [track-context]]
-    {:dispatch-n [[::pages/set-loader]
-                  [::go-stackoverflow]]
-     :persist-state (cond-> db
-                            track-context (assoc :register/track-context track-context)
-                            true (assoc ::db/loading? true
-                                        :google/maps-loaded? false) ; reload google maps when we return here
-                            true (dissoc ::db/page-mapping))}))
+;; TWITTER
 
 (reg-event-fx
   ::go-twitter
@@ -156,27 +191,14 @@
                             true (dissoc ::db/page-mapping))}))
 
 (reg-event-fx
-  ::login-as-success
+  ::redirect-to-twitter-callback
   db/default-interceptors
-  (fn [{db :db} [response]]
-    (let [user-db (r/read-string response)]
-      {:db      (update db :wh.user.db/sub-db merge user-db)
-       :set-url "/"})))
+  (fn [{db :db}]
+    {:navigate   [:twitter-callback
+                  :query-params (::db/query-params db)]}))
 
-(reg-event-fx
-  ::login-as
-  db/default-interceptors
-  (fn [{db :db} [email]]
-    {:dispatch   [::pages/set-loader]
-     :http-xhrio {:method           :post
-                  :headers          {"Accept" "application/edn"}
-                  :uri              (str (::db/api-server db)
-                                         (routes/path :login-as :query-params {"email" email}))
-                  :format           (text-request-format)
-                  :response-format  (raw-response-format)
-                  :with-credentials true
-                  :timeout          10000
-                  :on-success       [::login-as-success]}}))
+
+;; ON PAGE LOAD
 
 (defn query-redirect->path
   [query-redirect]
@@ -195,13 +217,9 @@
               (not-empty query-params)
               (concat [:query-params query-params])))))
 
-(reg-event-fx
-  ::redirect-to-twitter-callback
-  db/default-interceptors
-  (fn [{db :db}]
-    {:navigate   [:twitter-callback
-                  :query-params (::db/query-params db)]}))
-
+;; TODO: we have query redirect
+;; TODO: we have localstorage redirect
+;; TODO: we have step in page params
 (defmethod on-page-load :login
   [db]
   (list
@@ -212,9 +230,9 @@
     ;; if there's a redirect query param
     (when-let [query-redirect (get-in db [:wh.db/query-params "redirect"])]
       (vec (concat [:login/set-redirect] (query-redirect->path query-redirect))))
-    (when (= :github (get-in db [::db/page-params :step]))
+    (when (login/is-step? db :github)
       [:github/call {:type :login-page}])
-    (when (= :stackoverflow (get-in db [::db/page-params :step]))
+    (when (login/is-step? db :stackoverflow)
       [:stackoverflow/call {:type :login-page}])
-    (when (= :twitter (get-in db [::db/page-params :step]))
+    (when (login/is-step? db :twitter)
       [:twitter/call {:type :login-page}])))

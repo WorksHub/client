@@ -8,6 +8,7 @@
 
 .container
   padding: 5% 8px 8px
+  background-color: $primary-red
   background-image: url('/images/waves.svg')
   background-size: cover
   // add -1px to kill scroll
@@ -17,24 +18,54 @@
   background: $background-white
   box-shadow: 0 4px 8px $card-shadow-color
   max-width: 425px
-  padding: 24px
   border-radius: 4px
   margin: 0 auto
   display: grid
   grid-gap: 22px
+  position: relative
+  padding: 26px 18px
+
+  +tablet
+    padding: 32px 24px
+
+  &--check-email
+    position: absolute
+    width: 100%
+    height: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: space-between
+
+  &--invalid-link
+    display: flex
+    flex-direction: column
+    align-items: center
+    max-width: 360px
+    text-align: center
 
 .title
-  font-size: 24px
-  line-height: 24px
+  font-size: 20px
+  line-height: 20px
+  +tablet
+    font-size: 24px
+    line-height: 24px
   font-weight: 700
   color: $grey500
   letter-spacing: 0.2px
+
+  &--center
+    text-align: center
 
 .paragraph
   font-size: 14px
   line-height: 1.6
   letter-spacing: 0.2px
   color: $grey500
+
+  &--bold
+    font-weight: 600
+    padding: 12px 0
 
 .stackoverflow
   border: 2px solid $grey500
@@ -77,6 +108,9 @@
   &:disabled
     background-color: $grey300
 
+.form
+  display: grid
+  grid-gap: 12px
 
 .input
   height: 48px
@@ -96,22 +130,25 @@
     border-color: transparent
     box-shadow: 0 0 0 2px $error-red
 
+.fields
+  display: grid
+  grid-gap: 6px
 
 .label
   font-size: 14px
+  line-height: 18px
   font-weight: 600
   letter-spacing: 0.02em
   color: $grey500
-  display: flex
-  flex-direction: column
-  &--email
-    margin-top: 4px
-    margin-bottom: 14px
+  display: grid
+  grid-gap: 6px
 
 .error
   color: $error-red
   font-weight: 500
   font-size: 14px
+  line-height: 18px
+  display: inline-block
 
 .link
   font-weight: 600
@@ -134,3 +171,58 @@
   display: none
   +small-mobile
     display: block
+
+.about-confirmation
+  text-align: center
+  max-width: 300px
+
+.confirmation-image
+  flex: 1
+  width: 100%
+  background-image: url('/images/homepage/different1.svg')
+  background-size: contain
+  background-position-y: center
+  background-position-x: 40%
+  background-repeat: no-repeat
+
+.options
+  display: grid
+  grid-gap: 16px
+
+.option
+  display: flex
+  align-items: center
+  padding: 16px
+  border: 1px solid $grey400
+  border-radius: 4px
+  color: $text-black
+  font-size: 16px
+  line-height: 18px
+  +tablet
+    font-size: 20px
+    line-height: 24px
+
+  &__image
+    display: none
+    +tablet
+      display: block
+      margin-right: 14px
+
+  &__title
+    font-weight: 600
+
+  &__subtitle
+    font-weight: 500
+
+  &__icon
+    margin-left: auto
+    width: 22px
+    height: 22px
+    fill: $grey400
+
+  &:hover
+    color: $grey300
+
+.invalid-link-image
+  margin: 0 auto
+
