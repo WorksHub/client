@@ -5,6 +5,7 @@
 (def user-profile "landing_user_dashboard__user-profile--24_d3")
 (def user-name "landing_user_dashboard__user-name--2Y_gI")
 (def edit-profile "landing_user_dashboard__edit-profile--3e9tI")
+(def edit-name "landing_user_dashboard__edit-name--2FJ75")
 (def edit-profile__icon "landing_user_dashboard__edit-profile__icon--7054s")
 (def save-icon "landing_user_dashboard__save-icon--MLsck")
 (def section "landing_user_dashboard__section--1uE2r")

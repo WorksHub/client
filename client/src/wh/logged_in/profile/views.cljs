@@ -2,11 +2,11 @@
   (:require [clojure.string :as str]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
-            [wh.components.button-auth :as button-auth]
             [wh.common.specs.primitives :as p]
             [wh.common.text :refer [pluralize]]
             [wh.common.upload :as upload]
             [wh.common.user :as common-user]
+            [wh.components.button-auth :as button-auth]
             [wh.components.common :refer [link]]
             [wh.components.error.views :refer [error-box]]
             [wh.components.forms.views :refer [field-container
@@ -167,8 +167,9 @@
                                             :on-success [::events/avatar-upload-success]
                                             :on-failure [::events/avatar-upload-failure])}]
    [text-field (<sub [::subs/name])
-    {:label     "Your name"
-     :on-change [::events/edit-name]}]
+    {:label       "Your name"
+     :placeholder "What shall we call you?"
+     :on-change   [::events/edit-name]}]
    [multi-edit
     (<sub [::subs/rated-skills])
     {:label     [:div "Skills"
@@ -189,8 +190,8 @@
    [error-box]
    [:div.buttons-container.is-flex
     [:button.button.button--small {:data-test "save"
-                                   :on-click #(do (.preventDefault %)
-                                                  (dispatch [::events/save-header]))} "Save"]
+                                   :on-click  #(do (.preventDefault %)
+                                                   (dispatch [::events/save-header]))} "Save"]
     [cancel-link]]])
 
 ;; CV section – edit link

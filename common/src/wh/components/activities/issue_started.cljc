@@ -1,5 +1,6 @@
 (ns wh.components.activities.issue-started
-  (:require [wh.components.activities.components :as components]
+  (:require [wh.common.text :as text]
+            [wh.components.activities.components :as components]
             [wh.components.common :refer [link wrap-img img base-img]]
             [wh.routes :as routes]
             [wh.styles.activities :as styles]
@@ -14,10 +15,12 @@
   [:div (util/smc styles/issue-contributor)
    (wrap-img img image-url {:w 48 :h 48 :crop "center" :class styles/issue-contributor__avatar})
    [:span (util/smc styles/issue-contributor__title)
-    [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) name]
+    (if (text/not-blank name)
+      [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) name]
+      [:span (util/smc styles/issue-contributor__title) "Someone " ])
     [:span "has just started to work on an"]
     [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) "open source issue!"]]
-   [:img {:src "/images/feed/issue.svg"
+   [:img {:src   "/images/feed/issue.svg"
           :class styles/issue-contributor__img}]])
 
 (defn issue-company-component [{:keys [logo name] :as company}]

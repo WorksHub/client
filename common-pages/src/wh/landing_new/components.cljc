@@ -1,5 +1,7 @@
 (ns wh.landing-new.components
-  (:require [wh.components.activities.components :as activities]
+  (:require [clojure.string :as str]
+            [wh.common.text :as text]
+            [wh.components.activities.components :as activities]
             [wh.components.icons :as icons]
             [wh.interop :as interop]
             [wh.landing-new.events :as events]
@@ -7,9 +9,9 @@
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.util :as util]
             [wh.styles.landing :as styles]
-            [wh.styles.landing-user-dashboard :as dashboard-styles]))
+            [wh.styles.landing-user-dashboard :as dashboard-styles]
+            [wh.util :as util]))
 
 (defn stats-row [title value]
   [:p {:class dashboard-styles/section-row}
@@ -29,15 +31,19 @@
 
    [:div {:class dashboard-styles/user-profile}
     [:span {:class dashboard-styles/user-name}
-     "Welcome, " user-name "!"]
+     "Welcome" (when (text/not-blank user-name) (str ", " user-name)) "!"]
     [:a {:class dashboard-styles/edit-profile
          :href  (routes/path :profile)}
      [:span "Edit profile"]
      [icons/icon "pen"
       :class dashboard-styles/edit-profile__icon]]]])
 
-(defn ctas []
+(defn ctas [{:keys [user-name]}]
   [:section {:class dashboard-styles/cta}
+   (when (str/blank? user-name)
+     [:a {:class dashboard-styles/cta__link
+          :href  (routes/path :profile-edit-header)}
+      [:span {:class dashboard-styles/cta__link__accent} "What shall we call you?"]])
    [:a {:class dashboard-styles/cta__link
         :href  (routes/path :contribute)}
     [:span "Have something you want to share? "]
@@ -84,7 +90,7 @@
        [stats-row "Completed" (:completed issues-counted)]
        [stats-row "In progress" (:in-progress issues-counted)]]]
 
-     [ctas]]))
+     [ctas {:user-name user-name}]]))
 
 
 (defn prev-next-buttons [newer-than older-than]
