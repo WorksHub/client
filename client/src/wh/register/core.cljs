@@ -7,7 +7,8 @@
     [wh.register.events :as register-events]))
 
 (def page-mapping
-  {:register register/card-signup})
+  {:register {:page        register/card-signup
+              :can-access? (complement db/logged-in?)}})
 
 (reg-event-db ::initialize-page-mapping
   (fn [db _] (update db ::db/page-mapping merge page-mapping)))

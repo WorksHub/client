@@ -15,11 +15,13 @@
     [wh.login.views :as login]))
 
 (def page-mapping
-  {:github-callback github-callback/page
+  {:github-callback        github-callback/page
    :stackoverflow-callback stackoverflow-callback/page
-   :twitter-callback twitter-callback/page
-   :login login/page
-   :get-started get-started/page})
+   :twitter-callback       twitter-callback/page
+   :login                  {:page        login/page
+                            :can-access? (complement db/logged-in?)}
+   :get-started            {:page        get-started/page
+                            :can-access? (complement db/logged-in?)}})
 
 (reg-event-db
   ::initialize-page-mapping
