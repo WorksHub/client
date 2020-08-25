@@ -18,6 +18,7 @@
             [wh.components.icons :refer [icon]]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
+            [wh.logged-in.profile.components :as components]
             [wh.routes :as routes]
             [wh.subs :refer [<sub]]))
 
@@ -219,71 +220,6 @@
 
 ;; CV section – view
 
-(defn cv-section-view
-  ([opts] (cv-section-view :owner opts))
-  ([user-type {:keys [cv-link cv-filename cv-url]}]
-   [:section.profile-section.cv
-    [:div.cv__view
-     [:h2 "Career History"]
-
-     (when cv-url
-       [:p (if (owner? user-type) "You uploaded " "Uploaded CV: ")
-        [:a.a--underlined {:href cv-url, :target "_blank", :rel "noopener"}
-         (if (owner? user-type) cv-filename "Click here to download")]])
-
-     (when cv-link
-       [:p (if (owner? user-type) "Your external CV: " "External CV: ")
-        [:a.a--underlined {:href cv-link, :target "_blank", :rel "noopener"} cv-link]])
-
-     (when-not (or cv-url cv-link)
-       (if (owner? user-type)
-         "You haven't uploaded cv yet."
-         "No uploaded cv yet."))]
-
-    (when (owner-or-admin? user-type)
-      [:div.cv__upload
-       (conj
-        (upload-document "resume" (<sub [::subs/cv-uploading?])
-                         (upload/handler
-                          :launch [::events/cv-upload]
-                          :on-upload-start [::events/cv-upload-start]
-                          :on-success [::events/cv-upload-success]
-                          :on-failure [::events/cv-upload-failure]))
-
-        [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to CV" "button"])])]))
-
-(defn cover-letter-section-view
-  ([opts] (cover-letter-section-view :owner opts))
-  ([user-type {:keys [cover-letter-filename cover-letter-url]}]
-   [:section.profile-section.cover-letter
-    [:div.cover-letter__view
-     [:h2 "Default Cover Letter"]
-
-     (when cover-letter-url
-       [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
-        [:a.a--underlined {:href cover-letter-url, :target "_blank", :rel "noopener"}
-         (if (owner? user-type) cover-letter-filename "Click here to download")]])
-
-     (when-not cover-letter-url
-       (if (owner? user-type)
-         "You haven't uploaded Cover Letter yet."
-         "No uploaded Cover Letter yet."))]
-
-    (when (owner-or-admin? user-type)
-      [:div.cover-letter__upload
-       (conj
-        (upload-document "cover letter" (<sub [::subs/cover-letter-uploading?])
-         (upload/handler
-          :launch [::events/cover-letter-upload]
-          :on-upload-start [::events/cover-letter-upload-start]
-          :on-success [::events/cover-letter-upload-success]
-          :on-failure [::events/cover-letter-upload-failure]))
-
-        (when (and cover-letter-url (owner? user-type))
-          [:button.button
-           {:on-click #(dispatch [::events/remove-cover-letter])}
-           "Remove cover letter"]))])]))
-
 ;; Private section – view
 
 (defn itemize [items & {:keys [class no-data-message]}]
@@ -308,32 +244,6 @@
     [:button.delete {:on-click #(dispatch [::events/clear-url-save-success])}]]
    [:div.message-body
     "Settings saved successfully."]])
-
-(defn private-section-view
-  ([opts] (private-section-view :owner opts))
-  ([user-type {:keys [email phone job-seeking-status company-perks role-types remote
-                      salary visa-status current-location
-                      preferred-locations fields title email-link-fn]
-               :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
-                      title "Preferences" email-link-fn email-link}}]
-   [:section.profile-section.private
-    (when (owner-or-admin? user-type)
-      [edit-link :profile-edit-private :candidate-edit-private])
-    [:h2.private__disclaimer title]
-    (when (<sub [::subs/url-save-success])
-      [successful-save-info])
-    (when (owner? user-type)
-      [:div "This section is for our info only — we won’t show this directly to anyone 🔐"])
-    (when (:email fields)               [view-field "Email:" [email-link-fn email]])
-    (when (:phone fields)               [view-field "Phone Number:" phone])
-    (when (:status fields)              [view-field "Status:" job-seeking-status])
-    (when (:traits fields)              [view-field "Company traits:" (itemize company-perks :no-data-message "No perks selected.")])
-    (when (:salary fields)              [view-field "Expected salary:" salary])
-    (when (:visa fields)                [view-field "Visa status:" visa-status])
-    (when (:remote fields)              [view-field "Prefer remote working:" (if remote "Yes" "No")])
-    (when (:preferred-types fields)     [view-field "Preferred role types:" (itemize (map #(str/replace % #"_" " ") role-types) :no-data-message "None")])
-    (when (:current-location fields)    [view-field "Current location:" (or current-location "None")])
-    (when (:preferred-locations fields) [view-field "Preferred locations:" (itemize preferred-locations :no-data-message "No locations selected.")])]))
 
 ;; Private section – edit
 
@@ -438,24 +348,6 @@
                                                   (dispatch [::events/save-company-user]))} "Save"]
     [cancel-link]]])
 
-(defn main-view []
-  [:div
-   (let [is-company? (<sub [:user/company?])]
-     [:div
-      [header-view :owner (<sub [::subs/header-data])]
-      [error-box]
-      (when-not is-company? [cv-section-view (<sub [::subs/cv-data])])
-      (when-not is-company? [cover-letter-section-view (<sub [::subs/cover-letter-data])])
-      (when-not is-company? [private-section-view (<sub [::subs/private-data])])])
-   [:a.button
-    {:data-pushy-ignore "true"
-     :href              (routes/path :logout)}
-    "Logout"]])
-
-(defn view-page []
-  [:div.main-container
-   [:div.main.profile [main-view]]])
-
 (defn header-edit-page []
   [:div.main-container
    [:div.main.profile
@@ -513,3 +405,202 @@
          [:button.button.button--small
           {:on-click #(do (.preventDefault %)
                           (dispatch [::events/save-recommendations]))} "Save"]]]]]]]])
+
+;; -----------------------------------------------------------------------------------------------------------
+
+(defn cv-section-view
+  ([opts] (cv-section-view :owner opts))
+  ([user-type {:keys [cv-link cv-filename cv-url]}]
+   [:section.profile-section.cv
+    [:div.cv__view
+     [:h2 "Career History"]
+
+     (when cv-url
+       [:p (if (owner? user-type) "You uploaded " "Uploaded CV: ")
+        [:a.a--underlined {:href cv-url, :target "_blank", :rel "noopener"}
+         (if (owner? user-type) cv-filename "Click here to download")]])
+
+     (when cv-link
+       [:p (if (owner? user-type) "Your external CV: " "External CV: ")
+        [:a.a--underlined {:href cv-link, :target "_blank", :rel "noopener"} cv-link]])
+
+     (when-not (or cv-url cv-link)
+       (if (owner? user-type)
+         "You haven't uploaded cv yet."
+         "No uploaded cv yet."))]
+
+    (when (owner-or-admin? user-type)
+      [:div.cv__upload
+       (conj
+         (upload-document "resume" (<sub [::subs/cv-uploading?])
+                          (upload/handler
+                             :launch [::events/cv-upload]
+                             :on-upload-start [::events/cv-upload-start]
+                             :on-success [::events/cv-upload-success]
+                             :on-failure [::events/cv-upload-failure]))
+
+         [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to CV" "button"])])]))
+
+(defn cover-letter-section-view
+  ([opts] (cover-letter-section-view :owner opts))
+  ([user-type {:keys [cover-letter-filename cover-letter-url]}]
+   [:section.profile-section.cover-letter
+    [:div.cover-letter__view
+     [:h2 "Default Cover Letter"]
+
+     (when cover-letter-url
+       [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
+        [:a.a--underlined {:href cover-letter-url, :target "_blank", :rel "noopener"}
+         (if (owner? user-type) cover-letter-filename "Click here to download")]])
+
+     (when-not cover-letter-url
+       (if (owner? user-type)
+         "You haven't uploaded Cover Letter yet."
+         "No uploaded Cover Letter yet."))]
+
+    (when (owner-or-admin? user-type)
+      [:div.cover-letter__upload
+       (conj
+         (upload-document "cover letter" (<sub [::subs/cover-letter-uploading?])
+                           (upload/handler
+                            :launch [::events/cover-letter-upload]
+                            :on-upload-start [::events/cover-letter-upload-start]
+                            :on-success [::events/cover-letter-upload-success]
+                            :on-failure [::events/cover-letter-upload-failure]))
+
+         (when (and cover-letter-url (owner? user-type))
+           [:button.button
+            {:on-click #(dispatch [::events/remove-cover-letter])}
+            "Remove cover letter"]))])]))
+
+(defn private-section-view
+  ([opts] (private-section-view :owner opts))
+  ([user-type {:keys [email phone job-seeking-status company-perks role-types remote
+                      salary visa-status current-location
+                      preferred-locations fields title email-link-fn]
+               :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
+                      title "Preferences" email-link-fn email-link}}]
+   [:section.profile-section.private
+    (when (owner-or-admin? user-type)
+      [edit-link :profile-edit-private :candidate-edit-private])
+    [:h2.private__disclaimer title]
+    (when (<sub [::subs/url-save-success])
+      [successful-save-info])
+    (when (owner? user-type)
+      [:div "This section is for our info only — we won’t show this directly to anyone 🔐"])
+    (when (:email fields)               [view-field "Email:" [email-link-fn email]])
+    (when (:phone fields)               [view-field "Phone Number:" phone])
+    (when (:status fields)              [view-field "Status:" job-seeking-status])
+    (when (:traits fields)              [view-field "Company traits:" (itemize company-perks :no-data-message "No perks selected.")])
+    (when (:salary fields)              [view-field "Expected salary:" salary])
+    (when (:visa fields)                [view-field "Visa status:" visa-status])
+    (when (:remote fields)              [view-field "Prefer remote working:" (if remote "Yes" "No")])
+    (when (:preferred-types fields)     [view-field "Preferred role types:" (itemize (map #(str/replace % #"_" " ") role-types) :no-data-message "None")])
+    (when (:current-location fields)    [view-field "Current location:" (or current-location "None")])
+    (when (:preferred-locations fields) [view-field "Preferred locations:" (itemize preferred-locations :no-data-message "No locations selected.")])]))
+
+;; -----------------------------------------------------------------------------------------------------------
+
+(defn private-section-view-new
+  [user-type {:keys [email phone job-seeking-status company-perks role-types remote
+                     salary visa-status current-location
+                     preferred-locations fields title email-link-fn]
+              :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
+                     title  "Preferences" email-link-fn email-link}}]
+  [components/section
+   (when (owner-or-admin? user-type)
+     [components/edit-profile {:type :private}])
+   [components/title title]
+   (when (<sub [::subs/url-save-success])
+     [successful-save-info])
+   (when (owner? user-type)
+     [:div "This section is for our info only — we won’t show this directly to anyone 🔐"])
+   [:div
+    (when (:email fields) [components/view-field "Email:" [email-link-fn email]])
+    (when (:phone fields) [components/view-field "Phone Number:" (or phone "None")])
+    (when (:status fields) [components/view-field "Status:" (or job-seeking-status "None")])
+    (when (:traits fields) [components/view-field "company-traits" "Company traits:" (itemize company-perks :no-data-message "No perks selected.")])
+    (when (:salary fields) [components/view-field "Expected salary:" salary])
+    (when (:visa fields) [components/view-field "Visa status:" visa-status])
+    (when (:remote fields) [components/view-field "Prefer remote working:" (if remote "Yes" "No")])
+    (when (:preferred-types fields) [components/view-field "Preferred role types:" (itemize (map #(str/replace % #"_" " ") role-types) :no-data-message "None")])
+    (when (:current-location fields) [components/view-field "Current location:" (or current-location "None")])
+    (when (:preferred-locations fields) [components/view-field "Preferred locations:" (itemize preferred-locations :no-data-message "No locations selected.")])]])
+
+(defn cover-letter-section-view-new
+  [user-type {:keys [cover-letter-filename cover-letter-url]}]
+  [components/section
+    [components/title "Default Cover Letter"]
+
+    (when cover-letter-url
+      [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
+       [components/resource {:href cover-letter-url
+                             :text (if (owner? user-type) cover-letter-filename "Click here to download")}]])
+
+    (when-not cover-letter-url
+      (if (owner? user-type)
+        "You haven't uploaded Cover Letter yet"
+        "No uploaded Cover Letter yet"))
+
+   (when (owner-or-admin? user-type)
+     [components/section-buttons
+      [components/upload-button {:document "cover letter"
+                                 :data-test "upload-cover-letter"
+                                 :uploading? (<sub [::subs/cover-letter-uploading?])
+                                 :on-change (upload/handler
+                                             :launch [::events/cover-letter-upload]
+                                             :on-upload-start [::events/cover-letter-upload-start]
+                                             :on-success [::events/cover-letter-upload-success]
+                                             :on-failure [::events/cover-letter-upload-failure])}]
+      (when (and cover-letter-url (owner? user-type))
+        [components/small-button
+         {:on-click #(dispatch [::events/remove-cover-letter])}
+         "Remove cover letter"])])])
+
+(defn cv-section-view-new
+  [user-type {:keys [cv-link cv-filename cv-url]}]
+  [components/section
+   [components/title "Career History"]
+
+   (when (or cv-url cv-link)
+     [:div (when cv-url
+             [:p {:data-test "upload-resume-success"}
+              (if (owner? user-type) "You uploaded " "Uploaded CV: ")
+              [components/resource {:href cv-url
+                                    :text (if (owner? user-type) cv-filename "Click here to download")}]])
+
+
+           (when cv-link
+             [:p (if (owner? user-type) "Your external CV: " "External CV: ")
+              [components/resource {:href cv-link
+                                    :text cv-link}]])])
+
+   (when-not (or cv-url cv-link)
+     (if (owner? user-type)
+       "You haven't uploaded cv yet"
+       "No uploaded cv yet"))
+
+   (when (owner-or-admin? user-type)
+     [components/section-buttons
+      [components/upload-button {:document "resume"
+                                 :data-test "upload-resume"
+                                 :uploading? (<sub [::subs/cv-uploading?])
+                                 :on-change (upload/handler
+                                              :launch [::events/cv-upload]
+                                              :on-upload-start [::events/cv-upload-start]
+                                              :on-success [::events/cv-upload-success]
+                                              :on-failure [::events/cv-upload-failure])}]
+      [components/edit-cv-link]])])
+
+(defn main-view []
+  (let [is-company? (<sub [:user/company?])]
+    [components/content
+     [error-box]
+     (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
+     (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
+     (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])]))
+
+(defn view-page []
+  [components/container
+   [components/profile (<sub [::subs/header-data])]
+   [main-view]])

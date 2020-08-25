@@ -1,0 +1,154 @@
+@import 'mixins'
+@import 'colours'
+@import 'vars'
+
+.container
+  max-width: 1086px
+  margin: 0 auto
+  display: grid
+  align-items: start
+  gap: 16px
+  padding: 8px
+
+  +tablet
+    grid-template-columns: 256px 1fr
+    padding: 24px
+
+.content
+  display: grid
+  grid-gap: 18px
+
+.section
+  background-color: $white
+  border-radius: 4px
+  padding: 24px 20px
+  display: grid
+  gap: 16px
+  font-size: 14px
+  line-height: 24px
+  position: relative
+
+  &--profile
+    border: 1px solid $primary-red
+    gap: 24px
+
+  &__buttons
+    display: flex
+    flex-wrap: wrap
+    margin-bottom: -8px
+    & > *
+      margin-right: 8px
+      margin-bottom: 8px
+
+.avatar
+  width: 100px
+  height: 100px
+  border-radius: 50%
+  margin: 0 auto
+  border: 1px solid $primary-red
+  +tablet
+    width: 180px
+    height: 180px
+
+.username
+  font-size: 24px
+  line-height: 28px
+  font-weight: 700
+  letter-spacing: 0.02em
+
+.summary
+  font-size: 14px
+  line-height: 22px
+  -webkit-box-orient: vertical
+  -webkit-line-clamp: 10
+  display: -webkit-box
+  overflow: hidden
+  text-overflow: ellipsis
+
+.separator
+  background-color: $grey200
+  height: 1px
+  margin: 0
+
+.meta-rows
+  display: grid
+  grid-gap: 8px
+
+.meta-row
+  display: flex
+  align-items: center
+  font-size: 14px
+  line-height: 14px
+
+  &__icon
+    margin-right: 8px
+    fill: $grey500
+
+  &__description
+    padding-bottom: 2px
+    border-bottom: 1px solid $grey200
+
+.title
+  font-size: 20px
+  line-height: 24px
+  font-weight: 700
+  letter-spacing: 0.02em
+
+.edit
+  position: absolute
+  top: 28px
+  right: 20px
+
+.button
+  border-radius: 4px
+  height: 40px
+  align-items: center
+  display: inline-flex
+  justify-content: center
+  background: $primary-red
+  border: 1px solid $primary-red
+  box-sizing: border-box
+  color: $text-white
+  padding: 0 20px
+
+  font-family: $font-family
+  font-size: 12px
+  white-space: nowrap
+  font-weight: 600
+  letter-spacing: 0.02em
+  line-height: 16px
+
+  +tablet
+    font-size: 13px
+    padding: 0 32px
+
+  &:hover
+    background: $highlight-red
+    color: $primary-red
+    cursor: pointer
+
+  &--small
+    padding: 0 16px
+    height: 32px
+
+.view-field
+  display: flex
+  flex-wrap: wrap
+  flex-direction: column
+  margin-bottom: 8px
+
+  +tablet
+    flex-direction: row
+
+  &__label
+    font-weight: 500
+    margin-right: 16px
+    white-space: nowrap
+    width: 180px
+  &__content
+    flex: 1
+
+.resource
+  color: $grey500
+  border-bottom: 1px solid $grey400
+

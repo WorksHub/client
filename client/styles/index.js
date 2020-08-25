@@ -24,6 +24,7 @@ import './landing.sass';
 import './stream_preview.sass';
 import './iconsset.sass';
 import './register.sass';
+import './profile.sass';
 
 // components
 import './branding.sass';

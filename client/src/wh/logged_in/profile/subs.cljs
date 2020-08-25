@@ -32,6 +32,21 @@
      (::profile/contributions profile))))
 
 (reg-sub
+  ::social-urls
+  :<- [::profile]
+  (fn [profile]
+    (-> profile
+        util/strip-ns-from-map-keys
+        :other-urls
+        url/detect-urls-type)))
+
+(reg-sub
+  ::social
+  :<- [::social-urls]
+  (fn [urls [_ type]]
+    (some #(when (= type (:type %)) %) urls)))
+
+(reg-sub
   ::currencies
   (with-unspecified-option data/currencies))
 

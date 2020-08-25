@@ -4,6 +4,13 @@
             [wh.styles.signin-buttons :as style]
             [wh.util :as util]))
 
+(def type->href
+  {:github (routes/path :login :params {:step :github})
+   :stackoverflow (routes/path :login :params {:step :stackoverflow})
+   :twitter (routes/path :login :params {:step :twitter})
+   :email-signin (routes/path :login :params {:step :email})
+   :email-signup (routes/path :get-started)})
+
 (defn github
   ([]
    [github {:text "Github"}])

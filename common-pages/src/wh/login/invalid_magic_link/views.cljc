@@ -16,4 +16,4 @@
       "Your login link is invalid"]
      [auth/paragraph
       [auth/link {:text "Try login again"
-                  :href (routes/path :login)}]]]]])
+                  :href (routes/path :login :params {:step :email})}]]]]])
