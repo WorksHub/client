@@ -136,9 +136,4 @@
 
 ;; TODO [ch4435] remove this once 'feed' is established
 (defn page []
-  (cond
-    (= "www" (<sub [:wh/vertical]))
-    (www/homepage (<sub [:wh/page-params]))
-
-    true
-    (candidate-page)))
+  (www/homepage (<sub [:wh/page-params])))

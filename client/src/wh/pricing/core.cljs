@@ -3,10 +3,12 @@
     [cljs.loader :as loader]
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
     [wh.db :as db]
+    [wh.landing.views :as landing]
     [wh.pricing.views :as pricing]))
 
 (def page-mapping
-  {:pricing pricing/page})
+  {:pricing pricing/page
+   :employers landing/page})
 
 (reg-event-db
   ::initialize-page-mapping

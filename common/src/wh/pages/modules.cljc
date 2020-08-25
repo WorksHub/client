@@ -54,6 +54,7 @@
    :notifications-settings     :logged-in
    :pre-set-search             :jobs
    :pricing                    :pricing
+   :employers                  :pricing
    :profile                    :logged-in
    :profile-edit-header        :logged-in
    :profile-edit-cv            :logged-in
