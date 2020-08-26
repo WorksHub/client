@@ -2,6 +2,7 @@
   (:require [re-frame.core :refer [reg-event-db reg-event-fx dispatch path]]
             [wh.common.cases :as cases]
             [wh.common.graphql-queries :as graphql]
+            [wh.events :as events]
             [wh.db :as db]
             [wh.graphql.jobs :as graphql-jobs]
             [wh.logged-in.apply.db :as apply]
@@ -12,6 +13,9 @@
 
 (def apply-interceptors (into db/default-interceptors
                               [(path ::apply/sub-db)]))
+
+(def chat-elm-id "chatbot")
+(def scroll-to-bottom [::events/scroll-to-bottom chat-elm-id])
 
 ;; MISC ─────────────────────────────────────────────────────────────────────────────
 
@@ -72,7 +76,8 @@
       {:dispatch [::check-skills]}
       {:db (-> db
                (apply/update-current-step :step/cv-upload)
-               (apply/update-taken-steps :step/cv-upload))})))
+               (apply/update-taken-steps :step/cv-upload))
+       :dispatch scroll-to-bottom})))
 
 (reg-event-db
   ::cv-upload-start
@@ -118,7 +123,8 @@
       {:dispatch [::check-current-location]}
       {:db (-> db
                (apply/update-current-step :step/name)
-               (apply/update-taken-steps :step/name))})))
+               (apply/update-taken-steps :step/name))
+       :dispatch scroll-to-bottom})))
 
 (reg-event-fx
   ::update-name
@@ -273,7 +279,8 @@
       {:dispatch [::check-cv]}
       {:db (-> db
                (apply/update-current-step :step/current-location)
-               (apply/update-taken-steps :step/current-location))})))
+               (apply/update-taken-steps :step/current-location))
+       :dispatch scroll-to-bottom})))
 
 (reg-event-fx
   ::update-current-location-success
@@ -381,7 +388,8 @@
       {:dispatch [::apply]}
       {:db (-> db
                (apply/update-current-step :step/skills)
-               (apply/update-taken-steps :step/skills))})))
+               (apply/update-taken-steps :step/skills))
+       :dispatch scroll-to-bottom})))
 
 (reg-event-fx
   ::update-skills

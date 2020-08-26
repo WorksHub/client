@@ -242,6 +242,7 @@
 
 (defn chatbot []
   [:div.chatbot
+   {:id events/chat-elm-id}
    [icon "close"
     :class "close is-pulled-right"
     :id "application-bot_close-bot"

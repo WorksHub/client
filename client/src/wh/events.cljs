@@ -180,6 +180,12 @@
     {:analytics/account-created [data db]}))
 
 (reg-event-fx
+  ::scroll-to-bottom
+  db/default-interceptors
+  (fn [_ [id]]
+    {:scroll-to-bottom id}))
+
+(reg-event-fx
   :wh.events/scroll-to-top
   db/default-interceptors
   (fn [_ _]
