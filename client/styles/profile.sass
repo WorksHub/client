@@ -59,11 +59,7 @@
 .summary
   font-size: 14px
   line-height: 22px
-  -webkit-box-orient: vertical
-  -webkit-line-clamp: 10
-  display: -webkit-box
-  overflow: hidden
-  text-overflow: ellipsis
+  @include line-clamp(10)
 
 .separator
   background-color: $grey200
@@ -93,6 +89,14 @@
   line-height: 24px
   font-weight: 700
   letter-spacing: 0.02em
+
+.subtitle
+  font-size: 11px
+  line-height: 12px
+  text-transform: uppercase
+  letter-spacing: 0.5px
+  font-weight: 600
+  color: $grey300
 
 .edit
   position: absolute
@@ -151,4 +155,50 @@
 .resource
   color: $grey500
   border-bottom: 1px solid $grey400
+
+.top-tech
+  border: solid 1px $highlight-red
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  flex-direction: column
+  padding: 12px
+  width: 100px
+  height: 100px
+  position: relative
+  border-radius: 4px
+
+  &__icon
+    width: 22px
+    height: 22px
+    top: 8px
+    right: 8px
+    margin-bottom: 14px
+    fill: $primary-red
+    opacity: 0.9
+    position: absolute
+
+  &__label
+    height: auto
+    font-size: 12px
+    font-weight: 600
+    font-stretch: normal
+    font-style: normal
+    line-height: 1.14
+    letter-spacing: 0.5px
+    text-align: center
+    color: $primary-red
+    text-transform: capitalize
+    max-width: 86px
+    @include line-clamp(2)
+
+.skills
+  display: flex
+  flex-wrap: wrap
+  margin-right: -8px
+  margin-bottom: -8px
+
+  & > *
+    margin-right: 8px
+    margin-bottom: 8px
 

@@ -29,7 +29,7 @@
    [icons/icon icon :class styles/meta-row__icon]
    [:span {:class styles/meta-row__description} text]])
 
-(defn social-meta-row [type {:keys [display url] :as social}]
+(defn social-row [type {:keys [display url] :as social}]
   (if social
     [meta-row {:text display
                :icon (name type)
@@ -42,12 +42,10 @@
 (defn title [text]
   [:div {:class styles/title} text])
 
-(defn edit-cv-link []
-  (let [href (if (= (<sub [:wh.pages.core/page]) :profile)
-               (routes/path :profile-edit-cv)
-               (routes/path :candidate-edit-cv))]
-    [:a {:class (util/mc styles/button styles/button--small)
-         :href href} "Add a link to CV"]))
+(defn small-link [{:keys [text href]}]
+  [:a
+   {:class (util/mc styles/button styles/button--small) :href href}
+   text])
 
 (defn small-button [opts text]
   [:button (merge (util/smc styles/button styles/button--small) opts) text])
@@ -82,13 +80,13 @@
      [:div {:class styles/username} name]
      [:img {:src image-url
             :class styles/avatar}]
-     [:div {:class styles/summary
-            :title summary} summary]
+     (when summary [:div {:class styles/summary
+                          :title summary} summary])
      [:hr {:class styles/separator}]
      [:div {:class styles/meta-rows}
-      [social-meta-row :github (<sub [::subs/social :github])]
-      [social-meta-row :stackoverflow (<sub [::subs/social :stackoverflow])]
-      [social-meta-row :twitter (<sub [::subs/social :twitter])]]
+      [social-row :github (<sub [::subs/social :github])]
+      [social-row :stackoverflow (<sub [::subs/social :stackoverflow])]
+      [social-row :twitter (<sub [::subs/social :twitter])]]
      [:hr {:class styles/separator}]
      [:a {:data-pushy-ignore "true"
           :class styles/button
@@ -115,3 +113,16 @@
 
 (defn content [& children]
   (conj [:div {:class styles/content}] children))
+
+(defn subtitle [text]
+  [:div {:class styles/subtitle} text])
+
+(defn top-tech [tag]
+  (let [name (str/lower-case (:name tag))]
+    [:div {:class styles/top-tech
+           :title name}
+     [icons/icon (str name "-tag") :class styles/top-tech__icon]
+     [:div {:class styles/top-tech__label} name]]))
+
+(defn skills [tags]
+  (conj [:div {:class styles/skills}] tags))

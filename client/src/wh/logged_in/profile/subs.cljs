@@ -7,7 +7,7 @@
             [wh.common.url :as url]
             [wh.logged-in.profile.db :as profile]
             [wh.subs :refer [with-unspecified-option]]
-            [wh.user.db :as user]
+            [wh.logged-in.profile.db :as profile]
             [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
@@ -30,6 +30,13 @@
     (header-data
      (util/strip-ns-from-map-keys profile)
      (::profile/contributions profile))))
+
+(reg-sub
+  ::skills
+  :<- [::profile]
+  (fn [profile _]
+    (sort-by #(or (:rating %) 0) > (::profile/skills profile))))
+
 
 (reg-sub
   ::social-urls

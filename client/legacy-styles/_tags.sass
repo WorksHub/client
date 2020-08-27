@@ -129,7 +129,7 @@ $tag-spacing: 3px
   background-color: $lighter-red
   color: $red
   .icon:not(.icon--close) + span
-    margin-left: 18px
+    margin-left: 20px
   .icon
     position: absolute
     top: 6px
@@ -156,6 +156,8 @@ $tag-spacing: 3px
     background: $red
     .icon
       fill: $white
+  &.tag--uppercase
+    text-transform: capitalize
   &.tag--interactive
     cursor: pointer
     user-select: none

@@ -29,7 +29,8 @@
   (str on-click "invertTag(this);"))
 
 (defn tag
-  [element-type {:keys [label type subtype id icon on-click href with-icon? inverted? interactive? server-side-invert-on-click?]
+  [element-type {:keys [label type subtype id icon on-click href
+                        with-icon? inverted? interactive? server-side-invert-on-click?]
                  :or {with-icon? true}
                  :as t}]
   (let [label-lc (or (some-> label str/lower-case) "")

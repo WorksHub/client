@@ -79,11 +79,7 @@
   max-height: 44px
   margin: 0
   &--cropped
-    -webkit-box-orient: vertical
-    -webkit-line-clamp: 2
-    display: -webkit-box
-    overflow: hidden
-    text-overflow: ellipsis
+    @include line-clamp(2)
 
 .title
   color: $text-black

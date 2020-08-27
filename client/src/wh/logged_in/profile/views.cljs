@@ -16,6 +16,7 @@
                                                text-field text-input
                                                avatar-field]]
             [wh.components.icons :refer [icon]]
+            [wh.components.tag :as tag]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
             [wh.logged-in.profile.components :as components]
@@ -501,6 +502,37 @@
 
 ;; -----------------------------------------------------------------------------------------------------------
 
+(defn add-skills-cta []
+  [:<>
+   [:p "You haven't specified your skills yet"]
+   [components/section-buttons
+    [components/small-link {:href (if (= (<sub [:wh.pages.core/page]) :profile)
+                                    (routes/path :profile-edit-header)
+                                    (routes/path :candidate-edit-header))
+                            :text "Specify skills"}]]])
+
+(defn display-skills [skills]
+  (let [top-skill (take 5 skills)
+        other-skills (drop 5 skills)]
+    [:<>
+     [components/skills (for [skill top-skill]
+                          [components/top-tech skill])]
+     (when (seq other-skills)
+       [:<>
+        [components/subtitle "also likes to work with"]
+        [tag/strs->tag-list :li (map :name other-skills) nil]])]))
+
+(defn section-skills []
+  (let [skills (<sub [::subs/skills])]
+    [components/section
+     (when (seq skills)
+       [components/edit-profile {:type :default}])
+     [components/title "Top Skills"]
+     (if (seq skills)
+       [display-skills skills]
+       [add-skills-cta])]))
+
+
 (defn private-section-view-new
   [user-type {:keys [email phone job-seeking-status company-perks role-types remote
                      salary visa-status current-location
@@ -590,7 +622,10 @@
                                               :on-upload-start [::events/cv-upload-start]
                                               :on-success [::events/cv-upload-success]
                                               :on-failure [::events/cv-upload-failure])}]
-      [components/edit-cv-link]])])
+      [components/small-link {:href (if (= (<sub [:wh.pages.core/page]) :profile)
+                                      (routes/path :profile-edit-cv)
+                                      (routes/path :candidate-edit-cv))
+                              :text "Add link to CV"}]])])
 
 (defn main-view []
   (let [is-company? (<sub [:user/company?])]
@@ -598,7 +633,8 @@
      [error-box]
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
-     (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])]))
+     (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
+     [section-skills]]))
 
 (defn view-page []
   [components/container
