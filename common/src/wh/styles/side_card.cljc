@@ -45,6 +45,8 @@
 (def numeric-info__line "side_card__numeric-info__line--2VRNi")
 (def icon "side_card__icon--1-XMn")
 (def button "side_card__button--2WDDa")
+(def button--capitalize "side_card__button--capitalize--hEttg")
+(def button--small "side_card__button--small--2RFJQ")
 (def button--text "side_card__button--text--2t5cx")
 (def button--filled "side_card__button--filled--2wA-R")
 (def button--dark "side_card__button--dark--2PPQe")

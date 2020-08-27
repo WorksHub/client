@@ -99,6 +99,7 @@
               ["sitemap" :sitemap]
               ["invalid-magic-link" :invalid-magic-link]
               ["metrics" :metrics]
+              ["search" :search]
 
               ;; Mixed routes
               ["learn/" {""            :learn ;;Public SSR

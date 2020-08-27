@@ -50,6 +50,8 @@
                                    :depends-on #{:user :login :venia}}
                  :company         {:entries    [wh.company.core]
                                    :depends-on #{:logged-in :jobs}}
+                 :search          {:entries    [wh.search.core]
+                                   :depends-on #{:common :user :venia}}
                  :landing-page    {:entries    [wh.landing-page.core]
                                    :depends-on #{:common}}}
 

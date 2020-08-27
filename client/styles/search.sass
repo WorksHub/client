@@ -1,0 +1,152 @@
+@import 'mixins'
+
+.search-page
+  max-width: 1188px
+  margin: 24px auto 32px auto
+  background: $background-white
+  padding: 32px 85px 64px 115px
+  box-shadow: 0px 4px 8px $card-shadow-color
+  border-radius: 8px
+  +mobile
+    padding: 8px
+
+.results-title
+  align-items: center
+  color: $text-black
+  display: flex
+  font-size: 24px
+  font-weight: normal
+  letter-spacing: -0.01em
+  line-height: 18px
+  padding: 24px 0
+  +mobile
+    padding: 12px 0
+
+.tabs
+  display: flex
+  position: sticky
+  top: $header-height-desktop
+  background: #fff
+  padding: 24px 0 0 0
+  border-bottom: 1px solid $grey200
+  +mobile
+    padding: 0
+    flex-direction: column
+
+.tab
+  font-size: 14px
+  line-height: 19px
+  display: flex
+  align-items: center
+  text-align: center
+  cursor: pointer
+  color: $text-gray
+  padding: 0 4px 11px 4px
+  border-bottom: 1px solid transparent
+  user-select: none
+  position: relative
+  top: 1px
+  +mobile
+    margin-top: 8px
+    padding-bottom: 8px
+
+  &--active,
+  &:hover
+    color: $primary-red
+    border-bottom-color: $primary-red
+
+  &--active
+    font-weight: bold
+
+  &:not(:last-child)
+    margin-right: 32px
+
+.results-section
+  display: flex
+  flex-direction: column
+  +tablet
+    flex-direction: row
+  padding: 0
+  // a little trick. when browser scrolls to element using scrollIntoView
+  // it doesn't take our sticky header into consideration, so element we
+  // scroll to ends up being, actually, hidden under header.
+  // this little trick of adding bigger padding and negative margin that has
+  // the same value as height of header makes browser scroll to desired place
+  padding-top: 160px
+  margin-top: -110px
+  +mobile
+    padding-top: 270px
+    margin-top: -220px
+
+.results-section__header
+  flex-shrink: 0
+  display: flex
+  flex-direction: row
+  margin-bottom: 24px
+  align-items: baseline
+  +tablet
+    flex-direction: column
+    width: 216px
+    margin-bottom: 0
+  &__title
+    color: $text-black
+    &__hits
+      font-weight: 500
+  &__button
+    padding: 0 0 0 24px
+    width: 100%
+    +mobile
+      width: 50%
+    +tablet
+      padding: 0 71px 0 0
+
+.results-section__content
+  display: flex
+  flex-direction: column
+  flex: 1
+
+.result-card--skeleton
+  margin-bottom: 32px
+
+.result-card
+  display: flex
+  flex-direction: row
+  margin-bottom: 32px
+  &__content
+    display: flex
+    flex-direction: column
+  &__img
+    width: 40px
+    height: 40px
+    margin-right: 16px
+    border-radius: 4px
+    margin-top: 2px
+  &:hover
+    .result-card__title
+      color: $primary-red
+  &__title
+    font-weight: 600
+    font-size: 18px
+    line-height: 24px
+    letter-spacing: -0.01em
+    margin-bottom: 6px
+    color: $text-black
+  &__sub-title
+    font-weight: normal
+    font-size: 14px
+    line-height: 16px
+    letter-spacing: 0.02em
+    color: $text-gray
+    margin-bottom: 6px
+  &__description
+    overflow: hidden
+    text-overflow: ellipsis
+    display: -webkit-box
+    -webkit-line-clamp: 2
+    -webkit-box-orient: vertical
+    font-weight: normal
+    font-size: 16px
+    line-height: 20px
+    letter-spacing: 0.02em
+    color: $text-black
+    max-width: 60ch

@@ -1,13 +1,12 @@
 (ns wh.components.side-card.components
   (:require [#?(:cljs cljs-time.format
                 :clj clj-time.format) :as tf]
-            [clojure.string :as str]
+            [clojure.spec.alpha :as s]
             [wh.common.text :as text]
-            [wh.components.common :refer [link wrap-img img]]
-            [wh.components.icons :refer [icon] :as icons]
+            [wh.components.common :refer [wrap-img img]]
+            [wh.components.icons :as icons]
             [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
-            [wh.re-frame :as r]
             [wh.routes :as routes]
             [wh.styles.side-card :as style]
             [wh.util :as util]))
@@ -91,9 +90,12 @@
         [icons/icon icon :class style/icon]
         (str number " " (text/pluralize number sing plural))]))])
 
-(defn section-button [{:keys [title href type on-click]}]
+(defn section-button [{:keys [title href type on-click text size]
+                       :or   {text :capitalize size :default}}]
   [(if href :a :button)
    (merge {:class (util/mc style/button
+                           [(= :capitalize text) style/button--capitalize]
+                           [(= :small size) style/button--small]
                            (case type
                              :no-border style/button--text
                              :dark      style/button--dark

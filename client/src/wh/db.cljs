@@ -46,6 +46,7 @@
                 :homepage-company-dashboard
                 :homepage-dashboard
                 :homepage-not-logged-in
+                :search
                 :how-it-works
                 :improve-recommendations
                 :issue

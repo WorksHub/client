@@ -38,3 +38,4 @@ import './side_card_mobile.sass';
 import './skeletons.sass';
 import './landing_user_dashboard.sass';
 import './navbar.sass';
+import './search.sass';
