@@ -60,6 +60,14 @@
                               :on-change on-change}]
      [:span (str "Upload " document)]]))
 
+(defn edit-link [{:keys [href text data-test type]
+                  :or {text "Edit"}}]
+  (let [small? (= type :small)]
+    [:a {:href      href
+         :data-test data-test
+         :class     (util/mc styles/edit [small? styles/edit--small])}
+     [icons/icon "edit" :class (when small? styles/edit__small-icon)] [:span.visually-hidden text]]))
+
 (defn edit-profile [{:keys [type]}]
   (let [[user-route admin-route] (if (= type :private)
                                    [:profile-edit-private :candidate-edit-private]
@@ -67,10 +75,9 @@
         href (if (= (<sub [:wh.pages.core/page]) :profile)
                (routes/path user-route)
                (routes/path admin-route))]
-    [:a {:href href
-         :data-test (if (= type :private) "edit-profile-private" "edit-profile")
-         :class styles/edit}
-     [icons/icon "edit"] [:span.visually-hidden "Edit"]]))
+    [edit-link {:href href
+                :data-test (if (= type :private) "edit-profile-private" "edit-profile")
+                :text "Edit"}]))
 
 (defn profile [user]
   (let [{:keys [name image-url summary]}
@@ -103,16 +110,16 @@
     [:div {:class styles/view-field__content} content]]))
 
 (defn section [& children]
-  (conj [:div {:class styles/section}] children))
+  (into [:div {:class styles/section}] children))
 
 (defn section-buttons [& children]
-  (conj [:div {:class styles/section__buttons}] children))
+  (into [:div {:class styles/section__buttons}] children))
 
 (defn resource [{:keys [href text]}]
   [:a {:class styles/resource :href href :target "_blank" :rel "noopener"} text])
 
 (defn content [& children]
-  (conj [:div {:class styles/content}] children))
+  (into [:div {:class styles/content}] children))
 
 (defn subtitle [text]
   [:div {:class styles/subtitle} text])
@@ -125,4 +132,22 @@
      [:div {:class styles/top-tech__label} name]]))
 
 (defn skills [tags]
-  (conj [:div {:class styles/skills}] tags))
+  (into [:div {:class styles/skills}] tags))
+
+(defn meta-separator []
+  [:span {:class styles/meta-separator} "•"])
+
+(defn article [{:keys [id title formatted-creation-date reading-time upvote-count published] :as article-data}]
+  [:div {:class styles/article}
+   [edit-link {:href (routes/path :contribute-edit :params {:id id})
+               :type :small}]
+   [:a {:class styles/article__title
+        :href (routes/path :blog :params {:id id})} title]
+   [:div {:class styles/article__meta}
+    (when-not published [:<> [:span "not published"]
+                             [meta-separator]])
+    formatted-creation-date
+    [meta-separator]
+    reading-time " min read"
+    [meta-separator]
+    upvote-count " " (pluralize upvote-count "boost")]])

@@ -57,11 +57,13 @@
                          [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
                          [:stackoverflowInfo [:reputation]]
                          [:twitterInfo [:id]]]]
-                   [:blogs {:filter_type "mine"} [[:blogs [:id :title :published :upvoteCount]]]]]})
+                   [:blogs {:filter_type "mine"} [[:blogs [:id :title :formattedCreationDate :readingTime
+                                                           :upvoteCount :published]]]]]})
 
 (reg-event-fx
   ::fetch-initial-data
   (fn [{db :db} _]
+    (println "fetching data")
     {:graphql  {:query      initial-data-query
                 :on-success [::fetch-initial-data-success]}
      :dispatch [::pages/set-loader]}))

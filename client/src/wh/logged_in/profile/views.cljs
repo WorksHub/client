@@ -7,6 +7,7 @@
             [wh.common.upload :as upload]
             [wh.common.user :as common-user]
             [wh.components.button-auth :as button-auth]
+            [wh.components.cards :as cards]
             [wh.components.common :refer [link]]
             [wh.components.error.views :refer [error-box]]
             [wh.components.forms.views :refer [field-container
@@ -532,6 +533,18 @@
        [display-skills skills]
        [add-skills-cta])]))
 
+(defn section-articles []
+  (let [articles (<sub [::subs/contributions])]
+    [components/section
+     [components/title "Articles"]
+     (if (seq articles)
+       (for [article articles]
+         ^{:key (:id article)}
+         [components/article article])
+       [:p "You haven't written any articles yet"])
+     [components/section-buttons
+      [components/small-link {:text "Write article"
+                              :href (routes/path :contribute)}]]]))
 
 (defn private-section-view-new
   [user-type {:keys [email phone job-seeking-status company-perks role-types remote
@@ -609,7 +622,7 @@
 
    (when-not (or cv-url cv-link)
      (if (owner? user-type)
-       "You haven't uploaded cv yet"
+       "You haven't uploaded CV yet"
        "No uploaded cv yet"))
 
    (when (owner-or-admin? user-type)
@@ -634,7 +647,8 @@
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
      (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
-     [section-skills]]))
+     [section-skills]
+     [section-articles]]))
 
 (defn view-page []
   [components/container
