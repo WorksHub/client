@@ -78,7 +78,7 @@
                  :section/name "Companies"
                  :see-all      (routes/path :companies)}
                 {:id           :issues
-                 :menu/name    "Open Source Issues"
+                 :menu/name    "Issues"
                  :section/name "Issues"
                  :see-all      (routes/path :issues)}
                 {:id           :articles
