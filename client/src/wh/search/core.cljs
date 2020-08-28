@@ -6,9 +6,7 @@
             [wh.search.views :as search-views]))
 
 (def page-mapping
-  ;; TODO: once universal search is ready to go public, remove :can-access?
-  ;; condition [4683]
-  {:search {:page search-views/search-page, :can-access? user-common/admin?}})
+  {:search search-views/search-page})
 
 (reg-event-db
   ::initialize-page-mapping

@@ -119,30 +119,31 @@
        [skeleton-result])
      (range n))))
 
-(defn results-section [{:keys [search-result see-all] :as tab}]
+(defn results-section [{:keys [search-result see-all] :as section}]
   (let [hits-counted (get search-result :nbHits 0)
-        hits         (get search-result :hits [])]
+        hits         (get search-result :hits [])
+        empty        (get search-result :empty)]
     [:section {:class styles/results-section
-               :id    (name (:id tab))}
+               :id    (name (:id section))}
      [:div (util/smc styles/results-section__header)
       [:h1 (util/smc styles/results-section__header__title)
-       (:section/name tab)
+       (:section/name section)
        [:span (util/smc styles/results-section__header__title__hits)
         (str " (" hits-counted ")")]]
 
       [:div (util/smc styles/results-section__header__button)
-       [c/section-button {:title (str "See " (str/lower-case (:section/name tab)))
+       [c/section-button {:title (str "See " (str/lower-case (:section/name section)))
                           :href  see-all
                           :text  :default
                           :size  :small}]]]
 
      [:ul {:class styles/results-section__content}
-      (if-not (seq hits)
+      (if (or (not (seq hits)) empty)
         [skeleton-results]
 
         (for [{:keys [objectID] :as hit} hits]
           ^{:key objectID}
-          [(result-by-type (:id tab)) hit]))]]))
+          [(result-by-type (:id section)) hit]))]]))
 
 (defn sections-separated [sections]
   [:<>

@@ -4,8 +4,7 @@
             [re-frame.core :refer [reg-event-db reg-event-fx dispatch reg-fx]]
             [wh.db :as db]))
 
-;; TODO: make sure to use proper access keys [4682]
-(def client (algoliasearch "MVK698T35T" "3b2c040e2342a3993ff04ad787fa6442"))
+(def client (algoliasearch "MVK698T35T" "11cd904aa52288a239214960e2433f97"))
 
 (reg-event-fx
   ::go-to-tab
@@ -33,20 +32,52 @@
      :dispatch [:wh.pages.core/unset-loader]}))
 
 
-(defn make-query-for-index [index value]
-  {:indexName index
-   :query     value
-   ;; TODO: turn on "published" filter [4682]
-   ;; it's turned off for development purposes
-   ;; :filters   "published:true"
-   :params    {:hitsPerPage 10}})
+;; TODO: use env variables through shadow-cljs to set proper
+;; index-prefix, based on environment [ch4693]
+(def index-prefix "")
 
-;; TODO: use proper indices, instead of dev, before going to prod [4682]
+(def jobs-index (str index-prefix "jobs"))
+(def companies-index (str index-prefix "companies"))
+(def articles-index (str index-prefix "articles"))
+(def issues-index (str index-prefix "issues"))
+
+(def index->query
+  {jobs-index
+   (fn [value]
+     {:indexName jobs-index
+      :query     value
+      :filters   "published:true"
+      :params    {:hitsPerPage 10}})
+
+   companies-index
+   (fn [value]
+     {:indexName companies-index
+      :query     value
+      :filters   "'profile-enabled':true"
+      :params    {:hitsPerPage 10}})
+
+   articles-index
+   (fn [value]
+     {:indexName articles-index
+      :query     value
+      :filters   "published:true"
+      :params    {:hitsPerPage 10}})
+
+   issues-index
+   (fn [value]
+     {:indexName issues-index
+      :query     value
+      :filters   "status:open"
+      :params    {:hitsPerPage 10}})})
+
+(defn make-query-for-index [index value]
+  ((index->query index) value))
+
 (def search-indices
-  {"dev_jobs"      :jobs
-   "dev_articles"  :articles
-   "dev_issues"    :issues
-   "dev_companies" :companies})
+  {jobs-index      :jobs
+   articles-index  :articles
+   issues-index    :issues
+   companies-index :companies})
 
 (defn fetch-search-results [query]
   (->> search-indices
@@ -58,14 +89,18 @@
 (defn assoc-section-name [{:keys [index] :as datum}]
   [(search-indices index) datum])
 
+
+(defn- handle-success [search-results]
+  (let [{:keys [results]} (walk/keywordize-keys (js->clj search-results))]
+    (dispatch [::fetch-data-success
+               (into {} (map assoc-section-name results))])))
+
+(defn- handle-failure []
+  (dispatch [::fetch-data-failure]))
+
 (reg-fx
   :search
   (fn [value]
     (-> (fetch-search-results value)
-        (.then
-          (fn [search-results]
-            (let [{:keys [results]} (walk/keywordize-keys (js->clj search-results))]
-              (dispatch [::fetch-data-success
-                         (into {} (map assoc-section-name results))]))))
-        (.catch (fn []
-                  (dispatch [::fetch-data-failure]))))))
+        (.then handle-success)
+        (.catch handle-failure))))
