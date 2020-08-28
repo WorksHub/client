@@ -1,6 +1,7 @@
 (ns wh.components.navbar.subs
   (:require [re-frame.core :refer [reg-sub]]
-            [wh.common.user :as user-common]))
+            [wh.common.user :as user-common]
+            [wh.components.navbar.db :as db]))
 
 (reg-sub
   ::profile-image
@@ -13,3 +14,8 @@
   :<- [:user/sub-db]
   (fn [user _]
     (get-in user [:wh.user.db/company :slug])))
+
+(reg-sub
+  ::search-value
+  (fn [db _]
+    (db ::db/search-value)))

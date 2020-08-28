@@ -14,6 +14,5 @@
     (update db ::db/page-mapping merge page-mapping)))
 
 (dispatch-sync [::initialize-page-mapping])
-(dispatch-sync [:wh.search.events/fetch-data])
 
 (loader/set-loaded! :search)

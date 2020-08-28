@@ -37,6 +37,20 @@
          ;; 0 results and nil
          (safe-sum))))
 
+(reg-sub
+  ::search-results-tags
+  :<- [::search-results]
+  (fn [results _]
+    (->> results
+         vals
+         (mapcat :hits)
+         (mapcat :tags)
+         distinct
+         (filter #(#{"tech"} (:type %)))
+         ;; magic number. too many tags would pollute UI. we want users to click
+         ;; tags, not to spend half an hour scrolling through them
+         (take 9))))
+
 ;; Used for server side render
 (reg-sub
   ::query

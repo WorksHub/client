@@ -1,12 +1,14 @@
 (ns wh.search.components
-  (:require [clojure.string :as str]
+  (:require #?(:cljs [wh.pages.core :as pages])
+            [clojure.string :as str]
+            [re-frame.core :refer [dispatch]]
             [wh.components.side-card.components :as c]
-            [wh.re-frame :refer [atom]]
             [wh.components.skeletons.components :as skeletons]
+            [wh.components.tag :as tag]
+            [wh.re-frame :refer [atom]]
             [wh.routes :as routes]
             [wh.styles.search :as styles]
             [wh.util :as util]))
-
 
 (defn job-result [{:keys [title company tagline slug]}]
   [:li
@@ -87,7 +89,6 @@
 (def sections-coll
   (filter :section/name tabs-coll))
 
-
 (defn tabs [{:keys [go-to-tab]}]
   (let [active-tab (atom (-> tabs-coll first :id))]
     (fn [{:keys [go-to-tab]}]
@@ -103,25 +104,35 @@
             (:menu/name tab)])]))))
 
 (defn results-title [query results-count]
-  [:h1 {:class styles/results-title}
-   (if results-count
+  [:h1 {:class     styles/results-title
+        :data-test "search-results-title"}
+   (cond
+     (and results-count (not-empty query))
      (str results-count " results found for ‘" query "’")
 
-     (str "Searching for ‘" query "’"))])
+     (and results-count (empty? query))
+     "Latest results"
+
+     (not-empty query)
+     (str "Searching for ‘" query "’")
+
+     :else (str "Loading…"))])
 
 (defn skeleton-results
   ([]
    (skeleton-results 3))
 
   ([n]
-   (map
-     (fn [_]
-       [skeleton-result])
-     (range n))))
+   [:<>
+    (map
+      (fn [k]
+        ^{:key k}
+        [skeleton-result])
+      (range n))]))
 
 (defn results-section [{:keys [search-result see-all] :as section}]
   (let [hits-counted (get search-result :nbHits 0)
-        hits         (get search-result :hits [])
+        hits         (get search-result :hits)
         empty        (get search-result :empty)]
     [:section {:class styles/results-section
                :id    (name (:id section))}
@@ -138,7 +149,7 @@
                           :size  :small}]]]
 
      [:ul {:class styles/results-section__content}
-      (if (or (not (seq hits)) empty)
+      (if (or (not hits) empty)
         [skeleton-results]
 
         (for [{:keys [objectID] :as hit} hits]
@@ -157,3 +168,9 @@
 
               ^{:key id}
               [results-section tab]))))])
+
+(defn tags-section [tags]
+  [:div {:data-test "search-results-tags"}
+   (for [{:keys [label] :as tag} tags]
+     [tag/tag :a
+      (assoc tag :on-click #(dispatch [:wh.search/search-with-value label]))])])

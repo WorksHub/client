@@ -1,8 +1,9 @@
 (ns wh.search.events
   (:require ["algoliasearch" :as algoliasearch]
             [clojure.walk :as walk]
-            [re-frame.core :refer [reg-event-db reg-event-fx dispatch reg-fx]]
-            [wh.db :as db]))
+            [re-frame.core :refer [reg-event-fx dispatch reg-fx]]
+            [wh.db :as db]
+            [wh.pages.core :refer [on-page-load] :as pages]))
 
 (def client (algoliasearch "MVK698T35T" "11cd904aa52288a239214960e2433f97"))
 
@@ -13,24 +14,22 @@
 
 (reg-event-fx
   ::fetch-data
-  (fn [{db :db} _]
-    (let [query (get-in db [:wh.db/query-params "query"])]
-      {:search query})))
+  (fn [{db :db} [_ query]]
+    {:search query}))
 
 (reg-event-fx
   ::fetch-data-success
   db/default-interceptors
   (fn [{db :db} [data]]
     {:db       (assoc-in db [:wh.search/data] data)
-     :dispatch [:wh.pages.core/unset-loader]}))
+     :dispatch [::pages/unset-loader]}))
 
 (reg-event-fx
   ::fetch-data-failure
   db/default-interceptors
   (fn [{db :db} _]
     {:db       (assoc-in db [:wh.search/data] {})
-     :dispatch [:wh.pages.core/unset-loader]}))
-
+     :dispatch [::pages/unset-loader]}))
 
 ;; TODO: use env variables through shadow-cljs to set proper
 ;; index-prefix, based on environment [ch4693]
@@ -104,3 +103,9 @@
     (-> (fetch-search-results value)
         (.then handle-success)
         (.catch handle-failure))))
+
+(defmethod on-page-load :search [db]
+  (let [query (get-in db [:wh.db/query-params "query"])]
+    [[:wh.events/scroll-to-top]
+     [::fetch-data query]
+     [:wh.components.navbar.events/set-search-value query]]))

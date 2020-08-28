@@ -14,9 +14,13 @@
            results       (<sub [::subs/search-results])
            sections      (<sub [::subs/sections-with-results])
            results-count (<sub [::subs/results-count])
+           tags          (<sub [:wh.search.subs/search-results-tags])
            go-to-tab     #(dispatch [:wh.search.events/go-to-tab %])]
        [:div {:class styles/search-page}
         [components/results-title query results-count]
+
+        [components/tags-section tags]
+
         [components/tabs {:go-to-tab go-to-tab}]
 
         [components/sections-separated sections]])

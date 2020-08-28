@@ -1,5 +1,6 @@
 (ns wh.components.navbar.navbar
-  (:require #?(:cljs [wh.pages.core :as pages])
+  (:require #?(:cljs [re-frame.core :refer [dispatch]])
+            #?(:cljs [wh.components.navbar.events])
             [wh.common.url :as url]
             [wh.components.attract-card :as attract-card]
             [wh.components.branding :as branding]
@@ -15,6 +16,7 @@
             [wh.styles.navbar :as styles]
             [wh.util :as util]))
 
+
 (defn logo [vertical env]
   [:a {:href      (url/vertical-homepage-href env vertical)
        :data-test "home-link"
@@ -23,43 +25,49 @@
    [branding/vertical-title vertical {:type :navigation
                                       :size :small}]])
 
-#?(:cljs
-   (defn submit-search
-     [id]
-     (pages/navigate [:jobsboard :query-params {:search (.-value (.getElementById js/document id))}])))
-
 (def search-id "navbar__search-input")
 
-(defn search [type query-params]
-  (let [default-value (:search query-params)]
+
+;; Reagent complains about autocomplete keyword
+(def autocomplete-k #?(:cljs :autoComplete
+                       :clj  :autocomplete))
+
+(defn search [type]
+  (let [search-value (<sub [::subs/search-value])]
     [:form (merge {:method :get
-                   :action (routes/path :jobsboard)
+                   :action (routes/path :search)
                    :class  (util/mc
-                            styles/search__wrapper
-                            [(= type :small-menu-no-mobile) styles/no-mobile]
-                            [(= type :navbar) styles/no-mobile])}
-                  #?(:cljs {:on-submit (fn [e]
-                                         (.preventDefault e)
-                                         (submit-search search-id))}))
+                             styles/search__wrapper
+                             [(= type :small-menu-no-mobile) styles/no-mobile]
+                             [(= type :navbar) styles/no-mobile])}
+                  #?(:cljs {:on-submit
+                            (fn [e]
+                              (.preventDefault e)
+                              (dispatch [:wh.search/search-with-value search-value]))}))
      [icon "search-new" :class styles/search__search-icon]
-     [:input {:class       (util/mc
-                            styles/search
-                            [(or (= type :small-menu) (= type :small-menu-no-mobile)) styles/search__small-menu])
-              :id          search-id
-              :data-test   "job-search"
-              :type        "text"
-              :name        "search"
-              :placeholder "Search for jobs..."
-              #?(:cljs :defaultValue
-                 :clj  :value) default-value
-              ;; Reagent complains about autocomplete keyword
-              #?(:cljs :autoComplete
-                 :clj  :autocomplete) "off"}]
-     (when default-value
+     [:input (merge
+               {:class         (util/mc
+                                 styles/search
+                                 [(or (= type :small-menu)
+                                      (= type :small-menu-no-mobile))
+                                  styles/search__small-menu])
+                :id            search-id
+                :data-test     "job-search"
+                :type          "text"
+                :name          "query"
+                :placeholder   "Search…"
+                :value         search-value
+                autocomplete-k "off"}
+               #?(:cljs {:on-change
+                         (fn [e]
+                           (dispatch [:wh.components.navbar.events/set-search-value
+                                      (.-value (.-target e))]))}))]
+     (when search-value
        [:a
-        (merge {:href (routes/path :jobsboard)
+        (merge {:href  (routes/path :search)
                 :class styles/search__clear-icon}
-               #?(:cljs {:on-click #(set! (.-value (.getElementById js/document search-id)))}))
+               #?(:cljs {:on-click
+                         #(set! (.-value (.getElementById js/document search-id)))}))
         [icon "close"]])]))
 
 (defn button-write-article []
@@ -129,7 +137,7 @@
      :route     :employers}
     {:mobile? true}]])
 
-(defn menu-for-mobile-and-tablet [{:keys [candidate? company? admin? logged-in? query-params]}]
+(defn menu-for-mobile-and-tablet [{:keys [candidate? company? admin? logged-in?]}]
   [:div {:class (util/mc styles/small-menu__wrapper)
          :id    "navigation"}
    [close-navigation-button]
@@ -151,7 +159,7 @@
          :else [public-mobile-menu])
 
    [:div (util/smc styles/small-menu__search-wrapper)
-    [search :small-menu query-params]]])
+    [search :small-menu]]])
 
 
 (defn profile-menu [{:keys [candidate? company?]}]
@@ -180,7 +188,7 @@
     [:div (util/smc styles/navbar__right)
      (when company? [company/notifications {:class styles/no-desktop}])
 
-     [search :small-menu-no-mobile query-params]
+     [search :small-menu-no-mobile]
      [:div (util/smc styles/navbar__buttons)
       (when candidate? [button-write-article])
 
@@ -198,7 +206,7 @@
 
     content?
     [:div (util/smc styles/navbar__right)
-     [search :navbar query-params]
+     [search :navbar]
      [:div (util/smc styles/navbar__buttons)
       [button-signup]
       [button-signin]
@@ -226,8 +234,8 @@
      :page  page}]])
 
 
-(defn navbar [{:keys [vertical env content? page query-params
-                      candidate? company? admin? logged-in?]
+(defn navbar [{:keys [vertical env content? page
+                      candidate? company? admin?]
                :as   opts}]
   [:div {:class     styles/navbar__wrapper
          :data-test "navbar"}
