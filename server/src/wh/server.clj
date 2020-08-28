@@ -100,14 +100,15 @@
 
 (defn- initial-app-db
   [{:keys [vertical api-server] :as config} request]
-  {:wh.settings/environment    :dev
-   :wh.db/api-server           api-server
-   :wh.db/vertical             vertical
-   :wh.db/query-params         (:query-params request)
-   :wh.db/page-params          {}
-   :wh.db/uri                  (:uri request)
-   :wh.db/initial-load?        true
-   :wh.db/default-technologies (verticals/config vertical :default-technologies)})
+  {:wh.settings/environment          :dev
+   :wh.settings/algolia-index-prefix "dev_"
+   :wh.db/api-server                 api-server
+   :wh.db/vertical                   vertical
+   :wh.db/query-params               (:query-params request)
+   :wh.db/page-params                {}
+   :wh.db/uri                        (:uri request)
+   :wh.db/initial-load?              true
+   :wh.db/default-technologies       (verticals/config vertical :default-technologies)})
 
 (defn index-handler [request]
   (-> {:app-db (initial-app-db config request)}

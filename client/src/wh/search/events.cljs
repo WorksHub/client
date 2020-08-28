@@ -14,8 +14,8 @@
 
 (reg-event-fx
   ::fetch-data
-  (fn [{db :db} [_ query]]
-    {:search query}))
+  (fn [{db :db} [_ query prefix]]
+    {:search [query prefix]}))
 
 (reg-event-fx
   ::fetch-data-success
@@ -31,81 +31,82 @@
     {:db       (assoc-in db [:wh.search/data] {})
      :dispatch [::pages/unset-loader]}))
 
-;; TODO: use env variables through shadow-cljs to set proper
-;; index-prefix, based on environment [ch4693]
-(def index-prefix "")
+(def jobs-index "jobs")
+(def companies-index "companies")
+(def articles-index "articles")
+(def issues-index "issues")
 
-(def jobs-index (str index-prefix "jobs"))
-(def companies-index (str index-prefix "companies"))
-(def articles-index (str index-prefix "articles"))
-(def issues-index (str index-prefix "issues"))
+(defn index->query [prefix]
+  (let [jobs      (str prefix jobs-index)
+        companies (str prefix companies-index)
+        articles  (str prefix articles-index)
+        issues    (str prefix issues-index)]
+    {jobs
+     (fn [value]
+       {:indexName jobs
+        :query     value
+        :filters   "published:true"
+        :params    {:hitsPerPage 10}})
 
-(def index->query
-  {jobs-index
-   (fn [value]
-     {:indexName jobs-index
-      :query     value
-      :filters   "published:true"
-      :params    {:hitsPerPage 10}})
+     companies
+     (fn [value]
+       {:indexName companies
+        :query     value
+        :filters   "'profile-enabled':true"
+        :params    {:hitsPerPage 10}})
 
-   companies-index
-   (fn [value]
-     {:indexName companies-index
-      :query     value
-      :filters   "'profile-enabled':true"
-      :params    {:hitsPerPage 10}})
+     articles
+     (fn [value]
+       {:indexName articles
+        :query     value
+        :filters   "published:true"
+        :params    {:hitsPerPage 10}})
 
-   articles-index
-   (fn [value]
-     {:indexName articles-index
-      :query     value
-      :filters   "published:true"
-      :params    {:hitsPerPage 10}})
+     issues
+     (fn [value]
+       {:indexName issues
+        :query     value
+        :filters   "status:open"
+        :params    {:hitsPerPage 10}})}))
 
-   issues-index
-   (fn [value]
-     {:indexName issues-index
-      :query     value
-      :filters   "status:open"
-      :params    {:hitsPerPage 10}})})
+(defn make-query-for-index [prefix index value]
+  (((index->query prefix) index) value))
 
-(defn make-query-for-index [index value]
-  ((index->query index) value))
+(defn search-indices [prefix]
+  {(str prefix jobs-index)      :jobs
+   (str prefix articles-index)  :articles
+   (str prefix issues-index)    :issues
+   (str prefix companies-index) :companies})
 
-(def search-indices
-  {jobs-index      :jobs
-   articles-index  :articles
-   issues-index    :issues
-   companies-index :companies})
-
-(defn fetch-search-results [query]
-  (->> search-indices
+(defn fetch-search-results [query prefix]
+  (->> (search-indices prefix)
        keys
-       (map #(make-query-for-index % query))
+       (map #(make-query-for-index prefix % query))
        clj->js
        (.multipleQueries client)))
 
-(defn assoc-section-name [{:keys [index] :as datum}]
-  [(search-indices index) datum])
+(defn assoc-section-name [prefix {:keys [index] :as datum}]
+  [((search-indices prefix) index) datum])
 
 
-(defn- handle-success [search-results]
+(defn- handle-success [prefix search-results]
   (let [{:keys [results]} (walk/keywordize-keys (js->clj search-results))]
     (dispatch [::fetch-data-success
-               (into {} (map assoc-section-name results))])))
+               (into {} (map (partial assoc-section-name prefix) results))])))
 
 (defn- handle-failure []
   (dispatch [::fetch-data-failure]))
 
 (reg-fx
   :search
-  (fn [value]
-    (-> (fetch-search-results value)
-        (.then handle-success)
+  (fn [[value prefix]]
+    (-> (fetch-search-results value prefix)
+        (.then (partial handle-success prefix))
         (.catch handle-failure))))
 
 (defmethod on-page-load :search [db]
-  (let [query (get-in db [:wh.db/query-params "query"])]
+  (let [query  (get-in db [:wh.db/query-params "query"])
+        prefix (get db :wh.settings/algolia-index-prefix)]
     [[:wh.events/scroll-to-top]
-     [::fetch-data query]
+     [::fetch-data query prefix]
      [:wh.components.navbar.events/set-search-value query]]))
