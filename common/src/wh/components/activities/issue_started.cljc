@@ -17,7 +17,7 @@
    [:span (util/smc styles/issue-contributor__title)
     (if (text/not-blank name)
       [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) name]
-      [:span (util/smc styles/issue-contributor__title) "Someone " ])
+      [:span (util/smc styles/issue-contributor__title) "Someone "])
     [:span "has just started to work on an"]
     [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) "open source issue!"]]
    [:img {:src   "/images/feed/issue.svg"

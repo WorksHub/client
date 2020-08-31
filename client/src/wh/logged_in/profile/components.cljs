@@ -3,6 +3,7 @@
             [re-frame.core :refer [dispatch dispatch-sync]]
             [wh.components.signin-buttons :as signin-buttons]
             [wh.common.text :refer [pluralize]]
+            [wh.components.activities.components :as activities-components]
             [wh.components.common :refer [link]]
             [wh.components.error.views :refer [error-box]]
             [wh.components.forms.views :refer [field-container
@@ -12,6 +13,7 @@
                                                text-field text-input
                                                avatar-field]]
             [wh.components.icons :as icons]
+            [wh.components.issue :as issue-components]
             [wh.logged-in.profile.subs :as subs]
             [wh.routes :as routes]
             [wh.subs :refer [<sub]]
@@ -151,3 +153,34 @@
     reading-time " min read"
     [meta-separator]
     upvote-count " " (pluralize upvote-count "boost")]])
+
+(defn issue-creator [{:keys [company]}]
+  (let [img-src (:logo company)
+        name (:name company)]
+    [:div {:class styles/issue__creator}
+     [:img {:src img-src
+            :class styles/issue__creator-avatar
+            ;; reserve space during page load
+            :height 26
+            :width 26}]
+     [:span {:class styles/issue__creator-name} name]]))
+
+(defn issue-meta-elm [{:keys [icon text]}]
+  [:div {:class styles/issue__meta-elm}
+   [icons/icon icon :class styles/issue__meta-icon] text])
+
+(defn issue-meta [{:keys [repo compensation level] :as issue}]
+  [:div {:class styles/issue__meta}
+   [issue-meta-elm {:icon (str "issue-level-" (name level))
+                    :text (-> level name str/capitalize)}]
+   [:div {:class styles/issue__additional-meta}
+    [activities-components/compensation-amount compensation]
+    [activities-components/primary-language repo]]])
+
+(defn issue-card [{:keys [id title company] :as issue}]
+  [:div {:class styles/issue}
+   [issue-creator {:company company}]
+   [:a {:class styles/issue__title
+        :href (routes/path :issue :params {:id id})} title]
+   [issue-meta issue]])
+

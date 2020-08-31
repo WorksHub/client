@@ -6,6 +6,7 @@
             [wh.common.data :as data]
             [wh.common.errors :as errors]
             [wh.common.graphql-queries :as graphql]
+            [wh.common.issue :as common-issue]
             [wh.common.specs.primitives :as specs]
             [wh.common.upload :as upload]
             [wh.common.user :as common-user]
@@ -37,8 +38,12 @@
 ;; composite data structure. This will result in **massive**
 ;; simplification of this code.
 
+;; TODO: convert to defquery, CH4692
 (def initial-data-query
-  {:venia/queries [[:me [[:skills [:name :rating]]
+  {:venia/operation {:operation/type :query
+                     :operation/name "profile"}
+   :venia/variables [{:variable/name "user_id" :variable/type :ID}]
+   :venia/queries [[:me [[:skills [:name :rating]]
                          [:companyPerks [:name]]
                          [:otherUrls [:url]]
                          :imageUrl
@@ -58,13 +63,18 @@
                          [:stackoverflowInfo [:reputation]]
                          [:twitterInfo [:id]]]]
                    [:blogs {:filter_type "mine"} [[:blogs [:id :title :formattedCreationDate :readingTime
-                                                           :upvoteCount :published]]]]]})
+                                                           :upvoteCount :published]]]]
+                   [:query_issues {:user_id :$user_id}
+                    [[:issues [:id :title :level
+                               [:compensation [:amount :currency]]
+                               [:company [:id :name :logo :slug]]
+                               [:repo [:primary_language]]]]]]]})
 
 (reg-event-fx
   ::fetch-initial-data
   (fn [{db :db} _]
-    (println "fetching data")
     {:graphql  {:query      initial-data-query
+                :variables  {:user_id (user/id db)}
                 :on-success [::fetch-initial-data-success]}
      :dispatch [::pages/set-loader]}))
 
@@ -77,21 +87,26 @@
             ::profile/custom-avatar-mode (and (::profile/image-url profile)
                                               (not predefined-avatar))})))
 
-(defn profile-data [user blogs]
+(defn profile-data [user blogs issues]
   (let [predefined-avatar (common-user/url->predefined-avatar (:image-url user))]
     {::profile/predefined-avatar  (or predefined-avatar 1)
      ::profile/custom-avatar-mode (not predefined-avatar)
-     ::profile/contributions      (mapv cases/->kebab-case blogs)}))
+     ::profile/contributions      (mapv cases/->kebab-case blogs)
+     ::profile/issues             (->> issues
+                                       (map cases/->kebab-case issues)
+                                       (mapv common-issue/gql-issue->issue))}))
+
 
 (reg-event-fx
   ::fetch-initial-data-success
   db/default-interceptors
-  (fn [{db :db} [{{me :me blogs :blogs} :data}]]
-    (let [user (user/translate-user me)]
+  (fn [{db :db} [{{:keys [me blogs query_issues]} :data}]]
+    (let [issues (:issues query_issues)
+          user (user/translate-user me)]
       {:db       (merge-with merge
                              db
                              {::user/sub-db    user
-                              ::profile/sub-db (merge (profile-data user (:blogs blogs))
+                              ::profile/sub-db (merge (profile-data user (:blogs blogs) issues)
                                                       (profile/->sub-db user))})
        :dispatch [::pages/unset-loader]})))
 

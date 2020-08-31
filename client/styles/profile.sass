@@ -224,7 +224,7 @@
   position: relative
 
   &__title
-    font-weight: 500
+    font-weight: 600
     max-width: calc(100% - 20px)
 
     &:hover
@@ -233,4 +233,63 @@
   &__meta
     color: $grey300
     font-size: 13px
+
+.issue
+  border: 1px solid $grey200
+  border-radius: 4px
+  padding: 16px
+  display: grid
+  grid-gap: 12px
+  font-size: 14px
+  line-height: 18px
+  position: relative
+
+  &__meta
+    display: flex
+    flex-direction: column
+    margin-bottom: -12px
+    & > *
+      margin-bottom: 12px
+    +tablet
+      flex-direction: row
+      height: 26px
+      align-items: center
+      justify-content: space-between
+      margin-bottom: 0
+      & > *
+        margin-bottom: 0
+
+  &__additional-meta
+    display: flex
+
+  &__meta-elm
+    display: flex
+    align-items: center
+    color: $grey300
+    font-size: 13px
+
+  &__meta-icon
+    fill: $grey300
+    margin-right: 8px
+
+  &__creator
+    display: flex
+    align-items: center
+
+  &__creator-avatar
+    width: 26px
+    height: 26px
+    margin-right: 8px
+    border-radius: 4px
+
+  &__creator-name
+    font-size: 13px
+    color: $grey300
+
+  &__title
+    font-weight: 600
+    max-width: calc(100% - 20px)
+
+    &:hover
+      color: $primary-red
 

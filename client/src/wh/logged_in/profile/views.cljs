@@ -17,6 +17,7 @@
                                                text-field text-input
                                                avatar-field]]
             [wh.components.icons :refer [icon]]
+            [wh.components.issue :as issue]
             [wh.components.tag :as tag]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
@@ -546,6 +547,20 @@
       [components/small-link {:text "Write article"
                               :href (routes/path :contribute)}]]]))
 
+(defn section-issues []
+  (let [issues (<sub [::subs/issues])]
+    [components/section
+     [components/title "Open Source Issues"]
+     (if (seq issues)
+       (for [issue issues]
+         ^{:key (:id issue)}
+         [components/issue-card issue])
+       [:p "You haven't started working on any issue yet"])
+     [components/section-buttons
+      [components/small-link {:text "Explore issues"
+                              :href (routes/path :issues)}]]]))
+
+
 (defn private-section-view-new
   [user-type {:keys [email phone job-seeking-status company-perks role-types remote
                      salary visa-status current-location
@@ -648,7 +663,9 @@
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
      (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
      [section-skills]
-     [section-articles]]))
+     [section-articles]
+     [section-issues]]))
+
 
 (defn view-page []
   [components/container

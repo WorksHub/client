@@ -115,6 +115,12 @@
   (fn [profile _]
     (vec (::profile/contributions profile))))
 
+(reg-sub
+  ::issues
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/issues profile)))
+
 (defn salary-string [{:keys [min currency time-period]}]
   (let [min (text/not-blank min)
         time-period (when time-period (str/lower-case time-period))]
