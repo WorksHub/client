@@ -16,7 +16,6 @@
             [wh.styles.navbar :as styles]
             [wh.util :as util]))
 
-
 (defn logo [vertical env]
   [:a {:href      (url/vertical-homepage-href env vertical)
        :data-test "home-link"
@@ -43,6 +42,7 @@
                   #?(:cljs {:on-submit
                             (fn [e]
                               (.preventDefault e)
+                              (js/hideMenu)
                               (dispatch [:wh.search/search-with-value search-value]))}))
      [icon "search-new" :class styles/search__search-icon]
      [:input (merge

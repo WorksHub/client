@@ -14,11 +14,16 @@ const isMenuDisplayed = elmId =>
     Boolean(document.getElementById(elmId).style.display) &&
     document.getElementById(elmId).style.display !== 'none';
 
+
+function hideMenu() {
+  hide(mobileMenuId);
+  hide(closeMenuIconId);
+  displayIcon(openMenuIconId);
+}
+
 function toggleMenuDisplay() {
     if (isMenuDisplayed(mobileMenuId)) {
-        hide(mobileMenuId);
-        hide(closeMenuIconId);
-        displayIcon(openMenuIconId);
+        hideMenu();
     } else {
         displayMenu(mobileMenuId);
         hide(openMenuIconId);
@@ -27,3 +32,4 @@ function toggleMenuDisplay() {
 }
 
 window.toggleMenuDisplay = toggleMenuDisplay;
+window.hideMenu = hideMenu;
