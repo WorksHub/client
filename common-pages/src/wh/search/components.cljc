@@ -72,19 +72,23 @@
                 {:id           :jobs
                  :menu/name    "Jobs"
                  :section/name "Jobs"
-                 :see-all      (routes/path :jobsboard)}
+                 :cta-text     #(str "More " % " Jobs")
+                 :cta-link     #(routes/path :jobsboard :query-params {:search %})}
                 {:id           :companies
                  :menu/name    "Companies"
                  :section/name "Companies"
-                 :see-all      (routes/path :companies)}
+                 :cta-text     #(str "All Companies")
+                 :cta-link     #(routes/path :companies)}
                 {:id           :issues
                  :menu/name    "Issues"
                  :section/name "Issues"
-                 :see-all      (routes/path :issues)}
+                 :cta-text     #(str "All Issues")
+                 :cta-link     #(routes/path :issues)}
                 {:id           :articles
                  :menu/name    "Articles"
                  :section/name "Articles"
-                 :see-all      (routes/path :learn)}])
+                 :cta-text     #(str "All Articles")
+                 :cta-link     #(routes/path :learn)}])
 
 (def sections-coll
   (filter :section/name tabs-coll))
@@ -130,7 +134,7 @@
         [skeleton-result])
       (range n))]))
 
-(defn results-section [{:keys [search-result see-all] :as section}]
+(defn results-section [{:keys [search-result cta-link cta-text] :as section} query]
   (let [hits-counted (get search-result :nbHits 0)
         hits         (get search-result :hits)
         empty        (get search-result :empty)]
@@ -143,8 +147,8 @@
         (str " (" hits-counted ")")]]
 
       [:div (util/smc styles/results-section__header__button)
-       [c/section-button {:title (str "See " (str/lower-case (:section/name section)))
-                          :href  see-all
+       [c/section-button {:title (cta-text query)
+                          :href  (cta-link query)
                           :text  :default
                           :size  :small}]]]
 
@@ -156,7 +160,7 @@
           ^{:key objectID}
           [(result-by-type (:id section)) hit]))]]))
 
-(defn sections-separated [sections]
+(defn sections-separated [sections query]
   [:<>
    (->> sections
         (interpose :hr)
@@ -167,7 +171,7 @@
               [:hr]
 
               ^{:key id}
-              [results-section tab]))))])
+              [results-section tab query]))))])
 
 (defn tags-section [tags]
   [:div {:data-test "search-results-tags"}

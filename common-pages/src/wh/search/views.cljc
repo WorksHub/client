@@ -23,7 +23,7 @@
 
         [components/tabs {:go-to-tab go-to-tab}]
 
-        [components/sections-separated sections]])
+        [components/sections-separated sections query]])
 
      :clj (let [query         (<sub [::subs/query])
                 results-count nil]

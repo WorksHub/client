@@ -64,7 +64,7 @@
    {:path       (routes/path :create-company)
     :icon-name  "plus-circle"
     :icon-class styles/dropdown__link__icon-union
-    :text       "Create comapny"}])
+    :text       "Create company"}])
 
 
 (def articles-admin-submenu-list
