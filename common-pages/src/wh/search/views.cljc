@@ -31,4 +31,4 @@
              [components/results-title query results-count]
              [components/tabs {:go-to-tab identity}]
 
-             [components/sections-separated components/sections-coll]])))
+             [components/sections-separated components/sections-coll nil]])))

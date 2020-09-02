@@ -7,7 +7,6 @@
             [wh.common.upload :as upload]
             [wh.common.user :as common-user]
             [wh.components.button-auth :as button-auth]
-            [wh.components.cards :as cards]
             [wh.components.common :refer [link]]
             [wh.components.error.views :refer [error-box]]
             [wh.components.forms.views :refer [field-container
@@ -17,11 +16,10 @@
                                                text-field text-input
                                                avatar-field]]
             [wh.components.icons :refer [icon]]
-            [wh.components.issue :as issue]
             [wh.components.tag :as tag]
+            [wh.logged-in.profile.components :as components]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
-            [wh.logged-in.profile.components :as components]
             [wh.routes :as routes]
             [wh.subs :refer [<sub]]))
 
@@ -122,39 +120,49 @@
 
 ;; Profile header – edit
 
-(defn skill-rating [i rating]
+(defn- rating-points [i rating hover-rate active]
+  (for [digit (range 1 6)]
+    (if active
+      [icon (str "rating-" digit)
+       :class (when (= digit rating) "selected")
+       :on-mouse-over #(reset! hover-rate digit)
+       :on-mouse-out #(reset! hover-rate nil)
+       :on-mouse-down #(dispatch [::events/rate-skill i digit])]
+
+      [icon (str "rating-" digit)])))
+
+(defn skill-rating [i rating active]
   (let [hover-rate (reagent/atom nil)]
-    (fn [i rating]
+    (fn [i rating active]
       (let [rating (or @hover-rate rating 0)]
         (into
-         [:div.rating]
-         (for [digit (range 1 6)]
-           [icon (str "rating-" digit)
-            :class (when (= digit rating) "selected")
-            :on-mouse-over #(reset! hover-rate digit)
-            :on-mouse-out #(reset! hover-rate nil)
-            :on-mouse-down #(dispatch [::events/rate-skill i digit])]))))))
+          [:div.rating]
+          (rating-points i rating hover-rate active))))))
 
 (defn cancel-link
   ([] (cancel-link "button button--small"))
   ([class]
-   (let [candidate? (contains? #{:candidate-edit-header :candidate-edit-cv :candidate-edit-private} (<sub [:wh.pages.core/page]))]
+   (let [candidate? (contains? #{:candidate-edit-header :candidate-edit-cv
+                                 :candidate-edit-private}
+                               (<sub [:wh.pages.core/page]))]
      (if candidate?
        [link "Cancel" :candidate :id (:id (<sub [:wh/page-params])) :class class]
        [link "Cancel" :profile :class class]))))
 
 (defn skill-field [{:keys [name rating]}
                    {:keys [i label]}]
-  [:div.field.skill-field
-   (when label [:label.label label])
-   [:div.control
-    [:div.text-field-control
-     [:input.input {:value       name
-                    :placeholder "Type in a new skill"
-                    :data-test   "skill"
-                    :on-change   #(dispatch-sync
-                                    [::events/edit-skill i (-> % .-target .-value)])}]]
-    [skill-rating i rating]]])
+  (let [active-rating (not (str/blank? name))]
+    [:div.field.skill-field
+     (when label [:label.label label])
+     [:div.control
+      [:div.text-field-control
+       [:input.input {:value       name
+                      :placeholder "Type in a new skill"
+                      :data-test   "skill"
+                      :on-change   #(dispatch-sync
+                                      [::events/edit-skill i
+                                       (-> % .-target .-value)])}]]
+      [skill-rating i rating active-rating]]]))
 
 (defn header-edit []
   [:form.wh-formx.header-edit

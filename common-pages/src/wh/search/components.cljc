@@ -10,6 +10,7 @@
             [wh.styles.search :as styles]
             [wh.util :as util]))
 
+
 (defn job-result [{:keys [title company tagline slug]}]
   [:li
    [:a {:class (util/mc styles/result-card)
@@ -72,23 +73,24 @@
                 {:id           :jobs
                  :menu/name    "Jobs"
                  :section/name "Jobs"
-                 :cta-text     #(str "More " % " Jobs")
-                 :cta-link     #(routes/path :jobsboard :query-params {:search %})}
+                 :cta-text     (fn [x] (str "More " x " Jobs"))
+                 :cta-link     (fn [x]
+                                 (routes/path :jobsboard :query-params {:search x}))}
                 {:id           :companies
                  :menu/name    "Companies"
                  :section/name "Companies"
-                 :cta-text     #(str "All Companies")
-                 :cta-link     #(routes/path :companies)}
+                 :cta-text     (fn [_] (str "All Companies"))
+                 :cta-link     (fn [_] (routes/path :companies))}
                 {:id           :issues
                  :menu/name    "Issues"
                  :section/name "Issues"
-                 :cta-text     #(str "All Issues")
-                 :cta-link     #(routes/path :issues)}
+                 :cta-text     (fn [_] (str "All Issues"))
+                 :cta-link     (fn [_] (routes/path :issues))}
                 {:id           :articles
                  :menu/name    "Articles"
                  :section/name "Articles"
-                 :cta-text     #(str "All Articles")
-                 :cta-link     #(routes/path :learn)}])
+                 :cta-text     (fn [_] (str "All Articles"))
+                 :cta-link     (fn [_] (routes/path :learn))}])
 
 (def sections-coll
   (filter :section/name tabs-coll))
