@@ -109,11 +109,12 @@
        [:span (util/smc styles/company-info__job-count)
         info-str])]))
 
-(defn actions [{:keys [like-opts save-opts share-opts]
+(defn actions [{:keys [like-opts save-opts share-opts saved?]
                 :or   {like-opts {} save-opts {} share-opts {}}}]
   [:div (util/smc styles/actions)
    [:a (merge (util/smc styles/actions__action styles/actions__action--save) save-opts)
-    [icons/icon "save"]]])
+    [icons/icon "save"
+     :class (when saved? styles/actions__action--saved-icon)]]])
 
 (defn author [{:keys [img]} children]
   [:div (util/smc styles/author)

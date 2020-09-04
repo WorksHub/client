@@ -1,21 +1,20 @@
 (ns wh.admin.create-candidate.events
-  (:require
-    [camel-snake-kebab.core :as c]
-    [cljs-time.coerce :as tc]
-    [cljs-time.core :as t]
-    [clojure.string :as str]
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.admin.create-candidate.db :as sub-db]
-    [wh.common.fx.google-maps :as google-maps]
-    [wh.common.upload :as upload]
-    [wh.common.url :as url]
-    [wh.db :as db]
-    [wh.graphql.company :refer [fetch-tags]]
-    [wh.pages.core :as pages :refer [on-page-load]]
-    [wh.util :as util])
-  (:require-macros [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
+  (:require [cljs-time.coerce :as tc]
+            [cljs-time.core :as t]
+            [clojure.string :as str]
+            [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.admin.create-candidate.db :as sub-db]
+            [wh.common.fx.google-maps]
+            [wh.common.upload :as upload]
+            [wh.common.url :as url]
+            [wh.db :as db]
+            [wh.graphql.company :refer [fetch-tags]]
+            [wh.pages.core :as pages :refer [on-page-load]]
+            [wh.util :as util])
+  (:require-macros [wh.graphql-macros :refer [defquery]]))
 
-(def create-candidate-interceptors (into db/default-interceptors [(path ::sub-db/sub-db)]))
+(def create-candidate-interceptors
+  (into db/default-interceptors [(path ::sub-db/sub-db)]))
 
 (defquery fetch-companies
   {:venia/operation {:operation/type :query
@@ -27,7 +26,8 @@
                        :page_number 1
                        :page_size   10}
                       [[:pagination [:total :count :pageNumber]]
-                       [:companies [:id :name [:integrations [[:greenhouse [:enabled]]]]]]]]]})
+                       [:companies [:id :name
+                                    [:integrations [[:greenhouse [:enabled]]]]]]]]]})
 
 (reg-event-fx
   ::fetch-companies
@@ -79,7 +79,8 @@
 
 (doseq [[field {:keys [event?] :or {event? true}}] sub-db/fields
         :when event?
-        :let [event-name (keyword "wh.admin.create-candidate.events" (str "edit-" (name field)))
+        :let [event-name (keyword "wh.admin.create-candidate.events"
+                                  (str "edit-" (name field)))
               db-field (keyword "wh.admin.create-candidate.db" (name field))]]
   (reg-event-db event-name
                 create-candidate-interceptors
@@ -126,7 +127,8 @@
   create-candidate-interceptors
   (fn [{db :db} [retry-attempt result]]
     (if (and retry-attempt (> retry-attempt 2))
-      {:db (assoc db ::sub-db/location-search-error "Error searching location, please try again later")}
+      {:db (assoc db ::sub-db/location-search-error
+                  "Error searching location, please try again later")}
       (let [attempt (if-not retry-attempt 1 (inc retry-attempt))]
         {:dispatch [::search-location attempt]}))))
 
@@ -134,7 +136,8 @@
   ::select-location-suggestion
   create-candidate-interceptors
   (fn [db [id]]
-    (let [{:keys [label city country country-code administrative longitude latitude]} (nth (::sub-db/location-suggestions db) id)]
+    (let [{:keys [label city country country-code administrative longitude latitude]}
+          (nth (::sub-db/location-suggestions db) id)]
       (-> db
           (assoc ::sub-db/location__city city)
           (assoc ::sub-db/location__country country)
@@ -162,22 +165,27 @@
   (fn [db [id]]
     (assoc db
            ::sub-db/current-company id
-           ::sub-db/current-company-search (some #(when (= (:id %) id) (:name %)) (::sub-db/companies db)))))
+           ::sub-db/current-company-search
+           (some #(when (= (:id %) id) (:name %)) (::sub-db/companies db)))))
+
+
+(defn- process-location [i {:keys [_value administrative country country_code
+                                   locale_names _geoloc]}]
+  (cond-> {:id           i
+           :label        (str (first locale_names) ", " country)
+           :city         (first locale_names)
+           :country      country
+           :country-code (str/upper-case country_code)}
+          (seq administrative) (assoc :administrative (first administrative))
+          (seq _geoloc)        (assoc :longitude (:lng _geoloc)
+                                      :latitude (:lat _geoloc))))
 
 (reg-event-db
   ::process-search-location
   create-candidate-interceptors
   (fn [db [{:keys [hits]}]]
     (->> hits
-         (map-indexed (fn [i {:keys [value administrative country country_code locale_names _geoloc]}]
-                        (cond-> {:id           i
-                                 :label        (str (first locale_names) ", " country)
-                                 :city         (first locale_names)
-                                 :country      country
-                                 :country-code (str/upper-case country_code)}
-                    (seq administrative) (assoc :administrative (first administrative))
-                    (seq _geoloc) (assoc :longitude (:lng _geoloc)
-                                         :latitude (:lat _geoloc)))))
+         (map-indexed process-location)
          (assoc db ::sub-db/location-suggestions))))
 
 (reg-event-fx
@@ -185,22 +193,22 @@
   create-candidate-interceptors
   (fn [{db :db} _]
     (when-not (get db ::sub-db/available-tags)
-      ;;; FIXME: it should read {:graphql (fetch-tags ::fetch-tags-success)}, but when put in this way,
-      ;;; re-frame throws an error upon page load.
+      ;;; FIXME: it should read {:graphql (fetch-tags ::fetch-tags-success)},
+      ;;; but when put in this way, re-frame throws an error upon page load.
       {:graphql
-       {:query     #:venia{:operation #:operation{:type :query, :name "jobs_search"},
-                           :variables
-                           [#:variable{:name "vertical", :type :vertical}
-                            #:variable{:name "search_term", :type :String!}
-                            #:variable{:name "page", :type :Int!}],
-                           :queries
-                           [[:jobs_search
-                             {:vertical :$vertical,
-                              :search_term :$search_term,
-                              :page :$page,}
-                             [[:facets [:attr :value :count]]]]]},
+       {:query      #:venia{:operation #:operation{:type :query, :name "jobs_search"},
+                            :variables
+                            [#:variable{:name "vertical", :type :vertical}
+                             #:variable{:name "search_term", :type :String!}
+                             #:variable{:name "page", :type :Int!}],
+                            :queries
+                            [[:jobs_search
+                              {:vertical    :$vertical,
+                               :search_term :$search_term,
+                               :page        :$page,}
+                              [[:facets [:attr :value :count]]]]]},
         :variables  {:search_term "", :page 1, :vertical "functional"},
-        :on-success [:wh.admin.create-candidate.events/fetch-tags-success]}})))
+        :on-success [::fetch-tags-success]}})))
 
 (reg-event-db
   ::fetch-tags-success
@@ -217,14 +225,14 @@
   ::toggle-tech-tag
   create-candidate-interceptors
   (fn [{db :db} [tag]]
-    {:db (update db ::sub-db/tech-tags util/toggle {:tag tag :selected true})
+    {:db       (update db ::sub-db/tech-tags util/toggle {:tag tag :selected true})
      :dispatch [::edit-tech-tag-search ""]}))
 
 (reg-event-fx
   ::toggle-company-tag
   create-candidate-interceptors
   (fn [{db :db} [tag]]
-    {:db (update db ::sub-db/company-tags util/toggle {:tag tag :selected true})
+    {:db       (update db ::sub-db/company-tags util/toggle {:tag tag :selected true})
      :dispatch [::edit-company-tag-search ""]}))
 
 (reg-event-fx
@@ -243,45 +251,44 @@
                       [:id :email]]]})
 
 (defn db->location
-  [{:keys [::sub-db/email ::sub-db/name
-           ::sub-db/location__street ::sub-db/location__city
+  [{:keys [::sub-db/location__street ::sub-db/location__city
            ::sub-db/location__post-code ::sub-db/location__state
            ::sub-db/location__country ::sub-db/location__country-code
            ::sub-db/location__latitude ::sub-db/location__longitude]}]
-  {:street location__street
-   :post-code location__post-code
-   :city location__city
-   :state location__state
-   :country location__country
+  {:street       location__street
+   :post-code    location__post-code
+   :city         location__city
+   :state        location__state
+   :country      location__country
    :country-code location__country-code
-   :latitude location__latitude
-   :longitude location__longitude})
+   :latitude     location__latitude
+   :longitude    location__longitude})
 
 (defn db->graphql-user
   [{:keys [::sub-db/email ::sub-db/name ::sub-db/notify ::sub-db/tech-tags
            ::sub-db/company-tags ::sub-db/github-url ::sub-db/other-links
            ::sub-db/cv-url ::sub-db/cv-hash ::sub-db/cv-filename
            ::sub-db/current-company ::sub-db/current-company-search ::sub-db/phone]
-    :as db}]
+    :as   db}]
   (merge (util/transform-keys
-          {:email    email
-           :name     name
-           :phone    phone
-           :notify   notify
-           :reset-session false
-           :skills   (mapv #(hash-map :name (:tag %)) tech-tags)
-           :preferred-locations [(db->location db)]
-           :company-perks (mapv #(hash-map :name (:tag %)) company-tags)
-           :other-urls (->> (into [(when-not (str/blank? github-url)
-                                     {:title "GitHub", :url github-url})]
-                                  (map #(hash-map :url %) other-links))
-                            (remove (comp str/blank? :url))
-                            (map #(update % :url url/sanitize-url)))
-           :current-company-id current-company
-           :current-company-name current-company-search
-           :consented (-> (t/now) (tc/to-string))
-           :subscribed false
-           })
+           #(or (nil? %) (str/blank? %))
+           {:email                email
+            :name                 name
+            :phone                phone
+            :notify               notify
+            :reset-session        false
+            :skills               (mapv #(hash-map :name (:tag %)) tech-tags)
+            :preferred-locations  [(db->location db)]
+            :company-perks        (mapv #(hash-map :name (:tag %)) company-tags)
+            :other-urls           (->> (into [(when-not (str/blank? github-url)
+                                                {:title "GitHub", :url github-url})]
+                                             (map #(hash-map :url %) other-links))
+                                       (remove (comp str/blank? :url))
+                                       (map #(update % :url url/sanitize-url)))
+            :current-company-id   current-company
+            :current-company-name current-company-search
+            :consented            (-> (t/now) (tc/to-string))
+            :subscribed           false})
          (when (and cv-url cv-filename cv-hash)
            {:cv {:file {:url cv-url :name cv-filename :hash cv-hash}}})))
 
@@ -291,11 +298,10 @@
   (fn [{db :db} _]
     (let [errors (sub-db/invalid-fields db)]
       (if errors
-        {:db (-> db
-                 (assoc ::sub-db/form-errors (set errors)))
-         :dispatch-debounce {:id :scroll-to-error-after-pause
+        {:db                (-> db (assoc ::sub-db/form-errors (set errors)))
+         :dispatch-debounce {:id       :scroll-to-error-after-pause
                              :dispatch [::scroll-into-view (db/key->id (first errors))]
-                             :timeout 50}}
+                             :timeout  50}}
         {:graphql {:query      create-user-mutation
                    :variables  {:create_user (db->graphql-user db)}
                    :timeout    30000
@@ -308,7 +314,8 @@
   (fn [{db :db} [{{candidate :create_user} :data}]]
     (let [admins-email (get-in db [:wh.user.db/sub-db :wh.user.db/email])]
       {:navigate                       [:candidate :params {:id (:id candidate)}]
-       :register/track-account-created {:source admins-email :email (:email candidate)}})))
+       :register/track-account-created {:source admins-email
+                                        :email  (:email candidate)}})))
 
 (reg-event-db
   ::save-failure
@@ -322,7 +329,7 @@
   (fn [_ [id]]
     {:scroll-into-view id}))
 
-(defmethod on-page-load :create-candidate [db]
+(defmethod on-page-load :create-candidate [_db]
   [[:google/load-maps]
    [::initialize-db]
    [::fetch-tags]])

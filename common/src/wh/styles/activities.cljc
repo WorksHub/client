@@ -18,6 +18,7 @@
 (def actions "activities__actions--3mi_A")
 (def actions__action "activities__actions__action--1guVr")
 (def actions__action--save "activities__actions__action--save--3Nma8")
+(def actions__action--saved-icon "activities__actions__action--saved-icon--DKehT")
 (def button "activities__button--1Nq_Y")
 (def button--inverted "activities__button--inverted--1BM0H")
 (def button--short "activities__button--short--1-pEH")

@@ -1,6 +1,7 @@
 (ns wh.components.activities.job-published
-  (:require [wh.interop :as interop]
-            [wh.components.activities.components :as components]
+  (:require [wh.components.activities.components :as components]
+            [wh.interop :as interop]
+            [wh.re-frame.events :refer [dispatch]]
             [wh.routes :as routes]
             [wh.styles.activities :as styles]
             [wh.util :as util]))
@@ -27,7 +28,7 @@
    [components/tags tags]])
 
 (defn card
-  [{:keys [slug] :as job} type]
+  [{:keys [slug id] :as job} type {:keys [logged-in? saved-jobs]}]
   [components/card type
    [components/header
     [components/company-info (:job-company job)]
@@ -36,12 +37,16 @@
    [details job type]
    [components/footer :compound
     [components/actions
-     {:save-opts (interop/on-click-fn
-                   (interop/show-auth-popup
-                     :jobcard-apply
-                     [:job
-                      :params {:slug slug}
-                      :query-params {"apply" true "apply_source" "public-feed"}]))}]
+     {:saved?    (contains? saved-jobs id)
+      :save-opts (if logged-in?
+                   {:on-click #?(:cljs #(dispatch [:wh.events/toggle-job-like job])
+                                 :clj "")}
+                   (interop/on-click-fn
+                     (interop/show-auth-popup
+                       :jobcard-apply
+                       [:job
+                        :params {:slug slug}
+                        :query-params {"apply" true "apply_source" "public-feed"}])))}]
     [components/footer-buttons
      [components/button
       {:href (routes/path :jobsboard)
@@ -50,5 +55,3 @@
      [components/button
       {:href (routes/path :job :params {:slug slug})}
       "View job"]]]])
-
-

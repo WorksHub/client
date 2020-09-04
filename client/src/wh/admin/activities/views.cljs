@@ -24,7 +24,7 @@
                                       (or (or (:title object) (:name object))) ")")]
         [:a {:class    styles/show-hide
              :href     "#"
-             :on-click #(println (swap! expanded? not))}
+             :on-click #(swap! expanded? not)}
          (if @expanded? "Hide" "Show")]]
 
        (when @expanded?

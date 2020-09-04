@@ -21,34 +21,34 @@
 
 (defmulti activity-card (juxt :verb :object-type))
 
-(defmethod activity-card [:publish "company"] [activity]
+(defmethod activity-card [:publish "company"] [activity _opts]
   [company-published/card (:object activity) :publish])
 
-(defmethod activity-card [:publish "job"] [activity]
-  [job-published/card (:object activity) :publish])
+(defmethod activity-card [:publish "job"] [activity opts]
+  [job-published/card (:object activity) :publish opts])
 
-(defmethod activity-card [:publish "issue"] [activity]
+(defmethod activity-card [:publish "issue"] [activity _opts]
   [issue-published/card (:object activity) :publish])
 
-(defmethod activity-card [:publish "article"] [activity]
+(defmethod activity-card [:publish "article"] [activity _opts]
   [article-published/card (:object activity) :publish])
 
-(defmethod activity-card [:highlight "company"] [activity]
+(defmethod activity-card [:highlight "company"] [activity _opts]
   [company-published/card (:object activity) :highlight])
 
-(defmethod activity-card [:highlight "job"] [activity]
-  [job-published/card (:object activity) :highlight])
+(defmethod activity-card [:highlight "job"] [activity opts]
+  [job-published/card (:object activity) :highlight opts])
 
-(defmethod activity-card [:highlight "issue"] [activity]
+(defmethod activity-card [:highlight "issue"] [activity _opts]
   [issue-published/card (:object activity) :highlight])
 
-(defmethod activity-card [:highlight "article"] [activity]
+(defmethod activity-card [:highlight "article"] [activity _opts]
   [article-published/card (:object activity) :highlight])
 
-(defmethod activity-card [:start_issue "issue"] [activity]
+(defmethod activity-card [:start_issue "issue"] [activity _opts]
   [issue-started/card (:object activity) :start_issue])
 
-(defmethod activity-card :default [_activity]
+(defmethod activity-card :default [_activity _opts]
   nil)
 
 (defn tag-picker []
@@ -122,16 +122,20 @@
            ^{:key i}
            [activities/card-skeleton])]))
 
+;; FIXME: keyword params
 (defn activities-list
   [logged-in? candidate? jobs blogs issues show-recommendations?
-   vertical activities activities-loading? selected-tags not-enough-activities?]
+   vertical activities activities-loading? selected-tags not-enough-activities?
+   saved-jobs]
 
   (let [[group1 group2 group3 group4] (split-into-4-groups activities)
         display-additional-info?      (and (> (count activities)
                                               additional-info-threshold)
                                            (not logged-in?))
         older-than                    (:id (last activities))
-        newer-than                    (:id (first activities))]
+        newer-than                    (:id (first activities))
+        opts                          {:logged-in? logged-in?
+                                       :saved-jobs saved-jobs}]
     [:div {:class styles/main-column}
      (when candidate?
        [:<>
@@ -148,23 +152,23 @@
                 (= 0 (count activities)))
        [activities/card-not-found selected-tags])
      (for [activity group1]
-       ^{:key (:id activity)} [:div (activity-card activity)])
+       ^{:key (:id activity)} [:div (activity-card activity opts)])
      (when display-additional-info?
        [stat-card/about-applications vertical])
      (for [activity group2]
-       ^{:key (:id activity)} [:div (activity-card activity)])
+       ^{:key (:id activity)} [:div (activity-card activity opts)])
      (when (and display-additional-info? (not logged-in?))
        [attract-card/signin])
      (when display-additional-info?
        [stat-card/about-open-source vertical])
      (for [activity group3]
-       ^{:key (:id activity)} [:div (activity-card activity)])
+       ^{:key (:id activity)} [:div (activity-card activity opts)])
      (when display-additional-info?
        [stat-card/about-salary-increase vertical])
      [newsletter/newsletter {:logged-in? logged-in?
                              :type       :landing}]
      (for [activity group4]
-       ^{:key (:id activity)} [:div (activity-card activity)])
+       ^{:key (:id activity)} [:div (activity-card activity opts)])
 
      (when not-enough-activities?
        [:<>
@@ -178,13 +182,14 @@
         activities-loading?    (<sub [::subs/recent-activities-loading?])
         selected-tags          (<sub [::subs/selected-tags])
         candidate?             (<sub [::subs/candidate?])
-        not-enough-activities? (<sub [::subs/not-enough-activities?])]
+        not-enough-activities? (<sub [::subs/not-enough-activities?])
+        saved-jobs             (<sub [:user/liked-jobs])]
     (if activities-loading?
       [activities-loading candidate?]
-
       [activities-list
        logged-in? candidate? jobs blogs issues show-recommendations? vertical
-       activities activities-loading? selected-tags not-enough-activities?])))
+       activities activities-loading? selected-tags not-enough-activities?
+       saved-jobs])))
 
 
 (defn page []
