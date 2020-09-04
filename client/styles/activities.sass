@@ -4,6 +4,8 @@
 @import 'mixins'
 @import 'animations'
 
+$action-block-height: 25px
+
 .card
   background-color: $background-white
   box-shadow: 0 4px 8px $card-shadow-color
@@ -117,16 +119,54 @@
   margin-right: 16px
 
 .actions
+  display: block
+  width: 100%
+  max-height: $action-block-height
+  height: $action-block-height
+  overflow-y: hidden
+  position: relative
+  overflow-x: hidden
+
+.actions__inner
+  position: absolute
+  top: calc(-#{$action-block-height} - 4px)
+  transition: top ease-out 0.2s
+  &--open
+    top: 0px
+
+.actions__share
+  display: grid
   align-items: center
-  display: flex
+  height: $action-block-height
+  grid-template-columns: repeat(5, 25px)
+  grid-gap: 10px
+  margin-top: 1px
+
+.actions__share-button
+  cursor: pointer
+
+.actions__share-button--center
+  margin: 0 auto
+
+.actions__share-image
+  border-radius: 4px
+
+.actions__container
+  display: grid
+  grid-template-columns: repeat(4, 25px)
+  grid-gap: 10px
+  margin-top: 4px
 
 .actions__action
   display: block
-  margin-right: 22px
-  &--save
+  &--save, &--share
     fill: $grey500
-    height: 20px
-    width: 16px
+    svg
+      height: 18px
+      width: 20px
+  &--share
+    +mobile
+      display: none
   &--saved-icon
     fill: $primary-red
 
@@ -162,6 +202,7 @@
     background: transparent
     border: none
     color: $primary-red
+    padding: 0 20px
   &--short
     padding: 0 40px
 

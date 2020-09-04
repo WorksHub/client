@@ -1,5 +1,6 @@
 (ns wh.components.activities.issue-started
   (:require [wh.common.text :as text]
+            [wh.common.url :as url]
             [wh.components.activities.components :as components]
             [wh.components.common :refer [link wrap-img img base-img]]
             [wh.routes :as routes]
@@ -41,12 +42,21 @@
     title]])
 
 (defn card
-  [{:keys [id issue-contributor] :as issue}
-   type]
+  [{:keys [id issue-contributor title] :as issue} type
+   {:keys [base-uri vertical facebook-app-id]}]
   [components/card type
    [issue-contributor-component issue-contributor]
    [inner-card issue]
    [components/footer :default
+    (let [url (str (url/strip-path base-uri)
+                   (routes/path :issue :params {:id id}))]
+      [components/actions
+       {:share-opts {:url             url
+                     :id              id
+                     :content-title   title
+                     :content         "this Open Source issue getting some attention over"
+                     :vertical        vertical
+                     :facebook-app-id facebook-app-id}}])
     [components/footer-buttons
      [components/button
       {:href (routes/path :issues)

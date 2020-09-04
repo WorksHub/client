@@ -1,5 +1,6 @@
 (ns wh.components.activities.issue-published
   (:require [clojure.string :as str]
+            [wh.common.url :as url]
             [wh.components.activities.components :as components]
             [wh.routes :as routes]
             [wh.styles.activities :as styles]
@@ -8,9 +9,9 @@
 (defn issue->status [{:keys [status pr-count contributors] :as issue}]
   (if (= :open (keyword status))
     (cond
-      (and pr-count (pos? pr-count)) "submitted"
+      (and pr-count (pos? pr-count))                 "submitted"
       (and contributors (pos? (count contributors))) "started"
-      :else "open")
+      :else                                          "open")
     "closed"))
 
 (defn details [{:keys [id title contributors-count level pr-count repo compensation] :as issue} entity-type]
@@ -32,7 +33,9 @@
      [components/primary-language repo]
      [components/compensation-amount compensation]]]])
 
-(defn card [{:keys [id body] :as issue} type]
+(defn card
+  [{:keys [id body title] :as issue} type
+   {:keys [base-uri vertical facebook-app-id]}]
   [components/card type
    [components/header
     [components/company-info (:issue-company issue)]
@@ -40,6 +43,15 @@
    [components/description {:type :cropped} body]
    [details issue type]
    [components/footer :default
+    (let [url (str (url/strip-path base-uri)
+                   (routes/path :issue :params {:id id}))]
+      [components/actions
+       {:share-opts {:url             url
+                     :id              id
+                     :content-title   title
+                     :content         (str "this " (if (= type :publish) "new " "") "Open Source issue from " (get-in issue [:issue-company :name]))
+                     :vertical        vertical
+                     :facebook-app-id facebook-app-id}}])
     [components/footer-buttons
      [components/button
       {:href (routes/path :issues)

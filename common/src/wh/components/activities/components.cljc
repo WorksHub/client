@@ -1,14 +1,17 @@
 (ns wh.components.activities.components
   (:require [clojure.string :as str]
             [wh.common.data :refer [currency-symbols]]
+            [wh.common.text :as text]
             [wh.components.common :refer [link wrap-img img base-img]]
             [wh.components.icons :as icons]
             [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
+            [wh.interop :as interop]
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.styles.activities :as styles]
-            [wh.util :as util]))
+            [wh.util :as util]
+            [wh.verticals :as verticals]))
 
 (defn keyed-collection [children]
   (->> children
@@ -33,7 +36,7 @@
 
 (def title-class
   {:medium styles/title
-   :large (util/mc styles/title styles/title--large)})
+   :large  (util/mc styles/title styles/title--large)})
 
 (defn title
   [{:keys [href type margin]
@@ -83,11 +86,11 @@
   [:div (util/smc styles/entity-description
                   [(= entity-type :highlight) styles/entity-description--highlight])
    (cond->> (case type
-              :blog "Article"
-              :issue "Issue"
+              :blog    "Article"
+              :issue   "Issue"
               :company "Company"
-              :job "Job")
-            (= :publish entity-type) (str "New ")
+              :job     "Job")
+            (= :publish entity-type)   (str "New ")
             (= :highlight entity-type) (conj [:span (util/smc styles/entity-description--icon-wrapper)
                                               [:span (util/smc styles/entity-description--adjective) "Trending "]
                                               [icons/icon "trends" :class styles/entity-description--icon]]))])
@@ -109,12 +112,72 @@
        [:span (util/smc styles/company-info__job-count)
         info-str])]))
 
-(defn actions [{:keys [like-opts save-opts share-opts saved?]
-                :or   {like-opts {} save-opts {} share-opts {}}}]
-  [:div (util/smc styles/actions)
-   [:a (merge (util/smc styles/actions__action styles/actions__action--save) save-opts)
-    [icons/icon "save"
-     :class (when saved? styles/actions__action--saved-icon)]]])
+(defn share-controls
+  [share-opts share-id share-toggle-on-click]
+  (let [social-button-opts (merge share-toggle-on-click
+                                  {:class  styles/actions__share-button
+                                   :rel    "noopener"
+                                   :target "_blank"})]
+    [:div (util/smc styles/actions__share)
+     [:a
+      (merge social-button-opts
+             {:href (text/format
+                      "https://twitter.com/intent/tweet?text=Check out %s at %s %s"
+                      (:content share-opts)
+                      (verticals/config (:vertical share-opts) :twitter)
+                      (:url share-opts))})
+      [:img {:class styles/actions__share-image
+             :src   "/images/share-twitter.svg"}]]
+     [:a
+      (merge social-button-opts
+             {:href (text/format
+                      "https://www.linkedin.com/shareArticle?mini=true&url=%s&title=%s&summary=Check+out+%s+at+%s&source=%s"
+                      (:url share-opts)
+                      (:content-title share-opts)
+                      (:content share-opts)
+                      (verticals/config (:vertical share-opts) :platform-name)
+                      (verticals/config (:vertical share-opts) :platform-name))})
+      [:img {:class styles/actions__share-image
+             :src   "/images/share-linkedin.svg"}]]
+     [:a
+      (merge social-button-opts
+             {:href (text/format
+                      "https://www.facebook.com/dialog/share?app_id=%s&display=popup&href=%s&quote=Check+out+%s+at+%s"
+                      (:facebook-app-id share-opts)
+                      (:url share-opts)
+                      (:content share-opts)
+                      (verticals/config (:vertical share-opts) :platform-name))})
+      [:img {:class styles/actions__share-image
+             :src   "/images/share-facebook.svg"}]]
+     [:div (merge (interop/multiple-on-click
+                    share-toggle-on-click
+                    (interop/copy-str-to-clipboard-on-click (:url share-opts)))
+                  (util/smc styles/actions__share-button styles/actions__share-button--center))
+      [icons/icon "copy"]]
+     [:a (merge share-toggle-on-click
+                (util/smc styles/actions__share-button))
+      [icons/icon "close"]]]))
+
+(defn actions [{:keys [like-opts save-opts share-opts saved?]}]
+  (let [share-id              (str (gensym "actions") "-" (:id share-opts))
+        share-toggle-on-click (interop/toggle-class-on-click share-id styles/actions__inner--open)]
+    [:div (util/smc styles/actions)
+     [:div {:class (util/mc styles/actions__inner)
+            :id    share-id}
+      ;;
+      (when share-opts
+        [share-controls share-opts share-id share-toggle-on-click])
+      ;;
+      [:div (util/smc styles/actions__container)
+       (when save-opts
+         [:a (merge (util/smc styles/actions__action
+                              styles/actions__action--save) save-opts)
+          [icons/icon "save"
+           :class (when saved? styles/actions__action--saved-icon)]])
+       (when share-opts
+         [:a (merge (util/smc styles/actions__action styles/actions__action--share)
+                    share-toggle-on-click)
+          [icons/icon "network"]])]]]))
 
 (defn author [{:keys [img]} children]
   [:div (util/smc styles/author)

@@ -125,6 +125,10 @@
   []
   (on-click-fn (jsf (agreeToTracking))))
 
+(defn copy-str-to-clipboard-on-click
+  [s]
+  (on-click-fn (jsf (copyStringToClipboard s))))
+
 (defn multiple-on-click
   [& fns]
   (let [fns (remove nil? fns)]

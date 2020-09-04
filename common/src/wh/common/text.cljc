@@ -1,5 +1,7 @@
 (ns wh.common.text
-  (:require [clojure.string :as str]))
+  (:require #?(:cljs [goog.string :as gstring])
+            #?(:cljs [goog.string.format])
+            [clojure.string :as str]))
 
 (defn pluralize
   ([n singular] (pluralize n singular (str singular "s")))
@@ -37,3 +39,6 @@
       (str/replace #"<" "&lt;")
       (str/replace #">" "&gt;")
       (str/replace #"\"" "&quot;")))
+
+(def format #?(:cljs gstring/format
+               :clj clojure.core/format))

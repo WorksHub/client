@@ -86,6 +86,12 @@ That’s expected too. Use logging in by emails.
 
 File an issue on GitHub. We also tend to hang out on Clojurians Slack in the #workshub channel.
 
+## Attributions
+
+This list is incomplete:
+ - General Icons from Feather Icons (https://feathericons.com/)
+ - Social Media Icons from FlatIcon (https://www.flaticon.com/packs/social-networks-logos-2)
+
 ## License
 
 Copyright © WorksHub

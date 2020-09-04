@@ -1,5 +1,6 @@
 (ns wh.landing-new.views
   (:require #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
+            [wh.common.url :as url]
             [wh.components.activities.article-published :as article-published]
             [wh.components.activities.company-published :as company-published]
             [wh.components.activities.components :as activities]
@@ -21,32 +22,32 @@
 
 (defmulti activity-card (juxt :verb :object-type))
 
-(defmethod activity-card [:publish "company"] [activity _opts]
-  [company-published/card (:object activity) :publish])
+(defmethod activity-card [:publish "company"] [activity opts]
+  [company-published/card (:object activity) :publish opts])
 
 (defmethod activity-card [:publish "job"] [activity opts]
   [job-published/card (:object activity) :publish opts])
 
-(defmethod activity-card [:publish "issue"] [activity _opts]
-  [issue-published/card (:object activity) :publish])
+(defmethod activity-card [:publish "issue"] [activity opts]
+  [issue-published/card (:object activity) :publish opts])
 
-(defmethod activity-card [:publish "article"] [activity _opts]
-  [article-published/card (:object activity) :publish])
+(defmethod activity-card [:publish "article"] [activity opts]
+  [article-published/card (:object activity) :publish opts])
 
-(defmethod activity-card [:highlight "company"] [activity _opts]
-  [company-published/card (:object activity) :highlight])
+(defmethod activity-card [:highlight "company"] [activity opts]
+  [company-published/card (:object activity) :highlight opts])
 
 (defmethod activity-card [:highlight "job"] [activity opts]
   [job-published/card (:object activity) :highlight opts])
 
-(defmethod activity-card [:highlight "issue"] [activity _opts]
-  [issue-published/card (:object activity) :highlight])
+(defmethod activity-card [:highlight "issue"] [activity opts]
+  [issue-published/card (:object activity) :highlight opts])
 
-(defmethod activity-card [:highlight "article"] [activity _opts]
-  [article-published/card (:object activity) :highlight])
+(defmethod activity-card [:highlight "article"] [activity opts]
+  [article-published/card (:object activity) :highlight opts])
 
-(defmethod activity-card [:start_issue "issue"] [activity _opts]
-  [issue-started/card (:object activity) :start_issue])
+(defmethod activity-card [:start_issue "issue"] [activity opts]
+  [issue-started/card (:object activity) :start_issue opts])
 
 (defmethod activity-card :default [_activity _opts]
   nil)
@@ -101,7 +102,7 @@
 
 (defn right-column [jobs jobs-loading? show-recommendations? issues issues-loading?
                     company? users users-loading?]
-  [:div {:class styles/side-column
+  [:div {:class     styles/side-column
          :data-test "recommended-jobs-desktop"}
    [side-cards/jobs {:jobs                  jobs
                      :loading?              jobs-loading?
@@ -122,11 +123,10 @@
            ^{:key i}
            [activities/card-skeleton])]))
 
-;; FIXME: keyword params
 (defn activities-list
-  [logged-in? candidate? jobs blogs issues show-recommendations?
-   vertical activities activities-loading? selected-tags not-enough-activities?
-   saved-jobs]
+  [{:keys [logged-in? candidate? jobs blogs issues show-recommendations?
+           vertical activities activities-loading? selected-tags not-enough-activities?
+           saved-jobs environment facebook-app-id]}]
 
   (let [[group1 group2 group3 group4] (split-into-4-groups activities)
         display-additional-info?      (and (> (count activities)
@@ -134,8 +134,11 @@
                                            (not logged-in?))
         older-than                    (:id (last activities))
         newer-than                    (:id (first activities))
-        opts                          {:logged-in? logged-in?
-                                       :saved-jobs saved-jobs}]
+        opts                          {:logged-in?      logged-in?
+                                       :saved-jobs      saved-jobs
+                                       :base-uri        (url/vertical-homepage-href environment vertical)
+                                       :vertical        vertical
+                                       :facebook-app-id facebook-app-id}]
     [:div {:class styles/main-column}
      (when candidate?
        [:<>
@@ -183,13 +186,26 @@
         selected-tags          (<sub [::subs/selected-tags])
         candidate?             (<sub [::subs/candidate?])
         not-enough-activities? (<sub [::subs/not-enough-activities?])
-        saved-jobs             (<sub [:user/liked-jobs])]
+        facebook-app-id        (<sub [::subs/facebook-app-id])
+        saved-jobs             (<sub [:user/liked-jobs])
+        environment            (<sub [:wh/env])]
     (if activities-loading?
       [activities-loading candidate?]
       [activities-list
-       logged-in? candidate? jobs blogs issues show-recommendations? vertical
-       activities activities-loading? selected-tags not-enough-activities?
-       saved-jobs])))
+       {:activities             activities
+        :activities-loading?    activities-loading?
+        :blogs                  blogs
+        :candidate?             candidate?
+        :environment            environment
+        :facebook-app-id        facebook-app-id
+        :issues                 issues
+        :jobs                   jobs
+        :logged-in?             logged-in?
+        :not-enough-activities? not-enough-activities?
+        :saved-jobs             saved-jobs
+        :selected-tags          selected-tags
+        :show-recommendations?  show-recommendations?
+        :vertical               vertical}])))
 
 
 (defn page []

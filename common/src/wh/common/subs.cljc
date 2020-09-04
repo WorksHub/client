@@ -155,3 +155,8 @@
   :<- [:wh/vertical]
   (fn [vertical _]
     (verticals/config vertical :twitter)))
+
+(reg-sub
+  :wh/env
+  (fn [db _]
+    (:wh.settings/environment db)))

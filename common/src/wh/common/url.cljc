@@ -30,6 +30,22 @@
          (catch Exception e
            (error "Failed to parse URI:" uri))))))
 
+(defn strip-path [uri]
+  (let [uri (str/trim uri)]
+    #?(:cljs
+       (try
+         (let [u    (uri/parse uri)
+               port (.getPort u)]
+           (str (.getScheme u) "://" (.getDomain u) (when (and port (pos-int? port)) (str ":" port))))
+         (catch js/Error _)))
+    #?(:clj
+       (try
+         (let [u    (java.net.URI. uri)
+               port (.getPort u)]
+           (str (.getScheme u) "://" (.getHost u) (when (and port (pos-int? port)) (str ":" port))))
+         (catch Exception e
+           (error "Failed to parse URI:" uri))))))
+
 (defn has-domain? [uri]
   (not (nil? (uri->domain uri))))
 

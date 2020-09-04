@@ -1,5 +1,6 @@
 (ns wh.components.activities.article-published
-  (:require [wh.components.activities.components :as components]
+  (:require [wh.common.url :as url]
+            [wh.components.activities.components :as components]
             [wh.components.common :refer [link wrap-img img base-img]]
             [wh.components.icons :as icons]
             [wh.routes :as routes]
@@ -24,7 +25,8 @@
 (defn card
   [{:keys [title tags id author author-info reading-time display-date upvote-count]
     :as   blog}
-   type]
+   type
+   {:keys [base-uri vertical facebook-app-id]}]
   [components/card type
    [image blog]
    [:div (util/smc styles/article__content-wrapper)
@@ -41,6 +43,15 @@
        {:date display-date :reading-time reading-time}]]
      [components/tags tags]]]
    [components/footer :default
+    (let [url (str (url/strip-path base-uri)
+                   (routes/path :blog :params {:id id}))]
+      [components/actions
+       {:share-opts {:url             url
+                     :id              id
+                     :content-title   title
+                     :content         (str "'" title "'" (if (= type :publish) ", a brand new " ", an ") "article from " author)
+                     :vertical        vertical
+                     :facebook-app-id facebook-app-id}}])
     [components/footer-buttons
      [components/button
       {:href (routes/path :learn)

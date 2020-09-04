@@ -1,5 +1,6 @@
 (ns wh.components.activities.job-published
-  (:require [wh.components.activities.components :as components]
+  (:require [wh.common.url :as url]
+            [wh.components.activities.components :as components]
             [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch]]
             [wh.routes :as routes]
@@ -28,7 +29,8 @@
    [components/tags tags]])
 
 (defn card
-  [{:keys [slug id] :as job} type {:keys [logged-in? saved-jobs]}]
+  [{:keys [slug id title] :as job} type
+   {:keys [logged-in? saved-jobs base-uri vertical facebook-app-id]}]
   [components/card type
    [components/header
     [components/company-info (:job-company job)]
@@ -36,17 +38,25 @@
    [components/description {:type :cropped} (:tagline job)]
    [details job type]
    [components/footer :compound
-    [components/actions
-     {:saved?    (contains? saved-jobs id)
-      :save-opts (if logged-in?
-                   {:on-click #?(:cljs #(dispatch [:wh.events/toggle-job-like job])
-                                 :clj "")}
-                   (interop/on-click-fn
-                     (interop/show-auth-popup
-                       :jobcard-apply
-                       [:job
-                        :params {:slug slug}
-                        :query-params {"apply" true "apply_source" "public-feed"}])))}]
+    (let [url (str (url/strip-path base-uri)
+                   (routes/path :job :params {:slug slug}))]
+      [components/actions
+       {:share-opts {:url             url
+                     :id              id
+                     :content-title   title
+                     :content         (str "this " (if (= type :publish) "new " "") title " job")
+                     :vertical        vertical
+                     :facebook-app-id facebook-app-id}
+        :saved?     (contains? saved-jobs id)
+        :save-opts  (if logged-in?
+                      {:on-click #?(:cljs #(dispatch [:wh.events/toggle-job-like job])
+                                    :clj "")}
+                      (interop/on-click-fn
+                        (interop/show-auth-popup
+                          :jobcard-apply
+                          [:job
+                           :params {:slug slug}
+                           :query-params {"apply" true "apply_source" "public-feed"}])))}])
     [components/footer-buttons
      [components/button
       {:href (routes/path :jobsboard)
