@@ -4,6 +4,7 @@
             [clojure.string :as str]
             [re-frame.core :refer [path reg-event-db reg-event-fx]]
             [wh.admin.create-candidate.db :as sub-db]
+            [wh.common.data :as data]
             [wh.common.fx.google-maps]
             [wh.common.upload :as upload]
             [wh.common.url :as url]
@@ -12,6 +13,7 @@
             [wh.pages.core :as pages :refer [on-page-load]]
             [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
+
 
 (def create-candidate-interceptors
   (into db/default-interceptors [(path ::sub-db/sub-db)]))
@@ -258,7 +260,7 @@
   {:street       location__street
    :post-code    location__post-code
    :city         location__city
-   :state        location__state
+   :state        (get data/us-states location__state)
    :country      location__country
    :country-code location__country-code
    :latitude     location__latitude
