@@ -145,11 +145,13 @@ $homepage-max-width: 1084px
     +mobile
       margin-bottom: 24px
 
-.homepage__features
+.homepage__features,
+.homepage__integrations
   +desktop
     margin-bottom: 40px !important
 
-.homepage__feature-column
+.homepage__feature-column,
+.homepage__integration-column
   display: flex
   font-family: $family-secondary
   font-weight: $font-regular
@@ -158,7 +160,8 @@ $homepage-max-width: 1084px
   +desktop
     flex-direction: column
 
-.homepage__feature-column__img-container
+.homepage__feature-column__img-container,
+.homepage__integration-column__img-container
   display: flex
   align-items: center
   +desktop
@@ -175,8 +178,17 @@ $homepage-max-width: 1084px
     +mobile
       width: 85%
 
-.homepage__feature-column__description-container
-  margin: auto 0;
+.homepage__integration-column__img
+  max-width: 100px
+
+.homepage__integration-column__img-slack
+  max-width: 150px
+
+.homepage__integration-column__img-webhooks
+  max-width: 120px
+
+.homepage__feature-column__description-container,
+.homepage__integration-column__description-container
   text-align: left;
   +desktop
     padding: 0 12px;

@@ -35,34 +35,48 @@
 
 (def features-data
   [{:description "Targeted promotion of your job post to relevant members"
-    :img "/images/homepage/feature01.svg"
-    :id :promo}
+    :img         "/images/homepage/feature01.svg"
+    :id          :promo}
    {:description "Easy-to-use tools to track and share applicants"
-    :img "/images/homepage/feature02.svg"
-    :id :tools}
+    :img         "/images/homepage/feature02.svg"
+    :id          :tools}
    {:description "Connect with GitHub and get contributions to your open source code"
-    :img "/images/homepage/feature03.svg"
-    :id :analytics}
+    :img         "/images/homepage/feature03.svg"
+    :id          :analytics}
    {:description "Recommended candidates who are matched to your job"
-    :img "/images/homepage/feature04.svg"
-    :id :recommendations}])
+    :img         "/images/homepage/feature04.svg"
+    :id          :recommendations}])
+
+(def integrations-data
+  [{:description "Get notifications in Slack when people apply to your jobs or start work on your Open Source issues"
+    :img         "/images/company/slack-icon.svg"
+    :id          :slack}
+   {:description "Applications automatically forwarded from WorksHub into Greenhouse"
+    :img         "/images/company/greenhouse-icon.svg"
+    :id          :greenhouse}
+   {:description "Keep your setup in Workable and let WorksHub push applications in real-time"
+    :img         "/images/company/workable-icon.svg"
+    :id          :workable}
+   {:description "Got your own ATS? Webhooks coming soon..."
+    :img         "/images/company/webhooks.svg"
+    :id          :webhooks}])
 
 (def testimonials-data
-  [{:quote "WorksHub’s understanding of the market and other companies in the space has contributed heavily to our ability to develop and expand our team of Haskell and PureScript developers."
+  [{:quote  "WorksHub’s understanding of the market and other companies in the space has contributed heavily to our ability to develop and expand our team of Haskell and PureScript developers."
     :source "Will Jones, VP of Engineering"
-    :logo "/images/homepage/logos/habito.png"}
-   {:quote "WorksHub has consistently been able to deliver an excellent standard of candidate and we have been successful in recruiting for our needs in the knowledge that they have a thorough understanding of our growth requirements."
+    :logo   "/images/homepage/logos/habito.png"}
+   {:quote  "WorksHub has consistently been able to deliver an excellent standard of candidate and we have been successful in recruiting for our needs in the knowledge that they have a thorough understanding of our growth requirements."
     :source "Chris Percival, CTO"
-    :logo "/images/homepage/logos/inchora.png"}
-   {:quote "WorksHub is not only able to consistently find top-tier talent in a hyper-competitive market for Engineering hires but also takes the time to deeply understand our business and culture to ensure a great match and a great interview experience. They are the best in the game!"
+    :logo   "/images/homepage/logos/inchora.png"}
+   {:quote  "WorksHub is not only able to consistently find top-tier talent in a hyper-competitive market for Engineering hires but also takes the time to deeply understand our business and culture to ensure a great match and a great interview experience. They are the best in the game!"
     :source "Greg Ratner, CTO "
-    :logo "/images/homepage/logos/troops.svg"}
-   {:quote "WorksHub has been an invaluable way to find amazing talent. No one comes close to their depth of experience"
+    :logo   "/images/homepage/logos/troops.svg"}
+   {:quote  "WorksHub has been an invaluable way to find amazing talent. No one comes close to their depth of experience"
     :source "Reuben, CTO"
-    :logo "/images/homepage/logos/avantstay.png"}
-   {:quote "WorksHub has enabled us to constantly find out the great talents of Scala and functional programming globally and keep us very competitive in Japan to grow rapidly."
+    :logo   "/images/homepage/logos/avantstay.png"}
+   {:quote  "WorksHub has enabled us to constantly find out the great talents of Scala and functional programming globally and keep us very competitive in Japan to grow rapidly."
     :source "Ken Izumi, VP Engineering"
-    :logo "/images/homepage/logos/paidy.svg"}])
+    :logo   "/images/homepage/logos/paidy.svg"}])
 
 (defn header
   [market]
@@ -88,6 +102,19 @@
        [:img {:src img
               :alt ""}]]
       [:div.homepage__feature-column__description-container
+       [:span description]]])])
+
+(defn integrations
+  []
+  [:div.columns.homepage__integrations
+   (for [{:keys [description img id]} integrations-data]
+     ^{:key id}
+     [:div.column.homepage__integration-column
+      [:div.homepage__integration-column__img-container
+       [:img {:class (str "homepage__integration-column__img homepage__integration-column__img-" (name id))
+              :src   img
+              :alt   ""}]]
+      [:div.homepage__integration-column__description-container
        [:span description]]])])
 
 (defn walkthrough
@@ -217,6 +244,8 @@
         [:h2 "THE NEW STANDARD FOR TECHNICAL HIRING"]
         [:h3 "How it works"]
         (features)
+        [:h2 "INTEGRATIONS"]
+        (integrations)
         [:div.homepage__feature-ctas
          ;; TODO ABOUT US PAGE
          #_(link [:button.button.button--inverted
