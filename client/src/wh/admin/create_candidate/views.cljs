@@ -91,13 +91,12 @@
     [:h2 "Candidate preferences"]
     [tags-field
      (<sub [::subs/tech-tag-search])
-     (field ::create-candidate/tech-tags
-            :label        "* Technology"
-            :placeholder  "e.g. Clojure, Haskell, Scala"
-            :on-change    [::events/edit-tech-tag-search]
-            :on-tag-click #(dispatch [::events/toggle-tech-tag (:tag %)])
-            :on-add-tag   #(dispatch [::events/toggle-tech-tag %])
-            :tags         (<sub [::subs/matching-tech-tags]))]
+     {:label              "* Technology"
+      :id                 "_wh_company_create-candidate_db_tags"
+      :placeholder        "e.g. Clojure, Haskell, Scala"
+      :tags               (<sub [::subs/matching-tech-tags])
+      :on-change          [::events/edit-tech-tag-search]
+      :on-tag-click       #(dispatch [::events/toggle-tech-tag %])}]
     [tags-field
      (<sub [::subs/company-tag-search])
      (field ::create-candidate/company-tags

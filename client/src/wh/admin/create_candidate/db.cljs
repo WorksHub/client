@@ -12,13 +12,11 @@
 (s/def ::tags (s/coll-of any? :min-count 1))
 
 (def fields
-  {::name                {:order 0 :initial "", :validate ::p/non-empty-string}
-   ::email               {:order 1 :initial "", :validate ::p/email}
-   ::phone               {:order 2 :initial ""}
-    ::notify              {:order 3 :initial true}
-
-   ::location-search       {:order 30 :initial "" :event? false}
-
+  {::name                   {:order 0 :initial "", :validate ::p/non-empty-string}
+   ::email                  {:order 1 :initial "", :validate ::p/email}
+   ::phone                  {:order 2 :initial ""}
+   ::notify                 {:order 3 :initial true}
+   ::location-search        {:order 30 :initial "" :event? false}
    ::current-company        {:order 40, :initial nil}
    ::current-company-search {:order 41, :initial ""}
    ::resume-url             {:order 50, :initial nil}

@@ -9,11 +9,9 @@
             [wh.common.upload :as upload]
             [wh.common.url :as url]
             [wh.db :as db]
-            [wh.graphql.company :refer [fetch-tags]]
             [wh.pages.core :as pages :refer [on-page-load]]
             [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
-
 
 (def create-candidate-interceptors
   (into db/default-interceptors [(path ::sub-db/sub-db)]))
@@ -192,43 +190,17 @@
 
 (reg-event-fx
   ::fetch-tags
-  create-candidate-interceptors
-  (fn [{db :db} _]
-    (when-not (get db ::sub-db/available-tags)
-      ;;; FIXME: it should read {:graphql (fetch-tags ::fetch-tags-success)},
-      ;;; but when put in this way, re-frame throws an error upon page load.
-      {:graphql
-       {:query      #:venia{:operation #:operation{:type :query, :name "jobs_search"},
-                            :variables
-                            [#:variable{:name "vertical", :type :vertical}
-                             #:variable{:name "search_term", :type :String!}
-                             #:variable{:name "page", :type :Int!}],
-                            :queries
-                            [[:jobs_search
-                              {:vertical    :$vertical,
-                               :search_term :$search_term,
-                               :page        :$page,}
-                              [[:facets [:attr :value :count]]]]]},
-        :variables  {:search_term "", :page 1, :vertical "functional"},
-        :on-success [::fetch-tags-success]}})))
-
-(reg-event-db
-  ::fetch-tags-success
-  create-candidate-interceptors
-  (fn [db [results]]
-    (let [results (group-by :attr (get-in results [:data :jobs_search :facets]))
-          results (->> (get results "tags")
-                       (sort-by :count)
-                       (map #(hash-map :tag (:value %)))
-                       (reverse))]
-      (assoc db ::sub-db/available-tags results))))
+  (fn [_ _]
+    {:dispatch [:graphql/query :tags {:type :tech}]}))
 
 (reg-event-fx
   ::toggle-tech-tag
   create-candidate-interceptors
   (fn [{db :db} [tag]]
-    {:db       (update db ::sub-db/tech-tags util/toggle {:tag tag :selected true})
-     :dispatch [::edit-tech-tag-search ""]}))
+    ;; We use :id to select/unselect tags and :label to be sent as user skill name
+    (let [tag (select-keys tag [:id :label])]
+      {:db       (update db ::sub-db/tech-tags (fnil util/toggle #{}) tag)
+       :dispatch [::edit-tech-tag-search ""]})))
 
 (reg-event-fx
   ::toggle-company-tag
@@ -279,7 +251,7 @@
             :phone                phone
             :notify               notify
             :reset-session        false
-            :skills               (mapv #(hash-map :name (:tag %)) tech-tags)
+            :skills               (mapv #(hash-map :name (:label %)) tech-tags)
             :preferred-locations  [(db->location db)]
             :company-perks        (mapv #(hash-map :name (:tag %)) company-tags)
             :other-urls           (->> (into [(when-not (str/blank? github-url)

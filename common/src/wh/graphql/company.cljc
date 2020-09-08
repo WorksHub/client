@@ -228,21 +228,6 @@
    :venia/queries   [[:update_job {:update_job :$update_job}
                       [:id :slug :published]]]})
 
-(defn fetch-tags [success]
-  {:query      {:venia/operation {:operation/type :query
-                                  :operation/name "jobs_search"}
-                :venia/variables [{:variable/name "vertical" :variable/type :vertical}
-                                  {:variable/name "search_term" :variable/type :String!}
-                                  {:variable/name "page" :variable/type :Int!}]
-                :venia/queries   [[:jobs_search {:vertical    :$vertical
-                                                 :search_term :$search_term
-                                                 :page        :$page}
-                                   [[:facets [:attr :value :count]]]]]}
-   :variables  {:search_term ""
-                :page        1
-                :vertical    "functional"}
-   :on-success [success]})
-
 (defn all-company-jobs-query-fragment
   ([company-id page-size page-number & [fields]]
    (all-company-jobs-query-fragment {:company-id  company-id

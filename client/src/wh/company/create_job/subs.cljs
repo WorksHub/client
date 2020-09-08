@@ -232,6 +232,7 @@
   :<- [::all-tags]
   :<- [::tags]
   (fn [[tag-search tags selected-tag-ids]]
+    ;; TODO: refactor, and normalize with other tag selectors [ch4750]
     (let [matching-but-not-selected
           (filter (fn [tag] (and (or (str/blank? tag-search)
                                     (str/includes? (str/lower-case (:label tag)) tag-search))

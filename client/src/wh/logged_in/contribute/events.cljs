@@ -466,7 +466,7 @@
 (reg-event-fx
   ::fetch-tags
   (fn [_ _]
-    {:dispatch (into [:graphql/query] [:tags {}])}))
+    {:dispatch [:graphql/query :tags {}]}))
 
 (reg-event-db
   ::dismiss-codi
