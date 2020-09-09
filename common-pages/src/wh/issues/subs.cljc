@@ -58,10 +58,23 @@
          (= :issues (:wh.db/page db)))))
 
 (reg-sub
-  ::issues-for-company-id
+  ::issues-for-company-id?
   (fn [db _]
     (and (get-in db [:wh.db/page-params :company-id])
          (= :issues (:wh.db/page db)))))
+
+(reg-sub
+  ;; sub responsible for handling tagged :issues-for-company-id route
+  ;; see: (bidi/tag :issues :issues-for-company-id) in wh.routes
+  ;; without this sub, we wouldn't be able to create proper, paged routes for
+  ;; Company Issues page
+  ::page
+  :<- [::issues-for-company-id?]
+  :<- [:wh/page]
+  (fn [[issues-for-company-id? page] _]
+    (if issues-for-company-id?
+      :issues-for-company-id
+      page)))
 
 (reg-sub
   ::company-pod?

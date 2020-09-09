@@ -23,7 +23,8 @@
   ::failure
   issues-interceptors
   (fn [_ [retry-fn _error]]
-    {:dispatch [:error/set-global "Something went wrong while we tried to fetch your data 😢"
+    {:dispatch [:error/set-global
+                "Something went wrong while we tried to fetch your data 😢"
                 [retry-fn]]}))
 
 (reg-event-db
@@ -64,7 +65,8 @@
                                :published     true
                                :repo_language language
                                :page_number   (util/coerce-int (or page-number 1))
-                               :sort          (issues/issues-sort (::db/query-params db))}
+                               :sort          (issues/issues-sort
+                                                (::db/query-params db))}
                   :on-success [::fetch-issues-success]
                   :on-failure [::failure ::fetch-issues]}})))
 
@@ -93,7 +95,8 @@
      ::fetch-jobs-success
      db/default-interceptors
      (fn [db [resp]]
-       (assoc-in db [::issues/sub-db ::issues/jobs] (cases/->kebab-case (get-in resp [:data :jobs]))))))
+       (assoc-in db [::issues/sub-db ::issues/jobs]
+                 (cases/->kebab-case (get-in resp [:data :jobs]))))))
 
 (reg-event-db
   :issues/show-webhook-info
@@ -118,7 +121,8 @@
      ::update-issue-success
      db/default-interceptors
      (fn [db [issue]]
-       (update-in db [::issues/sub-db ::issues/issues] #(map (partial update-issue issue) %)))))
+       (update-in db [::issues/sub-db ::issues/issues]
+                  #(map (partial update-issue issue) %)))))
 
 #?(:cljs
    (do
@@ -133,7 +137,8 @@
                     [:wh.events/scroll-to-top]
                     [::set-page-title]
                     [::fetch-issues-languages]
-                    [::fetch-issues company-id page-number (some-> issues-language slug/slug->label)]])
+                    [::fetch-issues company-id page-number
+                     (some-> issues-language slug/slug->label)]])
                  (when company-id
                    [[::fetch-jobs company-id]]))))
 

@@ -83,7 +83,7 @@
       (stats-ball yellow :yellow)])])
 
 (defn issues-list []
-  (let [issues (<sub [::subs/issues])
+  (let [issues     (<sub [::subs/issues])
         issue-opts #?(:cljs {:edit-fn         (when (<sub [::subs/can-manage-issues?])
                                                 :edit-issue/show-issue-edit-popup)
                              :edit-success-fn [::events/update-issue-success]}
@@ -175,7 +175,8 @@
       :value     (<sub [::subs/sorting-by])
       :class     "issues__sorting__dropdown"
       :options   (<sub [::subs/sorting-options])
-      :on-change (interop-forms/add-select-value-to-url :sort (<sub [::subs/sorting-options]))}]]])
+      :on-change (interop-forms/add-select-value-to-url
+                   :sort (<sub [::subs/sorting-options]))}]]])
 
 (defn languages-list [class]
   (let [languages (some->> (<sub [::subs/issues-languages])
@@ -184,8 +185,11 @@
     [:section
      {:class class}
      (tag/strs->tag-list
-      :a languages
-      {:f #(assoc % :href (routes/path :issues-by-language :params {:language (slug/tag-label->slug (:label %))}))})]))
+       :a languages
+       {:f #(assoc
+              % :href
+              (routes/path :issues-by-language
+                           :params {:language (slug/tag-label->slug (:label %))}))})]))
 
 (defn page []
   (if (and (<sub [::subs/own-company?])
@@ -197,7 +201,7 @@
                         :default false
                         :clj     false)]
       [:div.main
-       (if (<sub [::subs/issues-for-company-id])
+       (if (<sub [::subs/issues-for-company-id?])
          [company-pod "is-mobile"]
          (if logged-in?
            [:h1 {:class (util/merge-classes "issues__header"
@@ -211,7 +215,12 @@
            [company-pod "is-desktop"])
          [sorting-component]
          [issues-list]
-         [pagination/pagination (<sub [::subs/current-page-number]) (<sub [::subs/pagination]) (<sub [:wh/page]) (<sub [:wh/query-params]) (<sub [:wh/page-params])]]
+         [pagination/pagination
+          (<sub [::subs/current-page-number])
+          (<sub [::subs/pagination])
+          (<sub [::subs/page])
+          (<sub [:wh/query-params])
+          (<sub [:wh/page-params])]]
         [edit-issue/edit-issue]
 
         [:div.issues__side.split-content__side
