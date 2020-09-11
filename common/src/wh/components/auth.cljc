@@ -24,14 +24,14 @@
         [:div [:div (util/smc styles/display-not-mobile) "Continue with Stack Overflow"]
          [:div (util/smc styles/display-mobile) "Stack Overflow"]]]
     [:div (util/smc styles/auth-buttons)
-     [signin-button/github {:text "Continue with Github"
-                            :type :auth
+     [signin-button/github {:text      "Continue with GitHub"
+                            :type      :auth
                             :data-test "auth-github"}]
-     [signin-button/twitter {:text "Continue with Twitter"
-                             :type :auth
+     [signin-button/twitter {:text      "Continue with Twitter"
+                             :type      :auth
                              :data-test "auth-twitter"}]
-     [signin-button/stack-overflow {:text stackoverflow-button-content
-                                    :type :auth
+     [signin-button/stack-overflow {:text      stackoverflow-button-content
+                                    :type      :auth
                                     :data-test "auth-stackoverflow"}]]))
 
 (defn page [& children]
@@ -61,11 +61,11 @@
    [error-message error]])
 
 (defn button [{:keys [submitting? text on-click data-test]
-               :or {text "Continue"}}]
-  [:button {:class styles/button
-            :on-click on-click
-            :type "button"
+               :or   {text "Continue"}}]
+  [:button {:class     styles/button
+            :on-click  on-click
+            :type      "button"
             :data-test data-test
-            :disabled submitting?}
+            :disabled  submitting?}
    (cond-> text
            submitting? (str "..."))])

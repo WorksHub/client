@@ -15,11 +15,11 @@
   ([]
    [github {:text "Github"}])
   ([{:keys [text type data-test]}]
-   [:a {:class (util/mc
-                 style/button
-                 style/button--github
-                 [(= type :auth) style/button--auth])
-        :href  (routes/path :login :params {:step :github})
+   [:a {:class     (util/mc
+                     style/button
+                     style/button--github
+                     [(= type :auth) style/button--auth])
+        :href      (routes/path :login :params {:step :github})
         :data-test data-test}
     [icon "github" :class style/icon]
     [:span text]]))
@@ -27,24 +27,26 @@
 (defn stack-overflow
   ([]
    [stack-overflow {:text "Stack Overflow"}])
-  ([{:keys [text type]}]
-   [:a {:class (util/mc
-                 style/button
-                 style/button--stackoverflow
-                 [(= type :auth) style/button--auth])
-        :href  (routes/path :login :params {:step :stackoverflow})}
+  ([{:keys [text type data-test]}]
+   [:a {:class     (util/mc
+                     style/button
+                     style/button--stackoverflow
+                     [(= type :auth) style/button--auth])
+        :href      (routes/path :login :params {:step :stackoverflow})
+        :data-test data-test}
     [icon "stackoverflow" :class (util/mc style/icon style/icon--stackoverflow)]
     [:span text]]))
 
 (defn twitter
   ([]
    [twitter {:text "Twitter"}])
-  ([{:keys [text type]}]
-   [:a {:class (util/mc
-                 style/button
-                 style/button--twitter
-                 [(= type :auth) style/button--auth])
-        :href  (routes/path :login :params {:step :twitter})}
+  ([{:keys [text type data-test]}]
+   [:a {:class     (util/mc
+                     style/button
+                     style/button--twitter
+                     [(= type :auth) style/button--auth])
+        :href      (routes/path :login :params {:step :twitter})
+        :data-test data-test}
     [icon "twitter" :class (util/mc style/icon style/icon--twitter)]
     [:span text]]))
 

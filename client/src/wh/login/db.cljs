@@ -1,8 +1,8 @@
 (ns wh.login.db
   (:require [cljs.spec.alpha :as s]
             [clojure.string :as str]
-            [wh.db :as db]
             [wh.common.specs.primitives :as primitives]
+            [wh.db :as db]
             [wh.routes :as routes]))
 
 (s/def ::email string?)
@@ -22,7 +22,8 @@
   (= step (get-in db [::db/page-params :step])))
 
 (defn is-dev-env? [db]
-  (= (:wh.settings/environment db) :dev))
+  (and (= (:wh.settings/environment db) :dev)
+       (not (get-in db [::db/query-params "force-email"]))))
 
 (defn email-sent? [db]
   (get-in db [::db/query-params "sent"]))
@@ -62,10 +63,10 @@
   (get-in db [::sub-db :submitting]))
 
 (def status->error
-  {:email-not-sent "Email was not sent, use whitelisted emails in development and staging environment."
-   :invalid-arguments "Please ensure you have supplied a valid email address."
+  {:email-not-sent           "Email was not sent, use whitelisted emails in development and staging environment."
+   :invalid-arguments        "Please ensure you have supplied a valid email address."
    :no-user-found-with-email "There is no account associated with this email.
                                If you are a company user,
                                please contact your company manager or talk to us via live chat."
-   :unknown-error "There was an error processing the request. Please try again later."
-   :email-unsuccessful "There was an problem with sending a login email. Please try again later."})
+   :unknown-error            "There was an error processing the request. Please try again later."
+   :email-unsuccessful       "There was an problem with sending a login email. Please try again later."})
