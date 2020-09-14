@@ -18,8 +18,7 @@
   {:github-callback        github-callback/page
    :stackoverflow-callback stackoverflow-callback/page
    :twitter-callback       twitter-callback/page
-   :login                  {:page        login/page
-                            :can-access? (complement db/logged-in?)}
+   :login                  login/page
    :get-started            {:page        get-started/page
                             :can-access? (complement db/logged-in?)}})
 
