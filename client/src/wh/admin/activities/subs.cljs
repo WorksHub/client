@@ -1,6 +1,7 @@
 (ns wh.admin.activities.subs
   (:require [re-frame.core :refer [reg-sub]]
-            [wh.re-frame.subs :refer [<sub]]))
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.util :as util]))
 
 (defn normalize-activity
   [{:keys [feed-company feed-issue feed-job feed-blog] :as activity}]
@@ -16,7 +17,7 @@
           feed-company {:object      feed-company
                         :object-type "company"}
           :else        {}))
-      (update :actor :id)
+      (update-in [:actor :actor-data] util/remove-nils)
       (dissoc :feed-job :feed-blog :feed-issue :feed-company)))
 
 (reg-sub

@@ -22,7 +22,11 @@
                                          :vertical        :$vertical}
                       [:first_page :last_page
                        [:activities
-                        [:id :verb [:actor [:id]] :to :date
+                        [:id :verb :to :date
+                         [:actor [:id [:actor_data
+                                       [:slug :name :logo :actor_type
+                                        :creation_date :total_published_job_count
+                                        :total_published_issue_count]]]]
                          [:feed_job [:id :title :slug :tagline :remote
                                      :sponsorship_offered :role_type :first_published
                                      [:tags :fragment/tagFields]

@@ -1,5 +1,6 @@
 (ns wh.admin.activities.views
   (:require [reagent.core :as r]
+            [wh.admin.activities.events]
             [wh.admin.activities.subs :as subs]
             [wh.re-frame.subs :refer [<sub]]
             [wh.styles.stream-preview :as styles]
@@ -30,7 +31,8 @@
        (when @expanded?
          [:div
           [:pre (str (dissoc act :object))]
-          [:pre (str (select-keys act [:object]))]])])))
+          [:pre (str (select-keys act [:object]))]
+          [:pre (str (select-keys act [:actor]))]])])))
 
 (defn preview []
   (let [expanded? (r/atom #{})]
