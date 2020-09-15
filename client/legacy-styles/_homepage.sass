@@ -26,11 +26,14 @@ $homepage-max-width: 1084px
           padding-left: 20px
 
 .homepage
+  overflow-x: hidden
   .button:not(.landing__button-auth)
     border-radius: 4px
     font-size: 12px
     height: 40px
     padding: 6px 12px
+    +mobile
+      width: 100%
 
 .homepage__top-content,
 .homepage__middle-content,

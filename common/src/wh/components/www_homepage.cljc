@@ -8,6 +8,7 @@
     [wh.components.common :refer [companies-section link]]
     [wh.components.icons :refer [icon]]
     [wh.how-it-works.views :as hiw]
+    [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util]))
 
 (def num-clouds 23)
@@ -79,7 +80,7 @@
     :logo   "/images/homepage/logos/paidy.svg"}])
 
 (defn header
-  [market]
+  [market get-started-route]
   [:div.homepage__header
    [:div.homepage__header__img
     [:div.homepage__header__img-inner
@@ -90,7 +91,7 @@
     [:p data/www-hero-copy]
     (link [:button.button
            {:id "www-landing__hero"}
-           get-started-cta-string] :get-started)]])
+           get-started-cta-string] get-started-route)]])
 
 (defn features
   []
@@ -118,7 +119,7 @@
        [:span description]]])])
 
 (defn walkthrough
-  []
+  [get-started-route]
   [:div.homepage__walkthrough
    [:h2 "READY FOR TAKE-OFF?"]
    [:h3 "Let's get started!"]
@@ -158,7 +159,7 @@
      [:span "Have a question along the way? We have a " [:strong "team of experts"] " that can help at every step of the process helping you make the best possible hire."]
      (link [:button.button
             {:id "www-landing__walkthrough__experts"}
-            get-started-cta-string] :get-started)]
+            get-started-cta-string] get-started-route)]
     [:div.column.homepage__step__img
      [:img {:src "/images/homepage/walkthrough04.svg"
             :alt ""}]]]])
@@ -193,18 +194,18 @@
             :alt ""}]]]])
 
 (defn testimonials
-  []
+  [get-started-route]
   [:div.homepage__testimonials
    [:h3 "Join our satisfied worldwide clients"]
    (link [:button.button.button__public
           {:id "www-landing__testimonials"}
-          get-started-cta-string] :get-started)
+          get-started-cta-string] get-started-route)
    [carousel
     (for [item testimonials-data]
       [testimonial item])]])
 
 (defn looking-to-hire
-  [title hide-boxes?]
+  [title hide-boxes? get-started-route]
   [:div.homepage__looking-to-hire
    [:div.homepage__looking-to-hire__header
     [:h3 "Who are you looking to hire?"]
@@ -223,19 +224,22 @@
           (icon logo)]])])
    (link [:button.button
           {:id "www-landing__looking-to-hire"}
-          get-started-cta-string] :get-started)])
+          get-started-cta-string] get-started-route)])
 
 (defn homepage
   ([]
    (homepage nil))
   ([{:keys [template]}]
-   (let [hiring-target (data/find-hiring-target template)]
+   (let [logged-in?        (<sub [:user/logged-in?])
+         get-started-route (if logged-in? :register-company :get-started)
+         hiring-target     (data/find-hiring-target template)]
      [:div.homepage
       [:div.homepage__top-content
        [:div.homepage__top-content__container
         (header (or (:title hiring-target)
                     (when template (txt/capitalize-words (str/lower-case (str/replace template #"[-_/]" " "))))
-                    "software engineers"))]
+                    "software engineers")
+                get-started-route)]
        [:div.homepage__companies-section
         [:div.homepage__companies-section__container
          (companies-section "Trusted by 300+ companies:")]]]
@@ -252,18 +256,18 @@
                   "Discover how we're different"] :pricing)
          (link [:button.button
                 {:id "www-landing__barriers-try"}
-                get-started-cta-string] :get-started)]]
+                get-started-cta-string] get-started-route)]]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--start"]
-       [hiw/stats :company false]
+       [hiw/stats :company false get-started-route]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--mid"]
-       [hiw/benefits :company false]
+       [hiw/benefits :company false get-started-route]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--end"]
        [:div.homepage__middle-content__container
-        (walkthrough)]
+        (walkthrough get-started-route)]
        [animated-hr "/images/homepage/globe.svg" "homepage__animated-hr__globe" "homepage__animated-hr__globe-wrapper"]
        [:div.homepage__middle-content__container
-        [testimonials]]
+        [testimonials get-started-route]]
        [animated-hr nil nil]]
       [:div.homepage__bottom-content
        [:div.homepage__bottom-content__container
-        (looking-to-hire (:description2 hiring-target) (boolean template))]]])))
+        (looking-to-hire (:description2 hiring-target) (boolean template) get-started-route)]]])))

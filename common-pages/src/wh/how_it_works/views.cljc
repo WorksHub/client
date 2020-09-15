@@ -15,22 +15,15 @@
   #?(:cljs [github/install-github-app (if class {:class class} {})]))
 
 (defn get-started-link
-  [github? & [{:keys [class label] :or {label data/get-started-cta-string}}]]
+  [github? get-started-route & [{:keys [class label] :or {label data/get-started-cta-string}}]]
   (let [btn [:button.button.button--public label]]
     (cond
       (or github? (<sub [::subs/show-github-buttons?]))
       [github-button class]
-      (<sub [::subs/show-candidate-buttons?])
-      (link btn
-            :issues
-            :class class)
-      (<sub [::subs/show-company-buttons?])
-      (link btn
-            :company-issues
-            :class class)
       :else
       (link btn
-            :get-started :query-params {:redirect "issues"}
+            get-started-route
+            :query-params {:redirect "issues"}
             :class class))))
 
 (defn slider
@@ -119,7 +112,7 @@
      [:p description]]]])
 
 (defn explanation
-  [selected-site github?]
+  [selected-site github? get-started-route]
   [:div
    {:class (util/merge-classes"how-it-works__explanation"
                               (str "how-it-works__explanation--" (name selected-site)))}
@@ -138,7 +131,7 @@
            (let [{:keys [img txt]} (nth steps i)]
              ^{:key img}
              [explanation-step img txt (inc i)]))))]
-    [get-started-link github?]]
+    [get-started-link github? get-started-route]]
    [step-line 4]])
 
 (defn benefit
@@ -161,7 +154,7 @@
        [benefit item]))])
 
 (defn benefits
-  [selected-site github?]
+  [selected-site github? get-started-route]
   [:div.how-it-works__benefits.how-it-works__benefits--company
    [:div.how-it-works__benefits__inner
     [:h2 "OPEN SOURCE ISSUES"]
@@ -172,7 +165,7 @@
       [:button.button.button--inverted.button--public
        "View all open source issues"]
       :issues]
-     [get-started-link github? {:label "Get Started for Free"}]]]])
+     [get-started-link github? get-started-route {:label "Get Started for Free"}]]]])
 
 (defn stats-ball
   [[title para icon-logo] colour]
@@ -186,14 +179,14 @@
    [:p para]])
 
 (defn stats
-  [selected-site github?]
+  [selected-site github? get-started-route]
   (let [{:keys [title subtitle info blue grey orange]} (get data/how-it-works-stats selected-site)]
     [:div
      {:class (util/merge-classes
                "how-it-works__stats"
                (str "how-it-works__stats--" (name selected-site)))}
      [:div.how-it-works__stats__inner
-      [get-started-link github? {:class "is-hidden-desktop how-it-works__github-button"}]
+      [get-started-link github? get-started-route {:class "is-hidden-desktop how-it-works__github-button" :label "Get Started for Free"}]
       [:div.how-it-works__stats__balls.is-hidden-mobile
        [:div.how-it-works__stats__balls-container
         (stats-ball blue :blue)
@@ -210,10 +203,10 @@
        (for [i info]
          ^{:key i}
          [:p i])
-       [get-started-link github? {:class "is-hidden-mobile how-it-works__github-button" :label "Get Started for Free"}]]]]))
+       [get-started-link github? get-started-route {:class "is-hidden-mobile how-it-works__github-button" :label "Get Started for Free"}]]]]))
 
 (defn faq
-  [selected-site github?]
+  [selected-site github? get-started-route]
   [:div.how-it-works__faq.how-it-works__faq--company
    [:div.how-it-works__faq__inner
     [:h2 "FAQs"]
@@ -224,7 +217,7 @@
       [:button.button.button--inverted.button--public
        "View all open source issues"]
       :issues]
-     [get-started-link github?]]]])
+     [get-started-link github? get-started-route]]]])
 
 (defn render
   [selected-site github?]
