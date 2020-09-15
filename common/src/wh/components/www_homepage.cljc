@@ -194,15 +194,19 @@
             :alt ""}]]]])
 
 (defn testimonials
-  [get-started-route]
-  [:div.homepage__testimonials
-   [:h3 "Join our satisfied worldwide clients"]
-   (link [:button.button.button__public
-          {:id "www-landing__testimonials"}
-          get-started-cta-string] get-started-route)
-   [carousel
-    (for [item testimonials-data]
-      [testimonial item])]])
+  ([]
+   [testimonials nil])
+
+  ([get-started-route]
+   [:div.homepage__testimonials
+    [:h3 "Join our satisfied worldwide clients"]
+    (when get-started-route
+      (link [:button.button.button__public
+             {:id "www-landing__testimonials"}
+             get-started-cta-string] get-started-route))
+    [carousel
+     (for [item testimonials-data]
+       [testimonial item])]]))
 
 (defn looking-to-hire
   [title hide-boxes? get-started-route]
