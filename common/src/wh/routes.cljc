@@ -82,7 +82,8 @@
              ;;Public SSR Pages - no app.js required
              [["" :homepage]
               ["feed" :feed]
-              ["hire-" {[:template] :homepage}]
+              ["hiring" :employers]
+              ["hire-" {[:template] :employers}]
               ["issues/" {""            :issues
                           [:company-id] (bidi/tag :issues :issues-for-company-id)}]
               ["issue/" {[:id] :issue}]
@@ -95,7 +96,6 @@
               ["privacy-policy" :privacy-policy]
               ["terms-of-service" :terms-of-service]
               ["pricing" :pricing]
-              ["hiring" :employers]
               ["sitemap" :sitemap]
               ["invalid-magic-link" :invalid-magic-link]
               ["metrics" :metrics]
@@ -206,7 +206,8 @@
               ["health/" {[:commit-sha] :health-by-commit-sha}]]])
 
 ;;TODO this config should pulled partially from wh.response.ssr/page-content map
-(def server-side-only-pages #{:invalid-magic-link
+(def server-side-only-pages #{:employers
+                              :invalid-magic-link
                               :not-found
                               :privacy-policy
                               :sitemap
@@ -221,6 +222,7 @@
                                                :companies
                                                :company-jobs
                                                :company-articles
+                                               :employers
                                                :feed
                                                :homepage
                                                :how-it-works

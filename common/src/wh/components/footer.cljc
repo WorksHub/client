@@ -55,10 +55,12 @@
   (let [link-data (footer-links "www")]
     [:div.footer__sitemap__list__container
      [:div.footer__sitemap__list
+      {:data-test "footer--hiring-links"}
       [:div "Highest in-demand talent"]
       (for [m (vals data/in-demand-hiring-data)]
         (create-link "Hire " m))]
      [:div.footer__sitemap__list
+      {:data-test "footer--hiring-links"}
       [:div "Locations"]
       (for [m data/in-demand-location-data]
         (create-link "Hire " m))]
@@ -68,17 +70,17 @@
         ^{:key title}
         [:a (cond
               route {:href (apply routes/path route)}
-              href {:href   href
-                    :target "_blank"
-                    :rel    "noopener"}) title])]
+              href  {:href   href
+                     :target "_blank"
+                     :rel    "noopener"}) title])]
      [:div.footer__sitemap__list
       [:div "Employers"]
       (for [{:keys [title href route]} (:employers link-data)]
         ^{:key title}
         [:a (cond route {:href (apply routes/path route)}
-                  href {:href   href
-                        :target "_blank"
-                        :rel    "noopener"}) title])]]))
+                  href  {:href   href
+                         :target "_blank"
+                         :rel    "noopener"}) title])]]))
 
 (defn footer-sitemap-job-vertical [vertical]
   (let [link-data (footer-links vertical)]
