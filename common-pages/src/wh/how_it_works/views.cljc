@@ -1,15 +1,14 @@
 (ns wh.how-it-works.views
-  (:require
-    #?(:cljs [reagent.core :as r])
-    #?(:cljs [wh.components.github :as github])
-    [wh.common.data :as data]
-    [wh.components.carousel :refer [carousel]]
-    [wh.components.common :refer [link]]
-    [wh.components.faq :as faq]
-    [wh.components.icons :refer [icon]]
-    [wh.how-it-works.subs :as subs]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.util :as util]))
+  (:require #?(:cljs [reagent.core :as r])
+            #?(:cljs [wh.components.github :as github])
+            [wh.common.data :as data]
+            [wh.components.carousel :refer [carousel]]
+            [wh.components.common :refer [link]]
+            [wh.components.faq :as faq]
+            [wh.components.icons :refer [icon]]
+            [wh.how-it-works.subs :as subs]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.util :as util]))
 
 (defn github-button [class]
   #?(:cljs [github/install-github-app (if class {:class class} {})]))
@@ -112,27 +111,30 @@
      [:p description]]]])
 
 (defn explanation
-  [selected-site github? get-started-route]
-  [:div
-   {:class (util/merge-classes"how-it-works__explanation"
-                              (str "how-it-works__explanation--" (name selected-site)))}
-   [:div.how-it-works__explanation__inner
-    [:div.how-it-works__explanation__copy
-     [:h2 (if (= :company selected-site) "COMPANIES" "CANDIDATES")]
-     [:h3 "How it works"]
-     [link [:button.button.button--inverted.button--public
-            "View all open source issues"]
-      :issues
-      :class "is-hidden-mobile"]]
-    [:div.how-it-works__explanation__steps
-     (let [steps (get data/how-it-works-explanation-steps selected-site)]
-       (doall
-         (for [i (range (count steps))]
-           (let [{:keys [img txt]} (nth steps i)]
-             ^{:key img}
-             [explanation-step img txt (inc i)]))))]
-    [get-started-link github? get-started-route]]
-   [step-line 4]])
+  ([selected-site github?]
+   [explanation selected-site github? :get-started])
+
+  ([selected-site github? get-started-route]
+   [:div
+    {:class (util/merge-classes"how-it-works__explanation"
+                               (str "how-it-works__explanation--" (name selected-site)))}
+    [:div.how-it-works__explanation__inner
+     [:div.how-it-works__explanation__copy
+      [:h2 (if (= :company selected-site) "COMPANIES" "CANDIDATES")]
+      [:h3 "How it works"]
+      [link [:button.button.button--inverted.button--public
+             "View all open source issues"]
+       :issues
+       :class "is-hidden-mobile"]]
+     [:div.how-it-works__explanation__steps
+      (let [steps (get data/how-it-works-explanation-steps selected-site)]
+        (doall
+          (for [i (range (count steps))]
+            (let [{:keys [img txt]} (nth steps i)]
+              ^{:key img}
+              [explanation-step img txt (inc i)]))))]
+     [get-started-link github? get-started-route]]
+    [step-line 4]]))
 
 (defn benefit
   [{:keys [img title txt]}]
@@ -154,18 +156,20 @@
        [benefit item]))])
 
 (defn benefits
-  [selected-site github? get-started-route]
-  [:div.how-it-works__benefits.how-it-works__benefits--company
-   [:div.how-it-works__benefits__inner
-    [:h2 "OPEN SOURCE ISSUES"]
-    [:h3 "What's in it for you?"]
-    (benefits-list (get data/how-it-works-benefits selected-site) {})
-    [:div.how-it-works__benefits__buttons
-     [link
-      [:button.button.button--inverted.button--public
-       "View all open source issues"]
-      :issues]
-     [get-started-link github? get-started-route {:label "Get Started for Free"}]]]])
+  ([selected-site github?]
+   [benefits selected-site github? :get-started])
+  ([selected-site github? get-started-route]
+   [:div.how-it-works__benefits.how-it-works__benefits--company
+    [:div.how-it-works__benefits__inner
+     [:h2 "OPEN SOURCE ISSUES"]
+     [:h3 "What's in it for you?"]
+     (benefits-list (get data/how-it-works-benefits selected-site) {})
+     [:div.how-it-works__benefits__buttons
+      [link
+       [:button.button.button--inverted.button--public
+        "View all open source issues"]
+       :issues]
+      [get-started-link github? get-started-route {:label "Get Started for Free"}]]]]))
 
 (defn stats-ball
   [[title para icon-logo] colour]
@@ -179,45 +183,49 @@
    [:p para]])
 
 (defn stats
-  [selected-site github? get-started-route]
-  (let [{:keys [title subtitle info blue grey orange]} (get data/how-it-works-stats selected-site)]
-    [:div
-     {:class (util/merge-classes
-               "how-it-works__stats"
-               (str "how-it-works__stats--" (name selected-site)))}
-     [:div.how-it-works__stats__inner
-      [get-started-link github? get-started-route {:class "is-hidden-desktop how-it-works__github-button" :label "Get Started for Free"}]
-      [:div.how-it-works__stats__balls.is-hidden-mobile
-       [:div.how-it-works__stats__balls-container
-        (stats-ball blue :blue)
-        (stats-ball grey :grey)
-        (stats-ball orange :orange)]]
-      [:div.how-it-works__stats__balls.is-hidden-desktop
-       [:div.how-it-works__stats__balls-container
-        (stats-ball blue :blue)
-        (stats-ball orange :orange)
-        (stats-ball grey :grey)]]
-      [:div.how-it-works__stats__info
-       [:h2 "THE POTENTIAL"]
-       [:h3 "Why open source software is the future of hiring"]
-       (for [i info]
-         ^{:key i}
-         [:p i])
-       [get-started-link github? get-started-route {:class "is-hidden-mobile how-it-works__github-button" :label "Get Started for Free"}]]]]))
+  ([selected-site github?]
+   [stats selected-site github? :get-started])
+  ([selected-site github? get-started-route]
+   (let [{:keys [title subtitle info blue grey orange]} (get data/how-it-works-stats selected-site)]
+     [:div
+      {:class (util/merge-classes
+                "how-it-works__stats"
+                (str "how-it-works__stats--" (name selected-site)))}
+      [:div.how-it-works__stats__inner
+       [get-started-link github? get-started-route {:class "is-hidden-desktop how-it-works__github-button" :label "Get Started for Free"}]
+       [:div.how-it-works__stats__balls.is-hidden-mobile
+        [:div.how-it-works__stats__balls-container
+         (stats-ball blue :blue)
+         (stats-ball grey :grey)
+         (stats-ball orange :orange)]]
+       [:div.how-it-works__stats__balls.is-hidden-desktop
+        [:div.how-it-works__stats__balls-container
+         (stats-ball blue :blue)
+         (stats-ball orange :orange)
+         (stats-ball grey :grey)]]
+       [:div.how-it-works__stats__info
+        [:h2 "THE POTENTIAL"]
+        [:h3 "Why open source software is the future of hiring"]
+        (for [i info]
+          ^{:key i}
+          [:p i])
+        [get-started-link github? get-started-route {:class "is-hidden-mobile how-it-works__github-button" :label "Get Started for Free"}]]]])))
 
 (defn faq
-  [selected-site github? get-started-route]
-  [:div.how-it-works__faq.how-it-works__faq--company
-   [:div.how-it-works__faq__inner
-    [:h2 "FAQs"]
-    [:h3 "What else would you like to know?"]
-    [faq/faq-component (get data/how-it-works-questions selected-site) selected-site]
-    [:div.how-it-works__faq__buttons
-     [link
-      [:button.button.button--inverted.button--public
-       "View all open source issues"]
-      :issues]
-     [get-started-link github? get-started-route]]]])
+  ([selected-site github?]
+   [faq selected-site github? :get-started])
+  ([selected-site github? get-started-route]
+   [:div.how-it-works__faq.how-it-works__faq--company
+    [:div.how-it-works__faq__inner
+     [:h2 "FAQs"]
+     [:h3 "What else would you like to know?"]
+     [faq/faq-component (get data/how-it-works-questions selected-site) selected-site]
+     [:div.how-it-works__faq__buttons
+      [link
+       [:button.button.button--inverted.button--public
+        "View all open source issues"]
+       :issues]
+      [get-started-link github? get-started-route]]]]))
 
 (defn render
   [selected-site github?]

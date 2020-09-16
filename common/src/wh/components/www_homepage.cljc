@@ -195,15 +195,14 @@
 
 (defn testimonials
   ([]
-   [testimonials nil])
+   [testimonials :get-started])
 
   ([get-started-route]
    [:div.homepage__testimonials
     [:h3 "Join our satisfied worldwide clients"]
-    (when get-started-route
-      (link [:button.button.button__public
-             {:id "www-landing__testimonials"}
-             get-started-cta-string] get-started-route))
+    (link [:button.button.button__public
+           {:id "www-landing__testimonials"}
+           get-started-cta-string] get-started-route)
     [carousel
      (for [item testimonials-data]
        [testimonial item])]]))
