@@ -10,18 +10,21 @@
             [wh.components.common :refer [link]]
             [wh.components.error.views :refer [error-box]]
             [wh.components.forms.views :refer [field-container
+                                               toggle
                                                labelled-checkbox
                                                multi-edit multiple-buttons
                                                select-field select-input
                                                text-field text-input
                                                avatar-field]]
             [wh.components.icons :refer [icon]]
+            [wh.components.issue :as issue]
             [wh.components.tag :as tag]
             [wh.logged-in.profile.components :as components]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
             [wh.routes :as routes]
-            [wh.subs :refer [<sub]]))
+            [wh.subs :refer [<sub]]
+            [wh.styles.profile :as styles]))
 
 ;; Profile header – view
 
@@ -663,17 +666,32 @@
                                       (routes/path :candidate-edit-cv))
                               :text "Add link to CV"}]])])
 
+(defn section-public-access-settings []
+  (let [profile-public? (<sub [::subs/published?])]
+    [components/section-highlighted
+     [:div {:class styles/access-settings}
+
+      [:div {:class styles/access-settings__description}
+       [:div {:class styles/access-settings__title-wrapper}
+        [:div {:class styles/access-settings__title}
+         "Published"]
+        [toggle {:value profile-public?
+                 :on-change #(dispatch [::events/toggle-profile-visibility])}]]
+       [:span (if profile-public?
+                "Your profile is visible to everyone."
+                "Your profile is hidden from everyone. Click the toggle to make it visible.")]]]]))
+
 (defn main-view []
   (let [is-company? (<sub [:user/company?])]
     [components/content
      [error-box]
+     [section-public-access-settings]
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
      (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
      [section-skills]
      [section-articles]
      [section-issues]]))
-
 
 (defn view-page []
   [components/container

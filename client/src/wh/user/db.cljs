@@ -26,6 +26,12 @@
 (defn id [db]
   (get-in db [::sub-db ::id]))
 
+(defn published? [db]
+  (boolean (get-in db [::sub-db ::published])))
+
+(defn toggle-published [db]
+  (update-in db [::sub-db ::published] not))
+
 (defn has-skills? [db]
   (seq (get-in db [::sub-db ::skills])))
 

@@ -114,6 +114,9 @@
 (defn section [& children]
   (into [:div {:class styles/section}] children))
 
+(defn section-highlighted [& children]
+  (into [:div (util/smc styles/section styles/section--highlighted)] children))
+
 (defn section-buttons [& children]
   (into [:div {:class styles/section__buttons}] children))
 
@@ -159,10 +162,7 @@
         name (:name company)]
     [:div {:class styles/issue__creator}
      [:img {:src img-src
-            :class styles/issue__creator-avatar
-            ;; reserve space during page load
-            :height 26
-            :width 26}]
+            :class styles/issue__creator-avatar}]
      [:span {:class styles/issue__creator-name} name]]))
 
 (defn issue-meta-elm [{:keys [icon text]}]

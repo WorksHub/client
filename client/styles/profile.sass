@@ -27,10 +27,13 @@
   font-size: 14px
   line-height: 24px
   position: relative
+  box-shadow: 0 4px 8px $card-shadow-color
 
   &--profile
-    border: 1px solid $primary-red
     gap: 24px
+
+  &--highlighted
+    border: 1px solid $primary-red
 
   &__buttons
     display: flex
@@ -293,3 +296,22 @@
     &:hover
       color: $primary-red
 
+.access-settings
+  display: grid
+  grid-template-columns: auto 1fr
+  grid-gap: 8px
+
+  &__title
+    font-size: 14px
+    font-weight: 600
+    letter-spacing: 0.03em
+
+  &__title-wrapper
+    display: flex
+    align-items: center
+    & > *
+      margin-right: 8px
+
+  &__description
+    display: grid
+    grid-gap: 6px

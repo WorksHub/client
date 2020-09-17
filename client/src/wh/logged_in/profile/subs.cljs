@@ -8,6 +8,7 @@
             [wh.logged-in.profile.db :as profile]
             [wh.subs :refer [with-unspecified-option]]
             [wh.logged-in.profile.db :as profile]
+            [wh.user.db :as user]
             [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
@@ -120,6 +121,11 @@
   :<- [::profile]
   (fn [profile _]
     (::profile/issues profile)))
+
+(reg-sub
+  ::published?
+  (fn [db _]
+    (user/published? db)))
 
 (defn salary-string [{:keys [min currency time-period]}]
   (let [min (text/not-blank min)

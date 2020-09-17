@@ -49,6 +49,7 @@
                          :imageUrl
                          :githubId
                          :phone
+                         :published
                          :name :summary
                          :email :jobSeekingStatus :roleTypes
                          :visaStatus :visaStatusOther
@@ -673,3 +674,25 @@
                    :on-failure [::removal-failure]}
       :dispatch-n [[::pages/set-loader]
                    [:error/close-global]]})))
+
+(reg-event-fx
+  ::toggle-profile-visibility-handle
+  db/default-interceptors
+  (fn [{db :db} [success? _]]
+    (if success?
+      {:db (user/toggle-published db)
+       :dispatch [::pages/clear-errors]}
+      {:dispatch [::pages/set-error "An error occurred while changing visibility of your profile"]})))
+
+(reg-event-fx
+  ::toggle-profile-visibility
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:graphql    {:query      graphql/update-user-mutation--published
+                  :variables  {:update_user {:id (user/id db)
+                                             :published (not (user/published? db))}}
+                  :on-success [::toggle-profile-visibility-handle true]
+                  :on-failure [::toggle-profile-visibility-handle false]}
+     :dispatch [:error/close-global]}))
+
+

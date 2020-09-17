@@ -23,6 +23,9 @@
 (def-query-from-template update-user-mutation--consent update-user-mutation
   {:fields [:consented]})
 
+(def-query-from-template update-user-mutation--published update-user-mutation
+  {:fields [:published]})
+
 (def-query-from-template update-user-mutation--approval update-user-mutation
   {:fields [[:approval [:status]]]})
 
