@@ -24,7 +24,7 @@
                        [:activities
                         [:id :verb :to :date
                          [:actor [:id [:actor_data
-                                       [:slug :name :logo :actor_type
+                                       [:slug :name :actor_type :image_url
                                         :creation_date :total_published_job_count
                                         :total_published_issue_count]]]]
                          [:feed_job [:id :title :slug :tagline :remote
