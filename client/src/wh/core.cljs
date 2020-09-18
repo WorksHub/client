@@ -20,9 +20,16 @@
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app")))
 
+;;TODO CH4832 figure out why init is called two times
+;;for some reason init function is called twice,
+;;we put an atom in order to mitigate this issue"
+(defonce init-called? (atom false))
+
 (defn ^:export init []
-  (pages/hook-browser-navigation!)
-  (mount-root))
+  (when (= @init-called? false)
+    (pages/hook-browser-navigation!)
+    (mount-root)
+    (reset! init-called? true)))
 
 (dev-setup)
 (re-frame/dispatch-sync [:init])

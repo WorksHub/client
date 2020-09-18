@@ -67,7 +67,8 @@
    :recommended                :logged-in
    :applied                    :logged-in
    :tags-edit                  :admin
-   :search                     :search})
+   :search                     :search
+   :user                       :profile})
 
 (defn module-for
   [handler user-type]

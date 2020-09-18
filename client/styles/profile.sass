@@ -18,6 +18,10 @@
   display: grid
   grid-gap: 18px
 
+.underline-link
+  padding-bottom: 2px
+  border-bottom: 1px solid $grey200
+
 .section
   background-color: $white
   border-radius: 4px
@@ -49,6 +53,7 @@
   border-radius: 50%
   margin: 0 auto
   border: 1px solid $primary-red
+  object-fit: cover
   +tablet
     width: 180px
     height: 180px
@@ -78,6 +83,12 @@
   align-items: center
   font-size: 14px
   line-height: 14px
+  font-weight: 500
+
+  &--stackoverflow
+    color: $stackoverflow-orange
+  &--twitter
+    color: $twitter-blue
 
   &__icon
     margin-right: 8px

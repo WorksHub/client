@@ -15,7 +15,7 @@
 
 (defn state
   [db query-id variables]
-  (get-in db [::cache [query-id variables] :state]))
+  (get-in db [::cache [query-id variables] :state] :initial))
 
 (defn errors
   [db query-id variables]

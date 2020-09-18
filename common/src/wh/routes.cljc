@@ -145,6 +145,7 @@
                               [:id "/edit/header"]  :candidate-edit-header
                               [:id "/edit/cv"]      :candidate-edit-cv
                               [:id "/edit/private"] :candidate-edit-private}]
+              ["users/" {[:id] :user}]
               ["company-settings/" :edit-company]
               ["company-issues/" {""                                      :company-issues
                                   "repositories"                          :manage-issues

@@ -1,5 +1,6 @@
 (ns wh.components.not-found
-  (:require [wh.routes :as routes]))
+  (:require [wh.routes :as routes]
+            [wh.styles.not-found :as styles]))
 
 (defn not-found []
   [:div.container
@@ -11,6 +12,11 @@
                         #?(:clj  {:onclick (str "alert('" msg "')")}
                            :cljs {:on-click #(js/alert msg)}))
        "Play"])]])
+
+(defn not-found-profile []
+  [:div {:class styles/container}
+   [:div {:class styles/numbers} "404"]
+   [:div {:class styles/description} "Profile page is hidden" [:br] "or doesn't exist"]])
 
 (defn not-found-page []
   [:div.dashboard

@@ -73,7 +73,8 @@
                 :recommended
                 :register
                 :register-company
-                :tags-edit})
+                :tags-edit
+                :user})
 
 ;; A mapping of routes to page components. The values can
 ;; optionally be of the form {:page page, :can-access? boolean-fn},

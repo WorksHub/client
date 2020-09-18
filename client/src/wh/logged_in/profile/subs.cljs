@@ -38,7 +38,6 @@
   (fn [profile _]
     (sort-by #(or (:rating %) 0) > (::profile/skills profile))))
 
-
 (reg-sub
   ::social-urls
   :<- [::profile]
@@ -376,3 +375,8 @@
       (condp = field
         :email "Please enter a valid email address."
         "This field is incorrect."))))
+
+(reg-sub
+  ::id
+  (fn [db _]
+    (user/id db)))

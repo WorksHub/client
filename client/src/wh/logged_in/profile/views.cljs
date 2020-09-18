@@ -22,6 +22,7 @@
             [wh.logged-in.profile.components :as components]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
+            [wh.logged-in.profile.db :as profile]
             [wh.routes :as routes]
             [wh.subs :refer [<sub]]
             [wh.styles.profile :as styles]))
@@ -515,63 +516,6 @@
 
 ;; -----------------------------------------------------------------------------------------------------------
 
-(defn add-skills-cta []
-  [:<>
-   [:p "You haven't specified your skills yet"]
-   [components/section-buttons
-    [components/small-link {:href (if (= (<sub [:wh.pages.core/page]) :profile)
-                                    (routes/path :profile-edit-header)
-                                    (routes/path :candidate-edit-header))
-                            :text "Specify skills"}]]])
-
-(defn display-skills [skills]
-  (let [top-skill (take 5 skills)
-        other-skills (drop 5 skills)]
-    [:<>
-     [components/skills (for [skill top-skill]
-                          [components/top-tech skill])]
-     (when (seq other-skills)
-       [:<>
-        [components/subtitle "also likes to work with"]
-        [tag/strs->tag-list :li (map :name other-skills) nil]])]))
-
-(defn section-skills []
-  (let [skills (<sub [::subs/skills])]
-    [components/section
-     (when (seq skills)
-       [components/edit-profile {:type :default}])
-     [components/title "Top Skills"]
-     (if (seq skills)
-       [display-skills skills]
-       [add-skills-cta])]))
-
-(defn section-articles []
-  (let [articles (<sub [::subs/contributions])]
-    [components/section
-     [components/title "Articles"]
-     (if (seq articles)
-       (for [article articles]
-         ^{:key (:id article)}
-         [components/article article])
-       [:p "You haven't written any articles yet"])
-     [components/section-buttons
-      [components/small-link {:text "Write article"
-                              :href (routes/path :contribute)}]]]))
-
-(defn section-issues []
-  (let [issues (<sub [::subs/issues])]
-    [components/section
-     [components/title "Open Source Issues"]
-     (if (seq issues)
-       (for [issue issues]
-         ^{:key (:id issue)}
-         [components/issue-card issue])
-       [:p "You haven't started working on any issue yet"])
-     [components/section-buttons
-      [components/small-link {:text "Explore issues"
-                              :href (routes/path :issues)}]]]))
-
-
 (defn private-section-view-new
   [user-type {:keys [email phone job-seeking-status company-perks role-types remote
                      salary visa-status current-location
@@ -667,7 +611,8 @@
                               :text "Add link to CV"}]])])
 
 (defn section-public-access-settings []
-  (let [profile-public? (<sub [::subs/published?])]
+  (let [profile-public? (<sub [::subs/published?])
+        id (<sub [::subs/id])]
     [components/section-highlighted
      [:div {:class styles/access-settings}
 
@@ -678,7 +623,9 @@
         [toggle {:value profile-public?
                  :on-change #(dispatch [::events/toggle-profile-visibility])}]]
        [:span (if profile-public?
-                "Your profile is visible to everyone."
+                [:span "Your profile is visible to everyone. " [components/underline-link
+                                                                {:href (routes/path :user :params {:id id})
+                                                                 :text "See it live!"}]]
                 "Your profile is hidden from everyone. Click the toggle to make it visible.")]]]]))
 
 (defn main-view []
@@ -689,11 +636,15 @@
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
      (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
-     [section-skills]
-     [section-articles]
-     [section-issues]]))
+     [components/section-skills (<sub [::subs/skills]) :private]
+     [components/section-articles (<sub [::subs/contributions]) :private]
+     [components/section-issues (<sub [::subs/issues]) :private]]))
 
 (defn view-page []
   [components/container
-   [components/profile (<sub [::subs/header-data])]
+   [components/profile (<sub [::subs/header-data])
+                       {:twitter (<sub [::subs/social :twitter])
+                        :stackoverflow (<sub [::subs/social :stackoverflow])
+                        :github (<sub [::subs/social :github])}
+                       :private]
    [main-view]])

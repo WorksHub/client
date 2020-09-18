@@ -17,3 +17,8 @@
    (when pred
      [:div.loader-container
       (loader)])])
+
+(defn loader-full-page []
+  [:div.loader-wrapper
+   [loader]])
+

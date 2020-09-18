@@ -1,0 +1,28 @@
+@import colours
+@import mixins
+
+.container
+  max-width: 800px
+  margin: 0 auto
+  padding: 20vh 0 0 0
+  display: flex
+  color: $primary-red
+  flex-direction: column
+  align-items: center
+
+.numbers
+  font-size: 82px
+  line-height: 82px
+  font-weight: 600
+  +tablet
+    font-size: 168px
+    line-height: 168px
+
+.description
+  font-size: 22px
+  line-height: 28px
+  font-weight: 600
+  text-align: center
+  +tablet
+    font-size: 36px
+    line-height: 42px
