@@ -34,11 +34,11 @@
      [components/compensation-amount compensation]]]])
 
 (defn card
-  [{:keys [id body title] :as issue} type
+  [{:keys [id body title] :as issue} actor type
    {:keys [base-uri vertical facebook-app-id]}]
   [components/card type
    [components/header
-    [components/company-info (:issue-company issue)]
+    [components/company-info actor]
     [components/entity-description :issue type]]
    [components/description {:type :cropped} body]
    [details issue type]

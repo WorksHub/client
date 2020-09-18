@@ -2,7 +2,6 @@
   (:require [wh.common.specs.company :as company-spec]
             [wh.common.url :as url]
             [wh.components.activities.components :as components]
-            [wh.interop :as interop]
             [wh.routes :as routes]))
 
 (defn details [{:keys [name tags slug description size locations] :as company} entity-type]
@@ -25,11 +24,11 @@
    [components/tags tags]])
 
 (defn card
-  [{:keys [id slug name] :as company} type
+  [{:keys [id slug name] :as company} actor type
    {:keys [base-uri vertical facebook-app-id]}]
   [components/card type
    [components/header
-    [components/company-info company]
+    [components/company-info actor]
     [components/entity-description :company type]]
    [components/description (if (= type :publish)
                              "Recently published their public profile"

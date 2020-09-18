@@ -29,11 +29,11 @@
    [components/tags tags]])
 
 (defn card
-  [{:keys [slug id title] :as job} type
+  [{:keys [slug id title] :as job} actor type
    {:keys [logged-in? saved-jobs base-uri vertical facebook-app-id]}]
   [components/card type
    [components/header
-    [components/company-info (:job-company job)]
+    [components/company-info actor]
     [components/entity-description :job type]]
    [components/description {:type :cropped} (:tagline job)]
    [details job type]

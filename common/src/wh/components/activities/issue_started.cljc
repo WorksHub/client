@@ -42,10 +42,10 @@
     title]])
 
 (defn card
-  [{:keys [id issue-contributor title] :as issue} type
+  [{:keys [id issue-contributor title] :as issue} actor type
    {:keys [base-uri vertical facebook-app-id]}]
   [components/card type
-   [issue-contributor-component issue-contributor]
+   [issue-contributor-component actor]
    [inner-card issue]
    [components/footer :default
     (let [url (str (url/strip-path base-uri)

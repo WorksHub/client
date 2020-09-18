@@ -95,7 +95,7 @@
                                               [:span (util/smc styles/entity-description--adjective) "Trending "]
                                               [icons/icon "trends" :class styles/entity-description--icon]]))])
 
-(defn company-info [{:keys [logo name slug] :as company}]
+(defn company-info [{:keys [image-url name slug] :as company}]
   (let [info-str (cond
                    (pos? (or (:total-published-issue-count company) 0))
                    (str "Live issues: " (get company :total-published-issue-count 0))
@@ -106,7 +106,7 @@
                    :else nil)]
     [:a {:class styles/company-info
          :href  (routes/path :company :params {:slug slug})}
-     (wrap-img img logo {:w 40 :h 40 :class styles/company-info__logo})
+     (wrap-img img image-url {:w 40 :h 40 :class styles/company-info__logo})
      [:h1 (util/smc styles/company-info__name) name]
      (when info-str
        [:span (util/smc styles/company-info__job-count)

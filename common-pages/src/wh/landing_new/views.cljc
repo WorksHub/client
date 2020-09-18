@@ -23,31 +23,31 @@
 (defmulti activity-card (juxt :verb :object-type))
 
 (defmethod activity-card [:publish "company"] [activity opts]
-  [company-published/card (:object activity) :publish opts])
+  [company-published/card (:object activity) (:actor activity) :publish opts])
 
 (defmethod activity-card [:publish "job"] [activity opts]
-  [job-published/card (:object activity) :publish opts])
+  [job-published/card (:object activity) (:actor activity) :publish opts])
 
 (defmethod activity-card [:publish "issue"] [activity opts]
-  [issue-published/card (:object activity) :publish opts])
+  [issue-published/card (:object activity) (:actor activity) :publish opts])
 
 (defmethod activity-card [:publish "article"] [activity opts]
-  [article-published/card (:object activity) :publish opts])
+  [article-published/card (:object activity) (:actor activity) :publish opts])
 
 (defmethod activity-card [:highlight "company"] [activity opts]
-  [company-published/card (:object activity) :highlight opts])
+  [company-published/card (:object activity) (:actor activity) :highlight opts])
 
 (defmethod activity-card [:highlight "job"] [activity opts]
-  [job-published/card (:object activity) :highlight opts])
+  [job-published/card (:object activity) (:actor activity) :highlight opts])
 
 (defmethod activity-card [:highlight "issue"] [activity opts]
-  [issue-published/card (:object activity) :highlight opts])
+  [issue-published/card (:object activity) (:actor activity) :highlight opts])
 
 (defmethod activity-card [:highlight "article"] [activity opts]
-  [article-published/card (:object activity) :highlight opts])
+  [article-published/card (:object activity) (:actor activity) :highlight opts])
 
 (defmethod activity-card [:start_issue "issue"] [activity opts]
-  [issue-started/card (:object activity) :start_issue opts])
+  [issue-started/card (:object activity) (:actor activity) :start_issue opts])
 
 (defmethod activity-card :default [_activity _opts]
   nil)

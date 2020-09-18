@@ -128,7 +128,7 @@
           feed-company {:object      (translate-company feed-company)
                         :object-type "company"}
           :else        {}))
-      (update :actor :id)
+      (update :actor :actor-data)
       (update :verb  keyword)))
 
 (reg-sub
