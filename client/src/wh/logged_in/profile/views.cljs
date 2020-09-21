@@ -17,15 +17,12 @@
                                                text-field text-input
                                                avatar-field]]
             [wh.components.icons :refer [icon]]
-            [wh.components.issue :as issue]
-            [wh.components.tag :as tag]
             [wh.logged-in.profile.components :as components]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
-            [wh.logged-in.profile.db :as profile]
             [wh.routes :as routes]
-            [wh.subs :refer [<sub]]
-            [wh.styles.profile :as styles]))
+            [wh.styles.profile :as styles]
+            [wh.subs :refer [<sub]]))
 
 ;; Profile header – view
 
@@ -47,16 +44,16 @@
   (when (seq other-urls)
     (let [so-reputation (:reputation stackoverflow-info)]
       (into
-       [:div.linkbox]
-       (for [{:keys [url type display]} other-urls]
-         [:span.linkbox__link-wrapper
-          [icon (name type)]
-          (when (and (= type :stackoverflow)
-                     so-reputation)
-            [:span.linkbox__reputation-badge so-reputation])
-          [:a.linkbox__link {:href   url
-                             :target "_blank"
-                             :rel    "noopener"} display]])))))
+        [:div.linkbox]
+        (for [{:keys [url type display]} other-urls]
+          [:span.linkbox__link-wrapper
+           [icon (name type)]
+           (when (and (= type :stackoverflow)
+                      so-reputation)
+             [:span.linkbox__reputation-badge so-reputation])
+           [:a.linkbox__link {:href   url
+                              :target "_blank"
+                              :rel    "noopener"} display]])))))
 
 (defn owner? [user-type] (= user-type :owner))
 (defn admin? [user-type] (= user-type :admin))
@@ -227,8 +224,8 @@
    (if uploading?
      [:button.button {:disabled true} "Uploading..."]
      [:label.file-label.profile-section__upload-document__label
-      [:input.file-input {:type "file"
-                          :name "avatar"
+      [:input.file-input {:type      "file"
+                          :name      "avatar"
                           :on-change on-change}]
       [:span.file-cta.button
        [:span.file-label (str "Upload " document-name)]]])])
@@ -264,40 +261,40 @@
 
 (defn current-location-field []
   [text-field (<sub [::subs/current-location-label])
-   {:label "Current location"
-    :data-test "current-location"
-    :suggestions (<sub [::subs/current-location-suggestions])
-    :on-change [::events/edit-current-location]
+   {:label                "Current location"
+    :data-test            "current-location"
+    :suggestions          (<sub [::subs/current-location-suggestions])
+    :on-change            [::events/edit-current-location]
     :on-select-suggestion [::events/select-current-location-suggestion]
-    :placeholder "Type to search location..."}])
+    :placeholder          "Type to search location..."}])
 
 (defn preferred-location-field [value {:keys [i label]}]
   [text-field value
-   {:label label
-    :suggestions (<sub [::subs/suggestions i])
-    :on-change [::events/edit-preferred-location i]
+   {:label                label
+    :suggestions          (<sub [::subs/suggestions i])
+    :on-change            [::events/edit-preferred-location i]
     :on-select-suggestion [::events/select-suggestion i]
-    :on-remove [::events/remove-preferred-location i]
-    :placeholder "Type to search location..."}])
+    :on-remove            [::events/remove-preferred-location i]
+    :placeholder          "Type to search location..."}])
 
 (defn private-section-edit []
   [:form.wh-formx.private-edit.wh-formx__layout
    [:h1 "Edit your private data"]
    [text-field (<sub [::subs/email])
-    {:label "Your email"
-     :validate ::p/email
+    {:label     "Your email"
+     :validate  ::p/email
      :on-change [::events/edit-email]}]
    [text-field (<sub [::subs/phone])
-    {:label "Your phone number (inc. dialling code)"
+    {:label     "Your phone number (inc. dialling code)"
      :on-change [::events/edit-phone]}]
    [select-field (<sub [::subs/job-seeking-status])
-    {:options (<sub [::subs/job-seeking-statuses])
-     :label "Job seeking status"
+    {:options   (<sub [::subs/job-seeking-statuses])
+     :label     "Job seeking status"
      :on-change [::events/edit-job-seeking-status]}]
    [multi-edit
     (<sub [::subs/company-perks])
-    {:label "Company perks"
-     :on-change [::events/edit-perk]
+    {:label       "Company perks"
+     :on-change   [::events/edit-perk]
      :placeholder "Type what you're looking for"}]
    [field-container
     {:label "Salary" :class "private-edit__salary"}
@@ -305,7 +302,7 @@
      [:div.column
       [:div.text-field-control
        [text-input (<sub [::subs/salary-min])
-        {:type :number
+        {:type        :number
          :placeholder "Minimum"
          :on-change   [::events/edit-salary-min]}]]]
      [:div.column
@@ -320,42 +317,42 @@
    [field-container
     {:label "Visa status"}
     [multiple-buttons (<sub [::subs/visa-status])
-     {:options (<sub [::subs/visa-statuses])
+     {:options   (<sub [::subs/visa-statuses])
       :on-change [::events/toggle-visa-status]}]]
    (when (<sub [::subs/visa-status-other-visible?])
      [text-field (<sub [::subs/visa-status-other])
-      {:label "Other Visa status"
+      {:label     "Other Visa status"
        :on-change [::events/edit-visa-status-other]}])
    [field-container
     {:label "Role types"}
     [multiple-buttons (<sub [::subs/role-types])
-     {:options [{:id "Full_time", :label "Full time"} "Contract" "Intern"]
+     {:options   [{:id "Full_time", :label "Full time"} "Contract" "Intern"]
       :on-change [::events/toggle-role-type]}]]
    [current-location-field]
    [multi-edit (<sub [::subs/preferred-location-labels])
-    {:label "Preferred locations"
+    {:label     "Preferred locations"
      :component preferred-location-field}]
    [labelled-checkbox
     (<sub [::subs/remote])
-    {:label "Prefer remote work"
+    {:label     "Prefer remote work"
      :on-change [::events/set-remote]}]
    [error-box]
    [:div.buttons-container
     [:button.button.button--small {:data-test "save"
-                                   :on-click #(do (.preventDefault %)
-                                                  (dispatch [::events/save-private]))} "Save"]
+                                   :on-click  #(do (.preventDefault %)
+                                                   (dispatch [::events/save-private]))} "Save"]
     [cancel-link]]])
 
 (defn company-user-edit []
   [:form.wh-formx.private-edit.wh-formx__layout
    [:h1 "Edit your profile"]
    [text-field (<sub [::subs/email])
-    {:label "Your email"
-     :validate ::p/email
+    {:label     "Your email"
+     :validate  ::p/email
      :on-change [::events/edit-email]}]
    [text-field (<sub [::subs/name])
-    {:label "Your name"
-     :validate ::p/non-empty-string
+    {:label     "Your name"
+     :validate  ::p/non-empty-string
      :on-change [::events/edit-name]}]
    [error-box]
    [:div.buttons-container
@@ -449,10 +446,10 @@
        (conj
          (upload-document "resume" (<sub [::subs/cv-uploading?])
                           (upload/handler
-                             :launch [::events/cv-upload]
-                             :on-upload-start [::events/cv-upload-start]
-                             :on-success [::events/cv-upload-success]
-                             :on-failure [::events/cv-upload-failure]))
+                            :launch [::events/cv-upload]
+                            :on-upload-start [::events/cv-upload-start]
+                            :on-success [::events/cv-upload-success]
+                            :on-failure [::events/cv-upload-failure]))
 
          [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to CV" "button"])])]))
 
@@ -477,7 +474,7 @@
       [:div.cover-letter__upload
        (conj
          (upload-document "cover letter" (<sub [::subs/cover-letter-uploading?])
-                           (upload/handler
+                          (upload/handler
                             :launch [::events/cover-letter-upload]
                             :on-upload-start [::events/cover-letter-upload-start]
                             :on-success [::events/cover-letter-upload-success]
@@ -494,7 +491,7 @@
                       salary visa-status current-location
                       preferred-locations fields title email-link-fn]
                :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
-                      title "Preferences" email-link-fn email-link}}]
+                      title  "Preferences" email-link-fn email-link}}]
    [:section.profile-section.private
     (when (owner-or-admin? user-type)
       [edit-link :profile-edit-private :candidate-edit-private])
@@ -545,28 +542,28 @@
 (defn cover-letter-section-view-new
   [user-type {:keys [cover-letter-filename cover-letter-url]}]
   [components/section
-    [components/title "Default Cover Letter"]
+   [components/title "Default Cover Letter"]
 
-    (when cover-letter-url
-      [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
-       [components/resource {:href cover-letter-url
-                             :text (if (owner? user-type) cover-letter-filename "Click here to download")}]])
+   (when cover-letter-url
+     [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
+      [components/resource {:href cover-letter-url
+                            :text (if (owner? user-type) cover-letter-filename "Click here to download")}]])
 
-    (when-not cover-letter-url
-      (if (owner? user-type)
-        "You haven't uploaded Cover Letter yet"
-        "No uploaded Cover Letter yet"))
+   (when-not cover-letter-url
+     (if (owner? user-type)
+       "You haven't uploaded Cover Letter yet"
+       "No uploaded Cover Letter yet"))
 
    (when (owner-or-admin? user-type)
      [components/section-buttons
-      [components/upload-button {:document "cover letter"
-                                 :data-test "upload-cover-letter"
+      [components/upload-button {:document   "cover letter"
+                                 :data-test  "upload-cover-letter"
                                  :uploading? (<sub [::subs/cover-letter-uploading?])
-                                 :on-change (upload/handler
-                                             :launch [::events/cover-letter-upload]
-                                             :on-upload-start [::events/cover-letter-upload-start]
-                                             :on-success [::events/cover-letter-upload-success]
-                                             :on-failure [::events/cover-letter-upload-failure])}]
+                                 :on-change  (upload/handler
+                                               :launch [::events/cover-letter-upload]
+                                               :on-upload-start [::events/cover-letter-upload-start]
+                                               :on-success [::events/cover-letter-upload-success]
+                                               :on-failure [::events/cover-letter-upload-failure])}]
       (when (and cover-letter-url (owner? user-type))
         [components/small-button
          {:on-click #(dispatch [::events/remove-cover-letter])}
@@ -585,10 +582,10 @@
                                     :text (if (owner? user-type) cv-filename "Click here to download")}]])
 
 
-           (when cv-link
-             [:p (if (owner? user-type) "Your external CV: " "External CV: ")
-              [components/resource {:href cv-link
-                                    :text cv-link}]])])
+      (when cv-link
+        [:p (if (owner? user-type) "Your external CV: " "External CV: ")
+         [components/resource {:href cv-link
+                               :text cv-link}]])])
 
    (when-not (or cv-url cv-link)
      (if (owner? user-type)
@@ -597,14 +594,14 @@
 
    (when (owner-or-admin? user-type)
      [components/section-buttons
-      [components/upload-button {:document "resume"
-                                 :data-test "upload-resume"
+      [components/upload-button {:document   "resume"
+                                 :data-test  "upload-resume"
                                  :uploading? (<sub [::subs/cv-uploading?])
-                                 :on-change (upload/handler
-                                              :launch [::events/cv-upload]
-                                              :on-upload-start [::events/cv-upload-start]
-                                              :on-success [::events/cv-upload-success]
-                                              :on-failure [::events/cv-upload-failure])}]
+                                 :on-change  (upload/handler
+                                               :launch [::events/cv-upload]
+                                               :on-upload-start [::events/cv-upload-start]
+                                               :on-success [::events/cv-upload-success]
+                                               :on-failure [::events/cv-upload-failure])}]
       [components/small-link {:href (if (= (<sub [:wh.pages.core/page]) :profile)
                                       (routes/path :profile-edit-cv)
                                       (routes/path :candidate-edit-cv))
@@ -612,7 +609,7 @@
 
 (defn section-public-access-settings []
   (let [profile-public? (<sub [::subs/published?])
-        id (<sub [::subs/id])]
+        id              (<sub [::subs/id])]
     [components/section-highlighted
      [:div {:class styles/access-settings}
 
@@ -620,7 +617,7 @@
        [:div {:class styles/access-settings__title-wrapper}
         [:div {:class styles/access-settings__title}
          "Published"]
-        [toggle {:value profile-public?
+        [toggle {:value     profile-public?
                  :on-change #(dispatch [::events/toggle-profile-visibility])}]]
        [:span (if profile-public?
                 [:span "Your profile is visible to everyone. " [components/underline-link
@@ -629,10 +626,16 @@
                 "Your profile is hidden from everyone. Click the toggle to make it visible.")]]]]))
 
 (defn main-view []
-  (let [is-company? (<sub [:user/company?])]
+  (let [is-company? (<sub [:user/company?])
+        is-owner?   (<sub [::subs/owner?])]
     [components/content
      [error-box]
      [section-public-access-settings]
+     [components/section-stats {:is-owner?       is-owner?
+                                :percentile      (<sub [::subs/percentile])
+                                :created         (<sub [::subs/created])
+                                :articles-count (<sub [::subs/articles-count])
+                                :issues-count   (<sub [::subs/issues-count])}]
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
      (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
@@ -643,8 +646,8 @@
 (defn view-page []
   [components/container
    [components/profile (<sub [::subs/header-data])
-                       {:twitter (<sub [::subs/social :twitter])
-                        :stackoverflow (<sub [::subs/social :stackoverflow])
-                        :github (<sub [::subs/social :github])}
-                       :private]
+    {:twitter       (<sub [::subs/social :twitter])
+     :stackoverflow (<sub [::subs/social :stackoverflow])
+     :github        (<sub [::subs/social :github])}
+    :private]
    [main-view]])

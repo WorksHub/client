@@ -1,8 +1,8 @@
 (ns wh.logged-in.profile.components
   (:require [clojure.string :as str]
             [re-frame.core :refer [dispatch dispatch-sync]]
-            [wh.components.signin-buttons :as signin-buttons]
             [wh.common.text :refer [pluralize]]
+            [wh.common.time :as time]
             [wh.components.activities.components :as activities-components]
             [wh.components.common :refer [link]]
             [wh.components.error.views :refer [error-box]]
@@ -13,12 +13,11 @@
                                                text-field text-input
                                                avatar-field]]
             [wh.components.icons :as icons]
-            [wh.components.issue :as issue-components]
+            [wh.components.signin-buttons :as signin-buttons]
             [wh.components.tag :as tag]
-            [wh.logged-in.profile.subs :as subs]
             [wh.routes :as routes]
-            [wh.subs :refer [<sub]]
             [wh.styles.profile :as styles]
+            [wh.subs :refer [<sub]]
             [wh.util :as util]))
 
 (defn container [& elms]
@@ -42,9 +41,9 @@
                  :href     url
                  :new-tab? true}]
       (when-not public?
-        [meta-row {:text (str "Connect " (str/capitalize (name social-provider)))
-                   :icon (name social-provider)
-                   :href (signin-buttons/type->href social-provider)
+        [meta-row {:text            (str "Connect " (str/capitalize (name social-provider)))
+                   :icon            (name social-provider)
+                   :href            (signin-buttons/type->href social-provider)
                    :social-provider social-provider}]))))
 
 (defn title [text]
@@ -66,15 +65,15 @@
 (defn upload-button [{:keys [document uploading? on-change data-test]}]
   (if uploading?
     [small-button {:disabled true} "Uploading..."]
-    [:label {:class (util/mc styles/button styles/button--small)
+    [:label {:class     (util/mc styles/button styles/button--small)
              :data-test data-test}
-     [:input.visually-hidden {:type "file"
-                              :name "avatar"
+     [:input.visually-hidden {:type      "file"
+                              :name      "avatar"
                               :on-change on-change}]
      [:span (str "Upload " document)]]))
 
 (defn edit-link [{:keys [href text data-test type]
-                  :or {text "Edit"}}]
+                  :or   {text "Edit"}}]
   (let [small? (= type :small)]
     [:a {:href      href
          :data-test data-test
@@ -85,20 +84,20 @@
   (let [[user-route admin-route] (if (= type :private)
                                    [:profile-edit-private :candidate-edit-private]
                                    [:profile-edit-header :candidate-edit-header])
-        href (if (= (<sub [:wh.pages.core/page]) :profile)
-               (routes/path user-route)
-               (routes/path admin-route))]
-    [edit-link {:href href
+        href                     (if (= (<sub [:wh.pages.core/page]) :profile)
+                                   (routes/path user-route)
+                                   (routes/path admin-route))]
+    [edit-link {:href      href
                 :data-test (if (= type :private) "edit-profile-private" "edit-profile")
-                :text "Edit"}]))
+                :text      "Edit"}]))
 
 (defn profile [user {:keys [github stackoverflow twitter] :as _socials} type]
-  (let [public? (= type :public)
+  (let [public?                          (= type :public)
         {:keys [name image-url summary]} (util/strip-ns-from-map-keys user)]
     [:div (util/smc styles/section styles/section--profile)
      (when-not public? [edit-profile {:type :default}])
      [:div {:class styles/username} name]
-     [:img {:src image-url
+     [:img {:src   image-url
             :class styles/avatar}]
      (when summary [:div {:class styles/summary
                           :title summary} summary])
@@ -111,15 +110,15 @@
        [:<>
         [:hr {:class styles/separator}]
         [:a {:data-pushy-ignore "true"
-             :class styles/button
-             :href (routes/path :logout)}
+             :class             styles/button
+             :href              (routes/path :logout)}
          "Logout"]])]))
 
 (defn view-field
   ([label content]
    (view-field nil label content))
   ([data-test label content]
-   [:div {:class styles/view-field
+   [:div {:class     styles/view-field
           :data-test data-test}
     [:label {:class styles/view-field__label} label]
     [:div {:class styles/view-field__content} content]]))
@@ -160,10 +159,10 @@
    (when editable? [edit-link {:href (routes/path :contribute-edit :params {:id id})
                                :type :small}])
    [:a {:class styles/article__title
-        :href (routes/path :blog :params {:id id})} title]
+        :href  (routes/path :blog :params {:id id})} title]
    [:div {:class styles/article__meta}
     (when-not published [:<> [:span "not published"]
-                             [meta-separator]])
+                         [meta-separator]])
     formatted-creation-date
     [meta-separator]
     reading-time " min read"
@@ -172,9 +171,9 @@
 
 (defn issue-creator [{:keys [company]}]
   (let [img-src (:logo company)
-        name (:name company)]
+        name    (:name company)]
     [:div {:class styles/issue__creator}
-     [:img {:src img-src
+     [:img {:src   img-src
             :class styles/issue__creator-avatar}]
      [:span {:class styles/issue__creator-name} name]]))
 
@@ -194,8 +193,84 @@
   [:div {:class styles/issue}
    [issue-creator {:company company}]
    [:a {:class styles/issue__title
-        :href (routes/path :issue :params {:id id})} title]
+        :href  (routes/path :issue :params {:id id})} title]
    [issue-meta issue]])
+
+(defn internal-anchor
+  [id]
+  [:div {:class styles/anchor
+         :id    id}])
+
+(defn internal-link
+  [id label]
+  [:a
+   #?(:clj  {:href (str "#" id)}
+      :cljs {:on-click #(.scrollIntoView (.getElementById js/document id))})
+   label])
+
+;; stats -----------------------------------------------------------
+
+(defn four-grid
+  [& items]
+  [:div (util/smc styles/four-grid)
+   (for [item items]
+     item)])
+
+(defn stat-container
+  [{:keys [title text image key]}]
+  [:div {:class (util/mc styles/grid-cell styles/stat-container)
+         :key   key}
+   [:div (util/smc styles/stat-container__title) title]
+   [:div (util/smc styles/stat-container__text) text]
+   [:img {:class styles/stat-container__image
+          :src   image}]])
+
+(defn percentile->title
+  [p]
+  (cond
+    (<= p 25) (str "Top " p "% user")
+    (<= p 50) (str "Rising star")
+    :else     (str "New user")))
+
+(defn percentile->image
+  [p]
+  (cond
+    (<= p 50) "/images/profile/top_user.svg"
+    :else     "/images/profile/new_user.svg"))
+
+(defn section-stats
+  [{:keys [is-owner? percentile created articles-count issues-count]}]
+  [section
+   [title "Activity & Stats"]
+   [four-grid
+    [stat-container
+     {:title "WorksHub Rating"
+      :text  (percentile->title percentile)
+      :image (percentile->image percentile)
+      :key   :rating}]
+    [stat-container
+     {:title "Member Since"
+      :text  (time/month+year (time/str->time created :date-time))
+      :image "/images/profile/member_since.svg"
+      :key   :created}]
+    [stat-container
+     {:title "Author Of"
+      :text  (if (pos-int? articles-count)
+               [internal-link "articles" (str articles-count (pluralize articles-count " article"))]
+               (if is-owner?
+                 [link "Write an article" :contribute :class "a--underlined"]
+                 "No articles yet"))
+      :image "/images/profile/articles.svg"
+      :key   :articles}]
+    [stat-container
+     {:title "Open Source Issues"
+      :text  (if (pos-int? issues-count)
+               [internal-link "issues" (str issues-count (pluralize issues-count " contribution"))]
+               (if is-owner?
+                 [link "View Open Source Issues" :issues :class "a--underlined"]
+                 "No contributions yet"))
+      :image "/images/profile/contributions.svg"
+      :key   :issues}]]])
 
 ;; skills ----------------------------------------------------------
 
@@ -227,17 +302,18 @@
        [edit-profile {:type :default}])
      [title "Top Skills"]
      (cond
-       skills? [display-skills user-skills]
-       (and (not skills?) public?) [:p "User haven't specified his skills yet. "]
-       :else [add-skills-cta])]))
+       skills?                     [display-skills user-skills]
+       (and (not skills?) public?) [:p "User hasn't specified his skills yet. "]
+       :else                       [add-skills-cta])]))
 
 ;; articles ----------------------------------------------------------
 
 (defn section-articles [articles type]
   (let [public? (= type :public)
-        message (if public? "User haven't written any articles yet. "
-                            "You haven't written any articles yet.")]
+        message (if public? "User hasn't written any articles yet. "
+                    "You haven't written any articles yet.")]
     [section
+     [internal-anchor "articles"]
      [title "Articles"]
      (if (seq articles)
        (for [article articles]
@@ -254,9 +330,10 @@
 
 (defn section-issues [issues type]
   (let [public? (= type :public)
-        message (if public? "User haven't started working on any issue yet. "
-                            "You haven't started working on any issue yet")]
+        message (if public? "User hasn't started working on any issue yet. "
+                    "You haven't started working on any issue yet")]
     [section
+     [internal-anchor "issues"]
      [title "Open Source Issues"]
      (if (seq issues)
        (for [issue issues]

@@ -7,7 +7,6 @@
             [wh.common.url :as url]
             [wh.logged-in.profile.db :as profile]
             [wh.subs :refer [with-unspecified-option]]
-            [wh.logged-in.profile.db :as profile]
             [wh.user.db :as user]
             [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
@@ -127,7 +126,7 @@
     (user/published? db)))
 
 (defn salary-string [{:keys [min currency time-period]}]
-  (let [min (text/not-blank min)
+  (let [min         (text/not-blank min)
         time-period (when time-period (str/lower-case time-period))]
     (if min
       (<< "Minimum ~{min} ~{currency} ~{time-period}")
@@ -136,7 +135,7 @@
 (defn visa-status-string
   [statuses other]
   (let [have-other? (contains? statuses "Other")
-        otherless (disj statuses "Other")]
+        otherless   (disj statuses "Other")]
     (if (seq statuses)
       (str/join ", " (cond-> otherless have-other? (conj other)))
       "No statuses selected")))
@@ -198,10 +197,10 @@
     (::profile/cv-uploading? profile)))
 
 (reg-sub
- ::cover-letter-uploading?
- :<- [::profile]
- (fn [profile _]
-   (::profile/cover-letter-uploading? profile)))
+  ::cover-letter-uploading?
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/cover-letter-uploading? profile)))
 
 (reg-sub
   ::email
@@ -350,16 +349,35 @@
    :cover-letter-link     (text/not-blank link)})
 
 (reg-sub
- ::cover-letter-data
- :<- [::profile]
- (fn [profile _]
-   (cover-letter-data (util/strip-ns-from-map-keys profile))))
+  ::cover-letter-data
+  :<- [::profile]
+  (fn [profile _]
+    (cover-letter-data (util/strip-ns-from-map-keys profile))))
 
 (reg-sub
   ::remote
   :<- [::profile]
   (fn [db]
     (::profile/remote db)))
+
+(reg-sub
+  ::percentile
+  :<- [::profile]
+  (fn [db]
+    (::profile/percentile db)))
+
+(reg-sub
+  ::created
+  :<- [::profile]
+  (fn [db]
+    (::profile/created db)))
+
+(reg-sub
+  ::owner?
+  :<- [::profile]
+  :<- [:user/sub-db]
+  (fn [[db user] _]
+    (= (::profile/id db) (:wh.user.db/id user))))
 
 (reg-sub
   ::cv-link
@@ -375,6 +393,18 @@
       (condp = field
         :email "Please enter a valid email address."
         "This field is incorrect."))))
+
+(reg-sub
+  ::articles-count
+  :<- [::contributions]
+  (fn [contributions]
+    (count contributions)))
+
+(reg-sub
+  ::issues-count
+  :<- [::issues]
+  (fn [issues]
+    (count issues)))
 
 (reg-sub
   ::id

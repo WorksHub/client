@@ -43,33 +43,35 @@
   {:venia/operation {:operation/type :query
                      :operation/name "profile"}
    :venia/variables [{:variable/name "user_id" :variable/type :ID}]
-   :venia/queries [[:me [[:skills [:name :rating]]
-                         [:companyPerks [:name]]
-                         [:otherUrls [:url]]
-                         :imageUrl
-                         :githubId
-                         :phone
-                         :published
-                         :name :summary
-                         :email :jobSeekingStatus :roleTypes
-                         :visaStatus :visaStatusOther
-                         :remote
-                         [:cv [:link
-                               [:file [:type :name :url :hash]]]]
-                         [:coverLetter [:link
-                                        [:file [:type :name :url :hash]]]]
-                         [:salary [:currency :min :timePeriod]]
-                         [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
-                         [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
-                         [:stackoverflowInfo [:reputation]]
-                         [:twitterInfo [:id]]]]
-                   [:blogs {:filter_type "mine"} [[:blogs [:id :title :formattedCreationDate :readingTime
-                                                           :upvoteCount :published]]]]
-                   [:query_issues {:user_id :$user_id}
-                    [[:issues [:id :title :level
-                               [:compensation [:amount :currency]]
-                               [:company [:id :name :logo :slug]]
-                               [:repo [:primary_language]]]]]]]})
+   :venia/queries   [[:me [[:skills [:name :rating]]
+                           [:companyPerks [:name]]
+                           [:otherUrls [:url]]
+                           :imageUrl
+                           :id :githubId
+                           :phone
+                           :published
+                           :name :summary
+                           :email :jobSeekingStatus :roleTypes
+                           :visaStatus :visaStatusOther
+                           :remote
+                           :percentile
+                           :created :lastSeen
+                           [:cv [:link
+                                 [:file [:type :name :url :hash]]]]
+                           [:coverLetter [:link
+                                          [:file [:type :name :url :hash]]]]
+                           [:salary [:currency :min :timePeriod]]
+                           [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
+                           [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
+                           [:stackoverflowInfo [:reputation]]
+                           [:twitterInfo [:id]]]]
+                     [:blogs {:filter_type "mine"} [[:blogs [:id :title :formattedCreationDate :readingTime
+                                                             :upvoteCount :published]]]]
+                     [:query_issues {:user_id :$user_id}
+                      [[:issues [:id :title :level
+                                 [:compensation [:amount :currency]]
+                                 [:company [:id :name :logo :slug]]
+                                 [:repo [:primary_language]]]]]]]})
 
 (reg-event-fx
   ::fetch-initial-data
@@ -694,5 +696,3 @@
                   :on-success [::toggle-profile-visibility-handle true]
                   :on-failure [::toggle-profile-visibility-handle false]}
      :dispatch [:error/close-global]}))
-
-

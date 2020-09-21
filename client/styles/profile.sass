@@ -10,6 +10,9 @@
   gap: 16px
   padding: 8px
 
+  +mobile
+    padding: 8px 0
+
   +tablet
     grid-template-columns: 256px 1fr
     padding: 24px
@@ -32,6 +35,9 @@
   line-height: 24px
   position: relative
   box-shadow: 0 4px 8px $card-shadow-color
+
+  +mobile
+    border-radius: 0
 
   &--profile
     gap: 24px
@@ -326,3 +332,70 @@
   &__description
     display: grid
     grid-gap: 6px
+
+.four-grid
+  display: grid
+  grid-template-columns: repeat(2,1fr)
+  grid-template-rows: repeat(2,1fr)
+
+.grid-cell
+  border-top: 1px solid $highlight-red
+  border-left: 1px solid $highlight-red
+  &:nth-child(-n+2)
+    border-top: none
+  &:nth-child(odd)
+    border-left: none
+
+.stat-container
+  padding: 12px 0 16px 0
+  position: relative
+  &:nth-child(odd)
+    padding-right: 24px
+    +mobile
+      padding-right: 12px
+  &:nth-child(even)
+    padding-left: 24px
+    +mobile
+      padding-left: 12px
+  &:nth-child(n+3)
+    padding-top: 20px
+  &__title
+    text-transform: uppercase
+    color: $grey300
+    font-size: 11px
+    line-height: 12px
+    letter-spacing: 0.5px
+    margin-bottom: 10px
+    +mobile
+      font-size: 10px
+      letter-spacing: 0.45px
+      margin-bottom: 8px
+  &__text
+    color: $grey500
+    font-size: 18px
+    margin-right: 34px
+    font-weight: 600
+    line-height: 22px
+    +mobile
+      font-size: 14px
+      margin-right: 0
+    a
+      text-decoration: underline
+  &__image
+    position: absolute
+    bottom: 12px
+    height: 32px
+    +desktop
+      height: 42px
+    +mobile
+      height: 0px
+  &:nth-child(odd) > &__image
+    right: 12px
+  &:nth-child(even) > &__image
+    right: 4px
+
+.anchor
+  visibility: hidden
+  height: 0
+  position: absolute
+  top: -$header-height-desktop

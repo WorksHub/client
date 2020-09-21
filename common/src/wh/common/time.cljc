@@ -8,7 +8,8 @@
 
 (defn str->time
   [s formatter-kw]
-  (tf/parse (tf/formatters formatter-kw) s))
+  (when s
+    (tf/parse (tf/formatters formatter-kw) s)))
 
 (defn human-time
   [t]
@@ -27,3 +28,8 @@
                          (str s " " (text/pluralize s "day") " ago"))
       ;; longer than 28 days
       :else            (tf/unparse (tf/formatter "d MMM, yyyy") t))))
+
+(defn month+year
+  [t]
+  (when t
+    (tf/unparse (tf/formatter "MMM yyyy") t)))
