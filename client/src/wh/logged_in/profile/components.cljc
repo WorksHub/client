@@ -5,19 +5,12 @@
             [wh.common.time :as time]
             [wh.components.activities.components :as activities-components]
             [wh.components.common :refer [link]]
-            [wh.components.error.views :refer [error-box]]
-            [wh.components.forms.views :refer [field-container
-                                               labelled-checkbox
-                                               multi-edit multiple-buttons
-                                               select-field select-input
-                                               text-field text-input
-                                               avatar-field]]
             [wh.components.icons :as icons]
             [wh.components.signin-buttons :as signin-buttons]
             [wh.components.tag :as tag]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
-            [wh.subs :refer [<sub]]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.util :as util]))
 
 (defn container [& elms]

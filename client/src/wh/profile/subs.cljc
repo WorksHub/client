@@ -4,9 +4,7 @@
             [wh.common.specs.primitives]
             [wh.common.url :as url]
             [wh.graphql-cache :as gql-cache]
-            [wh.profile.events :as profile-events]
-            [wh.subs :refer [with-unspecified-option]])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+            [wh.profile.events :as profile-events]))
 
 (reg-sub
   ::profile-query-result
@@ -47,20 +45,20 @@
   :<- [::profile]
   (fn [profile [_ type]]
     (->> profile
-         :other-urls
-         url/detect-urls-type
-         (some #(when (= type (:type %)) %)))))
+        :other-urls
+        url/detect-urls-type
+        (some #(when (= type (:type %)) %)))))
 
 (reg-sub
   ::percentile
   :<- [::profile]
-  (fn [db]
+  (fn [db _]
     (:percentile db)))
 
 (reg-sub
   ::created
   :<- [::profile]
-  (fn [db]
+  (fn [db _]
     (:created db)))
 
 (reg-sub
