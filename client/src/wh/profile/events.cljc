@@ -19,7 +19,9 @@
                                       :id
                                       :summary
                                       :percentile
-                                      :created]]
+                                      :created
+                                      :lastSeen
+                                      :updated]]
                    [:blogs {:user_id :$id} [[:blogs [:id :title :formattedCreationDate :readingTime
                                                      :upvoteCount :published]]]]
                    [:query_issues {:user_id :$id}
@@ -51,6 +53,5 @@
 
 #?(:cljs
    (defmethod pages/on-page-load :user [_]
-     ;; TODO: ask why it's impossible to user ::pages/unset-loader
      [[:wh.pages.core/unset-loader]
       [::load-profile]]))

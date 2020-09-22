@@ -19,7 +19,7 @@
 (defn header-data
   [data contributions]
   (-> data
-      (select-keys [:image-url :name :skills :other-urls :summary :stackoverflow-info :github-id :twitter-info])
+      (select-keys [:image-url :name :skills :other-urls :summary :stackoverflow-info :github-id :twitter-info :last-seen :updated])
       (update :other-urls url/detect-urls-type)
       (assoc :contributions contributions)))
 
@@ -405,6 +405,18 @@
   :<- [::issues]
   (fn [issues]
     (count issues)))
+
+(reg-sub
+  ::last-seen
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/last-seen profile)))
+
+(reg-sub
+  ::updated
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/updated profile)))
 
 (reg-sub
   ::id

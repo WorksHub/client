@@ -648,6 +648,8 @@
    [components/profile (<sub [::subs/header-data])
     {:twitter       (<sub [::subs/social :twitter])
      :stackoverflow (<sub [::subs/social :stackoverflow])
-     :github        (<sub [::subs/social :github])}
+     :github        (<sub [::subs/social :github])
+     :last-seen     (<sub [::subs/last-seen])
+     :updated       (<sub [::subs/updated])}
     :private]
    [main-view]])

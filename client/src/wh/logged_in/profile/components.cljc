@@ -19,12 +19,12 @@
 (defn meta-row [{:keys [text icon href new-tab? social-provider]}]
   [:a (cond-> {:class (util/mc styles/meta-row
                                [(= social-provider :stackoverflow) styles/meta-row--stackoverflow]
-                               [(= social-provider :twitter) styles/meta-row--twitter])
-               :href href}
+                               [(= social-provider :twitter) styles/meta-row--twitter])}
+              href (assoc :href href)
               new-tab? (merge {:target "_blank"
                                :rel    "noopener"}))
    [icons/icon icon :class styles/meta-row__icon]
-   [:span {:class styles/meta-row__description} text]])
+   [:span (when social-provider {:class styles/meta-row__description})  text]])
 
 (defn social-row [social-provider {:keys [display url] :as social} type]
   (let [public? (= type :public)]
@@ -32,7 +32,8 @@
       [meta-row {:text     display
                  :icon     (name social-provider)
                  :href     url
-                 :new-tab? true}]
+                 :new-tab? true
+                 :social-provider social-provider}]
       (when-not public?
         [meta-row {:text            (str "Connect " (str/capitalize (name social-provider)))
                    :icon            (name social-provider)
@@ -84,7 +85,7 @@
                 :data-test (if (= type :private) "edit-profile-private" "edit-profile")
                 :text      "Edit"}]))
 
-(defn profile [user {:keys [github stackoverflow twitter] :as _socials} type]
+(defn profile [user {:keys [github stackoverflow twitter last-seen updated]} type]
   (let [public?                          (= type :public)
         {:keys [name image-url summary]} (util/strip-ns-from-map-keys user)]
     [:div (util/smc styles/section styles/section--profile)
@@ -96,6 +97,16 @@
                           :title summary} summary])
      [:hr {:class styles/separator}]
      [:div {:class styles/meta-rows}
+      (when last-seen
+        [meta-row {:icon "clock"
+                   :text (->> (time/str->time last-seen :date-time)
+                              time/human-time
+                              (str "Last seen "))}])
+      (when updated
+        [meta-row {:icon "refresh"
+                   :text (->> (time/str->time updated :date-time)
+                              time/human-time
+                              (str "Updated "))}])
       [social-row :github github type]
       [social-row :stackoverflow stackoverflow type]
       [social-row :twitter twitter type]]

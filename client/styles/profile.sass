@@ -41,6 +41,9 @@
 
   &--profile
     gap: 24px
+    +tablet
+      position: sticky
+      top: 96px
 
   &--highlighted
     border: 1px solid $primary-red
@@ -89,7 +92,7 @@
   align-items: center
   font-size: 14px
   line-height: 14px
-  font-weight: 500
+  font-weight: 400
 
   &--stackoverflow
     color: $stackoverflow-orange
@@ -373,9 +376,9 @@
   &__text
     color: $grey500
     font-size: 18px
+    line-height: 18px
     margin-right: 34px
     font-weight: 600
-    line-height: 22px
     +mobile
       font-size: 14px
       margin-right: 0

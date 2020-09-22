@@ -55,7 +55,9 @@
                            :visaStatus :visaStatusOther
                            :remote
                            :percentile
-                           :created :lastSeen
+                           :created
+                           :lastSeen
+                           :updated
                            [:cv [:link
                                  [:file [:type :name :url :hash]]]]
                            [:coverLetter [:link

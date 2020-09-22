@@ -21,7 +21,7 @@
 
 (defn cache-loading?
   [query-fn db]
-  (= "executing" (apply gqlc/state db (query-fn db))))
+  (boolean (#{:executing :initial} (apply gqlc/state db (query-fn db)))))
 
 (reg-sub
   ::top-blogs
@@ -163,9 +163,7 @@
 (reg-sub
   ::recent-activities-loading?
   (fn [db _]
-    (let [state (apply gqlc/state db (events/recent-activities db))]
-      (or (nil? state)
-          (= :executing (keyword state))))))
+    (cache-loading? events/recent-activities db)))
 
 (reg-sub
   ::not-enough-activities?

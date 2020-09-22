@@ -50,6 +50,18 @@
         (some #(when (= type (:type %)) %)))))
 
 (reg-sub
+  ::last-seen
+  :<- [::profile]
+  (fn [profile _]
+    (:last-seen profile)))
+
+(reg-sub
+  ::updated
+  :<- [::profile]
+  (fn [profile _]
+    (:updated profile)))
+
+(reg-sub
   ::percentile
   :<- [::profile]
   (fn [db _]
