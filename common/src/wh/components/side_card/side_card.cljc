@@ -76,7 +76,7 @@
   [:section {:class style/section}
    [c/section-title "Top Ranking Users"]
    (if loading?
-     [c/section-elements-skeleton]
+     [c/section-elements-skeleton {:type :default}]
      [c/section-elements users card-user])
    (when-not loading?
      [:div
@@ -111,7 +111,7 @@
   [:section {:class style/section}
    [c/section-title (if show-recommendations? "Recommended jobs" "Hiring now")]
    (if loading?
-     [c/section-elements-skeleton]
+     [c/section-elements-skeleton {:type :default}]
      [c/section-elements jobs card-job {:data-test "recommended-jobs"}])
    (when-not loading?
      [:div {:class (util/mc style/footer style/footer--jobs)}
