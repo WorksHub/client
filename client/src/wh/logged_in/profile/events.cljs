@@ -46,29 +46,37 @@
    :venia/queries   [[:me [[:skills [:name :rating]]
                            [:companyPerks [:name]]
                            [:otherUrls [:url]]
-                           :imageUrl
-                           :id :githubId
-                           :phone
-                           :published
-                           :name :summary
+                           :imageUrl :id :githubId
+                           :phone :published :name :summary
                            :email :jobSeekingStatus :roleTypes
-                           :visaStatus :visaStatusOther
-                           :remote
-                           :percentile
-                           :created
-                           :lastSeen
-                           :updated
+                           :visaStatus :visaStatusOther :remote
+                           :percentile :created :lastSeen :updated
+
+                           [:contributionsCollection
+                            [:totalCommitContributions
+                             :totalRepositoriesWithContributedCommits
+                             [:contributionCalendar
+                              [[:weeks
+                                [[:contributionDays
+                                  [:contributionCount
+                                   :date :weekday :color]]]]]]]]
+
                            [:cv [:link
                                  [:file [:type :name :url :hash]]]]
                            [:coverLetter [:link
                                           [:file [:type :name :url :hash]]]]
                            [:salary [:currency :min :timePeriod]]
-                           [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
-                           [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
+                           [:currentLocation
+                            [:city :administrative :country :countryCode
+                             :subRegion :region :longitude :latitude]]
+                           [:preferredLocations
+                            [:city :administrative :country :countryCode
+                             :subRegion :region :longitude :latitude]]
                            [:stackoverflowInfo [:reputation]]
                            [:twitterInfo [:id]]]]
-                     [:blogs {:filter_type "mine"} [[:blogs [:id :title :formattedCreationDate :readingTime
-                                                             :upvoteCount :published]]]]
+                     [:blogs {:filter_type "mine"}
+                      [[:blogs [:id :title :formattedCreationDate
+                                :readingTime :upvoteCount :published]]]]
                      [:query_issues {:user_id :$user_id}
                       [[:issues [:id :title :level
                                  [:compensation [:amount :currency]]

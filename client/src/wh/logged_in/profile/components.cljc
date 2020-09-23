@@ -8,9 +8,10 @@
             [wh.components.icons :as icons]
             [wh.components.signin-buttons :as signin-buttons]
             [wh.components.tag :as tag]
+            [wh.logged-in.profile.components.contributions :as contributions]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
-            [wh.re-frame.subs :refer [<sub]]
             [wh.util :as util]))
 
 (defn container [& elms]
@@ -225,6 +226,12 @@
    (for [item items]
      item)])
 
+(defn three-grid
+  [& items]
+  [:div (util/smc styles/three-grid)
+   (for [item items]
+     item)])
+
 (defn stat-container
   [{:keys [title text image key]}]
   [:div {:class (util/mc styles/grid-cell styles/stat-container)
@@ -329,7 +336,9 @@
          ^{:key (:id article)}
          [article-card (assoc article :editable? (not public?))])
        [:p message
-        (when public? [underline-link {:text "Browse all articles" :href (routes/path :learn)}])])
+        (when public?
+          [underline-link
+           {:text "Browse all articles" :href (routes/path :learn)}])])
      (when-not public?
        [section-buttons
         [small-link {:text "Write article"
@@ -349,11 +358,38 @@
          ^{:key (:id issue)}
          [issue-card issue])
        [:p message
-        (when public? [underline-link {:text "Browse all issues" :href (routes/path :issues)}])])
+        (when public? [underline-link
+                       {:text "Browse all issues" :href (routes/path :issues)}])])
      (when-not public?
        [section-buttons
         [small-link {:text "Explore issues"
                      :href (routes/path :issues)}]])]))
+
+;; contributions ----------------------------------------------------------
+
+(defn contributions-section [contributions contributions-count
+                             contributions-repos months]
+  [section
+   [internal-anchor "github"]
+   [title "Open Source"]
+
+   [three-grid
+    ^{:key :contributions-count}
+    [stat-container
+     {:title "GitHub contributions"
+      :text  (str contributions-count " commits")
+      :image "/images/profile/commits.svg"
+      :key   :rating}]
+
+    ^{:key :repos-count}
+    [stat-container
+     {:title "Over a total of"
+      :text  (str contributions-repos " repositories")
+      :image "/images/profile/repositories.svg"
+      :key   :created}]
+
+    ^{:key :contributions-grid}
+    [contributions/contributions-grid contributions months]]])
 
 ;; issues ----------------------------------------------------------
 

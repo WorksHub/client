@@ -6,7 +6,8 @@
             [wh.common.text :as text]
             [wh.common.url :as url]
             [wh.logged-in.profile.db :as profile]
-            [wh.subs :refer [with-unspecified-option]]
+            [wh.subs :refer [with-unspecified-option
+                             <sub]]
             [wh.user.db :as user]
             [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
@@ -19,7 +20,8 @@
 (defn header-data
   [data contributions]
   (-> data
-      (select-keys [:image-url :name :skills :other-urls :summary :stackoverflow-info :github-id :twitter-info :last-seen :updated])
+      (select-keys [:image-url :name :skills :other-urls :summary :stackoverflow-info
+                    :github-id :twitter-info :last-seen :updated])
       (update :other-urls url/detect-urls-type)
       (assoc :contributions contributions)))
 
@@ -28,8 +30,8 @@
   :<- [::profile]
   (fn [profile _]
     (header-data
-     (util/strip-ns-from-map-keys profile)
-     (::profile/contributions profile))))
+      (util/strip-ns-from-map-keys profile)
+      (::profile/contributions profile))))
 
 (reg-sub
   ::skills
@@ -422,3 +424,50 @@
   ::id
   (fn [db _]
     (user/id db)))
+
+
+;; magic number. I'm not going to try and show data only from 4 months everytime.
+;; 18 seems like a safe, nice number of weeks
+(def weeks-count 18)
+
+(reg-sub
+  ::contributions-collection
+  :<- [::profile]
+  (fn [profile _]
+    (get profile ::profile/contributions-collection)))
+
+(reg-sub
+  ::contributions-calendar
+  :<- [::contributions-collection]
+  (fn [contributions _]
+    (->> (get-in contributions [:contribution-calendar :weeks])
+         (map :contribution-days)
+         (take-last weeks-count))))
+
+(reg-sub
+  ::contributions-count
+  :<- [::contributions-collection]
+  (fn [contributions _]
+    (get contributions :total-commit-contributions)))
+
+(reg-sub
+  ::contributions-repos
+  :<- [::contributions-collection]
+  (fn [contributions _]
+    (get contributions :total-repositories-with-contributed-commits)))
+
+(defn week->month [week]
+  (-> week first :date js/Date.
+      (.toLocaleString "en-us" #js {:month "short"})))
+
+;; magic number. 4 fits quite nice into design
+(def month-count 4)
+
+(reg-sub
+  ::contributions-months
+  :<- [::contributions-calendar]
+  (fn [contributions _]
+    (->> contributions
+         (map week->month)
+         (distinct)
+         (take-last month-count))))

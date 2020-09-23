@@ -626,20 +626,28 @@
                 "Your profile is hidden from everyone. Click the toggle to make it visible.")]]]]))
 
 (defn main-view []
-  (let [is-company? (<sub [:user/company?])
-        is-owner?   (<sub [::subs/owner?])]
+  (let [is-company?    (<sub [:user/company?])
+        is-owner?      (<sub [::subs/owner?])
+        contributions? (boolean
+                         (<sub [::subs/contributions-collection]))]
     [components/content
      [error-box]
      [section-public-access-settings]
-     [components/section-stats {:is-owner?       is-owner?
-                                :percentile      (<sub [::subs/percentile])
-                                :created         (<sub [::subs/created])
+     [components/section-stats {:is-owner?      is-owner?
+                                :percentile     (<sub [::subs/percentile])
+                                :created        (<sub [::subs/created])
                                 :articles-count (<sub [::subs/articles-count])
                                 :issues-count   (<sub [::subs/issues-count])}]
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
      (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
      [components/section-skills (<sub [::subs/skills]) :private]
+     (when contributions?
+       [components/contributions-section
+        (<sub [::subs/contributions-calendar])
+        (<sub [::subs/contributions-count])
+        (<sub [::subs/contributions-repos])
+        (<sub [::subs/contributions-months])])
      [components/section-articles (<sub [::subs/contributions]) :private]
      [components/section-issues (<sub [::subs/issues]) :private]]))
 
