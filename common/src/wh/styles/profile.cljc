@@ -55,3 +55,5 @@
 (def stat-container__text "profile__stat-container__text---8Cpd")
 (def stat-container__image "profile__stat-container__image--3WFB6")
 (def anchor "profile__anchor--15oAV")
+(def profile-hidden "profile__profile-hidden--I6mhr")
+(def profile-hidden__icon "profile__profile-hidden__icon--3pphe")

@@ -19,6 +19,7 @@
                                       :id
                                       :summary
                                       :percentile
+                                      :published
                                       :created
                                       :lastSeen
                                       :updated]]

@@ -22,7 +22,6 @@
   grid-gap: 18px
 
 .underline-link
-  padding-bottom: 2px
   border-bottom: 1px solid $grey200
 
 .section
@@ -30,7 +29,7 @@
   border-radius: 4px
   padding: 24px 20px
   display: grid
-  gap: 16px
+  gap: 14px
   font-size: 14px
   line-height: 24px
   position: relative
@@ -382,8 +381,6 @@
     +mobile
       font-size: 14px
       margin-right: 0
-    a
-      text-decoration: underline
   &__image
     position: absolute
     bottom: 12px
@@ -391,7 +388,7 @@
     +desktop
       height: 42px
     +mobile
-      height: 0px
+      height: 0
   &:nth-child(odd) > &__image
     right: 12px
   &:nth-child(even) > &__image
@@ -402,3 +399,16 @@
   height: 0
   position: absolute
   top: -$header-height-desktop
+
+.profile-hidden
+  &__icon
+    width: 26px
+    height: 26px
+    color: $grey300
+    margin-right: 8px
+
+  display: flex
+  width: 100%
+  justify-content: center
+  align-items: center
+  font-size: 18px

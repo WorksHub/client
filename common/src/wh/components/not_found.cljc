@@ -16,7 +16,7 @@
 (defn not-found-profile []
   [:div {:class styles/container}
    [:div {:class styles/numbers} "404"]
-   [:div {:class styles/description} "Profile page is hidden" [:br] "or doesn't exist"]])
+   [:div {:class styles/description} "Profile page doesn't exist"]])
 
 (defn not-found-page []
   [:div.dashboard

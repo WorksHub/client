@@ -12,12 +12,13 @@
     [:div (util/smc styles/article__feature)
      (wrap-img img feature {:w 578 :h 154 :class styles/article__feature-img :crop "center"})]))
 
-(defn issue-contributor-component [{:keys [name image-url] :as user}]
+(defn issue-contributor-component [{:keys [name image-url id] :as _user}]
   [:div (util/smc styles/issue-contributor)
    (wrap-img img image-url {:w 48 :h 48 :crop "center" :class styles/issue-contributor__avatar})
    [:span (util/smc styles/issue-contributor__title)
     (if (text/not-blank name)
-      [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) name]
+      [:a {:class (util/mc styles/issue-contributor__title styles/issue-contributor__title--bold styles/issue-contributor__title--link)
+           :href (routes/path :user :params {:id id})}  name]
       [:span (util/smc styles/issue-contributor__title) "Someone "])
     [:span "has just started to work on an"]
     [:span (util/smc styles/issue-contributor__title styles/issue-contributor__title--bold) "open source issue!"]]

@@ -10,6 +10,7 @@
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.styles.activities :as styles]
+            [wh.common.time :as time]
             [wh.util :as util]
             [wh.verticals :as verticals]))
 
@@ -102,7 +103,9 @@
                    (pos? (or (:total-published-job-count company) 0))
                    (str "Live jobs: " (get company :total-published-job-count 0))
                    (:creation-date company)
-                   (str "Joined " (:creation-date company))
+                   (str "Joined " (-> (:creation-date company)
+                                      (time/str->time :date-time)
+                                      (time/human-time)))
                    :else nil)]
     [:a {:class styles/company-info
          :href  (routes/path :company :params {:slug slug})}
@@ -179,14 +182,15 @@
                     share-toggle-on-click)
           [icons/icon "network"]])]]]))
 
-(defn author [{:keys [img]} children]
-  [:div (util/smc styles/author)
+(defn author [{:keys [img name id]}]
+  [:a {:class (util/mc styles/author)
+       :href  (routes/path :user :params {:id id})}
    (when img
      [:img {:class (util/mc styles/author__img)
             :src   img}])
    [:p
     (util/smc styles/author__name)
-    children]])
+    name]])
 
 (defn footer [type & children]
   [:div (util/smc styles/footer (when (= type :compound) styles/footer--compound))

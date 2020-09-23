@@ -39,7 +39,9 @@
          title]
         [components/entity-description :blog type]]
        [components/meta-row
-        [components/author {:img (:image-url actor)} author-name]
+        [components/author {:img (:image-url actor)
+                            :name author-name
+                            :id (:id actor)}]
         [article-time
          {:date display-date :reading-time reading-time}]]
        [components/tags tags]]]

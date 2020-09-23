@@ -71,5 +71,6 @@
 (def issue-contributor "activities__issue-contributor--1rJ1x")
 (def issue-contributor__title "activities__issue-contributor__title--wj8GF")
 (def issue-contributor__title--bold "activities__issue-contributor__title--bold--I5WIx")
+(def issue-contributor__title--link "activities__issue-contributor__title--link--16S9K")
 (def issue-contributor__avatar "activities__issue-contributor__avatar--2Yebu")
 (def issue-contributor__img "activities__issue-contributor__img--3MyQI")

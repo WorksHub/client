@@ -344,11 +344,16 @@ $action-block-height: 25px
   margin-right: 8px
   width: 24px
 
-.article__time,
+.article__time
+  font-family: $font-family
+  font-size: 14px
+  line-height: 17px
+
 .author__name
   font-family: $font-family
   font-size: 14px
   line-height: 17px
+  border-bottom: 1px solid $grey200
 
 .footer
   display: flex
@@ -481,14 +486,16 @@ $action-block-height: 25px
       font-size: 16px
       line-height: 22px
 
+    &--bold
+      font-weight: 600
+      &:first-of-type
+        margin-right: 6px
+        font-weight: 700
+      &:not(:first-of-type)
+        margin-left: 6px
 
-  &__title--bold
-    font-weight: 600
-    &:first-of-type
-      margin-right: 6px
-      font-weight: 700
-    &:not(:first-of-type)
-      margin-left: 6px
+    &--link
+      border-bottom: 1px solid $grey200
 
   &__avatar
     border-radius: 50%

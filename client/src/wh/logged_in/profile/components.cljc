@@ -24,7 +24,7 @@
               new-tab? (merge {:target "_blank"
                                :rel    "noopener"}))
    [icons/icon icon :class styles/meta-row__icon]
-   [:span (when social-provider {:class styles/meta-row__description})  text]])
+   [:span (when href {:class styles/meta-row__description})  text]])
 
 (defn social-row [social-provider {:keys [display url] :as social} type]
   (let [public? (= type :public)]
@@ -32,8 +32,7 @@
       [meta-row {:text     display
                  :icon     (name social-provider)
                  :href     url
-                 :new-tab? true
-                 :social-provider social-provider}]
+                 :new-tab? true}]
       (when-not public?
         [meta-row {:text            (str "Connect " (str/capitalize (name social-provider)))
                    :icon            (name social-provider)
@@ -87,7 +86,10 @@
 
 (defn profile [user {:keys [github stackoverflow twitter last-seen updated]} type]
   (let [public?                          (= type :public)
-        {:keys [name image-url summary]} (util/strip-ns-from-map-keys user)]
+        {:keys [name image-url summary]} (util/strip-ns-from-map-keys user)
+        show-meta? (->> [github stackoverflow twitter last-seen updated]
+                        (map boolean)
+                        (some true?))]
     [:div (util/smc styles/section styles/section--profile)
      (when-not public? [edit-profile {:type :default}])
      [:div {:class styles/username} name]
@@ -95,21 +97,24 @@
             :class styles/avatar}]
      (when summary [:div {:class styles/summary
                           :title summary} summary])
-     [:hr {:class styles/separator}]
-     [:div {:class styles/meta-rows}
-      (when last-seen
-        [meta-row {:icon "clock"
-                   :text (->> (time/str->time last-seen :date-time)
-                              time/human-time
-                              (str "Last seen "))}])
-      (when updated
-        [meta-row {:icon "refresh"
-                   :text (->> (time/str->time updated :date-time)
-                              time/human-time
-                              (str "Updated "))}])
-      [social-row :github github type]
-      [social-row :stackoverflow stackoverflow type]
-      [social-row :twitter twitter type]]
+     (if show-meta?
+       [:<> [:hr {:class styles/separator}]
+            [:div {:class styles/meta-rows}
+             (when last-seen
+               [meta-row {:icon "clock"
+                          :text (->> (time/str->time last-seen :date-time)
+                                     time/human-time
+                                     (str "Last seen "))}])
+             (when updated
+               [meta-row {:icon "refresh"
+                          :text (->> (time/str->time updated :date-time)
+                                     time/human-time
+                                     (str "Updated "))}])
+             [social-row :github github type]
+             [social-row :stackoverflow stackoverflow type]
+             [social-row :twitter twitter type]]]
+       ;; add div so it looks good with css grid
+       [:div])
      (when-not public?
        [:<>
         [:hr {:class styles/separator}]
@@ -262,7 +267,7 @@
       :text  (if (pos-int? articles-count)
                [internal-link "articles" (str articles-count (pluralize articles-count " article"))]
                (if is-owner?
-                 [link "Write an article" :contribute :class "a--underlined"]
+                 [link "Write an article" :contribute :class styles/underline-link]
                  "No articles yet"))
       :image "/images/profile/articles.svg"
       :key   :articles}]
@@ -271,7 +276,7 @@
       :text  (if (pos-int? issues-count)
                [internal-link "issues" (str issues-count (pluralize issues-count " contribution"))]
                (if is-owner?
-                 [link "View Open Source Issues" :issues :class "a--underlined"]
+                 [link "View Open Source Issues" :issues :class styles/underline-link]
                  "No contributions yet"))
       :image "/images/profile/contributions.svg"
       :key   :issues}]]])
@@ -349,3 +354,11 @@
        [section-buttons
         [small-link {:text "Explore issues"
                      :href (routes/path :issues)}]])]))
+
+;; issues ----------------------------------------------------------
+
+(defn profile-hidden-message []
+  [section
+   [:div {:class styles/profile-hidden}
+    [icons/icon "lock" :class styles/profile-hidden__icon]
+    "This user's profile is hidden"]])

@@ -7,29 +7,36 @@
     [wh.profile.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]))
 
+(defn content []
+  (let [profile-hidden? (<sub [::subs/profile-hidden?])
+        articles (<sub [::subs/blogs])
+        issues (<sub [::subs/issues])]
+    (if profile-hidden?
+      [components/profile-hidden-message]
+      [components/content
+       [components/section-stats {:is-owner?       false
+                                  :percentile      (<sub [::subs/percentile])
+                                  :created         (<sub [::subs/created])
+                                  :articles-count (count articles)
+                                  :issues-count   (count issues)}]
+       [components/section-skills (<sub [::subs/skills]) :public]
+       [components/section-articles articles :public]
+       [components/section-issues issues :public]])))
+
 (defn page []
-  (let [articles (<sub [::subs/blogs])
-        issues   (<sub [::subs/issues])]
-    (cond
-      (<sub [::subs/error?])
-      [not-found/not-found-profile]
-      (<sub [::subs/loader?])
-      [loader-full-page]
-      :else
-      [components/container
-       [components/profile (<sub [::subs/profile])
-        {:twitter       (<sub [::subs/social :twitter])
-         :stackoverflow (<sub [::subs/social :stackoverflow])
-         :github        (<sub [::subs/social :github])
-         :last-seen     (<sub [::subs/last-seen])
-         :updated       (<sub [::subs/updated])}
-        :public]
-       [components/content
-        [components/section-stats {:is-owner?       false
-                                   :percentile      (<sub [::subs/percentile])
-                                   :created         (<sub [::subs/created])
-                                   :articles-count (count articles)
-                                   :issues-count   (count issues)}]
-        [components/section-skills (<sub [::subs/skills]) :public]
-        [components/section-articles articles :public]
-        [components/section-issues issues :public]]])))
+  (cond
+    (<sub [::subs/error?])
+    [not-found/not-found-profile]
+    (<sub [::subs/loader?])
+    [loader-full-page]
+    :else
+    [components/container
+     [components/profile (<sub [::subs/profile])
+      {:twitter       (<sub [::subs/social :twitter])
+       :stackoverflow (<sub [::subs/social :stackoverflow])
+       :github        (<sub [::subs/social :github])
+       :last-seen     (<sub [::subs/last-seen])
+       :updated       (<sub [::subs/updated])}
+      :public]
+     [content]]))
+

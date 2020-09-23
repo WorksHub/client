@@ -105,14 +105,15 @@
 
 (defn author-info []
   (when-let [info (<sub [::subs/author-info])]
-    (let [{:keys [image-url name summary other-urls skills]} info
+    (let [{:keys [image-url name summary other-urls skills id] :as user} info
           skill-names (map :name skills)]
       [:div.author-info
        [:div.author-info__inner
         [:img.author-info__photo {:src image-url
                                   :alt "Author's avatar"}]
         [:div.author-info__data
-         [:div.author-info__name name]
+         [:a {:class "author-info__name"
+              :href (routes/path :user :params {:id id})} name]
          (when summary [:div.author-info__summary summary])
          (when other-urls [url-icons other-urls "author-info__other-urls"])]]
        (when (seq skill-names)

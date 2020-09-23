@@ -74,6 +74,12 @@
     (:created db)))
 
 (reg-sub
+  ::profile-hidden?
+  :<- [::profile]
+  (fn [db _]
+    (false? (:published db))))
+
+(reg-sub
   ::error?
   (fn [db _]
     (let [[query params] (profile-events/profile-query-description db)]

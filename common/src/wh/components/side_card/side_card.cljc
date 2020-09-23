@@ -56,8 +56,9 @@
        (tf/parse)
        (tf/unparse (tf/formatter "yyyy"))))
 
-(defn card-user [{:keys [blog-count issue-count created name image-url] :as _user}]
-  [:section {:class style/section__element}
+(defn card-user [{:keys [blog-count issue-count created name image-url id] :as _user}]
+  [:a {:class (util/mc style/section__element style/section__element--link)
+       :href (routes/path :user :params {:id id})}
    [c/connected-entity {:title      name
                         :title-type :primary
                         :subtitle   (str "Joined in " (format-user-date created))

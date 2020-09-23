@@ -24,7 +24,7 @@
                      :originalSource :formattedCreationDate :upvoteCount
                      :primaryVertical :verticals :associatedJobs
                      [:tags :fragment/tagFields]
-                     [:authorInfo [:name :summary :imageUrl
+                     [:authorInfo [:id :name :summary :imageUrl
                                    [:skills [:name]]
                                    [:otherUrls [:url :title]]]]
                      [:company [:logo :name :id]]]]]})
