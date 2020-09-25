@@ -4,6 +4,7 @@
             [re-frame.core :refer [path reg-event-db reg-event-fx]]
             [wh.common.cases :as cases]
             [wh.common.errors :as errors]
+            [wh.common.keywords :as keywords]
             [wh.common.upload :as upload]
             [wh.common.user :as user-common]
             [wh.components.forms.events :as form-events]
@@ -193,7 +194,7 @@
                :variables {:id id}}}))
 
 (defn translate-blog [blog]
-  (-> (util/namespace-map "wh.logged-in.contribute.db" (cases/->kebab-case blog))
+  (-> (keywords/namespace-map "wh.logged-in.contribute.db" (cases/->kebab-case blog))
       (assoc ::contribute/selected-tag-ids (->> blog :tags (map :id) set)
              ::contribute/company-id (get-in blog [:company :id])
              ::contribute/company-name (get-in blog [:company :name])

@@ -1,18 +1,13 @@
 (ns wh.common.fx.analytics
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [reg-fx reg-event-fx]]
-    [re-frame.db :refer [app-db]]
-    [wh.common.cases :as cases]
-    [wh.common.user :as user]
-    [wh.util :as util])
-  (:require-macros
-    [cljs.core :refer [exists?]]))
+  (:require [re-frame.core :refer [reg-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.keywords :as keywords]
+            [wh.common.user :as user]))
 
 (reg-fx
- :analytics/reset
- (fn []
-   (js/resetAnalytics)))
+  :analytics/reset
+  (fn []
+    (js/resetAnalytics)))
 
 (defn alias [db]
   (js/sendServerAnalytics (clj->js {:type :alias}))
@@ -20,7 +15,7 @@
 
 (defn identify [db]
   (let [{:keys [id] :as user} (-> (:wh.user.db/sub-db db)
-                                  util/strip-ns-from-map-keys)]
+                                  keywords/strip-ns-from-map-keys)]
     (when id
       (js/submitAnalyticsIdentify
         id

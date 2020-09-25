@@ -1,15 +1,14 @@
 (ns wh.logged-in.notifications.settings.events
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.common.errors :refer [upsert-user-error-message]]
-    [wh.common.graphql-queries :as graphql]
-    [wh.db :as db]
-    [wh.logged-in.notifications.settings.db :as settings]
-    [wh.pages.core :refer [on-page-load]]
-    [wh.user.db :as user]
-    [wh.util :as util]))
+  (:require [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.errors :refer [upsert-user-error-message]]
+            [wh.common.graphql-queries :as graphql]
+            [wh.common.keywords :as keywords]
+            [wh.db :as db]
+            [wh.logged-in.notifications.settings.db :as settings]
+            [wh.pages.core :refer [on-page-load]]
+            [wh.user.db :as user]
+            [wh.util :as util]))
 
 (def settings-interceptors (into db/default-interceptors
                                  [(path ::settings/sub-db)]))
@@ -70,7 +69,7 @@
                  {:saving? true
                   :save-status nil})
      :graphql {:query graphql/update-user-mutation--approval
-               :variables {:update_user (util/transform-keys
+               :variables {:update_user (keywords/transform-keys
                                          {:id (get-in db [::user/sub-db ::user/id])
                                           :notification-settings (get-in db [::settings/sub-db :frequencies])})}
                :on-success [::save-success]

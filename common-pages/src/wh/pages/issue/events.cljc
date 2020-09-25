@@ -1,16 +1,14 @@
 (ns wh.pages.issue.events
-  (:require
-    #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
-    #?(:cljs [wh.user.db :as user])
-    [re-frame.core :refer [path]]
-    [wh.common.issue :refer [gql-issue->issue]]
-    [wh.common.job :refer [translate-job]]
-    [wh.db :as db]
-    [wh.graphql-cache :as cache]
-    [wh.graphql.issues :as queries]
-    [wh.pages.issue.db :as issue]
-    [wh.re-frame.events :refer [reg-event-db reg-event-fx]]
-    [wh.util :as util]))
+  (:require #?(:cljs [wh.pages.core :as pages :refer [on-page-load]])
+            [re-frame.core :refer [path]]
+            [wh.common.issue :refer [gql-issue->issue]]
+            [wh.common.job :refer [translate-job]]
+            [wh.common.keywords :as keywords]
+            [wh.db :as db]
+            [wh.graphql-cache :as cache]
+            [wh.graphql.issues :as queries]
+            [wh.pages.issue.db :as issue]
+            [wh.re-frame.events :refer [reg-event-db reg-event-fx]]))
 
 (def issue-interceptors (into db/default-interceptors
                               [(path ::issue/sub-db)]))
@@ -26,8 +24,8 @@
   ::update-issue-success
   db/default-interceptors
   (fn [{db :db} [issue]]
-      {:dispatch (into [:graphql/update-entry]
-                       (concat (initial-query db) [:merge {:issue issue}]))}))
+    {:dispatch (into [:graphql/update-entry]
+                     (concat (initial-query db) [:merge {:issue issue}]))}))
 
 (reg-event-fx
   ::fetch-company-issues
@@ -92,7 +90,7 @@
   [db]
   (-> db
       (get-in [:wh.user.db/sub-db])
-      (util/strip-ns-from-map-keys)
+      (keywords/strip-ns-from-map-keys)
       (select-keys [:id :name :other-urls :github-info])))
 
 (reg-event-fx

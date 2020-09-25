@@ -7,6 +7,7 @@
             [wh.common.errors :as errors]
             [wh.common.graphql-queries :as graphql]
             [wh.common.issue :as common-issue]
+            [wh.common.keywords :as keywords]
             [wh.common.specs.primitives :as specs]
             [wh.common.upload :as upload]
             [wh.common.user :as common-user]
@@ -253,13 +254,13 @@
   (-> profile
       (select-keys [::profile/id ::profile/name ::profile/skills
                     ::profile/summary ::profile/other-urls ::profile/image-url])
-      util/transform-keys))
+      keywords/transform-keys))
 
 (defn graphql-company-user-update
   [db]
   (-> (::profile/sub-db db)
       (select-keys [::profile/id ::profile/email ::profile/name])
-      (util/transform-keys)))
+      (keywords/transform-keys)))
 
 (defn graphql-private-update
   [db]
@@ -268,35 +269,35 @@
                     ::profile/company-perks ::profile/visa-status ::profile/visa-status-other ::profile/role-types
                     ::profile/salary ::profile/remote ::profile/current-location ::profile/phone])
       (update ::profile/preferred-locations (partial filterv map?))
-      (util/transform-keys)))
+      (keywords/transform-keys)))
 
 (defn graphql-recommendations-update
   [db]
   (-> (::profile/sub-db db)
       (select-keys [::profile/id ::profile/preferred-locations ::profile/skills ::profile/remote])
       (update ::profile/preferred-locations (partial filterv map?))
-      (util/transform-keys)))
+      (keywords/transform-keys)))
 
 (defn user-private-update
   [profile]
   (as-> profile data
-        (util/strip-ns-from-map-keys data)
+        (keywords/strip-ns-from-map-keys data)
         (select-keys data [:email :visa-status :visa-status-other :salary])
-        (util/namespace-map "wh.user.db" data)))
+        (keywords/namespace-map "wh.user.db" data)))
 
 (defn graphql-cv-update
   [db]
   (-> {:id (or (get-in db [::profile/sub-db ::profile/id])
                (get-in db [::user/sub-db ::user/id]))
        :cv (get-in db [::profile/sub-db ::profile/cv])}
-      (util/transform-keys)))
+      (keywords/transform-keys)))
 
 (defn graphql-cover-letter-update
   [db]
   (-> {:id           (or (get-in db [::profile/sub-db ::profile/id])
                          (get-in db [::user/sub-db ::user/id]))
        :cover-letter (get-in db [::profile/sub-db ::profile/cover-letter])}
-      (util/transform-keys)))
+      (keywords/transform-keys)))
 
 (defn validate-profile
   "Returns nil if valid, an error message if invalid.
@@ -345,7 +346,7 @@
   (-> db
       settings-from-query-params
       (assoc :id (get-in db [::user/sub-db ::user/id]))
-      util/transform-keys))
+      keywords/transform-keys))
 
 (reg-event-fx
   ::save-settings-from-url-success

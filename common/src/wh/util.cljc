@@ -6,37 +6,6 @@
             [clojure.walk :refer [postwalk]])
   (:refer-clojure :exclude [random-uuid]))
 
-(defn now []
-  #?(:clj (System/currentTimeMillis)
-     :cljs (js/Date.now)))
-
-(defn parse-int
-  "Parse a string as integer, returning nil if it wasn't possible."
-  [s]
-  #?(:clj (try
-            (Integer/parseInt s)
-            (catch Exception _ nil))
-     :cljs (when (and (string? s) (re-find #"^[-+]?\d+$" s))
-             (let [res (js/parseInt s)]
-               (when-not (js/isNaN res)
-                 res)))))
-
-(defn coerce-int
-  "Try to coerce value to int. Created to handle GraphQL variables
-  that may come as strings but have to be coerced to int."
-  [s]
-  ;; In Clojure only numbers can be converted to integer with (int…)
-  ;; Strings have to be parsed with parseInt
-  #?(:clj (cond
-            (number? s) (int s)
-            :else (try
-                    (Integer/parseInt s)
-                    (catch Exception _ nil)))
-     ;; JS parseInt is ok with strings and numbers passed as arguments
-     :cljs (let [res (js/parseInt s)]
-             (when-not (js/isNaN res)
-               res))))
-
 #?(:clj (defn random-uuid []
           (str (java.util.UUID/randomUUID)))
    :cljs (def random-uuid cljs.core/random-uuid))
@@ -45,7 +14,7 @@
   "If a key in the provided set is nil or blank, remove it entirely."
   [m ks]
   (into {} (remove (fn [[k v]] (and (contains? ks k)
-                                   (or (nil? v) (and (string? v) (str/blank? v))))))
+                                    (or (nil? v) (and (string? v) (str/blank? v))))))
         m))
 
 (defn remove-where
@@ -53,7 +22,7 @@
   Also walks into nested maps"
   [m pred?]
   (postwalk
-    (fn [x] (if (map? x)
+   (fn [x] (if (map? x)
              (into {} (remove (fn [[k v]]
                                 (pred? v))) x)
              x)) m))
@@ -68,18 +37,18 @@
   Also walks into nested maps"
   [m]
   (remove-where
-    m #(or (nil? %)
-           (and (string? %) (str/blank? %)))))
+   m #(or (nil? %)
+          (and (string? %) (str/blank? %)))))
 
 (defn remove-nil-blank-or-empty
   "Removes the map entry if the value is nil, blank string or empty collection.
   Also walks into nested maps"
   [m]
   (remove-where
-    m
-    #(or (nil? %)
-         (and (string? %) (str/blank? %))
-         (and (coll? %) (empty? %)))))
+   m
+   #(or (nil? %)
+        (and (string? %) (str/blank? %))
+        (and (coll? %) (empty? %)))))
 
 (s/fdef remove-nils
   :args (s/cat :m map?)
@@ -88,38 +57,6 @@
         (letfn [(all-values [m]
                   (reduce-kv (fn [a k v] (if (map? v) (concat a (all-values v)) (conj a v))) [] m))]
           (not (some nil? (all-values ret))))))
-
-(defn namespace-map
-  "Namespace all keys in m with ns, unless they are already namespaced."
-  [ns m]
-  (let [ns (str ns)]
-    (reduce-kv (fn [acc k v]
-                 (let [k' (if (and (keyword? k)
-                                   (not (namespace k)))
-                            (keyword ns (name k))
-                            k)]
-                   (assoc acc k' v)))
-               {} m)))
-
-(defn strip-ns-from-map-keys
-  "Strips all namespaces of a map's keys."
-  [m]
-  (into {} (map (fn [[k v]] [(keyword (name k)) v])) m))
-
-(defn transform-keys
-  "Recursively transforms all map keys in coll.
-  It removes nil values (or in 2-arity version values that match the
-  remove-value? predicate), strips ns from map keys and CamelCases keys"
-  ([coll] (transform-keys nil? coll))
-  ([remove-value? coll]
-   (letfn [(transform [[k v]] [(c/->camelCaseKeyword k) v])]
-     (postwalk (fn [x] (if (map? x)
-                        (into {}
-                              (comp (remove (fn [[k v]] (remove-value? v)))
-                                    (map (fn [[k v]] [(keyword (name k)) v]))
-                                    (map transform))
-                              x)
-                        x)) coll))))
 
 (defn index-of
   "Returns the zero-based position of x in coll, or nil
@@ -164,11 +101,11 @@
    (unflatten-map m "__"))
   ([m nest-indicator]
    (reduce
-     (fn [a [k v]]
-       (let [parts (str/split (name k) (re-pattern nest-indicator))]
-         (if (= 1 (count parts))
-           (assoc a k v)
-           (update a (keyword (namespace k) (first parts)) assoc (keyword (last parts)) v)))) {} m)))
+    (fn [a [k v]]
+      (let [parts (str/split (name k) (re-pattern nest-indicator))]
+        (if (= 1 (count parts))
+          (assoc a k v)
+          (update a (keyword (namespace k) (first parts)) assoc (keyword (last parts)) v)))) {} m)))
 
 (defn flatten-map
   "Takes a map and deflates any nested maps keys using nested indicator.
@@ -177,13 +114,13 @@
    (flatten-map m "__"))
   ([m nest-indicator]
    (reduce
-     (fn [a [k v]]
-       (if (map? v)
-         (apply assoc
-                (dissoc a k)
-                (mapcat (fn [[k' v']]
-                          [(keyword (str (name k) nest-indicator (name k') )) v']) v))
-         a)) m m)))
+    (fn [a [k v]]
+      (if (map? v)
+        (apply assoc
+               (dissoc a k)
+               (mapcat (fn [[k' v']]
+                         [(keyword (str (name k) nest-indicator (name k'))) v']) v))
+        a)) m m)))
 
 (defn ->vec
   "Takes a value and either converts it to a vector or puts it into a vector
@@ -295,60 +232,7 @@
   [coll el idx]
   (apply concat (interpose [el] (split-at idx coll))))
 
-#?(:cljs
-   (def number-formatter (goog.i18n.NumberFormat. nf/Format.COMPACT_SHORT)))
-(defn number->compact-str
-  "Takes a number and"
-  ([n]
-   #?(:clj (number->compact-str n 0)
-      :cljs (.format number-formatter n)))
-  #?(:clj
-     ([n i]
-      (if (< n 1000)
-        (format (cond (int? n) "%d%s"
-                      (< n 10) "%.1f%s"
-                      :else    "%.0f%s")
-                n (nth ["K" "M" "B"] (dec i) ""))
-        (recur (double (/ n 1000)) (inc i))))))
-
 ;;;;
-
-(defmulti get-fields
-  (fn [f] (if (keyword? f)
-            :keyword
-            (first f))))
-
-(defmethod get-fields
-  'clojure.spec.alpha/keys
-  [f]
-  (->> f
-       (take-nth 2)
-       (rest)
-       (apply concat)
-       (map (comp keyword name))
-       (set)))
-
-(defmethod get-fields
-  'clojure.spec.alpha/nilable
-  [f]
-  (let [fs (rest f)]
-    (apply concat (map get-fields fs))))
-
-(defmethod get-fields
-  'clojure.spec.alpha/merge
-  [f]
-  (let [fs (rest f)]
-    (apply concat (map get-fields fs))))
-
-(defmethod get-fields
-  :keyword
-  [f]
-  (get-fields (s/form f)))
-
-(defn spec->fields
-  [s]
-  (get-fields (s/form s)))
-
 (defn trunc [n s]
   (when (pos-int? n)
     (->> (count s)

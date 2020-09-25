@@ -6,8 +6,8 @@
     [re-frame.core :refer [reg-event-db reg-event-fx reg-sub]]
     [re-frame.registrar :refer [get-handler register-handler]]
     [wh.common.cases :as cases]
-    [wh.db :as db]
-    [wh.util :as util]))
+    [wh.common.time :as time]
+    [wh.db :as db]))
 
 (defn reg-query
   [id query]
@@ -33,7 +33,7 @@
     (or (:force options)
         (not= state :success)
         (not (number? timestamp))
-        (>= (- (util/now) timestamp)
+        (>= (- (time/now) timestamp)
             cache-validity-ms))))
 
 ;; options:
@@ -85,7 +85,7 @@
                 :errors    (when (= state :failure)
                              (cases/->kebab-case errors))}
                (when (= state :success)
-                 {:timestamp (util/now)}))))
+                 {:timestamp (time/now)}))))
 
 (reg-event-db
   :graphql/update-entry

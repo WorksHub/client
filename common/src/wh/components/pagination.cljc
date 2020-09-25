@@ -1,7 +1,7 @@
 (ns wh.components.pagination
-  (:require
-    [wh.routes :as routes]
-    [wh.util :as util]))
+  (:require [wh.common.numbers :as numbers]
+            [wh.routes :as routes]
+            [wh.util :as util]))
 
 ;; TODO merge with pagination.clj
 
@@ -9,7 +9,7 @@
   [qps]
   (-> qps
       (get "page" "1")
-      (util/parse-int)))
+      (numbers/parse-int)))
 
 (defn pagination [current-page-number page-numbers route query-params & [params]]
   [:nav.pagination.is-centered {:role "pagination" :aria-label "pagination"}

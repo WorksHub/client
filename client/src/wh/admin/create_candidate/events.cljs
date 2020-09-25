@@ -6,6 +6,7 @@
             [wh.admin.create-candidate.db :as sub-db]
             [wh.common.data :as data]
             [wh.common.fx.google-maps]
+            [wh.common.keywords :as keywords]
             [wh.common.upload :as upload]
             [wh.common.url :as url]
             [wh.db :as db]
@@ -244,7 +245,7 @@
            ::sub-db/cv-url ::sub-db/cv-hash ::sub-db/cv-filename
            ::sub-db/current-company ::sub-db/current-company-search ::sub-db/phone]
     :as   db}]
-  (merge (util/transform-keys
+  (merge (keywords/transform-keys
            #(or (nil? %) (str/blank? %))
            {:email                email
             :name                 name

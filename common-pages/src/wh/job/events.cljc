@@ -12,6 +12,7 @@
             [wh.components.tag :as tag]
             [wh.job.db :as job]
             [wh.common.user :as user-common]
+            [wh.common.keywords :as keywords]
             #?(:cljs [wh.pages.core :refer [on-page-load]])
             #?(:cljs [wh.user.db :as user])
             [wh.util :as util])
@@ -49,7 +50,7 @@
   (as-> job job
         (cases/->kebab-case job)
         (update job :tags #(map tag/->tag %))
-        (util/namespace-map "wh.job.db" job)))
+        (keywords/namespace-map "wh.job.db" job)))
 
 (defn admin-or-job-owner? [db]
   #?(:cljs
@@ -502,7 +503,7 @@
                db
                job/default-db)
              {::job/preset-slug slug}
-             (util/namespace-map "wh.job.db" preset-fields)))))
+             (keywords/namespace-map "wh.job.db" preset-fields)))))
 
 (reg-event-fx
   ::fetch-issues-and-analytics

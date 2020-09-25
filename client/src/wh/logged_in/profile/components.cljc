@@ -1,6 +1,6 @@
 (ns wh.logged-in.profile.components
   (:require [clojure.string :as str]
-            [re-frame.core :refer [dispatch dispatch-sync]]
+            [wh.common.keywords :as keywords]
             [wh.common.text :refer [pluralize]]
             [wh.common.time :as time]
             [wh.components.activities.components :as activities-components]
@@ -87,7 +87,7 @@
 
 (defn profile [user {:keys [github stackoverflow twitter last-seen updated]} type]
   (let [public?                          (= type :public)
-        {:keys [name image-url summary]} (util/strip-ns-from-map-keys user)
+        {:keys [name image-url summary]} (keywords/strip-ns-from-map-keys user)
         show-meta? (->> [github stackoverflow twitter last-seen updated]
                         (map boolean)
                         (some true?))]

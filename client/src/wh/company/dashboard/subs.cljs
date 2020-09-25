@@ -1,18 +1,17 @@
 (ns wh.company.dashboard.subs
-  (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [cljs.spec.alpha :as s]
-    [clojure.string :as str]
-    [re-frame.core :refer [reg-sub]]
-    [wh.common.data :refer [package-data]]
-    [wh.common.specs.company]
-    [wh.company.dashboard.db :as sub-db]
-    [wh.components.stats.db :as stats]
-    [wh.routes :as routes]
-    [wh.util :as util])
-  (:require-macros
-    [clojure.core.strint :refer [<<]]))
+  (:require [cljs-time.core :as t]
+            [cljs-time.format :as tf]
+            [cljs.spec.alpha :as s]
+            [clojure.string :as str]
+            [re-frame.core :refer [reg-sub]]
+            [wh.common.data :refer [package-data]]
+            [wh.common.keywords :as keywords]
+            [wh.common.specs.company]
+            [wh.company.dashboard.db :as sub-db]
+            [wh.components.stats.db :as stats]
+            [wh.routes :as routes]
+            [wh.util :as util])
+  (:require-macros [clojure.core.strint :refer [<<]]))
 
 (reg-sub
   ::company-id
@@ -235,7 +234,7 @@
 (defn sub-db->minimum-company
   [sub-db]
   (-> sub-db
-      (util/strip-ns-from-map-keys)
+      (keywords/strip-ns-from-map-keys)
       (update :blogs (fn [blogs] (:blogs blogs)))
       (update :tech-scales (fn [ts] (util/remove-nils ts)))
       (update :tags (fn [tags] (map (fn [tag] (cond-> tag

@@ -7,12 +7,12 @@
             [re-frame.core :refer [path reg-event-db reg-event-fx]]
             [wh.common.cases :as cases]
             [wh.common.job :as common-job]
+            [wh.common.keywords :as keywords]
             [wh.common.user :as user-common]
             [wh.company.dashboard.db :as sub-db]
             [wh.db :as db]
             [wh.graphql.company :refer [update-company-mutation]]
-            [wh.job.events :refer [publish-job navigate-to-payment-setup
-                                   process-publish-role-intention]]
+            [wh.job.events :refer [process-publish-role-intention]]
             [wh.pages.core :as pages :refer [on-page-load]]
             [wh.user.db :as user]
             [wh.util :as util])
@@ -158,7 +158,7 @@
                                                              (update :type keyword)
                                                              (assoc :weight 0.0))) %)))
                company-db (as-> company x
-                                (util/namespace-map (namespace `::sub-db/x) x)
+                                (keywords/namespace-map (namespace `::sub-db/x) x)
                                 (assoc x ::sub-db/stats (get-in resp [:data :job_analytics]))
                                 (assoc x ::sub-db/jobs (mapv translate-job (get-in resp [:data :jobs])))
                                 (assoc x ::sub-db/activity (->> (get-in resp [:data :activity])
@@ -236,7 +236,7 @@
   ::update-company
   company-interceptors
   (fn [{db :db} [company]]
-    (let [c (util/namespace-map (namespace `::sub-db/x) company)]
+    (let [c (keywords/namespace-map (namespace `::sub-db/x) company)]
       {:db (merge db c)})))
 
 (reg-event-fx

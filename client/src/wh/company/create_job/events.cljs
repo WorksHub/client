@@ -6,12 +6,12 @@
             [wh.common.cases :as cases]
             [wh.common.data :as data :refer [get-manager-email get-manager-name]]
             [wh.common.errors :as common-errors]
+            [wh.common.keywords :as keywords]
             [wh.common.location :as location]
             [wh.common.user :as user-common]
             [wh.company.create-job.db :as create-job]
             [wh.components.tag :as tag]
             [wh.db :as db]
-            [wh.graphql-cache :refer [reg-query]]
             [wh.graphql.company
              :refer [create-job-mutation
                      update-job-mutation update-company-mutation]
@@ -66,7 +66,7 @@
         (util/remove-nils job)
         (cases/->kebab-case job)
         (util/flatten-map job)
-        (util/namespace-map "wh.company.create-job.db" job)
+        (keywords/namespace-map "wh.company.create-job.db" job)
         (update job ::create-job/verticals set)
         (update job ::create-job/manager get-manager-name)
         (update job ::create-job/tags #(set (map :id %)))))

@@ -3,8 +3,7 @@
                 :clj clj-time.core) :as t]
             [#?(:cljs cljs-time.format
                 :clj clj-time.format) :as tf]
-            [wh.common.text :as text]
-            [wh.util :as util]))
+            [wh.common.text :as text]))
 
 (defn str->time
   [s formatter-kw]
@@ -33,3 +32,7 @@
   [t]
   (when t
     (tf/unparse (tf/formatter "MMM yyyy") t)))
+
+(defn now []
+  #?(:clj (System/currentTimeMillis)
+     :cljs (js/Date.now)))

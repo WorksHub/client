@@ -5,6 +5,7 @@
             [clojure.string :as str]
             [wh.common.cases :as cases]
             [wh.common.data :as data]
+            [wh.common.keywords :as keywords]
             [wh.common.user :as user]
             [wh.util :as util]))
 
@@ -156,12 +157,12 @@
   [user]
   (as-> user user
         (cases/->kebab-case user)
-        (update user :current-location #(when % (util/namespace-map "location" %)))
-        (update user :preferred-locations (partial mapv #(util/namespace-map "location" %)))
+        (update user :current-location #(when % (keywords/namespace-map "location" %)))
+        (update user :preferred-locations (partial mapv #(keywords/namespace-map "location" %)))
         (util/update* user :visa-status set)
         (update user :role-types set)))
 
 (defn translate-user [user]
   (->> user
        graphql-user->db
-       (util/namespace-map "wh.user.db")))
+       (keywords/namespace-map "wh.user.db")))

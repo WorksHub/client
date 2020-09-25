@@ -2,14 +2,13 @@
   (:require [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
             [wh.common.data :as data]
+            [wh.common.keywords :as keywords]
             [wh.common.specs.primitives]
             [wh.common.text :as text]
             [wh.common.url :as url]
             [wh.logged-in.profile.db :as profile]
-            [wh.subs :refer [with-unspecified-option
-                             <sub]]
-            [wh.user.db :as user]
-            [wh.util :as util])
+            [wh.subs :refer [with-unspecified-option]]
+            [wh.user.db :as user])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (reg-sub
@@ -30,7 +29,7 @@
   :<- [::profile]
   (fn [profile _]
     (header-data
-      (util/strip-ns-from-map-keys profile)
+      (keywords/strip-ns-from-map-keys profile)
       (::profile/contributions profile))))
 
 (reg-sub
@@ -44,7 +43,7 @@
   :<- [::profile]
   (fn [profile]
     (-> profile
-        util/strip-ns-from-map-keys
+        keywords/strip-ns-from-map-keys
         :other-urls
         url/detect-urls-type)))
 
@@ -164,14 +163,14 @@
   ::private-data
   :<- [::profile]
   (fn [profile _]
-    (private-data (util/strip-ns-from-map-keys profile))))
+    (private-data (keywords/strip-ns-from-map-keys profile))))
 
 (reg-sub
   ::company-data
   :<- [::profile]
   (fn [profile _]
     (-> profile
-        util/strip-ns-from-map-keys
+        keywords/strip-ns-from-map-keys
         (select-keys [:email :name]))))
 
 (reg-sub
@@ -342,7 +341,7 @@
   ::cv-data
   :<- [::profile]
   (fn [profile _]
-    (cv-data (util/strip-ns-from-map-keys profile))))
+    (cv-data (keywords/strip-ns-from-map-keys profile))))
 
 (defn cover-letter-data
   [{{:keys [file link] :as cover-letter} :cover-letter}]
@@ -354,7 +353,7 @@
   ::cover-letter-data
   :<- [::profile]
   (fn [profile _]
-    (cover-letter-data (util/strip-ns-from-map-keys profile))))
+    (cover-letter-data (keywords/strip-ns-from-map-keys profile))))
 
 (reg-sub
   ::remote

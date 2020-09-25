@@ -3,6 +3,7 @@
             [re-frame.core :refer [path]]
             [wh.common.cases :as cases]
             [wh.common.issue :refer [gql-issue->issue]]
+            [wh.common.numbers :as numbers]
             [wh.db :as db]
             [wh.graphql.issues :as queries]
             [wh.issues.db :as issues]
@@ -64,7 +65,7 @@
                                :page_size     issues/default-page-size
                                :published     true
                                :repo_language language
-                               :page_number   (util/coerce-int (or page-number 1))
+                               :page_number   (numbers/coerce-int (or page-number 1))
                                :sort          (issues/issues-sort
                                                 (::db/query-params db))}
                   :on-success [::fetch-issues-success]

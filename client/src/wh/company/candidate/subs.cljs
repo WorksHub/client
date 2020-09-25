@@ -1,12 +1,10 @@
 (ns wh.company.candidate.subs
-  (:require [clojure.string :as str]
-            [re-frame.core :refer [reg-sub]]
+  (:require [re-frame.core :refer [reg-sub]]
+            [wh.common.keywords :as keywords]
             [wh.common.specs.primitives]
             [wh.company.candidate.db :as candidate]
             [wh.db :as db]
-            [wh.logged-in.profile.subs :as profile-subs]
-            [wh.util :as util])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+            [wh.logged-in.profile.subs :as profile-subs]))
 
 (reg-sub
   ::sub-db
@@ -16,7 +14,7 @@
 (reg-sub
   ::candidate-data
   (fn [db _]
-    (util/strip-ns-from-map-keys (get db :wh.logged-in.profile.db/sub-db))))
+    (keywords/strip-ns-from-map-keys (get db :wh.logged-in.profile.db/sub-db))))
 
 (reg-sub
   ::header-data

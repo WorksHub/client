@@ -1,5 +1,6 @@
 (ns wh.common.user
   (:require [clojure.string :as str]
+            [wh.common.keywords :as keywords]
             [wh.util :as util]))
 
 (defn absolute-image-url [image-url]
@@ -58,7 +59,7 @@
            :address             (when current-location
                                   {:city    (:city current-location)
                                    :country (:country current-location)})
-           :preferred-locations (mapv #(str (:city %) ", " (:country %)) (map util/strip-ns-from-map-keys preferred-locations))}
+           :preferred-locations (mapv #(str (:city %) ", " (:country %)) (map keywords/strip-ns-from-map-keys preferred-locations))}
           approval (assoc :approval-status (:status approval)
                           :approval-source (:source approval))
           company (assoc :company-name (:name company)

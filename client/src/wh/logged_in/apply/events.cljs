@@ -2,8 +2,9 @@
   (:require [re-frame.core :refer [reg-event-db reg-event-fx dispatch path]]
             [wh.common.cases :as cases]
             [wh.common.graphql-queries :as graphql]
-            [wh.events :as events]
+            [wh.common.keywords :as keywords]
             [wh.db :as db]
+            [wh.events :as events]
             [wh.graphql.jobs :as graphql-jobs]
             [wh.logged-in.apply.db :as apply]
             [wh.logged-in.profile.location-events :as location-events]
@@ -306,7 +307,7 @@
     (let [current-location (get-in db [::apply/sub-db ::apply/current-location])]
       {:db      (apply/set-loading db)
        :graphql {:query      graphql/update-user-mutation--current-location
-                 :variables  {:update_user (util/transform-keys {:id               (user/id db)
+                 :variables  {:update_user (keywords/transform-keys {:id               (user/id db)
                                                                  :current-location current-location})}
                  :on-success [::update-current-location-success]
                  :on-failure [::update-current-location-failure]}})))
@@ -397,7 +398,7 @@
   (fn [{db :db} _]
     {:graphql {:query      graphql/update-user-mutation--skills
                :variables  {:update_user
-                            (util/transform-keys {:id     (user/id db)
+                            (keywords/transform-keys {:id     (user/id db)
                                                   :skills (->> db
                                                                apply/sub-db
                                                                apply/selected-skills

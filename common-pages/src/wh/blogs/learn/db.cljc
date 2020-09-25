@@ -1,8 +1,8 @@
 (ns wh.blogs.learn.db
-  (:require
-    [bidi.bidi :as bidi]
-    [wh.common.text :as txt]
-    [wh.util :as util]))
+  (:require [bidi.bidi :as bidi]
+            [wh.common.numbers :as numbers]
+            [wh.common.text :as txt]
+            [wh.util :as util]))
 
 (def page-size 24)
 (def search-query-name "blogs-search")
@@ -11,7 +11,7 @@
   (bidi/url-decode (get-in db [:wh.db/page-params :tag])))
 
 (defn current-page [db]
-  (or (util/parse-int (get-in db [:wh.db/query-params "page"])) 1))
+  (or (numbers/parse-int (get-in db [:wh.db/query-params "page"])) 1))
 
 (defn search-term [db]
   (txt/not-blank

@@ -1,18 +1,16 @@
 (ns wh.company.edit.events
-  (:require [ajax.json :as ajax-json]
-            [camel-snake-kebab.core :as c]
+  (:require [camel-snake-kebab.core :as c]
             [cljs-time.coerce :as tc]
             [cljs-time.core :as t]
             [cljs-time.format :as tf]
             [clojure.set :as set]
             [clojure.string :as str]
-            [goog.Uri :as uri]
             [re-frame.core :refer [path reg-event-db reg-event-fx]]
             [wh.common.cases :as cases]
             [wh.common.data :refer [get-manager-email get-manager-name]]
             [wh.common.errors :as errors]
+            [wh.common.keywords :as keywords]
             [wh.common.logo]
-            [wh.common.upload :as upload]
             [wh.common.user :as user-common]
             [wh.company.common :as company]
             [wh.company.edit.db :as edit]
@@ -24,8 +22,7 @@
                      update-company-mutation-with-fields
                      add-new-company-user-mutation delete-user-mutation
                      company-query-with-payment-details
-                     all-company-jobs-query update-job-mutation
-                     publish-company-profile-mutation delete-integration-mutation]]
+                     delete-integration-mutation]]
             [wh.pages.core :as pages :refer [on-page-load]]
             [wh.user.db :as user]
             [wh.util :as util]))
@@ -246,7 +243,7 @@
       {:db (update db ::edit/sub-db
                    (fn [sub-db]
                      (-> sub-db
-                         (merge (util/namespace-map "wh.company.edit.db" company))
+                         (merge (keywords/namespace-map "wh.company.edit.db" company))
                          (update ::edit/package keyword)
                          (update ::edit/manager get-manager-name)
                          (update-in [::edit/integrations :email] set)
