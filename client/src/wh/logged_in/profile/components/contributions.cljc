@@ -9,7 +9,8 @@
      [:div
       (merge
         (util/smc styles/grid__day)
-        (when color {:style {:background-color color}}))])])
+        (when color {:style #?(:cljs {:background-color color}
+                               :clj (str "background-color: " color))}))])])
 
 (defn legend-days []
   [:div (util/smc styles/legend__days)
@@ -24,17 +25,20 @@
      [:div month])])
 
 (defn contributions-grid [contributions months]
-  [:div (util/smc styles/grid-cell-2-rows
+  [:div (util/smc styles/grid-cell
+                  styles/github-contributions-container
                   styles/stat-container
                   styles/stat-container--big)
-   [:div (util/smc styles/stat-container__title)
-    "Last 4 months productivity"]
-   [:div (util/smc styles/github-contributions)
-    [legend-months months]
+   [:div
+    [:div (util/smc styles/stat-container__title)
+     "Last 4 months productivity"]
 
-    [legend-days]
+    [:div (util/smc styles/github-contributions)
+     [legend-months months]
 
-    [:div (util/smc styles/grid)
-     (for [week contributions]
-       ^{:key (-> week first :date)}
-       [grid week])]]])
+     [legend-days]
+
+     [:div (util/smc styles/grid)
+      (for [week contributions]
+        ^{:key (-> week first :date)}
+        [grid week])]]]])

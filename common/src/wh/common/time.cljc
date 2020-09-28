@@ -1,9 +1,11 @@
 (ns wh.common.time
-  (:require [#?(:cljs cljs-time.core
+  (:require #?(:clj [clj-time.coerce :as tc])
+            [#?(:cljs cljs-time.core
                 :clj clj-time.core) :as t]
             [#?(:cljs cljs-time.format
                 :clj clj-time.format) :as tf]
             [wh.common.text :as text]))
+
 
 (defn str->time
   [s formatter-kw]
@@ -32,6 +34,12 @@
   [t]
   (when t
     (tf/unparse (tf/formatter "MMM yyyy") t)))
+
+(defn short-month [date]
+  (tf/unparse
+    #?(:clj (tf/with-locale (tf/formatter "MMM") java.util.Locale/US)
+       :cljs (tf/formatter "MMM"))
+    date))
 
 (defn now []
   #?(:clj (System/currentTimeMillis)

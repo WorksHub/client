@@ -226,12 +226,6 @@
    (for [item items]
      item)])
 
-(defn three-grid
-  [& items]
-  [:div (util/smc styles/three-grid)
-   (for [item items]
-     item)])
-
 (defn stat-container
   [{:keys [title text image key]}]
   [:div {:class (util/mc styles/grid-cell styles/stat-container)
@@ -373,7 +367,7 @@
    [internal-anchor "github"]
    [title "Open Source"]
 
-   [three-grid
+   [four-grid
     ^{:key :contributions-count}
     [stat-container
      {:title "GitHub contributions"

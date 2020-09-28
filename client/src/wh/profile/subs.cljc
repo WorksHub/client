@@ -2,6 +2,7 @@
   (:require [re-frame.core :refer [reg-sub]]
             [wh.common.issue :refer [gql-issue->issue]]
             [wh.common.specs.primitives]
+            [wh.common.time :as time]
             [wh.common.url :as url]
             [wh.graphql-cache :as gql-cache]
             [wh.profile.events :as profile-events]))
@@ -45,9 +46,9 @@
   :<- [::profile]
   (fn [profile [_ type]]
     (->> profile
-        :other-urls
-        url/detect-urls-type
-        (some #(when (= type (:type %)) %)))))
+         :other-urls
+         url/detect-urls-type
+         (some #(when (= type (:type %)) %)))))
 
 (reg-sub
   ::last-seen
@@ -90,3 +91,49 @@
   (fn [db _]
     (let [[query params] (profile-events/profile-query-description db)]
       (boolean (#{:initial :executing} (gql-cache/state db query params))))))
+
+
+;; magic number. I'm not going to try and show data only from 4 months everytime.
+;; 18 seems like a safe, nice number of weeks
+(def weeks-count 18)
+
+(reg-sub
+  ::contributions-collection
+  :<- [::profile]
+  (fn [profile _]
+    (:contributions-collection profile)))
+
+(reg-sub
+  ::contributions-calendar
+  :<- [::contributions-collection]
+  (fn [contributions _]
+    (->> (get-in contributions [:contribution-calendar :weeks])
+         (map :contribution-days)
+         (take-last weeks-count))))
+
+(reg-sub
+  ::contributions-count
+  :<- [::contributions-collection]
+  (fn [contributions _]
+    (get contributions :total-commit-contributions)))
+
+(reg-sub
+  ::contributions-repos
+  :<- [::contributions-collection]
+  (fn [contributions _]
+    (get contributions :total-repositories-with-contributed-commits)))
+
+(defn week->month [week]
+  (-> week first :date (time/str->time :date) time/short-month))
+
+;; magic number. 4 fits quite nice into design
+(def month-count 4)
+
+(reg-sub
+  ::contributions-months
+  :<- [::contributions-calendar]
+  (fn [contributions _]
+    (->> contributions
+         (map week->month)
+         (distinct)
+         (take-last month-count))))

@@ -9,17 +9,26 @@
 
 (defn content []
   (let [profile-hidden? (<sub [::subs/profile-hidden?])
-        articles (<sub [::subs/blogs])
-        issues (<sub [::subs/issues])]
+        articles        (<sub [::subs/blogs])
+        issues          (<sub [::subs/issues])
+        contributions?  (boolean
+                          (<sub [::subs/contributions-collection]))]
+
     (if profile-hidden?
       [components/profile-hidden-message]
       [components/content
-       [components/section-stats {:is-owner?       false
-                                  :percentile      (<sub [::subs/percentile])
-                                  :created         (<sub [::subs/created])
+       [components/section-stats {:is-owner?      false
+                                  :percentile     (<sub [::subs/percentile])
+                                  :created        (<sub [::subs/created])
                                   :articles-count (count articles)
                                   :issues-count   (count issues)}]
        [components/section-skills (<sub [::subs/skills]) :public]
+       (when contributions?
+         [components/contributions-section
+          (<sub [::subs/contributions-calendar])
+          (<sub [::subs/contributions-count])
+          (<sub [::subs/contributions-repos])
+          (<sub [::subs/contributions-months])])
        [components/section-articles articles :public]
        [components/section-issues issues :public]])))
 

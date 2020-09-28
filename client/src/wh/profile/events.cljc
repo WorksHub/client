@@ -12,19 +12,32 @@
                      :operation/name "fetch_user"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
-   :venia/queries [[:user {:id :$id} [[:skills [:name :rating]]
-                                      [:otherUrls [:url]]
-                                      :imageUrl
-                                      :name
-                                      :id
-                                      :summary
-                                      :percentile
-                                      :published
-                                      :created
-                                      :lastSeen
-                                      :updated]]
-                   [:blogs {:user_id :$id} [[:blogs [:id :title :formattedCreationDate :readingTime
-                                                     :upvoteCount :published]]]]
+   :venia/queries [[:user {:id :$id}
+                    [[:skills [:name :rating]]
+                     [:otherUrls [:url]]
+                     :imageUrl
+                     :name
+                     :id
+                     :summary
+                     :percentile
+                     :published
+                     :created
+                     :lastSeen
+                     :updated
+
+                     [:contributionsCollection
+                      [:totalCommitContributions
+                       :totalRepositoriesWithContributedCommits
+                       [:contributionCalendar
+                        [[:weeks
+                          [[:contributionDays
+                            [:contributionCount
+                             :date :weekday :color]]]]]]]]]]
+
+                   [:blogs {:user_id :$id}
+                    [[:blogs [:id :title :formattedCreationDate
+                              :readingTime :upvoteCount :published]]]]
+
                    [:query_issues {:user_id :$id}
                     [[:issues [:id :title :level
                                [:compensation [:amount :currency]]
