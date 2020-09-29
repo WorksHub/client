@@ -165,21 +165,29 @@ $font-family: Montserrat, serif
     +tablet
       display: none
 
+.search-dropdown
+  z-index: 5  
+  position: absolute
+  border: 1px solid $primary-red
+  width: 100%
+  &:empty
+    visibility: hidden
 
 .dropdown
   background: $background-white
   box-sizing: border-box
   display: block
   +desktop
-    display: none
-    border: 1px solid $primary-red
-    border-radius: 8px
-    padding: 16px 0
-    width: 260px
-    z-index: 5
-    position: absolute
-    top: calc(100% - 4px)
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 4px 16px rgba(0, 0, 0, 0.08)
+    &:not(.search-dropdown)
+      display: none
+      border: 1px solid $primary-red
+      border-radius: 8px
+      padding: 16px 0
+      width: 260px
+      z-index: 5
+      position: absolute
+      top: calc(100% - 4px)
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 4px 16px rgba(0, 0, 0, 0.08)
   &:hover
     display: block
   &__element
@@ -187,6 +195,17 @@ $font-family: Montserrat, serif
       height: 44px
     +desktop
       min-height: 51px
+  &__search__option
+    position: relative
+    padding: 10px
+    cursor: pointer
+    svg
+      position: absolute
+      right: 7px
+      top: 10px
+      fill: #434E55
+  &__search__option:hover
+    background-color: #F4F5F8;
   &__link
     width: 100%
     display: grid

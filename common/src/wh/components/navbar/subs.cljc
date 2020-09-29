@@ -19,3 +19,13 @@
   ::search-value
   (fn [db _]
     (db ::db/search-value)))
+
+(reg-sub
+  ::search-focus
+  (fn [db _]
+    (db ::db/search-focus)))
+
+(reg-sub
+  ::local-search
+  (fn [db _]
+    (db ::db/local-search)))

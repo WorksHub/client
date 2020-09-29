@@ -1,5 +1,8 @@
 (ns wh.components.navbar.components
   (:require [clojure.string :as str]
+            [re-frame.core :refer [dispatch]]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.components.navbar.subs :as subs]
             [wh.components.icons :as icons :refer [icon]]
             [wh.interop :as interop]
             [wh.routes :as routes]
@@ -35,6 +38,48 @@
     (for [{:keys [path route] :as el} dropdown]
       ^{:key (or path route)}
       [dropdown-element el opts])]))
+
+(defn search-dropdown-element [text]
+  [:li (merge (util/smc styles/dropdown__element))
+   [:div (util/smc styles/dropdown__search__option)
+    [:a 
+      (merge
+         {
+          :on-click #((dispatch [:wh.search/search-with-value text]))
+          :class (util/mc styles/dropdown__link__text)
+         })
+        
+         ( let [search-value (<sub [::subs/search-value])]
+              [:span (clojure.string/replace text search-value search-value)]
+         )
+      
+    ]
+    [icon "close" :on-click #(
+      (fn [e] (
+        ( let [local-search (<sub [::subs/local-search])]
+        ( let [values (remove (fn [x] (= x text)) local-search)]
+          (
+            .setItem js/localStorage "local_search" 
+            (
+              clojure.string/join "||" 
+              values
+            ) 
+          )
+          (dispatch [:wh.components.navbar.events/set-local-search values])
+        ))
+      ))
+    )]
+    
+  ]])
+
+(defn search-dropdown-list
+  ([dropdown]
+   [search-dropdown-list dropdown {}])
+  ([dropdown opts]
+   [:ul (util/smc styles/dropdown styles/search-dropdown)
+    (for [{:keys [path route] :as el} dropdown]
+      ^{:key (or path route)}
+      [search-dropdown-element el opts])]))
 
 (defn link
   ([element]

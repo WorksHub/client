@@ -26,13 +26,26 @@
 
 (def search-id "navbar__search-input")
 
+(defn local_search []
+  (dispatch [:wh.components.navbar.events/set-local-search  
+    (distinct (remove empty? (clojure.string/split (or (.getItem js/localStorage "local_search") "") "||")))]
+  )
+)
+
+(defn main []
+  (local_search)
+)
+
+(set! (.-onload js/window) main)
+
 
 ;; Reagent complains about autocomplete keyword
 (def autocomplete-k #?(:cljs :autoComplete
                        :clj  :autocomplete))
-
+  
 (defn search [type]
-  (let [search-value (<sub [::subs/search-value])]
+  (let [local-search (<sub [::subs/local-search]) search-value (<sub [::subs/search-value]) search-focus (<sub [::subs/search-focus])] 
+    
     [:form (merge {:method :get
                    :action (routes/path :search)
                    :class  (util/mc
@@ -43,7 +56,9 @@
                             (fn [e]
                               (.preventDefault e)
                               (js/hideMenu)
-                              (dispatch [:wh.search/search-with-value search-value]))}))
+                              (dispatch [:wh.search/search-with-value search-value]))
+                           })
+                )
      [icon "search-new" :class styles/search__search-icon]
      [:input (merge
                {:class         (util/mc
@@ -61,14 +76,46 @@
                #?(:cljs {:on-change
                          (fn [e]
                            (dispatch [:wh.components.navbar.events/set-search-value
-                                      (.-value (.-target e))]))}))]
+                                      (.-value (.-target e))]))
+                        }
+                )
+                #?(:cljs {:on-click
+                         (fn [e]
+                           (dispatch [:wh.components.navbar.events/set-search-focus true]))
+                        }
+                )
+                #?(:cljs {:on-focus
+                         (fn [e]
+                           (dispatch [:wh.components.navbar.events/set-search-focus true]))
+                        }
+                )
+                #?(:cljs {:on-blur
+                        (fn [e]
+                          (js/setTimeout (fn [] 
+                            (dispatch [:wh.components.navbar.events/set-search-focus false])
+                          ) 200)
+                        )
+                        }
+                  )
+              )]
+                        
      (when search-value
        [:a
         (merge {:href  (routes/path :search)
                 :class styles/search__clear-icon}
                #?(:cljs {:on-click
                          #(set! (.-value (.getElementById js/document search-id)))}))
-        [icon "close"]])]))
+        [icon "close"]]
+    )  
+    
+    (when search-focus
+       [components/search-dropdown-list 
+        (take 5 (filter (fn [a]
+            (clojure.string/includes? (clojure.string/lower-case a) (clojure.string/lower-case search-value))
+          ) local-search))
+       ]
+    )   
+  ]))
 
 (defn button-write-article []
   [:a {:class     (util/mc styles/button styles/button--contribute)
