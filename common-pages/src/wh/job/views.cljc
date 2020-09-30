@@ -1,30 +1,29 @@
 (ns wh.job.views
-  (:require
-    #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
-    #?(:cljs [wh.components.forms.views :refer [text-field error-component-outdated]])
-    #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
-    #?(:cljs [wh.components.stats.views :refer [stats-item]])
-    [clojure.string :as str]
-    [wh.common.data :refer [get-manager-name]]
-    [wh.common.job :as jobc]
-    [wh.common.text :refer [pluralize]]
-    [wh.company.listing.views :refer [company-card]]
-    [wh.components.cards :refer [match-circle]]
-    [wh.components.common :refer [wrap-img link img]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.issue :refer [level->str level->icon issue-card]]
-    [wh.components.job :refer [job-card highlight]]
-    [wh.components.pods.candidates :as candidate-pods]
-    [wh.interop :as interop]
-    [wh.job.events :as events]
-    [wh.job.subs :as subs]
-    [wh.pages.util :as putil]
-    [wh.re-frame :as r]
-    [wh.re-frame.events :refer [dispatch dispatch-sync]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.util :as util]
-    [wh.verticals :as verticals]))
+  (:require #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
+            #?(:cljs [wh.components.forms.views :refer [text-field error-component-outdated]])
+            #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+            #?(:cljs [wh.components.stats.views :refer [stats-item]])
+            [clojure.string :as str]
+            [wh.common.data :refer [get-manager-name]]
+            [wh.common.job :as jobc]
+            [wh.common.text :refer [pluralize]]
+            [wh.company.listing.views :refer [company-card]]
+            [wh.components.cards :refer [match-circle]]
+            [wh.components.common :refer [wrap-img link img]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.issue :refer [level->str level->icon issue-card]]
+            [wh.components.job :refer [job-card highlight]]
+            [wh.components.pods.candidates :as candidate-pods]
+            [wh.interop :as interop]
+            [wh.job.events :as events]
+            [wh.job.subs :as subs]
+            [wh.pages.util :as putil]
+            [wh.re-frame :as r]
+            [wh.re-frame.events :refer [dispatch dispatch-sync]]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
+            [wh.util :as util]
+            [wh.verticals :as verticals]))
 
 #?(:cljs
    (defn- latlng [{:keys [latitude longitude]}]
@@ -57,36 +56,58 @@
                                     (.setZoom @gmap zoom)
                                     (.setTitle @marker title)))}))))
 
+(defn- publish-button []
+  [:button.button.button--medium
+   (merge {:id    "job-view__publish-button"
+           :class (when (<sub [::subs/publishing?])
+                    "button--inverted button--loading")}
+          #?(:cljs
+             {:on-click #(dispatch [::events/publish-role])}))
+   "Publish"])
 
+(defn- view-applications-button []
+  [:a
+   {:href (<sub [::subs/view-applications-link])
+    :id   "job-view__view-applications-button"}
+   [:button.button.button--medium "View Applications"]])
+
+(defn- edit-button [can-edit?]
+  (if can-edit?
+    [link
+     [:button.button.button--medium.button--inverted "Edit"]
+     :edit-job
+     :id (<sub [::subs/id])
+     :html-id "job-view__edit-button"]
+
+    [link
+     [:button.button.button--medium.button--inverted "Edit"]
+     :payment-setup
+     :step :select-package
+     :html-id "job-view__edit-button"]))
 
 (defn apply-button
   ([]
    (apply-button {}))
   ([{:keys [id force-view-applications? condensed?]}]
-   (let [applied? (<sub [::subs/applied?])]
+   (let [applied?  (<sub [::subs/applied?])
+         can-edit? (<sub [::subs/can-edit-jobs?])]
      (cond
        (not (<sub [::subs/loaded?]))
        [:div.button--skeleton]
        (or (<sub [:user/admin?])
            (<sub [::subs/owner?]))
        (into [:div
-              {:class (util/merge-classes "job__admin-buttons"
-                                          (when condensed? "job__admin-buttons--condensed"))}
-              [link [:button.button.button--medium.button--inverted "Edit"]
-               :edit-job :id (<sub [::subs/id]) :html-id "job-view__publish-button"]]
+              {:class (util/merge-classes
+                        "job__admin-buttons"
+                        (when condensed? "job__admin-buttons--condensed"))}
+              [edit-button can-edit?]]
+
              (concat []
                      (when (<sub [::subs/show-unpublished?])
-                       [[:button.button.button--medium
-                         (merge {:id "job-view__publish-button"
-                                 :class (when (<sub [::subs/publishing?]) "button--inverted button--loading")}
-                                #?(:cljs
-                                   {:on-click #(dispatch [::events/publish-role])})) "Publish"]])
+                       [[publish-button]])
                      (when (or (not (<sub [::subs/show-unpublished?]))
                                force-view-applications?)
-                       [[:a
-                         {:href (<sub [::subs/view-applications-link])
-                          :id   "job-view__view-applications-button"}
-                         [:button.button.button--medium "View Applications"]]])))
+                       [[view-applications-button]])))
        :else
        [:div
         {:class (util/merge-classes "job__apply-buttons"
@@ -99,12 +120,12 @@
                                              [:job
                                               :params {:slug (:slug (<sub [::subs/apply-job]))}
                                               :query-params {:apply "true"}])))
-           {:id (str "job-view__apply-button" (when id (str "__" id)))
+           {:id       (str "job-view__apply-button" (when id (str "__" id)))
             :disabled (or applied? (<sub [:user/company?]))
             :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])})
-         (cond applied? "Applied"
+         (cond applied?                            "Applied"
                (some? (<sub [:user/applied-jobs])) "Instant Apply"
-               :else "Apply")]
+               :else                               "Apply")]
         [:div
          [:a {:href (routes/path :company-jobs :params {:slug (<sub [::subs/company-slug])})}
           [:button.button.button--medium.button--inverted.button--ellipsis

@@ -255,7 +255,7 @@
   db/default-interceptors
   (fn [{db :db} [job-id failure-event retry-event resp]]
     #?(:cljs
-       (let [reason (some-> resp :errors first :message keyword)
+       (let [reason          (some-> resp :errors first :message keyword)
              redirect-to-job {:navigate [:edit-job :params {:id job-id} :query-params {:save 1}]
                               :dispatch failure-event}]
          (case reason
