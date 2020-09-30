@@ -66,3 +66,6 @@
 (def grid__day "profile__grid__day--1UpyJ")
 (def profile-hidden "profile__profile-hidden--I6mhr")
 (def profile-hidden__icon "profile__profile-hidden__icon--3pphe")
+(def modal-content "profile__modal-content--1Fe2D")
+(def short-wrapper "profile__short-wrapper--OPKe3")
+(def other-urls "profile__other-urls--34iTK")

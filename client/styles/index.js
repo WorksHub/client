@@ -40,3 +40,5 @@ import './landing_user_dashboard.sass';
 import './navbar.sass';
 import './search.sass';
 import './not_found.sass';
+import './modal.sass'
+import './form.sass'

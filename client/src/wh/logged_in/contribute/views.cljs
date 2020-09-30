@@ -12,7 +12,7 @@
                                                logo-field
                                                tags-field
                                                select-field
-                                               custom-avatar-picker]]
+                                               custom-avatar-picker-outdated]]
             [wh.components.verticals :as vertical-views]
             [wh.interop :as interop]
             [wh.logged-in.contribute.db :as contribute]
@@ -151,13 +151,13 @@
      [:div
       [:div
        [:label.label "Avatar"]
-       [custom-avatar-picker {:uploading? (<sub [::subs/avatar-uploading?])
-                              :avatar-url             (<sub [::subs/avatar-url])
-                              :set-avatar             (upload/handler
-                                                        :launch [::events/avatar-upload]
-                                                        :on-upload-start [::events/avatar-upload-start]
-                                                        :on-success [::events/avatar-upload-success]
-                                                        :on-failure [::events/avatar-upload-failure])}]]
+       [custom-avatar-picker-outdated {:uploading? (<sub [::subs/avatar-uploading?])
+                                       :avatar-url      (<sub [::subs/avatar-url])
+                                       :set-avatar      (upload/handler
+                                                          :launch [::events/avatar-upload]
+                                                          :on-upload-start [::events/avatar-upload-start]
+                                                          :on-success [::events/avatar-upload-success]
+                                                          :on-failure [::events/avatar-upload-failure])}]]
       [multi-edit
        (<sub [::subs/skills])
        {:label "Skills"

@@ -9,11 +9,9 @@
 
 (defn content []
   (let [profile-hidden? (<sub [::subs/profile-hidden?])
-        articles        (<sub [::subs/blogs])
-        issues          (<sub [::subs/issues])
-        contributions?  (boolean
-                          (<sub [::subs/contributions-collection]))]
-
+        articles (<sub [::subs/blogs])
+        issues (<sub [::subs/issues])
+        contributions?  (boolean (<sub [::subs/contributions-collection]))]
     (if profile-hidden?
       [components/profile-hidden-message]
       [components/content

@@ -28,11 +28,12 @@
 
 (defn form-signin []
   [auth/form
+   {:on-submit #(do (.preventDefault %)
+                    (dispatch [::events/send-login-link]))}
    [field-email]
    [auth/error-message (<sub [::subs/error-message])]
    [auth/button {:data-test "signin"
-                 :submitting? (<sub [::subs/submitting?])
-                 :on-click #(dispatch [::events/send-login-link])}]])
+                 :submitting? (<sub [::subs/submitting?])}]])
 
 (defn check-you-email [email]
   [auth/card {:type :check-email

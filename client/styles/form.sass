@@ -1,0 +1,77 @@
+@import colours
+@import vars
+@import mixins
+
+.input
+  width: 100%
+  height: 46px
+  border: 1px solid $grey400
+  border-radius: 2px
+  color: $text-black
+  padding: 14px 18px
+  font-size: 14px
+  font-weight: 500
+  &::placeholder
+    color: $grey300
+    font-weight: 400
+    letter-spacing: 0.02em
+  &--textarea
+    height: auto
+    display: block
+
+.label
+  &__text
+    display: block
+    font-size: 14px
+    color: $text-black
+    font-weight: 700
+    letter-spacing: 0.04em
+    cursor: pointer
+
+.avatar
+  width: 120px
+  height: 120px
+  border-radius: 50%
+  object-fit: cover
+  border: 1px solid $primary-red
+
+  &__wrapper
+    display: inline-flex
+    cursor: pointer
+    right: 70px
+    top: 120px
+    +tablet
+      position: absolute
+
+  &__controls-wrapper
+    position: relative
+
+    &--disabled
+      filter: grayscale(1)
+
+  &__edit
+    position: absolute
+    right: -10px
+    top: -10px
+    border-radius: 50%
+    width: 48px
+    height: 48px
+    background-color: $primary-red
+    border: 1px solid transparent
+    color: $white
+    display: flex
+    align-items: center
+    justify-content: center
+
+    &:hover
+      background-color: $primary-red-hover
+
+  &__edit-icon
+    fill: $white
+
+.error
+  color: $error-red
+  font-size: 14px
+  padding: 6px 0 0
+  line-height: 18px
+  font-weight: 500

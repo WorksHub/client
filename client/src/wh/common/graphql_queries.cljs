@@ -41,6 +41,13 @@
 (def-query-from-template update-user-mutation--skills update-user-mutation
   {:fields [[:skills [:name :rating]]]})
 
+(def-query-from-template update-user-mutation--profile update-user-mutation
+  {:fields [:id
+            :name
+            :imageUrl
+            [:otherUrls [:url]]
+            :summary]})
+
 (def set-application-state-mutation
   {:venia/operation {:operation/type :mutation
                      :operation/name "set_application_state"}

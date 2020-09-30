@@ -92,8 +92,6 @@
                 :on-success [::fetch-initial-data-success]}
      :dispatch [::pages/set-loader]}))
 
-
-
 (defn init-avatar [profile]
   (let [predefined-avatar (common-user/url->predefined-avatar (::profile/image-url profile))]
     (merge profile
@@ -183,12 +181,6 @@
     (assoc db ::profile/phone phone)))
 
 (reg-event-db
-  ::edit-summary
-  profile-interceptors
-  (fn [db [summary]]
-    (assoc db ::profile/summary summary)))
-
-(reg-event-db
   ::edit-email
   profile-interceptors
   (fn [db [email]]
@@ -223,11 +215,6 @@
   profile-interceptors
   (fn [db [status]]
     (assoc db ::profile/job-seeking-status status)))
-
-(reg-event-db
-  ::edit-url
-  profile-interceptors
-  (form-events/multi-edit-fn ::profile/other-urls :url))
 
 (reg-event-db
   ::edit-perk
@@ -314,20 +301,18 @@
   ::save-header
   db/default-interceptors
   (fn [{db :db} _]
-    (let [profile (::profile/sub-db db)]
-      (if-let [error (validate-profile profile)]
-        {:dispatch [::pages/set-error error]}
-        (let [profile (if (get-in db [::profile/sub-db ::profile/custom-avatar-mode])
-                        profile
-                        (assoc profile ::profile/image-url
-                                       (common-user/avatar-url (get-in db [::profile/sub-db ::profile/predefined-avatar]))))
-              new-db (assoc db ::profile/sub-db profile)]
-          {:db       new-db
-           :graphql  {:query      graphql/update-user-mutation--approval
-                      :variables  {:update_user (graphql-header-update profile)}
-                      :on-success [::save-success]
-                      :on-failure [::save-failure]}
-           :dispatch [::pages/set-loader]})))))
+    (let [profile (::profile/sub-db db)
+          profile (if (get-in db [::profile/sub-db ::profile/custom-avatar-mode])
+                    profile
+                    (assoc profile ::profile/image-url
+                                   (common-user/avatar-url (get-in db [::profile/sub-db ::profile/predefined-avatar]))))
+          new-db (assoc db ::profile/sub-db profile)]
+      {:db       new-db
+       :graphql  {:query      graphql/update-user-mutation--approval
+                  :variables  {:update_user (graphql-header-update profile)}
+                  :on-success [::save-success]
+                  :on-failure [::save-failure]}
+       :dispatch [::pages/set-loader]})))
 
 (reg-event-fx
   ::save-private

@@ -16,6 +16,7 @@
   [t]
   (let [secs (t/in-seconds (t/interval t (t/now)))]
     (cond
+      (= secs 0) "just now"
       ;; less than a minute
       (< secs 60)      (str secs " " (text/pluralize secs "second") " ago")
       ;; less than an hour

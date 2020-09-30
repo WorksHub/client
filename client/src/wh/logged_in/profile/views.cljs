@@ -14,12 +14,13 @@
                                                labelled-checkbox
                                                multi-edit multiple-buttons
                                                select-field select-input
-                                               text-field text-input
-                                               avatar-field]]
+                                               text-field text-input]]
             [wh.components.icons :refer [icon]]
             [wh.logged-in.profile.components :as components]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
+            [wh.profile.update-public.views :as edit-modal]
+            [wh.profile.update-public.events :as edit-modal-events]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
             [wh.subs :refer [<sub]]))
@@ -167,39 +168,13 @@
 
 (defn header-edit []
   [:form.wh-formx.header-edit
-   [:h1 "Edit your basic info"]
-   [avatar-field {:custom-avatar-mode     (<sub [::subs/custom-avatar-mode])
-                  :set-custom-avatar-mode ::events/set-custom-avatar-mode
-                  :predefined-avatar      (<sub [::subs/predefined-avatar])
-                  :set-predefined-avatar  ::events/set-predefined-avatar
-                  :uploading-avatar?      (<sub [::subs/avatar-uploading?])
-                  :avatar-url             (<sub [::subs/image-url])
-                  :set-avatar             (upload/handler
-                                            :launch [::events/image-upload]
-                                            :on-upload-start [::events/avatar-upload-start]
-                                            :on-success [::events/avatar-upload-success]
-                                            :on-failure [::events/avatar-upload-failure])}]
-   [text-field (<sub [::subs/name])
-    {:label       "Your name"
-     :placeholder "What shall we call you?"
-     :on-change   [::events/edit-name]}]
+   [:h1 "Edit your skills"]
    [multi-edit
     (<sub [::subs/rated-skills])
     {:label     [:div "Skills"
                  [:br]
                  [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]
      :component skill-field}]
-   [multi-edit
-    (<sub [::subs/editable-urls])
-    {:label       "Websites"
-     :placeholder "Link to your web page, profile, portfolio, etc..."
-     :on-change   [::events/edit-url]}]
-   [text-field
-    (<sub [::subs/summary])
-    {:type        :textarea
-     :label       "Summary"
-     :placeholder "Here's your chance to tell us a bit about you. Use this summary as your personal elevator pitch, what have you achieved and what makes you tick."
-     :on-change   [::events/edit-summary]}]
    [error-box]
    [:div.buttons-container.is-flex
     [:button.button.button--small {:data-test "save"
@@ -594,7 +569,7 @@
 
    (when (owner-or-admin? user-type)
      [components/section-buttons
-      [components/upload-button {:document   "resume"
+      [components/upload-button {:document   "CV"
                                  :data-test  "upload-resume"
                                  :uploading? (<sub [::subs/cv-uploading?])
                                  :on-change  (upload/handler
@@ -632,6 +607,7 @@
                          (<sub [::subs/contributions-collection]))]
     [components/content
      [error-box]
+     [edit-modal/profile-edit-modal]
      [section-public-access-settings]
      [components/section-stats {:is-owner?      is-owner?
                                 :percentile     (<sub [::subs/percentile])
@@ -658,6 +634,7 @@
      :stackoverflow (<sub [::subs/social :stackoverflow])
      :github        (<sub [::subs/social :github])
      :last-seen     (<sub [::subs/last-seen])
-     :updated       (<sub [::subs/updated])}
+     :updated       (<sub [::subs/updated])
+     :on-edit       #(dispatch [::edit-modal-events/open-modal])}
     :private]
    [main-view]])

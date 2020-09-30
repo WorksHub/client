@@ -1,7 +1,7 @@
 (ns wh.job.views
   (:require
     #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
-    #?(:cljs [wh.components.forms.views :refer [text-field error-component]])
+    #?(:cljs [wh.components.forms.views :refer [text-field error-component-outdated]])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
     #?(:cljs [wh.components.stats.views :refer [stats-item]])
     [clojure.string :as str]
@@ -177,7 +177,7 @@
          {:class (str class-prefix "__apply-on-behalf-confirmation")}
          "\uD83D\uDC4D Candidate was approved and sent to the company."])
       (when-let [error (<sub [::subs/apply-on-behalf-error])]
-        (error-component error {:id "error-on-behalf-of"}))]))
+        (error-component-outdated error {:id "error-on-behalf-of"}))]))
 
 (defn company-header
   []

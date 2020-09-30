@@ -10,6 +10,7 @@
             [wh.components.tag :as tag]
             [wh.logged-in.profile.components.contributions :as contributions]
             [wh.re-frame.subs :refer [<sub]]
+            [re-frame.core :refer [dispatch]]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
             [wh.util :as util]))
@@ -66,33 +67,36 @@
                               :on-change on-change}]
      [:span (str "Upload " document)]]))
 
-(defn edit-link [{:keys [href text data-test type]
+(defn edit-link [{:keys [href text data-test type on-click]
                   :or   {text "Edit"}}]
   (let [small? (= type :small)]
     [:a {:href      href
          :data-test data-test
-         :class     (util/mc styles/edit [small? styles/edit--small])}
-     [icons/icon "edit" :class (when small? styles/edit__small-icon)] [:span.visually-hidden text]]))
+         :class     (util/mc styles/edit [small? styles/edit--small])
+         :on-click on-click}
+     [icons/icon "pen" :class (when small? styles/edit__small-icon)] [:span.visually-hidden text]]))
 
-(defn edit-profile [{:keys [type]}]
+(defn edit-profile [{:keys [type on-click]}]
   (let [[user-route admin-route] (if (= type :private)
                                    [:profile-edit-private :candidate-edit-private]
                                    [:profile-edit-header :candidate-edit-header])
         href                     (if (= (<sub [:wh.pages.core/page]) :profile)
                                    (routes/path user-route)
                                    (routes/path admin-route))]
-    [edit-link {:href      href
-                :data-test (if (= type :private) "edit-profile-private" "edit-profile")
-                :text      "Edit"}]))
+    [edit-link (cond-> {:data-test (if (= type :private) "edit-profile-private" "edit-profile")
+                        :text      "Edit"}
+                       (not on-click) (assoc :href href)
+                       on-click (assoc :on-click on-click))]))
 
-(defn profile [user {:keys [github stackoverflow twitter last-seen updated]} type]
+(defn profile [user {:keys [github stackoverflow twitter last-seen updated on-edit]} type]
   (let [public?                          (= type :public)
         {:keys [name image-url summary]} (keywords/strip-ns-from-map-keys user)
         show-meta? (->> [github stackoverflow twitter last-seen updated]
                         (map boolean)
                         (some true?))]
     [:div (util/smc styles/section styles/section--profile)
-     (when-not public? [edit-profile {:type :default}])
+     (when-not public? [edit-profile {:type :default
+                                      :on-click on-edit}])
      [:div {:class styles/username} name]
      [:img {:src   image-url
             :class styles/avatar}]
@@ -359,8 +363,6 @@
         [small-link {:text "Explore issues"
                      :href (routes/path :issues)}]])]))
 
-;; contributions ----------------------------------------------------------
-
 (defn contributions-section [contributions contributions-count
                              contributions-repos months]
   [section
@@ -384,8 +386,6 @@
 
     ^{:key :contributions-grid}
     [contributions/contributions-grid contributions months]]])
-
-;; issues ----------------------------------------------------------
 
 (defn profile-hidden-message []
   [section

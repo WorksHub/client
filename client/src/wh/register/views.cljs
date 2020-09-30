@@ -14,6 +14,7 @@
                :on-change  #(dispatch-sync [::events/set-name (-> % .-target .-value)])
                :aria-label "Name"
                :data-test "name"
+               :autocomplete "name"
                :placeholder "Name"
                :label "Name"
                :error (<sub [::subs/error-name])}])
@@ -23,6 +24,7 @@
                :placeholder "Email"
                :aria-label "Email"
                :data-test "email"
+               :autocomplete "email"
                :value      (<sub [::subs/email])
                :on-change  #(dispatch-sync [::events/set-email (-> % .-target .-value)])
                :label "Email"
@@ -30,12 +32,13 @@
 
 (defn form-signup []
   [auth/form
+   {:on-submit #(do (.preventDefault %)
+                    (dispatch [::events/create-user]))}
    [:div (util/smc styles/fields)
     [field-name]
     [field-email]]
    [auth/error-message (<sub [::subs/error-unhandled])]
    [auth/button {:submitting? (<sub [::subs/submitting?])
-                 :on-click #(dispatch [::events/create-user])
                  :data-test "signup"}]])
 
 (defn message-user-agreement []

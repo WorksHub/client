@@ -1,9 +1,9 @@
 (ns wh.logged-in.profile.subs
-  (:require [clojure.string :as str]
+  (:require [cljs.spec.alpha :as s]
+            [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
             [wh.common.data :as data]
             [wh.common.keywords :as keywords]
-            [wh.common.specs.primitives]
             [wh.common.text :as text]
             [wh.common.url :as url]
             [wh.logged-in.profile.db :as profile]
@@ -424,6 +424,7 @@
   (fn [db _]
     (user/id db)))
 
+;; contributions
 
 ;; magic number. I'm not going to try and show data only from 4 months everytime.
 ;; 18 seems like a safe, nice number of weeks

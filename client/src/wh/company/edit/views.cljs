@@ -179,7 +179,7 @@
                         (when saving? "button--inverted button--loading"))}
         (when-not saving? (if edit? "Save" "Create"))])
      (when-let [error (<sub [::subs/error])]
-       (f/error-component error { :id "company-edit-error-desktop"}))]]])
+       (f/error-component-outdated error { :id "company-edit-error-desktop"}))]]])
 
 (defn users
   [admin?]
@@ -234,7 +234,7 @@
                                          (when saving? "button--loading"))}
           (when-not saving? "Add User")])
        (when-let [error (<sub [::subs/user-error])]
-         (f/error-component error {:id "company-edit-user-error-desktop"}))]]]))
+         (f/error-component-outdated error {:id "company-edit-user-error-desktop"}))]]]))
 
 (defn integrations []
   [:div.wh-formx.wh-formx__layout

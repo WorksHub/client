@@ -90,7 +90,7 @@
          [:div.column.company-signup__content.is-8
           [company-signup-step-content]
           (when error
-            (f/error-component error {:class "is-hidden-mobile is-pulled-left" :id "company-signup-error-desktop"}))
+            (f/error-component-outdated error {:class "is-hidden-mobile is-pulled-left" :id "company-signup-error-desktop"}))
           [register-button]]
          [:div.column.company-signup__pods.is-4
           [benefits-pod]]]]]]
