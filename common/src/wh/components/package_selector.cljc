@@ -62,8 +62,13 @@
          (if (:cost package)
            (signup-button (or (:button-alt package) (:button package)) id billing-period)
            (contact-button true (or (:button-alt package) (:button package)) id billing-period))])
-      [:div.package-selector__live-jobs
-       [:div [:strong "Live jobs:"] (:live-jobs package)]]
+      [:div.package-selector__top-perks
+       [:div.package-selector__top-perks__item
+        [:strong "Live jobs:"] (:live-jobs package)]
+
+       (when-let [edit-jobs (:edit-jobs package)]
+         [:div.package-selector__top-perks__item
+          [:strong "Editing jobs:"] edit-jobs])]
       [:div.package-selector__perks
        (for [perk all-package-perks]
          ^{:key perk}
