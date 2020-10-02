@@ -83,6 +83,7 @@
      [:button.button.button--medium.button--inverted "Edit"]
      :payment-setup
      :step :select-package
+     :query-params {:action "edit"}
      :html-id "job-view__edit-button"]))
 
 (defn apply-button

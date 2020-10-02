@@ -1,10 +1,9 @@
 (ns wh.company.payment.subs
-  (:require
-    [re-frame.core :refer [reg-sub]]
-    [wh.common.data :as data]
-    [wh.company.payment.db :as payment]
-    [wh.db :as db]
-    [wh.user.db :as user]))
+  (:require [re-frame.core :refer [reg-sub]]
+            [wh.common.data :as data]
+            [wh.company.payment.db :as payment]
+            [wh.db :as db]
+            [wh.user.db :as user]))
 
 (defn payment-step
   [db]
@@ -287,12 +286,19 @@
   (fn [[candidate-id job-id action] _]
     (cond candidate-id
           "You cannot access candidates on your current package. Upgrade in order to unlock access to candidates who have applied to any of your roles \uD83D\uDD12"
+
           (and job-id (= :applications action))
           "You cannot access applications on your current package. Upgrade in order to unlock access to the applications that have been made to your roles \uD83D\uDD12"
-          (and job-id (= :publish action))
+
+          (= :publish action)
           "You cannot publish any more jobs on your current package. Upgrade in order to publish unlimited jobs across all our platforms \uD83D\uDD12"
+
+          (= :edit action)
+          "You cannot edit any more jobs on your current package. Upgrade in order to edit unlimited jobs across all our platforms \uD83D\uDD12"
+
           (= :integrations action)
           "You cannot use integrations on your current package. Upgrade in order to use all the integrations \uD83D\uDD12"
+
           :else nil)))
 
 (reg-sub

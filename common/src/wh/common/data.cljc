@@ -474,6 +474,7 @@
    "Review, track & share applicants"
    "ATS Integrations"
    "Account manager"
+   "Unlimited edits"
    "Active sourcing"
    "Screened applicants"
    "Guaranteed hires"])
@@ -530,10 +531,10 @@
                 :button      "Start Hiring"
                 :button-alt  "Get Started"
                 :live-jobs   "Unlimited"
-                :edit-jobs   "Unlimited"
                 :img         {:src "/images/employers/launch_pad.svg"
                               :alt "Launch Pad icon"}
                 :perks       #{"Unlimited hubs"
+                               "Unlimited edits"
                                "Performance analytics"
                                "Github integration"
                                "Company profile"
@@ -547,7 +548,6 @@
                 :per         nil
                 :button      "Get Started"
                 :button-alt  "Get in touch"
-                :edit-jobs   "Unlimited"
                 :live-jobs   "Unlimited"
                 :img         {:src "/images/employers/take_off.svg"
                               :alt "Take-Off icon"}

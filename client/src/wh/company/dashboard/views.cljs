@@ -144,6 +144,7 @@
 
     [link "Edit"
      :payment-setup :step :select-package
+     :query-params {:action "edit"}
      :class "button button--inverted"]))
 
 (defn job-card [{:keys [id slug title display-location published

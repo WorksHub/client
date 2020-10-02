@@ -229,22 +229,22 @@
   :select-package
   [_]
   (let [upgrading? (<sub [::subs/upgrading?])
-        package (<sub [::subs/company-package])]
+        package    (<sub [::subs/company-package])]
     [:div
      [package-selector
-      (merge {:signup-button select-package-button
-              :contact-button fake-demo-button
-              :mobile-fullscreen? true
-              :show-trials? (<sub [::subs/has-permission? :can_start_free_trial])
+      (merge {:signup-button                 select-package-button
+              :contact-button                fake-demo-button
+              :mobile-fullscreen?            true
+              :show-trials?                  (<sub [::subs/has-permission? :can_start_free_trial])
               :show-billing-period-selector? (not upgrading?)
-              :restrict-packages (restricted-packages)
-              :coupon (<sub [::subs/company-coupon])
-              :info-message (<sub [::subs/info-message])
-              :current-package (when-not (and (= :take_off package)
-                                              (<sub [::subs/company-new-offer])) ;; if we have pending offer, even if already take_off we want to show it
-                                 package)}
+              :restrict-packages             (restricted-packages)
+              :coupon                        (<sub [::subs/company-coupon])
+              :info-message                  (<sub [::subs/info-message])
+              :current-package               (when-not (and (= :take_off package)
+                                                            (<sub [::subs/company-new-offer])) ;; if we have pending offer, even if already take_off we want to show it
+                                               package)}
              (when upgrading?
-               {:billing-period  (<sub [::subs/company-billing-period])}))]]))
+               {:billing-period (<sub [::subs/company-billing-period])}))]]))
 
 (defn offer-details
   [{:keys [recurring-fee placement-percentage]} show-billing-period-selector?]
