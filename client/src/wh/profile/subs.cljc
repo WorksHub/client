@@ -4,7 +4,9 @@
             [wh.common.specs.primitives]
             [wh.common.time :as time]
             [wh.common.url :as url]
+            [wh.components.tag :as tag]
             [wh.graphql-cache :as gql-cache]
+            [wh.profile.db :as profile]
             [wh.profile.events :as profile-events]))
 
 (reg-sub
@@ -40,6 +42,12 @@
     (->> profile
          :skills
          (sort-by #(or (:rating %) 0) >))))
+
+(reg-sub
+  ::interests
+  :<- [::profile]
+  (fn [profile _]
+    (map tag/->tag (:interests profile))))
 
 (reg-sub
   ::social
@@ -91,7 +99,6 @@
   (fn [db _]
     (let [[query params] (profile-events/profile-query-description db)]
       (boolean (#{:initial :executing} (gql-cache/state db query params))))))
-
 
 ;; magic number. I'm not going to try and show data only from 4 months everytime.
 ;; 18 seems like a safe, nice number of weeks

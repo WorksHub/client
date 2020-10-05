@@ -53,15 +53,17 @@
                           (or focused-tag (.-focusedTag this))])))))
 
 (defn add-check-value-to-url
-  [query-param-name]
-  #?(:clj (str "if(this.checked)"
-               "{window.location = " (remove-page-add-interaction-qps
-                                       (symbol (->jsfn "setQueryParam" false (name query-param-name) 1))) ".href;}"
-               "else"
-               "{window.location = " (->jsfn "deleteQueryParam" false (name query-param-name)) ".href;}")
-     :cljs (fn [e]
-             (let [v (when (.-checked (.-target e)) 1)]
-               (dispatch [:wh.events/nav--set-query-param (name query-param-name) v])))))
+  ([query-param-name]
+   (add-check-value-to-url query-param-name 1))
+  ([query-param-name value]
+   #?(:clj (str "if(this.checked)"
+                "{window.location = " (remove-page-add-interaction-qps
+                                        (symbol (->jsfn "setQueryParam" false (name query-param-name) value))) ".href;}"
+                "else"
+                "{window.location = " (->jsfn "deleteQueryParam" false (name query-param-name)) ".href;}")
+      :cljs (fn [e]
+              (let [v (when (.-checked (.-target e)) value)]
+                (dispatch [:wh.events/nav--set-query-param (name query-param-name) v]))))))
 
 (defn filter-tags
   [tag-field-id text-atom]

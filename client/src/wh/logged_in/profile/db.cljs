@@ -2,7 +2,10 @@
   (:require [cljs.spec.alpha :as s]
             [clojure.string :as str]
             [wh.common.cases :as cases]
+            [wh.profile.db :as profile-db]
             [wh.util :as util]))
+
+(def maximum-skills profile-db/maximum-skills)
 
 (s/def ::predefined-avatar integer?)
 (s/def ::custom-avatar-mode boolean?)
@@ -26,3 +29,6 @@
   (into {}
         (map (fn [[k v]] [(keyword "wh.logged-in.profile.db" (name k)) v]))
         data))
+
+(def tag-query
+  [:tags {:type :tech}])

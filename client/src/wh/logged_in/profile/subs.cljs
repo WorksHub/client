@@ -1,15 +1,19 @@
 (ns wh.logged-in.profile.subs
   (:require [cljs.spec.alpha :as s]
             [clojure.string :as str]
-            [re-frame.core :refer [reg-sub]]
+            [re-frame.core :refer [reg-sub reg-sub-raw]]
             [wh.common.data :as data]
             [wh.common.keywords :as keywords]
             [wh.common.text :as text]
             [wh.common.url :as url]
+            [wh.components.tag :as tag]
+            [wh.graphql-cache :as cache]
             [wh.logged-in.profile.db :as profile]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.subs :refer [with-unspecified-option]]
             [wh.user.db :as user])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+  (:require-macros [clojure.core.strint :refer [<<]]
+                   [wh.re-frame.subs :refer [reaction]]))
 
 (reg-sub
   ::profile
@@ -37,6 +41,12 @@
   :<- [::profile]
   (fn [profile _]
     (sort-by #(or (:rating %) 0) > (::profile/skills profile))))
+
+(reg-sub
+  ::interests
+  :<- [::profile]
+  (fn [profile _]
+    (map tag/->tag (::profile/interests profile))))
 
 (reg-sub
   ::social-urls
@@ -471,3 +481,76 @@
          (map week->month)
          (distinct)
          (take-last month-count))))
+
+(reg-sub
+  ::edit-tech-changes?
+  :<- [::profile]
+  (fn [profile _]
+    (boolean
+      (::profile/edit-tech-changes? profile))))
+
+(reg-sub
+  ::skills-search
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/skills-search profile)))
+
+(reg-sub
+  ::interests-search
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/interests-search profile)))
+
+(reg-sub-raw
+  ::all-tags
+  (fn [_ _]
+    (reaction
+      (get-in (<sub (into [:graphql/result] profile/tag-query)) [:list-tags :tags]))))
+
+(reg-sub
+  ::selected-skills
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/selected-skills profile)))
+
+(reg-sub
+  ::selected-interests
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/selected-interests profile)))
+
+(defn search-term-match?
+  [search-term]
+  (fn [tag]
+    (str/includes? (str/lower-case (:label tag))
+                   (if search-term (str/lower-case search-term) ""))))
+
+(def max-tag-results 20)
+
+(reg-sub
+  ::skills-search-results
+  :<- [::all-tags]
+  :<- [::skills-search]
+  :<- [::selected-skills]
+  (fn [[all-tags search-term selected] _]
+    (let [selected-ids (set (map :id selected))]
+      (->> all-tags
+           (filter (search-term-match? search-term))
+           (remove (comp selected-ids :id))
+           (take max-tag-results)
+           (concat selected)
+           (map tag/tag->form-tag)))))
+
+(reg-sub
+  ::interests-search-results
+  :<- [::all-tags]
+  :<- [::interests-search]
+  :<- [::selected-interests]
+  (fn [[all-tags search-term selected] _]
+    (let [selected-ids (set (map :id selected))]
+      (->> all-tags
+           (filter (search-term-match? search-term))
+           (remove (comp selected-ids :id))
+           (take max-tag-results)
+           (concat selected)
+           (map tag/tag->form-tag)))))

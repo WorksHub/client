@@ -39,7 +39,12 @@
   {:fields [[:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]})
 
 (def-query-from-template update-user-mutation--skills update-user-mutation
-  {:fields [[:skills [:name :rating]]]})
+                         {:fields [[:skills [:name :rating]]]})
+
+(def-query-from-template update-user-mutation--skills-and-interest update-user-mutation
+                         {:fields [[:skills [:name :rating
+                                             [:tag [:id :slug :type :subtype :label :weight]]]]
+                                   [:interests [:id :slug :type :subtype :label :weight]]]})
 
 (def-query-from-template update-user-mutation--profile update-user-mutation
   {:fields [:id

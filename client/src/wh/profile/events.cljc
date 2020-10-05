@@ -12,37 +12,39 @@
                      :operation/name "fetch_user"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
-   :venia/queries [[:user {:id :$id}
-                    [[:skills [:name :rating]]
-                     [:otherUrls [:url]]
-                     :imageUrl
-                     :name
-                     :id
-                     :summary
-                     :percentile
-                     :published
-                     :created
-                     :lastSeen
-                     :updated
+   :venia/queries   [[:user {:id :$id}
+                      [[:skills [:name :rating
+                                 [:tag :fragment/tagFields]]]
+                       [:interests :fragment/tagFields]
+                       [:otherUrls [:url]]
+                       :imageUrl
+                       :name
+                       :id
+                       :summary
+                       :percentile
+                       :published
+                       :created
+                       :lastSeen
+                       :updated
 
-                     [:contributionsCollection
-                      [:totalCommitContributions
-                       :totalRepositoriesWithContributedCommits
-                       [:contributionCalendar
-                        [[:weeks
-                          [[:contributionDays
-                            [:contributionCount
-                             :date :weekday :color]]]]]]]]]]
+                       [:contributionsCollection
+                        [:totalCommitContributions
+                         :totalRepositoriesWithContributedCommits
+                         [:contributionCalendar
+                          [[:weeks
+                            [[:contributionDays
+                              [:contributionCount
+                               :date :weekday :color]]]]]]]]]]
 
-                   [:blogs {:user_id :$id}
-                    [[:blogs [:id :title :formattedCreationDate
-                              :readingTime :upvoteCount :published]]]]
+                     [:blogs {:user_id :$id}
+                      [[:blogs [:id :title :formattedCreationDate
+                                :readingTime :upvoteCount :published]]]]
 
-                   [:query_issues {:user_id :$id}
-                    [[:issues [:id :title :level
-                               [:compensation [:amount :currency]]
-                               [:company [:id :name :logo :slug]]
-                               [:repo [:primary_language]]]]]]]})
+                     [:query_issues {:user_id :$id}
+                      [[:issues [:id :title :level
+                                 [:compensation [:amount :currency]]
+                                 [:company [:id :name :logo :slug]]
+                                 [:repo [:primary_language]]]]]]]})
 
 (reg-query :profile profile-query)
 
@@ -60,10 +62,10 @@
   ::load-profile
   db/default-interceptors
   (fn [{db :db} _]
-    {:scroll-to-top true
-     :dispatch-n    [(into [:graphql/query]
-                           (conj (profile-query-description db)
-                                 {:on-complete [::set-page-title]}))]}))
+    {:dispatch (into [:graphql/query]
+                     (conj (profile-query-description db)
+                           {:on-complete [::set-page-title]
+                            :on-success  [:wh.events/scroll-to-top]}))}))
 
 #?(:cljs
    (defmethod pages/on-page-load :user [_]

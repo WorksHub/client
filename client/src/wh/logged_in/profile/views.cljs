@@ -17,10 +17,11 @@
                                                text-field text-input]]
             [wh.components.icons :refer [icon]]
             [wh.logged-in.profile.components :as components]
+            [wh.logged-in.profile.db :as profile]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
-            [wh.profile.update-public.views :as edit-modal]
             [wh.profile.update-public.events :as edit-modal-events]
+            [wh.profile.update-public.views :as edit-modal]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
             [wh.subs :refer [<sub]]))
@@ -617,7 +618,30 @@
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
      (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
-     [components/section-skills (<sub [::subs/skills]) :private]
+     [components/section-skills {:type                   :private
+                                 :skills                 (<sub [::subs/skills])
+                                 :interests              (<sub [::subs/interests])
+                                 :query-params           (<sub [:wh/query-params])
+                                 :max-skills             profile/maximum-skills
+                                 ;; Edit settings below this point
+                                 :changes?               (<sub [::subs/edit-tech-changes?])
+                                 :on-edit                [::events/on-edit-tech]
+                                 :on-skill-rating-change [::events/on-skill-rating-change]
+                                 :on-save                [::events/on-save-edit-tech]
+                                 :on-cancel              [::events/on-cancel-edit-tech]
+                                 :skills-search          {:search-term  (<sub [::subs/skills-search])
+                                                          :id           "profile-edit-tech-experience"
+                                                          :placeholder  "Search and add up to 6 technologies"
+                                                          :tags         (<sub [::subs/skills-search-results])
+                                                          :on-change    [::events/set-skills-search]
+                                                          :on-tag-click #(dispatch [::events/toggle-skill %])}
+                                 ;;
+                                 :interests-search       {:search-term  (<sub [::subs/interests-search])
+                                                          :id           "profile-edit-tech-interests"
+                                                          :placeholder  "Search and add your interests"
+                                                          :tags         (<sub [::subs/interests-search-results])
+                                                          :on-change    [::events/set-interests-search]
+                                                          :on-tag-click #(dispatch [::events/toggle-interest %])}}]
      (when contributions?
        [components/contributions-section
         (<sub [::subs/contributions-calendar])

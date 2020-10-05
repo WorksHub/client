@@ -105,7 +105,9 @@
 (s/def ::min (s/nilable nat-int?))
 (s/def ::time-period (s/nilable (set data/time-periods)))
 (s/def ::salary (s/nilable (s/keys :opt-un [::min ::currency ::time-period])))
-(s/def ::rating (s/nilable (s/and int? #(<= 1 % 5))))
+(def min-experience 0)
+(def max-experience 11)
+(s/def ::rating (s/nilable (s/int-in min-experience (inc max-experience))))
 (s/def ::skill (s/keys :req-un [::name]
                        :opt-un [::rating]))
 (s/def ::skills (s/* ::skill))
