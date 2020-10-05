@@ -218,9 +218,17 @@
          :on-close     #(dispatch [::events/close-publish-celebration id])}])]))
 
 (defn add-job-card []
-  [link [:div.card.add-job
-         [:div.add-job__icon [icon "add-new-2"]]
-         [:div.add-job__add "Add new role"]] :create-job])
+  (let [can-publish? (<sub [::subs/can-publish-jobs?])
+        element      [:div.card.add-job
+                      [:div.add-job__icon [icon "add-new-2"]]
+                      [:div.add-job__add "Add new role"]]]
+    (if can-publish?
+      [link element :create-job]
+
+      [link element
+       :payment-setup
+       :step :select-package
+       :query-params {:action "publish"}])))
 
 (defn roles [class-name title jobs live-roles?]
   (into

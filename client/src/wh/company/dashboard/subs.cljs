@@ -271,3 +271,8 @@
   ::can-edit-jobs?
   (fn [db _]
     (job/can-edit-jobs? db)))
+
+(reg-sub
+  ::can-publish-jobs?
+  (fn [db _]
+    (job/can-publish-jobs? db)))

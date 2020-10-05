@@ -382,7 +382,7 @@
           (when (user-common/company? db)
             [::fetch-company (user/company-id db)]))
 
-    (list [::redirect-to-payment-screen])))
+    (list [::cant-create-job-redirect])))
 
 (defmethod on-page-load :edit-job [db]
   (if (job/can-edit-jobs? db)
@@ -392,7 +392,7 @@
           [::load-job (get-in db [::db/page-params :id])]
           [::fetch-benefit-tags])
 
-    (list [::redirect-to-payment-screen])))
+    (list [::cant-edit-job-redirect])))
 
 (reg-event-db
   ::set-location-suggestions
@@ -724,7 +724,15 @@
     (assoc db ::create-job/pending-company-description desc)))
 
 (reg-event-fx
-  ::redirect-to-payment-screen
+  ::cant-edit-job-redirect
   create-job-interceptors
   (fn [{_db :db} _]
     {:navigate [:payment-setup :params {:step :select-package}]}))
+
+(reg-event-fx
+  ::cant-create-job-redirect
+  create-job-interceptors
+  (fn [{_db :db} _]
+    {:navigate [:payment-setup
+                :params {:step :select-package}
+                :query-params {:action "publish"}]}))

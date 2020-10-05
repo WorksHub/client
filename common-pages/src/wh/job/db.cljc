@@ -1,6 +1,7 @@
 (ns wh.job.db
   (:require [#?(:cljs cljs.spec.alpha :clj clojure.spec.alpha) :as s]
             [wh.common.data :as data]
+            [wh.common.specs.tags]
             [wh.common.user :as user]
             [wh.util :as util]))
 
