@@ -68,7 +68,6 @@
           :on-click #(dispatch [::events/update-current-location])})
        "Next"]]]))
 
-
 (defn cv-upload-step []
   (let [current-step? (= :step/cv-upload (<sub [::subs/current-step]))]
     [:div.cv-upload
@@ -79,6 +78,7 @@
       [:input.file-input {:id        "application-bot_upload-cv"
                           :type      "file"
                           :name      "avatar"
+                          :disabled  (not current-step?)
                           :on-change (when current-step?
                                        (upload/handler
                                          :launch [::profile-events/cv-upload]
@@ -89,7 +89,9 @@
        [:span {:class (if (and current-step? (<sub [::subs/updating?]))
                         "button--loading"
                         "file-label")}
-        "Upload resume"]]]]))
+        "Upload resume"]]]
+     (when (<sub [::subs/cv-upload-success?])
+       [codi-message "CV uploaded!"])]))
 
 (defn rejection-step []
   [:div

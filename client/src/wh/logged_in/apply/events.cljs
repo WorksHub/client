@@ -103,6 +103,7 @@
     {:db       (-> db
                    (user/update-cv (get-in resp [:data :update_user :cv :file]))
                    (apply/unset-loading)
+                   (assoc-in [::apply/sub-db ::apply/cv-upload-success?] true)
                    (assoc-in [::apply/sub-db ::apply/cv-upload-failed?] false))
      :dispatch [::check-cv]}))
 
