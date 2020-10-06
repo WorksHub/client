@@ -559,7 +559,7 @@
 (defn contributions-section [contributions contributions-count
                              contributions-repos months]
   [section
-   [internal-anchor "github"]
+   [internal-anchor "open-source"]
    [title "Open Source"]
 
    [four-grid
