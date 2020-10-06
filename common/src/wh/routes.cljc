@@ -24,7 +24,6 @@
                          :jobsboard
                          :contribute-edit})
 
-(def no-menu-pages #{:register :register-company :payment-setup :get-started :feed})
 (def no-footer-pages #{:register :register-company :payment-setup :get-started :login :invalid-magic-link})
 (def no-nav-link-pages #{:register :register-company :payment-setup :get-started})
 
