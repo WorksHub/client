@@ -356,13 +356,13 @@
   ([r]
    (rating->percentage r 12))
   ([r n]
-   (int (* 100 (/ (inc r) n)))))
+   (int (* 100 (/ (inc (or r 0)) n)))))
 
 (defn experience-text
   [label rating]
   (str label " - "
        (cond
-         (zero? rating) "less than a year"
+         (or (nil? rating) (zero? rating))  "less than a year"
          (> rating 10)  "10+ years"
          :else          (str rating (pluralize rating " year")))))
 
