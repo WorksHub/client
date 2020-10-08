@@ -4,7 +4,7 @@
             [wh.common.url :as url]
             [wh.components.attract-card :as attract-card]
             [wh.components.branding :as branding]
-            [wh.components.icons :as icons :refer [icon]]
+            [wh.components.icons :refer [icon]]
             [wh.components.navbar.admin :as admin]
             [wh.components.navbar.candidate :as candidate]
             [wh.components.navbar.company :as company]
@@ -14,6 +14,7 @@
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.styles.navbar :as styles]
+            [wh.common.user :as user-common]
             [wh.util :as util]))
 
 (defn logo [vertical env]
@@ -237,8 +238,11 @@
 (defn navbar [{:keys [vertical env content? page
                       candidate? company? admin?]
                :as   opts}]
-  [:div {:class     styles/navbar__wrapper
-         :data-test "navbar"}
+  [:nav {:class     styles/navbar__wrapper
+         :data-test "navbar"
+         :id         "wh-navbar"
+         :role       "navigation"
+         :aria-label "main navigation"}
    [:div (util/smc styles/navbar)
     [logo vertical env]
 
@@ -258,3 +262,19 @@
     [navbar-right opts]]
 
    [menu-for-mobile-and-tablet opts]])
+
+(defn top-bar
+  [{:keys [env vertical logged-in? query-params page user-type] :as _args}]
+  (let [candidate? (user-common/candidate-type? user-type)
+        company?   (user-common/company-type? user-type)
+        admin?     (user-common/admin-type? user-type)
+        content?   (not (contains? routes/no-nav-link-pages page))]
+    [navbar {:vertical     vertical
+             :page         page
+             :content?     content?
+             :env          env
+             :candidate?   candidate?
+             :company?     company?
+             :admin?       admin?
+             :logged-in?   logged-in?
+             :query-params query-params}]))

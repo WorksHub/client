@@ -2,7 +2,7 @@
   (:require
     [re-frame.core :refer [dispatch]]
     [wh.components.icons :refer [icon]]
-    [wh.components.navbar :as nav-common]
+    [wh.components.branding :as branding]
     [wh.components.forms.views :as views]
     [wh.util :as util]))
 
@@ -12,7 +12,7 @@
   (when-not (and (= vertical "www") toggle-event)
     (views/labelled-checkbox status
       (merge {:label [:div {:class "verticals-pod__vertical-toggle"}
-                      [icon vertical] (nav-common/logo-title vertical)]
+                      [icon vertical] (branding/vertical-title vertical {:size :small})]
               :label-class "verticals-pod__vertical-toggle-wrapper"}
              (when toggle-event {:on-change (conj toggle-event vertical)})))))
 

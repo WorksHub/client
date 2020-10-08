@@ -4,10 +4,11 @@
             ["smoothscroll-polyfill"]
             [wh.components.error.subs :as error-subs]
             [wh.components.error.views :refer [global-status-box]]
+            [wh.components.banner :as banner]
             [wh.components.footer :as footer]
             [wh.components.icons :refer [icon]]
             [wh.components.loader :refer [loader]]
-            [wh.components.navbar :as navbar]
+            [wh.components.navbar.navbar :as navbar]
             [wh.pages.router :refer [current-page]]
             [wh.subs :as subs :refer [<sub]]))
 
@@ -42,8 +43,8 @@
     (if (<sub [::subs/version-mismatch])
       [version-mismatch]
       [:div.main-panel
-       [navbar/promo-banner {:page       page
-                             :logged-in? logged-in?}]
+       [banner/banner {:page       page
+                       :logged-in? logged-in?}]
        [navbar/top-bar
         {:env               (<sub [::subs/env])
          :vertical          (<sub [::subs/vertical])

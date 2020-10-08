@@ -2,9 +2,10 @@
   (:require #?(:cljs [reagent.core :as r])
             [wh.common.data :as data]
             [wh.common.data.company-profile :as company-data]
-            [wh.styles.navbar :as styles]
+            [wh.styles.navbar :as navbar-styles]
+            [wh.styles.tasks :as styles]
             [wh.components.common :refer [link]]
-            [wh.components.icons :refer [icon]]
+            [wh.components.icons :as icon]
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.util :as util]))
@@ -16,7 +17,6 @@
        (remove #(= :complete (<sub [:user/company-onboarding-task-state %])))
        (count)))
 
-
 (defn task->path
   [task]
   (case task
@@ -25,44 +25,40 @@
     :add_integration  [:edit-company]
     :add_issue        [:company-issues]))
 
-(defn task
-  [id {:keys [title subtitle] :as task} tasks-open?]
+(defn task-description [{:keys [icon title subtitle] :as _task} state]
+  (let [icon (if (#{:read :complete} state) "cutout-tick" icon)]
+    [:div {:class styles/task}
+     [icon/icon icon :class styles/task__icon]
+     [:div {:class styles/title} title]
+     [:p {:class styles/subtitle} subtitle]]))
+
+(defn task-wrapper
+  [id task tasks-open?]
   (let [state (<sub [:user/company-onboarding-task-state id])
         [handler & {:as link-options}] (task->path id)]
-    [:div
-     {:key id
-      :class (util/merge-classes "navbar__task"
-                                 (when state (str "navbar__task--" (name state))))}
-     [link {:text [:div
-                   [:div.is-flex
-                    [icon (:icon task)]
-                    [:div.title title
-                     [icon "cutout-tick"]]]
-                   [:p subtitle]]
-            :handler handler
-            :options (assoc link-options
-                            :on-click #(do (reset! tasks-open? false)
-                                           #?(:cljs (js/setClass data/logged-in-menu-id "is-open" false))
-                                           #?(:cljs (js/disableNoScroll))
-                                           (dispatch [:company/set-task-as-read id])))}]]))
+    [link {:text [task-description task state]
+           :handler handler
+           :options (assoc link-options
+                           :on-click #(do (reset! tasks-open? false)
+                                          #?(:cljs (js/setClass data/logged-in-menu-id "is-open" false))
+                                          #?(:cljs (js/disableNoScroll))
+                                          (dispatch [:company/set-task-as-read id])))}]))
 
 (defn task-notifications-content
   [tasks-open?]
-  [:div.navbar-overlay__content
-   [:div.navbar__tasks-header
-    "Get more out of WorksHub"]
-   (doall
-     (for [[id t] company-data/company-onboarding-tasks]
-       [:div.navbar__task-container
-        {:key id}
-        [task id t tasks-open?]]))])
+  [:div {:class styles/tasks__wrapper}
+   [:div {:class styles/header}
+    "Explore WorksHub"]
+   [:ul {:class styles/tasks}
+    (doall
+      (for [[id t] company-data/company-onboarding-tasks]
+        ^{:key id}
+        [:li [task-wrapper id t tasks-open?]]))]])
 
 (defn tasks [tasks-open?]
-  [:div.navbar__tasks__inner
-   [:div.navbar-overlay__inner
-    [:div.navbar-overlay__bg]
-    [task-notifications-content tasks-open?]
-    [:div.navbar-overlay__triangle]]])
+  [:div {:class styles/content}
+   [task-notifications-content tasks-open?]])
+
 
 (defn tasks-notifications [{:keys [class]}]
   #?(:cljs
@@ -74,15 +70,15 @@
                                   (reset! open? false)))
                   unfinished? (pos? (unfinished-task-count))
                   _           (.addEventListener js/document "click" handler)]
-       [:div {:class (util/mc styles/notification class)
+       [:div {:class (util/mc navbar-styles/notification class)
               :ref   #(reset! !ref %)}
 
-        [icon "bell"
-         :class styles/bell-icon
+        [icon/icon "bell"
+         :class navbar-styles/bell-icon
          :on-click #(swap! open? not)]
 
         (when unfinished?
-          [:div (util/smc styles/unfinished-marker)])
+          [:div (util/smc navbar-styles/unfinished-marker)])
 
         (when @open? [tasks open?])]
 

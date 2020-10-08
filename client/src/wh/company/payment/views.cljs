@@ -17,7 +17,6 @@
             [wh.components.common :refer [companies-section link]]
             [wh.components.forms.views :as f :refer [text-field select-field]]
             [wh.components.icons :refer [icon]]
-            [wh.components.navbar :as nav-common]
             [wh.components.package-selector :refer [package-selector]]
             [wh.db :as db]
             [wh.subs :refer [<sub] :as core-subs]

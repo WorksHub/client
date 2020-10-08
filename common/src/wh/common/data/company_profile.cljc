@@ -51,11 +51,11 @@
 (def company-onboarding-tasks
   {:complete_profile {:title    "Complete your company profile"
                       :subtitle "Sell your company to our community. What are you building and how?"
-                      :icon     "company"
+                      :icon     "company-building"
                       :time     2}
    :add_job          {:title    "Advertise a new role"
                       :subtitle "Start hiring top talent right away!"
-                      :icon     "add-new"
+                      :icon     "plus-circle"
                       :time     3}
    :add_integration  {:title    "Connect your integrations"
                       :subtitle "WorksHub can integrate with popular services such as Greenhouse and Slack."
@@ -63,5 +63,5 @@
                       :time     2}
    :add_issue        {:title    "Get started with Open Source Issues"
                       :subtitle "Scope talent by using issues from your open source projects."
-                      :icon     "pr"
+                      :icon     "git"
                       :time     2}})
