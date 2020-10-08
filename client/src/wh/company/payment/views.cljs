@@ -8,7 +8,6 @@
             [wh.common.cases :as cases]
             [wh.common.cost :as cost]
             [wh.common.data :as data]
-            [wh.common.re-frame-helpers :as rf-helpers]
             [wh.common.text :refer [pluralize]]
             [wh.company.payment.db :as payment]
             [wh.company.payment.events :as events]
@@ -31,14 +30,14 @@
 (def CardElement (r/adapt-react-class stripe-elements/CardElement))
 (def StripeProvider (r/adapt-react-class stripe-elements/StripeProvider))
 
-(def element-style {:base {:color "#6E7F89"
-                           :textTransform "capitalize"
-                           :letterSpacing "0.025em"
-                           :fontSize "12px"
-                           :height "15px"
-                           :fontFamily "'Montserrat', sans-serif"
-                           "::placeholder" {:color "#adadad"}}
-                    :invalid {} #_{:color "#c4000f"}})
+(def element-style {:base    {:color          "#6E7F89"
+                              :textTransform  "capitalize"
+                              :letterSpacing  "0.025em"
+                              :fontSize       "12px"
+                              :height         "15px"
+                              :fontFamily     "'Montserrat', sans-serif"
+                              "::placeholder" {:color "#adadad"}}
+                    :invalid {} #_ {:color "#c4000f"}})
 
 (defn submit-stripe-form!
   [id end-event]
@@ -62,31 +61,31 @@
 (defn StripeForm
   [id end-event]
   (r/adapt-react-class
-   (stripe-elements/injectStripe
-    (r/reactify-component
-     (r/create-class {:display-name "stripe-reagent-form"
-                      :component-did-update
-                      (fn [this]
-                        (swap! stripe-form-contexts assoc id this))
-                      :component-did-mount
-                      (fn [this]
-                        (swap! stripe-form-contexts assoc id this))
-                      :render
-                      (fn [this]
-                        (let [element-on-change (fn [e]
-                                                  (let [e (js->clj e :keywordize-keys true)
-                                                        error (:error e)]
-                                                    (dispatch [::events/set-stripe-card-form-error (:message error)])
-                                                    (swap! (r/state-atom this) assoc-in [:errors (keyword (:elementType e))] error)))]
-                          [:form {:id "stripe-card-form"
-                                  :on-submit (fn [e]
-                                               (.preventDefault e)
-                                               (submit-stripe-form! id end-event))
-                                  :class "StripeForm"}
-                           [CardElement {:style element-style
-                                         :on-change element-on-change}]
-                           [:div.error
-                            @(r/cursor (r/state-atom this) [:errors :card :message])]]))})))))
+    (stripe-elements/injectStripe
+      (r/reactify-component
+        (r/create-class {:display-name "stripe-reagent-form"
+                         :component-did-update
+                         (fn [this]
+                           (swap! stripe-form-contexts assoc id this))
+                         :component-did-mount
+                         (fn [this]
+                           (swap! stripe-form-contexts assoc id this))
+                         :render
+                         (fn [this]
+                           (let [element-on-change (fn [e]
+                                                     (let [e     (js->clj e :keywordize-keys true)
+                                                           error (:error e)]
+                                                       (dispatch [::events/set-stripe-card-form-error (:message error)])
+                                                       (swap! (r/state-atom this) assoc-in [:errors (keyword (:elementType e))] error)))]
+                             [:form {:id        "stripe-card-form"
+                                     :on-submit (fn [e]
+                                                  (.preventDefault e)
+                                                  (submit-stripe-form! id end-event))
+                                     :class     "StripeForm"}
+                              [CardElement {:style     element-style
+                                            :on-change element-on-change}]
+                              [:div.error
+                               @(r/cursor (r/state-atom this) [:errors :card :message])]]))})))))
 
 (defn card-terms
   [package]
@@ -104,15 +103,15 @@
     [:div.payment__coupon-form__field
      [:form.wh-formx.wh-formx__layout
       {:on-submit #(.preventDefault %)}
-      [text-field nil {:id "coupon-form-input"
+      [text-field nil {:id        "coupon-form-input"
                        :on-change [::events/set-coupon-code]
-                       :value (<sub [::subs/coupon-code])
-                       :error (<sub [::subs/coupon-error])
-                       :on-focus #(dispatch [::events/reset-coupon-error])
+                       :value     (<sub [::subs/coupon-code])
+                       :error     (<sub [::subs/coupon-error])
+                       :on-focus  #(dispatch [::events/reset-coupon-error])
                        :read-only (or (not enabled?) loading?)}]
       [:button.button.button--inverted
-       {:id "coupon-form-apply-button"
-        :class (when loading? "button--loading")
+       {:id       "coupon-form-apply-button"
+        :class    (when loading? "button--loading")
         :disabled (not enabled?)
         :on-click #(when (and enabled? (not loading?))
                      (dispatch apply-event)
@@ -122,12 +121,12 @@
 (defn coupon-form
   []
   (let [expanded? (r/atom false)
-        code (r/atom "")]
+        code      (r/atom "")]
     (fn []
       [:div.payment__coupon-form
        {:class (when @expanded? "payment__coupon-form--expanded")}
        [:div.is-flex
-        {:id "coupon-form-expand"
+        {:id       "coupon-form-expand"
          :on-click #(swap! expanded? not)}
         [:span.is-not-selectable "Do you have a promotional code?"]
         [:div.payment__coupon-form__roll-down
@@ -153,12 +152,12 @@
 
 (defn authorize-card-button
   [_]
-  (let [enabled? (<sub [::subs/stripe-card-form-enabled?])
+  (let [enabled?     (<sub [::subs/stripe-card-form-enabled?])
         can-proceed? (<sub [::subs/can-press-authorize?])]
     [:div.button-container
      [:button.button.is-full-width
-      {:id "authorize-card-button"
-       :class (when-not enabled? "button--inverted button--loading")
+      {:id       "authorize-card-button"
+       :class    (when-not enabled? "button--inverted button--loading")
        :disabled (or (not can-proceed?) (<sub [::subs/stripe-card-form-error]))
        :on-click #(when (and enabled? can-proceed?)
                     (when-let [el (.getElementById js/document "stripe-card-form")]
@@ -171,7 +170,7 @@
   [label package billing-period]
   (let [upgrading? (<sub [::subs/upgrading?])]
     [:button.button
-     {:id (str "select-package-btn-" (name package) "-" (name billing-period))
+     {:id       (str "select-package-btn-" (name package) "-" (name billing-period))
       :on-click #(dispatch [::events/setup-step-forward (merge {:package package}
                                                                (when-not upgrading?
                                                                  {:billing-period billing-period}))])}
@@ -184,19 +183,19 @@
 
 (defn fake-demo-button
   [secondary? label package billing-period]
-  (let [upgrading? (<sub [::subs/upgrading?])
+  (let [upgrading?     (<sub [::subs/upgrading?])
         take-off-offer (<sub [::subs/company-new-offer])]
     (if (and (= :take_off package)
              take-off-offer)
       [:button.button
-       {:id (str "select-package-btn-" (name package) "-" (name billing-period))
+       {:id       (str "select-package-btn-" (name package) "-" (name billing-period))
         :on-click #(dispatch [::events/setup-step-forward (merge {:package package}
                                                                  (when-not upgrading?
                                                                    {:billing-period billing-period}))])}
        "View Offer"]
       [:button.button
-       {:class (when secondary? "button--inverted")
-        :id (str "select-package-btn-take_off-" (name billing-period))
+       {:class    (when secondary? "button--inverted")
+        :id       (str "select-package-btn-take_off-" (name billing-period))
         :on-click #(dispatch [::events/setup-step-forward {:package package :billing-period billing-period}])}
        label])))
 
@@ -249,7 +248,7 @@
   [{:keys [recurring-fee placement-percentage]} show-billing-period-selector?]
   (let [{:keys [discount number]} (get data/billing-data (or (<sub [::subs/billing-period])
                                                              (<sub [::subs/company-billing-period])))
-        cpm (- recurring-fee (* recurring-fee discount))]
+        cpm                       (- recurring-fee (* recurring-fee discount))]
     [:div.payment-setup__offer-details
      [:p "We have prepared an offer for you. Please check the terms being proposed in the offer before providing payment information."]
      (when show-billing-period-selector?
@@ -257,7 +256,7 @@
         [:h3 "How often would you like to be billed?"]
         [:form.wh-formx.wh-formx__layout
          [select-field (<sub [::subs/billing-period])
-          {:options (<sub [::subs/offer-billing-selection-options])
+          {:options   (<sub [::subs/offer-billing-selection-options])
            :on-change [::events/set-billing-period]}]]])
      [:div [:strong "Monthly fee: "] (int->dollars cpm)
       (when discount [:i (str " (" (* 100 discount) "% off)")])]
@@ -277,31 +276,31 @@
 
 (defn upgrading-calculator
   [package billing-period]
-  (let [new-offer (<sub [::subs/company-new-offer])
-        has-details? (<sub [::subs/has-saved-card-details?])
-        package (<sub [::subs/package])
-        {:keys [cost]} (<sub [::subs/current-package-data])
-        {:keys [discount number description] :as bp} (get data/billing-data billing-period)
-        next-invoice (<sub [::subs/next-invoice])
-        coupon (or (<sub [::subs/current-coupon])
-                   (:coupon next-invoice)
-                   #_(<sub [::subs/company-coupon])) ;; TODO shall we remove this field entirely? Do we even want company coupons here???
-        latent-cost (* number (cost/calculate-monthly-cost cost discount coupon))
-        estimate (<sub [::subs/estimate])
-        pro-rated-estimates (filter :proration estimate)
-        next-charge (some #(when-not (:proration %) %) estimate)
-        first-charge (if (and next-invoice coupon)
-                       ;; TODO explain this
-                       (cond (and (= :once (:duration coupon)) (:discount-amount coupon))
-                             (- latent-cost (:discount-amount coupon))
-                             (and (= :once (:duration coupon)) (:discount-percentage coupon))
-                             (- latent-cost (* latent-cost (/ (:discount-percentage coupon) 100)))
-                             :else
-                             (* number (cost/calculate-monthly-cost cost discount (assoc coupon :duration :forever))))
-                       latent-cost)
-        breakdown? (<sub [::subs/breakdown?])]
+  (let [new-offer                                                                                                                (<sub [::subs/company-new-offer])
+        has-details?                                                                                                             (<sub [::subs/has-saved-card-details?])
+        package                                                                                                                  (<sub [::subs/package])
+        {:keys [cost]}                                                                                                           (<sub [::subs/current-package-data])
+        {:keys [discount number description] :as bp}                                                                             (get data/billing-data billing-period)
+        next-invoice                                                                                                             (<sub [::subs/next-invoice])
+        coupon                                                                                                                   (or (<sub [::subs/current-coupon])
+                                                                                                                                     (:coupon next-invoice)
+                                                                                                                                     #_(<sub [::subs/company-coupon])) ;; TODO shall we remove this field entirely? Do we even want company coupons here???
+        latent-cost                                                                                                              (* number (cost/calculate-monthly-cost cost discount coupon))
+        estimate                                                                                                                 (<sub [::subs/estimate])
+        pro-rated-estimates                                                                                                      (filter :proration estimate)
+        next-charge                                                                                                              (some #(when-not (:proration %) %) estimate)
+        first-charge                                                                                                             (if (and next-invoice coupon)
+                                                                                                                                   ;; TODO explain this
+                                                                                                                                   (cond (and (= :once (:duration coupon)) (:discount-amount coupon))
+                                                                                                                                         (- latent-cost (:discount-amount coupon))
+                                                                                                                                         (and (= :once (:duration coupon)) (:discount-percentage coupon))
+                                                                                                                                         (- latent-cost (* latent-cost (/ (:discount-percentage coupon) 100)))
+                                                                                                                                         :else
+                                                                                                                                         (* number (cost/calculate-monthly-cost cost discount (assoc coupon :duration :forever))))
+                                                                                                                                   latent-cost)
+        breakdown?                                                                                                               (<sub [::subs/breakdown?])]
     [:div.payment-setup__upgrading-calculator
-     {:class (rf-helpers/merge-classes
+     {:class (util/merge-classes
                (when breakdown? "payment-setup__upgrading-calculator--breakdown")
                (when-not estimate "payment-setup__upgrading-calculator--loading"))}
      (if estimate
@@ -536,7 +535,7 @@
                (let [checked? (= k billing-period)]
                  [:div.column
                   {:key      k
-                   :class    (rf-helpers/merge-classes
+                   :class    (util/merge-classes
                                (when checked? "checked")
                                (when-not enabled? "disabled")
                                (when (= k existing-billing-period) "existing"))

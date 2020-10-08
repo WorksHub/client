@@ -1,14 +1,13 @@
 (ns wh.login.views
   (:require [re-frame.core :refer [dispatch dispatch-sync]]
-            [wh.common.re-frame-helpers :refer [dispatch-on-enter]]
             [wh.components.auth :as auth]
             [wh.components.common :refer [link]]
             [wh.components.conversation.views :refer [button]]
             [wh.components.icons :refer [icon]]
             [wh.login.events :as events]
             [wh.login.subs :as subs]
-            [wh.styles.register :as styles]
             [wh.routes :as routes]
+            [wh.styles.register :as styles]
             [wh.subs :refer [<sub]]
             [wh.util :as util]))
 
@@ -17,14 +16,13 @@
   [button "Back to Profile" [::events/go-profile]])
 
 (defn field-email []
-  [auth/field {:type :email
+  [auth/field {:type        :email
                :placeholder "Email"
-               :aria-label "Email"
-               :data-test "email"
-               :label "Email"
-               :value      (<sub [::subs/email])
-               :on-key-up   (dispatch-on-enter [::events/send-login-link])
-               :on-change  #(dispatch-sync [::events/set-email (-> % .-target .-value)])}])
+               :aria-label  "Email"
+               :data-test   "email"
+               :label       "Email"
+               :value       (<sub [::subs/email])
+               :on-change   #(dispatch-sync [::events/set-email (-> % .-target .-value)])}])
 
 (defn form-signin []
   [auth/form
@@ -32,7 +30,7 @@
                     (dispatch [::events/send-login-link]))}
    [field-email]
    [auth/error-message (<sub [::subs/error-message])]
-   [auth/button {:data-test "signin"
+   [auth/button {:data-test   "signin"
                  :submitting? (<sub [::subs/submitting?])}]])
 
 (defn check-you-email [email]

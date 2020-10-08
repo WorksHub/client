@@ -1,7 +1,6 @@
 (ns wh.logged-in.contribute.views
   (:require [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
-            [wh.common.re-frame-helpers :refer [merge-classes]]
             [wh.common.upload :as upload]
             [wh.components.common :refer [link]]
             [wh.components.conversation.views :as codi :refer [codi-message]]
@@ -19,7 +18,8 @@
             [wh.logged-in.contribute.events :as events]
             [wh.logged-in.contribute.subs :as subs]
             [wh.pages.util :as putil]
-            [wh.subs :refer [<sub]]))
+            [wh.subs :refer [<sub]]
+            [wh.util :refer [merge-classes]]))
 
 (defn hero []
   [:div.contribute__hero

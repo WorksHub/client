@@ -22,13 +22,12 @@
     [re-frame.core :refer [dispatch dispatch-sync]]
     [reagent.core :as reagent]
     [wh.common.emoji :as emoji]
-    [wh.common.re-frame-helpers :refer [merge-classes]]
     [wh.common.specs.primitives :as p]
     [wh.common.user :as common-user]
     [wh.components.icons :refer [icon]]
     [wh.styles.form :as styles]
     [wh.subs :refer [<sub]]
-    [wh.util :as util])
+    [wh.util :as util :refer [merge-classes]])
   (:require-macros
     [clojure.core.strint :refer [<<]]))
 
@@ -179,7 +178,7 @@
                   (when on-focus (on-focus %)))
    :on-blur #(do (reset! focused false)
                  (when on-blur (on-blur %)))})
-  
+
 
 (defn text-field-error [value {:keys [validate error]} dirty focused]
   (when (and @dirty (not @focused))
@@ -542,4 +541,3 @@
      (when avatar-url
        [:img.avatar {:src avatar-url
                      :alt "Uploaded avatar"}])]))
-
