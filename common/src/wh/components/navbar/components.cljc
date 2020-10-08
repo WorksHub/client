@@ -42,28 +42,22 @@
 (defn search-dropdown-element [text]
   [:li (merge (util/smc styles/dropdown__element))
    [:div (util/smc styles/dropdown__search__option)
-    [:a 
-      (merge
-         {
+    [:a (merge {
           :on-click #((dispatch [:wh.search/search-with-value text]))
           :class (util/mc styles/dropdown__link__text)
-         })
-        
-         ( let [search-value (<sub [::subs/search-value])]
-              [:span (clojure.string/replace text search-value search-value)]
-         )
-      
+        })
+        (let [search-value (or (<sub [::subs/search-value]) "")]
+            [:div {:dangerouslySetInnerHTML {:__html 
+              (clojure.string/replace text (re-pattern (str "(?i)" search-value)) #(str "<b>" %1 "</b>"))
+            }}]
+        )
     ]
     [icon "close" :on-click #(
       (fn [e] (
-        ( let [local-search (<sub [::subs/local-search])]
-        ( let [values (remove (fn [x] (= x text)) local-search)]
-          (
-            .setItem js/localStorage "local_search" 
-            (
-              clojure.string/join "||" 
-              values
-            ) 
+        (let [local-search (<sub [::subs/local-search])]
+        (let [values (remove (fn [x] (= x text)) local-search)]
+          (.setItem js/localStorage "local_search" 
+            (clojure.string/join "||" values) 
           )
           (dispatch [:wh.components.navbar.events/set-local-search values])
         ))

@@ -80,7 +80,7 @@
                         }
                 )
                 #?(:cljs {:on-click
-                         (fn [e]
+                        (fn [e]
                            (dispatch [:wh.components.navbar.events/set-search-focus true]))
                         }
                 )
@@ -106,12 +106,12 @@
                #?(:cljs {:on-click
                          #(set! (.-value (.getElementById js/document search-id)))}))
         [icon "close"]]
-    )  
+    )
     
     (when search-focus
        [components/search-dropdown-list 
         (take 5 (filter (fn [a]
-            (clojure.string/includes? (clojure.string/lower-case a) (clojure.string/lower-case search-value))
+            (clojure.string/includes? (clojure.string/lower-case a) (clojure.string/lower-case (or search-value "")))
           ) local-search))
        ]
     )   
