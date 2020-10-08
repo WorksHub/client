@@ -1,7 +1,8 @@
 (ns wh.components.navbar.subs
   (:require [re-frame.core :refer [reg-sub]]
             [wh.common.user :as user-common]
-            [wh.components.navbar.db :as db]))
+            [wh.components.navbar.db :as db]
+            [wh.job.db :as job]))
 
 (reg-sub
   ::profile-image
@@ -29,3 +30,8 @@
   ::local-search
   (fn [db _]
     (db ::db/local-search)))
+    
+(reg-sub
+  ::can-publish-jobs?
+  (fn [db _]
+    (job/can-publish-jobs? db)))

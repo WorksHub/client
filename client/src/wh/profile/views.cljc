@@ -4,6 +4,7 @@
     [wh.components.loader :refer [loader-full-page]]
     [wh.components.not-found :as not-found]
     [wh.logged-in.profile.components :as components]
+    [wh.profile.db :as profile]
     [wh.profile.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]))
 
@@ -11,9 +12,7 @@
   (let [profile-hidden? (<sub [::subs/profile-hidden?])
         articles        (<sub [::subs/blogs])
         issues          (<sub [::subs/issues])
-        contributions?  (boolean
-                          (<sub [::subs/contributions-collection]))]
-
+        contributions?  (boolean (<sub [::subs/contributions-collection]))]
     (if profile-hidden?
       [components/profile-hidden-message]
       [components/content
@@ -22,7 +21,11 @@
                                   :created        (<sub [::subs/created])
                                   :articles-count (count articles)
                                   :issues-count   (count issues)}]
-       [components/section-skills (<sub [::subs/skills]) :public]
+       [components/section-skills {:type         :public
+                                   :skills       (<sub [::subs/skills])
+                                   :interests    (<sub [::subs/interests])
+                                   :query-params (<sub [:wh/query-params])
+                                   :max-skills   profile/maximum-skills}]
        (when contributions?
          [components/contributions-section
           (<sub [::subs/contributions-calendar])
@@ -48,4 +51,3 @@
        :updated       (<sub [::subs/updated])}
       :public]
      [content]]))
-

@@ -8,6 +8,7 @@
             [wh.common.graphql-queries :as graphql]
             [wh.common.issue :as common-issue]
             [wh.common.keywords :as keywords]
+            [wh.common.numbers :as numbers]
             [wh.common.specs.primitives :as specs]
             [wh.common.upload :as upload]
             [wh.common.user :as common-user]
@@ -44,7 +45,10 @@
   {:venia/operation {:operation/type :query
                      :operation/name "profile"}
    :venia/variables [{:variable/name "user_id" :variable/type :ID}]
-   :venia/queries   [[:me [[:skills [:name :rating]]
+   :venia/queries   [[:me [[:skills [:name :rating
+                                     [:tag [:id :slug :type :subtype :label :weight]]]]
+                           ;; TODO CH4692 [:interests :fragment/tagFields]
+                           [:interests [:id :slug :type :subtype :label :weight]]
                            [:companyPerks [:name]]
                            [:otherUrls [:url]]
                            :imageUrl :id :githubId
@@ -87,12 +91,10 @@
 (reg-event-fx
   ::fetch-initial-data
   (fn [{db :db} _]
-    {:graphql  {:query      initial-data-query
-                :variables  {:user_id (user/id db)}
-                :on-success [::fetch-initial-data-success]}
-     :dispatch [::pages/set-loader]}))
-
-
+    (cond-> {:graphql {:query      initial-data-query
+                       :variables  {:user_id (user/id db)}
+                       :on-success [::fetch-initial-data-success]}}
+            (:wh.db/initial-load? db) (assoc :dispatch [::pages/set-loader]))))
 
 (defn init-avatar [profile]
   (let [predefined-avatar (common-user/url->predefined-avatar (::profile/image-url profile))]
@@ -116,13 +118,15 @@
   db/default-interceptors
   (fn [{db :db} [{{:keys [me blogs query_issues]} :data}]]
     (let [issues (:issues query_issues)
-          user (user/translate-user me)]
-      {:db       (merge-with merge
-                             db
-                             {::user/sub-db    user
-                              ::profile/sub-db (merge (profile-data user (:blogs blogs) issues)
-                                                      (profile/->sub-db user))})
-       :dispatch [::pages/unset-loader]})))
+          user   (user/translate-user me)]
+      {:db         (merge-with merge
+                               db
+                               {::user/sub-db    user
+                                ::profile/sub-db (merge (profile-data user (:blogs blogs) issues)
+                                                        (profile/->sub-db user))})
+       ;; subsequent data requests
+       :dispatch-n [[::pages/unset-loader]
+                    (into [:graphql/query] profile/tag-query)]})))
 
 (reg-event-db
   ::init-profile-edit
@@ -133,7 +137,7 @@
         (update ::profile/sub-db init-avatar))))
 
 (defn settings-from-query-params [db]
-  (let [query-params (::db/query-params db)
+  (let [query-params    (::db/query-params db)
         matching-params (select-keys query-params ["job-seeking-status"])]
     (into {}
           (map (fn [[k v]] [(keyword k) (data/job-seeking-status->name v)]))
@@ -183,12 +187,6 @@
     (assoc db ::profile/phone phone)))
 
 (reg-event-db
-  ::edit-summary
-  profile-interceptors
-  (fn [db [summary]]
-    (assoc db ::profile/summary summary)))
-
-(reg-event-db
   ::edit-email
   profile-interceptors
   (fn [db [email]]
@@ -223,11 +221,6 @@
   profile-interceptors
   (fn [db [status]]
     (assoc db ::profile/job-seeking-status status)))
-
-(reg-event-db
-  ::edit-url
-  profile-interceptors
-  (form-events/multi-edit-fn ::profile/other-urls :url))
 
 (reg-event-db
   ::edit-perk
@@ -305,29 +298,27 @@
   [profile]
   (cond
     (not (common-user/full-name? (::profile/name profile))) "Please fill in your name (at least two words)"
-    (str/blank? (::profile/email profile)) "Please provide your email."
+    (str/blank? (::profile/email profile))                  "Please provide your email."
     (->> (::profile/other-urls profile)
          (map :url)
-         (some #(not (s/valid? ::specs/url %)))) "One (or more) of the website links is invalid. Please amend and try again."))
+         (some #(not (s/valid? ::specs/url %))))            "One (or more) of the website links is invalid. Please amend and try again."))
 
 (reg-event-fx
   ::save-header
   db/default-interceptors
   (fn [{db :db} _]
-    (let [profile (::profile/sub-db db)]
-      (if-let [error (validate-profile profile)]
-        {:dispatch [::pages/set-error error]}
-        (let [profile (if (get-in db [::profile/sub-db ::profile/custom-avatar-mode])
-                        profile
-                        (assoc profile ::profile/image-url
-                                       (common-user/avatar-url (get-in db [::profile/sub-db ::profile/predefined-avatar]))))
-              new-db (assoc db ::profile/sub-db profile)]
-          {:db       new-db
-           :graphql  {:query      graphql/update-user-mutation--approval
-                      :variables  {:update_user (graphql-header-update profile)}
-                      :on-success [::save-success]
-                      :on-failure [::save-failure]}
-           :dispatch [::pages/set-loader]})))))
+    (let [profile (::profile/sub-db db)
+          profile (if (get-in db [::profile/sub-db ::profile/custom-avatar-mode])
+                    profile
+                    (assoc profile ::profile/image-url
+                           (common-user/avatar-url (get-in db [::profile/sub-db ::profile/predefined-avatar]))))
+          new-db  (assoc db ::profile/sub-db profile)]
+      {:db       new-db
+       :graphql  {:query      graphql/update-user-mutation--approval
+                  :variables  {:update_user (graphql-header-update profile)}
+                  :on-success [::save-success]
+                  :on-failure [::save-failure]}
+       :dispatch [::pages/set-loader]})))
 
 (reg-event-fx
   ::save-private
@@ -399,15 +390,15 @@
   ::save-cv-info
   db/default-interceptors
   (fn [{db :db} [{:keys [type]}]]
-    (let [url-path [::profile/sub-db ::profile/cv :link]
-          cv-link (get-in db url-path)
+    (let [url-path       [::profile/sub-db ::profile/cv :link]
+          cv-link        (get-in db url-path)
           valid-cv-link? (or (= type :upload-cv)
                              (s/valid? ::specs/url cv-link))]
       (if valid-cv-link?
-        {:graphql  {:query      graphql/update-user-mutation--approval
-                    :variables  {:update_user (graphql-cv-update db)}
-                    :on-success [::save-success]
-                    :on-failure [::save-failure]}
+        {:graphql    {:query      graphql/update-user-mutation--approval
+                      :variables  {:update_user (graphql-cv-update db)}
+                      :on-success [::save-success]
+                      :on-failure [::save-failure]}
          :dispatch-n [[::pages/set-loader]
                       [:error/close-global]]}
 
@@ -416,15 +407,15 @@
 
 
 (reg-event-fx
- ::save-cover-letter-info
- db/default-interceptors
- (fn [{db :db} _]
-   {:graphql    {:query      graphql/update-user-mutation--approval
-                 :variables  {:update_user (graphql-cover-letter-update db)}
-                 :on-success [::save-success]
-                 :on-failure [::save-failure]}
-    :dispatch-n [[::pages/set-loader]
-                 [:error/close-global]]}))
+  ::save-cover-letter-info
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:graphql    {:query      graphql/update-user-mutation--approval
+                  :variables  {:update_user (graphql-cover-letter-update db)}
+                  :on-success [::save-success]
+                  :on-failure [::save-failure]}
+     :dispatch-n [[::pages/set-loader]
+                  [:error/close-global]]}))
 
 (reg-event-fx
   ::save-success
@@ -452,18 +443,18 @@
                     [::pages/unset-loader]]})))
 
 (reg-event-fx
- ::removal-success
- db/default-interceptors
- (fn [{db :db} _res]
-   {:dispatch [::pages/clear-errors]
-    :navigate [:profile]}))
+  ::removal-success
+  db/default-interceptors
+  (fn [{db :db} _res]
+    {:dispatch [::pages/clear-errors]
+     :navigate [:profile]}))
 
 (reg-event-fx
- ::removal-failure
- user-interceptors
- (fn [{db :db} _res]
-   {:dispatch-n [[::pages/set-error "An error occurred while deleting your data."]
-                 [::pages/unset-loader]]}))
+  ::removal-failure
+  user-interceptors
+  (fn [{db :db} _res]
+    {:dispatch-n [[::pages/set-error "An error occurred while deleting your data."]
+                  [::pages/unset-loader]]}))
 
 
 (reg-event-db
@@ -522,9 +513,9 @@
      :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (reg-event-fx
- ::cover-letter-upload
- db/default-interceptors
- upload/cover-letter-upload-fn)
+  ::cover-letter-upload
+  db/default-interceptors
+  upload/cover-letter-upload-fn)
 
 (reg-event-db
   ::cover-letter-upload-start
@@ -666,7 +657,7 @@
 (def remove-default-cover-letter-mutation
   {:venia/operation {:operation/type :mutation
                      :operation/name "remove_default_cover_letter"}
-   :venia/variables [{:variable/name "user_id"           :variable/type :ID!}
+   :venia/variables [{:variable/name "user_id" :variable/type :ID!}
                      {:variable/name "cover_letter_hash" :variable/type :String!}]
    :venia/queries   [[:remove_default_cover_letter
                       {:user_id :$user_id
@@ -674,26 +665,26 @@
                       [:status]]]})
 
 (reg-event-fx
- ::remove-cover-letter
- db/default-interceptors
- (fn [{db :db} _]
-   (let [user-id      (get-in db [:wh.user.db/sub-db :wh.user.db/id])
-         cover-letter (get-in db [::profile/sub-db ::profile/cover-letter])
-         hash         (get-in cover-letter [:file :hash])]
-     {:graphql    {:query      remove-default-cover-letter-mutation
-                   :variables  {:user_id           user-id
-                                :cover_letter_hash hash}
-                   :on-success [::removal-success]
-                   :on-failure [::removal-failure]}
-      :dispatch-n [[::pages/set-loader]
-                   [:error/close-global]]})))
+  ::remove-cover-letter
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [user-id      (get-in db [:wh.user.db/sub-db :wh.user.db/id])
+          cover-letter (get-in db [::profile/sub-db ::profile/cover-letter])
+          hash         (get-in cover-letter [:file :hash])]
+      {:graphql    {:query      remove-default-cover-letter-mutation
+                    :variables  {:user_id           user-id
+                                 :cover_letter_hash hash}
+                    :on-success [::removal-success]
+                    :on-failure [::removal-failure]}
+       :dispatch-n [[::pages/set-loader]
+                    [:error/close-global]]})))
 
 (reg-event-fx
   ::toggle-profile-visibility-handle
   db/default-interceptors
   (fn [{db :db} [success? _]]
     (if success?
-      {:db (user/toggle-published db)
+      {:db       (user/toggle-published db)
        :dispatch [::pages/clear-errors]}
       {:dispatch [::pages/set-error "An error occurred while changing visibility of your profile"]})))
 
@@ -701,9 +692,118 @@
   ::toggle-profile-visibility
   db/default-interceptors
   (fn [{db :db} _]
-    {:graphql    {:query      graphql/update-user-mutation--published
-                  :variables  {:update_user {:id (user/id db)
-                                             :published (not (user/published? db))}}
-                  :on-success [::toggle-profile-visibility-handle true]
-                  :on-failure [::toggle-profile-visibility-handle false]}
+    {:graphql  {:query      graphql/update-user-mutation--published
+                :variables  {:update_user {:id        (user/id db)
+                                           :published (not (user/published? db))}}
+                :on-success [::toggle-profile-visibility-handle true]
+                :on-failure [::toggle-profile-visibility-handle false]}
      :dispatch [:error/close-global]}))
+
+(reg-event-db
+  ::set-skills-search
+  profile-interceptors
+  (fn [profile [search-term]]
+    (assoc profile ::profile/skills-search search-term)))
+
+(reg-event-db
+  ::set-interests-search
+  profile-interceptors
+  (fn [profile [search-term]]
+    (assoc profile ::profile/interests-search search-term)))
+
+(reg-event-db
+  ::toggle-skill
+  profile-interceptors
+  (fn [profile [tag]]
+    (let [selected-skills (::profile/selected-skills profile)
+          formatted-tag   (assoc tag
+                                 :selected true
+                                 :rating 0)
+          adding?         (not (some #(= (:id tag) (:id %)) selected-skills))]
+      (if (and adding? (>= (count selected-skills) profile/maximum-skills))
+        profile
+        (-> profile
+            (update ::profile/selected-skills util/toggle-by-id formatted-tag)
+            (assoc ::profile/edit-tech-changes? true))))))
+
+(reg-event-db
+  ::toggle-interest
+  profile-interceptors
+  (fn [profile [tag]]
+    (-> profile
+        (update ::profile/selected-interests util/toggle-by-id
+                (assoc tag
+                       :selected true))
+        (assoc ::profile/edit-tech-changes? true))))
+
+(reg-event-db
+  ::on-skill-rating-change
+  profile-interceptors
+  (fn [profile [tag-id rating]]
+    (let [fix-skill (fn [skill]
+                      (if (= (:id skill) tag-id)
+                        (assoc skill :rating (numbers/parse-int rating))
+                        skill))]
+      (-> profile
+          (update ::profile/selected-skills (partial map fix-skill))
+          (assoc ::profile/edit-tech-changes? true)))))
+
+(reg-event-db
+  ::on-edit-tech
+  profile-interceptors
+  (fn [profile [editing?]]
+    ;; sync existing skills and interests with 'selected'
+    (if editing?
+      (-> profile
+          (assoc ::profile/selected-skills (map #(assoc (:tag %)
+                                                        :selected true
+                                                        :rating (:rating %)) (::profile/skills profile)))
+          (assoc ::profile/selected-interests (map #(assoc % :selected true) (::profile/interests profile)))
+          (assoc ::profile/edit-tech-changes? false))
+      profile)))
+
+(reg-event-db
+  ::on-cancel-edit-tech
+  profile-interceptors
+  (fn [profile _]
+    profile))
+
+(defn skill->skill-input
+  [{:keys [rating label id]}]
+  {:rating rating
+   :name   label
+   :tagId  id})
+
+(defn clean-skill
+  [{:keys [rating label] :as skill}]
+  {:rating rating
+   :name   label
+   :tag    (dissoc skill :rating :name :selected)})
+
+(reg-event-fx
+  ::on-save-edit-tech
+  db/default-interceptors
+  (fn [{db :db } _]
+    (let [interests (get-in db [::profile/sub-db ::profile/selected-interests])
+          skills    (get-in db [::profile/sub-db ::profile/selected-skills])]
+      {:graphql
+       {:query      graphql/update-user-mutation--skills-and-interest
+        :variables  {:update_user
+                     {:id          (user/id db)
+                      :interestIds (map :id interests)
+                      :skills      (map skill->skill-input skills)}}
+        :on-success [::on-save-edit-tech-result {:success? true}]
+        :on-failure [::on-save-edit-tech-result {:success? false}]}
+       ;; optimistic update
+       :db       (-> db
+                     (assoc-in [::profile/sub-db ::profile/interests] interests)
+                     (assoc-in [::profile/sub-db ::profile/skills] (map clean-skill skills)))
+       :dispatch [:error/close-global]})))
+
+(reg-event-fx
+  ::on-save-edit-tech-result
+  db/default-interceptors
+  (fn [{db :db} [{:keys [success?]}]]
+    (when-not success?
+      {:dispatch [:error/set-global "A problem occurred whilst trying to save your profile"
+                  [::on-save-edit-tech]]})))

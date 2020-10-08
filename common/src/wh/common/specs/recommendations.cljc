@@ -14,7 +14,7 @@
                    :wh.recommendation/candidate-score]
           :opt-un [:wh.recommendation/company-score]))
 (s/def :wh.recommendation/user
-  (s/keys :req-un [::user-spec/id ::user-spec/skills
+  (s/keys :req-un [::user-spec/id :wh.user/skills
                    ::user-spec/preferred-locations ::user-spec/remote]))
 (s/def :wh/recommendation
   (s/keys :req-un [:wh.recommendation/user-id :wh.recommendation/job-id

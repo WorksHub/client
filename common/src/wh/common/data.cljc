@@ -474,6 +474,7 @@
    "Review, track & share applicants"
    "ATS Integrations"
    "Account manager"
+   "Unlimited edits"
    "Active sourcing"
    "Screened applicants"
    "Guaranteed hires"])
@@ -483,75 +484,76 @@
 (def launch-pad-trial-days 0)
 
 (def package-data
-  {:free {:name "Trial"
-          :cost 0
-          :per nil
-          :trial free-trial-days
-          :button "Start Trial"
-          :live-jobs "Unlimited"
-          :img {:src "/images/employers/free.svg"
-                :alt "Free icon"}
-          :perks #{"Unlimited hubs"
-                   "Performance analytics"}
-          :order 1
-          :description (str "Our " free-trial-days "-day trial allows you to post a job in minutes and experience our core features before upgrading.")}
-   :explore {:name "Explore"
-             :cost 0
-             :per nil
-             :button "Get Started"
-             :live-jobs "One"
-             :img {:src "/images/employers/essential.svg"
-                   :alt "Explore icon"}
-             :perks #{"Unlimited hubs"
-                      "Performance analytics"
-                      "Github integration"
-                      "Company profile"}
-             :order 1
-             :description (str "Our basic package allows you to attract talent by creating a company profile and posting open-soure issues. This way you can experience some of our core features before upgrading.")
-             :extra "First Job FREE!"}
-   :essential {:name "Essential"
-               :cost 500
-               :per "month"
-               :button "Start Hiring"
-               :button-alt "Select & Pay"
-               :live-jobs "One"
-               :img {:src "/images/employers/essential.svg"
-                     :alt "Essential icon"}
-               :perks #{"Unlimited hubs"
-                        "Performance analytics"
-                        "Github integration"
-                        "Company profile"
-                        "Review, track & share applicants"}
-               :order 2
-               :description "For those looking to get good exposure to our dedicated pool of technical talent with limited hiring needs."}
-   :launch_pad {:name "Launch Pad"
-                :cost 1500
-                :per "month"
-                :button "Start Hiring"
-                :button-alt "Get Started"
-                :live-jobs "Unlimited"
-                :img {:src "/images/employers/launch_pad.svg"
-                      :alt "Launch Pad icon"}
-                :perks #{"Unlimited hubs"
-                         "Performance analytics"
-                         "Github integration"
-                         "Company profile"
-                         "Review, track & share applicants"
-                         "ATS Integrations"
-                         "Account manager"}
-                :order 3
+  {:free       {:name        "Trial"
+                :cost        0
+                :per         nil
+                :trial       free-trial-days
+                :button      "Start Trial"
+                :live-jobs   "Unlimited"
+                :img         {:src "/images/employers/free.svg"
+                              :alt "Free icon"}
+                :perks       #{"Unlimited hubs"
+                               "Performance analytics"}
+                :order       1
+                :description (str "Our " free-trial-days "-day trial allows you to post a job in minutes and experience our core features before upgrading.")}
+   :explore    {:name        "Explore"
+                :cost        0
+                :per         nil
+                :button      "Get Started"
+                :live-jobs   "One"
+                :img         {:src "/images/employers/essential.svg"
+                              :alt "Explore icon"}
+                :perks       #{"Unlimited hubs"
+                               "Performance analytics"
+                               "Github integration"
+                               "Company profile"}
+                :order       1
+                :description (str "Our basic package allows you to attract talent by creating a company profile and posting open-soure issues. This way you can experience some of our core features before upgrading.")
+                :extra       "First Job FREE!"}
+   :essential  {:name        "Essential"
+                :cost        500
+                :per         "month"
+                :button      "Start Hiring"
+                :button-alt  "Select & Pay"
+                :live-jobs   "One"
+                :img         {:src "/images/employers/essential.svg"
+                              :alt "Essential icon"}
+                :perks       #{"Unlimited hubs"
+                               "Performance analytics"
+                               "Github integration"
+                               "Company profile"
+                               "Review, track & share applicants"}
+                :order       2
+                :description "For those looking to get good exposure to our dedicated pool of technical talent with limited hiring needs."}
+   :launch_pad {:name        "Launch Pad"
+                :cost        1500
+                :per         "month"
+                :button      "Start Hiring"
+                :button-alt  "Get Started"
+                :live-jobs   "Unlimited"
+                :img         {:src "/images/employers/launch_pad.svg"
+                              :alt "Launch Pad icon"}
+                :perks       #{"Unlimited hubs"
+                               "Unlimited edits"
+                               "Performance analytics"
+                               "Github integration"
+                               "Company profile"
+                               "Review, track & share applicants"
+                               "ATS Integrations"
+                               "Account manager"}
+                :order       3
                 :description "Take control of your hiring with unlimited job adverts and applications. Our GitHub integration allows you to further streamline your interview process as well incentivising more candidates to apply."}
-   :take_off {:name "Take-Off"
-              :cost nil
-              :per nil
-              :button "Get Started"
-              :button-alt "Get in touch"
-              :live-jobs "Unlimited"
-              :img {:src "/images/employers/take_off.svg"
-                    :alt "Take-Off icon"}
-              :perks (set all-package-perks)
-              :order 4
-              :description "For ambitious hiring plans, access a dedicated Talent Manager to speed up your results and act as your recruiting partner."}})
+   :take_off   {:name        "Take-Off"
+                :cost        nil
+                :per         nil
+                :button      "Get Started"
+                :button-alt  "Get in touch"
+                :live-jobs   "Unlimited"
+                :img         {:src "/images/employers/take_off.svg"
+                              :alt "Take-Off icon"}
+                :perks       (set all-package-perks)
+                :order       4
+                :description "For ambitious hiring plans, access a dedicated Talent Manager to speed up your results and act as your recruiting partner."}})
 
 ;; added three on 25/06/2019
 (def billing-periods #{:one :three :six #_:twelve})

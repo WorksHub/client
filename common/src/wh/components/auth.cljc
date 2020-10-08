@@ -37,8 +37,8 @@
 (defn page [& children]
   (into [:div {:class styles/container}] children))
 
-(defn form [& children]
-  (into [:div {:class styles/form}] children))
+(defn form [opts & children]
+  (into [:form (merge {:class styles/form} opts)] children))
 
 (defn card [{:keys [type data-test] :as args} & children]
   (into [:div {:data-test data-test
@@ -64,7 +64,6 @@
                :or   {text "Continue"}}]
   [:button {:class     styles/button
             :on-click  on-click
-            :type      "button"
             :data-test data-test
             :disabled  submitting?}
    (cond-> text

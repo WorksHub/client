@@ -44,12 +44,16 @@
     :icon-class styles/dropdown__link__icon-person
     :text       "My Open Source Issues"}])
 
-(def jobs-company-submenu-list
+(defn jobs-company-submenu-list [can-publish?]
   [{:path       (routes/path :jobsboard)
     :icon-name  "board-rectangles"
     :icon-class styles/dropdown__link__icon-jobsboard
     :text       "Jobsboard"}
-   {:path       (routes/path :create-job)
+   {:path       (if can-publish?
+                  (routes/path :create-job)
+                  (routes/path :payment-setup
+                               :params {:step :select-package}
+                               :query-params {:action "publish"}))
     :icon-name  "plus-circle"
     :icon-class styles/dropdown__link__icon-plus
     :text       "Post a new Job"}
@@ -79,13 +83,14 @@
     :text       "Write an article"}])
 
 (defn company-mobile-menu []
-  (let [company-slug (<sub [::subs/company-slug])]
+  (let [company-slug (<sub [::subs/company-slug])
+        can-publish? (<sub [::subs/can-publish-jobs?])]
     [:div (util/smc styles/small-menu styles/small-menu--logged-in)
      [:div (util/smc styles/small-menu__column)
       [components/submenu
        {:text      "Jobs"
         :icon-name "suitcase"
-        :dropdown  jobs-company-submenu-list}]
+        :dropdown  (jobs-company-submenu-list can-publish?)}]
 
       [components/submenu
        {:text      "Issues"
@@ -106,45 +111,46 @@
   #?(:cljs [navbar-tasks/tasks-notifications opts]))
 
 (defn company-menu [{:keys [page]}]
-  [:ul (util/smc styles/links)
-   [components/link {:children [icons/icon "dashboard"
-                                :class styles/dashboard-icon]
-                     ;; :path takes precedence over :route in setting :href value,
-                     ;; but :route is used to decide whether link is active.
-                     ;; All is well here
-                     :path     (routes/path :homepage)
-                     :route    :company-dashboard
-                     :page     page}]
-
-   [components/link
-    {:text     "Jobs"
-     :route    :jobsboard
-     :page     page
-     :dropdown jobs-company-submenu-list}]
-
-   [components/link
-    {:text     "Open Source Issues"
-     :route    :issues
-     :page     page
-     :dropdown issues-company-submenu-list}]
-
-   (let [company-slug (<sub [::subs/company-slug])]
-     [components/link {:text     "Company"
+  (let [can-publish? (<sub [::subs/can-publish-jobs?])]
+    [:ul (util/smc styles/links)
+     [components/link {:children [icons/icon "dashboard"
+                                  :class styles/dashboard-icon]
                        ;; :path takes precedence over :route in setting :href value,
                        ;; but :route is used to decide whether link is active.
                        ;; All is well here
-                       :path     (routes/path :company :params {:slug company-slug})
-                       :route    :company
-                       :page     page
-                       :dropdown (company-company-submenu-list company-slug)}])
+                       :path     (routes/path :homepage)
+                       :route    :company-dashboard
+                       :page     page}]
 
-   [components/link
-    {:text     "Articles"
-     :route    :learn
-     :page     page
-     :dropdown articles-company-submenu-list}]
+     [components/link
+      {:text     "Jobs"
+       :route    :jobsboard
+       :page     page
+       :dropdown (jobs-company-submenu-list can-publish?)}]
 
-   [notifications {}]])
+     [components/link
+      {:text     "Open Source Issues"
+       :route    :issues
+       :page     page
+       :dropdown issues-company-submenu-list}]
+
+     (let [company-slug (<sub [::subs/company-slug])]
+       [components/link {:text     "Company"
+                         ;; :path takes precedence over :route in setting :href value,
+                         ;; but :route is used to decide whether link is active.
+                         ;; All is well here
+                         :path     (routes/path :company :params {:slug company-slug})
+                         :route    :company
+                         :page     page
+                         :dropdown (company-company-submenu-list company-slug)}])
+
+     [components/link
+      {:text     "Articles"
+       :route    :learn
+       :page     page
+       :dropdown articles-company-submenu-list}]
+
+     [notifications {}]]))
 
 (defn profile-menu []
   (let [company-slug (<sub [::subs/company-slug])]

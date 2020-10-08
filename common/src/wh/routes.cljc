@@ -24,7 +24,6 @@
                          :jobsboard
                          :contribute-edit})
 
-(def no-menu-pages #{:register :register-company :payment-setup :get-started :feed})
 (def no-footer-pages #{:register :register-company :payment-setup :get-started :login :invalid-magic-link})
 (def no-nav-link-pages #{:register :register-company :payment-setup :get-started})
 
@@ -233,7 +232,8 @@
                                                :jobsboard
                                                :learn
                                                :learn-by-tag
-                                               :pre-set-search})
+                                               :pre-set-search
+                                               :user})
                                                ;;:pricing CH3618
 
 (def server-side-only-paths (set (map #(bidi/path-for routes %) server-side-only-pages)))

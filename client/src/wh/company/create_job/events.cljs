@@ -35,8 +35,10 @@
                      :page_number 1
                      :page_size companies-query-page-size}
                     [[:pagination [:total :count :pageNumber]]
-                     [:companies [:id :name [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]
-                                                            [:workable [:enabled [:jobs [:id :name]]]]]]]]]]]})
+                     [:companies [:id :name
+                                  [:integrations
+                                   [[:greenhouse [:enabled [:jobs [:id :name]]]]
+                                    [:workable [:enabled [:jobs [:id :name]]]]]]]]]]]})
 
 (defn db->graphql-job
   [db]
@@ -372,19 +374,25 @@
                :on-failure [::fetch-company-failure]}}))
 
 (defmethod on-page-load :create-job [db]
-  (list [::initialize-db]
-        [:google/load-maps]
-        [::fetch-tags]
-        [::fetch-benefit-tags]
-        (when (user-common/company? db)
-          [::fetch-company (user/company-id db)])))
+  (if (job/can-publish-jobs? db)
+    (list [::initialize-db]
+          [:google/load-maps]
+          [::fetch-tags]
+          [::fetch-benefit-tags]
+          (when (user-common/company? db)
+            [::fetch-company (user/company-id db)]))
+
+    (list [::cant-create-job-redirect])))
 
 (defmethod on-page-load :edit-job [db]
-  (list [::initialize-db]
-        [:google/load-maps]
-        [::fetch-tags]
-        [::load-job (get-in db [::db/page-params :id])]
-        [::fetch-benefit-tags]))
+  (if (job/can-edit-jobs? db)
+    (list [::initialize-db]
+          [:google/load-maps]
+          [::fetch-tags]
+          [::load-job (get-in db [::db/page-params :id])]
+          [::fetch-benefit-tags])
+
+    (list [::cant-edit-job-redirect])))
 
 (reg-event-db
   ::set-location-suggestions
@@ -395,10 +403,11 @@
 (reg-event-fx
   ::select-location-suggestion
   create-job-interceptors
-  (fn [{db :db} [id]]
-    {:google/place-details {:place-id   id
-                            :on-success [::fetch-place-details-success]
-                            :on-failure [:error/set-global "Failed to fetch data from Google."]}}))
+  (fn [{_db :db} [id]]
+    {:google/place-details
+     {:place-id   id
+      :on-success [::fetch-place-details-success]
+      :on-failure [:error/set-global "Failed to fetch data from Google."]}}))
 
 (reg-event-fx
   ::fetch-place-details-success
@@ -423,9 +432,10 @@
   ::search-location
   create-job-interceptors
   (fn [{db :db} [retry-num]]
-    {:google/place-predictions {:input      (get db ::create-job/search-address)
-                                :on-success [::process-search-location]
-                                :on-failure [:error/set-global "Failed to fetch data from Google."]}}))
+    {:google/place-predictions
+     {:input      (get db ::create-job/search-address)
+      :on-success [::process-search-location]
+      :on-failure [:error/set-global "Failed to fetch data from Google."]}}))
 
 (reg-event-db
   ::process-search-location
@@ -454,7 +464,8 @@
   ::edit-tagline
   create-job-interceptors
   (fn [db [tagline]]
-    (assoc db ::create-job/tagline (apply str (take create-job/tagline-max-length tagline)))))
+    (assoc db ::create-job/tagline
+           (apply str (take create-job/tagline-max-length tagline)))))
 
 (reg-event-fx
   ::edit-search-address
@@ -678,14 +689,16 @@
              (assoc
                ::create-job/pending-logo url
                ::create-job/logo-uploading? false)
-             (update ::create-job/form-errors (fnil disj #{}) :wh.company.profile/logo))}))
+             (update ::create-job/form-errors
+                     (fnil disj #{}) :wh.company.profile/logo))}))
 
 (reg-event-fx
   ::logo-upload-failure
   create-job-interceptors
   (fn [{db :db} [resp]]
     {:db (assoc db ::create-job/logo-uploading? false)
-     :dispatch [:error/set-global (common-errors/image-upload-error-message (:status resp))]}))
+     :dispatch [:error/set-global
+                (common-errors/image-upload-error-message (:status resp))]}))
 
 (reg-event-db
   ::set-benefits-search
@@ -695,7 +708,7 @@
 
 (reg-event-fx
   ::fetch-benefit-tags
-  (fn [{db :db} _]
+  (fn [{_db :db} _]
     {:dispatch (into [:graphql/query] (tag-query :benefit))}))
 
 (reg-event-db
@@ -709,3 +722,17 @@
   create-job-interceptors
   (fn [db [desc]]
     (assoc db ::create-job/pending-company-description desc)))
+
+(reg-event-fx
+  ::cant-edit-job-redirect
+  create-job-interceptors
+  (fn [{_db :db} _]
+    {:navigate [:payment-setup :params {:step :select-package}]}))
+
+(reg-event-fx
+  ::cant-create-job-redirect
+  create-job-interceptors
+  (fn [{_db :db} _]
+    {:navigate [:payment-setup
+                :params {:step :select-package}
+                :query-params {:action "publish"}]}))

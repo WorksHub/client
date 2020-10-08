@@ -71,6 +71,12 @@
     (::apply/cv-upload-failed? db)))
 
 (reg-sub
+  ::cv-upload-success?
+  :<- [::sub-db]
+  (fn [db _]
+    (::apply/cv-upload-success? db)))
+
+(reg-sub
   ::update-name-failed?
   :<- [::sub-db]
   (fn [db _]

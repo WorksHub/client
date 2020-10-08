@@ -29,6 +29,7 @@
 (def actions__action--saved-icon "activities__actions__action--saved-icon--DKehT")
 (def button "activities__button--1Nq_Y")
 (def button--inverted "activities__button--inverted--1BM0H")
+(def button--inverted-highlighted "activities__button--inverted-highlighted--11aYu")
 (def button--short "activities__button--short--1-pEH")
 (def button--dark "activities__button--dark--1pdNs")
 (def article__feature "activities__article__feature--2e8wB")

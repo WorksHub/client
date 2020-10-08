@@ -71,18 +71,27 @@
 (defn toggle
   "If set contains option, removes it, else adds it.
   Creates a new set if none supplied"
-  [set option]
-  (if set
-    ((if (contains? set option) disj conj) set option)
+  [coll option]
+  (if coll
+    ((if (contains? (set coll) option) disj conj) (set coll) option)
+    #{option}))
+
+(defn toggle-by-id
+  "If set contains option with matching :id key, removes it, else adds it.
+  Creates a new set if none supplied"
+  [coll option]
+  (if coll
+    (let [candidate (some #(when (= (:id %) (:id option)) %) coll)]
+      ((if candidate disj conj) (set coll) (or candidate option)))
     #{option}))
 
 (defn toggle-unless-empty
   "Like toggle, but returns set unchanged if the result
   would otherwise be empty."
-  [set option]
-  (if (= set #{option})
-    set
-    (toggle set option)))
+  [coll option]
+  (if (= coll #{option})
+    coll
+    (toggle coll option)))
 
 (defn gql-errors->error-key
   [error-resp]

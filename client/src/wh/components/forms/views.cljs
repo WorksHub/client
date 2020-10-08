@@ -26,6 +26,7 @@
     [wh.common.specs.primitives :as p]
     [wh.common.user :as common-user]
     [wh.components.icons :refer [icon]]
+    [wh.styles.form :as styles]
     [wh.subs :refer [<sub]]
     [wh.util :as util])
   (:require-macros
@@ -77,27 +78,74 @@
   If supplied, the `dirty` option should be an atom which holds
   a boolean value; it will be reset to true upon first change of
   the input. This is used by text-field."
-  [value {:keys [type on-change placeholder on-scroll rows dirty data-test]
-          :or {type :text}
+  [value {:keys [type on-change placeholder on-scroll
+                 rows dirty data-test class-textarea class-input]
+          :or {type :text
+               class-textarea "textarea"
+               class-input "input"}
           :as options}]
-  [(if (= type :textarea)
-     :textarea.textarea
-     :input.input)
-   (merge (when-not (= type :textarea) {:type type})
-          (when data-test {:data-test data-test})
-          {:value value :placeholder placeholder}
-          (when on-change
-            {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) % options)]
-                           (when dirty
-                             (reset! dirty true))
-                           (if (fn? on-change)
-                             (on-change new-value)
-                             (dispatch-sync (conj on-change new-value))))})
-          (when on-scroll
-            {:on-scroll #(dispatch on-scroll)})
-          (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press :step])
-          (when (and rows (= type :textarea))
-            {:rows rows}))])
+  (let [textarea? (= type :textarea)]
+    [(if textarea? :textarea :input)
+     (merge (when-not textarea? {:type type})
+            (when data-test {:data-test data-test})
+            {:value value
+             :placeholder placeholder
+             :class (if textarea? class-textarea class-input)}
+            (when on-change
+              {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) % options)]
+                             (when dirty
+                               (reset! dirty true))
+                             (if (fn? on-change)
+                               (on-change new-value)
+                               (dispatch-sync (conj on-change new-value))))})
+            (when on-scroll
+              {:on-scroll #(dispatch on-scroll)})
+            (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press :step])
+            (when (and rows (= type :textarea))
+              {:rows rows}))]))
+
+(defn text-input-new [value opts]
+  [text-input value (merge opts {:class-input styles/input
+                                 :class-textarea (util/mc styles/input styles/input--textarea)})])
+
+(defn label-text [{:keys [label required? hidden?]}]
+  (when label [:span {:class (util/mc styles/label__text
+                                      [hidden? "visually-hidden"])} (when required? "* ") label]))
+
+(defn text-input-with-label [value {:keys [label required?] :as options}]
+  [:label
+   [label-text {:label label
+                :required? required?}]
+   [text-input-new value options]])
+
+(defn error-component [error]
+  (when error
+    [:div {:class styles/error} error]))
+
+(defn custom-avatar-picker [{:keys [uploading? set-avatar avatar-url]}]
+  [:div {:class (util/mc styles/avatar__controls-wrapper [uploading? styles/avatar__controls-wrapper--disabled])}
+   [:input.visually-hidden {:type "file"
+                            :name "avatar"
+                            :accept    "image/*"
+                            :on-change set-avatar
+                            :disabled uploading?}]
+   [:span {:class styles/avatar__edit}
+    [icon "pen" :class styles/avatar__edit-icon]
+    [:span.visually-hidden "Update avatar"]]
+   (when avatar-url
+     [:img {:class styles/avatar
+            :src avatar-url
+            :alt "Uploaded avatar"}])])
+
+(defn avatar-field
+  [{:keys [uploading-avatar?
+           avatar-url
+           set-avatar]}]
+  [:label {:class styles/avatar__wrapper}
+   [label-text {:label "Avatar" :hidden? true}]
+   [custom-avatar-picker {:uploading? uploading-avatar?
+                          :set-avatar set-avatar
+                          :avatar-url avatar-url}]])
 
 (defn suggestions-list
   "A list of suggestions for a text-field."
@@ -306,12 +354,14 @@
   Passes options to each rendered field, conj'ing field number to both
   :i entry in options and to the on-change vector."
   [items
-   {:keys [label on-change component]
-    :or {component text-field}
+   {:keys [label on-change component lens class-wrapper]
+    :or {component text-field
+         lens identity}
     :as options}]
-  (into [:div]
+  (into [:div {:class class-wrapper}]
         (for [[i item] (map-indexed vector (conj (vec items) nil))]
-          [component item
+          [component
+           (lens item)
            (merge (dissoc options :label)
                   {:i i
                    :on-change (when on-change (conj on-change i))}
@@ -403,7 +453,7 @@
            [:div.field__error.field--invalid error]
            [:div.field__error.field--invalid.is-invisible "errors go here"])]))))
 
-(defn error-component
+(defn error-component-outdated
   [message opts]
   [:div.is-danger.form-error
    opts
@@ -478,7 +528,7 @@
                     :on-mouse-down #(dispatch [on-change i])
                     :alt (str "Pre-set avatar image " i)}])))
 
-(defn custom-avatar-picker [{:keys [uploading? set-avatar avatar-url]}]
+(defn custom-avatar-picker-outdated [{:keys [uploading? set-avatar avatar-url]}]
   (if uploading?
     [:p "Uploading your avatar, please wait..."]
     [:div.file.avatar-picker
@@ -493,34 +543,3 @@
        [:img.avatar {:src avatar-url
                      :alt "Uploaded avatar"}])]))
 
-(defn avatar-field [{:keys [custom-avatar-mode
-                            set-custom-avatar-mode
-                            predefined-avatar
-                            set-predefined-avatar
-                            uploading-avatar?
-                            avatar-url
-                            set-avatar]}]
-  (let [custom? custom-avatar-mode]
-    [:div.field.avatar-field
-     [:label.label "Your avatar"]
-     [:div.control
-      [:label.radio
-       [:input {:type "radio"
-                :name "avatar-type"
-                :checked (not custom?)
-                :on-change #(dispatch [set-custom-avatar-mode false])}]
-       " Use a predefined avatar"
-       (when-not custom?
-         [predefined-avatar-picker
-          {:selected predefined-avatar
-           :on-change set-predefined-avatar}])]
-      [:label.radio
-       [:input {:type "radio"
-                :name "avatar-type"
-                :checked custom?
-                :on-change #(dispatch [set-custom-avatar-mode true])}]
-       " Upload your own image"
-       (when custom?
-         [custom-avatar-picker {:uploading? uploading-avatar?
-                                :set-avatar set-avatar
-                                :avatar-url avatar-url}])]]]))

@@ -9,6 +9,7 @@
             [wh.common.specs.company]
             [wh.company.dashboard.db :as sub-db]
             [wh.components.stats.db :as stats]
+            [wh.job.db :as job]
             [wh.routes :as routes]
             [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
@@ -265,3 +266,13 @@
   :<- [:user/company?]
   (fn [[not-seen? user-is-company?] _]
     (and user-is-company? not-seen?)))
+
+(reg-sub
+  ::can-edit-jobs?
+  (fn [db _]
+    (job/can-edit-jobs? db)))
+
+(reg-sub
+  ::can-publish-jobs?
+  (fn [db _]
+    (job/can-publish-jobs? db)))

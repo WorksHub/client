@@ -56,7 +56,7 @@
    (when (and view-jobs-link? total-published-job-count (pos? total-published-job-count))
      [link
       [:div.companies__company__job-count
-       [:img {:src "/cursors/cursor-2.svg"}]
+       [:img {:src "/images/antenna.svg"}]
        [:span (str "View " total-published-job-count " " (text/pluralize total-published-job-count "job"))]]
       :company-jobs :slug slug])])
 

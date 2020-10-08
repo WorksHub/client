@@ -415,4 +415,4 @@
                         "button--loading")}
            (when-not (<sub [::subs/saving?]) "Unpublish")])
         (when-let [error (<sub [::subs/error])]
-          (f/error-component error { :id "company-edit-error-desktop"}))]]]]))
+          (f/error-component-outdated error { :id "company-edit-error-desktop"}))]]]]))

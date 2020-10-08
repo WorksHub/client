@@ -81,31 +81,6 @@
          (fn [db _]
            (::db/server-side-rendered? db)))
 
-(defn showing-company-onboarding-dashboard-welcome?
-  [db]
-  (and (= :company-dashboard (::db/page db))
-       (user-common/company? db)
-       (user/company-onboarding-msg-not-seen? db :dashboard_welcome)))
-
-(defn menu-hidden-due-to-special-circumstances?
-  [db]
-  (showing-company-onboarding-dashboard-welcome? db))
-
-;; a second subscription with same logic, but different name –
-;; for semantic clarity
-(reg-sub ::show-navbar-menu?
-         (fn [db _]
-           (and (not (contains? routes/no-menu-pages (::db/page db)))
-                (not (menu-hidden-due-to-special-circumstances? db)))))
-
-(defn search-hidden-due-to-special-circumstances?
-  [db]
-  (showing-company-onboarding-dashboard-welcome? db))
-
-(reg-sub ::hide-navbar-search?
-         (fn [db _]
-           (search-hidden-due-to-special-circumstances? db)))
-
 (reg-sub ::show-footer?
          (fn [db _]
            (not (contains? routes/no-footer-pages (::db/page db)))))

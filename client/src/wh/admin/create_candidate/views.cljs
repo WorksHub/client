@@ -6,7 +6,7 @@
     [wh.admin.create-candidate.subs :as subs]
     [wh.common.upload :as upload]
     [wh.components.forms.views
-     :refer [error-component field-container labelled-checkbox
+     :refer [error-component-outdated field-container labelled-checkbox
              tags-field text-field]]
     [wh.components.icons :refer [icon]]
     [wh.db :as db]
@@ -107,7 +107,7 @@
             :on-add-tag   #(dispatch [::events/toggle-company-tag %])
             :tags         (<sub [::subs/matching-company-tags]))]]
    (when-let [error (<sub [::subs/error])]
-     (error-component error {:id "create-candidate-error-desktop"}))
+     (error-component-outdated error {:id "create-candidate-error-desktop"}))
    [:div.buttons-container
     [:button.button.button--medium {:on-click #(do (.preventDefault %)
                                                    (dispatch [::events/save]))} "Create candidate"]]])

@@ -12,6 +12,7 @@
 
   +mobile
     padding: 8px 0
+    overflow-x: hidden
 
   +tablet
     grid-template-columns: 256px 1fr
@@ -124,14 +125,28 @@
   position: absolute
   top: 28px
   right: 20px
+  color: $grey400
 
   &--small
     top: 16px
     right: 16px
 
+
   &__small-icon
     height: 1.2rem
     width: 1.2rem
+
+  &__button
+    cursor: pointer
+  &__button-icon
+    fill: $grey400
+    &--editing
+      width: 24px
+      height: 24px
+      margin: -4px -4px 0 0
+
+  &:hover
+    opacity: 0.5
 
 .button
   border-radius: 4px
@@ -164,6 +179,10 @@
   &--small
     padding: 0 16px
     height: 32px
+
+  &--inverted
+    background: $white
+    color: $primary-red
 
 .view-field
   display: flex
@@ -227,10 +246,14 @@
   flex-wrap: wrap
   margin-right: -8px
   margin-bottom: -8px
-
   & > *
     margin-right: 8px
     margin-bottom: 8px
+
+  &__content
+   display: block
+   & > * + *
+     margin-top: 18px
 
 .meta-separator
   padding: 0 6px
@@ -410,7 +433,139 @@
   visibility: hidden
   height: 0
   position: absolute
-  top: -$header-height-desktop
+  top: -($header-height-desktop + 12px)
+
+.editable-section
+  border: 0
+  &--editing
+    border: 1px solid $primary-red
+    .section
+      padding: 23px 19px
+
+.skills
+  &__top
+    position: relative
+  &__paragraph
+    line-height: 22px
+    width: 70%
+
+.experiences
+  display: grid
+  grid-gap: 18px
+  &__graph,
+  &__excess
+    display: grid
+    grid-gap: 12px
+  &__excess
+    margin-bottom: 12px
+
+.experience
+  display: flex
+  height: 48px
+  &__visual
+    height: 46px
+    width: 46px
+    border: 1px solid $highlight-red
+    position: relative
+  &__icon
+    margin: 0 auto
+    display: block
+    height: 32px
+    width: 32px
+    transform: translateY(calc(50% - 10px))
+    fill: $grey500
+  &__initial
+    height: 100%
+    width: fit-content
+    height: fit-content
+    margin: 0 auto
+    transform: translateY(50%)
+    color: $grey500
+    font-size: 24px
+    font-weight: 500
+
+.experience-bar
+  width: 100%
+  height: 32px
+  border: 1px solid $highlight-red
+  border-left: 0
+  margin: auto 0
+  position: relative
+  &__bg
+    background-color: $highlight-red
+    width: 0px
+    height: 100%
+    position: absolute
+    top: 0
+    display: flex
+    align-items: center
+  &__text-inner
+    font-weight: 500
+    padding: 0px 8px
+    color: $primary-red
+    white-space: nowrap
+    text-transform: uppercase
+    font-size: 11px
+    line-height: 12px
+    letter-spacing: 0.5px
+
+@mixin range-input-thumb-style
+  border: 3px solid $primary-red
+  height: 18px
+  width: 18px
+  border-radius: 18px
+  background: $white
+  cursor: pointer
+
+.experience-slider
+  width: 100%
+  display: grid
+  grid-template-rows: auto 18px
+  margin-left: 18px
+  &__input-parent
+    position: relative
+  &__bg
+    background: $highlight-red
+    height: 2px
+    border-radius: 4px
+    width: 100%
+    margin-top: 7px
+  &__fill
+    background: $primary-red
+    height: 2px
+    border-radius: 4px
+    width: 100%
+    position: absolute
+    top: 7px
+  &__text,
+  &__input
+    width: 100%
+  &__input
+    position: absolute
+    top: 17px
+    z-index: 1
+    -webkit-appearance: none
+    background: transparent
+    &::-webkit-slider-thumb
+      -webkit-appearance: none
+      @include range-input-thumb-style
+      margin-top: -18px /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+    &::-moz-range-thumb
+      @include range-input-thumb-style
+    &::-webkit-slider-runnable-track
+      background: transparent
+      border-color: transparent
+      color: transparent
+    &:focus::-webkit-slider-runnable-track
+      background: transparent
+      border-color: transparent
+      color: transparent
+    &::-moz-range-track
+      background: transparent
+      border-color: transparent
+      color: transparent
+    &:focus
+      outline: none
 
 .github-contributions-container
   grid-row: 1/3
@@ -471,3 +626,64 @@
   align-items: center
   font-size: 18px
 
+.edit-tech
+  display: grid
+  grid-gap: 16px
+  grid-template-columns: 24px 1fr
+  grid-template-rows: repeat(2, 24px auto auto auto)
+
+  +mobile
+    display: block
+
+  &__number
+    @include number-circle(24px)
+    grid-column-start: 1
+    +mobile
+      float: left
+      margin-right: 6px
+
+  &__title
+    font-size: 14px
+    font-weight: 500
+    line-height: 24px
+    color: $grey500
+    +mobile
+      margin-bottom: 6px
+
+  &__description
+    font-size: 14px
+    line-height: 22px
+    +mobile
+      margin-bottom: 12px
+
+  &__offset
+    grid-column-start: 2
+
+  &__buttons
+    display: flex
+    justify-content: flex-end
+
+.skills-ratings
+  width: 100%
+  +mobile
+    margin-bottom: 18px
+
+.interests
+  display: block
+  &__text
+    font-size: 14px
+    line-height: 22px
+    margin: 8px 0 18px 0
+
+.modal-content
+  margin-top: -12px
+  display: grid
+  grid-auto-rows: auto
+  grid-gap: 18px
+
+.short-wrapper
+  max-width: 320px
+
+.other-urls
+  display: grid
+  grid-gap: 12px

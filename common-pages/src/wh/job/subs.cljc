@@ -1,17 +1,14 @@
 (ns wh.job.subs
-  (:require
-    [#?(:cljs cljs-time.coerce :clj clj-time.coerce) :as tc]
-    [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
-    [bidi.bidi :as bidi]
-    [clojure.string :as str]
-    [re-frame.core :refer [reg-sub]]
-    [wh.common.job :as jobc]
-    [wh.components.stats.db :as stats]
-    [wh.db :as db]
-    [wh.graphql.jobs :as jobs]
-    [wh.job.db :as job]
-    [wh.routes :as routes]
-    [wh.company.listing.db :as listing])
+  (:require [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
+            [bidi.bidi :as bidi]
+            [clojure.string :as str]
+            [re-frame.core :refer [reg-sub]]
+            [wh.common.job :as jobc]
+            [wh.components.stats.db :as stats]
+            [wh.graphql.jobs :as jobs]
+            [wh.job.db :as job]
+            [wh.routes :as routes]
+            [wh.company.listing.db :as listing])
   (#?(:cljs :require-macros :clj :require)
     [clojure.core.strint :refer [<<]]))
 
@@ -454,3 +451,8 @@
     (some->> (::job/last-modified sub-db)
              (tf/parse   (tf/formatters :date-time))
              (tf/unparse (tf/formatter "dd MMMM, YYYY")))))
+
+(reg-sub
+  ::can-edit-jobs?
+  (fn [db _]
+    (job/can-edit-jobs? db)))

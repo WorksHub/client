@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [wh.common.data :refer [currency-symbols]]
             [wh.common.text :as text]
+            [wh.common.time :as time]
             [wh.components.common :refer [link wrap-img img base-img]]
             [wh.components.icons :as icons]
             [wh.components.skeletons.components :as skeletons]
@@ -10,7 +11,6 @@
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.styles.activities :as styles]
-            [wh.common.time :as time]
             [wh.util :as util]
             [wh.verticals :as verticals]))
 
@@ -21,17 +21,20 @@
                       (with-meta child {:key idx})))))
 
 (def button-class
-  {:filled       (util/mc styles/button)
-   :filled-short (util/mc styles/button styles/button--short)
-   :dark         (util/mc styles/button styles/button--dark)
-   :inverted     (util/mc styles/button styles/button--inverted)})
+  {:filled              (util/mc styles/button)
+   :filled-short        (util/mc styles/button styles/button--short)
+   :dark                (util/mc styles/button styles/button--dark)
+   :inverted            (util/mc styles/button styles/button--inverted)
+   :inverted-highlighed (util/mc styles/button styles/button--inverted-highlighted)})
 
-(defn button [{:keys [type href event-handlers]
+(defn button [{:keys [type href event-handlers on-click]
                :or   {type :filled event-handlers {}}}
               children]
   [:a (merge {:class (button-class type)}
              (when href
                {:href href})
+             (when on-click
+               (interop/on-click-fn on-click)) ;; we assume it's already interop-friendly
              event-handlers)
    children])
 

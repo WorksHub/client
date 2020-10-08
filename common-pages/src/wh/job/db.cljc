@@ -1,13 +1,22 @@
 (ns wh.job.db
-  (:require
-    [#?(:cljs cljs.spec.alpha :clj clojure.spec.alpha) :as s]
-    [wh.common.data :as data]
-    [wh.util :as util]))
+  (:require [#?(:cljs cljs.spec.alpha :clj clojure.spec.alpha) :as s]
+            [wh.common.data :as data]
+            [wh.common.specs.tags]
+            [wh.common.user :as user]
+            [wh.util :as util]))
 
 (defn company-permissions
   [db]
   (or (get-in db [::sub-db ::company :permissions])
       (get-in db [:wh.user.db/sub-db :wh.user.db/company :permissions])))
+
+(defn can-edit-jobs? [db]
+  (or (user/admin? db)
+      (contains? (company-permissions db) :can_edit_jobs)))
+
+(defn can-publish-jobs? [db]
+  (or (user/admin? db)
+      (contains? (company-permissions db) :can_publish)))
 
 ;; The :no-matching-job is also used in wh.response.handler.job
 (s/def ::error (s/nilable #{:no-matching-job :unknown-error :unauthorised}))

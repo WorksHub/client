@@ -136,13 +136,27 @@
    [icon icon-name]
    [:div.company-job__stat-number count]])
 
+(defn- edit-job [id can-edit-jobs?]
+  (if can-edit-jobs?
+    [link "Edit"
+     :edit-job :id id
+     :class "button button--inverted"]
 
-(defn job-card [{:keys [id slug title display-location published first-published tags stats partial-view-data matching-users verticals] :as job}]
-  (let [company-name (<sub [::subs/name])
-        logo (<sub [::subs/logo])
-        preset-job (assoc job
-                          :company-name company-name
-                          :logo logo)]
+    [link "Edit"
+     :payment-setup :step :select-package
+     :query-params {:action "edit"}
+     :class "button button--inverted"]))
+
+(defn job-card [{:keys [id slug title display-location published
+                        first-published tags stats partial-view-data
+                        matching-users verticals]
+                 :as   job}]
+  (let [company-name   (<sub [::subs/name])
+        logo           (<sub [::subs/logo])
+        preset-job     (assoc job
+                              :company-name company-name
+                              :logo logo)
+        can-edit-jobs? (<sub [::subs/can-edit-jobs?])]
     [:div.card.company-job
      {:id (str "dashboard__job-card__" id)}
      [:div.company-job__head-row
@@ -151,22 +165,26 @@
        [job-stat "views" (:views stats)
         (when partial-view-data "We've only been collecting views since 18 July 2018, so the view counts for this job may be incomplete.")]
        [job-stat "bookmark" (:likes stats)]
-       [:a {:id (str "dashboard-job-card__view-applications-stat_" id)
+       [:a {:id   (str "dashboard-job-card__view-applications-stat_" id)
             :href (<sub [::subs/view-applications-link id])}
         [job-stat "applications" (:applications stats)]]]]
+
      [:div.company-job__basic-info
-      [:div.company-job__title [link title :job
-                                :slug slug
-                                :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]]
+      [:div.company-job__title
+       [link title :job
+        :slug slug
+        :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]]
       [:div.company-job__company
        [link company-name :job
         :slug slug
         :class "company-job__company-name"
         :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]
        [:span.company-job__thats-you " – that's you	🙌"]]
-      [:div.company-job__address [link display-location :job
-                                  :slug slug
-                                  :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]]]
+      [:div.company-job__address
+       [link display-location :job
+        :slug slug
+        :on-click #(dispatch-sync [:wh.job/preset-job-data preset-job])]]]
+
      (if published
        [:div.company-job__posted "Posted on " first-published]
        [:div.company-job__posted " "])
@@ -177,29 +195,40 @@
         "We have " matching-users " active " (pluralize matching-users "member") " with 75%+ match rates for this role. "
         (when-not (= (<sub [::subs/package]) :take_off)
           [:span (upgrade-link "Upgrade") " to access these candidates."])])
+
      [:div.company-job__buttons
       (if published
-        [:a.button {:id (str "dashboard-job-card__view-applications-button_" id)
+        [:a.button {:id   (str "dashboard-job-card__view-applications-button_" id)
                     :href (<sub [::subs/view-applications-link id])}
          "View Applications"]
         (let [is-publishing? (<sub [::subs/is-job-publishing? id])]
           [:button.button
-           {:id (str "dashboard-job-card__publish-button_" id)
-            :class (when is-publishing? "button--inverted button--loading")
+           {:id       (str "dashboard-job-card__publish-button_" id)
+            :class    (when is-publishing? "button--inverted button--loading")
             :on-click #(dispatch [::events/publish-role id])}
            "Publish Role"]))
-      [link "Edit" :edit-job :id id :class "button button--inverted"]]
+
+      [edit-job id can-edit-jobs?]]
+
      (when (<sub [::subs/is-publish-celebration-showing? id])
        [payment/publish-celebration
-        {:title title
+        {:title        title
          :company-name company-name
-         :verticals verticals
-         :on-close #(dispatch [::events/close-publish-celebration id])}])]))
+         :verticals    verticals
+         :on-close     #(dispatch [::events/close-publish-celebration id])}])]))
 
 (defn add-job-card []
-  [link [:div.card.add-job
-         [:div.add-job__icon [icon "add-new-2"]]
-         [:div.add-job__add "Add new role"]] :create-job])
+  (let [can-publish? (<sub [::subs/can-publish-jobs?])
+        element      [:div.card.add-job
+                      [:div.add-job__icon [icon "add-new-2"]]
+                      [:div.add-job__add "Add new role"]]]
+    (if can-publish?
+      [link element :create-job]
+
+      [link element
+       :payment-setup
+       :step :select-package
+       :query-params {:action "publish"}])))
 
 (defn roles [class-name title jobs live-roles?]
   (into
