@@ -4,9 +4,9 @@
   (:require
     [re-frame.core :refer [dispatch dispatch-sync]]
     [reagent.core :as reagent]
-    [wh.common.re-frame-helpers :refer [merge-classes]]
     [wh.components.icons :refer [icon]]
-    [wh.subs :refer [<sub]]))
+    [wh.subs :refer [<sub]]
+    [wh.util :refer [merge-classes]]))
 
 (defn codi-message [& parts]
   (let [[options parts] (if (map? (first parts))

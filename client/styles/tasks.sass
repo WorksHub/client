@@ -1,0 +1,62 @@
+@import colours
+@import mixins
+@import vars
+
+$tasks-width: 380px
+$tasks-width-mobile: 320px
+$icon-size: 20px
+
+.title
+  font-size: 14px
+  line-height: 18px
+  font-weight: 600
+  letter-spacing: 0.02em
+  color: $text-black
+
+.subtitle
+  font-size: 14px
+  line-height: 18px
+  color: $grey500
+
+.task
+  background-color: $white
+  display: grid
+  padding: 12px 12px 12px 48px
+  grid-gap: 6px
+  border-radius: 4px
+  position: relative
+
+  &__icon
+    position: absolute
+    top: calc(50% - 10px)
+    left: 12px
+    width: $icon-size
+    height: $icon-size
+    fill: $grey500
+    color: $grey500
+
+.header
+  font-size: 16px
+  line-height: 46px
+  font-weight: 700
+  color: $white
+  padding-left: 6px
+
+.tasks
+  display: grid
+  grid-gap: 6px
+
+  &__wrapper
+    background-color: $green100
+    border-radius: 8px
+    padding: 0 8px 8px
+
+.content
+  left: 0
+  position: absolute
+  width: $tasks-width-mobile
+  top: $navbar-dropdown-starts-at
+  transform: translateX(-50vw)
+  +tablet
+    transform: translateX(-45%)
+    width: $tasks-width

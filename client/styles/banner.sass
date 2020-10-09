@@ -1,0 +1,27 @@
+@import vars
+@import colours
+@import mixins
+
+$banner-height: 48px
+$banner-height-mobile: 30px
+
+.banner
+  display: none
+  height: $banner-height
+  background-color: $highlight-red
+  &:global(.is-open)
+    display: flex
+    align-items: center
+    justify-content: center
+  +mobile
+    height: $banner-height-mobile
+
+.link
+  color: $primary-red
+  line-height: 16px
+  font-weight: 600
+  font-size: 16px
+  +mobile
+    font-size: 13px
+  &:hover
+    color: $primary-red-hover
