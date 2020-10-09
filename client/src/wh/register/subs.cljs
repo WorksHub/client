@@ -25,6 +25,11 @@
     (register/stackoverflow-signup? db)))
 
 (reg-sub
+  ::twitter-signup?
+  (fn [db _]
+    (register/twitter-signup? db)))
+
+(reg-sub
   ::submitting?
   :<- [::sub-db]
   (fn [db _]

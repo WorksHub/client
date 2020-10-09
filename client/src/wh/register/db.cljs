@@ -24,8 +24,19 @@
                 ;; approval won't be available because user is not created yet
                 (not (get-in db [::user/sub-db ::user/approval])))))
 
+(defn twitter-signup?
+  "checks if user tried to signup with twitter"
+  [db]
+  (boolean (and (username db)
+                (get-in db [::user/sub-db ::user/twitter-access-token])
+                ;; approval won't be available because user is not created yet
+                (not (get-in db [::user/sub-db ::user/approval])))))
+
 (defn initialize-sub-db [db]
-  (assoc db ::sub-db {:name (if (stackoverflow-signup? db) (username db) "")
+  (assoc db ::sub-db {:name (if (or (stackoverflow-signup? db)
+                                    (twitter-signup? db))
+                              (username db)
+                              "")
                       :email ""
                       :error nil
                       :submitting false}))
@@ -38,6 +49,12 @@
 
 (defn db->stackoverflow-account-id [db]
   (get-in db [::user/sub-db ::user/stackoverflow-info :account-id]))
+
+(defn db->twitter-access-token [db]
+  (get-in db [::user/sub-db ::user/twitter-access-token]))
+
+(defn db->twitter-account-id [db]
+  (get-in db [::user/sub-db ::user/twitter-id]))
 
 (defn db->db-with-user [db graphql-user]
   (update db ::user/sub-db #(merge % (user/translate-user graphql-user))))

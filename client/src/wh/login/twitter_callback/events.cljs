@@ -67,7 +67,9 @@
   ::twitter-auth-success
   db/default-interceptors
   (fn [{db :db} [resp]]
-    (let [user (get-in resp [:data :twitter_auth :user])
+    (let [resp-data (get-in resp [:data :twitter_auth])
+          user (or (:user_info_twitter resp-data)
+                   (:user resp-data))
           account-id (get-in user [:twitter_info :id])
           new-user? (:new user)
           db (-> db
@@ -76,10 +78,15 @@
           base-dispatch (cond-> [[::pages/unset-loader]]
                                 new-user? (conj [:register/track-account-created {:source :twitter :id account-id}])
                                 (and new-user? (:register/track-context db)) (conj [:register/track-start (:register/track-context db)]))]
-      {:db      db
-       :graphql {:query      user-details
-                 :on-success [::user-details-success base-dispatch]
-                 :on-failure [::request-fail]}})))
+      ;; user wasn't created, we want to receive email address from user
+      (if (:twitter_access_token user)
+        {:db db
+         :dispatch-n base-dispatch
+         :navigate [:register]}
+        {:db      db
+         :graphql {:query      user-details
+                   :on-success [::user-details-success base-dispatch]
+                   :on-failure [::request-fail]}}))))
 
 (defquery twitter-auth-mutation
   {:venia/operation {:operation/type :mutation
@@ -97,7 +104,15 @@
                          :email
                          :image_url
                          [:twitter_info
-                          [:id]]]]]]]})
+                          [:id]]]]
+                       [:user_info_twitter
+                        [:twitter_id
+                         :name
+                         [:twitter_access_token
+                          [:oauth_token
+                           :oauth_token_secret
+                           :user_id
+                           :screen_name]]]]]]]})
 
 (reg-event-fx
   ::twitter-callback

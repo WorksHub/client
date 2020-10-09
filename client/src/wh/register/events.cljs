@@ -2,9 +2,9 @@
   (:require
     [re-frame.core :refer [reg-event-db reg-event-fx]]
     [wh.db :as db]
+    [wh.common.keywords :as keywords]
     [wh.login.db :as login]
-    [wh.register.db :as register]
-    [wh.util :as util])
+    [wh.register.db :as register])
   (:require-macros
     [wh.graphql-macros :refer [defquery]]))
 
@@ -57,8 +57,12 @@
                        register/unset-submitting-flag
                        (register/db->db-with-user user))
        :dispatch-n (into [[:register/track-account-created
-                           (if (register/stackoverflow-signup? db)
+                           (cond
+                             (register/stackoverflow-signup? db)
                              {:source :stackoverflow :id (register/db->stackoverflow-account-id db)}
+                             (register/twitter-signup? db)
+                             {:source :twitter :id (register/db->twitter-account-id db)}
+                             :else
                              {:source :email :email (:email user)})]]
                          (login/redirect-post-login-or-registration {}))})))
 
@@ -70,11 +74,12 @@
                   register/set-submitting-flag
                   register/unset-error)
      :graphql {:query      create-user-mutation
-               :variables  {:create_user (util/remove-nils
+               :variables  {:create_user (keywords/transform-keys
                                            {:name                     (-> db register/db->sub-db register/->name)
                                             :email                    (-> db register/db->sub-db register/->email)
                                             :consented                (js/Date.)
-                                            :stackoverflowAccessToken (register/db->stackoverflow-access-token db)})
+                                            :stackoverflowAccessToken (register/db->stackoverflow-access-token db)
+                                            :twitterAccessToken       (register/db->twitter-access-token db)})
                             :force_unapproved true}
                :on-success [::create-user-success]
                :on-failure [::create-user-failure]}}))

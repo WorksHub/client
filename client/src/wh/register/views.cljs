@@ -60,7 +60,10 @@
                :data-test "form-signup"}
     [auth/title "Sign Up"]
     (when (<sub [::subs/stackoverflow-signup?]) [auth/stackoverflow-message])
-    (when-not (<sub [::subs/stackoverflow-signup?]) [auth/social-buttons])
+    (when (<sub [::subs/twitter-signup?]) [auth/twitter-message])
+    (when-not (or (<sub [::subs/stackoverflow-signup?])
+                  (<sub [::subs/twitter-signup?]))
+      [auth/social-buttons])
     [form-signup]
     [message-user-agreement]
     [auth/separator]

@@ -48,8 +48,12 @@
         children))
 
 (defn stackoverflow-message []
-  [:div (util/smc styles/paragraph styles/stackoverflow)
+  [:div (util/smc styles/paragraph styles/info)
    "Stack Overflow doesn't provide your email information, please fill it in. Thank you"])
+
+(defn twitter-message []
+  [:div (util/smc styles/paragraph styles/info)
+   "Your Twitter profile doesn't have email information, please fill it in. Thank you"])
 
 (defn error-message [message]
   (when message [:span (util/smc styles/error) message]))
