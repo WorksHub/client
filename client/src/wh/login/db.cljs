@@ -56,12 +56,15 @@
 
 (defn redirect-vector [db]
   "returns a vector description of redirect"
-  (let [redirect-path-query (some-> (get-in db [:wh.db/query-params "redirect"])
-                                    query-redirect->path)
-        redirect-path-cache (some-> (js/popAuthRedirect)
-                                    r/read-string)
-        redirect-path-db    (get-in db [::sub-db :redirect])]
-    (or redirect-path-cache redirect-path-query redirect-path-db)))
+  (try (let [redirect-path-query (some-> (get-in db [:wh.db/query-params "redirect"])
+                                         query-redirect->path)
+             redirect-path-cache (some-> (js/popAuthRedirect)
+                                         r/read-string)
+             redirect-path-db    (get-in db [::sub-db :redirect])]
+         (or redirect-path-cache redirect-path-query redirect-path-db))
+       (catch js/Error e
+         (do (js/console.error e)
+             nil))))
 
 (defn redirect-url
   "builds a redirect url to pass to the BE"

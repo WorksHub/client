@@ -20,7 +20,7 @@ const contextToMessageType = {
     issue: messageType.issue
 };
 const lsKey = {
-    redirect: 'wh_auth.redirect'
+    redirect: 'wh_auth.redirect_url'
 };
 const cls = {
     isOpen: 'is-open',
