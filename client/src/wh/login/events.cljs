@@ -1,10 +1,7 @@
 (ns wh.login.events
   (:require
     [ajax.formats :refer [text-request-format raw-response-format]]
-    [bidi.bidi :as bidi]
     [cljs.reader :as r]
-    [clojure.string :as str]
-    [goog.Uri :as uri]
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
     [wh.db :as db]
     [wh.login.db :as login]
@@ -39,6 +36,8 @@
   (fn [db [email]]
     (login/set-email db email)))
 
+
+
 (reg-event-fx
   ::send-login-link
   (fn [{db :db} _]
@@ -51,7 +50,7 @@
         :always                          {:db      (login/set-submitting db)
                                           :graphql {:query      magic-link-mutation
                                                     :variables  {:email    email
-                                                                 :redirect (login/redirect-link db)}
+                                                                 :redirect (login/redirect-url db)}
                                                     :on-success [::send-login-link-handler true]
                                                     :on-failure [::send-login-link-handler false]}}))))
 
@@ -134,10 +133,10 @@
     {:dispatch-n    [[::pages/set-loader]
                      [::go-stackoverflow]]
      :persist-state (cond-> db
-                            track-context                                                                                                 (assoc :register/track-context track-context)
-                            true                                                                                                          (assoc ::db/loading? true
-                                                                                                                                                 :google/maps-loaded? false) ; reload google maps when we return here
-                            true                                                                                                          (dissoc ::db/page-mapping))}))
+                            track-context (assoc :register/track-context track-context)
+                            true (assoc ::db/loading? true
+                                        :google/maps-loaded? false) ; reload google maps when we return here
+                            true (dissoc ::db/page-mapping))}))
 
 ;; GITHUB
 
@@ -165,10 +164,10 @@
     {:dispatch-n    [[::pages/set-loader]
                      [::go-github]]
      :persist-state (cond-> db
-                            track-context                                                                                                 (assoc :register/track-context track-context)
-                            true                                                                                                          (assoc ::db/loading? true
-                                                                                                                                                 :google/maps-loaded? false) ; reload google maps when we return here
-                            true                                                                                                          (dissoc ::db/page-mapping))}))
+                            track-context (assoc :register/track-context track-context)
+                            true (assoc ::db/loading? true
+                                        :google/maps-loaded? false) ; reload google maps when we return here
+                            true (dissoc ::db/page-mapping))}))
 
 ;; TWITTER
 
@@ -185,10 +184,10 @@
     {:dispatch-n    [[::pages/set-loader]
                      [::go-twitter]]
      :persist-state (cond-> db
-                            track-context                                                                                                 (assoc :register/track-context track-context)
-                            true                                                                                                          (assoc ::db/loading? true
-                                                                                                                                                 :google/maps-loaded? false) ; reload google maps when we return here
-                            true                                                                                                          (dissoc ::db/page-mapping))}))
+                            track-context (assoc :register/track-context track-context)
+                            true (assoc ::db/loading? true
+                                        :google/maps-loaded? false) ; reload google maps when we return here
+                            true (dissoc ::db/page-mapping))}))
 
 (reg-event-fx
   ::redirect-to-twitter-callback
@@ -197,39 +196,10 @@
     {:navigate [:twitter-callback
                 :query-params (::db/query-params db)]}))
 
-
-;; ON PAGE LOAD
-
-(defn query-redirect->path
-  [query-redirect]
-  (when-let [route (->> query-redirect
-                        (bidi/url-decode)
-                        (bidi/match-route routes/routes))]
-    (let [query-params (let [params (-> query-redirect uri/parse .getQueryData)]
-                         (zipmap (.getKeys params) (.getValues params)))]
-      ;; url params can be 'route-params' or just 'params' depending on how
-      ;; they are specified in routes (see ':company' vs ':payment-setup')
-      (cond-> (vector (:handler route))
-              (or (not-empty (:route-params route))
-                  (not-empty (:params route)))
-              (concat [:params (merge (:route-params route)
-                                      (:params route))])
-              (not-empty query-params)
-              (concat [:query-params query-params])))))
-
-;; TODO: we have query redirect
-;; TODO: we have localstorage redirect
-;; TODO: we have step in page params
 (defmethod on-page-load :login
   [db]
   (list
     [:wh.events/scroll-to-top]
-    ;; if there's an auth redirect we pop and set it
-    (when-let [cached-redirect (js/popAuthRedirect)]
-      (vec (concat [:login/set-redirect] (r/read-string cached-redirect))))
-    ;; if there's a redirect query param
-    (when-let [query-redirect (get-in db [:wh.db/query-params "redirect"])]
-      (vec (concat [:login/set-redirect] (query-redirect->path query-redirect))))
     (when (login/is-step? db :github)
       [:github/call {:type :login-page}])
     (when (login/is-step? db :stackoverflow)

@@ -104,15 +104,11 @@
   (fn [db _]
     (assoc db ::candidate/sub-db candidate/default-db)))
 
-(defn redirect
-  [db]
-  [:login/set-redirect :candidate :params {:id (get-in db [::db/page-params :id])}])
-
 (reg-event-fx
   ::go-to-magic-form
   db/default-interceptors
   (fn [{db :db}]
-    {:dispatch-n [(redirect db)
+    {:dispatch-n [[:login/set-redirect :candidate :params {:id (get-in db [::db/page-params :id])}]
                   [:wh.events/nav :login :params {:step :email}]
                   [:wh.login.events/show-magic-form]]}))
 

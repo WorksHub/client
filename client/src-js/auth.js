@@ -1,37 +1,62 @@
 import { setClass, setNoScroll } from './public';
+import customLocalStorage from './local_storage';
 
-var wh_auth = {};
-wh_auth.redirect = null;
-wh_auth.contexts = new Map();
-wh_auth.contexts.set('homepage-jobcard-apply', 'apply');
-wh_auth.contexts.set('contribute', 'contribute');
-wh_auth.contexts.set('jobcard-apply', 'apply');
-wh_auth.contexts.set('jobpage-apply', 'apply');
-wh_auth.contexts.set('search-jobs', 'search-jobs');
-wh_auth.contexts.set('jobpage-see-more', 'see-more');
-wh_auth.contexts.set('upvote', 'upvote');
-wh_auth.contexts.set('issue', 'issue');
+const messageType = {
+    apply: 'apply',
+    contribute: 'contribute',
+    searchJobs: 'search-jobs',
+    seeMore: 'see-more',
+    upvote: 'upvote',
+    issue: 'issue'
+};
+const contextToMessageType = {
+    'homepage-jobcard-apply': messageType.apply,
+    contribute: messageType.contribute,
+    'jobcard-apply': messageType.apply,
+    'jobpage-apply': messageType.apply,
+    'search-jobs': messageType.searchJobs,
+    'jobpage-see-more': messageType.seeMore,
+    upvote: messageType.upvote,
+    issue: messageType.issue
+};
+const lsKey = {
+    redirect: 'wh_auth.redirect'
+};
+const cls = {
+    isOpen: 'is-open',
+    isVisible: 'is-visible'
+};
+const id = {
+    authPopup: 'auth-popup'
+};
+
+const messageId = s => id.authPopup + '__' + s;
+const fiveMinutes = 5 * 60;
+
+function showMessage(context) {
+    Object.values(messageType).forEach(mt => setClass(messageId(mt), cls.isVisible, false));
+    const messageTypeToShow = contextToMessageType[context];
+    if (messageTypeToShow) {
+        setClass(messageId(messageTypeToShow), cls.isVisible, true);
+    }
+}
 
 function showAuthPopUp(context, redirect) {
-  localStorage.setItem('wh_auth.redirect', redirect);
-  var newContext = wh_auth.contexts.get(context);
-  var arr = new Set(Array.from(wh_auth.contexts.values()));
-  arr.forEach(item => setClass('auth-popup__' + item, 'is-visible', false));
-  setClass('auth-popup__' + newContext, 'is-visible', true);
-  setClass('auth-popup', 'is-open', true);
-  setNoScroll('auth-popup', true);
+    customLocalStorage.setItem(lsKey.redirect, redirect, fiveMinutes);
+    showMessage(context);
+    setClass(id.authPopup, cls.isOpen, true);
+    setNoScroll(id.authPopup, true);
 }
-window.showAuthPopUp = showAuthPopUp;
 
 function hideAuthPopUp() {
-  setClass('auth-popup', 'is-open', false);
-  setNoScroll('auth-popup', false);
+    setClass(id.authPopup, cls.isOpen, false);
+    setNoScroll(id.authPopup, false);
 }
-window.hideAuthPopUp = hideAuthPopUp;
 
 function popAuthRedirect() {
-  var r = localStorage.getItem('wh_auth.redirect');
-  localStorage.removeItem('wh_auth.redirect');
-  return r;
+    return customLocalStorage.getItem(lsKey.redirect);
 }
+
+window.hideAuthPopUp = hideAuthPopUp;
+window.showAuthPopUp = showAuthPopUp;
 window.popAuthRedirect = popAuthRedirect;

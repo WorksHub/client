@@ -107,7 +107,7 @@
 
 (defn disable-no-scroll-on-click
   []
-  (on-click-fn (jsf (disableNoScroll)))  )
+  (on-click-fn (jsf (disableNoScroll))))
 
 (defn toggle-no-scroll-on-click
   [id]

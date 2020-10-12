@@ -64,7 +64,7 @@
                              {:source :twitter :id (register/db->twitter-account-id db)}
                              :else
                              {:source :email :email (:email user)})]]
-                         (login/redirect-post-login-or-registration {}))})))
+                         (login/redirect-post-login-or-registration db))})))
 
 (reg-event-fx
   ::create-user

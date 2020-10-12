@@ -246,8 +246,8 @@
   ::apply-job
   :<- [::sub-db]
   :<- [::company-name]
-  (fn [[{:keys [::job/id ::job/location]} company-name] _]
-    {:id id :company-name company-name :location location}))
+  (fn [[{:keys [::job/id ::job/location ::job/slug] :as db} company-name] _]
+    {:id id :company-name company-name :location location :slug slug}))
 
 (reg-sub
   :google/maps-loaded?

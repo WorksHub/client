@@ -1,5 +1,8 @@
 (ns wh.login.db
-  (:require [cljs.spec.alpha :as s]
+  (:require [cljs.reader :as r]
+            [bidi.bidi :as bidi]
+            [goog.Uri :as uri]
+            [cljs.spec.alpha :as s]
             [clojure.string :as str]
             [wh.common.specs.primitives :as primitives]
             [wh.db :as db]
@@ -30,8 +33,45 @@
 
 ;; ------------------------------------
 
+(defn query-redirect->path
+  [query-redirect]
+  (when-let [route (->> query-redirect
+                        (bidi/url-decode)
+                        (bidi/match-route routes/routes))]
+    (let [query-params (let [params (-> query-redirect uri/parse .getQueryData)]
+                         (zipmap (.getKeys params) (.getValues params)))]
+      ;; url params can be 'route-params' or just 'params' depending on how
+      ;; they are specified in routes (see ':company' vs ':payment-setup')
+      (cond-> (vector (:handler route))
+              (or (not-empty (:route-params route))
+                  (not-empty (:params route)))
+              (concat [:params (merge (:route-params route)
+                                      (:params route))])
+              (not-empty query-params)
+              (concat [:query-params query-params])))))
+
+(defn construct-redirect [path]
+  (some->> path
+           (apply routes/path)))
+
+(defn redirect-vector [db]
+  "returns a vector description of redirect"
+  (let [redirect-path-query (some-> (get-in db [:wh.db/query-params "redirect"])
+                                    query-redirect->path)
+        redirect-path-cache (some-> (js/popAuthRedirect)
+                                    r/read-string)
+        redirect-path-db    (get-in db [::sub-db :redirect])]
+    (or redirect-path-cache redirect-path-query redirect-path-db)))
+
+(defn redirect-url
+  "builds a redirect url to pass to the BE"
+  [db]
+  (-> db
+      redirect-vector
+      construct-redirect))
+
 (defn redirect-post-login-or-registration [db]
-  [(into [:wh.events/nav] (get-in db [::sub-db :redirect] [:homepage]))])
+  [(into [:wh.events/nav] (or (redirect-vector db) [:homepage]))])
 
 (defn error [db]
   (get-in db [::sub-db :error]))
@@ -42,10 +82,6 @@
 (defn email [db]
   (some->> (get-in db [::sub-db :email])
            str/trim))
-
-(defn redirect-link [db]
-  (when-let [path (get-in db [::sub-db :redirect])]
-    (apply routes/path path)))
 
 (defn set-error [db error]
   (assoc-in db [::sub-db :error] error))
