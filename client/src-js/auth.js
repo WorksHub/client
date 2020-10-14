@@ -7,12 +7,14 @@ const messageType = {
     searchJobs: 'search-jobs',
     seeMore: 'see-more',
     upvote: 'upvote',
-    issue: 'issue'
+    issue: 'issue',
+    save: 'save'
 };
 const contextToMessageType = {
     'homepage-jobcard-apply': messageType.apply,
     contribute: messageType.contribute,
     'jobcard-apply': messageType.apply,
+    'jobcard-save': messageType.save,
     'jobpage-apply': messageType.apply,
     'search-jobs': messageType.searchJobs,
     'jobpage-see-more': messageType.seeMore,

@@ -73,34 +73,44 @@
                     [:marked]]]})
 
 (reg-event-fx
-  ::toggle-job-like-success
+  ::perform-job-like-success
   db/default-interceptors
-  (fn [{db :db} [id action]]
-    (merge {:db (update-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs] util/toggle id)}
+  (fn [{db :db} [id action liked]]
+    (merge {:db (update-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs] (fnil (if liked conj disj) #{}) id)}
            (when action
              {:dispatch (case action
                           :reload-recommended [:personalised-jobs/fetch-jobs-by-type :recommended 1]
-                          :reload-dashboard [:wh.logged-in.dashboard.events/fetch-recommended-jobs]
-                          :reload-liked [:personalised-jobs/fetch-jobs-by-type :liked 1])}))))
+                          :reload-dashboard   [:wh.logged-in.dashboard.events/fetch-recommended-jobs]
+                          :reload-liked       [:personalised-jobs/fetch-jobs-by-type :liked 1])}))))
+
+(defn perform-job-like
+  [{:keys [id] :as job} action liked?]
+  (let [event-name (str "Job " (if liked? "Removed Like" "Liked"))]
+    {:graphql         {:query      like-job-mutation
+                       :variables  {:id id :add liked?}
+                       :on-success [::perform-job-like-success id action liked?]}
+     :analytics/track [event-name job]}))
 
 (reg-event-fx
- ::toggle-job-like
+  ::set-job-like
+  db/default-interceptors
+  (fn [{db :db} [job action liked?]]
+    (perform-job-like job action liked?)))
+
+(reg-event-fx
+  ::toggle-job-like
   db/default-interceptors
   (fn [{db :db} [{:keys [id] :as job} action]]
-    (let [liked (contains? (get-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs]) id)
-          event-name (str "Job " (if liked "Removed Like" "Liked"))]
-      {:graphql         {:query      like-job-mutation
-                         :variables  {:id id, :add (not liked)}
-                         :on-success [::toggle-job-like-success id action]}
-       :analytics/track [event-name job]})))
+    (let [liked? (not (contains? (get-in db [:wh.user.db/sub-db :wh.user.db/liked-jobs]) id))]
+      (perform-job-like job action liked?))))
 
 (defquery blacklist-job-mutation
   {:venia/operation {:operation/type :mutation
                      :operation/name "BlacklistJob"}
    :venia/variables [{:variable/name "id"
                       :variable/type :String!}]
-   :venia/queries [[:mark_job {:job_id :$id, :add true, :job_mark_action :blacklist}
-                    [:marked]]]})
+   :venia/queries   [[:mark_job {:job_id :$id, :add true, :job_mark_action :blacklist}
+                      [:marked]]]})
 
 ;; TODO: move it away
 (reg-event-fx

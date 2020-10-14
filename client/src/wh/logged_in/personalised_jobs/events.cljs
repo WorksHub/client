@@ -57,23 +57,34 @@
   ::fetch-personalised-jobs-success
   personalised-jobs-interceptors
   (fn [{db :db} [resp]]
-    (let [new-jobs (mapv job/translate-job (get-in resp [:data :jobs]))
+    (let [new-jobs               (mapv job/translate-job (get-in resp [:data :jobs]))
           candidate-applications (mapv cases/->kebab-case (get-in resp [:data :candidate_applications]))
-          jobs (::personalised-jobs/jobs db)
-          updated-jobs (distinct (concat (map #(dissoc % :state) jobs) new-jobs))]
-      {:db (assoc db ::personalised-jobs/jobs (if candidate-applications
-                                                (add-application-state updated-jobs candidate-applications)
-                                                updated-jobs)
-                     ::personalised-jobs/show-load-more? (>= (count new-jobs) pages/default-page-size))
-       :dispatch [::pages/unset-loader]})))
+          jobs                   (::personalised-jobs/jobs db)
+          updated-jobs           (distinct (concat (map #(dissoc % :state) jobs) new-jobs))]
+      {:db       (assoc db ::personalised-jobs/jobs (if candidate-applications
+                                                      (add-application-state updated-jobs candidate-applications)
+                                                      updated-jobs)
+                        ::personalised-jobs/show-load-more? (>= (count new-jobs) pages/default-page-size))
+       :dispatch [::pages/unset-loader ::fetch-personalised-jobs-success]})))
+
+(reg-event-fx
+  ::set-job-saved
+  personalised-jobs-interceptors
+  (fn [{db :db} [save? job-id]]
+    {:dispatch-n [[::pages/set-loader]
+                  [:wh.events/set-job-like {:id job-id} :reload-liked save?]]}))
 
 (defmethod on-page-load :recommended [db]
   [[::pages/set-loader]
    [:personalised-jobs/fetch-jobs-by-type :recommended 1]])
 
 (defmethod on-page-load :liked [db]
-  [[::pages/set-loader]
-   [:personalised-jobs/fetch-jobs-by-type :liked 1]])
+  (let [should-save? (= (get-in db [::db/query-params "action"]) "save")
+        save-job-id  (when should-save? (get-in db [::db/query-params "job-id"]))]
+    [[::pages/set-loader]
+     (if save-job-id
+       [::set-job-saved true save-job-id]
+       [:personalised-jobs/fetch-jobs-by-type :liked 1])]))
 
 (defmethod on-page-load :applied [db]
   [[::pages/set-loader]

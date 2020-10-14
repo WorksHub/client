@@ -53,10 +53,9 @@
                                     :clj "")}
                       (interop/on-click-fn
                         (interop/show-auth-popup
-                          :jobcard-apply
-                          [:job
-                           :params {:slug slug}
-                           :query-params {"apply" true "apply_source" "public-feed"}])))}])
+                          :jobcard-save
+                          [:liked
+                           :query-params {"action" "save" "job-id" id}])))}])
     [components/footer-buttons
      [components/button
       (let [job-page-params [:job

@@ -17,6 +17,12 @@
    {:id (build-sub-id "apply")}
    [:h1 "Login or register" [:br] "to apply for this job!"]])
 
+(defn overlay-content-save
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "save")}
+   [:h1 "Login or register" [:br] "to save this job!"]])
+
 (defn overlay-content-see-more
   []
   [:div.auth-popup__content
@@ -56,15 +62,16 @@
 
 (defn popup [platform-name]
   [:div
-   {:id auth-popup-id
+   {:id    auth-popup-id
     :class (util/merge-classes "overlay" "auth-popup")}
    [:div.overlay__content
     [:div.overlay__close
      (interop/on-click-fn
-      (interop/hide-auth-popup))
+       (interop/hide-auth-popup))
      [icon "close"]]
     [:div
      [overlay-content-apply]
+     [overlay-content-save]
      [overlay-content-contribute]
      [overlay-content-see-more]
      [overlay-content-blog]
