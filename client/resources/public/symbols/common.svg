@@ -213,16 +213,16 @@
     <symbol id="location-round" viewBox="0 0 18 18" fill="none">
       <path d="M15.75 7.5c0 5.25-6.75 9.75-6.75 9.75s-6.75-4.5-6.75-9.75a6.75 6.75 0 0113.5 0z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 9.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
-    <symbol viewBox="0 0 16 16" id="home" fill="none">
+    <symbol id="home" viewBox="0 0 16 16" fill="none">
       <path d="M2 6l6-4.67L14 6v7.33a1.33 1.33 0 01-1.33 1.34H3.33A1.33 1.33 0 012 13.33V6z" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 14.67V8h4v6.67" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
-    <symbol width="16" height="16" viewBox="0 0 16 16" fill="none" id="contract">
+    <symbol id="contract" width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M9.33 1.33H4a1.33 1.33 0 00-1.33 1.34v10.66A1.33 1.33 0 004 14.67h8a1.33 1.33 0 001.33-1.34v-8l-4-4z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.33 1.33v4h4M10.67 8.67H5.33M10.67 11.33H5.33M6.67 6H5.33" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
-    <symbol width="16" height="16" viewBox="0 0 16 16" fill="none" id="award">
+    <symbol id="award" width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M8 10A4.67 4.67 0 108 .67 4.67 4.67 0 008 10z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.47 9.26l-.8 6.07 3.33-2 3.33 2-.8-6.08" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
-    <symbol width="16" height="16" viewBox="0 0 16 16" fill="none" id="globe">
+    <symbol id="globe" width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M8 14.67A6.67 6.67 0 108 1.33a6.67 6.67 0 000 13.34zM1.33 8h13.34" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 1.33A10.2 10.2 0 0110.67 8 10.2 10.2 0 018 14.67 10.2 10.2 0 015.33 8c.05-2.47 1-4.84 2.67-6.67z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
     <symbol id="job-sponsorship" viewBox="0 0 378 512">

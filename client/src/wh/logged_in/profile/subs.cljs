@@ -7,7 +7,6 @@
             [wh.common.text :as text]
             [wh.common.url :as url]
             [wh.components.tag :as tag]
-            [wh.graphql-cache :as cache]
             [wh.logged-in.profile.db :as profile]
             [wh.re-frame.subs :refer [<sub]]
             [wh.subs :refer [with-unspecified-option]]
@@ -488,6 +487,13 @@
   (fn [profile _]
     (boolean
       (::profile/edit-tech-changes? profile))))
+
+(reg-sub
+  ::editing-tech?
+  :<- [::profile]
+  (fn [profile _]
+    (boolean
+      (::profile/editing-tech? profile))))
 
 (reg-sub
   ::skills-search

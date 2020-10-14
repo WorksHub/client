@@ -10,6 +10,7 @@
 (def time-periods ["Yearly" "Daily"])
 
 (def visa-options #{"US Citizenship" "US Greencard" "US H1B" "EU Citizenship" "EU Visa" "Other"})
+(def role-types #{"Full time" "Contract" "Intern"})
 
 (def currency-symbols
   {"GBP" "£"

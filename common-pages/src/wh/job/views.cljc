@@ -5,7 +5,6 @@
             #?(:cljs [wh.components.stats.views :refer [stats-item]])
             [clojure.string :as str]
             [wh.common.data :refer [get-manager-name]]
-            [wh.common.job :as jobc]
             [wh.common.text :refer [pluralize]]
             [wh.company.listing.views :refer [company-card]]
             [wh.components.cards :refer [match-circle]]
@@ -22,8 +21,7 @@
             [wh.re-frame.events :refer [dispatch dispatch-sync]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.util :as util]
-            [wh.verticals :as verticals]))
+            [wh.util :as util]))
 
 #?(:cljs
    (defn- latlng [{:keys [latitude longitude]}]

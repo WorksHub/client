@@ -56,7 +56,8 @@
      [:div.animatable
       [:div.conversation-element.user.current-location-input
        [text-field (<sub [::subs/current-location-label])
-        {:suggestions          (<sub [::subs/current-location-suggestions])
+        {:data-test            "current-location"
+         :suggestions          (<sub [::subs/current-location-suggestions])
          :on-change            [::events/edit-current-location]
          :on-select-suggestion [::events/select-current-location-suggestion]
          :placeholder          "Type to search..."}]]]
@@ -208,7 +209,8 @@
        [error-message "There was an error updating your skills, please try again."]
        [codi-message "Please select your skills"])
      [:div.animatable.visa-options
-      [:div.multiple-buttons
+      [:div {:class "multiple-buttons"
+             :data-test "skills"}
        (for [skill required-skills
              :let [selected? (some #(= % skill) selected-skills)]]
          [:button.button.visa-option
@@ -221,6 +223,7 @@
       [:button.conversation-button.update-visa
        {:class    (when (<sub [::subs/updating?]) "button--loading")
         :disabled (empty? selected-skills)
+        :data-test "update-skills"
         :on-click #(dispatch [::events/update-skills])}
        "Update skills"]]]))
 

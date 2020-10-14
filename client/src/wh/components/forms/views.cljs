@@ -103,8 +103,11 @@
             (when (and rows (= type :textarea))
               {:rows rows}))]))
 
-(defn text-input-new [value opts]
-  [text-input value (merge opts {:class-input styles/input
+(defn text-input-new
+  [value {:keys [class-input]
+          :or {class-input styles/input}
+          :as opts}]
+  [text-input value (merge opts {:class-input class-input
                                  :class-textarea (util/mc styles/input styles/input--textarea)})])
 
 (defn label-text [{:keys [label required? hidden?]}]
@@ -148,12 +151,15 @@
 
 (defn suggestions-list
   "A list of suggestions for a text-field."
-  [items {:keys [on-select-suggestion]}]
-  (into [:ul.input__suggestions]
+  [items {:keys [on-select-suggestion class class-suggestion data-test]
+          :or {class "input__suggestions"}}]
+  (into [:ul (cond-> {:class class}
+                     data-test (assoc :data-test (str data-test "-suggestions")))]
         (map (fn [{:keys [id label]}]
                ;; use 'onmousedown' as well as 'onclick' as in some sitations 'onclick' wont
                ;; fire because the suggestions list is removed too quickly due to !focused parent
-               [:li {:on-click #(when on-select-suggestion
+               [:li {:class class-suggestion
+                     :on-click #(when on-select-suggestion
                                   (dispatch (conj on-select-suggestion id)))
                      :on-mouse-down #(when on-select-suggestion
                                        (dispatch (conj on-select-suggestion id)))}
@@ -200,28 +206,51 @@
   [value options]
   (let [dirty (reagent/atom false)
         focused (reagent/atom false)]
-    (fn [value {:keys [suggestions dirty? error force-error? read-only on-select-suggestion on-remove hide-icon?] :as options}]
+    (fn [value {:keys [suggestions dirty? error force-error? read-only on-select-suggestion on-remove hide-icon? new?] :as options}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
       (let [value (or value (:value options))
             suggestable? (and (or (seq suggestions) on-select-suggestion) (not hide-icon?))
             show-suggestion? (and (seq suggestions) @focused (not read-only))
-            removable? (and on-remove value (not @focused))]
-        (field-container (merge options
-                                {:error (if (and (string? error) force-error?)
-                                          error
-                                          (text-field-error value options dirty focused))})
-                         [:div.text-field-control
-                          {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
-                                       (when suggestable? " text-field-control--suggestable")
-                                       (when removable? " text-field-control--removable"))}
-                          (text-input value (merge options (text-field-input-options dirty focused options)))
-                          (when suggestable? [icon "search-new" :class "search-icon"])
-                          (when show-suggestion?
-                            [suggestions-list suggestions options])
-                          (when removable?
-                            [icon "close" :class "remove-text-field-btn" :on-click #(dispatch-sync on-remove)])])))))
+            removable? (and on-remove value (not @focused))
+            ;;
+            search-icon-class (if new? styles/suggestions__search-icon "search-icon")
+            search-icon-comp (when suggestable? [icon "search-new" :class search-icon-class])
+            ;;
+            suggestions-list-options (cond-> options new? (assoc
+                                                            :class styles/suggestions__suggestions
+                                                            :class-suggestion styles/suggestions__suggestion))
+            suggestions-list-comp (when show-suggestion? [suggestions-list suggestions suggestions-list-options])
+            ;;
+            close-icon-class (if new? styles/suggestions__delete-icon "remove-text-field-btn")
+            close-icon-comp (when removable? [icon "close" :class close-icon-class :on-click #(dispatch-sync on-remove)])]
+        (if new?
+          [:div {:class styles/suggestions__wrapper}
+           (text-input-new value (merge options
+                                        (text-field-input-options dirty focused options)
+                                        {:class-input (util/mc styles/input styles/suggestions__input)}))
+           search-icon-comp
+           suggestions-list-comp
+           close-icon-comp]
+          (field-container (merge options
+                                  {:error (if (and (string? error) force-error?)
+                                            error
+                                            (text-field-error value options dirty focused))})
+                           [:div.text-field-control
+                            {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
+                                         (when suggestable? " text-field-control--suggestable")
+                                         (when removable? " text-field-control--removable"))}
+                            (text-input value (merge options (text-field-input-options dirty focused options)))
+                            search-icon-comp
+                            suggestions-list-comp
+                            close-icon-comp]))))))
+
+(defn text-field-with-label [value {:keys [label required?] :as options}]
+  [:label
+   [label-text {:label label
+                :required? required?}]
+   [text-field value (assoc options :new? true)]])
 
 (defn checkbox
   "A bare checkbox. Value should be a boolean."
@@ -267,12 +296,14 @@
 (defn select-input
   "A bare select input. Typically not used standalone, but wrapped as
   select-field. See that function for parameters description."
-  [value {:keys [options on-change disabled]}]
+  [value {:keys [options on-change disabled class class-wrapper]
+          :or {class-wrapper "select"}}]
   (let [options (sanitize-select-options options)]
-    [:div.select
+    [:div {:class class-wrapper}
      (into
        [:select
-        (merge {:value (str (util/index-of (mapv :id options) value))}
+        (merge {:value (str (util/index-of (mapv :id options) value))
+                :class class}
                (when on-change
                  {:on-change #(let [id (:id (nth options (js/parseInt (target-value % nil))))]
                                 (if (fn? on-change)
@@ -289,11 +320,22 @@
              or maps with :id and :label (\"foo\" is shorthand for
              {:id \"foo\", :label \"foo\"}).
   :value - should be one of the :id's."
-  [value {:keys [dirty? force-error?] :as options}]
-  (field-container (if (or dirty? force-error?)
-                     options
-                     (dissoc options :error))
-                   (select-input (or value (:value options)) options)))
+  [value {:keys [dirty? force-error? new?] :as options}]
+  (if new?
+    [select-input
+     (or value (:value options))
+     (assoc options :class (util/mc styles/input styles/input--select)
+                    :class-wrapper styles/input-wrapper--select)]
+    (field-container (if (or dirty? force-error?)
+                       options
+                       (dissoc options :error))
+                     (select-input (or value (:value options)) options))))
+
+(defn select-field-with-label [value {:keys [label required?] :as options}]
+  [:label
+   [label-text {:label label
+                :required? required?}]
+   [select-field value (assoc options :new? true)]])
 
 (defn radio-buttons
   "Renders a set of radio buttons wrapped together in a div."
@@ -337,8 +379,9 @@
 
 (defn multiple-checkboxes
   "Like multiple-buttons, but renders a set of labelled checkboxes."
-  [multi-value {:keys [options on-change]}]
-  (into [:div.multiple-checkboxes]
+  [multi-value {:keys [options on-change class-wrapper]
+                :or {class-wrapper "multiple-checkboxes"}}]
+  (into [:div {:class class-wrapper}]
         (map
          (fn [{:keys [value label disabled] :as option}]
            [labelled-checkbox (contains? multi-value value)
@@ -541,3 +584,4 @@
      (when avatar-url
        [:img.avatar {:src avatar-url
                      :alt "Uploaded avatar"}])]))
+

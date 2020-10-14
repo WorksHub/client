@@ -159,6 +159,7 @@
   box-sizing: border-box
   color: $text-white
   padding: 0 20px
+  min-width: 100px
 
   font-family: $font-family
   font-size: 12px
@@ -475,7 +476,6 @@
     transform: translateY(calc(50% - 10px))
     fill: $grey500
   &__initial
-    height: 100%
     width: fit-content
     height: fit-content
     margin: 0 auto
@@ -687,3 +687,46 @@
 .other-urls
   display: grid
   grid-gap: 12px
+
+.private-update
+  &__wrapper
+    max-width: 90%
+    display: grid
+    grid-gap: 14px
+    +tablet
+      max-width: 480px
+
+    &--outer
+      position: relative
+
+  &__checkboxes
+    display: grid
+    row-gap: 4px
+
+  &__checkboxes-wrapper
+    display: grid
+    grid-template-columns: max-content max-content
+    grid-gap: 24px
+
+  &__salary
+    display: grid
+    grid-gap: 8px
+    max-width: 60%
+    align-items: flex-end
+    +tablet
+      max-width: 100%
+      grid-template-columns: 1fr 120px 120px
+
+  &__buttons
+    display: grid
+    justify-content: right
+    grid-template-columns: auto auto
+    grid-gap: 8px
+    +tablet
+      position: absolute
+      right: 0
+      bottom: 0
+
+  &__preferred-locations
+    display: grid
+    grid-gap: 4px

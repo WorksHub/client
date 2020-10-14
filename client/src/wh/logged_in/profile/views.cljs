@@ -17,11 +17,14 @@
                                                text-field text-input]]
             [wh.components.icons :refer [icon]]
             [wh.logged-in.profile.components :as components]
-            [wh.logged-in.profile.db :as profile]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
-            [wh.profile.update-public.events :as edit-modal-events]
+            [wh.profile.db :as profile]
             [wh.profile.update-public.views :as edit-modal]
+            [wh.profile.update-public.events :as edit-modal-events]
+            [wh.profile.update-private.views :as edit-private]
+            [wh.profile.update-private.events :as edit-private-events]
+            [wh.profile.update-private.subs :as edit-private-subs]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
             [wh.subs :refer [<sub]]))
@@ -489,15 +492,13 @@
 
 ;; -----------------------------------------------------------------------------------------------------------
 
-(defn private-section-view-new
-  [user-type {:keys [email phone job-seeking-status company-perks role-types remote
+(defn edit-user-private-info
+  [user-type {:keys [email phone job-seeking-status role-types remote
                      salary visa-status current-location
                      preferred-locations fields title email-link-fn]
               :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
                      title  "Preferences" email-link-fn email-link}}]
-  [components/section
-   (when (owner-or-admin? user-type)
-     [components/edit-profile {:type :private}])
+  [:<>
    [components/title title]
    (when (<sub [::subs/url-save-success])
      [successful-save-info])
@@ -507,13 +508,23 @@
     (when (:email fields) [components/view-field "Email:" [email-link-fn email]])
     (when (:phone fields) [components/view-field "Phone Number:" (or phone "None")])
     (when (:status fields) [components/view-field "Status:" (or job-seeking-status "None")])
-    (when (:traits fields) [components/view-field "company-traits" "Company traits:" (itemize company-perks :no-data-message "No perks selected.")])
     (when (:salary fields) [components/view-field "Expected salary:" salary])
     (when (:visa fields) [components/view-field "Visa status:" visa-status])
     (when (:remote fields) [components/view-field "Prefer remote working:" (if remote "Yes" "No")])
     (when (:preferred-types fields) [components/view-field "Preferred role types:" (itemize (map #(str/replace % #"_" " ") role-types) :no-data-message "None")])
     (when (:current-location fields) [components/view-field "Current location:" (or current-location "None")])
     (when (:preferred-locations fields) [components/view-field "Preferred locations:" (itemize preferred-locations :no-data-message "No locations selected.")])]])
+
+(defn edit-user-private-info-wrapper
+  [user-type opts]
+  [components/editable-section
+   {:editable? (owner? user-type)
+    :editing?  (<sub [::edit-private-subs/editing-profile?])
+    :on-edit   [::edit-private-events/open-form]
+    :read-body [edit-user-private-info user-type opts]
+    :edit-body [:<>
+                [components/title "Edit profile"]
+                [edit-private/profile-edit-inline]]}])
 
 (defn cover-letter-section-view-new
   [user-type {:keys [cover-letter-filename cover-letter-url]}]
@@ -604,8 +615,7 @@
 (defn main-view []
   (let [is-company?    (<sub [:user/company?])
         is-owner?      (<sub [::subs/owner?])
-        contributions? (boolean
-                         (<sub [::subs/contributions-collection]))]
+        contributions? (boolean (<sub [::subs/contributions-collection]))]
     [components/content
      [error-box]
      [edit-modal/profile-edit-modal]
@@ -617,7 +627,7 @@
                                 :issues-count   (<sub [::subs/issues-count])}]
      (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
      (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
-     (when-not is-company? [private-section-view-new :owner (<sub [::subs/private-data])])
+     (when-not is-company? [edit-user-private-info-wrapper :owner (<sub [::subs/private-data])])
      [components/section-skills {:type                   :private
                                  :skills                 (<sub [::subs/skills])
                                  :interests              (<sub [::subs/interests])
@@ -625,10 +635,11 @@
                                  :max-skills             profile/maximum-skills
                                  ;; Edit settings below this point
                                  :changes?               (<sub [::subs/edit-tech-changes?])
-                                 :on-edit                [::events/on-edit-tech]
+                                 :editing?               (<sub [::subs/editing-tech?])
+                                 :on-edit                [::events/toggle-edit-tech]
+                                 :on-cancel              [::events/toggle-edit-tech]
                                  :on-skill-rating-change [::events/on-skill-rating-change]
                                  :on-save                [::events/on-save-edit-tech]
-                                 :on-cancel              [::events/on-cancel-edit-tech]
                                  :skills-search          {:search-term  (<sub [::subs/skills-search])
                                                           :id           "profile-edit-tech-experience"
                                                           :placeholder  "Search and add up to 6 technologies"

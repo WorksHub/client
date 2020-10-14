@@ -32,7 +32,6 @@
    :profile                   {:page profile/view-page :can-access? db/logged-in?}
    :profile-edit-header       {:page profile/header-edit-page :can-access? db/logged-in?}
    :profile-edit-cv           {:page profile/cv-edit-page :can-access? db/logged-in?}
-   :profile-edit-private      {:page profile/private-edit-page :can-access? db/logged-in?}
    :profile-edit-company-user {:page profile/company-user-edit-page :can-access? db/logged-in?}})
 
 (reg-event-db

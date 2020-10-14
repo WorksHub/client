@@ -10,7 +10,6 @@
             [wh.components.icons :as icons]
             [wh.components.signin-buttons :as signin-buttons]
             [wh.components.tag :as tag]
-            [wh.interop.forms :as interop]
             [wh.logged-in.profile.components.contributions :as contributions]
             [wh.re-frame :as r]
             [wh.re-frame.events :refer [dispatch]]
@@ -331,26 +330,25 @@
        :else                       [add-skills-cta])]))
 
 (defn edit-button
-  [editing-atom on-edit-event]
+  [editing? on-edit-event]
   [:div (util/smc styles/edit styles/edit__button)
    [icons/icon "pen"
-    :class (util/mc styles/edit__button-icon [@editing-atom styles/edit__button-icon--editing])
+    :class (util/mc styles/edit__button-icon [editing? styles/edit__button-icon--editing])
     :on-click (fn [_]
-                (swap! editing-atom not)
                 (when on-edit-event
-                  (dispatch (conj on-edit-event @editing-atom))))]])
+                  (dispatch on-edit-event)))]])
 
 (defn editable-section
-  [{:keys [editable? on-edit read-body edit-body editing-atom anchor]}]
-  [:div (util/smc styles/editable-section [@editing-atom styles/editable-section--editing])
+  [{:keys [editable? on-edit read-body edit-body editing? anchor]}]
+  [:div (util/smc styles/editable-section [editing? styles/editable-section--editing])
    [section
     (when anchor
       [internal-anchor anchor])
-    (if @editing-atom
+    (if editing?
       edit-body
       read-body)
-    (when (and editable? (not @editing-atom))
-      [edit-button editing-atom on-edit])]])
+    (when (and editable? (not editing?))
+      [edit-button editing? on-edit])]])
 
 (defn rating->percentage
   ([r]
@@ -475,50 +473,45 @@
 (defn confirm-save!
   []
   #?(:cljs (js/confirm "Are you sure you want to discard unsaved changes?")
-     :clj false))
+     :clj  false))
 
-(defn section-skills [_opts]
-  (let [editing? (r/atom false)]
-    (fn [{:keys [skills interests type query-params on-edit on-cancel on-save changes?] :as opts}]
-      (let [public?      (= type :public)
-            skills?      (seq skills)
-            interests?   (seq interests)
-            on-save-fn   #(do (reset! editing? false)
-                              (scroll-to-skills)
-                              (when on-save (dispatch on-save)))
-            on-cancel-fn #(do (when (or (not changes?)
-                                        (confirm-save!))
-                                (reset! editing? false)
-                                (scroll-to-skills)
-                                (when on-cancel (dispatch on-cancel))))]
-        [editable-section
-         {:editable?    (not public?)
-          :editing-atom editing?
-          :anchor       "skills"
-          :on-edit      on-edit
-          :read-body    [:<>
-                         [:div (util/smc styles/skills__top)
-                          [title "Technologies"]]
-                         [:div (util/smc styles/skills__content)
-                          (if skills?
-                            [experience skills (:max-skills opts)]
-                            [:p "This person has not selected any skills yet!"])
-                          (when interests?
-                            [display-interests interests])]]
-          :edit-body    [:<>
-                         [title "Tech experience and interests"]
-                         [:p (util/smc styles/skills__paragraph)
-                          "This is a key part of your profile. List out your tech experience and give companies an insight into what else interests you in a role."]
-                         [edit-tech (assoc opts
-                                           :on-cancel on-cancel-fn
-                                           :on-save on-save-fn)]]}]))))
+(defn section-skills [{:keys [skills interests type on-edit on-cancel on-save editing? changes?] :as opts}]
+  (let [public? (= type :public)
+        skills? (seq skills)
+        interests? (seq interests)
+        on-save-fn #(do (scroll-to-skills)
+                        (when on-save (dispatch on-save)))
+        on-cancel-fn #(do (when (or (not changes?) (confirm-save!))
+                            (scroll-to-skills)
+                            (when on-cancel (dispatch on-cancel))))]
+    [editable-section
+     {:editable? (not public?)
+      :editing?  editing?
+      :anchor    "skills"
+      :on-edit   on-edit
+      :read-body [:<>
+                  [:div (util/smc styles/skills__top)
+                   [title "Technologies"]]
+                  [:div (util/smc styles/skills__content)
+                   (if skills?
+                     [experience skills (:max-skills opts)]
+                     [:p "This person has not selected any skills yet!"])
+                   (when interests?
+                     [display-interests interests])]]
+      :edit-body [:<>
+                  [title "Tech experience and interests"]
+                  [:p (util/smc styles/skills__paragraph)
+                   "This is a key part of your profile. List out your tech experience and give companies an insight into what else interests you in a role."]
+                  [edit-tech (assoc opts
+                               :on-cancel on-cancel-fn
+                               :on-save on-save-fn)]]}]))
 
 ;; articles ----------------------------------------------------------
 
 (defn section-articles [articles type]
   (let [public? (= type :public)
         message (if public? "User hasn't written any articles yet. "
-                    "You haven't written any articles yet.")]
+                            "You haven't written any articles yet.")]
     [section
      [internal-anchor "articles"]
      [title "Articles"]
@@ -540,7 +533,7 @@
 (defn section-issues [issues type]
   (let [public? (= type :public)
         message (if public? "User hasn't started working on any issue yet. "
-                    "You haven't started working on any issue yet")]
+                            "You haven't started working on any issue yet")]
     [section
      [internal-anchor "issues"]
      [title "Open Source Issues"]

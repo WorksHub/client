@@ -749,24 +749,19 @@
           (assoc ::profile/edit-tech-changes? true)))))
 
 (reg-event-db
-  ::on-edit-tech
-  profile-interceptors
-  (fn [profile [editing?]]
-    ;; sync existing skills and interests with 'selected'
-    (if editing?
-      (-> profile
-          (assoc ::profile/selected-skills (map #(assoc (:tag %)
-                                                        :selected true
-                                                        :rating (:rating %)) (::profile/skills profile)))
-          (assoc ::profile/selected-interests (map #(assoc % :selected true) (::profile/interests profile)))
-          (assoc ::profile/edit-tech-changes? false))
-      profile)))
-
-(reg-event-db
-  ::on-cancel-edit-tech
+  ::toggle-edit-tech
   profile-interceptors
   (fn [profile _]
-    profile))
+    ;; sync existing skills and interests with 'selected'
+    (if (::profile/editing-tech? profile)
+      (assoc profile ::profile/editing-tech? false)
+      (assoc profile
+        ::profile/selected-skills (map #(assoc (:tag %)
+                                          :selected true
+                                          :rating (:rating %)) (::profile/skills profile))
+        ::profile/selected-interests (map #(assoc % :selected true) (::profile/interests profile))
+        ::profile/edit-tech-changes? false
+        ::profile/editing-tech? true))))
 
 (defn skill->skill-input
   [{:keys [rating label id]}]
@@ -797,7 +792,8 @@
        ;; optimistic update
        :db       (-> db
                      (assoc-in [::profile/sub-db ::profile/interests] interests)
-                     (assoc-in [::profile/sub-db ::profile/skills] (map clean-skill skills)))
+                     (assoc-in [::profile/sub-db ::profile/skills] (map clean-skill skills))
+                     (assoc-in [::profile/sub-db ::profile/editing-tech?] false))
        :dispatch [:error/close-global]})))
 
 (reg-event-fx
