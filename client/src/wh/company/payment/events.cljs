@@ -1,34 +1,41 @@
 (ns wh.company.payment.events
-  (:require
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.common.cases :as cases]
-    [wh.company.payment.db :as payment]
-    [wh.company.payment.subs :as subs]
-    [wh.db :as db]
-    [wh.graphql.company :refer [company-query
-                                job-query update-company-mutation
-                                update-job-mutation]]
-    [wh.job.db :as job]
-    [wh.job.events :refer [process-publish-role-intention]]
-    [wh.pages.core :as pages :refer [on-page-load force-scroll-to-top!]]
-    [wh.user.db :as user]
-    [wh.util :as util])
-  (:require-macros
-    [wh.graphql-macros :refer [defquery]]))
+  (:require [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.common.cases :as cases]
+            [wh.common.specs.company :as company-spec]
+            [wh.company.payment.db :as payment]
+            [wh.company.payment.subs :as subs]
+            [wh.db :as db]
+            [wh.graphql.company :refer [company-query
+                                        job-query update-company-mutation
+                                        update-job-mutation]]
+            [wh.job.db :as job]
+            [wh.job.events :refer [process-publish-role-intention]]
+            [wh.pages.core :as pages :refer [on-page-load force-scroll-to-top!]]
+            [wh.user.db :as user]
+            [wh.util :as util])
+  (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (def payment-interceptors (into db/default-interceptors
                                 [(path ::payment/sub-db)]))
 
 (def job-fields [:id :slug :title :verticals :valid])
 
-(def company-fields [:id :name :package :permissions :disabled :freeTrialStarted :slug
-                     [:jobs {:pageSize 5 :pageNumber 1 :published false}
-                      [[:jobs [:id :title :published]]]]
-                     [:nextInvoice [:amount [:coupon [:discountAmount :discountPercentage :duration :description]]]]
-                     [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]
-                                [:coupon [:discountAmount :discountPercentage :duration :description]]]]
-                     [:offer [:recurringFee :placementPercentage :acceptedAt]]
-                     [:pendingOffer [:recurringFee :placementPercentage]]])
+(def company-fields
+  [:id :name :package :permissions :disabled
+   :freeTrialStarted :slug :jobQuota
+   [:jobs {:pageSize 5 :pageNumber 1 :published false}
+    [[:jobs [:id :title :published]]]]
+
+   [:nextInvoice
+    [:amount [:coupon [:discountAmount :discountPercentage :duration :description]]]]
+
+   [:payment
+    [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]
+     [:coupon [:discountAmount :discountPercentage :duration :description]]]]
+
+   [:offer [:recurringFee :placementPercentage :acceptedAt]]
+
+   [:pendingOffer [:recurringFee :placementPercentage]]])
 
 (def update-company-mutation+
   (update-in update-company-mutation [:venia/queries 0] assoc 2 company-fields))
@@ -115,9 +122,15 @@
   db/default-interceptors
   (fn [{db :db} _]
     (when-not (= :free (subs/company-package db))
-      (let [package (subs/package db)
+      (let [package        (subs/package db)
             billing-period (subs/billing-period db)]
-        {:graphql {:query {:venia/queries [[:estimate_subscription_change {:package package} [:description :amount :proration [:period [:start]]]]]}
+        {:graphql {:query
+                   {:venia/queries [[:estimate_subscription_change
+                                     {:package  package
+                                      ;; TODO: send number of jobs chosen by user. CH4731
+                                      :jobQuota company-spec/max-job-quota}
+                                     [:description :amount :proration
+                                      [:period [:start]]]]]}
                    :on-success [::estimate-subscription-change-success]
                    :on-failure [::estimate-subscription-change-failure]}}))))
 
@@ -139,33 +152,37 @@
 (defmethod progress-payment-setup
   :select-package
   [_ db {:keys [package billing-period]}]
-  (merge {:navigate [:payment-setup
-                     :query-params (cond-> (::db/query-params db)
-                                     package        (assoc "package" (name package))
-                                     billing-period (assoc "billing" (name billing-period)))
-                     :params {:step :pay-confirm}]}))
+  (merge {:navigate
+          [:payment-setup
+           :query-params (cond-> (::db/query-params db)
+                                 package        (assoc "package" (name package))
+                                 billing-period (assoc "billing" (name billing-period)))
+           :params {:step :pay-confirm}]}))
 
 (defmethod progress-payment-setup
   :pay-confirm
   [_ db args]
-  {:graphql {:query      update-company-mutation+
-             :variables  {:update_company
-                          (merge {:id (subs/company-id db)}
-                                 (when-let [p (subs/package db)]
-                                   (merge {:package p}
-                                          (when (get-in db [::payment/sub-db
-                                                            ::payment/company
-                                                            :pending-offer])
-                                            {:acceptOffer true})))
-                                 (when-let [bp (subs/billing-period db)]
-                                   {:billingPeriod bp})
-                                 (when-let [coupon (get-in db [::payment/sub-db ::payment/current-coupon])]
-                                   {:couponCode (:code coupon)})
-                                 (when-let [token (get-in db [::payment/sub-db ::payment/token])]
-                                   {:paymentToken  token}))}
-             :timeout 25000 ;; 25s timeout just for this one, in case Stripe is slow
-             :on-success [::update-company-success (subs/job-id db) (subs/action db)]
-             :on-failure [::update-company-failure]}})
+  {:graphql
+   {:query      update-company-mutation+
+    :variables  {:update_company
+                 (merge {:id       (subs/company-id db)
+                         ;; TODO: send number of jobs chosen by user. CH4731
+                         :jobQuota company-spec/max-job-quota}
+                        (when-let [p (subs/package db)]
+                          (merge {:package p}
+                                 (when (get-in db [::payment/sub-db
+                                                   ::payment/company
+                                                   :pending-offer])
+                                   {:acceptOffer true})))
+                        (when-let [bp (subs/billing-period db)]
+                          {:billingPeriod bp})
+                        (when-let [coupon (get-in db [::payment/sub-db ::payment/current-coupon])]
+                          {:couponCode (:code coupon)})
+                        (when-let [token (get-in db [::payment/sub-db ::payment/token])]
+                          {:paymentToken token}))}
+    :timeout    25000 ;; 25s timeout just for this one, in case Stripe is slow
+    :on-success [::update-company-success (subs/job-id db) (subs/action db)]
+    :on-failure [::update-company-failure]}})
 
 (reg-event-fx
   ::update-company-success

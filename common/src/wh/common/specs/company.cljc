@@ -1,10 +1,9 @@
 (ns wh.common.specs.company
-  (:require
-    [#?(:clj clojure.spec.alpha
-        :cljs cljs.spec.alpha) :as s]
-    [wh.common.specs.date]
-    [wh.common.specs.primitives :as p]
-    [wh.common.specs.tags]))
+  (:require [#?(:clj clojure.spec.alpha
+                :cljs cljs.spec.alpha) :as s]
+            [wh.common.specs.date]
+            [wh.common.specs.primitives :as p]
+            [wh.common.specs.tags]))
 
 (def description-placeholder "Please enter a valid description for your company")
 
@@ -115,3 +114,13 @@
                                                 :wh/tags
                                                 :wh.company/total-published-issue-count
                                                 :wh.company/total-published-job-count]))
+
+(def min-job-quota 1)
+(def max-job-quota 999)
+;; Amount of jobs that company can create/publish
+;; We market some of our packages as giving unlimited jobs, but in backend
+;; we represent unlimited as 999 to avoid spoiling this spec and app logic
+;; with 'infinity' concept
+(s/def :wh.company/job-quota
+  (s/int-in min-job-quota (inc max-job-quota)))
+

@@ -1,10 +1,9 @@
 (ns wh.company.payment.db
-  (:require
-    [cljs.spec.alpha :as s]
-    [wh.common.specs.payment]
-    [wh.common.specs.primitives :as primitives]
-    [wh.db :as db]
-    [wh.user.db :as user]))
+  (:require [cljs.spec.alpha :as s]
+            [wh.common.specs.payment]
+            [wh.common.specs.primitives :as primitives]
+            [wh.db :as db]
+            [wh.user.db :as user]))
 
 (s/def ::step #{:select-package :pay-confirm :pay-success})
 (s/def ::action #{:publish :applications :integrations})
@@ -31,15 +30,15 @@
 (s/def ::job-states (s/map-of string? ::job-state))
 
 (def default-db
-  {::token  nil
-   ::error nil
-   ::error-message nil
+  {::token                     nil
+   ::error                     nil
+   ::error-message             nil
    ::stripe-card-form-enabled? true
-   ::stripe-card-form-error nil
-   ::estimate nil
-   ::waiting? false
-   ::coupon-loading? false
-   ::coupon-error nil
-   ::coupon-code ""
-   ::current-coupon nil
-   ::job-states {}})
+   ::stripe-card-form-error    nil
+   ::estimate                  nil
+   ::waiting?                  false
+   ::coupon-loading?           false
+   ::coupon-error              nil
+   ::coupon-code               ""
+   ::current-coupon            nil
+   ::job-states                {}})
