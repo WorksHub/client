@@ -17,8 +17,8 @@ $font-family: Montserrat, serif
   margin: 0 auto
   display: flex
   align-items: center
-  height: $header-height-desktop
   padding: 0 20px 0 0
+  height: var(--header-height)
 
   &__wrapper
     background-color: $background-white
@@ -137,9 +137,10 @@ $font-family: Montserrat, serif
     position: relative
     flex-direction: column
     display: none
+    padding-top: 16px
     background-color: $background-white
     border-top: 1px solid $grey200
-    max-height: calc(100vh - #{$header-height-desktop})
+    max-height: calc(100vh - var(--header-height))
     overflow-y: auto
     +desktop
       display: none!important
@@ -416,8 +417,11 @@ $font-family: Montserrat, serif
       background-color: $grey100
 
   &__icon
-    width: 36px
-    height: 36px
+    width: 30px
+    height: 30px
+    +tablet
+      width: 36px
+      height: 36px
 
 .toggle-navigation
   padding: 8px
