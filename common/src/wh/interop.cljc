@@ -65,6 +65,10 @@
         r (when redirect (pr-str redirect))]
     (jsf (showAuthPopUp c r))))
 
+(defn save-redirect
+  [redirect]
+  (jsf (saveRedirect (pr-str redirect))))
+
 (defn hide-auth-popup
   []
   (jsf (hideAuthPopUp)))

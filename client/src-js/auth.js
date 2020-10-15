@@ -43,8 +43,12 @@ function showMessage(context) {
     }
 }
 
-function showAuthPopUp(context, redirect) {
+function saveRedirect(redirect) {
     customLocalStorage.setItem(lsKey.redirect, redirect, fiveMinutes);
+}
+
+function showAuthPopUp(context, redirect) {
+    saveRedirect(redirect)
     showMessage(context);
     setClass(id.authPopup, cls.isOpen, true);
     setNoScroll(id.authPopup, true);
@@ -59,6 +63,7 @@ function popAuthRedirect() {
     return customLocalStorage.getItem(lsKey.redirect);
 }
 
+window.saveRedirect = saveRedirect;
 window.hideAuthPopUp = hideAuthPopUp;
 window.showAuthPopUp = showAuthPopUp;
 window.popAuthRedirect = popAuthRedirect;

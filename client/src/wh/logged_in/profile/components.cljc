@@ -10,6 +10,7 @@
             [wh.components.icons :as icons]
             [wh.components.signin-buttons :as signin-buttons]
             [wh.components.tag :as tag]
+            [wh.interop :as interop]
             [wh.logged-in.profile.components.contributions :as contributions]
             [wh.re-frame :as r]
             [wh.re-frame.events :refer [dispatch]]
@@ -21,10 +22,11 @@
 (defn container [& elms]
   (into [:div {:class styles/container}] elms))
 
-(defn meta-row [{:keys [text icon href new-tab? social-provider]}]
+(defn meta-row [{:keys [text icon href new-tab? on-click social-provider]}]
   [:a (cond-> {:class (util/mc styles/meta-row
                                [(= social-provider :stackoverflow) styles/meta-row--stackoverflow]
                                [(= social-provider :twitter) styles/meta-row--twitter])}
+              on-click (merge (interop/on-click-fn on-click))
               href     (assoc :href href)
               new-tab? (merge {:target "_blank"
                                :rel    "noopener"}))
@@ -41,6 +43,7 @@
       (when-not public?
         [meta-row {:text            (str "Connect " (str/capitalize (name social-provider)))
                    :icon            (name social-provider)
+                   :on-click        (interop/save-redirect [:profile])
                    :href            (signin-buttons/type->href social-provider)
                    :social-provider social-provider}]))))
 
