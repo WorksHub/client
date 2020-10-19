@@ -785,3 +785,8 @@
   (str "Hire " market " using your open source code"))
 
 (def logged-in-menu-id "logged-in-menu")
+
+(def uk-address "81 Rivington Street, London, EC2A 3AY")
+(def uk-address-maps-link "https://goo.gl/maps/EsxvKXSbdTL35uxc6")
+(def us-address "108 E 16th Street, New York, NY 10003")
+(def us-address-maps-link "https://goo.gl/maps/aymEPiDebYS2")

@@ -1,6 +1,5 @@
 (ns wh.components.footer
   (:require
-    [clojure.string :as str]
     [wh.common.data :as data]
     [wh.components.icons :refer [icon]]
     [wh.routes :as routes]
@@ -146,14 +145,16 @@
        "WorksHub"]]
      [:div.footer__info__contact
       [:div [:span "\uD83D\uDCE7"] [:span [:a {:href "mailto:hello@works-hub.com"} "hello@works-hub.com"]]]
-      [:div [:span "\uD83C\uDDEC\uD83C\uDDE7"] [:span [:a {:href   "https://goo.gl/maps/U8zoGSJ17wQ2"
-                                                           :target "_blank"
-                                                           :rel    "noopener"}
-                                                       "36 New Inn Yard, London, EC2A 3EY"]]]
-      [:div [:span "\uD83C\uDDFA\uD83C\uDDF8"] [:span [:a {:href   "https://goo.gl/maps/aymEPiDebYS2"
-                                                           :target "_blank"
-                                                           :rel    "noopener"}
-                                                       "108 E 16th Street, New York, NY 10003"]]]]]
+      [:div [:span "\uD83C\uDDEC\uD83C\uDDE7"] [:span {:data-test "uk-address"}
+                                                [:a {:href   data/uk-address-maps-link
+                                                     :target "_blank"
+                                                     :rel    "noopener"}
+                                                 data/uk-address]]]
+      [:div [:span "\uD83C\uDDFA\uD83C\uDDF8"] [:span {:data-test "us-address"}
+                                                [:a {:href   data/us-address-maps-link
+                                                     :target "_blank"
+                                                     :rel    "noopener"}
+                                                 data/us-address]]]]]
     [:div.footer__graphic
      [:img {:src "/images/homepage/footer.svg"
             :alt ""}]]]
