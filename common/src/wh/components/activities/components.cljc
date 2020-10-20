@@ -66,10 +66,10 @@
      [:p (description-class type) children])))
 
 (defn tag-component [tag]
-  (let [href (routes/path :pre-set-search :params {:tag (slug/slug (:slug tag))})
-        tag  (assoc tag :href href)
-        tag  (update tag :label str/lower-case)]
-    [tag/tag :a tag]))
+  (let [href (routes/path :search :query-params {:query (:slug tag)})]
+    [tag/tag :a (-> tag
+                    (assoc :href href)
+                    (update :label str/lower-case))]))
 
 (defn tags
   [tags]
