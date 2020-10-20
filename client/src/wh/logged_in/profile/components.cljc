@@ -435,7 +435,7 @@
    [:div (util/smc styles/edit-tech__description styles/edit-tech__offset)
     (str "Add up to "
          (:max-skills opts)
-         " technologies that you have the most experience with. What do you work with the most? What are you an expert in? Add your years of experience using the slider.")]
+         " skills that you have the most experience with. What do you work with the most? What are you an expert in? Add your years of experience using the slider.")]
    [:div (util/smc styles/edit-tech__offset 'wh-formx)
     #?(:cljs [tags-field
               (:search-term (:skills-search opts))
@@ -447,8 +447,7 @@
    [:div (util/smc styles/edit-tech__number) 2]
    [:div (util/smc styles/edit-tech__title) "Interests"]
    [:div (util/smc styles/edit-tech__description styles/edit-tech__offset)
-    "Tell potential employers about your other interests. What is it you’re looking for in your next role? What area of tech would you like to work? And what technologies are you currently learning? Search and add them here
-"]
+    "Tell potential employers about your other interests. What is it you’re looking for in your next role? What kinds of tech would you like to work with? What skills are you currently learning? Search and add them here."]
    [:div (util/smc styles/edit-tech__offset 'wh-formx)
     #?(:cljs [tags-field
               (:search-term (:interests-search opts))
@@ -479,11 +478,11 @@
      :clj  false))
 
 (defn section-skills [{:keys [skills interests type on-edit on-cancel on-save editing? changes?] :as opts}]
-  (let [public? (= type :public)
-        skills? (seq skills)
-        interests? (seq interests)
-        on-save-fn #(do (scroll-to-skills)
-                        (when on-save (dispatch on-save)))
+  (let [public?      (= type :public)
+        skills?      (seq skills)
+        interests?   (seq interests)
+        on-save-fn   #(do (scroll-to-skills)
+                          (when on-save (dispatch on-save)))
         on-cancel-fn #(do (when (or (not changes?) (confirm-save!))
                             (scroll-to-skills)
                             (when on-cancel (dispatch on-cancel))))]
@@ -494,7 +493,7 @@
       :on-edit   on-edit
       :read-body [:<>
                   [:div (util/smc styles/skills__top)
-                   [title "Technologies"]]
+                   [title "Skills"]]
                   [:div (util/smc styles/skills__content)
                    (if skills?
                      [experience skills (:max-skills opts)]
@@ -502,12 +501,12 @@
                    (when interests?
                      [display-interests interests])]]
       :edit-body [:<>
-                  [title "Tech experience and interests"]
+                  [title "Experience and interests"]
                   [:p (util/smc styles/skills__paragraph)
-                   "This is a key part of your profile. List out your tech experience and give companies an insight into what else interests you in a role."]
+                   "This is a key part of your profile. List out your skills and experience, and give companies an insight into what else interests you in a role."]
                   [edit-tech (assoc opts
-                               :on-cancel on-cancel-fn
-                               :on-save on-save-fn)]]}]))
+                                    :on-cancel on-cancel-fn
+                                    :on-save on-save-fn)]]}]))
 
 ;; articles ----------------------------------------------------------
 
