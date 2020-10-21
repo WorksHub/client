@@ -511,9 +511,10 @@
 
 @mixin range-input-thumb-style
   border: 3px solid $primary-red
+  box-sizing: border-box
   height: 18px
   width: 18px
-  border-radius: 18px
+  border-radius: 50%
   background: $white
   cursor: pointer
 
@@ -522,50 +523,25 @@
   display: grid
   grid-template-rows: auto 18px
   margin-left: 18px
-  &__input-parent
-    position: relative
-  &__bg
-    background: $highlight-red
-    height: 2px
-    border-radius: 4px
+  &__text
     width: 100%
-    margin-top: 7px
-  &__fill
+  &__input
+    width: 100%
+    cursor: pointer
+    appearance: none
     background: $primary-red
-    height: 2px
+    outline: none
+    opacity: 0.85
+    transition: opacity .2s
+    height: 3px
     border-radius: 4px
-    width: 100%
-    position: absolute
-    top: 7px
-  &__text,
-  &__input
-    width: 100%
-  &__input
-    position: absolute
-    top: 17px
-    z-index: 1
-    -webkit-appearance: none
-    background: transparent
     &::-webkit-slider-thumb
       -webkit-appearance: none
       @include range-input-thumb-style
-      margin-top: -18px /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
     &::-moz-range-thumb
       @include range-input-thumb-style
-    &::-webkit-slider-runnable-track
-      background: transparent
-      border-color: transparent
-      color: transparent
-    &:focus::-webkit-slider-runnable-track
-      background: transparent
-      border-color: transparent
-      color: transparent
-    &::-moz-range-track
-      background: transparent
-      border-color: transparent
-      color: transparent
-    &:focus
-      outline: none
+    &:hover
+      opacity: 1
 
 .github-contributions-container
   grid-row: 1/3

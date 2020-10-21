@@ -379,21 +379,16 @@
 
 (defn experience-slider
   [label rating on-change-event]
-  (let [width (rating->percentage (dec rating) 11)]
-    [:div (util/smc styles/experience-slider)
-     [:div (util/smc styles/experience-slider__text)
-      [experience-text label rating]]
-     [:div (util/smc styles/experience-slider__input-parent)
-      [:div {:class (util/mc styles/experience-slider__bg)}]
-      [:div {:class (util/mc styles/experience-slider__fill)
-             :style {:width (str width "%")}}]
-      [:input {:type      "range"
-               :min       0
-               :max       11
-               :step      1
-               :value     rating
-               :class     styles/experience-slider__input
-               :on-change #(dispatch (conj on-change-event (.. % -target -value)))}]]]))
+  [:div (util/smc styles/experience-slider)
+   [:div (util/smc styles/experience-slider__text)
+    [experience-text label rating]]
+   [:input {:type      "range"
+            :min       0
+            :max       11
+            :step      1
+            :value     rating
+            :class     styles/experience-slider__input
+            :on-change #(dispatch (conj on-change-event (.. % -target -value)))}]])
 
 (defn experience
   [skills max-skills]
