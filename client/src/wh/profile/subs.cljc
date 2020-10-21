@@ -52,23 +52,29 @@
 (reg-sub
   ::social
   :<- [::profile]
-  (fn [profile [_ type]]
-    (->> profile
-         :other-urls
-         url/detect-urls-type
-         (some #(when (= type (:type %)) %)))))
+  :<- [::profile-hidden?]
+  (fn [[profile hidden?] [_ type]]
+    (when-not hidden?
+      (->> profile
+           :other-urls
+           url/detect-urls-type
+           (some #(when (= type (:type %)) %))))))
 
 (reg-sub
   ::last-seen
   :<- [::profile]
-  (fn [profile _]
-    (:last-seen profile)))
+  :<- [::profile-hidden?]
+  (fn [[profile hidden?] _]
+    (when-not hidden?
+      (:last-seen profile))))
 
 (reg-sub
   ::updated
   :<- [::profile]
-  (fn [profile _]
-    (:updated profile)))
+  :<- [::profile-hidden?]
+  (fn [[profile hidden?] _]
+    (when-not hidden?
+      (:updated profile))))
 
 (reg-sub
   ::percentile
