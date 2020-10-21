@@ -22,7 +22,8 @@
                :data-test   "email"
                :label       "Email"
                :value       (<sub [::subs/email])
-               :on-change   #(dispatch-sync [::events/set-email (-> % .-target .-value)])}])
+               :on-change   #(dispatch-sync [::events/set-email (-> % .-target .-value)])
+               :autoFocus   true}])
 
 (defn form-signin []
   [auth/form
