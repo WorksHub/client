@@ -115,6 +115,21 @@
     (user-common/company? db) (get-in db [::user/sub-db ::user/company-id])
     (user-common/admin? db) (get-in db [::db/page-params :id])))
 
+(reg-event-db
+  ::fetch-permissions-success
+  (fn [db [_ {{:keys [me]} :data}]]
+    (let [permissions (get-in me [:company :permissions])]
+      (assoc-in db [::user/sub-db ::user/company :permissions] permissions))))
+
+(reg-event-fx
+  ::fetch-permissions
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [id (user-common/user-id db)]
+      {:graphql {:query      user-common/permissions-query
+                 :variables  {:user_id id}
+                 :on-success [::fetch-permissions-success]}})))
+
 (reg-event-fx
   ::fetch-company
   db/default-interceptors
@@ -155,8 +170,8 @@
                            (update :size keyword)
                            (update :permissions #(set (map keyword %)))
                            (update :tags #(map (fn [tag] (-> tag
-                                                             (update :type keyword)
-                                                             (assoc :weight 0.0))) %)))
+                                                            (update :type keyword)
+                                                            (assoc :weight 0.0))) %)))
                company-db (as-> company x
                                 (keywords/namespace-map (namespace `::sub-db/x) x)
                                 (assoc x ::sub-db/stats (get-in resp [:data :job_analytics]))
@@ -177,10 +192,10 @@
      :dispatch-n (or (some-> (get-in db [:wh.db/query-params "events"]) base64/decodeString reader/read-string) [])}))
 
 (reg-event-db
- ::fetch-company-failure
- company-interceptors
- (fn [db data]
-   (assoc db ::sub-db/error :failed-to-fetch-company)))
+  ::fetch-company-failure
+  company-interceptors
+  (fn [db data]
+    (assoc db ::sub-db/error :failed-to-fetch-company)))
 
 (reg-event-fx
   ::scroll-to-job
@@ -202,13 +217,14 @@
                          :dispatch [::scroll-to-job (str "dashboard__job-card__" job-id)]
                          :timeout  300}}))
 
-(reg-event-db
+(reg-event-fx
   ::publish-job-success
   company-interceptors
-  (fn [db [job-id]]
-    (-> db
-        (update ::sub-db/publishing-jobs (comp #(disj % job-id) set))
-        (update ::sub-db/publish-celebrations (comp #(conj % job-id) set)))))
+  (fn [{db :db} [job-id]]
+    {:db (-> db
+             (update ::sub-db/publishing-jobs (comp #(disj % job-id) set))
+             (update ::sub-db/publish-celebrations (comp #(conj % job-id) set)))
+     :dispatch [::fetch-permissions]}))
 
 (reg-event-db
   ::publish-job-failure
@@ -220,17 +236,19 @@
   ::publish-role
   db/default-interceptors
   (fn [{db :db} [job-id]]
-    (let [perms (get-in db [::sub-db/sub-db ::sub-db/permissions])
+    (let [perms         (get-in db [::sub-db/sub-db ::sub-db/permissions])
           pending-offer (get-in db [::sub-db/sub-db ::sub-db/pending-offer])]
       (process-publish-role-intention
-       {:db db
-        :job-id job-id
-        :permissions perms
-        :pending-offer pending-offer
-        :publish-events {:success [::publish-job-success job-id]
-                         :failure [::publish-job-failure job-id]
-                         :retry   [::publish-role job-id]}
-        :on-publish (fn [db] (update-in db [::sub-db/sub-db ::sub-db/publishing-jobs] (comp #(conj % job-id) set)))}))))
+        {:db             db
+         :job-id         job-id
+         :permissions    perms
+         :pending-offer  pending-offer
+         :publish-events {:success [::publish-job-success job-id]
+                          :failure [::publish-job-failure job-id]
+                          :retry   [::publish-role job-id]}
+         :on-publish     (fn [db]
+                           (update-in db [::sub-db/sub-db ::sub-db/publishing-jobs]
+                                      (comp #(conj % job-id) set)))}))))
 
 (reg-event-fx
   ::update-company

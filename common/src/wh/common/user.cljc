@@ -1,7 +1,9 @@
 (ns wh.common.user
   (:require [clojure.string :as str]
             [wh.common.keywords :as keywords]
-            [wh.util :as util]))
+            [wh.util :as util])
+  (#?(:clj :require :cljs :require-macros)
+    [wh.graphql-macros :refer [defquery]]))
 
 (defn absolute-image-url [image-url]
   (if (and (not (str/blank? image-url))
@@ -86,3 +88,13 @@
 
 (defn admin? [db]
   (admin-type? (get-in db [:wh.user.db/sub-db :wh.user.db/type])))
+
+(defn user-id
+  [db]
+  (get-in db [:wh.user.db/sub-db :wh.user.db/id]))
+
+(defquery permissions-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "profile"}
+   :venia/variables [{:variable/name "user_id" :variable/type :ID}]
+   :venia/queries   [[:me [[:company [:permissions]]]]]})

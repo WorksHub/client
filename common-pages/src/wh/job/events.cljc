@@ -220,7 +220,9 @@
     {:db (assoc db
                 ::job/publishing? false
                 ::job/published true)
-     :dispatch [:success/set-global (str "Congratulations! Your role '" (::job/title db)"' is now live!")]}))
+     :dispatch-n [[:success/set-global
+                   (str "Congratulations! Your role '" (::job/title db)"' is now live!")]
+                  [::fetch-permissions]]}))
 
 (reg-event-db
   ::publish-job-failure
@@ -295,6 +297,23 @@
 
        :else
        (navigate-to-payment-setup job-id))))
+
+(reg-event-fx
+  ::fetch-permissions
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [id (user-common/user-id db)]
+      {:graphql {:query      user-common/permissions-query
+                 :variables  {:user_id id}
+                 :on-success [::fetch-permissions-success]}})))
+
+(reg-event-db
+  ::fetch-permissions-success
+  (fn [db [_ {{:keys [me]} :data}]]
+    (let [permissions (get-in me [:company :permissions])]
+      (-> db
+          (assoc-in [:wh.user.db/sub-db :wh.user.db/company :permissions] permissions)
+          (assoc-in [:wh.job.db/sub-db :wh.job.db/company :permissions] permissions)))))
 
 (reg-event-fx
   ::publish-role
