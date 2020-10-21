@@ -456,3 +456,17 @@
   ::can-edit-jobs?
   (fn [db _]
     (job/can-edit-jobs? db)))
+
+(reg-sub
+  ::adzuna-tracking-url
+  :<- [::sub-db]
+  :<- [:wh/env]
+  (fn [[{:keys [::job/location]} env] _]
+    (when (= :prod env)
+      (when-let [country (:country location)]
+        (cond
+          (or (str/includes? country "UK")
+              (str/includes? country "United Kingdom")) "https://www.adzuna.co.uk/app_complete/7616"
+          (or (str/includes? country "USA")
+              (str/includes? country "United States of America")
+              (str/includes? country "United States"))  "https://www.adzuna.co.uk/app_complete/7615")))))

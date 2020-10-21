@@ -553,4 +553,7 @@
       (<sub [::subs/company-id])
       nil])
    ;; TODO add script for SSR version to detect `apply=true` and trigger auth popup
-   [:script (interop/set-class-on-scroll "job__apply-sticky" "sticky--shown" 160)]])
+   [:script (interop/set-class-on-scroll "job__apply-sticky" "sticky--shown" 160)]
+   ;; tracking pixels
+   (when-let [adzuna-tracking-url (<sub [::subs/adzuna-tracking-url])]
+     [:iframe {:src adzuna-tracking-url :scrolling "no" :frameborder "0" :width "1" :height "1"}])])
