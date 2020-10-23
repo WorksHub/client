@@ -47,3 +47,4 @@ import './modal.sass';
 import './form.sass';
 import './banner.sass';
 import './tasks.sass';
+import './payment.sass';

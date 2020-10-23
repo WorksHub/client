@@ -48,6 +48,8 @@
 
 (defn calculate-next-charge-from-invoice
   [{:keys [amount]} number cost discount coupon]
-  (let [cost-minus-next (* (dec number) (calculate-monthly-cost cost discount coupon))
-        cost-next (calculate-monthly-cost (/ amount 100) discount coupon)]
+  (let [cost-minus-next (* (dec number)
+                           (calculate-monthly-cost cost discount coupon))
+        cost-next (calculate-monthly-cost (/ amount 100)
+                                          discount coupon)]
     (+ cost-next cost-minus-next)))

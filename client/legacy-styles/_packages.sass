@@ -41,6 +41,7 @@
 .package-selector__column-inner
   padding: 38px 18px 18px 18px
   background-color: white
+  height: 100%
   +mobile
     margin-bottom: 40px
 
@@ -55,28 +56,6 @@
   width: 90px
   height: 90px
   margin: auto
-
-.package-selector__price
-  display: flex
-  flex-direction: column
-  color: $steel-gray
-  position: relative
-  max-width: 200px
-  margin: 0 auto
-  height: 50px
-
-.package-selector__amount
-  font-size: 18px
-  font-weight: $font-semi-bold
-  line-height: 22px
-  letter-spacing: 0.5px
-
-.package-selector__amount-per,
-.package-selector__amount-billed
-  height: 14px
-  font-size: 12px
-  line-height: 14px
-  font-style: italic
 
 .package-selector__current-plan
   text-transform: uppercase
@@ -97,21 +76,6 @@
   color: $greyish
   border: solid 1px $greyish
   pointer-events: none
-
-.package-selector__top-perks
-  margin-top: 16px
-  border-top: 1px solid $pale-gray
-  border-bottom: 1px solid $pale-gray
-  padding: 6px 0 10px 0
-  &__item
-    height: 26px
-    text-align: left
-    strong
-      color: $steel-gray
-      font-size: 12px
-      font-weight: $font-semi-bold
-      line-height: 14px
-      margin-right: 3px
 
 .package-selector__perks
   margin-top: 24px
@@ -149,8 +113,10 @@
 
 .package-selector__discount-badge
   position: absolute
-  right: 0
-  top: -10px
+  right: -15px
+  top: -20px
+  z-index: 1
+  background: $white
   text-transform: uppercase
   display: flex
   flex-direction: column

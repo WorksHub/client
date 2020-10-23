@@ -1,7 +1,7 @@
 (ns wh.company.payment.events
   (:require [re-frame.core :refer [path reg-event-db reg-event-fx]]
             [wh.common.cases :as cases]
-            [wh.common.specs.company :as company-spec]
+            [wh.common.data :as data]
             [wh.company.payment.db :as payment]
             [wh.company.payment.subs :as subs]
             [wh.db :as db]
@@ -127,8 +127,7 @@
         {:graphql {:query
                    {:venia/queries [[:estimate_subscription_change
                                      {:package  package
-                                      ;; TODO: send number of jobs chosen by user. CH4731
-                                      :jobQuota company-spec/max-job-quota}
+                                      :jobQuota data/max-job-quota}
                                      [:description :amount :proration
                                       [:period [:start]]]]]}
                    :on-success [::estimate-subscription-change-success]
@@ -151,23 +150,23 @@
 
 (defmethod progress-payment-setup
   :select-package
-  [_ db {:keys [package billing-period]}]
+  [_ db {:keys [package billing-period quantity]}]
   (merge {:navigate
           [:payment-setup
            :query-params (cond-> (::db/query-params db)
                                  package        (assoc "package" (name package))
+                                 quantity       (assoc "quantity" (str quantity))
                                  billing-period (assoc "billing" (name billing-period)))
            :params {:step :pay-confirm}]}))
 
 (defmethod progress-payment-setup
   :pay-confirm
-  [_ db args]
+  [_ db {:keys [job-quota] :as args}]
   {:graphql
    {:query      update-company-mutation+
     :variables  {:update_company
                  (merge {:id       (subs/company-id db)
-                         ;; TODO: send number of jobs chosen by user. CH4731
-                         :jobQuota company-spec/max-job-quota}
+                         :jobQuota job-quota}
                         (when-let [p (subs/package db)]
                           (merge {:package p}
                                  (when (get-in db [::payment/sub-db

@@ -98,3 +98,6 @@
                      :operation/name "profile"}
    :venia/variables [{:variable/name "user_id" :variable/type :ID}]
    :venia/queries   [[:me [[:company [:permissions]]]]]})
+
+(defn translate-permissions [permissions]
+  (into #{} (map keyword permissions)))

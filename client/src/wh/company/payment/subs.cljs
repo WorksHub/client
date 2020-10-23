@@ -27,6 +27,9 @@
 (defn billing-period [db]
   (some-> (get (::db/query-params db) "billing") keyword))
 
+(defn quantity [db]
+  (get (::db/query-params db) "quantity"))
+
 (reg-sub ::db (fn [db _] db))
 (reg-sub ::sub-db (fn [db _] (::payment/sub-db db)))
 
@@ -112,10 +115,10 @@
     (company-package db)))
 
 (reg-sub
- ::company-disabled?
- :<- [::sub-db]
- (fn [sub-db _]
-   (get-in sub-db [::payment/company :disabled])))
+  ::company-disabled?
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (get-in sub-db [::payment/company :disabled])))
 
 (reg-sub
   ::billing-period
@@ -126,6 +129,31 @@
   ::package
   (fn [db _]
     (package db)))
+
+(def id->quantity
+  {"one"       1
+   "two"       2
+   "unlimited" data/max-job-quota})
+
+(reg-sub
+  ::raw-quantity
+  (fn [db _]
+    (quantity db)))
+
+(reg-sub
+  ::quantity
+  :<- [::raw-quantity]
+  (fn [quantity _]
+    (get id->quantity quantity 1)))
+
+(reg-sub
+  ::chosen-quota
+  :<- [::current-package-data]
+  :<- [::raw-quantity]
+  (fn [[{:keys [job-quotas] :as package} quantity] _]
+    (->> job-quotas
+         (filter #(= (:id %) quantity))
+         first)))
 
 (reg-sub
   ::candidate-id

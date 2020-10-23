@@ -310,7 +310,8 @@
 (reg-event-db
   ::fetch-permissions-success
   (fn [db [_ {{:keys [me]} :data}]]
-    (let [permissions (get-in me [:company :permissions])]
+    (let [permissions (user-common/translate-permissions
+                        (get-in me [:company :permissions]))]
       (-> db
           (assoc-in [:wh.user.db/sub-db :wh.user.db/company :permissions] permissions)
           (assoc-in [:wh.job.db/sub-db :wh.job.db/company :permissions] permissions)))))

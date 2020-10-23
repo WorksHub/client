@@ -1,0 +1,81 @@
+@import 'mixins'
+
+.job-quota-list
+  height: 50px
+  position: relative
+  z-index: 1
+  &__arrow
+    fill: $grey300
+    position: absolute
+    top: 15px
+    width: 12px
+    right: 9px
+    z-index: 1
+  &__content
+    border: 1px solid $primary-red
+    border-radius: 4px
+    position: absolute
+    background: #fff
+    width: 100%
+    &--open
+      .job-quota
+        display: flex
+
+.job-quota
+  position: relative
+  font-size: 14px
+  cursor: pointer
+  padding: 8px 0
+  justify-content: center
+  user-select: none
+  display: none
+  &--checked
+    display: flex
+  &__name
+    margin-left: -29px
+    font-size: 14px
+    width: 110px
+    line-height: 17px
+    display: flex
+    flex-direction: column
+    &__quantity
+      font-weight: 600
+  &:hover
+    .package-selector__price, &
+      color: $primary-red
+
+.package-selector__price
+  display: flex
+  flex-direction: column
+  color: $grey300
+  position: relative
+  margin: 0
+  font-size: 14px
+  line-height: 17px
+
+.package-selector__amount-per,
+.package-selector__amount-billed
+  font-style: italic
+
+.package-selector__amount
+  font-weight: 600
+  letter-spacing: 0.5px
+
+.package-selector__header
+  height: 262px
+
+.package-selector__top-perks
+  height: 44px
+  margin-top: 16px
+  border-top: 1px solid $grey200
+  border-bottom: 1px solid $grey200
+  padding: 6px 0 10px 0
+  &__item
+    height: 26px
+    text-align: left
+    &__title
+      color: $grey300
+      font-size: 12px
+      font-weight: 600
+      line-height: 14px
+      margin-right: 3px

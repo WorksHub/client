@@ -484,6 +484,10 @@
 (def free-trial-days 0)
 (def launch-pad-trial-days 0)
 
+
+(def min-job-quota 1)
+(def max-job-quota 999)
+
 (def package-data
   {:free       {:name        "Trial"
                 :cost        0
@@ -527,11 +531,21 @@
                 :order       2
                 :description "For those looking to get good exposure to our dedicated pool of technical talent with limited hiring needs."}
    :launch_pad {:name        "Launch Pad"
-                :cost        1500
                 :per         "month"
                 :button      "Start Hiring"
                 :button-alt  "Get Started"
-                :live-jobs   "Unlimited"
+                :job-quotas  [{:name  "One"
+                               :quota 1
+                               :id    "one"
+                               :cost  400}
+                              {:name  "Two"
+                               :quota 2
+                               :id    "two"
+                               :cost  750}
+                              {:name  "Unlimited"
+                               :quota max-job-quota
+                               :id    "unlimited"
+                               :cost  1000}]
                 :img         {:src "/images/employers/launch_pad.svg"
                               :alt "Launch Pad icon"}
                 :perks       #{"Unlimited hubs"

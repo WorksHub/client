@@ -8,8 +8,8 @@
             [wh.common.cases :as cases]
             [wh.common.cost :as cost]
             [wh.common.data :as data]
+            [wh.common.numbers :as numbers]
             [wh.common.text :refer [pluralize]]
-            [wh.company.payment.db :as payment]
             [wh.company.payment.events :as events]
             [wh.company.payment.subs :as subs]
             [wh.company.views :refer [int->dollars]]
@@ -17,7 +17,6 @@
             [wh.components.forms.views :as f :refer [text-field select-field]]
             [wh.components.icons :refer [icon]]
             [wh.components.package-selector :refer [package-selector]]
-            [wh.db :as db]
             [wh.subs :refer [<sub] :as core-subs]
             [wh.util :as util]
             [wh.verticals :as verticals]))
@@ -151,7 +150,7 @@
        (card-terms package))]))
 
 (defn authorize-card-button
-  [_]
+  [quantity]
   (let [enabled?     (<sub [::subs/stripe-card-form-enabled?])
         can-proceed? (<sub [::subs/can-press-authorize?])]
     [:div.button-container
@@ -161,25 +160,34 @@
        :disabled (or (not can-proceed?) (<sub [::subs/stripe-card-form-error]))
        :on-click #(when (and enabled? can-proceed?)
                     (when-let [el (.getElementById js/document "stripe-card-form")]
-                      (submit-stripe-form! :payment-setup-form [::events/setup-step-forward])))}
+                      (submit-stripe-form!
+                        :payment-setup-form
+                        [::events/setup-step-forward
+                         (when quantity
+                           {:job-quota (numbers/coerce-int quantity)})])))}
       "Authorize Card"]]))
 
 (defmulti payment-setup-step-content identity)
 
 (defn select-package-button
-  [label package billing-period]
-  (let [upgrading? (<sub [::subs/upgrading?])]
-    [:button.button
-     {:id       (str "select-package-btn-" (name package) "-" (name billing-period))
-      :on-click #(dispatch [::events/setup-step-forward (merge {:package package}
-                                                               (when-not upgrading?
-                                                                 {:billing-period billing-period}))])}
-     (cond upgrading?
-           "Upgrade & Pay"
-           (and (#{:launch_pad} package)
-                (<sub [::subs/can-start-free-trial?]))
-           "Start Free Trial"
-           :else label)]))
+  ([label package billing-period]
+   (select-package-button label package billing-period nil))
+  ([label package billing-period quantity]
+   (let [upgrading? (<sub [::subs/upgrading?])]
+     [:button.button
+      {:id       (str "select-package-btn-" (name package) "-" (name billing-period))
+       :on-click #(dispatch [::events/setup-step-forward
+                             (merge {:package package}
+                                    (when-not upgrading?
+                                      {:billing-period billing-period})
+                                    (when quantity
+                                      {:quantity quantity}))])}
+      (cond upgrading?
+            "Upgrade & Pay"
+            (and (#{:launch_pad} package)
+                 (<sub [::subs/can-start-free-trial?]))
+            "Start Free Trial"
+            :else label)])))
 
 (defn fake-demo-button
   [secondary? label package billing-period]
@@ -275,30 +283,31 @@
   (tf/unparse (tf/formatter "DD MMM YYYY") (t/plus (t/now) (t/months (get-in data/billing-data [bp :number])))))
 
 (defn upgrading-calculator
-  [package billing-period]
-  (let [new-offer                                                                                                                (<sub [::subs/company-new-offer])
-        has-details?                                                                                                             (<sub [::subs/has-saved-card-details?])
-        package                                                                                                                  (<sub [::subs/package])
-        {:keys [cost]}                                                                                                           (<sub [::subs/current-package-data])
-        {:keys [discount number description] :as bp}                                                                             (get data/billing-data billing-period)
-        next-invoice                                                                                                             (<sub [::subs/next-invoice])
-        coupon                                                                                                                   (or (<sub [::subs/current-coupon])
-                                                                                                                                     (:coupon next-invoice)
-                                                                                                                                     #_(<sub [::subs/company-coupon])) ;; TODO shall we remove this field entirely? Do we even want company coupons here???
-        latent-cost                                                                                                              (* number (cost/calculate-monthly-cost cost discount coupon))
-        estimate                                                                                                                 (<sub [::subs/estimate])
-        pro-rated-estimates                                                                                                      (filter :proration estimate)
-        next-charge                                                                                                              (some #(when-not (:proration %) %) estimate)
-        first-charge                                                                                                             (if (and next-invoice coupon)
-                                                                                                                                   ;; TODO explain this
-                                                                                                                                   (cond (and (= :once (:duration coupon)) (:discount-amount coupon))
-                                                                                                                                         (- latent-cost (:discount-amount coupon))
-                                                                                                                                         (and (= :once (:duration coupon)) (:discount-percentage coupon))
-                                                                                                                                         (- latent-cost (* latent-cost (/ (:discount-percentage coupon) 100)))
-                                                                                                                                         :else
-                                                                                                                                         (* number (cost/calculate-monthly-cost cost discount (assoc coupon :duration :forever))))
-                                                                                                                                   latent-cost)
-        breakdown?                                                                                                               (<sub [::subs/breakdown?])]
+  [billing-period]
+  (let [new-offer                         (<sub [::subs/company-new-offer])
+        has-details?                      (<sub [::subs/has-saved-card-details?])
+        package                           (<sub [::subs/package])
+        {:keys [cost]}                    (<sub [::subs/current-package-data])
+        {:keys [discount number] :as _bp} (get data/billing-data billing-period)
+        next-invoice                      (<sub [::subs/next-invoice])
+        coupon                            (or (<sub [::subs/current-coupon])
+                                              (:coupon next-invoice)
+                                              ;; TODO shall we remove this field entirely? Do we even want company coupons here???
+                                              #_(<sub [::subs/company-coupon]))
+        latent-cost                       (* number (cost/calculate-monthly-cost cost discount coupon))
+        estimate                          (<sub [::subs/estimate])
+        pro-rated-estimates               (filter :proration estimate)
+        next-charge                       (some #(when-not (:proration %) %) estimate)
+        first-charge                      (if (and next-invoice coupon)
+                                            ;; TODO explain this
+                                            (cond (and (= :once (:duration coupon)) (:discount-amount coupon))
+                                                  (- latent-cost (:discount-amount coupon))
+                                                  (and (= :once (:duration coupon)) (:discount-percentage coupon))
+                                                  (- latent-cost (* latent-cost (/ (:discount-percentage coupon) 100)))
+                                                  :else
+                                                  (* number (cost/calculate-monthly-cost cost discount (assoc coupon :duration :forever))))
+                                            latent-cost)
+        breakdown?                        (<sub [::subs/breakdown?])]
     [:div.payment-setup__upgrading-calculator
      {:class (util/merge-classes
                (when breakdown? "payment-setup__upgrading-calculator--breakdown")
@@ -344,10 +353,13 @@
        [:div.is-loading-spinner])]))
 
 (defn initial-payment-details
-  [package billing-period]
-  (let [{:keys [cost trial] :or {trial 0}} (<sub [::subs/current-package-data])
+  [package billing-period quantity]
+  (let [{:keys [cost trial]
+         :or {trial 0}} (<sub [::subs/current-package-data])
         trial (if (<sub [::subs/has-permission? :can_start_free_trial]) trial 0)
         {:keys [discount number description] :as bp} (get data/billing-data billing-period)
+        quota (<sub [::subs/chosen-quota])
+        cost (or (:cost quota) cost)
         date (-> (t/now)
                  (t/plus (t/months number))
                  (t/plus (t/days trial)))
@@ -355,6 +367,7 @@
         coupon (<sub [::subs/current-coupon])
         monthly-cost (cost/calculate-monthly-cost cost discount coupon)
         {:keys [before-coupon after-coupon]} (cost/calculate-initial-payment number monthly-cost coupon)]
+
     [:div
      (when (pos? trial)
        [:p.li [icon "cutout-tick"] (str "you will be on a FREE TRIAL for " trial " days")])
@@ -375,24 +388,24 @@
      (when coupon
        [:p.li.coupon [icon "cutout-tick"] "promotion applied: " (str/lower-case (:description coupon)) ""])]))
 
-(defmulti pay-confirm-content identity)
+(defmulti pay-confirm-content :package)
 
 (defmethod pay-confirm-content :default
-  [_package]
+  [_opts]
   (let [new-card-when-upgrading? (r/atom false)]
-    (fn [package]
-      (let [billing-period (or (<sub [::subs/billing-period])
-                               (<sub [::subs/company-billing-period]))
-            {:keys [name]} (get data/package-data package)
-            {:keys [title] :as bp} (get data/billing-data billing-period)
-            upgrading? (<sub [::subs/upgrading?])
-            has-details? (<sub [::subs/has-saved-card-details?])
-            enabled? (<sub [::subs/stripe-card-form-enabled?])
-            can-proceed? (<sub [::subs/can-press-authorize?])
-            starting-trial? (and (= :launch_pad package) (<sub [::subs/can-start-free-trial?]))
+    (fn [{:keys [package quantity]}]
+      (let [billing-period          (or (<sub [::subs/billing-period])
+                                        (<sub [::subs/company-billing-period]))
+            {:keys [name]}          (get data/package-data package)
+            {:keys [title] :as bp}  (get data/billing-data billing-period)
+            upgrading?              (<sub [::subs/upgrading?])
+            has-details?            (<sub [::subs/has-saved-card-details?])
+            enabled?                (<sub [::subs/stripe-card-form-enabled?])
+            can-proceed?            (<sub [::subs/can-press-authorize?])
+            starting-trial?         (and (= :launch_pad package) (<sub [::subs/can-start-free-trial?]))
             existing-billing-period (some->> (<sub [::subs/existing-billing-period])
                                              (get data/billing-data))
-            breakdown? (<sub [::subs/breakdown?])]
+            breakdown?              (<sub [::subs/breakdown?])]
         [:div.payment-setup__payment-details__calculator
          {:class (if breakdown? "breakdown" "no-breakdown")}
          (cond
@@ -406,8 +419,8 @@
            [:h1 (str "You have selected " (when starting-trial? " FREE TRIAL for" ) " the " name
                      " package on the " title " plan.")])
          (if upgrading?
-           [upgrading-calculator package billing-period]
-           [initial-payment-details package billing-period])
+           [upgrading-calculator billing-period]
+           [initial-payment-details package billing-period quantity])
          [:hr
           {:class (when upgrading? "fixed")}]
          (if (and has-details? (not @new-card-when-upgrading?))
@@ -418,8 +431,8 @@
              (card-terms package)
              [:div.button-container
               [:button.button.is-full-width
-               {:id "authorize-card-button--no-token"
-                :class (when-not enabled? "button--inverted button--loading")
+               {:id       "authorize-card-button--no-token"
+                :class    (when-not enabled? "button--inverted button--loading")
                 :disabled (or (not can-proceed?) (<sub [::subs/stripe-card-form-error]))
                 :on-click #(when (and enabled? can-proceed?)
                              (dispatch-sync [::events/set-stripe-card-form-enabled false])
@@ -428,12 +441,12 @@
            [:div.payment-setup__payment-details__card
             {:class (when upgrading? "payment-setup__payment-details__card--upgrading")}
             [:p "Please enter your payment details"]
-            [card-form {:id :payment-setup-form
-                        :terms? true
+            [card-form {:id      :payment-setup-form
+                        :terms?  true
                         :coupon? (not upgrading?) ;; TODO this prevents coupons during upgrades
                         :package package
-                        :event [::events/setup-step-forward]}]
-            [authorize-card-button]])
+                        :event   [::events/setup-step-forward]}]
+            [authorize-card-button quantity]])
          (when (and upgrading? existing-billing-period (<sub [::subs/stripe-card-form-enabled?]))
            [link [:button.button.button--inverted.is-full-width "Cancel"]
             :edit-company
@@ -446,7 +459,7 @@
       (let [offer (<sub [::subs/company-new-offer])
             upgrading? (<sub [::subs/upgrading?])]
         (if (and upgrading? offer)
-          (pay-confirm-content :default)
+          (pay-confirm-content {:package :default})
           [:div
            [:h1 "You have selected the Take Off package. This is our premium service which can be tailored to your specific hiring requirements."]
            [:p "Benefits include"]
@@ -465,7 +478,7 @@
                            :coupon? false
                            :package :take_off
                            :event [::events/setup-step-forward]}]
-               [authorize-card-button]]]
+               [authorize-card-button nil]]]
              [:div
               [:a {:href   verticals/take-off-meeting-link
                    :target "_blank"
@@ -480,9 +493,7 @@
 
 (defmethod pay-confirm-content :free
   [_]
-  (let [job-id (<sub [::subs/job-id])
-        action (<sub [::subs/action])
-        waiting? (<sub [::subs/waiting?])]
+  (let [waiting? (<sub [::subs/waiting?])]
     [:div
      [:h1 "You have selected the trial package so won’t be charged anything right now!"]
      [:p "Benefits include"]
@@ -569,15 +580,17 @@
 (defmethod payment-setup-step-content
   :pay-confirm
   [_]
-  (let [p (<sub [::subs/package])]
+  (let [package  (<sub [::subs/package])
+        quantity (<sub [::subs/quantity])]
     [:div
      (when (and (<sub [::subs/upgrading?])
                 (<sub [::subs/existing-billing-period]))
        [select-billing-period])
      [:div.payment-setup__pay-confirm-container
-      {:class (str "payment-setup__pay-confirm-container__" (name p))}
-      [pay-confirm-content p]
-      [:img (get-in data/package-data [p :img])]]]))
+      {:class (str "payment-setup__pay-confirm-container__" (name package))}
+      [pay-confirm-content {:package  package
+                            :quantity quantity}]
+      [:img (get-in data/package-data [package :img])]]]))
 
 (defmethod payment-setup-step-content
   :pay-success
