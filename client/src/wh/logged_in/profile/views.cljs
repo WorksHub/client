@@ -504,7 +504,7 @@
      [successful-save-info])
    (when (owner? user-type)
      [:div "This section is for our info only — we won’t show this directly to anyone 🔐"])
-   [:div
+   [:div {:data-test :private-info}
     (when (:email fields) [components/view-field "Email:" [email-link-fn email]])
     (when (:phone fields) [components/view-field "Phone Number:" (or phone "None")])
     (when (:status fields) [components/view-field "Status:" (or job-seeking-status "None")])
@@ -522,6 +522,8 @@
     :editing?  (<sub [::edit-private-subs/editing-profile?])
     :on-edit   [::edit-private-events/open-form]
     :read-body [edit-user-private-info user-type opts]
+    :data-test :toggle-edit-private-info
+    :display-toggle? (<sub [::subs/display-toggle?])
     :edit-body [:<>
                 [components/title "Edit profile"]
                 [edit-private/profile-edit-inline]]}])

@@ -154,7 +154,7 @@
   [items {:keys [on-select-suggestion class class-suggestion data-test]
           :or {class "input__suggestions"}}]
   (into [:ul (cond-> {:class class}
-                     data-test (assoc :data-test (str data-test "-suggestions")))]
+                     data-test (assoc :data-test (str (name data-test)  "-suggestions")))]
         (map (fn [{:keys [id label]}]
                ;; use 'onmousedown' as well as 'onclick' as in some sitations 'onclick' wont
                ;; fire because the suggestions list is removed too quickly due to !focused parent
@@ -203,10 +203,11 @@
   :validate - a spec to validate this field's value against.
   :suggestions - a list of suggestions displayed beneath the field.
   :on-select-suggestion - the event dispatched when a suggestion is selected."
-  [value options]
+  [_value options]
   (let [dirty (reagent/atom false)
-        focused (reagent/atom false)]
-    (fn [value {:keys [suggestions dirty? error force-error? read-only on-select-suggestion on-remove hide-icon? new?] :as options}]
+        focused (reagent/atom false)
+        new? (:new? options)]
+    (fn [value {:keys [suggestions dirty? error force-error? read-only on-select-suggestion on-remove hide-icon?] :as options}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
@@ -227,24 +228,24 @@
             close-icon-comp (when removable? [icon "close" :class close-icon-class :on-click #(dispatch-sync on-remove)])]
         (if new?
           [:div {:class styles/suggestions__wrapper}
-           (text-input-new value (merge options
+           [text-input-new value (merge options
                                         (text-field-input-options dirty focused options)
-                                        {:class-input (util/mc styles/input styles/suggestions__input)}))
+                                        {:class-input (util/mc styles/input styles/suggestions__input)})]
            search-icon-comp
            suggestions-list-comp
            close-icon-comp]
-          (field-container (merge options
+          [field-container (merge options
                                   {:error (if (and (string? error) force-error?)
                                             error
                                             (text-field-error value options dirty focused))})
                            [:div.text-field-control
-                            {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
-                                         (when suggestable? " text-field-control--suggestable")
-                                         (when removable? " text-field-control--removable"))}
-                            (text-input value (merge options (text-field-input-options dirty focused options)))
-                            search-icon-comp
-                            suggestions-list-comp
-                            close-icon-comp]))))))
+                             {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
+                                          (when suggestable? " text-field-control--suggestable")
+                                          (when removable? " text-field-control--removable"))}
+                             (text-input value (merge options (text-field-input-options dirty focused options)))
+                             search-icon-comp
+                             suggestions-list-comp
+                             close-icon-comp]])))))
 
 (defn text-field-with-label [value {:keys [label required?] :as options}]
   [:label
@@ -280,7 +281,8 @@
          :class "visually-hidden"
          :id id
          :disabled disabled
-         :checked (if (nil? value) (:value options) value)}
+         :checked (if (nil? value) (:value options) value)
+         :value label}
         (when on-change
           {:on-change #(when (not disabled)
                          (dispatch-sync (conj on-change (target-checked %))))}))]
@@ -296,14 +298,15 @@
 (defn select-input
   "A bare select input. Typically not used standalone, but wrapped as
   select-field. See that function for parameters description."
-  [value {:keys [options on-change disabled class class-wrapper]
+  [value {:keys [options on-change disabled class class-wrapper data-test]
           :or {class-wrapper "select"}}]
   (let [options (sanitize-select-options options)]
     [:div {:class class-wrapper}
      (into
        [:select
         (merge {:value (str (util/index-of (mapv :id options) value))
-                :class class}
+                :class class
+                :data-test data-test}
                (when on-change
                  {:on-change #(let [id (:id (nth options (js/parseInt (target-value % nil))))]
                                 (if (fn? on-change)

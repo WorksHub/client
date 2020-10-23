@@ -131,14 +131,23 @@
     top: 16px
     right: 16px
 
-
   &__small-icon
     height: 1.2rem
     width: 1.2rem
 
-  &__button
-    cursor: pointer
-  &__button-icon
+  &:hover
+    opacity: 0.5
+
+.edit-button
+  position: absolute
+  top: 28px
+  right: 20px
+  color: $grey400
+  cursor: pointer
+  border: none
+  background: transparent
+
+  &__icon
     fill: $grey400
     &--editing
       width: 24px

@@ -36,6 +36,12 @@
       (::profile/contributions profile))))
 
 (reg-sub
+  ::display-toggle?
+  :<- [::profile]
+  (fn [db _]
+    (boolean (::profile/id db))))
+
+(reg-sub
   ::skills
   :<- [::profile]
   (fn [profile _]

@@ -12,7 +12,7 @@
 (defn current-location []
   [forms/text-field-with-label (<sub [::subs/current-location-label])
    {:label                "Current location"
-    :data-test            "current-location"
+    :data-test            :current-location
     :suggestions          (<sub [::subs/current-location-suggestions])
     :on-change            [::events/edit-current-location]
     :on-select-suggestion [::events/select-current-location-suggestion]
@@ -22,6 +22,7 @@
   [forms/text-field value
    {:new?                 true
     :label                label
+    :data-test            :preferred-location
     :suggestions          (<sub [::subs/location-suggestions i])
     :on-change            [::events/edit-preferred-location i]
     :on-select-suggestion [::events/select-suggestion i]
@@ -44,7 +45,8 @@
     {:label       "Email"
      :required?   true
      :placeholder "Email"
-     :on-change   [::events/edit-email]}]
+     :on-change   [::events/edit-email]
+     :data-test :email}]
    [forms/error-component (<sub [::subs/field-error :email])]])
 
 (defn phone []
@@ -52,7 +54,8 @@
    (<sub [::subs/phone])
    {:label       "Phone"
     :placeholder "Phone"
-    :on-change   [::events/edit-phone]}])
+    :on-change   [::events/edit-phone]
+    :data-test :phone}])
 
 (defn role-type-and-visa-status []
   [:div {:class styles/private-update__checkboxes-wrapper}
@@ -79,19 +82,22 @@
      {:label       "Minimum Salary"
       :placeholder "Salary"
       :type        "number"
-      :on-change   [::events/edit-salary-min]}]
+      :on-change   [::events/edit-salary-min]
+      :data-test :salary}]
     [forms/select-field
      (<sub [::subs/salary-currency])
      {:new?      true
       :options   (<sub [::subs/currency-options])
       :label     "Currency"
-      :on-change [::events/edit-salary-currency]}]
+      :on-change [::events/edit-salary-currency]
+      :data-test :currency}]
     [forms/select-field
      (<sub [::subs/salary-time-period])
      {:new?      true
       :options   (<sub [::subs/time-period-options])
       :label     "Time period"
-      :on-change [::events/edit-salary-time-period]}]]
+      :on-change [::events/edit-salary-time-period]
+      :data-test :time-period}]]
    [forms/error-component (<sub [::subs/field-error :salary])]])
 
 (defn job-seeking-status []
@@ -99,7 +105,8 @@
    (<sub [::subs/job-seeking-status])
    {:options   (<sub [::subs/job-seeking-statuses])
     :label     "Job seeking status"
-    :on-change [::events/edit-job-seeking-status]}])
+    :on-change [::events/edit-job-seeking-status]
+    :data-test :job-seeking-status}])
 
 (defn visa-status-other []
   (when (<sub [::subs/show-visa-status-other?])
@@ -125,12 +132,14 @@
     "Cancel"]
    [:button
     {:on-click #(dispatch [::events/update-profile])
-     :class    (util/mc styles/button styles/button--small)}
+     :class    (util/mc styles/button styles/button--small)
+     :data-test :save}
     "Save"]])
 
 (defn profile-edit-inline []
   (when (<sub [::subs/editing-profile?])
-    [:div {:class styles/private-update__wrapper--outer}
+    [:div {:class styles/private-update__wrapper--outer
+           :data-test :edit-private-info}
      [:div {:class styles/private-update__wrapper}
       [email]
       [phone]

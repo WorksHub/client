@@ -333,16 +333,18 @@
        :else                       [add-skills-cta])]))
 
 (defn edit-button
-  [editing? on-edit-event]
-  [:div (util/smc styles/edit styles/edit__button)
-   [icons/icon "pen"
-    :class (util/mc styles/edit__button-icon [editing? styles/edit__button-icon--editing])
+  [{:keys [editing? on-edit-event data-test]}]
+  [:button
+   {:class styles/edit-button
+    :data-test data-test
     :on-click (fn [_]
                 (when on-edit-event
-                  (dispatch on-edit-event)))]])
+                  (dispatch on-edit-event)))}
+   [icons/icon "pen"
+    :class (util/mc styles/edit-button__icon [editing? styles/edit-button__icon--editing])]])
 
 (defn editable-section
-  [{:keys [editable? on-edit read-body edit-body editing? anchor]}]
+  [{:keys [editable? on-edit read-body edit-body editing? anchor data-test display-toggle?]}]
   [:div (util/smc styles/editable-section [editing? styles/editable-section--editing])
    [section
     (when anchor
@@ -350,8 +352,10 @@
     (if editing?
       edit-body
       read-body)
-    (when (and editable? (not editing?))
-      [edit-button editing? on-edit])]])
+    (when (and editable? (not editing?) display-toggle?)
+      [edit-button {:editing? editing?
+                    :on-edit-event on-edit
+                    :data-test data-test}])]])
 
 (defn rating->percentage
   ([r]
@@ -486,6 +490,7 @@
       :editing?  editing?
       :anchor    "skills"
       :on-edit   on-edit
+      :display-toggle? true
       :read-body [:<>
                   [:div (util/smc styles/skills__top)
                    [title "Skills"]]
