@@ -54,17 +54,10 @@
     ]
     [icon "close" :on-click #(
       (fn [e] (
-        (let [local-search (<sub [::subs/local-search])]
-        (let [values (remove (fn [x] (= x text)) local-search)]
+        (let [local-search (<sub [::subs/local-search])] (let [values (remove (fn [x] (= x text)) local-search)]
           (.setItem js/localStorage "local_search" 
-            (clojure.string/join "||" values) 
-          )
-          (dispatch [:wh.components.navbar.events/set-local-search values])
-        ))
-      ))
-    )]
-    
-  ]])
+            (clojure.string/join "||" values))
+            (dispatch [:wh.components.navbar.events/set-local-search values]))))))]]])
 
 (defn search-dropdown-list
   ([dropdown]
