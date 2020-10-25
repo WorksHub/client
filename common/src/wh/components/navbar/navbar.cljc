@@ -29,13 +29,9 @@
 
 (defn local_search []
   (dispatch [:wh.components.navbar.events/set-local-search  
-    (distinct (remove empty? (clojure.string/split (or (.getItem js/localStorage "local_search") "") "||")))]
-  )
-)
+    (distinct (remove empty? (clojure.string/split (or (.getItem js/localStorage "local_search") "") "||")))]))
 
-(defn main []
-  (local_search)
-)
+(defn main [] (local_search))
 
 (set! (.-onload js/window) main)
 
@@ -53,13 +49,11 @@
                              styles/search__wrapper
                              [(= type :small-menu-no-mobile) styles/no-mobile]
                              [(= type :navbar) styles/no-mobile])}
-                  #?(:cljs {:on-submit
+                   #?(:cljs {:on-submit
                             (fn [e]
                               (.preventDefault e)
                               (js/hideMenu)
-                              (dispatch [:wh.search/search-with-value search-value]))
-                           })
-                )
+                              (dispatch [:wh.search/search-with-value search-value]))}))
      [icon "search-new" :class styles/search__search-icon]
      [:input (merge
                {:class         (util/mc
@@ -77,46 +71,30 @@
                #?(:cljs {:on-change
                          (fn [e]
                            (dispatch [:wh.components.navbar.events/set-search-value
-                                      (.-value (.-target e))]))
-                        }
-                )
+                                      (.-value (.-target e))]))})
                 #?(:cljs {:on-click
                         (fn [e]
-                           (dispatch [:wh.components.navbar.events/set-search-focus true]))
-                        }
-                )
+                           (dispatch [:wh.components.navbar.events/set-search-focus true]))})
                 #?(:cljs {:on-focus
                          (fn [e]
-                           (dispatch [:wh.components.navbar.events/set-search-focus true]))
-                        }
-                )
+                           (dispatch [:wh.components.navbar.events/set-search-focus true]))})
                 #?(:cljs {:on-blur
                         (fn [e]
                           (js/setTimeout (fn [] 
-                            (dispatch [:wh.components.navbar.events/set-search-focus false])
-                          ) 200)
-                        )
-                        }
-                  )
-              )]
+                            (dispatch [:wh.components.navbar.events/set-search-focus false])) 200))}))]
                         
      (when search-value
        [:a
         (merge {:href  (routes/path :search)
                 :class styles/search__clear-icon}
                #?(:cljs {:on-click
-                         #(set! (.-value (.getElementById js/document search-id)))}))
-        [icon "close"]]
-    )
+                         #(set! (.-value (.getElementById js/document search-id)))})) [icon "close"]])
     
     (when search-focus
        [components/search-dropdown-list 
         (take 5 (filter (fn [a]
             (clojure.string/includes? (clojure.string/lower-case a) (clojure.string/lower-case (or search-value "")))
-          ) local-search))
-       ]
-    )   
-  ]))
+          ) local-search))])]))
 
 (defn button-write-article []
   [:a {:class     (util/mc styles/button styles/button--contribute)

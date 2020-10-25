@@ -44,14 +44,10 @@
    [:div (util/smc styles/dropdown__search__option)
     [:a (merge {
           :on-click #((dispatch [:wh.search/search-with-value text]))
-          :class (util/mc styles/dropdown__link__text)
-        })
+          :class (util/mc styles/dropdown__link__text)})
         (let [search-value (or (<sub [::subs/search-value]) "")]
             [:div {:dangerouslySetInnerHTML {:__html 
-              (clojure.string/replace text (re-pattern (str "(?i)" search-value)) #(str "<b>" %1 "</b>"))
-            }}]
-        )
-    ]
+              (clojure.string/replace text (re-pattern (str "(?i)" search-value)) #(str "<b>" %1 "</b>"))}}])]
     [icon "close" :on-click #(
       (fn [e] (
         (let [local-search (<sub [::subs/local-search])] (let [values (remove (fn [x] (= x text)) local-search)]

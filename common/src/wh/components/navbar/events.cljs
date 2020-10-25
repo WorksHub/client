@@ -30,17 +30,11 @@
     (let [local-search (<sub [::subs/local-search])]
       (let [values (distinct (into [] (concat [value] local-search )))]
         (.setItem js/localStorage "local_search" 
-          (clojure.string/join "||" values) 
-        )
-        (dispatch [:wh.components.navbar.events/set-local-search values])
-      )
-    )
-    {:db (-> db
-      (assoc ::db/search-value value)
-      (assoc-in [:wh.search/data] {}))
-      :universal-search value
-    }
-  ))
+          (clojure.string/join "||" values))
+          (dispatch [:wh.components.navbar.events/set-local-search values])))
+      {:db (-> db
+        (assoc ::db/search-value value)
+        (assoc-in [:wh.search/data] {})) :universal-search value}))
 
 (reg-fx
   :universal-search
