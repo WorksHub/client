@@ -185,15 +185,26 @@
                     share-toggle-on-click)
           [icons/icon "network"]])]]]))
 
-(defn author [{:keys [img name id]}]
+
+(defn- candidate-container [{:keys [id]} & children]
   [:a {:class (util/mc styles/author)
        :href  (routes/path :user :params {:id id})}
-   (when img
-     [:img {:class (util/mc styles/author__img)
-            :src   img}])
-   [:p
-    (util/smc styles/author__name)
-    name]])
+   children])
+
+(defn- author-container [{:as _opts} & children]
+  [:span {:class (util/mc styles/author)}
+   children])
+
+(defn author [{:keys [img name id]}]
+  (let [container (if id candidate-container author-container)]
+    [container {:id id}
+     (when img
+       [:img {:class (util/mc styles/author__img)
+              :src   img}])
+     [:p
+      (util/smc styles/author__name
+                [id styles/author__name--candidate])
+      name]]))
 
 (defn footer [type & children]
   [:div (util/smc styles/footer (when (= type :compound) styles/footer--compound))

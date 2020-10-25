@@ -51,6 +51,7 @@
 (def author__img "activities__author__img--3zrlu")
 (def article__time "activities__article__time--3Grzo")
 (def author__name "activities__author__name--3bGMQ")
+(def author__name--candidate "activities__author__name--candidate--pgu9D")
 (def footer "activities__footer--1zO_O")
 (def footer--compound "activities__footer--compound--1gRIV")
 (def footer__buttons "activities__footer__buttons--2lgvh")
