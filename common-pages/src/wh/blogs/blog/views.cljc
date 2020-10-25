@@ -44,19 +44,19 @@
        :target "_blank"
        :rel    "noopener"
        :aria-label "Share blog on Facebook"}
-      [icon "facebook" :class "share-links__facebook"]]
+      [icon "facebook-circle" :class "share-links__facebook"]]
      [:a
       {:href   (str "https://twitter.com/intent/tweet?text=" enc-twitter-message "&url=" enc-link)
        :target "_blank"
        :rel    "noopener"
        :aria-label "Share blog on Twitter"}
-      [icon "twitter" :class "share-links__twitter"]]
+      [icon "twitter-circle" :class "share-links__twitter"]]
      [:a
       {:href   (str "https://www.linkedin.com/shareArticle?mini=true&url=" enc-link "&title=" enc-normal-message "&summary=&origin=")
        :target "_blank"
        :rel    "noopener"
        :aria-label "Share blog on Linkedin"}
-      [icon "linkedin" :class "share-links__linkedin"]]]))
+      [icon "linkedin-circle" :class "share-links__linkedin"]]]))
 
 (defn recommended-jobs []
   (when-let [jobs (<sub [::subs/recommended-jobs])]

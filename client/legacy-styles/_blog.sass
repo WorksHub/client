@@ -58,6 +58,9 @@ $hero-top: 26px
 
 .blog__social-icons
   padding-bottom: 8px
+  position: absolute
+  bottom: 0
+  right: 0
 
 .blog__social-icons-wrapper
   position: sticky
@@ -221,11 +224,11 @@ $hero-top: 26px
   text-align: center
 
 .share-links
-  display: flex
+  line-height: initial
+  display: grid
+  grid-gap: 8px
   padding: 16px 0
-  flex-direction: column
-  justify-content: space-between
-  align-items: center
+  justify-content: center
   background-color: #ffae71
   width: 60px
   border-radius: 29px
@@ -235,18 +238,8 @@ $hero-top: 26px
 
   .icon
     fill: white
-
-    &.share-links__facebook
-      width: 37px
-      height: 37px
-
-    &.share-links__twitter
-      width: 39px
-      height: 39px
-
-    &.share-links__linkedin
-      width: 26px
-      height: 26px
+    width: 37px
+    height: 37px
 
 $author-info-size: 300px
 $author-info-photo-size: 95px
