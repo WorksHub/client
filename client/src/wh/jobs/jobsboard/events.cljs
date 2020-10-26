@@ -59,7 +59,8 @@
                              (util/update* "sponsorship-offered" util/string->boolean)
                              (util/update* "remote" util/string->boolean)
                              (util/update-in* [:remuneration :min] js/parseInt)
-                             (util/update-in* [:remuneration :max] js/parseInt))
+                             (util/update-in* [:remuneration :max] js/parseInt)
+                             (util/update-in* [:remuneration :competitive] util/string->boolean))
           page-from-params (int (get-in db [::db/query-params "page"]))
           page             (if (zero? page-from-params)
                              (inc page-from-params)
@@ -110,6 +111,13 @@
   jobsboard-interceptors
   (fn [{db :db} _]
     {:db       (update-in db [::jobsboard/search :wh.search/remote] not)
+     :dispatch [:wh.search/search]}))
+
+(reg-event-fx
+  :wh.search/toggle-show-competitive
+  jobsboard-interceptors
+  (fn [{db :db} _]
+    {:db       (update-in db [::jobsboard/search :wh.search/competitive] not)
      :dispatch [:wh.search/search]}))
 
 (reg-event-fx
@@ -176,9 +184,10 @@
   :wh.search/initialize-widgets
   db/default-interceptors
   (fn [db _]
-    (let [params (:wh.db/query-params db)
-          val-set (fn [k] (set (when-let [v (params k)] (str/split v #";"))))
-          val-bool (fn [k] (= (params k) "true"))]
+    (let [params                (:wh.db/query-params db)
+          val-set               (fn [k] (set (when-let [v (params k)] (str/split v #";"))))
+          val-bool              (fn [k] (= (params k) "true"))
+          val-bool-default-true (fn [k] (not= (params k) "false"))]
       (-> db
           (assoc :wh.db/search-term nil) ; if we came here from pre-set search, we reset the term because we have the query in url
           (update-in [::jobsboard/sub-db ::jobsboard/search] merge
@@ -190,38 +199,43 @@
                       :wh.search/wh-regions  (set (map keyword (val-set "wh-region")))
                       :wh.search/remote      (val-bool "remote")
                       :wh.search/sponsorship (val-bool "sponsorship-offered")
+                      :wh.search/competitive (val-bool-default-true "remuneration.competitive")
                       :wh.search/salary      (js/parseInt (params "remuneration.min"))
                       :wh.search/salary-type ({"Yearly" :year, "Daily" :day} (params "remuneration.time-period"))})))))
 
 (defn- salary-params
-  [{[min max] :wh.search/salary-range, type :wh.search/salary-type, currency :wh.search/currency}]
-  (cond-> {:remuneration.time-period ({:year "Yearly", :day "Daily"} type)}
-          min (assoc :remuneration.min (js/parseInt min))
-          max (assoc :remuneration.max (js/parseInt max))
-          currency (assoc :remuneration.currency currency)))
+  [competitive? {[min max] :wh.search/salary-range, type :wh.search/salary-type, currency :wh.search/currency}]
+  (cond-> {}
+          type               (assoc :remuneration.time-period ({:year "Yearly", :day "Daily"} type))
+          min                (assoc :remuneration.min (js/parseInt min))
+          max                (assoc :remuneration.max (js/parseInt max))
+          currency           (assoc :remuneration.currency currency)
+          (not competitive?) (assoc :remuneration.competitive false)))
 
 (defn- search-params
   [criteria query-only? app-db]
-  (let [criteria (cond-> criteria query-only? (select-keys [:wh.search/query]))
+  (let [criteria                         (cond-> criteria query-only? (select-keys [:wh.search/query]))
         {:keys [:wh.search/query :wh.search/tags :wh.search/role-types
                 :wh.search/remote :wh.search/sponsorship :wh.search/currency
                 :wh.search/wh-regions :wh.search/cities :wh.search/countries
-                :wh.search/salary-type :wh.search/only-mine :wh.search/published]} criteria
-        view-type (get-in app-db [:wh.db/query-params jobsboard-ssr/view-type-param])]
+                :wh.search/salary-type :wh.search/only-mine :wh.search/published
+                :wh.search/competitive]} criteria
+        view-type                        (get-in app-db [:wh.db/query-params jobsboard-ssr/view-type-param])]
     [:jobsboard
      :query-params (cond-> {}
-                           (not (str/blank? query)) (assoc :search query)
-                           remote (assoc :remote "true")
-                           sponsorship (assoc :sponsorship-offered "true")
-                           (seq tags) (assoc :tags (str/join ";" tags))
-                           (seq wh-regions) (assoc :wh-region (str/join ";" (map name wh-regions)))
-                           (seq cities) (assoc :location.city (str/join ";" cities))
-                           (seq countries) (assoc :location.country-code (str/join ";" countries))
-                           (seq role-types) (assoc :role-type (str/join ";" role-types))
-                           (and (not= "*" currency) salary-type) (merge (salary-params criteria))
-                           only-mine (assoc :manager (get-in app-db [:wh.user.db/sub-db :wh.user.db/email]))
+                           (not (str/blank? query))                (assoc :search query)
+                           remote                                  (assoc :remote "true")
+                           sponsorship                             (assoc :sponsorship-offered "true")
+                           (seq tags)                              (assoc :tags (str/join ";" tags))
+                           (seq wh-regions)                        (assoc :wh-region (str/join ";" (map name wh-regions)))
+                           (seq cities)                            (assoc :location.city (str/join ";" cities))
+                           (seq countries)                         (assoc :location.country-code (str/join ";" countries))
+                           (seq role-types)                        (assoc :role-type (str/join ";" role-types))
+                           (or (and (not= "*" currency) salary-type)
+                               (not competitive))                  (merge (salary-params competitive criteria))
+                           only-mine                               (assoc :manager (get-in app-db [:wh.user.db/sub-db :wh.user.db/email]))
                            (and published (= (count published) 1)) (assoc :published (first published))
-                           view-type (assoc :view-type (name view-type)))]))
+                           view-type                               (assoc :view-type (name view-type)))]))
 
 (reg-event-fx
   :wh.search/search

@@ -99,32 +99,38 @@
         [expanded-location-box collapsed?]))))
 
 (defn salary-box []
-  [:div.search__box.search__salary
-   [:span.label "Salary:"]
-   [radio-buttons (<sub [:wh.search/salary-type])
-    {:options   [{:id :day, :label "Daily"}
-                 {:id :year, :label "Yearly"}]
-     :on-change [:wh.search/set-salary-type]}]
-   (when (<sub [:wh.search/grouped-salary-ranges])
-     [slider-range
-      {:value     (<sub [:wh.search/salary-range-js])
-       :min       (<sub [:wh.search/salary-min])
-       :max       (<sub [:wh.search/salary-max])
-       :step      (case (<sub [:wh.search/salary-type])
-                    :day 50
-                    :year 1000
-                    1)
-       :on-change #(dispatch [:wh.search/set-salary-range (js->clj %)])}])
-   [:span.search__salary__range
-    (<sub [:wh.search/salary-range-desc])]
-   [:span.wh-form
-    [select-field (<sub [:wh.search/currency])
-     {:options   (<sub [:wh.search/currencies])
-      :disabled  (not (<sub [:wh.search/salary-type]))
-      :on-change [:wh.search/set-currency]}]]
-   [icon "close"
-    :class "search__reset"
-    :on-click #(dispatch [:wh.search/reset-salary])]])
+  [:<>
+   [:div.search__box.search__salary
+    [:span.label "Salary:"]
+    [radio-buttons (<sub [:wh.search/salary-type])
+     {:options   [{:id :day, :label "Daily"}
+                  {:id :year, :label "Yearly"}]
+      :on-change [:wh.search/set-salary-type]}]
+    (when (<sub [:wh.search/grouped-salary-ranges])
+      [slider-range
+       {:value     (<sub [:wh.search/salary-range-js])
+        :min       (<sub [:wh.search/salary-min])
+        :max       (<sub [:wh.search/salary-max])
+        :step      (case (<sub [:wh.search/salary-type])
+                     :day  50
+                     :year 1000
+                     1)
+        :on-change #(dispatch [:wh.search/set-salary-range (js->clj %)])}])
+    [:span.search__salary__range
+     (<sub [:wh.search/salary-range-desc])]
+    [:span.wh-form
+     [select-field (<sub [:wh.search/currency])
+      {:options   (<sub [:wh.search/currencies])
+       :disabled  (not (<sub [:wh.search/salary-type]))
+       :on-change [:wh.search/set-currency]}]]
+    [icon "close"
+     :class "search__reset"
+     :on-click #(dispatch [:wh.search/reset-salary])]]
+   [:div.search__box.search__salary-extra
+    [labelled-checkbox (<sub [:wh.search/show-competitive?])
+     {:label     "Show jobs with 'Competitive' salary"
+      :value     (<sub [:wh.search/show-competitive?])
+      :on-change [:wh.search/toggle-show-competitive]}]]])
 
 (defn admin-filters-box []
   [:div.search__box.search__admin
@@ -133,8 +139,8 @@
      :on-change [:wh.search/toggle-published]}]
    [labelled-checkbox (<sub [:wh.search/only-mine])
     (assoc (<sub [:wh.search/only-mine-desc])
-      :value (<sub [:wh.search/only-mine])
-      :on-change [:wh.search/toggle-only-mine])]])
+           :value (<sub [:wh.search/only-mine])
+           :on-change [:wh.search/toggle-only-mine])]])
 
 (def view-types
   {:view/list  {:icon-name "applications" :label "List"}

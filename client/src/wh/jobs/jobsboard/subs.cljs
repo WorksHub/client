@@ -7,8 +7,8 @@
             [wh.components.pagination :as pagination]
             [wh.db :as db]
             [wh.graphql.jobs :as jobs]
-            [wh.jobsboard-ssr.db :as jobsboard-ssr]
             [wh.jobs.jobsboard.db :as jobsboard]
+            [wh.jobsboard-ssr.db :as jobsboard-ssr]
             [wh.user.db :as user]
             [wh.verticals :as verticals])
   (:require-macros [clojure.core.strint :refer [<<]]))
@@ -188,6 +188,12 @@
   :<- [::search]
   (fn [search _]
     (:wh.search/tags-collapsed? search)))
+
+(reg-sub
+  :wh.search/show-competitive?
+  :<- [::search]
+  (fn [search _]
+    (:wh.search/competitive search)))
 
 (reg-sub
   :wh.search/flagged-tags
