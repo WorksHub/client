@@ -23,22 +23,24 @@
                                   (when secondary? "button--inverted"))}
       label]]))
 
-(defn signup-button [label package billing-period]
+(defn signup-button [label package billing-period quantity]
   [:a
    {:href (routes/path :register-company
-                       :query-params {:package (name package)
-                                      :billing (name billing-period)})
-    :id (str "employers_signup-btn-" label
-             (when package (str "-" (name package)))
-             (when billing-period (str "-" (name billing-period))))}
+                       :query-params {:package  (name package)
+                                      :billing  (name billing-period)
+                                      :quantity quantity})
+    :id   (str "employers_signup-btn-" label
+               (when package (str "-" (name package)))
+               (when billing-period (str "-" (name billing-period))))}
    (if (and (#{:launch_pad} package)
             (<sub [::subs/can-start-free-trial?]))
      [:button.button "Start Free Trial"]
      [:button.button label])])
 
 (defn page []
-  (let [vertical (<sub [:wh/vertical])
-        billing-period (keyword (or (<sub [:wh/query-param "billing-period"]) (name data/default-billing-period)))]
+  (let [vertical       (<sub [:wh/vertical])
+        billing-period (keyword (or (<sub [:wh/query-param "billing-period"])
+                                    (name data/default-billing-period)))]
     [:div.pricing
      [:div.public-content
       [:h2.public__subtitle "STRAIGHTFORWARD PRICING"]
@@ -49,18 +51,20 @@
          billing-period
          (->> data/billing-data
               (filter (fn [[k v]] (contains? data/billing-periods k)))
-              (map (fn [[k v]] {:id k
-                                :label [:span (:title v)
-                                        (when-let [discount (:discount v)]
-                                          [:small (str "(" (* 100 discount) "% off)")])]
-                                :href (routes/path :pricing :query-params {:billing-period (name k)})})))]]]
+              (map (fn [[k v]] {:id    k
+                               :label [:span (:title v)
+                                       (when-let [discount (:discount v)]
+                                         [:small (str "(" (* 100 discount) "% off)")])]
+                               :href  (routes/path
+                                        :pricing
+                                        :query-params {:billing-period (name k)})})))]]]
       [package-selector
-       {:signup-button signup-button
+       {:signup-button                 signup-button
         :show-billing-period-selector? false
-        :billing-period billing-period
-        :mobile-fullscreen? true
-        :show-trials? false
-        :contact-button (demo-button)}]]
+        :billing-period                billing-period
+        :mobile-fullscreen?            true
+        :show-trials?                  false
+        :contact-button                (demo-button)}]]
      [:div.public-content.has-text-centered
       [:div.pricing__request-demo
        [(demo-button) false "Request Demo" nil nil]]]

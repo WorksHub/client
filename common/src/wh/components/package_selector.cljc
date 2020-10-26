@@ -82,13 +82,15 @@
 
 (defn package-cost [package job-quota coupon billing-data]
   (let [quotas (:job-quotas package)
-        cost   (:cost package)]
+        cost   (:cost package)
+        free?  (and cost (zero? cost))]
     (cond
       quotas [package-quotas quotas coupon package job-quota billing-data]
 
-      cost [:div {:class styles/package-selector__price}
-            [:span.package-selector__amount
-             (if (zero? cost)
+      cost [:div (util/smc styles/package-selector__price
+                           [free? styles/package-selector__price--free])
+            [:span (util/smc styles/package-selector__amount)
+             (if free?
                "Free"
                (cost/int->dollars
                  (cost/calculate-monthly-cost cost (:discount billing-data) coupon)))]

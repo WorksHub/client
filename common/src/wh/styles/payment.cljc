@@ -8,6 +8,7 @@
 (def job-quota__name "payment__job-quota__name--2soui")
 (def job-quota__name__quantity "payment__job-quota__name__quantity--_bUoO")
 (def package-selector__price "payment__package-selector__price--2mY5b")
+(def package-selector__price--free "payment__package-selector__price--free--1LTTH")
 (def package-selector__amount-per "payment__package-selector__amount-per--2SO2P")
 (def package-selector__amount-billed "payment__package-selector__amount-billed--2gAne")
 (def package-selector__amount "payment__package-selector__amount--3RrYP")
