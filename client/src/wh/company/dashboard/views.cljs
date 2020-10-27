@@ -12,6 +12,7 @@
             [wh.components.ellipsis.views :refer [ellipsis]]
             [wh.components.icons :refer [icon]]
             [wh.components.loader :refer [loader]]
+            [wh.components.modal-publish-job :as modal-publish-job]
             [wh.components.stats.views :refer [stats-item]]
             [wh.components.tag :as tag]
             [wh.job.views :as job]
@@ -147,6 +148,21 @@
      :query-params {:action "edit"}
      :class "button button--inverted"]))
 
+(defn publish-role [{:keys [id]}]
+  (let [is-publishing? (<sub [::subs/is-job-publishing? id])
+        show-modal? (not (<sub [::subs/can-edit-jobs-after-first-job-published?]))]
+    [:<>
+     [modal-publish-job/modal {:on-close #(dispatch [::modal-publish-job/toggle-modal])
+                               :on-publish #(dispatch [::events/publish-role id])
+                               :on-publish-and-upgrade #(dispatch [::events/publish-role id :redirect-to-payment])}]
+     [:button.button
+      {:id       (str "dashboard-job-card__publish-button_" id)
+       :class    (when is-publishing? "button--inverted button--loading")
+       :on-click #(dispatch (if show-modal?
+                              [::modal-publish-job/toggle-modal]
+                              [::events/publish-role id]))}
+      "Publish Role"]]))
+
 (defn job-card [{:keys [id slug title display-location published
                         first-published tags stats partial-view-data
                         matching-users verticals]
@@ -201,13 +217,7 @@
         [:a.button {:id   (str "dashboard-job-card__view-applications-button_" id)
                     :href (<sub [::subs/view-applications-link id])}
          "View Applications"]
-        (let [is-publishing? (<sub [::subs/is-job-publishing? id])]
-          [:button.button
-           {:id       (str "dashboard-job-card__publish-button_" id)
-            :class    (when is-publishing? "button--inverted button--loading")
-            :on-click #(dispatch [::events/publish-role id])}
-           "Publish Role"]))
-
+        [publish-role {:id id}])
       [edit-job id can-edit-jobs?]]
 
      (when (<sub [::subs/is-publish-celebration-showing? id])

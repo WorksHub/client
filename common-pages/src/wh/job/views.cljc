@@ -12,8 +12,10 @@
             [wh.components.icons :refer [icon]]
             [wh.components.issue :refer [level->str level->icon issue-card]]
             [wh.components.job :refer [job-card highlight]]
+            [wh.components.modal-publish-job :as modal-publish-job]
             [wh.components.pods.candidates :as candidate-pods]
             [wh.interop :as interop]
+            [wh.job.components :as jc]
             [wh.job.events :as events]
             [wh.job.subs :as subs]
             [wh.pages.util :as putil]
@@ -54,21 +56,6 @@
                                     (.setZoom @gmap zoom)
                                     (.setTitle @marker title)))}))))
 
-(defn- publish-button []
-  [:button.button.button--medium
-   (merge {:id    "job-view__publish-button"
-           :class (when (<sub [::subs/publishing?])
-                    "button--inverted button--loading")}
-          #?(:cljs
-             {:on-click #(dispatch [::events/publish-role])}))
-   "Publish"])
-
-(defn- view-applications-button []
-  [:a
-   {:href (<sub [::subs/view-applications-link])
-    :id   "job-view__view-applications-button"}
-   [:button.button.button--medium "View Applications"]])
-
 (defn- edit-button [can-edit?]
   (if can-edit?
     [link
@@ -84,57 +71,61 @@
      :query-params {:action "edit"}
      :html-id "job-view__edit-button"]))
 
-(defn apply-button
-  ([]
-   (apply-button {}))
-  ([{:keys [id force-view-applications? condensed?]}]
-   (let [applied?  (<sub [::subs/applied?])
-         can-edit? (<sub [::subs/can-edit-jobs?])]
-     (cond
-       (not (<sub [::subs/loaded?]))
-       [:div.button--skeleton]
-       (or (<sub [:user/admin?])
-           (<sub [::subs/owner?]))
-       (into [:div
-              {:class (util/merge-classes
-                        "job__admin-buttons"
-                        (when condensed? "job__admin-buttons--condensed"))}
-              [edit-button can-edit?]]
+(defn buttons-admin-and-company-owners [{:keys [force-view-applications? condensed?]}]
+  (let [can-edit? (<sub [::subs/can-edit-jobs?])
+        show-unpublished? (<sub [::subs/show-unpublished?])
+        view-applications? (or (not show-unpublished?) force-view-applications?)
+        show-modal? (not (<sub [::subs/can-edit-jobs-after-first-job-published?]))
+        publishing? (<sub [::subs/publishing?])]
+    (cond-> [:div
+             (util/smc "job__admin-buttons" [condensed? "job__admin-buttons--condensed"])
+             [edit-button can-edit?]
+             [modal-publish-job/modal {:on-close #(dispatch [::modal-publish-job/toggle-modal])
+                                       :on-publish #(dispatch [::events/publish-role])
+                                       :on-publish-and-upgrade #(dispatch [::events/publish-role nil :redirect-to-payment])}]]
+            ;;
+            show-unpublished?
+            (conj [jc/publish-button {:publishing? publishing?
+                                      :on-click (if show-modal?
+                                                  [::modal-publish-job/toggle-modal]
+                                                  [::events/publish-role])}])
+            ;;
+            view-applications?
+            (conj [jc/view-applications-button {:href (<sub [::subs/view-applications-link])}]))))
 
-             (concat []
-                     (when (<sub [::subs/show-unpublished?])
-                       [[publish-button]])
-                     (when (or (not (<sub [::subs/show-unpublished?]))
-                               force-view-applications?)
-                       [[view-applications-button]])))
-       :else
-       [:div
-        {:class (util/merge-classes "job__apply-buttons"
-                                    (when condensed? "job__apply-buttons--condensed"))}
-        [:button.button.button--medium
-         (if (not (<sub [:user/logged-in?]))
-           (merge {:id (str "job-view__logged-out-apply-button" (when id (str "__" id)))}
-                  (interop/on-click-fn
-                    (interop/show-auth-popup :jobpage-apply
-                                             [:job
-                                              :params {:slug (:slug (<sub [::subs/apply-job]))}
-                                              :query-params {:apply "true"}])))
-           {:id       (str "job-view__apply-button" (when id (str "__" id)))
-            :disabled (or applied? (<sub [:user/company?]))
-            :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])})
-         (cond applied?                            "Applied"
-               (some? (<sub [:user/applied-jobs])) "Instant Apply"
-               :else                               "Apply")]
-        [:div
-         [:a {:href (routes/path :company-jobs :params {:slug (<sub [::subs/company-slug])})}
-          [:button.button.button--medium.button--inverted.button--ellipsis
-           (if condensed?
-             "See more"
-             (str "More jobs from " (<sub [::subs/company-name])))]]
-         (when (and (not condensed?) (<sub [::subs/profile-enabled?]))
-           [:a {:href (routes/path :company :params {:slug (<sub [::subs/company-slug])})}
-            [:button.button.button--medium.button--inverted.button--ellipsis
-             "About " (<sub [::subs/company-name])]])]]))))
+(defn buttons-user [{:keys [id condensed?]}]
+  (let [already-applied? (<sub [::subs/applied?])
+        job (<sub [::subs/apply-job])
+        name (<sub [::subs/company-name])
+        slug (<sub [::subs/company-slug])
+        profile-enabled? (<sub [::subs/profile-enabled?])
+        show-about? (and (not condensed?) profile-enabled?)]
+    [:div
+     (util/smc "job__apply-buttons" [condensed? "job__apply-buttons--condensed"])
+     [jc/apply-button {:applied? already-applied?
+                       :job      job
+                       :id       id}]
+     [:div
+      [jc/more-jobs-link {:href         (routes/path :company-jobs :params {:slug slug})
+                          :condensed?   condensed?
+                          :company-name name}]
+      (when show-about?
+        [jc/about-company-link {:href         (routes/path :company :params {:slug (<sub [::subs/company-slug])})
+                                :company-name name}])]]))
+
+(defn buttons
+  ([]
+   (buttons {}))
+  ([opts]
+   (cond
+     (not (<sub [::subs/loaded?]))
+     [:div.button--skeleton]
+     ;; admins and company owners
+     (or (<sub [:user/admin?]) (<sub [::subs/owner?]))
+     [buttons-admin-and-company-owners opts]
+     ;; users
+     :else
+     [buttons-user opts])))
 
 (defn save-button []
   [icon "bookmark"
@@ -260,12 +251,12 @@
      (if (and matching-users (> matching-users 0))
        [:p "We have " matching-users " active " (pluralize matching-users "member") " with 75%+ match rates for this role. What are you waiting for?"]
        [:p "Calculating your matches..."])
-     [apply-button]]))
+     [buttons]]))
 
 (defn admin-action
   []
   [:section.job__admin-action
-   [apply-button {:force-view-applications? true}]
+   [buttons {:force-view-applications? true}]
    (when (<sub [:user/admin?])
      [apply-on-behalf "job"])])
 
@@ -280,7 +271,7 @@
           [:span message]
           [match-circle {:score score
                          :text? true}]]))
-     [apply-button {:id "candidate-action-box"}]]))
+     [buttons {:id "candidate-action-box"}]]))
 
 (defn create-skeleton-tags []
   (map (fn [i]
@@ -419,7 +410,7 @@
       [icon (if loaded? "codi" "circle")]
       (when loaded?
         [:span message])]
-     [apply-button {:id id :condensed? true}]]))
+     [buttons {:id id :condensed? true}]]))
 
 (defn other-roles
   []
@@ -455,29 +446,33 @@
       "Instant Apply"
       "Apply")]])
 
+(defn actions []
+  (let [admin?   (<sub [:user/admin?])
+        company? (<sub [:user/company?])]
+    (cond (<sub [::subs/owner?])
+          [:div.section-container
+           [company-action]
+           [job-stats]]
+          admin?
+          [:div.section-container
+           [admin-action]
+           [job-stats]]
+          company? ;; but not owner
+          [:div]
+          :else
+          [candidate-action])))
+
 (defn job-details
   []
   (let [admin?   (<sub [:user/admin?])
-        company? (<sub [:user/company?])
-        actions  (cond (<sub [::subs/owner?])
-                       [:div.section-container
-                        [company-action]
-                        [job-stats]]
-                       admin?
-                       [:div.section-container
-                        [admin-action]
-                        [job-stats]]
-                       company? ;; but not owner
-                       [:div]
-                       :else
-                       [candidate-action])]
+        company? (<sub [:user/company?])]
     [:div.main-container
      [:div.main.job
       [:div.is-flex
        [:div.job__main
         [company-header]
         [:div.is-hidden-desktop
-         actions
+         [actions]
          [job-highlights]]
         [tagline]
         [information]
@@ -488,7 +483,7 @@
         (when-not (or admin? company? (<sub [::subs/applied?]))
           [lower-cta])]
        [:div.job__side.is-hidden-mobile
-        actions
+        [actions]
         [job-highlights]
         [candidate-pods/candidate-cta]
         (when (<sub [::subs/show-issues?])

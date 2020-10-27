@@ -339,6 +339,8 @@
                       (not= (get-in db [::payment/sub-db ::payment/company :id])
                             (get-in db [::user/sub-db ::user/company :id])))
               [[::fetch-company]])
+            (when (= "publish-job" (get-in db [:wh.db/query-params "type"]))
+              [[:success/set-global (str "Congratulations! Your role is now live!")]])
             (when (and (get-in db [::payment/sub-db ::payment/company :id])
                        (subs/upgrading? db)
                        (= :pay-confirm (subs/payment-step db)))

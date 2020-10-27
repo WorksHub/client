@@ -49,16 +49,16 @@
 (defn profile-edit-modal []
   (let [open? (<sub [::subs/editing-profile?])
         on-close #(dispatch [::events/close-modal])]
-    (when open?
-      [modal/modal {:open? open?
-                    :on-request-close on-close
-                    :label "Edit your profile"}
-       [modal/header {:title "Edit your profile"
-                      :on-close on-close}]
-       [modal/body [content]]
-       [modal/footer
-        [modal/button {:text "Close"
-                       :on-click on-close
-                       :type :secondary}]
-        [modal/button {:text "Save"
-                       :on-click #(dispatch [::events/update-profile])}]]])))
+    [modal/modal {:open? open?
+                  :on-request-close on-close
+                  :label "Edit your profile"}
+     [modal/header {:title "Edit your profile"
+                    :on-close on-close}]
+     [modal/body [content]]
+     [modal/footer
+      [modal/button {:text "Close"
+                     :on-click on-close
+                     :type :secondary}]
+      [modal/button {:text "Save"
+                     :on-click #(dispatch [::events/update-profile])}]]]))
+

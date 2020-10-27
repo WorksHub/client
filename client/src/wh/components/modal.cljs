@@ -26,6 +26,9 @@
 (defn body [& children]
   (into [:div {:class styles/body}] children))
 
+(defn extended-body [{:keys [class] :as _opts} & children]
+  (into [:div (util/smc styles/body class)] children))
+
 (defn button [{:keys [text on-click type]}]
   [:button {:class (util/mc styles/button [(= type :secondary) styles/button--secondary])
             :on-click on-click} text])
@@ -33,17 +36,23 @@
 (def modal-wrapper-id "modal-wrapper")
 
 (defn modal
-  [{:keys [open? on-request-close id label]
-    :or {id "modal"}
-    :as _opts}
-   & children]
-  [:div {:id modal-wrapper-id}
-   (into [react-modal {:is-open open?
-                       :class-name styles/modal
-                       :overlay-class-name styles/overlay
-                       :content-label label
-                       :id id
-                       :on-after-open #(js/window.toggleNoScroll modal-wrapper-id)
-                       :on-after-close #(js/window.toggleNoScroll modal-wrapper-id)
-                       :on-request-close on-request-close}]
-         children)])
+  []
+  (let [;; without randomised id setNoScroll doesn't work correctly
+        ;; if there are several modals on one page
+        modal-wrapper-id' (str modal-wrapper-id (random-uuid))
+        on-after-close #(js/window.setNoScroll modal-wrapper-id' false)
+        on-after-open #(js/window.setNoScroll modal-wrapper-id' true)]
+    (fn [{:keys [open? on-request-close id label class]
+          :or {id "modal"}
+          :as _opts}
+         & children]
+      [:div {:id modal-wrapper-id'}
+       (into [react-modal {:is-open open?
+                           :class-name (util/merge-classes styles/modal class)
+                           :overlay-class-name styles/overlay
+                           :content-label label
+                           :id id
+                           :on-after-open on-after-open
+                           :on-after-close on-after-close
+                           :on-request-close on-request-close}]
+             children)])))

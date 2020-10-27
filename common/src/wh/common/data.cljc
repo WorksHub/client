@@ -472,7 +472,7 @@
    "Performance analytics"
    "Github integration"
    "Company profile"
-   "Review, track & share applicants"
+   "Review & track applicants"
    "ATS Integrations"
    "Account manager"
    "Unlimited edits"
@@ -527,7 +527,7 @@
                                "Performance analytics"
                                "Github integration"
                                "Company profile"
-                               "Review, track & share applicants"}
+                               "Review & track applicants"}
                 :order       2
                 :description "For those looking to get good exposure to our dedicated pool of technical talent with limited hiring needs."}
    :launch_pad {:name        "Launch Pad"
@@ -553,7 +553,7 @@
                                "Performance analytics"
                                "Github integration"
                                "Company profile"
-                               "Review, track & share applicants"
+                               "Review & track applicants"
                                "ATS Integrations"
                                "Account manager"}
                 :order       3

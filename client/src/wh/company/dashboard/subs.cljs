@@ -4,6 +4,7 @@
             [cljs.spec.alpha :as s]
             [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
+            [wh.common.company :as companyc]
             [wh.common.data :refer [package-data]]
             [wh.common.keywords :as keywords]
             [wh.common.specs.company]
@@ -216,6 +217,11 @@
     (some-> sub-db
             ::sub-db/publishing-jobs
             (contains? id))))
+
+(reg-sub
+  ::can-edit-jobs-after-first-job-published?
+  (fn [db _]
+    (companyc/can-edit-jobs-after-first-job-published? db)))
 
 (reg-sub
   ::is-publish-celebration-showing?

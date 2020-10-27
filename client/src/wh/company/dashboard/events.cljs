@@ -10,6 +10,7 @@
             [wh.common.keywords :as keywords]
             [wh.common.user :as user-common]
             [wh.company.dashboard.db :as sub-db]
+            [wh.components.modal-publish-job :as modal-publish-job]
             [wh.db :as db]
             [wh.graphql.company :refer [update-company-mutation]]
             [wh.job.events :refer [process-publish-role-intention]]
@@ -223,11 +224,14 @@
 (reg-event-fx
   ::publish-job-success
   company-interceptors
-  (fn [{db :db} [job-id]]
-    {:db (-> db
-             (update ::sub-db/publishing-jobs (comp #(disj % job-id) set))
-             (update ::sub-db/publish-celebrations (comp #(conj % job-id) set)))
-     :dispatch [::fetch-permissions]}))
+  (fn [{db :db} [job-id redirect-to-payment?]]
+    (cond-> {:db (-> db
+                     (update ::sub-db/publishing-jobs (comp #(disj % job-id) set))
+                     (update ::sub-db/publish-celebrations (comp #(conj % job-id) set)))}
+            :always (assoc :dispatch [::fetch-permissions])
+            redirect-to-payment? (assoc :navigate [:payment-setup
+                                                   :params {:step :select-package}
+                                                   :query-params {:type "publish-job"}]))))
 
 (reg-event-db
   ::publish-job-failure
@@ -238,20 +242,20 @@
 (reg-event-fx
   ::publish-role
   db/default-interceptors
-  (fn [{db :db} [job-id]]
-    (let [perms         (get-in db [::sub-db/sub-db ::sub-db/permissions])
+  (fn [{db :db} [job-id redirect-to-payment?]]
+    (let [perms (get-in db [::sub-db/sub-db ::sub-db/permissions])
           pending-offer (get-in db [::sub-db/sub-db ::sub-db/pending-offer])]
       (process-publish-role-intention
-        {:db             db
-         :job-id         job-id
-         :permissions    perms
-         :pending-offer  pending-offer
-         :publish-events {:success [::publish-job-success job-id]
-                          :failure [::publish-job-failure job-id]
-                          :retry   [::publish-role job-id]}
-         :on-publish     (fn [db]
-                           (update-in db [::sub-db/sub-db ::sub-db/publishing-jobs]
-                                      (comp #(conj % job-id) set)))}))))
+       {:db db
+        :job-id job-id
+        :permissions perms
+        :pending-offer pending-offer
+        :publish-events {:success [::publish-job-success job-id redirect-to-payment?]
+                         :failure [::publish-job-failure job-id]
+                         :retry   [::publish-role job-id]}
+        :on-publish (fn [db] (-> db
+                                 (update-in [::sub-db/sub-db ::sub-db/publishing-jobs] (comp #(conj % job-id) set))
+                                 modal-publish-job/close-modal))}))))
 
 (reg-event-fx
   ::update-company

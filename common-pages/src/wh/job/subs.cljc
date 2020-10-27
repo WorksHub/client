@@ -4,6 +4,7 @@
             [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
+            [wh.common.company :as companyc]
             [wh.components.stats.db :as stats]
             [wh.graphql.jobs :as jobs]
             [wh.job.db :as job]
@@ -437,6 +438,11 @@
   :<- [::company]
   (fn [company _]
     (:profile-enabled company)))
+
+(reg-sub
+  ::can-edit-jobs-after-first-job-published?
+  (fn [db _]
+    (companyc/can-edit-jobs-after-first-job-published? db)))
 
 (reg-sub
   ::company-slug

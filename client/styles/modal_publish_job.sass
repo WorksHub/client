@@ -1,0 +1,168 @@
+@import colours
+@import mixins
+
+.modal
+  width: 100%
+  max-width: 100%
+  +tablet
+    width: 672px
+    max-width: 672px
+
+.body
+  display: grid
+  grid-gap: 24px
+  position: relative
+  text-align: center
+
+.title
+  text-align: start
+  font-size: 20px
+  line-height: 25px
+  font-weight: bold
+  +tablet
+    text-align: unset
+    font-size: 22px
+    line-height: 20px
+
+.explanation
+  text-align: start
+  font-size: 16px
+  max-width: 380px
+  line-height: 21px
+  +tablet
+    text-align: unset
+
+  &__wrapper
+    display: flex
+    justify-content: center
+
+.package
+  width: auto
+  border: 2px solid $grey200
+  border-radius: 4px
+  display: grid
+  grid-gap: 20px
+  padding: 24px 24px 36px
+  justify-content: center
+  text-align: center
+  margin-bottom: 16px
+
+  +tablet
+    width: auto
+    margin-bottom: 0
+
+  &--highlighted
+    border-color: $primary-red
+
+.secondary-text
+  font-size: 13px
+  line-height: 21px
+  font-style: italic
+
+.package-name
+  font-size: 20px
+  line-height: 22px
+  font-weight: bold
+  color: $text-black
+  text-align: center
+
+  &--highlighted
+    font-size: 22px
+    color: $primary-red
+
+.price
+  font-size: 18px
+  line-height: 22px
+  font-weight: 600
+
+  &__wrapper
+    display: grid
+    grid-template-columns: repeat(3, max-content)
+    justify-content: center
+    grid-gap: 7px
+
+.packages
+  flex-direction: column-reverse
+  display: flex
+  justify-content: space-around
+  margin-bottom: -16px
+  +tablet
+    margin-bottom: 0
+    flex-direction: row
+
+.perk
+  text-align: start
+  display: flex
+  align-items: center
+  line-height: 18px
+
+  &__icon
+    margin-right: 8px
+    fill: $text-black
+
+    &--highlighted
+      fill: $primary-red
+
+.perks
+  text-align: start
+  display: grid
+  grid-gap: 8px
+  justify-content: center
+  height: 96px
+  grid-template-rows: repeat(4, min-content)
+
+  &--hide-one-perk
+    .perk:nth-of-type(3)
+      display: none
+
+.button
+  height: 45px
+  min-width: 230px
+  font-size: 16px
+  color: $grey500
+  background: $white
+  border: 1px solid $grey500
+  border-radius: 4px
+  letter-spacing: 0.03em
+  font-weight: 600
+  cursor: pointer
+
+  &--highlighted
+    color: $white
+    background: $primary-red
+    border-color: $primary-red
+
+  &__wrapper
+    display: grid
+    grid-gap: 4px
+    position: relative
+
+  &__additional-info
+    position: absolute
+    bottom: -21px
+    width: 275px
+    left: -22px
+
+.paragraph
+  display: flex
+  flex-direction: column
+  justify-content: center
+  font-size: 14px
+  line-height: 1.4
+  letter-spacing: 0.2px
+  color: $grey500
+
+  &--bold
+    font-weight: 600
+    padding: 0 6px
+
+  +tablet
+    flex-direction: row
+
+.info
+  display: grid
+  grid-gap: 6px
+
+.link
+  font-weight: 600
+  padding: 12px 0

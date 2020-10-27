@@ -25,51 +25,53 @@
    [branding/vertical-title vertical {:type :navigation
                                       :size :small}]])
 
-(def search-id "navbar__search-input")
-
 
 ;; Reagent complains about autocomplete keyword
 (def autocomplete-k #?(:cljs :autoComplete
                        :clj  :autocomplete))
 
-(defn search [type]
-  (let [search-value (<sub [::subs/search-value])]
-    [:form (merge {:method :get
-                   :action (routes/path :search)
-                   :class  (util/mc
-                             styles/search__wrapper
-                             [(= type :small-menu-no-mobile) styles/no-mobile]
-                             [(= type :navbar) styles/no-mobile])}
-                  #?(:cljs {:on-submit
-                            (fn [e]
-                              (.preventDefault e)
-                              (js/hideMenu)
-                              (dispatch [:wh.search/search-with-value search-value]))}))
-     [icon "search-new" :class styles/search__search-icon]
-     [:input (merge
-               {:class         (util/mc
-                                 styles/search
-                                 [(or (= type :small-menu)
-                                      (= type :small-menu-no-mobile))
-                                  styles/search__small-menu])
-                :id            search-id
-                :data-test     "job-search"
-                :type          "text"
-                :name          "query"
-                :placeholder   "Search…"
-                :value         search-value
-                autocomplete-k "off"}
-               #?(:cljs {:on-change
-                         (fn [e]
-                           (dispatch [:wh.components.navbar.events/set-search-value
-                                      (.-value (.-target e))]))}))]
-     (when search-value
-       [:a
-        (merge {:href  (routes/path :search)
-                :class styles/search__clear-icon}
-               #?(:cljs {:on-click
-                         #(set! (.-value (.getElementById js/document search-id)))}))
-        [icon "close"]])]))
+(def search-id "navbar__search-input")
+
+(defn search [_]
+  (let [navbar-search-id (str search-id (util/random-uuid))]
+    (fn [type]
+      (let [search-value (<sub [::subs/search-value])]
+        [:form (merge {:method :get
+                       :action (routes/path :search)
+                       :class  (util/mc
+                                 styles/search__wrapper
+                                 [(= type :small-menu-no-mobile) styles/no-mobile]
+                                 [(= type :navbar) styles/no-mobile])}
+                      #?(:cljs {:on-submit
+                                (fn [e]
+                                  (.preventDefault e)
+                                  (js/hideMenu)
+                                  (dispatch [:wh.search/search-with-value search-value]))}))
+         [icon "search-new" :class styles/search__search-icon]
+         [:input (merge
+                   {:class         (util/mc
+                                     styles/search
+                                     [(or (= type :small-menu)
+                                          (= type :small-menu-no-mobile))
+                                      styles/search__small-menu])
+                    :id            navbar-search-id
+                    :data-test     "job-search"
+                    :type          "text"
+                    :name          "query"
+                    :placeholder   "Search…"
+                    :value         search-value
+                    autocomplete-k "off"}
+                   #?(:cljs {:on-change
+                             (fn [e]
+                               (dispatch [:wh.components.navbar.events/set-search-value
+                                          (.-value (.-target e))]))}))]
+         (when search-value
+           [:a
+            (merge {:href  (routes/path :search)
+                    :class styles/search__clear-icon}
+                   #?(:cljs {:on-click
+                             #(set! (.-value (.getElementById js/document navbar-search-id)))}))
+            [icon "close"]])]))))
 
 (defn button-write-article []
   [:a {:class     (util/mc styles/button styles/button--contribute)

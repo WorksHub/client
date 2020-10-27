@@ -10,6 +10,7 @@
             [wh.db :as db]
             [wh.graphql.jobs :as graphql-jobs]
             [wh.components.tag :as tag]
+            [wh.components.modal-publish-job :as modal-publish-job]
             [wh.job.db :as job]
             [wh.common.user :as user-common]
             [wh.common.keywords :as keywords]
@@ -214,15 +215,21 @@
     (assoc db :google/maps-loaded? true)))
 
 (reg-event-fx
+  ::navigate-payment
+  job-interceptors
+  (fn [_ _]
+    {:navigate [:payment-setup
+                :params {:step :select-package}
+                :query-params {:type "publish-job"}]}))
+
+(reg-event-fx
   ::publish-job-success
   job-interceptors
-  (fn [{db :db} [job-id]]
-    {:db (assoc db
-                ::job/publishing? false
-                ::job/published true)
-     :dispatch-n [[:success/set-global
-                   (str "Congratulations! Your role '" (::job/title db)"' is now live!")]
-                  [::fetch-permissions]]}))
+  (fn [{db :db} [redirect-to-payment?]]
+    {:db (assoc db ::job/published true)
+     :dispatch-n (cond-> [[:success/set-global (str "Congratulations! Your role '" (::job/title db)"' is now live!")]]
+                         :always (conj [::fetch-permissions])
+                         redirect-to-payment? (conj [::navigate-payment]))}))
 
 (reg-event-db
   ::publish-job-failure
@@ -319,7 +326,7 @@
 (reg-event-fx
   ::publish-role
   db/default-interceptors
-  (fn [{db :db} [job-id]]
+  (fn [{db :db} [job-id redirect-to-payment?]]
     (let [perms (job/company-permissions db)
           job-id (or job-id (get-in db [::job/sub-db ::job/id]))
           pending-offer (get-in db [::job/sub-db ::job/company :pending-offer])]
@@ -328,10 +335,13 @@
          :job-id job-id
          :permissions perms
          :pending-offer pending-offer
-         :publish-events {:success [::publish-job-success]
+         :publish-events {:success [::publish-job-success redirect-to-payment?]
                           :failure [::publish-job-failure]
                           :retry   [::publish-role]}
-         :on-publish #(assoc-in % [::job/sub-db ::job/publishing?] true)}))))
+         :on-publish (fn [db]
+                       (-> db
+                           (assoc-in [::job/sub-db ::job/publishing?] true)
+                           modal-publish-job/close-modal))}))))
 
 (defquery update-company
   {:venia/operation {:operation/type :mutation
