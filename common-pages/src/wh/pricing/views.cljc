@@ -12,12 +12,14 @@
             [wh.verticals :as verticals]))
 
 (defn demo-button []
-  (fn [secondary? label package _billing-period]
-    [:a {:href   (if (= :take_off package)
-                   verticals/take-off-meeting-link
-                   verticals/demo-link)
-         :target "_blank"
-         :rel    "noopener"}
+  (fn [secondary? label package billing-period]
+    [:a {:href (if (= :take_off package)
+                 verticals/take-off-meeting-link
+                 (routes/path :register-company
+                              :query-params
+                              (cond-> {}
+                                      package        (assoc :package (name package))
+                                      billing-period (assoc :billing (name billing-period)))))}
      [:button#employers_demo-btn
       {:class (util/merge-classes "button button__public"
                                   (when secondary? "button--inverted"))}
