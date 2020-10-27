@@ -6,22 +6,24 @@
     [wh.subs :refer [<sub]]))
 
 (defn global-status-box []
-  (when-let [message (<sub [::subs/message])]
-    [:div
-     {:class (str "global-status " (<sub [::subs/type]))}
-     (when (= "success" (<sub [::subs/type]))
-       [icon "tick" :class "tick is-hidden-desktop"])
-     [icon "close" :class "close is-pulled-right" :on-click #(dispatch [:error/close-global])]
-     [:div.global-status__body
-      [:div.global-status__message
-       (when (= "success" (<sub [::subs/type]))
-         [icon "tick" :class "tick is-hidden-mobile"])
-       message
-       (when-let [event (<sub [::subs/retry-event])]
-         [:span " Please " [:span {:on-click #(do (.preventDefault %)
-                                                  (dispatch [:error/retry-failed-action event]))
-                                   :class    "global-status__try-again"}
-                            "try again"]])]]]))
+  (let [type (<sub [::subs/type])]
+    (when-let [message (<sub [::subs/message])]
+      [:div
+       {:class (str "global-status " type)
+        :data-test (str "global-" type)}
+       (when (= "success" type)
+         [icon "tick" :class "tick is-hidden-desktop"])
+       [icon "close" :class "close is-pulled-right" :on-click #(dispatch [:error/close-global])]
+       [:div.global-status__body
+        [:div.global-status__message
+         (when (= "success" type)
+           [icon "tick" :class "tick is-hidden-mobile"])
+         message
+         (when-let [event (<sub [::subs/retry-event])]
+           [:span " Please " [:span {:on-click #(do (.preventDefault %)
+                                                    (dispatch [:error/retry-failed-action event]))
+                                     :class    "global-status__try-again"}
+                              "try again"]])]]])))
 
 ;; TODO: eradicate this and use global-status-box everywhere instead
 (defn error-box []

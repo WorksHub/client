@@ -25,7 +25,13 @@
   ::avatar-uploading?
   :<- [::sub-db]
   (fn [db _]
-    (:image-uploading? db)))
+    (= (:image-upload-status db) :pending)))
+
+(reg-sub
+  ::avatar-uploaded?
+  :<- [::sub-db]
+  (fn [db _]
+    (= (:image-upload-status db) :success)))
 
 (reg-sub
   ::summary

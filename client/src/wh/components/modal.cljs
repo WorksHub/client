@@ -29,9 +29,10 @@
 (defn extended-body [{:keys [class] :as _opts} & children]
   (into [:div (util/smc styles/body class)] children))
 
-(defn button [{:keys [text on-click type]}]
+(defn button [{:keys [text on-click type data-test]}]
   [:button {:class (util/mc styles/button [(= type :secondary) styles/button--secondary])
-            :on-click on-click} text])
+            :on-click on-click
+            :data-test data-test} text])
 
 (def modal-wrapper-id "modal-wrapper")
 

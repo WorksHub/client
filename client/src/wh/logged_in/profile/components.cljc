@@ -100,15 +100,17 @@
                        (not on-click) (assoc :href href)
                        on-click       (assoc :on-click on-click))]))
 
-(defn profile [user {:keys [github stackoverflow twitter last-seen updated on-edit]} type]
+(defn profile [user {:keys [github stackoverflow twitter website last-seen updated on-edit display-toggle?]} type]
   (let [public?                          (= type :public)
         {:keys [name image-url summary]} (keywords/strip-ns-from-map-keys user)
         show-meta?                       (->> [github stackoverflow twitter last-seen updated]
                                               (map boolean)
                                               (some true?))]
-    [:div (util/smc styles/section styles/section--profile)
-     (when-not public? [edit-profile {:type     :default
-                                      :on-click on-edit}])
+    [:div {:class (util/mc styles/section styles/section--profile)
+           :data-test :public-info}
+     (when (and (not public?) display-toggle?)
+       [edit-profile {:type     :default
+                      :on-click on-edit}])
      [:div {:class styles/username} name]
      [:img {:src   image-url
             :class styles/avatar}]
@@ -127,6 +129,7 @@
                       :text (->> (time/str->time updated :date-time)
                                  time/human-time
                                  (str "Updated "))}])
+         [social-row :web website type]
          [social-row :github github type]
          [social-row :stackoverflow stackoverflow type]
          [social-row :twitter twitter type]]]

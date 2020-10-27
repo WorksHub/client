@@ -67,7 +67,7 @@
   ::avatar-upload-start
   profile-update-interceptors
   (fn [db _]
-    (assoc db :image-uploading? true)))
+    (assoc db :image-upload-status :pending)))
 
 (reg-event-db
   ::avatar-upload-success
@@ -75,13 +75,13 @@
   (fn [db [_ {:keys [url]}]]
     (assoc db
       :image-url url
-      :image-uploading? false)))
+      :image-upload-status :success)))
 
 (reg-event-fx
   ::avatar-upload-failure
   profile-update-interceptors
   (fn [{db :db} [resp]]
-    {:db       (assoc db :image-uploading? false)
+    {:db       (assoc db :image-upload-status :failure)
      :dispatch [:error/set-global(errors/image-upload-error-message (:status resp))]}))
 
 ;; profile update ---------

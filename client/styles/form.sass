@@ -94,11 +94,14 @@
 
   &__wrapper
     display: inline-flex
+    width: fit-content
+    flex-direction: column
     cursor: pointer
     right: 70px
-    top: 120px
+    top: 100px
     +tablet
       position: absolute
+      flex-direction: row
 
   &__controls-wrapper
     position: relative
@@ -125,6 +128,17 @@
 
   &__edit-icon
     fill: $white
+
+  &__message
+    bottom: -14px
+    width: 100%
+    display: flex
+    justify-content: center
+    font-size: 13px
+    line-height: 13px
+    font-weight: 500
+    +tablet
+      position: absolute
 
 .error
   color: $error-red

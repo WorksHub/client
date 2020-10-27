@@ -11,8 +11,11 @@
 (defn content []
   [:div {:class styles/modal-content}
    [forms/avatar-field
-    {:uploading-avatar? (<sub [::subs/avatar-uploading?])
+    {:avatar-uploading? (<sub [::subs/avatar-uploading?])
+     :avatar-uploaded? (<sub [::subs/avatar-uploaded?])
      :avatar-url (<sub [::subs/avatar])
+     :data-test :avatar
+     :msg-success "Avatar uploaded"
      :set-avatar (upload/handler
                    :launch [::events/avatar-upload]
                    :on-upload-start [::events/avatar-upload-start]
@@ -24,7 +27,8 @@
      {:label "Name"
       :required? true
       :placeholder "Name"
-      :on-change [::events/edit-name]}]
+      :on-change [::events/edit-name]
+      :data-test :name}]
     [forms/error-component (<sub [::subs/field-error :name])]]
    [:div {:class styles/short-wrapper}
     [forms/multi-edit
@@ -34,7 +38,8 @@
       :on-change     [::events/edit-url]
       :component     forms/text-input-with-label
       :lens          :url
-      :class-wrapper styles/other-urls}]
+      :class-wrapper styles/other-urls
+      :data-test     :website}]
     [forms/error-component (<sub [::subs/field-error :other-urls])]]
    [:div
     [forms/text-input-with-label
@@ -43,7 +48,8 @@
       :placeholder "Tell companies and our technical community a little bit about yourself"
       :type :textarea
       :on-change [::events/edit-summary]
-      :rows 4}]
+      :rows 4
+      :data-test :summary}]
     [forms/error-component (<sub [::subs/field-error :summary])]]])
 
 (defn profile-edit-modal []
@@ -60,5 +66,5 @@
                      :on-click on-close
                      :type :secondary}]
       [modal/button {:text "Save"
-                     :on-click #(dispatch [::events/update-profile])}]]]))
-
+                     :on-click #(dispatch [::events/update-profile])
+                     :data-test :save}]]]))

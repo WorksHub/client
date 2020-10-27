@@ -667,11 +667,13 @@
 (defn view-page []
   [components/container
    [components/profile (<sub [::subs/header-data])
-    {:twitter       (<sub [::subs/social :twitter])
-     :stackoverflow (<sub [::subs/social :stackoverflow])
-     :github        (<sub [::subs/social :github])
-     :last-seen     (<sub [::subs/last-seen])
-     :updated       (<sub [::subs/updated])
-     :on-edit       #(dispatch [::edit-modal-events/open-modal])}
+    {:twitter         (<sub [::subs/url :twitter])
+     :stackoverflow   (<sub [::subs/url :stackoverflow])
+     :github          (<sub [::subs/url :github])
+     :website         (<sub [::subs/url :web])
+     :last-seen       (<sub [::subs/last-seen])
+     :updated         (<sub [::subs/updated])
+     :display-toggle? (<sub [::subs/display-toggle?])
+     :on-edit         #(dispatch [::edit-modal-events/open-modal])}
     :private]
    [main-view]])

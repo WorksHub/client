@@ -124,13 +124,14 @@
   (when error
     [:div {:class styles/error} error]))
 
-(defn custom-avatar-picker [{:keys [uploading? set-avatar avatar-url]}]
+(defn custom-avatar-picker [{:keys [uploading? uploaded? set-avatar avatar-url data-test]}]
   [:div {:class (util/mc styles/avatar__controls-wrapper [uploading? styles/avatar__controls-wrapper--disabled])}
    [:input.visually-hidden {:type "file"
                             :name "avatar"
                             :accept    "image/*"
                             :on-change set-avatar
-                            :disabled uploading?}]
+                            :disabled uploading?
+                            :data-test data-test}]
    [:span {:class styles/avatar__edit}
     [icon "pen" :class styles/avatar__edit-icon]
     [:span.visually-hidden "Update avatar"]]
@@ -140,14 +141,23 @@
             :alt "Uploaded avatar"}])])
 
 (defn avatar-field
-  [{:keys [uploading-avatar?
+  [{:keys [avatar-uploading?
+           avatar-uploaded?
+           msg-success
            avatar-url
-           set-avatar]}]
+           set-avatar
+           data-test]}]
   [:label {:class styles/avatar__wrapper}
    [label-text {:label "Avatar" :hidden? true}]
-   [custom-avatar-picker {:uploading? uploading-avatar?
+   [custom-avatar-picker {:uploading? avatar-uploading?
+                          :uploaded? avatar-uploaded?
                           :set-avatar set-avatar
-                          :avatar-url avatar-url}]])
+                          :avatar-url avatar-url
+                          :data-test data-test}]
+   (when (and msg-success avatar-uploaded?)
+     [:span {:class styles/avatar__message
+             :data-test :avatar-uploaded}
+      msg-success])])
 
 (defn suggestions-list
   "A list of suggestions for a text-field."

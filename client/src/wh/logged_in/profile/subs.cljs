@@ -63,7 +63,7 @@
         url/detect-urls-type)))
 
 (reg-sub
-  ::social
+  ::url
   :<- [::social-urls]
   (fn [urls [_ type]]
     (some #(when (= type (:type %)) %) urls)))

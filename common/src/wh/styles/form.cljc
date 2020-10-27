@@ -16,4 +16,5 @@
 (def avatar__controls-wrapper--disabled "form__avatar__controls-wrapper--disabled--3ZxOr")
 (def avatar__edit "form__avatar__edit--1ukqS")
 (def avatar__edit-icon "form__avatar__edit-icon--1-jVC")
+(def avatar__message "form__avatar__message--2z9Sk")
 (def error "form__error--3xs2U")

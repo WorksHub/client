@@ -9,26 +9,31 @@
             [wh.register.events :as events]))
 
 (defn field-name []
-  [auth/field {:type       :text
-               :value      (<sub [::subs/name])
-               :on-change  #(dispatch-sync [::events/set-name (-> % .-target .-value)])
-               :aria-label "Name"
-               :data-test "name"
-               :autocomplete "name"
-               :placeholder "Name"
-               :label "Name"
-               :error (<sub [::subs/error-name])}])
+  (let [on-change  #(dispatch-sync [::events/set-name (-> % .-target .-value)])]
+    (fn []
+      [auth/field {:type       :text
+                   :on-change on-change
+                   :aria-label "Name"
+                   :data-test "name"
+                   :autocomplete "name"
+                   :placeholder "Name"
+                   :label "Name"
+                   :value (<sub [::subs/name])
+                   :error (<sub [::subs/error-name])}])))
 
 (defn field-email []
-  [auth/field {:type :email
-               :placeholder "Email"
-               :aria-label "Email"
-               :data-test "email"
-               :autocomplete "email"
-               :value      (<sub [::subs/email])
-               :on-change  #(dispatch-sync [::events/set-email (-> % .-target .-value)])
-               :label "Email"
-               :error (<sub [::subs/error-email])}])
+  (let [on-change #(dispatch-sync [::events/set-email (-> % .-target .-value)])]
+    (fn []
+      [auth/field {:type :email
+                   :placeholder "Email"
+                   :aria-label "Email"
+                   :data-test "email"
+                   :autocomplete "email"
+                   :on-change on-change
+                   :value      (<sub [::subs/email])
+                   :on-change
+                   :label "Email"
+                   :error (<sub [::subs/error-email])}])))
 
 (defn form-signup []
   [auth/form
