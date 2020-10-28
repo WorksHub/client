@@ -30,8 +30,7 @@
                    :data-test "email"
                    :autocomplete "email"
                    :on-change on-change
-                   :value      (<sub [::subs/email])
-                   :on-change
+                   :value  (<sub [::subs/email])
                    :label "Email"
                    :error (<sub [::subs/error-email])}])))
 
