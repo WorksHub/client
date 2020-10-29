@@ -1,5 +1,6 @@
 (ns wh.company.candidate.events
   (:require [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.admin.queries :as admin-queries]
             [wh.common.graphql-queries :as queries]
             [wh.common.user :as user-common]
             [wh.company.candidate.db :as candidate]
@@ -12,15 +13,6 @@
 
 (def candidate-interceptors (into db/default-interceptors
                                   [(path ::candidate/sub-db)]))
-
-(defquery set-user-platform-approval-status-mutation
-  {:venia/operation {:operation/type :mutation
-                     :operation/name "update_user_approval_status"}
-   :venia/variables [{:variable/name "id"
-                      :variable/type :ID!}
-                     {:variable/name "status"
-                      :variable/type :String!}]
-   :venia/queries [[:update_user_approval_status {:id :$id :status :$status}]]})
 
 (defn candidate-id [db]
   (get-in db [::db/page-params :id]))
@@ -91,7 +83,7 @@
   candidate-interceptors
   (fn [{db :db} [id email status]]
     {:db      (assoc-in db [::candidate/data :updating] status)
-     :graphql {:query      set-user-platform-approval-status-mutation
+     :graphql {:query      admin-queries/set-approval-status-mutation
                :variables  {:id id :status status}
                :timeout    30000
                :on-success [::load-candidate]

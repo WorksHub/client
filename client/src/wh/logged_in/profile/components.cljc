@@ -61,9 +61,10 @@
                       (vector? on-click) #(dispatch on-click))})))
    text])
 
-(defn underline-link [{:keys [text href]}]
+(defn underline-link [{:keys [text href new-tab?]}]
   [:a
-   {:class styles/underline-link :href href}
+   (cond-> {:class styles/underline-link :href href}
+           new-tab? (merge {:target "_blank" :rel "noopener"}))
    text])
 
 (defn small-button [opts text]
@@ -554,7 +555,7 @@
         [small-link {:text "Explore issues"
                      :href (routes/path :issues)}]])]))
 
-(defn contributions-section [contributions contributions-count
+(defn section-contributions [contributions contributions-count
                              contributions-repos months]
   [section
    [internal-anchor "open-source"]

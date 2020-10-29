@@ -1,11 +1,17 @@
 (ns wh.profile.events
   (:require
     [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
+    [wh.admin.queries :as admin-queries]
     [wh.db :as db]
     [wh.graphql-cache :refer [reg-query] :as gql-cache]
+    [wh.graphql.fragments :as _fragments]
+    [wh.profile.db :as profile]
     #?(:cljs [wh.pages.core :as pages]))
   (#?(:clj :require :cljs :require-macros)
    [wh.graphql-macros :refer [defquery]]))
+
+(def profile-interceptors (into db/default-interceptors
+                                [(path ::profile/sub-db)]))
 
 (defquery profile-query
   {:venia/operation {:operation/type :query
@@ -26,6 +32,14 @@
                        :created
                        :lastSeen
                        :updated
+                       :hubspotProfileUrl
+
+                       [:applied [:timestamp :state
+                                  [:job [:id :slug :title [:company [:name]]]]]]
+
+                       [:likes [:id :slug :title [:company [:name]]]]
+
+                       [:approval [:status :source :time]]
 
                        [:contributionsCollection
                         [:totalCommitContributions
@@ -65,7 +79,33 @@
     {:dispatch (into [:graphql/query]
                      (conj (profile-query-description db)
                            {:on-complete [::set-page-title]
-                            :on-success  [:wh.events/scroll-to-top]}))}))
+                            :on-success  [:wh.events/scroll-to-top]
+                            :force true}))}))
+
+(reg-event-fx
+  ::set-approval-status-failure
+  profile-interceptors
+  (fn [{db :db} [[id status]]]
+    {:db      (profile/unset-updating-status db)
+     :dispatch [:error/set-global "Failed to set user status."
+                [::set-approval-status id status]]}))
+
+(reg-event-fx
+  ::set-approval-status-success
+  profile-interceptors
+  (fn [{db :db} _]
+    {:db      (profile/unset-updating-status db)
+     :dispatch [::load-profile]}))
+
+(reg-event-fx
+  ::set-approval-status
+  profile-interceptors
+  (fn [{db :db} [id status]]
+    {:db      (profile/set-updating-status db status)
+     :graphql {:query      admin-queries/set-approval-status-mutation
+               :variables  {:id id :status status}
+               :on-success [::set-approval-status-success]
+               :on-failure [::set-approval-status-failure [id status]]}}))
 
 #?(:cljs
    (defmethod pages/on-page-load :user [_]

@@ -6,7 +6,7 @@
     [clojure.string :as str]
     [re-frame.core :refer [path reg-event-db reg-event-fx]]
     [wh.admin.candidates.db :as candidates]
-    [wh.admin.queries :as queries]
+    [wh.admin.queries :as admin-queries]
     [wh.common.cases :as cases]
     [wh.db :as db]
     [wh.pages.core :refer [on-page-load]]
@@ -129,7 +129,7 @@
   candidates-interceptors
   (fn [{db :db} [id email status close-error]]
     {:db      (update db ::candidates/search-results toggle-updating? id status)
-     :graphql {:query      queries/set-approval-status-mutation
+     :graphql {:query      admin-queries/set-approval-status-mutation
                :variables  {:id id :status status}
                :timeout    30000
                :on-success [::update-user-status-success]

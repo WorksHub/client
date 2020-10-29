@@ -2,6 +2,7 @@
   (:require [re-frame.core :refer [reg-sub]]
             [wh.common.issue :refer [gql-issue->issue]]
             [wh.common.specs.primitives]
+            [wh.common.subs :as _subs]
             [wh.common.time :as time]
             [wh.common.url :as url]
             [wh.components.tag :as tag]
@@ -20,6 +21,11 @@
   :<- [::profile-query-result]
   (fn [result _]
     (:user result)))
+
+(reg-sub
+  ::db
+  (fn [db _]
+    (::profile/sub-db db)))
 
 (reg-sub
   ::issues
@@ -94,6 +100,21 @@
   (fn [db _]
     (false? (:published db))))
 
+;; alias standard subscription to incorporate query params
+(reg-sub
+  ::admin-view?
+  :<- [:user/admin?]
+  :<- [:wh/query-param "type"]
+  (fn [[admin? type] _]
+    (and admin? (not (= type "public")))))
+
+(reg-sub
+  ::hide-profile?
+  :<- [::admin-view?]
+  :<- [::profile-hidden?]
+  (fn [[admin? profile-hidden?] _]
+    (and (not admin?) profile-hidden?)))
+
 (reg-sub
   ::error?
   (fn [db _]
@@ -150,3 +171,35 @@
          (map week->month)
          (distinct)
          (take-last month-count))))
+
+(reg-sub
+  ::liked-jobs
+  :<- [::profile]
+  (fn [profile _]
+    (:likes profile)))
+
+(reg-sub
+  ::hs-url
+  :<- [::profile]
+  (fn [profile _]
+    (:hubspot-profile-url profile)))
+
+(reg-sub
+  ::applications
+  :<- [::profile]
+  (fn [profile _]
+    (:applied profile)))
+
+(reg-sub
+  ::approval-info
+  :<- [::profile]
+  (fn [profile _]
+    (:approval profile)))
+
+(reg-sub
+  ::updating-status
+  :<- [::db]
+  (fn [db _]
+    (profile/updating-status db)))
+
+

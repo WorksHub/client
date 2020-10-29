@@ -24,6 +24,7 @@
 
 .underline-link
   border-bottom: 1px solid $grey200
+  word-break: break-word
 
 .section
   background-color: $white
@@ -186,9 +187,29 @@
     color: $primary-red
     cursor: pointer
 
+  &:disabled
+    cursor: not-allowed
+
   &--small
     padding: 0 16px
-    height: 32px
+    height: 34px
+
+  &--neutral
+    background: $grey500
+    border-color: $grey500
+    &:hover
+      color: $white
+      border-color: $grey500
+      background: $grey300
+
+  &--neutral-inverted
+    background: $white
+    color: $grey500
+    border-color: $grey500
+    &:hover
+      border-color: $grey500
+      color: $grey500
+      background: $grey200
 
   &--inverted
     background: $white
@@ -715,3 +736,74 @@
   &__preferred-locations
     display: grid
     grid-gap: 4px
+
+.admin
+  &__subsection
+    display: grid
+    align-items: start
+    +tablet
+      grid-template-columns: 120px 1fr
+      grid-gap: 16px
+
+  &__subsection-title
+    text-transform: uppercase
+    display: flex
+    align-items: center
+    color: $grey300
+    font-size: 11px
+    line-height: 24px
+    letter-spacing: 0.5px
+    +tablet
+      justify-content: flex-end
+
+  &__buttons
+    display: grid
+    grid-template-columns: auto auto
+    grid-gap: 8px
+    top: 20px
+    right: 20px
+    +tablet
+      position: absolute
+
+  &__secondary-text
+    font-weight: 400
+    color: $grey300
+    line-height: 1.1
+    font-size: 13px
+
+  &__job-list
+    display: grid
+    grid-gap: 9px
+
+.toggle-view
+  background: $white
+  border-radius: 4px
+  padding: 16px
+  height: auto
+  position: fixed
+  display: none
+  bottom: 16px
+  left: 10px
+  border: 1px solid $grey500
+  z-index: 1
+  +tablet
+    display: flex
+
+  &__title
+    font-size: 13px
+    font-weight: 600
+    letter-spacing: 0.03em
+    margin-right: 16px
+
+  &__link
+    height: 32px
+    background: $grey200
+    color: $grey500
+    font-size: 13px
+    display: inline-block
+    padding: 0 24px
+    font-weight: 500
+
+    &--selected
+      background: $grey500
+      color: $grey200

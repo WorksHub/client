@@ -656,7 +656,7 @@
                                                           :on-change    [::events/set-interests-search]
                                                           :on-tag-click #(dispatch [::events/toggle-interest %])}}]
      (when contributions?
-       [components/contributions-section
+       [components/section-contributions
         (<sub [::subs/contributions-calendar])
         (<sub [::subs/contributions-count])
         (<sub [::subs/contributions-repos])
