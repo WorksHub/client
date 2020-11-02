@@ -20,7 +20,7 @@
                       :variable/type :ID!}]
    :venia/queries [[:blog {:id :$id}
                     [:id :title :feature :creator :published
-                     :htmlBody :readingTime :author
+                     :htmlBody :readingTime :author :authorId
                      :originalSource :formattedCreationDate :upvoteCount
                      :primaryVertical :verticals :associatedJobs
                      [:tags :fragment/tagFields]

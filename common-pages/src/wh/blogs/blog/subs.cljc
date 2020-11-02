@@ -139,8 +139,9 @@
   :<- [::blog]
   (fn [db _]
     (when-let [info (:author-info db)]
-      (update info
-              :image-url #(or % (common-user/random-avatar-url))))))
+      (-> info
+          (assoc :author-id (:author-id db))
+          (update :image-url #(or % (common-user/random-avatar-url)))))))
 
 (reg-sub
   ::company-name
