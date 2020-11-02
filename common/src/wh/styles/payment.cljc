@@ -16,3 +16,4 @@
 (def package-selector__top-perks "payment__package-selector__top-perks--3GuQj")
 (def package-selector__top-perks__item "payment__package-selector__top-perks__item--8oji1")
 (def package-selector__top-perks__item__title "payment__package-selector__top-perks__item__title--1cggQ")
+(def next-charge "payment__next-charge--3UcWh")

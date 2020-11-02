@@ -173,7 +173,7 @@
 (def default-company-fields
   [:id :slug :name :manager :descriptionHtml
    :logo :package :vertical :autoApprove :permissions
-   :paidOfflineUntil :disabled :profileEnabled
+   :paidOfflineUntil :disabled :profileEnabled :jobQuota
    [:videos [:youtubeId :thumbnail :description]]
    [:payment [:billingPeriod :expires [:card [:last4Digits :brand [:expiry [:month :year]]]]]]
    [:users [:name :email :id]]

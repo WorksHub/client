@@ -22,13 +22,21 @@
   (some-> (get (::db/query-params db) "action") keyword))
 
 (defn package [db]
-  (some-> (get (::db/query-params db) "package") keyword))
+  (or (some-> (get (::db/query-params db) "package") keyword)
+      (get-in db [::payment/sub-db ::payment/company :package])))
 
 (defn billing-period [db]
   (some-> (get (::db/query-params db) "billing") keyword))
 
+(def id->quantity
+  {"one"       1
+   "two"       2
+   "unlimited" data/max-job-quota})
+
 (defn quantity [db]
-  (get (::db/query-params db) "quantity"))
+  (if-let [quantity-param (get (::db/query-params db) "quantity")]
+    (get id->quantity quantity-param 1)
+    (get-in db [::payment/sub-db ::payment/company :job-quota])))
 
 (reg-sub ::db (fn [db _] db))
 (reg-sub ::sub-db (fn [db _] (::payment/sub-db db)))
@@ -130,30 +138,23 @@
   (fn [db _]
     (package db)))
 
-(def id->quantity
-  {"one"       1
-   "two"       2
-   "unlimited" data/max-job-quota})
-
 (reg-sub
-  ::raw-quantity
+  ::quantity
   (fn [db _]
     (quantity db)))
 
-(reg-sub
-  ::quantity
-  :<- [::raw-quantity]
-  (fn [quantity _]
-    (get id->quantity quantity 1)))
+
+(defn current-quota [{:keys [job-quotas] :as package} quantity]
+  (->> job-quotas
+       (filter #(= (:quota %) quantity))
+       first))
 
 (reg-sub
   ::chosen-quota
   :<- [::current-package-data]
-  :<- [::raw-quantity]
-  (fn [[{:keys [job-quotas] :as package} quantity] _]
-    (->> job-quotas
-         (filter #(= (:id %) quantity))
-         first)))
+  :<- [::quantity]
+  (fn [[package quantity] _]
+    (current-quota package quantity)))
 
 (reg-sub
   ::candidate-id

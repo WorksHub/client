@@ -1,34 +1,35 @@
 (ns wh.company.edit.views
-  (:require
-    [clojure.string :as str]
-    [goog.string :as gstring]
-    [re-frame.core :refer [dispatch]]
-    [reagent.core :as r]
-    [wh.common.cost :as cost]
-    [wh.common.data :as data :refer [package-data billing-data]]
-    [wh.common.logo]
-    [wh.common.text :refer [pluralize]]
-    [wh.common.upload :as upload]
-    [wh.company.components.forms.views :refer [rich-text-field]]
-    [wh.company.edit.db :as edit]
-    [wh.company.edit.events :as events]
-    [wh.company.edit.subs :as subs]
-    [wh.company.payment.db :as payment-db]
-    [wh.company.payment.views :as payment]
-    [wh.company.views :refer [double->dollars int->dollars]]
-    [wh.components.common :refer [link]]
-    [wh.components.ellipsis.views :refer [ellipsis]]
-    [wh.components.forms.views :as f :refer [labelled-checkbox field-container select-field text-field select-input logo-field]]
-    [wh.components.github :as github]
-    [wh.components.icons :refer [icon]]
-    [wh.components.overlay.views :refer [popup-wrapper]]
-    [wh.components.selector :refer [selector]]
-    [wh.db :as db]
-    [wh.routes :as routes]
-    [wh.subs :refer [<sub error-sub-key]]
-    [wh.user.subs :as user-subs]
-    [wh.util :as util]
-    [wh.verticals :as verticals]))
+  (:require [clojure.string :as str]
+            [goog.string :as gstring]
+            [re-frame.core :refer [dispatch]]
+            [reagent.core :as r]
+            [wh.common.cost :as cost]
+            [wh.common.data :as data :refer [package-data billing-data]]
+            [wh.common.logo]
+            [wh.common.text :refer [pluralize]]
+            [wh.common.upload :as upload]
+            [wh.company.components.forms.views :refer [rich-text-field]]
+            [wh.company.edit.db :as edit]
+            [wh.company.edit.events :as events]
+            [wh.company.edit.subs :as subs]
+            [wh.company.payment.db :as payment-db]
+            [wh.company.payment.views :as payment]
+            [wh.company.views :refer [double->dollars int->dollars]]
+            [wh.components.common :refer [link]]
+            [wh.components.ellipsis.views :refer [ellipsis]]
+            [wh.components.forms.views :as f
+             :refer [labelled-checkbox field-container select-field
+                     text-field select-input logo-field]]
+            [wh.components.github :as github]
+            [wh.components.icons :refer [icon]]
+            [wh.components.overlay.views :refer [popup-wrapper]]
+            [wh.components.selector :refer [selector]]
+            [wh.db :as db]
+            [wh.routes :as routes]
+            [wh.subs :refer [<sub error-sub-key]]
+            [wh.user.subs :as user-subs]
+            [wh.util :as util]
+            [wh.verticals :as verticals]))
 
 (defn field [k & {:as args}]
   (merge
@@ -47,9 +48,11 @@
   (let [{:keys [name email]} (<sub [::subs/manager-name-and-email])]
     [:div.pod.company-edit__manager-pod
      [:span (if admin? "WorksHub manager details:" "Your WorksHub manager:")]
+
      [:div.company-edit__manager-pod__details
       [:h1 (or name "Pending")]
       [:span (or email "No manager is currently assigned")]]
+
      (if admin?
        [:form.wh-formx.wh-formx__layout
         [text-field nil (field ::edit/manager
@@ -430,7 +433,8 @@
   (let [{:keys [card billing-period] :as payment} (<sub [::subs/payment])
         package                                   (<sub [::subs/package-kw])
         event                                     [::events/update-card-details]
-        has-sub?                                  (<sub [::subs/has-subscription?])]
+        has-sub?                                  (<sub [::subs/has-subscription?])
+        job-quota                                 (<sub [::subs/job-quota])]
     [:div.company-edit__payment-details
      (when card
        [:div.company-edit__payment-details__card-details
@@ -460,10 +464,25 @@
            "Change billing period"]
           :payment-setup
           :step :pay-confirm
-          :query-params {:billing          (name billing-period)
-                         :package          (name package)
-                         :existing-billing (name billing-period)
-                         :breakdown        false}]]])
+          :query-params (cond->
+                          {:billing          (name billing-period)
+                           :package          (name package)
+                           :existing-billing (name billing-period)
+                           :breakdown        false}
+                          job-quota (merge {:quantity (:id job-quota)}))]]])
+
+     (when (and job-quota has-sub?)
+       [:div.company-edit__payment-details__billing-and-pricing
+        [:h2 "Change job quota"]
+        [:div
+         [:p "You can publish " (str/lower-case (:name job-quota)) " "
+          (pluralize (:quota job-quota) "job") " in current your plan."]
+         [link
+          [:button.button "Change job quota"]
+          :payment-setup
+          :step :select-package
+          :query-params {:package (some-> package name)}]]])
+
      (when has-sub?
        [:div.company-edit__payment-details__coupons
         [:h2 "Discounts"]
@@ -490,50 +509,63 @@
 
 (defn hiring-pod
   [admin?
+   package-id
    {:keys [cost extras description img perks] :as package}
    {:keys [discount number] :as billing-period :or {discount 0}}
    coupon
    {:keys [recurring-fee placement-percentage accepted-at]}]
-  [:div.pod.company-edit__hiring-pod
-   (if package
-     [:span.company-edit__hiring-pod__your-package "Your package"]
-     [:p "You don't currently have a package selected. Select one of our packages to begin your hiring adventure."])
-   [:div.company-edit__hiring-pod__title
-    [:h1 (:name package)]
-    (cond (pos? cost)
-          [:h2 (int->dollars (cost/calculate-monthly-cost cost discount coupon)) [:i "/" (:per package)]]
-          (and accepted-at recurring-fee)
-          [:h2 (int->dollars (cost/calculate-monthly-cost recurring-fee discount coupon)) [:i "/month"]]
-          :else [:div.empty])
-    (when (and (or (pos? cost) (and accepted-at recurring-fee)) (:description billing-period))
-      [:div.company-edit__hiring-pod__title__billing-description
-       [:span "Billed every "]
-       (when (> number 1) [:strong number " "])
-       [:strong (pluralize number "month")]])
-    (when accepted-at
-      [:div.company-edit__hiring-pod__title__billing-description
-       [:span [:strong placement-percentage "%"] " placement fee"]])]
-   [:div.company-edit__hiring-pod__extras extras]
-   (when description
-     [:div.company-edit__hiring-pod__description description])
-   [:div.company-signup__hiring_pod__logo-container
-    [:div.company-signup__hiring_pod__logo-circle
-     [:img img]]]
-   (when perks
-     [:ul.company-edit__hiring-pod__perks
-      (for [perk perks]
-        ^{:key perk}
-        [:li.company-edit__hiring-pod__perk
-         [icon "tick"]
-         [:span perk]])])
-   (if admin?
-     [link [:button.button "Create Take-Off Offer"]
-      :create-company-offer
-      :id (<sub [::subs/id])]
-     [link (if package "Upgrade/View package options" "Select a package")
-      :payment-setup
-      :step :select-package
-      :class "a--underlined"])])
+  (let [job-quota (<sub [::subs/job-quota])]
+    [:div.pod.company-edit__hiring-pod
+     (if package
+       [:span.company-edit__hiring-pod__your-package "Your package"]
+       [:p "You don't currently have a package selected. Select one of our packages to begin your hiring adventure."])
+
+     [:div.company-edit__hiring-pod__title
+      [:h1 (:name package)]
+
+      (when job-quota
+        [:h2 [:span "Available Jobs: "] [:span (:name job-quota)]])
+
+      (cond (pos? cost)
+            [:h2 (int->dollars (cost/calculate-monthly-cost cost discount coupon)) [:i "/" (:per package)]]
+            (and accepted-at recurring-fee)
+            [:h2 (int->dollars (cost/calculate-monthly-cost recurring-fee discount coupon)) [:i "/month"]]
+            :else [:div.empty])
+
+      (when (and (or (pos? cost) (and accepted-at recurring-fee)) (:description billing-period))
+        [:div.company-edit__hiring-pod__title__billing-description
+         [:span "Billed every "]
+         (when (> number 1) [:strong number " "])
+         [:strong (pluralize number "month")]])
+
+      (when accepted-at
+        [:div.company-edit__hiring-pod__title__billing-description
+         [:span [:strong placement-percentage "%"] " placement fee"]])]
+
+     [:div.company-edit__hiring-pod__extras extras]
+     (when description
+       [:div.company-edit__hiring-pod__description description])
+     [:div.company-signup__hiring_pod__logo-container
+      [:div.company-signup__hiring_pod__logo-circle
+       [:img img]]]
+     (when perks
+       [:ul.company-edit__hiring-pod__perks
+        (for [perk perks]
+          ^{:key perk}
+          [:li.company-edit__hiring-pod__perk
+           [icon "tick"]
+           [:span perk]])])
+     (when admin?
+       [link [:button.button "Create Take-Off Offer"]
+        :create-company-offer
+        :id (<sub [::subs/id])])
+
+     (when-not admin?
+       [link (if package "Upgrade/View package options" "Select a package")
+        :payment-setup
+        :step :select-package
+        :query-params (if package-id {:package (name package-id)} {})
+        :class "a--underlined"])]))
 
 (defn disabled-banner
   []
@@ -548,8 +580,8 @@
         loading?       (<sub [::subs/loading?])
         disabled?      (<sub [::subs/disabled?])
         settings-title (cond (and admin? edit?) (str (<sub [::subs/name]) " Settings")
-                             edit? "Settings"
-                             :else "Create company")]
+                             edit?              "Settings"
+                             :else              "Create company")]
     [:div.main-container
      [:div.main
       (cond
@@ -590,12 +622,14 @@
           [:div.column.is-4.is-offset-1.company-edit__side-pods
            [:div.company-edit__side-pods--container
             [manager-pod admin?]
-            (let [pk (<sub [::subs/package-kw])
-                  bp (<sub [::subs/billing-period])
+            (let [pk     (<sub [::subs/package-kw])
+                  bp     (<sub [::subs/billing-period])
                   coupon (<sub [::subs/coupon])
-                  offer (<sub [::subs/offer])]
-              (hiring-pod admin? (-> (get package-data pk)
-                                     (dissoc :perks))
+                  offer  (<sub [::subs/offer])]
+              (hiring-pod admin?
+                          pk
+                          (-> (get package-data pk)
+                              (dissoc :perks))
                           (get billing-data bp)
                           coupon
                           offer))

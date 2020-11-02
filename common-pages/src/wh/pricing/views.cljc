@@ -25,7 +25,7 @@
                                   (when secondary? "button--inverted"))}
       label]]))
 
-(defn signup-button [label package billing-period quantity]
+(defn signup-button [label package billing-period quantity _]
   [:a
    {:href (routes/path :register-company
                        :query-params {:package  (name package)

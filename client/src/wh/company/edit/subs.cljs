@@ -1,31 +1,30 @@
 (ns wh.company.edit.subs
-  (:require
-    [cljs-time.core :as t]
-    [cljs-time.format :as tf]
-    [clojure.set :refer [rename-keys]]
-    [clojure.spec.alpha :as s]
-    [clojure.string :as str]
-    [goog.string :as gstring]
-    [goog.string.format]
-    [re-frame.core :refer [reg-sub]]
-    [wh.common.data :refer [managers get-manager-email]]
-    [wh.common.errors :as errors]
-    [wh.common.specs.primitives :as p]
-    [wh.company.edit.db :as edit]
-    [wh.db :as db]
-    [wh.subs :refer [error-sub-key]]
-    [wh.user.subs :as user-subs]))
+  (:require [cljs-time.core :as t]
+            [cljs-time.format :as tf]
+            [clojure.set :refer [rename-keys]]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as str]
+            [goog.string :as gstring]
+            [goog.string.format]
+            [re-frame.core :refer [reg-sub]]
+            [wh.common.data :as data :refer [managers get-manager-email]]
+            [wh.common.errors :as errors]
+            [wh.common.specs.primitives :as p]
+            [wh.company.edit.db :as edit]
+            [wh.db :as db]
+            [wh.subs :refer [error-sub-key]]
+            [wh.user.subs :as user-subs]))
 
 (reg-sub ::sub-db (fn [db _] (::edit/sub-db db)))
 
 (doseq [field edit/field-names
-        :let [sub (keyword "wh.company.edit.subs" (name field))
-              db-field (keyword "wh.company.edit.db" (name field))]]
+        :let  [sub (keyword "wh.company.edit.subs" (name field))
+               db-field (keyword "wh.company.edit.db" (name field))]]
   (reg-sub sub :<- [::sub-db] (fn [db _] (db-field db))))
 
 (def error-msgs {::p/non-empty-string "This field can't be empty."
-                 ::p/email "This is not a valid email."
-                 ::edit/manager "Please select a valid Manager from the list."})
+                 ::p/email            "This is not a valid email."
+                 ::edit/manager       "Please select a valid Manager from the list."})
 
 (defn error-query
   [db k spec]
@@ -222,13 +221,13 @@
     (:coupon payment)))
 
 (reg-sub
- ::payment-expires
- :<- [::payment]
- (fn [payment _]
-   (some->> payment
-        :expires
-        (tf/parse (tf/formatters :date-time))
-        (tf/unparse (tf/formatter "DD MMM YYYY")))))
+  ::payment-expires
+  :<- [::payment]
+  (fn [payment _]
+    (some->> payment
+             :expires
+             (tf/parse (tf/formatters :date-time))
+             (tf/unparse (tf/formatter "DD MMM YYYY")))))
 
 (reg-sub
   ::billing-period
@@ -384,3 +383,12 @@
   :<- [::permissions]
   (fn [perms _]
     (contains? perms "can_cancel_subscription")))
+
+(reg-sub
+  ::job-quota
+  :<- [::sub-db]
+  (fn [db _]
+    (when-let [quota-number (::edit/job-quota db)]
+      (->> (get-in data/package-data [:launch_pad :job-quotas])
+           (filter #(= (:quota %) quota-number))
+           (first)))))

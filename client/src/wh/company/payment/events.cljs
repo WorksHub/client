@@ -117,17 +117,24 @@
                :on-success [::update-company-success (subs/job-id db) (subs/action db)]
                :on-failure [::update-company-failure]}}))
 
+(defn- current-quota [db]
+  (let [package (subs/package db)
+        package (get data/package-data package)]
+    (:quota (subs/current-quota package (subs/quantity db)))))
+
 (reg-event-fx
   ::estimate-subscription-change
   db/default-interceptors
   (fn [{db :db} _]
     (when-not (= :free (subs/company-package db))
       (let [package        (subs/package db)
-            billing-period (subs/billing-period db)]
+            billing-period (subs/billing-period db)
+            quota          (current-quota db)]
         {:graphql {:query
                    {:venia/queries [[:estimate_subscription_change
-                                     {:package  package
-                                      :jobQuota data/max-job-quota}
+                                     (merge {:package package}
+                                            (when quota
+                                              {:jobQuota quota}))
                                      [:description :amount :proration
                                       [:period [:start]]]]]}
                    :on-success [::estimate-subscription-change-success]

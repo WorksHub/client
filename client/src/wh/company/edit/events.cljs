@@ -52,8 +52,8 @@
 
 (doseq [field edit/field-names
         :when (get-in edit/fields [field :event?] true)
-        :let [event-name (keyword "wh.company.edit.events" (str "edit-" (name field)))
-              db-field (keyword "wh.company.edit.db" (name field))]]
+        :let  [event-name (keyword "wh.company.edit.events" (str "edit-" (name field)))
+               db-field (keyword "wh.company.edit.db" (name field))]]
   (reg-event-db event-name
                 company-interceptors
                 (fn [db [new-value]]

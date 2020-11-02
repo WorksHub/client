@@ -53,7 +53,7 @@
    ::auto-approve     {:initial false, :validate boolean?}
    ::profile-enabled  {:initial false, :validate boolean?}
    ;; TODO MOVE THIS TO COMPANY PROFILE
-   ::videos {:initial false, :validate boolean?}
+   ::videos           {:initial false, :validate boolean?}
    ;;
    ::new-user-name    {:initial "", :validate ::p/non-empty-string}
    ::new-user-email   {:initial "", :validate ::p/email}})
