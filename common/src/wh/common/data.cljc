@@ -572,28 +572,28 @@
 
 ;; added three on 25/06/2019
 (def billing-periods #{:one :three :six #_:twelve})
-(def default-billing-period :one)
+(def default-billing-period :six)
 
 (def billing-data
-  {:one    {:title "Monthly"
-            :number 1
+  {:one    {:title       "Monthly"
+            :number      1
             :description nil}
-   :three    {:title "Quarterly"
-              :number 3
-              :description "billed every three months"
-              :discount 0.05}
-   :six    {:title "Six Monthly"
-            :number 6
+   :three  {:title       "Quarterly"
+            :number      3
+            :description "billed every three months"
+            :discount    0.05}
+   :six    {:title       "Six Monthly"
+            :number      6
             :description "billed every six months"
-            :discount 0.1}
-   :twelve {:title "Annually"
-            :number 12
+            :discount    0.1}
+   :twelve {:title       "Annually"
+            :number      12
             :description "billed annually"
-            :discount 0.15}})
+            :discount    0.15}})
 
 (def job-seeking-status->name
-  {"open-to-offers" "Open to offers"
-   "looking" "Looking for a new job"
+  {"open-to-offers"   "Open to offers"
+   "looking"          "Looking for a new job"
    "no-offers-please" "No offers please"})
 
 (def name->job-seeking-status
