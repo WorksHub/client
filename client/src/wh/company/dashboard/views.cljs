@@ -421,31 +421,32 @@
 (defn company-onboarding
   []
   [:div.main.company-onboarding
-   [:div.company-onboarding__content
+   [:div {:class     "company-onboarding__content"
+          :data-test "company-onboarding"}
     [:h1 (str "Hello " (<sub [:wh.user.subs/name]) ", welcome to WorksHub!") [:br]
      "We'll source the best talent for your team"]
     [:p "What would you like to do first?"]
     [:ul.company-onboarding__actions
      [company-onboarding-action
       {:number 1
-       :id "company-onboarding--company-profile"
-       :task :complete_profile
-       :path [:company :slug (some-> (<sub [:wh.user.subs/company]) :slug)]}]
+       :id     "company-onboarding--company-profile"
+       :task   :complete_profile
+       :path   [:company :slug (some-> (<sub [:wh.user.subs/company]) :slug)]}]
      [company-onboarding-action
       {:number 2
-       :id "company-onboarding--new-role"
-       :task :add_job
-       :path [:create-job]}]
+       :id     "company-onboarding--new-role"
+       :task   :add_job
+       :path   [:create-job]}]
      [company-onboarding-action
       {:number 3
-       :id "company-onboarding--integrations"
-       :task :add_integration
-       :path [:edit-company]}]
+       :id     "company-onboarding--integrations"
+       :task   :add_integration
+       :path   [:edit-company]}]
      [company-onboarding-action
       {:number 4
-       :id "company-onboarding--issues"
-       :task :add_issue
-       :path [:company-issues]}]]]])
+       :id     "company-onboarding--issues"
+       :task   :add_issue
+       :path   [:company-issues]}]]]])
 
 
 (defmulti error->message identity)

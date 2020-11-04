@@ -1,55 +1,59 @@
 (ns wh.company.register.views
-  (:require
-    [re-frame.core :refer [dispatch]]
-    [wh.company.register.db :as register]
-    [wh.company.register.events :as events]
-    [wh.company.register.subs :as subs]
-    [wh.components.common :refer [companies-section]]
-    [wh.components.forms.views :as f]
-    [wh.db :as db]
-    [wh.subs :refer [<sub error-sub-key]]))
+  (:require [re-frame.core :refer [dispatch]]
+            [wh.company.register.db :as register]
+            [wh.company.register.events :as events]
+            [wh.company.register.subs :as subs]
+            [wh.components.common :refer [companies-section]]
+            [wh.components.forms.views :as f]
+            [wh.db :as db]
+            [wh.subs :refer [<sub error-sub-key]]))
 
 (defn register-button []
   (let [loading? (<sub [::subs/loading?])]
     [:button.button.button--small.company-signup__next-button
-     {:class    (str "is-full-width" (if loading? " button--loading button--inverted"))
-      :id       "company-signup__content--company-details-next"
-      :on-click #(when-not loading? (dispatch [::events/register]))}
+     {:class     (str "is-full-width" (if loading? " button--loading button--inverted"))
+      :id        "company-signup__content--company-details-next"
+      :data-test "signup-company"
+      :on-click  #(when-not loading? (dispatch [::events/register]))}
      (when-not loading? "Register")
      [:img {:src "/arrow-right.svg"}]]))
 
 (defn form-row [{:keys [label key input spec suggestions]}
                 {:keys [force-dirty? disabled?]}]
   (let [common-opts (merge
-                      {:id (db/key->id key)
-                       :label label
-                       :error (<sub [(error-sub-key key)])
+                      {:id        (db/key->id key)
+                       :data-test (name key)
+                       :label     label
+                       :error     (<sub [(error-sub-key key)])
                        :read-only disabled?
-                       :validate spec
-                       :dirty? (when force-dirty? true)
-                       :on-blur #(dispatch [::events/check key])}
+                       :validate  spec
+                       :dirty?    (when force-dirty? true)
+                       :on-blur   #(dispatch [::events/check key])}
                       (when suggestions
                         {:auto-complete "nope"}))]
     [f/text-field
      (<sub [key])
      (merge common-opts
-            {:type input
+            {:type      input
              :on-change [key]
-             :on-blur #(dispatch [::events/check key])}
+             :on-blur   #(dispatch [::events/check key])}
             (when suggestions
               (let [[suggestions-sub suggestions-event] suggestions]
-                {:suggestions (<sub [suggestions-sub])
+                {:suggestions          (<sub [suggestions-sub])
                  :on-select-suggestion [suggestions-event]})))]))
 
 
 (defn company-signup-step-content []
   (let [loading? (<sub [::subs/loading?])]
     [:form.form.wh-formx.wh-formx__layout
-     {:on-submit #(.preventDefault %)}
+     {:on-submit #(.preventDefault %)
+      :data-test "form-signup-company"}
      (let [company-form-checked? (<sub [::subs/company-signup-form-checked?])]
        (for [{key :key :as field-opts} register/company-fields-maps]
          ^{:key (str key)}
-         [form-row field-opts {:force-dirty? company-form-checked? :disabled? loading?}]))
+         [form-row field-opts
+          {:force-dirty? company-form-checked? :disabled? loading?}]))
+
      [:label#consent-label.is-flex {:for "consent"}
       [:div {:class "checkbox__box"}]
       [:span
@@ -90,7 +94,9 @@
          [:div.column.company-signup__content.is-8
           [company-signup-step-content]
           (when error
-            (f/error-component-outdated error {:class "is-hidden-mobile is-pulled-left" :id "company-signup-error-desktop"}))
+            (f/error-component-outdated
+              error {:class "is-hidden-mobile is-pulled-left"
+                     :id    "company-signup-error-desktop"}))
           [register-button]]
          [:div.column.company-signup__pods.is-4
           [benefits-pod]]]]]]
