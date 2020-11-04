@@ -1,8 +1,8 @@
 (ns wh.components.button-auth
   (:require [wh.components.icons :refer [icon]]
             [wh.interop :as interop]
-            [wh.util :as util]
-            [wh.routes :as routes]))
+            [wh.routes :as routes]
+            [wh.util :as util]))
 
 (defn add-onclick [params on-click]
   (cond-> params
@@ -37,11 +37,11 @@
   {:twitter "button__icon--twitter"})
 
 (def type->default-text
-  {:github "Start with Github"
+  {:github        "Start with GitHub"
    :stackoverflow "Start with Stack Overflow"
-   :twitter "Start with Twitter"
-   :email-signin "Login with Email"
-   :email-signup "Start with Email"})
+   :twitter       "Start with Twitter"
+   :email-signin  "Login with Email"
+   :email-signup  "Start with Email"})
 
 (defn button
   ([type]
@@ -68,9 +68,9 @@
       text])))
 
 (def type->connect-text
-  {:github "Connect Github"
+  {:github        "Connect GitHub"
    :stackoverflow "Connect Stack Overflow"
-   :twitter "Connect Twitter"})
+   :twitter       "Connect Twitter"})
 
 (def type->icon-class
   {:github "button__icon"
@@ -86,4 +86,3 @@
                  (type->class type))})
    [icon (type->icon type) :class (type->icon-class type)]
    (type->connect-text type)])
-

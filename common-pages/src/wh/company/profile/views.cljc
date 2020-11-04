@@ -269,7 +269,7 @@
      :alt ""}]
    [:div.company-profile__banner-cta__copy
     [:h2 "Use Open Source Issues to find your next hire"]
-    [:p "Connect your company Github account and add tasks to your job descriptions to get more qualified applications."]
+    [:p "Connect your company GitHub account and add tasks to your job descriptions to get more qualified applications."]
     #?(:cljs [github/install-github-app {:class "company-profile__cta-button"}])]])
 
 (defn issues

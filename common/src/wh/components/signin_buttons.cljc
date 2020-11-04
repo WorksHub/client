@@ -13,7 +13,7 @@
 
 (defn github
   ([]
-   [github {:text "Github"}])
+   [github {:text "GitHub"}])
   ([{:keys [text type data-test]}]
    [:a {:class     (util/mc
                      style/button

@@ -470,7 +470,7 @@
 (def all-package-perks
   ["Unlimited hubs"
    "Performance analytics"
-   "Github integration"
+   "GitHub integration"
    "Company profile"
    "Review & track applicants"
    "ATS Integrations"
@@ -510,7 +510,7 @@
                               :alt "Explore icon"}
                 :perks       #{"Unlimited hubs"
                                "Performance analytics"
-                               "Github integration"
+                               "GitHub integration"
                                "Company profile"}
                 :order       1
                 :description (str "Our basic package allows you to attract talent by creating a company profile and posting open-soure issues. This way you can experience some of our core features before upgrading.")
@@ -525,7 +525,7 @@
                               :alt "Essential icon"}
                 :perks       #{"Unlimited hubs"
                                "Performance analytics"
-                               "Github integration"
+                               "GitHub integration"
                                "Company profile"
                                "Review & track applicants"}
                 :order       2
@@ -551,7 +551,7 @@
                 :perks       #{"Unlimited hubs"
                                "Unlimited edits"
                                "Performance analytics"
-                               "Github integration"
+                               "GitHub integration"
                                "Company profile"
                                "Review & track applicants"
                                "ATS Integrations"

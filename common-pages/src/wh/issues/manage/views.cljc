@@ -99,7 +99,7 @@
 (defn connect-gh-app-error []
   #?(:cljs
      [:div.manage-issues-syncing-repo
-      [:p "Failed to connect WorksHub Github App, please try again"]
+      [:p "Failed to connect WorksHub GitHub App, please try again"]
       [github/install-github-app {}]]))
 
 (defn control-panel

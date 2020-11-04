@@ -1,10 +1,10 @@
 (ns wh.components.github
   (:require
+    #?(:clj [wh.config :as config])
     #?(:cljs [re-frame.core :refer [dispatch]])
     #?(:cljs [wh.events])
     #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     #?(:cljs [wh.subs :as subs :refer [<sub]])
-    #?(:clj [wh.config :as config])
     [wh.components.icons :refer [icon]]))
 
 (defn app-name []
@@ -24,7 +24,7 @@
 
 (defn install-github-app
   [{:keys [class label id]
-    :or   {label "Integrate with Github"}}]
+    :or   {label "Integrate with GitHub"}}]
   #?(:cljs [:a.button.button--public.button--github
             (merge
               {:class    class
