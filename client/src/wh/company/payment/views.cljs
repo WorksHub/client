@@ -648,14 +648,15 @@
 (defmethod payment-setup-step-content
   :pay-success
   [_]
-  (let [role       (<sub [::subs/job-title])
-        job-slug   (<sub [::subs/job-slug])
-        job-id     (<sub [::subs/job-id])
-        action     (<sub [::subs/action])
-        company    (<sub [::subs/company-name])
-        verts      (<sub [::subs/verticals])
-        package    (<sub [::subs/package])
-        existing-billing-period (<sub [::subs/existing-billing-period])]
+  (let [role                    (<sub [::subs/job-title])
+        job-slug                (<sub [::subs/job-slug])
+        job-id                  (<sub [::subs/job-id])
+        action                  (<sub [::subs/action])
+        company                 (<sub [::subs/company-name])
+        verts                   (<sub [::subs/verticals])
+        package                 (<sub [::subs/package])
+        existing-billing-period (<sub [::subs/existing-billing-period])
+        can-publish-next-job?   (<sub [::subs/can-publish-next-job?])]
     [:div.payment-setup__pay-success.has-text-centered
      [:h1 "Welcome to the team!"]
      [icon "tick"]
@@ -699,20 +700,20 @@
               [:p "Now select one or more jobs you'd like to publish:"]
               [:ul
                (doall
-                 (for [job jobs
+                 (for [job  jobs
                        :let [job-id (:id job)]]
                    ^{:key job-id}
                    [:li.payment-setup__pay-success__job
                     [:h3 (:title job)]
                     (let [state (<sub [::subs/job-state job-id])]
                       [:button
-                       {:class (util/merge-classes
-                                 "button"
-                                 "is-full-width"
-                                 (when state
-                                   "button--inverted")
-                                 (when (= state :loading)
-                                   "button--loading"))
+                       {:class    (util/merge-classes
+                                    "button"
+                                    "is-full-width"
+                                    (when state
+                                      "button--inverted")
+                                    (when (= state :loading)
+                                      "button--loading"))
                         :on-click #(dispatch [::events/publish-role job-id])
                         :disabled (= state :published)}
                        (if (= state :published)
@@ -721,9 +722,15 @@
                (when (<sub [::subs/has-published-at-least-one-role?])
                  [:li [:h3] [link [:button.button
                                    "All done!"] :homepage]])]])
+
+           (when can-publish-next-job?
+             [link [:button.button.is-full-width
+                    {:class "button--inverted"}
+                    "Create a new job"] :create-job])
+
            [link [:button.button.is-full-width
                   {:class "button--inverted"}
-                  "Create a new job"] :create-job]])])]))
+                  "Go to dashboard"] :homepage]])])]))
 
 (defn error-display
   []

@@ -28,6 +28,9 @@
 (defn billing-period [db]
   (some-> (get (::db/query-params db) "billing") keyword))
 
+(defn event-type [db]
+  (some-> (get (::db/query-params db) "type") keyword))
+
 (def id->quantity
   {"one"       1
    "two"       2
@@ -142,6 +145,19 @@
   ::quantity
   (fn [db _]
     (quantity db)))
+
+(reg-sub
+  ::event-type
+  (fn [db _]
+    (event-type db)))
+
+(reg-sub
+  ::can-publish-next-job?
+  :<- [::quantity]
+  :<- [::event-type]
+  (fn [[quantity event-type] _]
+    (not (and (= event-type :publish-job)
+              (<= quantity 1)))))
 
 
 (defn current-quota [{:keys [job-quotas] :as package} quantity]
