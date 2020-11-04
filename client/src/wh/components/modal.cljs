@@ -47,7 +47,8 @@
           :or {id "modal"}
           :as _opts}
          & children]
-      [:div {:id modal-wrapper-id'}
+      [:div {:id modal-wrapper-id'
+             :class styles/modal__container}
        (into [react-modal {:is-open open?
                            :class-name (util/merge-classes styles/modal class)
                            :overlay-class-name styles/overlay

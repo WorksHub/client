@@ -1,5 +1,6 @@
 (ns wh.styles.modal)
 (def modal "modal__modal--D9-_D")
+(def modal__container "modal__modal__container--2e97x")
 (def overlay "modal__overlay--3h4hC")
 (def header "modal__header--2WdQK")
 (def footer "modal__footer--3Wgqu")
