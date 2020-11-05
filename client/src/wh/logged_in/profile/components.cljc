@@ -348,8 +348,9 @@
     :class (util/mc styles/edit-button__icon [editing? styles/edit-button__icon--editing])]])
 
 (defn editable-section
-  [{:keys [editable? on-edit read-body edit-body editing? anchor data-test display-toggle?]}]
-  [:div (util/smc styles/editable-section [editing? styles/editable-section--editing])
+  [{:keys [editable? on-edit read-body edit-body editing? focused? anchor data-test display-toggle?]}]
+  [:div (util/smc styles/editable-section
+                  [focused? styles/editable-section--editing])
    [section
     (when anchor
       [internal-anchor anchor])
@@ -457,9 +458,10 @@
               (:interests-search opts)])]
    [:div (util/smc styles/edit-tech__offset styles/edit-tech__buttons)
     [section-buttons
-     [small-link {:text     "Cancel"
-                  :on-click (:on-cancel opts)
-                  :class    styles/button--inverted}]
+     (when (:on-cancel opts)
+       [small-link {:text     "Cancel"
+                    :on-click (:on-cancel opts)
+                    :class    styles/button--inverted}])
      [small-link {:text     "Save"
                   :on-click (:on-save opts)}]]]])
 
@@ -490,27 +492,31 @@
                             (scroll-to-skills)
                             (when on-cancel (dispatch on-cancel))))]
     [editable-section
-     {:editable? (not public?)
-      :editing?  editing?
-      :anchor    "skills"
-      :on-edit   on-edit
+     {:editable?       (not public?)
+      :editing?        (or editing? (and (not skills?) (not interests?)))
+      :focused?        editing?
+      :anchor          "skills"
+      :on-edit         on-edit
       :display-toggle? true
-      :read-body [:<>
-                  [:div (util/smc styles/skills__top)
-                   [title "Skills"]]
-                  [:div (util/smc styles/skills__content)
-                   (if skills?
-                     [experience skills (:max-skills opts)]
-                     [:p "This person has not selected any skills yet!"])
-                   (when interests?
-                     [display-interests interests])]]
-      :edit-body [:<>
-                  [title "Experience and interests"]
-                  [:p (util/smc styles/skills__paragraph)
-                   "This is a key part of your profile. List out your skills and experience, and give companies an insight into what else interests you in a role."]
-                  [edit-tech (assoc opts
-                                    :on-cancel on-cancel-fn
-                                    :on-save on-save-fn)]]}]))
+      :read-body       [:<>
+                        [:div (util/smc styles/skills__top)
+                         [title "Skills"]]
+                        [:div (util/smc styles/skills__content)
+                         (if skills?
+                           [experience skills (:max-skills opts)]
+                           [:p "This person has not selected any skills yet!"])
+                         (when interests?
+                           [display-interests interests])]]
+      :edit-body       [:<>
+                        [title "Experience and interests"]
+                        [:p (util/smc styles/skills__paragraph)
+                         "This is a key part of your profile. List out your skills and experience, and give companies an insight into what else interests you in a role."]
+                        [edit-tech
+                         (cond->
+                           (assoc opts
+                                  :on-save on-save-fn
+                                  :on-cancel on-cancel-fn)
+                           (not editing?) (dissoc :on-cancel))]]}]))
 
 ;; articles ----------------------------------------------------------
 
