@@ -173,14 +173,15 @@
   [label package billing-period quantity upgrade-quota?]
   (let [upgrading? (<sub [::subs/upgrading?])]
     [:button.button
-     {:id       (str "select-package-btn-" (name package) "-" (name billing-period))
-      :disabled (and upgrading? (not upgrade-quota?))
-      :on-click #(dispatch [::events/setup-step-forward
-                            (merge {:package package}
-                                   (when-not upgrading?
-                                     {:billing-period billing-period})
-                                   (when quantity
-                                     {:quantity quantity}))])}
+     {:id        (str "select-package-btn-" (name package) "-" (name billing-period))
+      :data-test "select-package-btn"
+      :disabled  (and upgrading? (not upgrade-quota?))
+      :on-click  #(dispatch [::events/setup-step-forward
+                             (merge {:package package}
+                                    (when-not upgrading?
+                                      {:billing-period billing-period})
+                                    (when quantity
+                                      {:quantity quantity}))])}
      (cond upgrading?
            "Change quota"
 
@@ -244,7 +245,6 @@
   [_]
   (let [upgrading? (<sub [::subs/upgrading?])
         package    (<sub [::subs/company-package])
-        action     (<sub [::subs/action])
         quota      (<sub [::subs/chosen-quota])]
     [:div
      [package-selector
@@ -312,6 +312,32 @@
                       (assoc coupon :duration :forever))))
     latent-cost))
 
+(defn- next-charge-info [first-charge next-charge billing-period latent-cost number]
+  [:<>
+   [:div (util/smc styles/next-charge)
+    "The next charge will be " (int->dollars first-charge) ", on "
+    (if next-charge
+      (some-> (get-in next-charge [:period :start]) (period->time))
+      (fallback-period-time billing-period)) "."]
+
+   [:div (util/smc styles/next-charge)
+    "A subsequent charge will "
+    (when (not= latent-cost first-charge)
+      (str "be " (int->dollars latent-cost) " and ")) "recur "
+    (if (= 1 number)
+      "each month"
+      (str "every " number " " (pluralize number "month"))) "."]])
+
+(defn- downgrade-info []
+  [:<>
+   [:div (util/smc styles/downgrade-info)
+    [:hr]
+
+    [:p (util/smc styles/downgrade-info)
+     "You are about to downgrade your job quota.
+After this change we will unpublish all your jobs.
+On next screen you can republish jobs that you want."]]])
+
 (defn upgrading-calculator
   [billing-period]
   (let [new-offer                         (<sub [::subs/company-new-offer])
@@ -321,6 +347,7 @@
         ;; if we have chosen quota for package it takes precedence over any default cost
         quota-cost                        (get (<sub [::subs/chosen-quota]) :cost)
         cost                              (or quota-cost cost)
+        downgrading-quota?                (<sub [::subs/downgrading-quota?])
         {:keys [discount number] :as _bp} (get data/billing-data billing-period)
         next-invoice                      (<sub [::subs/next-invoice])
         coupon                            (or (<sub [::subs/current-coupon])
@@ -351,7 +378,9 @@
              {:key (:description est)}
              [:span (:description est)]
              [:span (int->dollars (:amount est) {:cents? true})]]))
+
         [:hr]
+
         (let [cost (if (and new-offer (not has-details?))
                      latent-cost
                      (max 0 (->> estimate
@@ -362,23 +391,15 @@
             [:div.is-flex
              [:strong "Initial charge, debited immediately"]
              [:strong (int->dollars cost {:cents? true})]]))
+
         (when coupon
           [:div.is-flex
            [:i "An active discount will be applied (" (name (:duration coupon)) "): " (:description coupon)]])
 
-        [:div (util/smc styles/next-charge)
-         "The next charge will be " (int->dollars first-charge) ", on "
-         (if next-charge
-           (some-> (get-in next-charge [:period :start]) (period->time))
-           (fallback-period-time billing-period)) "."]
+        [next-charge-info
+         first-charge next-charge billing-period latent-cost number]
 
-        [:div (util/smc styles/next-charge)
-         "A subsequent charge will "
-         (when (not= latent-cost first-charge)
-           (str "be " (int->dollars latent-cost) " and ")) "recur "
-         (if (= 1 number)
-           "each month"
-           (str "every " number " " (pluralize number "month"))) "."]]
+        (when downgrading-quota? [downgrade-info])]
 
        [:div.is-loading-spinner])]))
 
@@ -645,6 +666,48 @@
                             :quantity quantity}]
       [:img (get-in data/package-data [package :img])]]]))
 
+
+(defn- publish-jobs []
+  (let [quota-used?           (<sub [::subs/quota-used?])
+        can-publish-next-job? (<sub [::subs/can-publish-next-job?])]
+    [:div.column
+     (when-let [jobs (not-empty (<sub [::subs/jobs]))]
+       [:div.payment-setup__pay-success__jobs
+        [:p "Now select one or more jobs you'd like to publish:"]
+        [:ul
+         (doall
+           (for [job  jobs
+                 :let [job-id (:id job)]]
+             ^{:key job-id}
+             [:li.payment-setup__pay-success__job
+              [:h3 (:title job)]
+              (let [state (<sub [::subs/job-state job-id])]
+                [:button
+                 {:class    (util/merge-classes
+                              "button"
+                              "is-full-width"
+                              (when state
+                                "button--inverted")
+                              (when (= state :loading)
+                                "button--loading"))
+                  :on-click #(dispatch [::events/publish-role job-id])
+                  :disabled (or (= state :published) quota-used?)}
+                 (if (= state :published)
+                   [icon "cutout-tick"]
+                   "Publish now")])]))
+         (when (<sub [::subs/has-published-at-least-one-role?])
+           [:li [:h3] [link [:button.button
+                             "All done!"] :homepage]])]])
+
+     (when can-publish-next-job?
+       [link [:button.button.is-full-width
+              {:class "button--inverted" :disabled quota-used?}
+              "Create a new job"] :create-job])
+
+     [link [:button.button.is-full-width
+            {:class "button--inverted"}
+            "Go to dashboard"] :homepage]]))
+
 (defmethod payment-setup-step-content
   :pay-success
   [_]
@@ -655,8 +718,7 @@
         company                 (<sub [::subs/company-name])
         verts                   (<sub [::subs/verticals])
         package                 (<sub [::subs/package])
-        existing-billing-period (<sub [::subs/existing-billing-period])
-        can-publish-next-job?   (<sub [::subs/can-publish-next-job?])]
+        existing-billing-period (<sub [::subs/existing-billing-period])]
     [:div.payment-setup__pay-success.has-text-centered
      [:h1 "Welcome to the team!"]
      [icon "tick"]
@@ -694,43 +756,7 @@
            [link [:button.button.is-full-width
                   {:class "button--inverted"}
                   "View your dashboard"] :homepage]]
-          [:div.column
-           (when-let [jobs (not-empty (<sub [::subs/jobs]))]
-             [:div.payment-setup__pay-success__jobs
-              [:p "Now select one or more jobs you'd like to publish:"]
-              [:ul
-               (doall
-                 (for [job  jobs
-                       :let [job-id (:id job)]]
-                   ^{:key job-id}
-                   [:li.payment-setup__pay-success__job
-                    [:h3 (:title job)]
-                    (let [state (<sub [::subs/job-state job-id])]
-                      [:button
-                       {:class    (util/merge-classes
-                                    "button"
-                                    "is-full-width"
-                                    (when state
-                                      "button--inverted")
-                                    (when (= state :loading)
-                                      "button--loading"))
-                        :on-click #(dispatch [::events/publish-role job-id])
-                        :disabled (= state :published)}
-                       (if (= state :published)
-                         [icon "cutout-tick"]
-                         "Publish now")])]))
-               (when (<sub [::subs/has-published-at-least-one-role?])
-                 [:li [:h3] [link [:button.button
-                                   "All done!"] :homepage]])]])
-
-           (when can-publish-next-job?
-             [link [:button.button.is-full-width
-                    {:class "button--inverted"}
-                    "Create a new job"] :create-job])
-
-           [link [:button.button.is-full-width
-                  {:class "button--inverted"}
-                  "Go to dashboard"] :homepage]])])]))
+          [publish-jobs])])]))
 
 (defn error-display
   []

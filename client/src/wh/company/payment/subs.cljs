@@ -36,10 +36,16 @@
    "two"       2
    "unlimited" data/max-job-quota})
 
+(defn- param-quantity [db]
+  (when-let [quantity-param (get (::db/query-params db) "quantity")]
+    (get id->quantity quantity-param 1)))
+
+(defn- company-quantity [db]
+  (get-in db [::payment/sub-db ::payment/company :job-quota]))
+
 (defn quantity [db]
-  (if-let [quantity-param (get (::db/query-params db) "quantity")]
-    (get id->quantity quantity-param 1)
-    (get-in db [::payment/sub-db ::payment/company :job-quota])))
+  (or (param-quantity db)
+      (company-quantity db)))
 
 (reg-sub ::db (fn [db _] db))
 (reg-sub ::sub-db (fn [db _] (::payment/sub-db db)))
@@ -147,18 +153,29 @@
     (quantity db)))
 
 (reg-sub
+  ::downgrading-quota?
+  (fn [db _]
+    (let [pq (param-quantity db)
+          cq (company-quantity db)]
+      ;; If param-quantity (taken from url) is smaller than current company quantity
+      ;; then user is trying to downgrade company package and we need to inform user
+      ;; about consequences
+      (< pq cq))))
+
+(reg-sub
   ::event-type
   (fn [db _]
     (event-type db)))
 
 (reg-sub
+  ;; Used when user upgrades from Explore to Launch Pad 1. In such situation
+  ;; we don't want to display "Create a new job" button, because quota doesn't allow that
   ::can-publish-next-job?
   :<- [::quantity]
   :<- [::event-type]
   (fn [[quantity event-type] _]
     (not (and (= event-type :publish-job)
               (<= quantity 1)))))
-
 
 (defn current-quota [{:keys [job-quotas] :as package} quantity]
   (->> job-quotas
@@ -350,7 +367,7 @@
   ::offer-billing-selection-options
   (fn [_ _]
     (map (fn [[bp {:keys [title discount]}]]
-           {:id bp
+           {:id    bp
             :label (str title (when discount (str " (" (* 100 discount) "% off)")))})
          data/billing-data)))
 
@@ -375,6 +392,26 @@
   :<- [::sub-db]
   (fn [sub-db [_ job-id]]
     (get-in sub-db [::payment/job-states job-id])))
+
+(reg-sub
+  ::job-published
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (->> (get sub-db ::payment/job-states)
+         (vals)
+         (filter #(= :published))
+         (count))))
+
+(reg-sub
+  ;; Used after changing plan, ie. downgrading quota. On the confirmation
+  ;; screen user can publish previously unpublished jobs. When user published
+  ;; some jobs and consumed available quota we want to block other jobs from
+  ;; publishing and disable "Create a new job" button
+  ::quota-used?
+  :<- [::job-published]
+  :<- [::quantity]
+  (fn [[job-published quantity] _]
+    (>= job-published quantity)))
 
 (reg-sub
   ::has-published-at-least-one-role?

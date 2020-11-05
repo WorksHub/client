@@ -35,12 +35,13 @@
   (let [checked    (= (:cost active-quota)
                       (:cost quota))
         quota-name (:name quota)]
-    [:div {:class    (util/mc styles/job-quota
-                              [checked styles/job-quota--checked])
-           :on-click (fn []
-                       (when @open?
-                         (reset! job-quota quota))
-                       (swap! open? not))}
+    [:div {:class     (util/mc styles/job-quota
+                               [checked styles/job-quota--checked])
+           :data-test (str "package-quota-" (:id quota))
+           :on-click  (fn []
+                        (when @open?
+                          (reset! job-quota quota))
+                        (swap! open? not))}
 
      [:div (util/smc styles/job-quota__name)
       [:span (util/smc styles/job-quota__name__quantity) quota-name]

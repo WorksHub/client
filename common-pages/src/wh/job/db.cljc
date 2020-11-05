@@ -10,6 +10,12 @@
   (or (get-in db [::sub-db ::company :permissions])
       (get-in db [:wh.user.db/sub-db :wh.user.db/company :permissions])))
 
+(defn set-company-permissions
+  [db permissions]
+  (-> db
+      (assoc-in [::sub-db ::company :permissions] permissions)
+      (assoc-in [:wh.user.db/sub-db :wh.user.db/company :permissions] permissions)))
+
 (defn can-edit-jobs? [db]
   (or (user/admin? db)
       (contains? (company-permissions db) :can_edit_jobs)))

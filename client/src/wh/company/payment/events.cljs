@@ -152,6 +152,8 @@
   (fn [db _]
     (assoc db ::payment/error :failed-to-estimate-upgrade)))
 
+;; progress-payment START
+
 (defmulti progress-payment-setup
   (fn [step _ _] step))
 
@@ -191,12 +193,22 @@
     :on-failure [::update-company-failure]}})
 
 (reg-event-fx
+  ::setup-step-forward
+  db/default-interceptors
+  (fn [{db :db} [args]]
+    (force-scroll-to-top!)
+    (progress-payment-setup (subs/payment-step db) db args)))
+
+;; progress-payment END
+
+(reg-event-fx
   ::update-company-success
   db/default-interceptors
   (fn [{db :db} [job-id action resp]]
-    (let [company (get-in resp [:data :update_company])]
+    (let [company     (get-in resp [:data :update_company])
+          permissions (set (map keyword (:permissions company)))]
       (merge {:db (-> db
-                      (assoc-in [::user/sub-db ::user/company :permissions] (set (map keyword (:permissions company))))
+                      (job/set-company-permissions permissions)
                       (update ::job/sub-db dissoc ::job/id) ;; causes job to be reloaded
                       (update-in [::payment/sub-db ::payment/company] dissoc :id))} ;; causes company to be reloaded
              (if (and job-id (= :publish action))
@@ -234,13 +246,6 @@
   payment-interceptors
   (fn [db _resp]
     (assoc db ::payment/error :failed-job-publish)))
-
-(reg-event-fx
-  ::setup-step-forward
-  db/default-interceptors
-  (fn [{db :db} [args]]
-    (force-scroll-to-top!)
-    (progress-payment-setup (subs/payment-step db) db args)))
 
 (reg-event-db
   ::save-token
