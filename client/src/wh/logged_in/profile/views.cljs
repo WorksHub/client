@@ -617,7 +617,9 @@
 (defn main-view []
   (let [is-company?    (<sub [:user/company?])
         is-owner?      (<sub [::subs/owner?])
-        contributions? (boolean (<sub [::subs/contributions-collection]))]
+        contributions? (boolean (<sub [::subs/contributions-collection]))
+        issues         (<sub [::subs/issues])
+        contributions  (<sub [::subs/contributions])]
     [components/content
      [error-box]
      [edit-modal/profile-edit-modal]
@@ -661,8 +663,14 @@
         (<sub [::subs/contributions-count])
         (<sub [::subs/contributions-repos])
         (<sub [::subs/contributions-months])])
-     [components/section-articles (<sub [::subs/contributions]) :private]
-     [components/section-issues (<sub [::subs/issues]) :private]]))
+
+     (if (seq contributions)
+       [components/section-articles contributions :private]
+       [components/articles-cta])
+
+     (if (seq issues)
+       [components/section-issues issues :private]
+       [components/oss-cta])]))
 
 (defn view-page []
   [components/container

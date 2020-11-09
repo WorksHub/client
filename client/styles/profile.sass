@@ -170,6 +170,10 @@
   color: $text-white
   padding: 0 20px
   min-width: 100px
+  &--inverted
+    color: $primary-red
+    background-color: white
+    font-weight: bold
 
   font-family: $font-family
   font-size: 12px
@@ -807,3 +811,36 @@
     &--selected
       background: $grey500
       color: $grey200
+
+
+.cta
+  display: flex
+  justify-content: space-between
+  &__content
+    flex: 1
+  &__text
+    font-size: 14px
+    line-height: 1.71
+    margin-bottom: 24px
+    margin-left: 16px
+    font-weight: 500
+    list-style: disc
+  &__title
+    color: $text-black
+    font-size: 18px
+    font-weight: bold
+    line-height: 1.44
+    margin: 0 0 16px 0
+    padding: 0
+  &__image
+    object-fit: contain
+    +mobile
+      display: none
+    &--girl
+      width: 108px
+      margin: 0 32px
+    &--computer-guy
+      width: 160px
+      margin-left: 12px
+  &__button
+    width: 100%

@@ -1,6 +1,5 @@
 (ns wh.logged-in.profile.components
   (:require #?(:cljs [wh.components.forms.views :as f :refer [tags-field]])
-            [clojure.set :as set]
             [clojure.string :as str]
             [wh.common.keywords :as keywords]
             [wh.common.text :refer [pluralize]]
@@ -12,7 +11,6 @@
             [wh.components.tag :as tag]
             [wh.interop :as interop]
             [wh.logged-in.profile.components.contributions :as contributions]
-            [wh.re-frame :as r]
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
@@ -154,7 +152,12 @@
     [:div {:class styles/view-field__content} content]]))
 
 (defn section [& children]
-  (into [:div {:class styles/section}] children))
+  (let [opts         (first children)
+        {:keys [class]
+         :or   {class ""}
+         :as   opts} (when (map? opts) opts)
+        children     (if opts (rest children) children)]
+    (into [:div (util/smc styles/section class)] children)))
 
 (defn section-highlighted [& children]
   (into [:div (util/smc styles/section styles/section--highlighted)] children))
@@ -560,6 +563,49 @@
        [section-buttons
         [small-link {:text "Explore issues"
                      :href (routes/path :issues)}]])]))
+
+(defn articles-cta []
+  [section (util/smc styles/cta)
+   [:div (util/smc styles/cta__content)
+    [:h1 (util/smc styles/cta__title)
+     "Become a top ranking user!"]
+
+    [:ul (util/smc styles/cta__text)
+     [:li "Share your thoughts & expertise with our community!"]
+     [:li "The more articles you write, the more people recognize your profile and want to work with you!"]]
+
+    [:a {:data-pushy-ignore "true"
+         :class             (util/mc styles/button
+                                     styles/button--inverted
+                                     styles/cta__button)
+         :href              (routes/path :contribute)}
+     "Write an article"]]
+
+   [:img {:src   "/images/profile/girl.png"
+          :class (util/mc styles/cta__image
+                          styles/cta__image--girl)}]])
+
+(defn oss-cta []
+  [section (util/smc styles/cta)
+   [:div (util/smc styles/cta__content)
+    [:h1 (util/smc styles/cta__title)
+     "Increase your chances of getting hired"]
+
+    [:ul (util/smc styles/cta__text)
+     [:li "Get paid to learn new technologies by working on open source issues!"]
+     [:li "The more contributions you make, the higher ranking your profile!
+Working on open source projects is the best way to confirm your skills!"]]
+
+    [:a {:data-pushy-ignore "true"
+         :class             (util/mc styles/button
+                                     styles/button--inverted
+                                     styles/cta__button)
+         :href              (routes/path :issues)}
+     "Get started with open source"]]
+
+   [:img {:src   "/images/profile/computer_guy2.png"
+          :class (util/mc styles/cta__image
+                          styles/cta__image--computer-guy)}]])
 
 (defn section-contributions [contributions contributions-count
                              contributions-repos months]
