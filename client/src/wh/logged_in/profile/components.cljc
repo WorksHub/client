@@ -1,6 +1,7 @@
 (ns wh.logged-in.profile.components
   (:require #?(:cljs [wh.components.forms.views :as f :refer [tags-field]])
             [clojure.string :as str]
+            [re-frame.core :refer [dispatch-sync]]
             [wh.common.keywords :as keywords]
             [wh.common.text :refer [pluralize]]
             [wh.common.time :as time]
@@ -11,6 +12,8 @@
             [wh.components.tag :as tag]
             [wh.interop :as interop]
             [wh.logged-in.profile.components.contributions :as contributions]
+            [wh.profile.db :as profile]
+            [wh.re-frame :as r]
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
@@ -45,12 +48,13 @@
                    :href            (signin-buttons/type->href social-provider)
                    :social-provider social-provider}]))))
 
-(defn title [text]
+(defn sec-title [text]
   [:div {:class styles/title} text])
 
-(defn small-link [{:keys [text href class on-click]}]
+(defn small-link [{:keys [text href class on-click inverted?]}]
   [:a
-   (merge {:class (util/mc styles/button styles/button--small class)}
+   (merge {:class (util/mc styles/button styles/button--small class
+                           [inverted? styles/button--inverted])}
           (when href {:href href})
           #?(:cljs
              (when on-click
@@ -65,13 +69,34 @@
            new-tab? (merge {:target "_blank" :rel "noopener"}))
    text])
 
-(defn small-button [opts text]
-  [:button (merge (util/smc styles/button styles/button--small) opts) text])
+(defn job-link [job]
+  [underline-link
+   {:text (:title job)
+    :href (routes/path :job :params {:slug (:slug job)})}])
 
-(defn upload-button [{:keys [document uploading? on-change data-test]}]
+(defn application-state [{:keys [state timestamp job] :as _application} user type]
+  (let [other? (= type :other)]
+    [:div {:class styles/job-application__state-wrapper}
+     [:span {:class styles/job-application__applied-on} "Applied " (time/str->human-time timestamp)]
+     [:span {:class styles/job-application__state} (profile/state->str state)]
+     (when other?
+       [:a {:href (routes/path :user
+                               :params {:id (:id user)}
+                               :query-params {:job-id (:id job)})
+            :class styles/admin__secondary-link} "View application"])]))
+
+(defn small-button [{:keys [inverted?] :as opts} text]
+  [:button (merge
+             (util/smc styles/button styles/button--small
+                       [inverted? styles/button--inverted])
+             opts)
+   text])
+
+(defn upload-button [{:keys [document uploading? on-change data-test inverted?]}]
   (if uploading?
-    [small-button {:disabled true} "Uploading..."]
-    [:label {:class     (util/mc styles/button styles/button--small)
+    [small-button {:disabled true :inverted? inverted?} "Uploading..."]
+    [:label {:class     (util/mc styles/button styles/button--small
+                                 [inverted? styles/button--inverted])
              :data-test data-test}
      [:input.visually-hidden {:type      "file"
                               :name      "avatar"
@@ -159,8 +184,14 @@
         children     (if opts (rest children) children)]
     (into [:div (util/smc styles/section class)] children)))
 
-(defn section-highlighted [& children]
-  (into [:div (util/smc styles/section styles/section--highlighted)] children))
+(defn section-custom [_ & _]
+  (let [company-cls (util/mc styles/section--highlighted
+                             styles/section--admin)]
+    (fn [type & children]
+      (into [:div (util/smc styles/section
+                            [(= type :highlighted) styles/section--highlighted]
+                            [(= type :company) company-cls])]
+            children))))
 
 (defn section-buttons [& children]
   (into [:div {:class styles/section__buttons}] children))
@@ -180,6 +211,15 @@
            :title name}
      [icons/icon (str name "-tag") :class styles/top-tech__icon]
      [:div {:class styles/top-tech__label} name]]))
+
+(defn job-list [content]
+  [:ul {:class styles/job-list}
+   content])
+
+(defn subsection [title content]
+  [:div {:class styles/subsection}
+   [:div {:class styles/subsection__title} title]
+   content])
 
 (defn skills-container [tags]
   (into [:div {:class styles/skills}] tags))
@@ -274,7 +314,7 @@
 (defn section-stats
   [{:keys [is-owner? percentile created articles-count issues-count]}]
   [section
-   [title "Activity & Stats"]
+   [sec-title "Activity & Stats"]
    [four-grid
     [stat-container
      {:title "WorksHub Rating"
@@ -333,7 +373,7 @@
     [section
      (when (and skills? (not public?))
        [edit-profile {:type :default}])
-     [title "Top Skills"]
+     [sec-title "Top Skills"]
      (cond
        skills?                     [display-skills user-skills]
        (and (not skills?) public?) [:p "User hasn't specified his skills yet. "]
@@ -503,7 +543,7 @@
       :display-toggle? true
       :read-body       [:<>
                         [:div (util/smc styles/skills__top)
-                         [title "Skills"]]
+                         [sec-title "Skills"]]
                         [:div (util/smc styles/skills__content)
                          (if skills?
                            [experience skills (:max-skills opts)]
@@ -511,7 +551,7 @@
                          (when interests?
                            [display-interests interests])]]
       :edit-body       [:<>
-                        [title "Experience and interests"]
+                        [sec-title "Experience and interests"]
                         [:p (util/smc styles/skills__paragraph)
                          "This is a key part of your profile. List out your skills and experience, and give companies an insight into what else interests you in a role."]
                         [edit-tech
@@ -526,10 +566,10 @@
 (defn section-articles [articles type]
   (let [public? (= type :public)
         message (if public? "User hasn't written any articles yet. "
-                            "You haven't written any articles yet.")]
+                    "You haven't written any articles yet.")]
     [section
      [internal-anchor "articles"]
-     [title "Articles"]
+     [sec-title "Articles"]
      (if (seq articles)
        (for [article articles]
          ^{:key (:id article)}
@@ -548,10 +588,10 @@
 (defn section-issues [issues type]
   (let [public? (= type :public)
         message (if public? "User hasn't started working on any issue yet. "
-                            "You haven't started working on any issue yet")]
+                    "You haven't started working on any issue yet")]
     [section
      [internal-anchor "issues"]
-     [title "Open Source Issues"]
+     [sec-title "Open Source Issues"]
      (if (seq issues)
        (for [issue issues]
          ^{:key (:id issue)}
@@ -570,23 +610,24 @@
     [:h1 (util/smc styles/cta__title)
      "Become a top ranking user!"]
 
-    [:ul (util/smc styles/cta__text)
+    [:ul (util/smc styles/cta__list)
      [:li "Share your thoughts & expertise with our community!"]
      [:li "The more articles you write, the more people recognize your profile and want to work with you!"]]
 
     [:a {:data-pushy-ignore "true"
          :class             (util/mc styles/button
                                      styles/button--inverted
-                                     styles/cta__button)
+                                     styles/cta__button--full)
          :href              (routes/path :contribute)}
      "Write an article"]]
 
-   [:img {:src   "/images/profile/girl.png"
-          :class (util/mc styles/cta__image
-                          styles/cta__image--girl)}]])
+   [:div (util/smc styles/cta__image__container--girl
+                   styles/cta__image__container)
+    [:img {:src   "/images/profile/girl.png"
+           :class (util/mc styles/cta__image)}]]])
 
 (defn oss-cta []
-  [section (util/smc styles/cta)
+  [section (util/smc styles/cta styles/cta__container)
    [:div (util/smc styles/cta__content)
     [:h1 (util/smc styles/cta__title)
      "Increase your chances of getting hired"]
@@ -599,19 +640,20 @@ Working on open source projects is the best way to confirm your skills!"]]
     [:a {:data-pushy-ignore "true"
          :class             (util/mc styles/button
                                      styles/button--inverted
-                                     styles/cta__button)
+                                     styles/cta__button--full)
          :href              (routes/path :issues)}
      "Get started with open source"]]
 
-   [:img {:src   "/images/profile/computer_guy2.png"
-          :class (util/mc styles/cta__image
-                          styles/cta__image--computer-guy)}]])
+   [:div (util/smc styles/cta__image__container--computer-guy
+                   styles/cta__image__container)
+    [:img {:src   "/images/profile/computer_guy2.png"
+           :class (util/mc styles/cta__image)}]]])
 
 (defn section-contributions [contributions contributions-count
                              contributions-repos months]
   [section
    [internal-anchor "open-source"]
-   [title "Open Source"]
+   [sec-title "Open Source"]
 
    [four-grid
     ^{:key :contributions-count}
@@ -636,3 +678,57 @@ Working on open source projects is the best way to confirm your skills!"]]
    [:div {:class styles/profile-hidden}
     [icons/icon "lock" :class styles/profile-hidden__icon]
     "This user's profile is hidden"]])
+
+(defn target-value [ev]
+  (-> ev .-target .-value))
+
+(defn text-field [value {:keys [label on-change placeholder class on-enter] :as _opts}]
+  [:input {:type        "text"
+           :value       value
+           :class       (util/mc styles/text-field class)
+           :placeholder placeholder
+           :on-key-down (fn [e]
+                          (when (and (= "Enter" (.-key e)) on-enter)
+                            (on-enter)))
+           :on-change   #(let [new-value (target-value %)]
+                           (if (fn? on-change)
+                             (on-change new-value)
+                             (dispatch-sync (conj on-change new-value))))}])
+
+;; --------------------------------------------------------------------------------
+
+(defn itemize [items & {:keys [class no-data-message]}]
+  (if (seq items)
+    (into [:ul {:class class}]
+          (for [item items]
+            [:li item]))
+    no-data-message))
+
+(defn email-link [email]
+  [:a {:href (str "mailto:" email)} email])
+
+(defn owner? [user-type] (= user-type :owner))
+
+(defn edit-user-private-info
+  [user-type {:keys [email phone job-seeking-status role-types remote
+                     salary visa-status current-location
+                     preferred-locations fields title]
+              :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
+                     title  "Preferences"}}]
+  [:<>
+   [sec-title title]
+   (when (owner? user-type)
+     [:div "This section is for our info only — we won’t show this directly to anyone 🔐"])
+   [:div {:data-test :private-info}
+    (when (:email fields) [view-field "Email:" [email-link email]])
+    (when (:phone fields) [view-field "Phone Number:" (or phone "Not specified")])
+    (when (:status fields) [view-field "Status:" (or job-seeking-status "Not specified")])
+    (when (:salary fields) [view-field "Expected salary:" salary])
+    (when (:visa fields) [view-field "Visa status:" (or visa-status "Not specified")])
+    (when (:remote fields) [view-field "Prefer remote working:" (if remote "Yes" "No")])
+    (when (:preferred-types fields) [view-field "Preferred role types:" (itemize
+                                                                          (map #(str/replace % #"_" " ") role-types)
+                                                                          :no-data-message "None")])
+    (when (:current-location fields) [view-field "Current location:" (or current-location "Not specified")])
+    (when (:preferred-locations fields) [view-field "Preferred locations:" (itemize preferred-locations
+                                                                                    :no-data-message "No locations selected")])]])

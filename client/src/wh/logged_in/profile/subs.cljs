@@ -178,7 +178,9 @@
   ::private-data
   :<- [::profile]
   (fn [profile _]
-    (private-data (keywords/strip-ns-from-map-keys profile))))
+    (-> profile
+        keywords/strip-ns-from-map-keys
+        private-data)))
 
 (reg-sub
   ::company-data
@@ -400,6 +402,12 @@
   :<- [::cv-data]
   (fn [cv _]
     (:cv-link cv)))
+
+(reg-sub
+  ::cv-link-editable
+  :<- [::profile]
+  (fn [db]
+    (::profile/cv-link-editable db)))
 
 (reg-sub
   ::error-message

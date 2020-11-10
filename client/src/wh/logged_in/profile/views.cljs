@@ -17,14 +17,16 @@
                                                text-field text-input]]
             [wh.components.icons :refer [icon]]
             [wh.logged-in.profile.components :as components]
+            [wh.logged-in.profile.components.cover-letter :as cover-letter]
+            [wh.logged-in.profile.components.cv :as cv]
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
             [wh.profile.db :as profile]
-            [wh.profile.update-public.views :as edit-modal]
-            [wh.profile.update-public.events :as edit-modal-events]
-            [wh.profile.update-private.views :as edit-private]
             [wh.profile.update-private.events :as edit-private-events]
             [wh.profile.update-private.subs :as edit-private-subs]
+            [wh.profile.update-private.views :as edit-private]
+            [wh.profile.update-public.events :as edit-modal-events]
+            [wh.profile.update-public.views :as edit-modal]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
             [wh.subs :refer [<sub]]))
@@ -189,15 +191,20 @@
 ;; CV section – edit link
 
 (defn cv-section-edit-link []
-  [:form.wh-formx.cv-edit.wh-formx__layout
-   [:h1 "Edit your resume"]
-   [text-field (<sub [::subs/cv-link]) {:label "Resume link" :on-change [::events/edit-cv-link]}]
-   [error-box]
-   [:div.buttons-container
-    [:button.button.button--small {:on-click #(do (.preventDefault %)
-                                                  (dispatch [::events/save-cv-info {:type :update-cv-link}]))} "Save"]
-    [cancel-link]]])
-
+  (let [cv-link (<sub [::subs/cv-link])]
+    [:form.wh-formx.cv-edit.wh-formx__layout
+     [:h1 "Edit your resume"]
+     [text-field cv-link
+      {:label "Resume link" :on-change [::events/edit-cv-link]}]
+     [error-box]
+     [:div.buttons-container
+      [:button.button.button--small
+       {:on-click #(do (.preventDefault %)
+                       (dispatch [::events/save-cv-info
+                                  {:type    :update-cv-link
+                                   :cv-link cv-link}]))}
+       "Save"]
+      [cancel-link]]]))
 (defn upload-document [document-name uploading? on-change]
   [:div.profile-section__upload-document
    (if uploading?
@@ -432,38 +439,6 @@
 
          [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to CV" "button"])])]))
 
-(defn cover-letter-section-view
-  ([opts] (cover-letter-section-view :owner opts))
-  ([user-type {:keys [cover-letter-filename cover-letter-url]}]
-   [:section.profile-section.cover-letter
-    [:div.cover-letter__view
-     [:h2 "Default Cover Letter"]
-
-     (when cover-letter-url
-       [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
-        [:a.a--underlined {:href cover-letter-url, :target "_blank", :rel "noopener"}
-         (if (owner? user-type) cover-letter-filename "Click here to download")]])
-
-     (when-not cover-letter-url
-       (if (owner? user-type)
-         "You haven't uploaded Cover Letter yet."
-         "No uploaded Cover Letter yet."))]
-
-    (when (owner-or-admin? user-type)
-      [:div.cover-letter__upload
-       (conj
-         (upload-document "cover letter" (<sub [::subs/cover-letter-uploading?])
-                          (upload/handler
-                            :launch [::events/cover-letter-upload]
-                            :on-upload-start [::events/cover-letter-upload-start]
-                            :on-success [::events/cover-letter-upload-success]
-                            :on-failure [::events/cover-letter-upload-failure]))
-
-         (when (and cover-letter-url (owner? user-type))
-           [:button.button
-            {:on-click #(dispatch [::events/remove-cover-letter])}
-            "Remove cover letter"]))])]))
-
 (defn private-section-view
   ([opts] (private-section-view :owner opts))
   ([user-type {:keys [email phone job-seeking-status company-perks role-types remote
@@ -492,28 +467,6 @@
 
 ;; -----------------------------------------------------------------------------------------------------------
 
-(defn edit-user-private-info
-  [user-type {:keys [email phone job-seeking-status role-types remote
-                     salary visa-status current-location
-                     preferred-locations fields title email-link-fn]
-              :or   {fields #{:email :phone :status :traits :salary :visa :remote :preferred-types :current-location :preferred-locations}
-                     title  "Preferences" email-link-fn email-link}}]
-  [:<>
-   [components/title title]
-   (when (<sub [::subs/url-save-success])
-     [successful-save-info])
-   (when (owner? user-type)
-     [:div "This section is for our info only — we won’t show this directly to anyone 🔐"])
-   [:div {:data-test :private-info}
-    (when (:email fields) [components/view-field "Email:" [email-link-fn email]])
-    (when (:phone fields) [components/view-field "Phone Number:" (or phone "None")])
-    (when (:status fields) [components/view-field "Status:" (or job-seeking-status "None")])
-    (when (:salary fields) [components/view-field "Expected salary:" salary])
-    (when (:visa fields) [components/view-field "Visa status:" visa-status])
-    (when (:remote fields) [components/view-field "Prefer remote working:" (if remote "Yes" "No")])
-    (when (:preferred-types fields) [components/view-field "Preferred role types:" (itemize (map #(str/replace % #"_" " ") role-types) :no-data-message "None")])
-    (when (:current-location fields) [components/view-field "Current location:" (or current-location "None")])
-    (when (:preferred-locations fields) [components/view-field "Preferred locations:" (itemize preferred-locations :no-data-message "No locations selected.")])]])
 
 (defn edit-user-private-info-wrapper
   [user-type opts]
@@ -521,17 +474,17 @@
    {:editable? (owner? user-type)
     :editing?  (<sub [::edit-private-subs/editing-profile?])
     :on-edit   [::edit-private-events/open-form]
-    :read-body [edit-user-private-info user-type opts]
+    :read-body [components/edit-user-private-info user-type opts]
     :data-test :toggle-edit-private-info
     :display-toggle? (<sub [::subs/display-toggle?])
     :edit-body [:<>
-                [components/title "Edit profile"]
+                [components/sec-title "Edit profile"]
                 [edit-private/profile-edit-inline]]}])
 
 (defn cover-letter-section-view-new
   [user-type {:keys [cover-letter-filename cover-letter-url]}]
   [components/section
-   [components/title "Default Cover Letter"]
+   [components/sec-title "Default Cover Letter"]
 
    (when cover-letter-url
      [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
@@ -561,7 +514,7 @@
 (defn cv-section-view-new
   [user-type {:keys [cv-link cv-filename cv-url]}]
   [components/section
-   [components/title "Career History"]
+   [components/sec-title "Career History"]
 
    (when (or cv-url cv-link)
      [:div (when cv-url
@@ -599,7 +552,7 @@
 (defn section-public-access-settings []
   (let [profile-public? (<sub [::subs/published?])
         id              (<sub [::subs/id])]
-    [components/section-highlighted
+    [components/section-custom :highlighted
      [:div {:class styles/access-settings}
 
       [:div {:class styles/access-settings__description}
@@ -615,11 +568,21 @@
                 "Your profile is hidden from everyone. Click the toggle to make it visible.")]]]]))
 
 (defn main-view []
-  (let [is-company?    (<sub [:user/company?])
-        is-owner?      (<sub [::subs/owner?])
-        contributions? (boolean (<sub [::subs/contributions-collection]))
+  (let [is-company?          (<sub [:user/company?])
+        is-owner?            (<sub [::subs/owner?])
+        contributions?       (boolean (<sub [::subs/contributions-collection]))
         issues         (<sub [::subs/issues])
-        contributions  (<sub [::subs/contributions])]
+        contributions  (<sub [::subs/contributions])
+        top-ranking-cta? (or (zero? (count issues)) (zero? (count contributions)))
+        cover-letter-data    (<sub [::subs/cover-letter-data])
+        {:keys
+         [cover-letter-url]} cover-letter-data
+        cover-present?       cover-letter-url
+        private-data         (<sub [::subs/private-data])
+        cv-data              (<sub [::subs/cv-data])
+        {:keys
+         [cv-link cv-url]}   cv-data
+        cv-present?          (or cv-url cv-link)]
     [components/content
      [error-box]
      [edit-modal/profile-edit-modal]
@@ -629,9 +592,19 @@
                                 :created        (<sub [::subs/created])
                                 :articles-count (<sub [::subs/articles-count])
                                 :issues-count   (<sub [::subs/issues-count])}]
-     (when-not is-company? [cv-section-view-new :owner (<sub [::subs/cv-data])])
-     (when-not is-company? [cover-letter-section-view-new :owner (<sub [::subs/cover-letter-data])])
-     (when-not is-company? [edit-user-private-info-wrapper :owner (<sub [::subs/private-data])])
+     (when-not is-company?
+       (if cv-present?
+         [cv-section-view-new :owner cv-data]
+         [cv/cv-cta]))
+
+     (when-not is-company?
+       (if cover-present?
+         [cover-letter-section-view-new :owner cover-letter-data]
+         [cover-letter/cover-letter-cta]))
+
+     (when-not is-company?
+       [edit-user-private-info-wrapper :owner private-data])
+
      [components/section-skills {:type                   :private
                                  :skills                 (<sub [::subs/skills])
                                  :interests              (<sub [::subs/interests])

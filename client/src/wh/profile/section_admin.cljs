@@ -31,32 +31,13 @@
    [:div (str/capitalize status)]
    (when source
      [:div {:class styles/admin__secondary-text}
-      (-> time
-          (time/str->time :date-time)
-          time/human-time)
+      (time/str->human-time time)
       (str " by " source)])])
 
-(defn subsection [title content]
-  [:div {:class styles/admin__subsection}
-   [:div {:class styles/admin__subsection-title} title]
-   content])
-
-(defn job-list [content]
-  [:ul {:class styles/admin__job-list}
-   content])
-
-(defn job-link [job]
-  [components/underline-link
-   {:text (:title job)
-    :href (routes/path :job :params {:slug (:slug job)})}])
-
-(defn job-application [{:keys [job state timestamp]}]
+(defn job-application [{:keys [job] :as application}]
   [:div
-   [job-link job]
-   [:div {:class styles/admin__secondary-text}
-    (str state " , " (-> timestamp
-                         (time/str->time :date-time)
-                         time/human-time))]])
+   [components/job-link job]
+   [components/application-state application nil nil]])
 
 (defn toggle-view [user admin-view?]
   (let [admin-link (routes/path :user :params {:id (:id user)})
@@ -71,21 +52,21 @@
 
 (defn controls [{:keys [applications liked-jobs hs-url approval-info] :as opts}]
   [components/section
-   [components/title "Admin section"]
+   [components/sec-title "Admin section"]
    [approve-buttons opts]
-   [subsection "Status:" [approval approval-info]]
-   [subsection "Hubspot:" [:div [components/underline-link {:text hs-url
-                                                            :href hs-url
-                                                            :new-tab? true}]]]
-   [subsection "Applied to:" [job-list
-                              (if (seq applications)
-                                (for [application applications]
-                                  ^{:key (:timestamp application)}
-                                  [:li [job-application application]])
-                                "-")]]
-   [subsection "Liked jobs:" [job-list
-                              (if (seq liked-jobs)
-                                (for [job liked-jobs]
-                                  ^{:key (:id job)}
-                                  [:li [job-link job]])
-                                "-")]]])
+   [components/subsection "Status:" [approval approval-info]]
+   [components/subsection "Hubspot:" [:div [components/underline-link {:text hs-url
+                                                                       :href hs-url
+                                                                       :new-tab? true}]]]
+   [components/subsection "Applied to:" [components/job-list
+                                         (if (seq applications)
+                                           (for [application applications]
+                                             ^{:key (:timestamp application)}
+                                             [:li [job-application application]])
+                                           "-")]]
+   [components/subsection "Liked jobs:" [components/job-list
+                                         (if (seq liked-jobs)
+                                           (for [job liked-jobs]
+                                             ^{:key (:id job)}
+                                             [:li [components/job-link job]])
+                                           "-")]]])

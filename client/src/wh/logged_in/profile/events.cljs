@@ -279,11 +279,14 @@
         (keywords/namespace-map "wh.user.db" data)))
 
 (defn graphql-cv-update
-  [db]
-  (-> {:id (or (get-in db [::profile/sub-db ::profile/id])
-               (get-in db [::user/sub-db ::user/id]))
-       :cv (get-in db [::profile/sub-db ::profile/cv])}
-      (keywords/transform-keys)))
+  ([db]
+   (graphql-cv-update db nil))
+
+  ([db cv]
+   (-> {:id (or (get-in db [::profile/sub-db ::profile/id])
+                (get-in db [::user/sub-db ::user/id]))
+        :cv (or cv (get-in db [::profile/sub-db ::profile/cv]))}
+       (keywords/transform-keys))))
 
 (defn graphql-cover-letter-update
   [db]
@@ -389,21 +392,27 @@
 (reg-event-fx
   ::save-cv-info
   db/default-interceptors
-  (fn [{db :db} [{:keys [type]}]]
-    (let [url-path       [::profile/sub-db ::profile/cv :link]
-          cv-link        (get-in db url-path)
-          valid-cv-link? (or (= type :upload-cv)
-                             (s/valid? ::specs/url cv-link))]
-      (if valid-cv-link?
+  (fn [{db :db} [{:keys [type cv-link]}]]
+    (cond
+      (= type :update-cv-link)
+      (if (s/valid? ::specs/url cv-link)
         {:graphql    {:query      graphql/update-user-mutation--approval
-                      :variables  {:update_user (graphql-cv-update db)}
+                      :variables  {:update_user (graphql-cv-update db {:link cv-link})}
                       :on-success [::save-success]
                       :on-failure [::save-failure]}
          :dispatch-n [[::pages/set-loader]
                       [:error/close-global]]}
 
         {:dispatch
-         [:error/set-global "CV link is not valid. Please amend and try again."]}))))
+         [:error/set-global "CV link is not valid. Please amend and try again."]})
+
+      (= type :upload-cv)
+      {:graphql    {:query      graphql/update-user-mutation--approval
+                    :variables  {:update_user (graphql-cv-update db)}
+                    :on-success [::save-success]
+                    :on-failure [::save-failure]}
+       :dispatch-n [[::pages/set-loader]
+                    [:error/close-global]]})))
 
 
 (reg-event-fx
@@ -636,6 +645,12 @@
   profile-interceptors
   (fn [db [link]]
     (assoc-in db [::profile/cv :link] link)))
+
+(reg-event-db
+  ::edit-cv-link-editable
+  profile-interceptors
+  (fn [db [link]]
+    (assoc db ::profile/cv-link-editable link)))
 
 (reg-event-db
   ::select-suggestion

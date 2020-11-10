@@ -43,7 +43,7 @@
   [db]
   (cond (and (user-common/admin? db) (not (company-id db))) :homepage ;; :admin-applications
         (user-common/admin? db)                             :admin-company-applications
-        (user-common/company? db)                           :company-applications ))
+        (user-common/company? db)                           :company-applications))
 
 (defn company-view?
   [db]

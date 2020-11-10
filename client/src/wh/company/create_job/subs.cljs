@@ -263,6 +263,7 @@
 
 (reg-sub
   ::manager-suggestions
+  ;; TODO: CH5151 ::manager sub is missing
   :<- [::manager]
   (fn [m _]
     (let [m (when m (str/lower-case m))

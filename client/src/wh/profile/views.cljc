@@ -5,28 +5,53 @@
     [wh.components.not-found :as not-found]
     [wh.logged-in.profile.components :as components]
     #?(:cljs [wh.profile.section-admin :as section-admin])
+    #?(:cljs [wh.profile.section-company :as section-company])
     [wh.profile.db :as profile]
     [wh.profile.events :as profile-events]
     [wh.profile.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]))
 
-(defn section-admin []
+(defn section-for-admin []
   #?(:cljs (let [user (<sub [::subs/profile])
                  admin-view? (<sub [::subs/admin-view?])]
-             (when admin-view? [section-admin/controls {:hs-url (<sub [::subs/hs-url])
-                                                        :applications (<sub [::subs/applications])
-                                                        :liked-jobs (<sub [::subs/liked-jobs])
-                                                        :approval-info (<sub [::subs/approval-info])
-                                                        :on-approve #(dispatch [::profile-events/set-approval-status (:id user) "approved"])
-                                                        :on-reject #(dispatch [::profile-events/set-approval-status (:id user) "rejected"])
-                                                        :updating-status (<sub [::subs/updating-status])}]))))
+             (when admin-view? [section-admin/controls
+                                {:hs-url (<sub [::subs/hs-url])
+                                 :applications (<sub [::subs/applications])
+                                 :liked-jobs (<sub [::subs/liked-jobs])
+                                 :approval-info (<sub [::subs/approval-info])
+                                 :on-approve #(dispatch [::profile-events/set-approval-status (:id user) "approved"])
+                                 :on-reject #(dispatch [::profile-events/set-approval-status (:id user) "rejected"])
+                                 :updating-status (<sub [::subs/updating-status])}]))))
 
-(defn section-stats [{:keys [articles issues]}]
-  [components/section-stats {:is-owner?      false
-                             :percentile     (<sub [::subs/percentile])
-                             :created        (<sub [::subs/created])
-                             :articles-count (count articles)
-                             :issues-count   (count issues)}])
+(defn section-for-company []
+  #?(:cljs (let [user (<sub [::subs/profile])
+                 company-view? (<sub [:user/company?])
+                 applications (<sub [::subs/applications])
+                 current-application (<sub [::subs/current-application])
+                 set-application-state #(dispatch [::profile-events/set-application-state {:user user
+                                                                                           :application current-application
+                                                                                           :state %}])]
+             (when (and company-view? (seq applications))
+               [section-company/controls
+                {:current-application current-application
+                 :user                user
+                 :other-applications  (<sub [::subs/other-applications])
+                 :updating-state?     (<sub [::subs/updating-application-state?])
+                 :company             (<sub [::subs/company])
+                 :on-get-in-touch     #(set-application-state (profile/application-state :get-in-touch))
+                 :on-pass             #(set-application-state (profile/application-state :pass))
+                 :on-hire             #(set-application-state (profile/application-state :hire))
+                 :on-modal-close      #(dispatch [::profile-events/close-user-info-modal])
+                 :modal-opened?       (<sub [::subs/user-info-modal-opened?])}]))))
+
+(defn section-stats []
+  (let [articles (<sub [::subs/blogs])
+        issues (<sub [::subs/issues])]
+    [components/section-stats {:is-owner?      false
+                               :percentile     (<sub [::subs/percentile])
+                               :created        (<sub [::subs/created])
+                               :articles-count (count articles)
+                               :issues-count   (count issues)}]))
 
 (defn section-skills []
   [components/section-skills {:type         :public
@@ -43,39 +68,68 @@
      (<sub [::subs/contributions-repos])
      (<sub [::subs/contributions-months])]))
 
-(defn content []
-  (let [hide-profile? (<sub [::subs/hide-profile?])
-        articles (<sub [::subs/blogs])
-        issues (<sub [::subs/issues])
-        admin-view? (<sub [::subs/admin-view?])
-        admin? (<sub [:user/admin?])
-        user (<sub [::subs/profile])]
-    [:<>
-     #?(:cljs (when admin? [section-admin/toggle-view user admin-view?]))
-     (if hide-profile?
-       [components/profile-hidden-message]
-       [components/content
-        [section-admin]
-        [section-stats {:articles articles
-                        :issues issues}]
-        [section-skills]
-        [section-contributions]
-        [components/section-articles articles :public]
-        [components/section-issues issues :public]])]))
+(defn section-articles []
+  (let [articles (<sub [::subs/blogs])]
+    [components/section-articles articles :public]))
+
+(defn section-issues []
+  (let [issues (<sub [::subs/issues])]
+    [components/section-issues issues :public]))
+
+(defn toggle-view
+  "Toggle the look of a profile so admin can see the it as a guest"
+  []
+  #?(:cljs (when (<sub [:user/admin?])
+             [section-admin/toggle-view
+              (<sub [::subs/profile])
+              (<sub [::subs/admin-view?])])))
+
+(defn profile-column []
+  [components/profile (<sub [::subs/profile])
+   {:twitter       (<sub [::subs/social :twitter])
+    :stackoverflow (<sub [::subs/social :stackoverflow])
+    :github        (<sub [::subs/social :github])
+    :last-seen     (<sub [::subs/last-seen])
+    :updated       (<sub [::subs/updated])}
+   :public])
+
+(defn section-private-details []
+  (let [default-fields #{:visa :preferred-locations :current-location}
+        extended-fields (conj default-fields :email)]
+    (fn []
+      (let [user-details (<sub [::subs/user-details])
+            contacted-or-hired? (<sub [::subs/was-contacted-or-hired?])
+            admin-view? (<sub [::subs/admin-view?])
+            company-view? (<sub [::subs/company-view?])]
+        (when (or admin-view? company-view?)
+          [components/section
+           [components/edit-user-private-info
+            :public
+            (assoc user-details
+              :title "Details"
+              :fields (if contacted-or-hired? extended-fields default-fields))]])))))
 
 (defn page []
   (cond
     (<sub [::subs/error?])
     [not-found/not-found-profile]
+    ;;
     (<sub [::subs/loader?])
     [loader-full-page]
+    ;;
     :else
     [components/container
-     [components/profile (<sub [::subs/profile])
-      {:twitter       (<sub [::subs/social :twitter])
-       :stackoverflow (<sub [::subs/social :stackoverflow])
-       :github        (<sub [::subs/social :github])
-       :last-seen     (<sub [::subs/last-seen])
-       :updated       (<sub [::subs/updated])}
-      :public]
-     [content]]))
+     [profile-column]
+     [:<>
+      [toggle-view]
+      (if (<sub [::subs/hide-profile?])
+        [components/profile-hidden-message]
+        [components/content
+         [section-for-admin]
+         [section-for-company]
+         [section-stats]
+         [section-skills]
+         [section-private-details]
+         [section-contributions]
+         [section-articles]
+         [section-issues]])]]))

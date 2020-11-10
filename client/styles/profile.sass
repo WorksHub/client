@@ -25,6 +25,7 @@
 .underline-link
   border-bottom: 1px solid $grey200
   word-break: break-word
+  line-height: 1.3
 
 .section
   background-color: $white
@@ -48,6 +49,9 @@
 
   &--highlighted
     border: 1px solid $primary-red
+
+  &--admin
+    gap: 24px
 
   &__buttons
     display: flex
@@ -741,25 +745,31 @@
     display: grid
     grid-gap: 4px
 
-.admin
-  &__subsection
-    display: grid
-    align-items: start
-    +tablet
-      grid-template-columns: 120px 1fr
-      grid-gap: 16px
+.subsection
+  display: grid
+  align-items: start
+  +tablet
+    grid-template-columns: 120px 1fr
+    grid-gap: 16px
 
-  &__subsection-title
+  &__title
     text-transform: uppercase
     display: flex
     align-items: center
     color: $grey300
     font-size: 11px
-    line-height: 24px
     letter-spacing: 0.5px
+    line-height: 16px
+    text-align: right
+    margin-top: 3px
     +tablet
       justify-content: flex-end
 
+  &__wrapper
+    display: grid
+    grid-gap: 24px
+
+.admin
   &__buttons
     display: grid
     grid-template-columns: auto auto
@@ -775,9 +785,13 @@
     line-height: 1.1
     font-size: 13px
 
-  &__job-list
-    display: grid
-    grid-gap: 9px
+  &__secondary-link
+    border-bottom: 1px solid $grey200
+    font-size: 13px
+
+.job-list
+  display: grid
+  grid-gap: 12px
 
 .toggle-view
   background: $white
@@ -812,19 +826,74 @@
       background: $grey500
       color: $grey200
 
+.job-application
+  display: grid
+  grid-gap: 4px
+  justify-items: start
+
+  &__wrapper
+    display: grid
+    grid-gap: 12px
+    align-items: center
+    +tablet
+      grid-template-columns: auto auto
+
+  &__controls
+    display: grid
+    grid-gap: 8px
+    margin-top: 4px
+    grid-template-columns: auto auto
+
+  &__note
+    background: $grey100
+    color: $grey500
+    border-radius: 4px
+    padding: 8px 16px
+    font-size: 13px
+    line-height: 21px
+
+  &__note-title
+    font-weight: 500
+
+  &__applied-on
+    line-height: 1.1
+    font-size: 13px
+    color: $grey300
+    margin-right: 8px
+
+  &__state
+    line-height: 1.1
+    font-size: 13px
+    font-weight: 600
+    color: $primary-red
+    margin-right: 12px
+
+  &__state-wrapper
+    line-height: 1.1
+
+
 
 .cta
   display: flex
   justify-content: space-between
   &__content
     flex: 1
-  &__text
+  &__container
+    display: flex
+  &__text-container
+    display: flex
+    align-items: center
+    flex: 1
+  &__text-field
+    margin-right: 12px
+  &__list, &__text
     font-size: 14px
     line-height: 1.71
     margin-bottom: 24px
-    margin-left: 16px
     font-weight: 500
+  &__list
     list-style: disc
+    margin-left: 16px
   &__title
     color: $text-black
     font-size: 18px
@@ -834,13 +903,64 @@
     padding: 0
   &__image
     object-fit: contain
-    +mobile
-      display: none
-    &--girl
-      width: 108px
-      margin: 0 32px
-    &--computer-guy
-      width: 160px
-      margin-left: 12px
-  &__button
+    height: 100%
     width: 100%
+    &__container
+      +mobile
+        display: none
+      &--girl
+        flex-basis: 68px
+        +desktop
+          flex-basis: 108px
+        margin: 0 32px
+      &--document
+        flex-basis: 150px
+        align-self: start
+        margin-left: 6px
+        +desktop
+          margin: 0 30px
+      &--computer-guy
+        flex-basis: 86px
+        align-self: start
+        margin-top: 16px
+        +desktop
+          margin-top: 0
+          flex-basis: 136px
+          align-self: center
+          margin-left: 12px
+      &--people
+        align-self: start
+        flex-basis: 236px
+        +desktop
+          margin: 0 40px 0 50px
+          align-self: center
+  &__button
+    &--full
+      width: 100%
+    &--small
+      width: 180px
+  &__section
+    display: flex
+    flex-direction: column
+    align-items: start
+    +desktop
+      flex-direction: row
+      align-items: center
+    &__seperator
+      margin: 18px 0 18px 8px
+      text-align: left
+      +desktop
+        text-align: center
+        margin: 0
+      color: $grey300
+      width: 70px
+      font-size: 11px
+      line-height: 1.09
+      letter-spacing: 0.5px
+      font-weight: 700
+
+.text-field
+  flex: 1
+  padding: 0 16px
+  height: 34px
+  border: solid 1px #e8e8e8

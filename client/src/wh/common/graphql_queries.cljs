@@ -2,7 +2,7 @@
   (:require
     [wh.graphql.jobs :as jobs])
   (:require-macros
-    [wh.graphql-macros :refer [def-query-template def-query-from-template]]))
+    [wh.graphql-macros :refer [def-query-template def-query-from-template defquery]]))
 
 (def-query-template update-user-mutation
   {:venia/operation {:operation/type :mutation
@@ -53,7 +53,7 @@
             [:otherUrls [:url]]
             :summary]})
 
-(def set-application-state-mutation
+(defquery set-application-state-mutation
   {:venia/operation {:operation/type :mutation
                      :operation/name "set_application_state"}
    :venia/variables [{:variable/name "input"

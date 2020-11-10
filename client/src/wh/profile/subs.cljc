@@ -95,6 +95,40 @@
     (:created db)))
 
 (reg-sub
+  ::applications
+  :<- [::profile]
+  (fn [profile _]
+    (:applied profile)))
+
+(reg-sub
+  ::current-application
+  :<- [::applications]
+  :<- [:wh/query-param "job-id"]
+  (fn [[applications job-id] _]
+    (some #(when (= job-id (get-in % [:job :id])) %) applications)))
+
+(reg-sub
+  ::was-contacted-or-hired?
+  :<- [::applications]
+  (fn [applications _]
+    (some #(or (= (profile/application-state :get-in-touch) (:state %))
+               (= (profile/application-state :hired) (:state %)))
+          applications)))
+
+(reg-sub
+  ::other-applications
+  :<- [::applications]
+  :<- [:wh/query-param "job-id"]
+  (fn [[applications job-id] _]
+    (filter #(not= job-id (get-in % [:job :id])) applications)))
+
+(reg-sub
+  ::updating-application-state?
+  :<- [::db]
+  (fn [db]
+    (profile/updating-application-state? db)))
+
+(reg-sub
   ::profile-hidden?
   :<- [::profile]
   (fn [db _]
@@ -109,11 +143,21 @@
     (and admin? (not (= type "public")))))
 
 (reg-sub
+  ::company-view?
+  :<- [:user/company?]
+  :<- [::applications]
+  (fn [[company? applications] _]
+    (and company? (seq applications))))
+
+(reg-sub
   ::hide-profile?
+  :<- [::company-view?]
   :<- [::admin-view?]
   :<- [::profile-hidden?]
-  (fn [[admin? profile-hidden?] _]
-    (and (not admin?) profile-hidden?)))
+  (fn [[company-view? admin-view? profile-hidden?] _]
+    (and (not company-view?)
+         (not admin-view?)
+         profile-hidden?)))
 
 (reg-sub
   ::error?
@@ -136,6 +180,12 @@
   :<- [::profile]
   (fn [profile _]
     (:contributions-collection profile)))
+
+(reg-sub
+  ::user-details
+  :<- [::profile]
+  (fn [profile _]
+    (profile/format-profile profile)))
 
 (reg-sub
   ::contributions-calendar
@@ -185,10 +235,10 @@
     (:hubspot-profile-url profile)))
 
 (reg-sub
-  ::applications
-  :<- [::profile]
-  (fn [profile _]
-    (:applied profile)))
+  ::company
+  :<- [::applications]
+  (fn [applications _]
+    (get-in applications [0 :job :company])))
 
 (reg-sub
   ::approval-info
@@ -201,5 +251,10 @@
   :<- [::db]
   (fn [db _]
     (profile/updating-status db)))
+
+(reg-sub
+  ::user-info-modal-opened?
+  (fn [db]
+    (profile/modal-opened? db)))
 
 

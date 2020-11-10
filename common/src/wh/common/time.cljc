@@ -45,3 +45,8 @@
 (defn now []
   #?(:clj (System/currentTimeMillis)
      :cljs (js/Date.now)))
+
+(defn str->human-time [s]
+  (-> s
+      (str->time :date-time)
+      human-time))

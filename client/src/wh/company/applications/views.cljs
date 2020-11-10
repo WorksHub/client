@@ -375,7 +375,7 @@
                        [:a
                         {:href (if-let [company-id (get-in select-job-link [:options :id])]
                                  (routes/path (:handler select-job-link) :params {:id (get-in select-job-link [:options :id])} :query-params qp)
-                                 (routes/path (:handler select-job-link) :query-params qp ))}
+                                 (routes/path (:handler select-job-link) :query-params qp))}
                         [:button.button.button--inverted.is-full-width-mobile
                          "View All Applicants" [icon "arrow-right"]]]])
                     (when (and applications loading?)
