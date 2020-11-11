@@ -1,5 +1,6 @@
 (ns wh.logged-in.profile.components
   (:require #?(:cljs [wh.components.forms.views :as f :refer [tags-field]])
+            #?(:cljs [wh.logged-in.profile.subs])
             [clojure.string :as str]
             [re-frame.core :refer [dispatch-sync]]
             [wh.common.keywords :as keywords]
@@ -526,17 +527,23 @@
      :clj  false))
 
 (defn section-skills [{:keys [skills interests type on-edit on-cancel on-save editing? changes?] :as opts}]
-  (let [public?      (= type :public)
-        skills?      (seq skills)
-        interests?   (seq interests)
-        on-save-fn   #(do (scroll-to-skills)
-                          (when on-save (dispatch on-save)))
-        on-cancel-fn #(do (when (or (not changes?) (confirm-save!))
-                            (scroll-to-skills)
-                            (when on-cancel (dispatch on-cancel))))]
+  (let [public?            (= type :public)
+        skills?            (seq skills)
+        interests?         (seq interests)
+        on-save-fn         #(do (scroll-to-skills)
+                                (when on-save (dispatch on-save)))
+        on-cancel-fn       #(do (when (or (not changes?) (confirm-save!))
+                                  (scroll-to-skills)
+                                  (when on-cancel (dispatch on-cancel))))
+        candidate?         #?(:cljs (<sub [:wh.logged-in.profile.subs/candidate?])
+                              :clj false)
+        ;; When candidate edits profile and both skills and interests are empty,
+        ;; we make "Skills and interests" section editable by default, to encourage
+        ;; candidates to fill it
+        editing-by-default (and (not public?) candidate? (not skills?) (not interests?))]
     [editable-section
      {:editable?       (not public?)
-      :editing?        (or editing? (and (not skills?) (not interests?)))
+      :editing?        (or editing? editing-by-default)
       :focused?        editing?
       :anchor          "skills"
       :on-edit         on-edit

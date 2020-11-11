@@ -6,6 +6,7 @@
             [wh.common.keywords :as keywords]
             [wh.common.text :as text]
             [wh.common.url :as url]
+            [wh.common.user :as user-common]
             [wh.components.tag :as tag]
             [wh.logged-in.profile.db :as profile]
             [wh.re-frame.subs :refer [<sub]]
@@ -574,3 +575,8 @@
            (take max-tag-results)
            (concat selected)
            (map tag/tag->form-tag)))))
+
+(reg-sub
+  ::candidate?
+  (fn [db]
+    (user-common/candidate? db)))
