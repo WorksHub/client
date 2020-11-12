@@ -1,11 +1,10 @@
 (ns wh.admin.create-offer.events
-  (:require
-    [re-frame.core :refer [path reg-event-db reg-event-fx]]
-    [wh.admin.create-offer.db :as create-offer]
-    [wh.common.cases :as cases]
-    [wh.common.data :as data]
-    [wh.db :as db]
-    [wh.pages.core :as pages :refer [on-page-load]]))
+  (:require [re-frame.core :refer [path reg-event-db reg-event-fx]]
+            [wh.admin.create-offer.db :as create-offer]
+            [wh.common.cases :as cases]
+            [wh.common.data :as data]
+            [wh.db :as db]
+            [wh.pages.core :as pages :refer [on-page-load]]))
 
 (def create-offer-interceptors (into db/default-interceptors
                                      [(path ::create-offer/sub-db)]))
@@ -25,11 +24,11 @@
 
 
 (reg-event-fx
- ::initialize-db
- db/default-interceptors
- (fn [{db :db} _]
-   (let [new-db (create-offer/initial-db db)]
-     {:db (assoc db ::create-offer/sub-db new-db)})))
+  ::initialize-db
+  db/default-interceptors
+  (fn [{db :db} _]
+    (let [new-db (create-offer/initial-db db)]
+      {:db (assoc db ::create-offer/sub-db new-db)})))
 
 (reg-event-fx
   ::fetch-company
@@ -60,52 +59,52 @@
     {:dispatch [:error/set-global "Company could not be loaded."]}))
 
 (reg-event-db
- ::select-offer
- create-offer-interceptors
- (fn [db [offer]]
-   (let [{:keys [fixed percentage]} (get data/take-off-offers offer)]
-     (assoc db
-            ::create-offer/offer offer
-            ::create-offer/offer-fixed fixed
-            ::create-offer/offer-percentage percentage))))
+  ::select-offer
+  create-offer-interceptors
+  (fn [db [offer]]
+    (let [{:keys [fixed percentage]} (get data/take-off-offers offer)]
+      (assoc db
+             ::create-offer/offer offer
+             ::create-offer/offer-fixed fixed
+             ::create-offer/offer-percentage percentage))))
 
 (reg-event-fx
   ::create-offer
   db/default-interceptors
   (fn [{db :db} _]
-    {:db (-> db
-             (assoc-in [::create-offer/sub-db ::create-offer/creating?] true)
-             (assoc-in [::create-offer/sub-db ::create-offer/company :pending-offer] nil))
-     :graphql {:query {:venia/operation {:operation/type :mutation
-                                         :operation/name "update_company"}
-                       :venia/variables [{:variable/name "update_company"
-                                          :variable/type :UpdateCompanyInput!}]
-                       :venia/queries   [[:update_company {:update_company :$update_company}
-                                          [:id]]]}
-               :variables {:update_company
-                           {:id (company-id db)
-                            :pendingOffer {:recurringFee (get-in db [::create-offer/sub-db
-                                                                     ::create-offer/offer-fixed])
-                                           :placementPercentage (get-in db [::create-offer/sub-db
-                                                                            ::create-offer/offer-percentage])}}}
+    {:db      (-> db
+                  (assoc-in [::create-offer/sub-db ::create-offer/creating?] true)
+                  (assoc-in [::create-offer/sub-db ::create-offer/company :pending-offer] nil))
+     :graphql {:query      {:venia/operation {:operation/type :mutation
+                                              :operation/name "update_company"}
+                            :venia/variables [{:variable/name "update_company"
+                                               :variable/type :UpdateCompanyInput!}]
+                            :venia/queries   [[:update_company {:update_company :$update_company}
+                                               [:id]]]}
+               :variables  {:update_company
+                            {:id           (company-id db)
+                             :pendingOffer {:recurringFee        (get-in db [::create-offer/sub-db
+                                                                             ::create-offer/offer-fixed])
+                                            :placementPercentage (get-in db [::create-offer/sub-db
+                                                                             ::create-offer/offer-percentage])}}}
                :on-success [::create-offer-success]
                :on-failure [::create-offer-failure]}}))
 
 (reg-event-fx
- ::create-offer-success
- create-offer-interceptors
- (fn [{db :db} [resp]]
-   (let [company (get-in resp [:data :company])]
-     {:db (assoc db
-                 ::create-offer/success? true
-                 ::create-offer/creating? false)})))
+  ::create-offer-success
+  create-offer-interceptors
+  (fn [{db :db} [resp]]
+    (let [company (get-in resp [:data :company])]
+      {:db (assoc db
+                  ::create-offer/success? true
+                  ::create-offer/creating? false)})))
 
 (reg-event-fx
- ::create-offer-failure
- create-offer-interceptors
- (fn [{db :db} _]
-   {:db (assoc db ::create-offer/creating? false)
-    :dispatch [:error/set-global "There was an error whilst creating the offer."]}))
+  ::create-offer-failure
+  create-offer-interceptors
+  (fn [{db :db} _]
+    {:db (assoc db ::create-offer/creating? false)
+     :dispatch [:error/set-global "There was an error whilst creating the offer."]}))
 
 (defmethod on-page-load :create-company-offer [db]
   [[::initialize-db]
