@@ -656,6 +656,28 @@ Working on open source projects is the best way to confirm your skills!"]]
     [:img {:src   "/images/profile/computer_guy2.png"
            :class (util/mc styles/cta__image)}]]])
 
+(defn connect-gh-cta []
+  [section (util/smc styles/cta styles/cta__container)
+   [:div (util/smc styles/cta__content)
+    [:h1 (util/smc styles/cta__title)
+     "Make your profile work harder for you"]
+
+    [:p (util/smc styles/cta__text)
+     "Link to GitHub to show off your productivity and get access to our open source issues feature - another way we can help you find the perfect role."]
+
+    [:a {:data-pushy-ignore "true"
+         :class             (util/mc styles/button
+                                     styles/button--github
+                                     styles/cta__button--full)
+         :href              (routes/path :login :params {:step :github})}
+     [icons/icon "github" :class styles/button--github__icon]
+     [:span "Connect to GitHub"]]]
+
+   [:div (util/smc styles/cta__image__container--computer-guy
+                   styles/cta__image__container)
+    [:img {:src   "/images/profile/computer_guy.png"
+           :class (util/mc styles/cta__image)}]]])
+
 (defn section-contributions [contributions contributions-count
                              contributions-repos months]
   [section

@@ -572,9 +572,8 @@
   (let [is-company?          (<sub [:user/company?])
         is-owner?            (<sub [::subs/owner?])
         contributions?       (boolean (<sub [::subs/contributions-collection]))
-        issues         (<sub [::subs/issues])
-        contributions  (<sub [::subs/contributions])
-        top-ranking-cta? (or (zero? (count issues)) (zero? (count contributions)))
+        issues               (<sub [::subs/issues])
+        contributions        (<sub [::subs/contributions])
         cover-letter-data    (<sub [::subs/cover-letter-data])
         {:keys
          [cover-letter-url]} cover-letter-data
@@ -632,12 +631,14 @@
                                                           :tags         (<sub [::subs/interests-search-results])
                                                           :on-change    [::events/set-interests-search]
                                                           :on-tag-click #(dispatch [::events/toggle-interest %])}}]
-     (when contributions?
+     (if contributions?
        [components/section-contributions
         (<sub [::subs/contributions-calendar])
         (<sub [::subs/contributions-count])
         (<sub [::subs/contributions-repos])
-        (<sub [::subs/contributions-months])])
+        (<sub [::subs/contributions-months])]
+
+       [components/connect-gh-cta])
 
      (if (seq contributions)
        [components/section-articles contributions :private]

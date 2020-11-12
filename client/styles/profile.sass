@@ -174,10 +174,28 @@
   color: $text-white
   padding: 0 20px
   min-width: 100px
+  &:hover
+    background: $highlight-red
+    color: $primary-red
+    cursor: pointer
+
   &--inverted
     color: $primary-red
     background-color: white
     font-weight: bold
+  &--github
+    color: $github-black
+    background-color: $white
+    border-color: $github-black
+    font-weight: bold
+    &__icon
+      fill: $github-black
+      margin-right: 8px
+    &:hover
+      background-color: $github-black
+      color: $white
+      .button--github__icon
+        fill: $white
 
   font-family: $font-family
   font-size: 12px
@@ -189,11 +207,6 @@
   +tablet
     font-size: 13px
     padding: 0 32px
-
-  &:hover
-    background: $highlight-red
-    color: $primary-red
-    cursor: pointer
 
   &:disabled
     cursor: not-allowed

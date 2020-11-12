@@ -27,6 +27,8 @@
 (def edit-button__icon--editing "profile__edit-button__icon--editing--3zVW4")
 (def button "profile__button--kdHOs")
 (def button--inverted "profile__button--inverted--ATNTO")
+(def button--github "profile__button--github--GqmSQ")
+(def button--github__icon "profile__button--github__icon--2vHk1")
 (def button--small "profile__button--small--hRh2C")
 (def button--neutral "profile__button--neutral--2_AQ6")
 (def button--neutral-inverted "profile__button--neutral-inverted--1n0LO")
