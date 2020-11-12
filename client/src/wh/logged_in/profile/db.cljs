@@ -3,6 +3,7 @@
             [clojure.string :as str]
             [wh.common.cases :as cases]
             [wh.profile.db :as profile-db]
+            [wh.user.db :as user]
             [wh.util :as util]))
 
 (def maximum-skills profile-db/maximum-skills)
@@ -32,3 +33,26 @@
 
 (def tag-query
   [:tags {:type :tech}])
+
+(defn user-id-page-param [db]
+  (get-in db [:wh.db/page-params :id]))
+
+(defn use-personal-id?
+  [db]
+  (or (not (user/admin? db))
+      (empty? (user-id-page-param db))))
+
+(defn user-id
+  [db]
+  (if (use-personal-id? db)
+    (user/id db)
+    (user-id-page-param db)))
+
+(defn published? [db]
+  (boolean (get-in db [::sub-db ::published])))
+
+(defn toggle-published [db]
+  (update-in db [::sub-db ::published] not))
+
+(defn foreign-profile? [db]
+  (not (use-personal-id? db)))

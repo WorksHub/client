@@ -90,7 +90,7 @@
   [:button (merge
              (util/smc styles/button styles/button--small
                        [inverted? styles/button--inverted])
-             opts)
+             (dissoc opts :inverted?))
    text])
 
 (defn upload-button [{:keys [document uploading? on-change data-test inverted?]}]
@@ -701,7 +701,6 @@ Working on open source projects is the best way to confirm your skills!"]]
                            (if (fn? on-change)
                              (on-change new-value)
                              (dispatch-sync (conj on-change new-value))))}])
-
 ;; --------------------------------------------------------------------------------
 
 (defn itemize [items & {:keys [class no-data-message]}]

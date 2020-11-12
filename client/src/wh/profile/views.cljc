@@ -4,24 +4,11 @@
     [wh.components.loader :refer [loader-full-page]]
     [wh.components.not-found :as not-found]
     [wh.logged-in.profile.components :as components]
-    #?(:cljs [wh.profile.section-admin :as section-admin])
     #?(:cljs [wh.profile.section-company :as section-company])
     [wh.profile.db :as profile]
     [wh.profile.events :as profile-events]
     [wh.profile.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]))
-
-(defn section-for-admin []
-  #?(:cljs (let [user (<sub [::subs/profile])
-                 admin-view? (<sub [::subs/admin-view?])]
-             (when admin-view? [section-admin/controls
-                                {:hs-url (<sub [::subs/hs-url])
-                                 :applications (<sub [::subs/applications])
-                                 :liked-jobs (<sub [::subs/liked-jobs])
-                                 :approval-info (<sub [::subs/approval-info])
-                                 :on-approve #(dispatch [::profile-events/set-approval-status (:id user) "approved"])
-                                 :on-reject #(dispatch [::profile-events/set-approval-status (:id user) "rejected"])
-                                 :updating-status (<sub [::subs/updating-status])}]))))
 
 (defn section-for-company []
   #?(:cljs (let [user (<sub [::subs/profile])
@@ -76,14 +63,6 @@
   (let [issues (<sub [::subs/issues])]
     [components/section-issues issues :public]))
 
-(defn toggle-view
-  "Toggle the look of a profile so admin can see the it as a guest"
-  []
-  #?(:cljs (when (<sub [:user/admin?])
-             [section-admin/toggle-view
-              (<sub [::subs/profile])
-              (<sub [::subs/admin-view?])])))
-
 (defn profile-column []
   [components/profile (<sub [::subs/profile])
    {:twitter       (<sub [::subs/social :twitter])
@@ -120,16 +99,14 @@
     :else
     [components/container
      [profile-column]
-     [:<>
-      [toggle-view]
-      (if (<sub [::subs/hide-profile?])
-        [components/profile-hidden-message]
-        [components/content
-         [section-for-admin]
-         [section-for-company]
-         [section-stats]
-         [section-skills]
-         [section-private-details]
-         [section-contributions]
-         [section-articles]
-         [section-issues]])]]))
+     (if (<sub [::subs/hide-profile?])
+       [components/profile-hidden-message]
+       [components/content
+        [section-for-company]
+        [section-stats]
+        [section-skills]
+        [section-private-details]
+        [section-contributions]
+        [section-articles]
+        [section-issues]])]))
+

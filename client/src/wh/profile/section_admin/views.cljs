@@ -1,4 +1,4 @@
-(ns wh.profile.section-admin
+(ns wh.profile.section-admin.views
   (:require [clojure.string :as str]
             [wh.common.time :as time]
             [wh.components.common :refer [link]]

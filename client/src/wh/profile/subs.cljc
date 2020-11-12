@@ -223,38 +223,12 @@
          (take-last month-count))))
 
 (reg-sub
-  ::liked-jobs
-  :<- [::profile]
-  (fn [profile _]
-    (:likes profile)))
-
-(reg-sub
-  ::hs-url
-  :<- [::profile]
-  (fn [profile _]
-    (:hubspot-profile-url profile)))
-
-(reg-sub
   ::company
   :<- [::applications]
   (fn [applications _]
     (get-in applications [0 :job :company])))
 
 (reg-sub
-  ::approval-info
-  :<- [::profile]
-  (fn [profile _]
-    (:approval profile)))
-
-(reg-sub
-  ::updating-status
-  :<- [::db]
-  (fn [db _]
-    (profile/updating-status db)))
-
-(reg-sub
   ::user-info-modal-opened?
   (fn [db]
     (profile/modal-opened? db)))
-
-

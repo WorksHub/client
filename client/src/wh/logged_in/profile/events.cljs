@@ -45,41 +45,51 @@
   {:venia/operation {:operation/type :query
                      :operation/name "profile"}
    :venia/variables [{:variable/name "user_id" :variable/type :ID}]
-   :venia/queries   [[:me [[:skills [:name :rating
-                                     [:tag [:id :slug :type :subtype :label :weight]]]]
-                           ;; TODO CH4692 [:interests :fragment/tagFields]
-                           [:interests [:id :slug :type :subtype :label :weight]]
-                           [:companyPerks [:name]]
-                           [:otherUrls [:url]]
-                           :imageUrl :id :githubId
-                           :phone :published :name :summary
-                           :email :jobSeekingStatus :roleTypes
-                           :visaStatus :visaStatusOther :remote
-                           :percentile :created :lastSeen :updated
+   :venia/queries   [[:user {:id :$user_id}
+                      [[:skills [:name :rating
+                                 [:tag [:id :slug :type :subtype :label :weight]]]]
+                       ;; TODO CH4692 [:interests :fragment/tagFields]
+                       [:interests [:id :slug :type :subtype :label :weight]]
+                       [:companyPerks [:name]]
+                       [:otherUrls [:url]]
+                       :imageUrl :id :githubId
+                       :phone :published :name :summary
+                       :email :jobSeekingStatus :roleTypes
+                       :visaStatus :visaStatusOther :remote
+                       :percentile :created :lastSeen :updated
+                       [:contributionsCollection
+                        [:totalCommitContributions
+                         :totalRepositoriesWithContributedCommits
+                         [:contributionCalendar
+                          [[:weeks
+                            [[:contributionDays
+                              [:contributionCount
+                               :date :weekday :color]]]]]]]]
 
-                           [:contributionsCollection
-                            [:totalCommitContributions
-                             :totalRepositoriesWithContributedCommits
-                             [:contributionCalendar
-                              [[:weeks
-                                [[:contributionDays
-                                  [:contributionCount
-                                   :date :weekday :color]]]]]]]]
-
-                           [:cv [:link
-                                 [:file [:type :name :url :hash]]]]
-                           [:coverLetter [:link
-                                          [:file [:type :name :url :hash]]]]
-                           [:salary [:currency :min :timePeriod]]
-                           [:currentLocation
-                            [:city :administrative :country :countryCode
-                             :subRegion :region :longitude :latitude]]
-                           [:preferredLocations
-                            [:city :administrative :country :countryCode
-                             :subRegion :region :longitude :latitude]]
-                           [:stackoverflowInfo [:reputation]]
-                           [:twitterInfo [:id]]]]
-                     [:blogs {:filter_type "mine"}
+                       [:cv [:link
+                             [:file [:type :name :url :hash]]]]
+                       [:coverLetter [:link
+                                      [:file [:type :name :url :hash]]]]
+                       [:salary [:currency :min :timePeriod]]
+                       [:currentLocation
+                        [:city :administrative :country :countryCode
+                         :subRegion :region :longitude :latitude]]
+                       [:preferredLocations
+                        [:city :administrative :country :countryCode
+                         :subRegion :region :longitude :latitude]]
+                       [:stackoverflowInfo [:reputation]]
+                       [:twitterInfo [:id]]
+                       ;; -----------------
+                       [:approval [:status :source :time]]
+                       :type
+                       [:applied [:timestamp
+                                  :state
+                                  :note
+                                  [:coverLetter [:link [:file [:url]]]]
+                                  [:job [:id :slug :title [:company [:name]]]]]]
+                       :hubspotProfileUrl
+                       [:likes [:id :slug :title [:company [:name]]]]]]
+                     [:blogs {:user_id :$user_id}
                       [[:blogs [:id :title :formattedCreationDate
                                 :readingTime :upvoteCount :published]]]]
                      [:query_issues {:user_id :$user_id}
@@ -92,7 +102,7 @@
   ::fetch-initial-data
   (fn [{db :db} _]
     (cond-> {:graphql {:query      initial-data-query
-                       :variables  {:user_id (user/id db)}
+                       :variables  {:user_id (profile/user-id db)}
                        :on-success [::fetch-initial-data-success]}}
             (:wh.db/initial-load? db) (assoc :dispatch [::pages/set-loader]))))
 
@@ -116,13 +126,13 @@
 (reg-event-fx
   ::fetch-initial-data-success
   db/default-interceptors
-  (fn [{db :db} [{{:keys [me blogs query_issues]} :data}]]
+  (fn [{db :db} [{{:keys [user blogs query_issues]} :data}]]
     (let [issues (:issues query_issues)
-          user   (user/translate-user me)]
+          user   (user/translate-user user)]
       {:db         (merge-with merge
                                db
-                               {::user/sub-db    user
-                                ::profile/sub-db (merge (profile-data user (:blogs blogs) issues)
+                               (when-not (profile/foreign-profile? db) {::user/sub-db user})
+                               {::profile/sub-db (merge (profile-data user (:blogs blogs) issues)
                                                         (profile/->sub-db user))})
        ;; subsequent data requests
        :dispatch-n [[::pages/unset-loader]
@@ -339,7 +349,7 @@
   [db]
   (-> db
       settings-from-query-params
-      (assoc :id (get-in db [::user/sub-db ::user/id]))
+      (assoc :id (profile/user-id db))
       keywords/transform-keys))
 
 (reg-event-fx
@@ -433,12 +443,15 @@
     {:dispatch [::pages/clear-errors]
      :navigate (cond (> (count res) 1)
                      (first res)
-
+                     ;;
                      (contains? #{:candidate :candidate-edit-header
                                   :candidate-edit-cv :candidate-edit-private}
                                 (:wh.db/page db))
                      [:candidate :params (:wh.db/page-params db)]
-
+                     ;;
+                     (profile/foreign-profile? db)
+                     [:profile-by-id :params {:id (profile/user-id db)}]
+                     ;;
                      :else [:profile])}))
 
 (reg-event-fx
@@ -683,7 +696,7 @@
   ::remove-cover-letter
   db/default-interceptors
   (fn [{db :db} _]
-    (let [user-id      (get-in db [:wh.user.db/sub-db :wh.user.db/id])
+    (let [user-id      (profile/user-id db)
           cover-letter (get-in db [::profile/sub-db ::profile/cover-letter])
           hash         (get-in cover-letter [:file :hash])]
       {:graphql    {:query      remove-default-cover-letter-mutation
@@ -699,7 +712,7 @@
   db/default-interceptors
   (fn [{db :db} [success? _]]
     (if success?
-      {:db       (user/toggle-published db)
+      {:db       (profile/toggle-published db)
        :dispatch [::pages/clear-errors]}
       {:dispatch [::pages/set-error "An error occurred while changing visibility of your profile"]})))
 
@@ -708,8 +721,8 @@
   db/default-interceptors
   (fn [{db :db} _]
     {:graphql  {:query      graphql/update-user-mutation--published
-                :variables  {:update_user {:id        (user/id db)
-                                           :published (not (user/published? db))}}
+                :variables  {:update_user {:id        (profile/user-id db)
+                                           :published (not (profile/published? db))}}
                 :on-success [::toggle-profile-visibility-handle true]
                 :on-failure [::toggle-profile-visibility-handle false]}
      :dispatch [:error/close-global]}))
@@ -799,7 +812,7 @@
       {:graphql
        {:query      graphql/update-user-mutation--skills-and-interest
         :variables  {:update_user
-                     {:id          (user/id db)
+                     {:id          (profile/user-id db)
                       :interestIds (map :id interests)
                       :skills      (map skill->skill-input skills)}}
         :on-success [::on-save-edit-tech-result {:success? true}]

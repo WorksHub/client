@@ -139,8 +139,9 @@
 
 (reg-sub
   ::published?
-  (fn [db _]
-    (user/published? db)))
+  :<- [::profile]
+  (fn [profile _]
+    (::profile/published profile)))
 
 (defn salary-string [{:keys [min currency time-period]}]
   (let [min         (text/not-blank min)

@@ -22,11 +22,12 @@
             [wh.logged-in.profile.events :as events]
             [wh.logged-in.profile.subs :as subs]
             [wh.profile.db :as profile]
+            [wh.profile.section-admin.core :as section-admin]
+            [wh.profile.update-public.views :as edit-modal]
+            [wh.profile.update-private.views :as edit-private]
             [wh.profile.update-private.events :as edit-private-events]
             [wh.profile.update-private.subs :as edit-private-subs]
-            [wh.profile.update-private.views :as edit-private]
             [wh.profile.update-public.events :as edit-modal-events]
-            [wh.profile.update-public.views :as edit-modal]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
             [wh.subs :refer [<sub]]))
@@ -587,6 +588,7 @@
      [error-box]
      [edit-modal/profile-edit-modal]
      [section-public-access-settings]
+     [section-admin/section-for-admin]
      [components/section-stats {:is-owner?      is-owner?
                                 :percentile     (<sub [::subs/percentile])
                                 :created        (<sub [::subs/created])

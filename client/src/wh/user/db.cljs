@@ -56,11 +56,20 @@
   (= (get-in db [::sub-db ::approval :status])
      "approved"))
 
+(defn user-type [db]
+  (get-in db [::sub-db ::type]))
+
 (defn company-type? [type]
   (= type "company"))
 
 (defn company? [db]
-  (company-type? (get-in db [::sub-db ::type])))
+  (company-type? (user-type db)))
+
+(defn admin-type? [type]
+  (= type "admin"))
+
+(defn admin? [db]
+  (admin-type? (user-type db)))
 
 (defn has-permission? [db permission]
   (contains? (get-in db [::sub-db ::company :permissions]) permission))

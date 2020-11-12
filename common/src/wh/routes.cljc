@@ -157,7 +157,8 @@
                            "edit/header"  :profile-edit-header
                            "edit/cv"      :profile-edit-cv
                            "edit/private" :profile-edit-private
-                           "edit"         :profile-edit-company-user}]
+                           "edit"         :profile-edit-company-user
+                           [:id]          (bidi/tag :profile :profile-by-id)}]
               ["notifications/" {"settings" :notifications-settings}]
               ["improve-recommendations" :improve-recommendations]
               ["payment/" {"package"  (with-params :payment-setup :step :select-package)
