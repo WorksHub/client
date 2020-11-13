@@ -1,44 +1,40 @@
 (ns wh.profile.events
-  (:require
-    [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
-    #?(:cljs [wh.common.graphql-queries :as queries])
-    [wh.db :as db]
-    [wh.graphql-cache :refer [reg-query] :as gql-cache]
-    [wh.graphql.fragments :as _fragments]
-    [wh.profile.db :as profile]
-    #?(:cljs [wh.pages.core :as pages]))
+  (:require [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
+            #?(:cljs [wh.common.graphql-queries :as queries])
+            [wh.db :as db]
+            [wh.graphql-cache :refer [reg-query] :as gql-cache]
+            [wh.common.user :as user]
+            [wh.graphql.fragments :as _fragments]
+            [wh.profile.db :as profile]
+            #?(:cljs [wh.pages.core :as pages]))
   (#?(:clj :require :cljs :require-macros)
-   [wh.graphql-macros :refer [defquery]]))
+    [wh.graphql-macros :refer [defquery def-query-template
+                               def-query-from-template]]))
 
 (def profile-interceptors (into db/default-interceptors
                                 [(path ::profile/sub-db)]))
 
-(defquery profile-query
+(def-query-template profile-query-template
   {:venia/operation {:operation/type :query
                      :operation/name "fetch_user"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}
                      {:variable/name "job_id"
                       :variable/type :ID}]
-   :venia/queries   [[:user {:id :$id
+   :venia/queries   [[:user {:id    :$id
                              :jobId :$job_id}
                       [[:skills [:name :rating
                                  [:tag :fragment/tagFields]]]
+                       $profile-fields
+                       :id :imageUrl :name :summary :percentile :published
+                       :created :lastSeen :updated :visaStatus :visaStatusOther
+
                        [:interests :fragment/tagFields]
                        [:otherUrls [:url]]
-                       :imageUrl
-                       :email
-                       :name
-                       :id
-                       :summary
-                       :percentile
-                       :published
-                       :created
-                       :lastSeen
-                       :updated
-                       :visaStatus :visaStatusOther
-                       [:currentLocation [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
-                       [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]
+                       [:currentLocation [:city :administrative :country :countryCode
+                                          :subRegion :region :longitude :latitude]]
+                       [:preferredLocations [:city :administrative :country :countryCode
+                                             :subRegion :region :longitude :latitude]]
                        [:cv [:link [:file [:type :name :url]]]]
                        [:applied [:timestamp
                                   :state
@@ -64,13 +60,26 @@
                                  [:company [:id :name :logo :slug]]
                                  [:repo [:primary_language]]]]]]]})
 
+;; Query for public profile
+(def-query-from-template profile-query profile-query-template
+                         {:profile-fields []})
+
+;; Query for companies viewing candidates profile
+(def-query-from-template profile-company-query profile-query-template
+                         {:profile-fields :email})
+
 (reg-query :profile profile-query)
+(reg-query :profile-company profile-company-query)
 
 (defn profile-query-description [db]
-  (let [job-id (get-in db [:wh.db/query-params "job-id"])
-        user-id (get-in db [:wh.db/page-params :id])]
-    [:profile (cond-> {:id user-id}
-                      job-id (merge {:job_id job-id}))]))
+  (let [job-id   (get-in db [:wh.db/query-params "job-id"])
+        user-id  (get-in db [:wh.db/page-params :id])
+        company? (user/company? db)
+        ;; When company queries applicant profile they might want to access their email,
+        ;; while people watching public profiles should not have access to users emails.
+        query    (if (and company? job-id) :profile-company :profile)]
+    [query (cond-> {:id user-id}
+                   job-id (merge {:job_id job-id}))]))
 
 (reg-event-fx
   ::set-page-title
@@ -87,7 +96,7 @@
                      (conj (profile-query-description db)
                            {:on-complete [::set-page-title]
                             :on-success  [:wh.events/scroll-to-top]
-                            :force true}))}))
+                            :force       true}))}))
 
 ;; ----------------------------------------------------------
 
