@@ -7,7 +7,7 @@
             [wh.common.upload :as upload]
             [wh.common.user :as common-user]
             [wh.components.button-auth :as button-auth]
-            [wh.components.common :refer [link]]
+            [wh.components.common :refer [link link-user]]
             [wh.components.error.views :refer [error-box]]
             [wh.components.forms.views :refer [field-container
                                                toggle
@@ -155,7 +155,7 @@
                                  :candidate-edit-private}
                                (<sub [:wh.pages.core/page]))]
      (if candidate?
-       [link "Cancel" :candidate :id (:id (<sub [:wh/page-params])) :class class]
+       [link-user "Cancel" (<sub [:user/admin?]) :id (:id (<sub [:wh/page-params])) :class class]
        [link "Cancel" :profile :class class]))))
 
 (defn skill-field [{:keys [name rating]}

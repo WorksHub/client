@@ -89,14 +89,7 @@
    [resume-and-links]
    [:fieldset.create-candidate__preferences
     [:h2 "Candidate preferences"]
-    [tags-field
-     (<sub [::subs/tech-tag-search])
-     {:label              "* Technology"
-      :id                 "_wh_company_create-candidate_db_tags"
-      :placeholder        "e.g. Clojure, Haskell, Scala"
-      :tags               (<sub [::subs/matching-tech-tags])
-      :on-change          [::events/edit-tech-tag-search]
-      :on-tag-click       #(dispatch [::events/toggle-tech-tag %])}]
+    ;; TODO: 5222, put tag selector back if needed
     [tags-field
      (<sub [::subs/company-tag-search])
      (field ::create-candidate/company-tags

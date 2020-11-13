@@ -8,7 +8,7 @@
     [wh.company.applications.events :as events]
     [wh.company.applications.subs :as subs]
     [wh.components.cards :refer [match-circle]]
-    [wh.components.common :refer [link]]
+    [wh.components.common :refer [link link-user]]
     [wh.components.ellipsis.views :refer [ellipsis]]
     [wh.components.forms.views :as forms]
     [wh.components.icons :refer [icon]]
@@ -118,7 +118,7 @@
      {:class (when skeleton? "skeleton")}
      [:div.company-application__name
       (when-not skeleton?
-        [link (:name app) :candidate :id user-id :class "a--hover-red" :query-params {:job-id job-id}])]
+        [link-user (:name app) (<sub [:user/admin?]) :id user-id :class "a--hover-red" :query-params {:job-id job-id}])]
      [:div.company-application__applied-on-section
       [:div.company-application__applied-on (when-not skeleton? "Applied on ") timestamp]
       [:div.company-application__view-documents
@@ -128,7 +128,7 @@
           [:i "No CV provided"])]
        [:div.company-application__view-document
         (when-not skeleton?
-          [link "View Profile" :candidate :id user-id :class "a--underlined" :query-params {:job-id job-id}])]
+          [link-user "View Profile" (<sub [:user/admin?]) :id user-id :class "a--underlined" :query-params {:job-id job-id}])]
        [:div.company-application__view-document
         (if (or cover-letter skeleton?)
           [:a.a--underlined.company-application__view-cover-letter {:href cover-letter, :target "_blank", :rel "noopener"} (when-not skeleton? "View Cover Letter")]

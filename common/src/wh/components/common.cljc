@@ -3,7 +3,8 @@
     #?(:clj [wh.config :as config])
     #?(:cljs [re-frame.core :refer [subscribe]])
     [clojure.string :as str]
-    [wh.routes :as routes]))
+    [wh.routes :as routes]
+    [wh.re-frame.subs :refer [<sub]]))
 
 (defn link
   ([{:keys [text handler options]}]
@@ -18,6 +19,13 @@
                  html-id (assoc :id html-id)) text]))
   ([text handler & {:as options}]
    (link {:text text :handler handler :options options})))
+
+;; TODO: 5218, remove this helper when we have only one user profile implementation
+(defn link-user [text admin? & {:as options}]
+  [link
+   {:text text
+    :handler (if admin? :profile-by-id :user)
+    :options options}])
 
 (def aws-bucket-regex #"functionalworks-backend--(prod|qa)\.s3\.amazonaws\.com")
 

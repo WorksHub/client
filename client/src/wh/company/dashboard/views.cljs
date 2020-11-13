@@ -8,7 +8,7 @@
             [wh.company.dashboard.events :as events]
             [wh.company.dashboard.subs :as subs]
             [wh.company.payment.views :as payment]
-            [wh.components.common :refer [link]]
+            [wh.components.common :refer [link link-user]]
             [wh.components.ellipsis.views :refer [ellipsis]]
             [wh.components.icons :refer [icon]]
             [wh.components.loader :refer [loader]]
@@ -331,10 +331,10 @@
    "Need help promoting your role? Contact us! "
    (mailto-link "Just ask Codi")])
 
-(defmethod activity-item-content "application" [{:keys [job-slug job-title user-id user-name timestamp]}]
+(defmethod activity-item-content "application" [{:keys [job-id job-slug job-title user-id user-name timestamp] :as opts}]
   [:span
    (if (<sub [::subs/can-see-applications?])
-     [link user-name :candidate :id user-id :class "a--underlined"]
+     [link-user user-name (<sub [:user/admin?]) :id user-id :class "a--underlined" :query-params {:job-id job-id}]
      [:strong user-name])
    " applied for your "
    [link job-title :job :slug job-slug :class "a--underlined"]

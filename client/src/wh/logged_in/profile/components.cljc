@@ -615,11 +615,11 @@
   [section (util/smc styles/cta)
    [:div (util/smc styles/cta__content)
     [:h1 (util/smc styles/cta__title)
-     "Become a top ranking user!"]
+     "Share your thoughts"]
 
     [:ul (util/smc styles/cta__list)
-     [:li "Share your thoughts & expertise with our community!"]
-     [:li "The more articles you write, the more people recognize your profile and want to work with you!"]]
+     [:li "Share your thoughts & expertise with our community"]
+     [:li "The more articles you write, the more people recognize your profile and want to work with you"]]
 
     [:a {:data-pushy-ignore "true"
          :class             (util/mc styles/button
@@ -637,12 +637,12 @@
   [section (util/smc styles/cta styles/cta__container)
    [:div (util/smc styles/cta__content)
     [:h1 (util/smc styles/cta__title)
-     "Increase your chances of getting hired"]
+     "Contribute to open source"]
 
-    [:ul (util/smc styles/cta__text)
-     [:li "Get paid to learn new technologies by working on open source issues!"]
-     [:li "The more contributions you make, the higher ranking your profile!
-Working on open source projects is the best way to confirm your skills!"]]
+    [:ul (util/smc styles/cta__list)
+     [:li "Get paid to learn new technologies by working on open source issues"]
+     [:li "The more contributions you make, the higher ranking your profile"]
+     [:li "Working on open source projects is the best way to confirm your skills"]]
 
     [:a {:data-pushy-ignore "true"
          :class             (util/mc styles/button
@@ -660,10 +660,11 @@ Working on open source projects is the best way to confirm your skills!"]]
   [section (util/smc styles/cta styles/cta__container)
    [:div (util/smc styles/cta__content)
     [:h1 (util/smc styles/cta__title)
-     "Make your profile work harder for you"]
+     "Connect GitHub account"]
 
-    [:p (util/smc styles/cta__text)
-     "Link to GitHub to show off your productivity and get access to our open source issues feature - another way we can help you find the perfect role."]
+    [:ul (util/smc styles/cta__list)
+     [:li "Link to GitHub to show off your productivity"]
+     [:li "Get access to our open source issues feature - another way we can help you find the perfect role"]]
 
     [:a {:data-pushy-ignore "true"
          :class             (util/mc styles/button

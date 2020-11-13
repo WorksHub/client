@@ -444,11 +444,6 @@
      :navigate (cond (> (count res) 1)
                      (first res)
                      ;;
-                     (contains? #{:candidate :candidate-edit-header
-                                  :candidate-edit-cv :candidate-edit-private}
-                                (:wh.db/page db))
-                     [:candidate :params (:wh.db/page-params db)]
-                     ;;
                      (profile/foreign-profile? db)
                      [:profile-by-id :params {:id (profile/user-id db)}]
                      ;;

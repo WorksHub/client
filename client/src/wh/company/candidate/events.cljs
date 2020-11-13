@@ -100,6 +100,8 @@
   ::go-to-magic-form
   db/default-interceptors
   (fn [{db :db}]
+    ;; TODO: 4676, this logic will be deleted with /candidates/id page so I don't bother myself with updates
+    ;; this logic is executed when guest is trying to access candidate page
     {:dispatch-n [[:login/set-redirect :candidate :params {:id (get-in db [::db/page-params :id])}]
                   [:wh.events/nav :login :params {:step :email}]
                   [:wh.login.events/show-magic-form]]}))

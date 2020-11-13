@@ -23,7 +23,7 @@
    ::github-url             {:order 60, :initial ""}
    ::other-links            {:order 61, :initial [], :sub? false, :event? false}
    ::tech-tag-search        {:order 70, :initial ""}
-   ::tech-tags              {:order 71, :initial #{}, :validate ::tags}
+   ::tech-tags              {:order 71, :initial #{}}
    ::company-tag-search     {:order 80, :initial ""}
    ::company-tags           {:order 81, :initial #{}}})
 

@@ -4,7 +4,7 @@
     [re-frame.core :refer [dispatch dispatch-sync]]
     [wh.admin.candidates.events :as events]
     [wh.admin.candidates.subs :as subs]
-    [wh.components.common :refer [link]]
+    [wh.components.common :refer [link link-user]]
     [wh.components.forms.views :refer [text-field]]
     [wh.components.icons :refer [icon url-icons]]
     [wh.components.loader :refer [loader]]
@@ -26,7 +26,7 @@
       [:div.column.candidate-pod__first-section
        [url-icons other-urls "candidate-pod__other-urls"]
        [:p.candidate-pod__name
-        [link (if (str/blank? name) "Profile" name) :candidate :id object-id]]
+        [link-user (if (str/blank? name) "Profile" name) (<sub [:user/admin?]) :id object-id]]
        [:p [:a.a--underlined {:href (str "mailto:" email)} email] (when-not (str/blank? location) (str " | " location))]
        [:p.candidate-pod__cv-links
         (when hubspot-profile-url
@@ -83,10 +83,6 @@
                {:on-click #(do (.preventDefault %)
                                (dispatch (conj on-change option)))}))
            label])))
-
-
-
-
 
 (defn main []
   [:div.main
