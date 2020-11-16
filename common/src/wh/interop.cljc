@@ -133,6 +133,15 @@
   [s]
   (on-click-fn (jsf (copyStringToClipboard s))))
 
+(defn on-search-key [e]
+  ((jsf (onSearchKey e))))
+
+(defn on-search-query-edit [e]
+  ((jsf (onSearchQueryEdit e))))
+
+(defn on-search-focus [e]
+  ((jsf (onSearchFocus e))))
+
 (defn multiple-on-click
   [& fns]
   (let [fns (remove nil? fns)]

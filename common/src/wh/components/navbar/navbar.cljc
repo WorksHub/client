@@ -63,8 +63,11 @@
                     autocomplete-k "off"}
                    #?(:cljs {:on-change
                              (fn [e]
+                               (interop/on-search-query-edit e)
                                (dispatch [:wh.components.navbar.events/set-search-value
-                                          (.-value (.-target e))]))}))]
+                                          (.-value (.-target e))]))
+                             :on-key-press interop/on-search-key
+                             :on-focus interop/on-search-focus}))]
          (when search-value
            [:a
             (merge {:href  (routes/path :search)
