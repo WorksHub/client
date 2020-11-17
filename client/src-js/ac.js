@@ -17,7 +17,7 @@ function range(n) {
 
 function getHistory() {
   try {
-    return JSON.parse(localStorage.getItem(DB_ID))
+    return JSON.parse(localStorage.getItem(DB_ID)) || []
   } catch (e) {
     return []
   }
@@ -35,18 +35,17 @@ function hideMenu(n) {
 }
 
 function onSearchKey(e) {
-  const ip = e.target
+  const input = e.target
   let history = getHistory()
-  console.log(e.key)
   if (e.key === 'Enter') {
-    const value = ip.value
+    const value = input.value
     history = history.filter(e => e !== value)
     history.unshift(value)
     if (history.length > HISTORY_SIZE) {
       history.pop()
     }
     localStorage.setItem(DB_ID, JSON.stringify(history))
-    hideMenu(ip)
+    hideMenu(input)
   }
 }
 
@@ -89,7 +88,8 @@ function showMenu(n, results, q) {
 
     const cancel = document.createElement('div')
     cancel.style['font-family'] = 'monospace'
-    cancel.innerText = 'x'
+    cancel.style['font-size'] = '1.5em'
+    cancel.innerText = '×'
     cancel.style.width = '20px'
     cancel.style.height = '20px'
     cancel.style['line-height'] = '20px'
@@ -126,32 +126,32 @@ function showMenu(n, results, q) {
 }
 
 function onSearchQueryEdit(e) {
-  const ip = e.target
+  const input = e.target
   const history = getHistory()
-  const query = ip.value.toLowerCase()
+  const query = input.value.toLowerCase()
   const results = history.map((res, idx) => ({text: res, idx}))
     .filter(e => e.text.indexOf(query) !== -1)
     .slice(0, HISTORY_LIST_SIZE)
-  hideMenu(ip)
-  showMenu(ip, results, query)
+  hideMenu(input)
+  showMenu(input, results, query)
 }
 
 let elr
 
 function onSearchFocus(e) {
-  const ip = e.target
+  const input = e.target
   const history = getHistory()
-  const query = ip.value.toLowerCase()
+  const query = input.value.toLowerCase()
   const results = history.slice(0, HISTORY_LIST_SIZE)
     .map((res, idx) => ({text: res, idx}))
     .filter(e => e.text.indexOf(query) !== -1)
-  showMenu(ip, results, query)
+  showMenu(input, results, query)
 
   elr = () => {
-    hideMenu(ip);
-    ip.removeEventListener('blur', elr)
+    hideMenu(input);
+    input.removeEventListener('blur', elr)
   }
-  ip.addEventListener('blur', elr)
+  input.addEventListener('blur', elr)
 }
 
 window.onSearchKey = onSearchKey
