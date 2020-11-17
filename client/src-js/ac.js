@@ -2,9 +2,10 @@ const HISTORY_SIZE = 20
 const HISTORY_LIST_SIZE = 4
 const DB_ID = "search_history"
 const WRAPPER_CLASS = "search_class"
-const HOVER_COLOR = '#eeeeee'
+const HOVER_COLOR = '#f4ada4'
 const HOVER_COLOR_CANCEL = '#dddddd'
 const BG_COLOR = '#fefefe'
+const PRIMARY = '#ef8374'
 
 function range(n) {
   let res = []
@@ -76,6 +77,8 @@ function showMenu(n, results, q) {
   w.style.left = '0'
   w.style.width = '100%'
   w.style['font-size'] = '1.3em'
+  w.style.border = '2px solid ' + PRIMARY
+  w.style['border-radius'] = '4px'
   n.parentNode.appendChild(w)
   results.map(({text, idx}) => {
     const el = document.createElement('div')
