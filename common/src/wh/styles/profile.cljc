@@ -135,6 +135,7 @@
 (def cta__content "profile__cta__content--EmL3x")
 (def cta__container "profile__cta__container--3lh4r")
 (def cta__text-container "profile__cta__text-container--3nD2h")
+(def cta__text-field-container "profile__cta__text-field-container--1szb5")
 (def cta__text-field "profile__cta__text-field--3dKhR")
 (def cta__list "profile__cta__list--34p17")
 (def cta__text "profile__cta__text--1KDy7")
@@ -150,3 +151,4 @@
 (def cta__section "profile__cta__section--3Z7J2")
 (def cta__section__seperator "profile__cta__section__seperator--3q2-t")
 (def text-field "profile__text-field--3-eC1")
+(def cv-link "profile__cv-link--3P12B")

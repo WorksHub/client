@@ -39,11 +39,13 @@ You can update it anytime from your profile."]
           {:on-change   [::events/edit-cv-link-editable]
            :on-enter    save-link!
            :placeholder "Enter link to resume"
+           :data-test   "enter-cv-link"
            :class       styles/cta__text-field}]
 
          [components/small-button
           {:on-click  save-link!
-           :inverted? true}
+           :inverted? true
+           :data-test "save-cv-link"}
           "Save"]])]]
 
     [:div (util/smc styles/cta__image__container--document

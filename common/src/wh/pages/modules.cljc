@@ -9,7 +9,6 @@
    :blog                       :blogs
    :candidate                  :company
    :candidate-edit-header      :company
-   :candidate-edit-cv          :company
    :candidate-edit-private     :company
    :candidates                 :admin
    :admin-articles             :admin
@@ -57,7 +56,6 @@
    :employers                  :pricing
    :profile                    :logged-in
    :profile-edit-header        :logged-in
-   :profile-edit-cv            :logged-in
    :profile-edit-private       :logged-in
    :profile-edit-company-user  :logged-in
    :register-company           :company

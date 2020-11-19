@@ -30,7 +30,8 @@
             [wh.profile.update-public.events :as edit-modal-events]
             [wh.routes :as routes]
             [wh.styles.profile :as styles]
-            [wh.subs :refer [<sub]]))
+            [wh.subs :refer [<sub]]
+            [wh.util :as util]))
 
 ;; Profile header – view
 
@@ -151,8 +152,7 @@
 (defn cancel-link
   ([] (cancel-link "button button--small"))
   ([class]
-   (let [candidate? (contains? #{:candidate-edit-header :candidate-edit-cv
-                                 :candidate-edit-private}
+   (let [candidate? (contains? #{:candidate-edit-header :candidate-edit-private}
                                (<sub [:wh.pages.core/page]))]
      (if candidate?
        [link-user "Cancel" (<sub [:user/admin?]) :id (:id (<sub [:wh/page-params])) :class class]
@@ -191,21 +191,6 @@
 
 ;; CV section – edit link
 
-(defn cv-section-edit-link []
-  (let [cv-link (<sub [::subs/cv-link])]
-    [:form.wh-formx.cv-edit.wh-formx__layout
-     [:h1 "Edit your resume"]
-     [text-field cv-link
-      {:label "Resume link" :on-change [::events/edit-cv-link]}]
-     [error-box]
-     [:div.buttons-container
-      [:button.button.button--small
-       {:on-click #(do (.preventDefault %)
-                       (dispatch [::events/save-cv-info
-                                  {:type    :update-cv-link
-                                   :cv-link cv-link}]))}
-       "Save"]
-      [cancel-link]]]))
 (defn upload-document [document-name uploading? on-change]
   [:div.profile-section__upload-document
    (if uploading?
@@ -216,8 +201,6 @@
                           :on-change on-change}]
       [:span.file-cta.button
        [:span.file-label (str "Upload " document-name)]]])])
-
-;; CV section – view
 
 ;; Private section – view
 
@@ -355,14 +338,6 @@
       [:div.column.is-7
        [header-edit]]]]]])
 
-(defn cv-edit-page []
-  [:div.main-container
-   [:div.main.profile
-    [:div.wh-formx-page-container
-     [:div.columns.is-variable.is-2
-      [:div.column.is-7
-       [cv-section-edit-link]]]]]])
-
 (defn private-edit-page []
   [:div.main-container
    [:div.main.profile
@@ -421,7 +396,9 @@
 
      (when cv-link
        [:p (if (owner? user-type) "Your external CV: " "External CV: ")
-        [:a.a--underlined {:href cv-link, :target "_blank", :rel "noopener"} cv-link]])
+        [:a.a--underlined
+         {:href cv-link :target "_blank" :rel "noopener" :data-test "cv-link"}
+         cv-link]])
 
      (when-not (or cv-url cv-link)
        (if (owner? user-type)
@@ -436,9 +413,7 @@
                             :launch [::events/cv-upload]
                             :on-upload-start [::events/cv-upload-start]
                             :on-success [::events/cv-upload-success]
-                            :on-failure [::events/cv-upload-failure]))
-
-         [edit-link :profile-edit-cv :candidate-edit-cv "Add a link to CV" "button"])])]))
+                            :on-failure [::events/cv-upload-failure])))])]))
 
 (defn private-section-view
   ([opts] (private-section-view :owner opts))
@@ -512,6 +487,33 @@
          {:on-click #(dispatch [::events/remove-cover-letter])}
          "Remove cover letter"])])])
 
+(defn- cv-link-section [cv-link user-type]
+  (let [editing-cv-link? (<sub [::subs/editing-cv-link?])]
+    [:div
+     (if editing-cv-link?
+       (let [cv-link-val (<sub [::subs/cv-link-editable])
+             save-link!  #(dispatch [::events/save-cv-info
+                                     {:type    :update-cv-link
+                                      :cv-link cv-link-val}])]
+         [:div (util/smc styles/cta__text-field-container)
+          [components/text-field cv-link-val
+           {:on-change   [::events/edit-cv-link-editable]
+            :on-enter    save-link!
+            :placeholder "Enter link to resume"
+            :data-test   "enter-cv-link"
+            :class       styles/cta__text-field}]
+
+          [components/small-button {:on-click  save-link!
+                                    :data-test "save-cv-link"}
+           "Save"]])
+
+       (when cv-link
+         [:p (util/smc styles/cv-link)
+          (if (owner? user-type) "Your external CV: " "External CV: ")
+          [components/resource {:href      cv-link
+                                :text      cv-link
+                                :data-test "cv-link"}]]))]))
+
 (defn cv-section-view-new
   [user-type {:keys [cv-link cv-filename cv-url]}]
   [components/section
@@ -525,10 +527,7 @@
                                     :text (if (owner? user-type) cv-filename "Click here to download")}]])
 
 
-      (when cv-link
-        [:p (if (owner? user-type) "Your external CV: " "External CV: ")
-         [components/resource {:href cv-link
-                               :text cv-link}]])])
+      [cv-link-section cv-link user-type]])
 
    (when-not (or cv-url cv-link)
      (if (owner? user-type)
@@ -536,19 +535,27 @@
        "No uploaded cv yet"))
 
    (when (owner-or-admin? user-type)
-     [components/section-buttons
-      [components/upload-button {:document   "CV"
-                                 :data-test  "upload-resume"
-                                 :uploading? (<sub [::subs/cv-uploading?])
-                                 :on-change  (upload/handler
-                                               :launch [::events/cv-upload]
-                                               :on-upload-start [::events/cv-upload-start]
-                                               :on-success [::events/cv-upload-success]
-                                               :on-failure [::events/cv-upload-failure])}]
-      [components/small-link {:href (if (= (<sub [:wh.pages.core/page]) :profile)
-                                      (routes/path :profile-edit-cv)
-                                      (routes/path :candidate-edit-cv))
-                              :text "Add link to CV"}]])])
+     (let [editing-cv-link? (<sub [::subs/editing-cv-link?])]
+       [components/section-buttons
+        (when-not editing-cv-link?
+          [components/upload-button {:document   "CV"
+                                     :data-test  "upload-resume"
+                                     :uploading? (<sub [::subs/cv-uploading?])
+                                     :on-change  (upload/handler
+                                                   :launch [::events/cv-upload]
+                                                   :on-upload-start [::events/cv-upload-start]
+                                                   :on-success [::events/cv-upload-success]
+                                                   :on-failure [::events/cv-upload-failure])}])
+
+        [components/small-link
+         {:on-click  #(dispatch [::events/toggle-cv-link-editing cv-link])
+          :inverted? editing-cv-link?
+          :data-test "change-cv-link"
+          :text      (cond
+                       (and cv-link editing-cv-link?) "Cancel"
+                       cv-link                        "Change link to CV"
+                       :else                          "Add link to CV")}]]))])
+
 
 (defn section-public-access-settings []
   (let [profile-public? (<sub [::subs/published?])

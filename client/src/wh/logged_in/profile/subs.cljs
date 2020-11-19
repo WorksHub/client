@@ -412,6 +412,12 @@
     (::profile/cv-link-editable db)))
 
 (reg-sub
+  ::editing-cv-link?
+  :<- [::profile]
+  (fn [db]
+    (::profile/editing-cv-link? db)))
+
+(reg-sub
   ::error-message
   :<- [::error-fields]
   (fn [errors [_ field]]

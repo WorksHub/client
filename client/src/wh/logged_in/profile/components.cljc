@@ -52,11 +52,12 @@
 (defn sec-title [text]
   [:div {:class styles/title} text])
 
-(defn small-link [{:keys [text href class on-click inverted?]}]
+(defn small-link [{:keys [text href class on-click inverted? data-test]}]
   [:a
    (merge {:class (util/mc styles/button styles/button--small class
                            [inverted? styles/button--inverted])}
           (when href {:href href})
+          (when data-test {:data-test data-test})
           #?(:cljs
              (when on-click
                {:on-click
@@ -86,11 +87,12 @@
                                :query-params {:job-id (:id job)})
             :class styles/admin__secondary-link} "View application"])]))
 
-(defn small-button [{:keys [inverted?] :as opts} text]
+(defn small-button [{:keys [inverted? data-test] :as opts} text]
   [:button (merge
              (util/smc styles/button styles/button--small
                        [inverted? styles/button--inverted])
-             (dissoc opts :inverted?))
+             (dissoc opts :inverted?)
+             (when data-test {:data-test data-test}))
    text])
 
 (defn upload-button [{:keys [document uploading? on-change data-test inverted?]}]
@@ -197,8 +199,10 @@
 (defn section-buttons [& children]
   (into [:div {:class styles/section__buttons}] children))
 
-(defn resource [{:keys [href text]}]
-  [:a {:class styles/resource :href href :target "_blank" :rel "noopener"} text])
+(defn resource [{:keys [href text data-test]}]
+  [:a (merge {:class styles/resource :href href :target "_blank" :rel "noopener"}
+             (when data-test {:data-test data-test}))
+   text])
 
 (defn content [& children]
   (into [:div {:class styles/content}] children))
@@ -712,11 +716,12 @@
 (defn target-value [ev]
   (-> ev .-target .-value))
 
-(defn text-field [value {:keys [label on-change placeholder class on-enter] :as _opts}]
+(defn text-field [value {:keys [label on-change placeholder class on-enter data-test] :as _opts}]
   [:input {:type        "text"
            :value       value
            :class       (util/mc styles/text-field class)
            :placeholder placeholder
+           :data-test   data-test
            :on-key-down (fn [e]
                           (when (and (= "Enter" (.-key e)) on-enter)
                             (on-enter)))

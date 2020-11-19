@@ -25,13 +25,11 @@
    :contribute                {:page contribute/page :can-access? db/logged-in?}
    :contribute-edit           {:page contribute/page :can-access? db/logged-in?}
    :candidate-edit-header     {:page profile/header-edit-page :can-access? user-common/admin?}
-   :candidate-edit-cv         {:page profile/cv-edit-page :can-access? user-common/admin?}
    :candidate-edit-private    {:page profile/private-edit-page :can-access? user-common/admin?}
    :improve-recommendations   {:page profile/improve-recommendations-page :can-access? db/logged-in?}
    :notifications-settings    {:page notif-settings/page :can-access? db/logged-in?}
    :profile                   {:page profile/view-page :can-access? db/logged-in?}
    :profile-edit-header       {:page profile/header-edit-page :can-access? db/logged-in?}
-   :profile-edit-cv           {:page profile/cv-edit-page :can-access? db/logged-in?}
    :profile-edit-company-user {:page profile/company-user-edit-page :can-access? db/logged-in?}})
 
 (reg-event-db

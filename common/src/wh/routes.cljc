@@ -142,7 +142,6 @@
                               "new"                 :create-candidate
                               [:id]                 :candidate
                               [:id "/edit/header"]  :candidate-edit-header
-                              [:id "/edit/cv"]      :candidate-edit-cv
                               [:id "/edit/private"] :candidate-edit-private}]
               ["users/" {[:id] :user}]
               ["company-settings/" :edit-company]
@@ -155,7 +154,6 @@
               ["applied" :applied]
               ["profile/" {""             :profile
                            "edit/header"  :profile-edit-header
-                           "edit/cv"      :profile-edit-cv
                            "edit/private" :profile-edit-private
                            "edit"         :profile-edit-company-user
                            [:id]          (bidi/tag :profile :profile-by-id)}]

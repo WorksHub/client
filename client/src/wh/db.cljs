@@ -16,7 +16,6 @@
                 :applied
                 :blog
                 :candidate
-                :candidate-edit-cv
                 :candidate-edit-header
                 :candidate-edit-private
                 :candidates
@@ -67,7 +66,6 @@
                 :pricing
                 :profile
                 :profile-edit-company-user
-                :profile-edit-cv
                 :profile-edit-header
                 :profile-edit-private
                 :recommended

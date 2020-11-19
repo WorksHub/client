@@ -162,16 +162,10 @@
 (defmethod on-page-load :profile-edit-header [db]
   [[::init-profile-edit]])
 
-(defmethod on-page-load :profile-edit-cv [db]
-  [[::init-profile-edit]])
-
 (defmethod on-page-load :profile-edit-private [db]
   [[::init-profile-edit]])
 
 (defmethod on-page-load :candidate-edit-header [db]
-  [[:wh.company.candidate.events/load-candidate]])
-
-(defmethod on-page-load :candidate-edit-cv [db]
   [[:wh.company.candidate.events/load-candidate]])
 
 (defmethod on-page-load :candidate-edit-private [db]
@@ -406,12 +400,16 @@
     (cond
       (= type :update-cv-link)
       (if (s/valid? ::specs/url cv-link)
-        {:graphql    {:query      graphql/update-user-mutation--approval
-                      :variables  {:update_user (graphql-cv-update db {:link cv-link})}
-                      :on-success [::save-success]
-                      :on-failure [::save-failure]}
-         :dispatch-n [[::pages/set-loader]
-                      [:error/close-global]]}
+        {:graphql  {:query      graphql/update-user-mutation--approval
+                    :variables  {:update_user (graphql-cv-update db {:link cv-link})}
+                    :on-success [::save-success]
+                    :on-failure [::save-failure]}
+         ;; optimistic update
+         :db       (-> db
+                       (assoc-in [::profile/sub-db ::profile/cv :link] cv-link)
+                       (assoc-in
+                         [::profile/sub-db ::profile/editing-cv-link?] false))
+         :dispatch [:error/close-global]}
 
         {:dispatch
          [:error/set-global "CV link is not valid. Please amend and try again."]})
@@ -440,7 +438,9 @@
   ::save-success
   db/default-interceptors
   (fn [{db :db} res]
-    {:dispatch [::pages/clear-errors]
+    ;; Hide "editing CV link" input
+    {:db       (assoc-in db [::profile/sub-db ::profile/editing-cv-link?] false)
+     :dispatch [::pages/clear-errors]
      :navigate (cond (> (count res) 1)
                      (first res)
                      ;;
@@ -649,16 +649,23 @@
     (assoc db ::profile/remote remote)))
 
 (reg-event-db
-  ::edit-cv-link
-  profile-interceptors
-  (fn [db [link]]
-    (assoc-in db [::profile/cv :link] link)))
-
-(reg-event-db
   ::edit-cv-link-editable
   profile-interceptors
   (fn [db [link]]
     (assoc db ::profile/cv-link-editable link)))
+
+(reg-event-db
+  ::toggle-cv-link-editing
+  profile-interceptors
+  (fn [db [current-link]]
+    (if (::profile/editing-cv-link? db)
+      (-> db
+          (assoc ::profile/cv-link-editable "")
+          (assoc ::profile/editing-cv-link? false))
+
+      (-> db
+          (assoc ::profile/cv-link-editable (or current-link ""))
+          (assoc ::profile/editing-cv-link? true)))))
 
 (reg-event-db
   ::select-suggestion
@@ -779,12 +786,12 @@
     (if (::profile/editing-tech? profile)
       (assoc profile ::profile/editing-tech? false)
       (assoc profile
-        ::profile/selected-skills (map #(assoc (:tag %)
-                                          :selected true
-                                          :rating (:rating %)) (::profile/skills profile))
-        ::profile/selected-interests (map #(assoc % :selected true) (::profile/interests profile))
-        ::profile/edit-tech-changes? false
-        ::profile/editing-tech? true))))
+             ::profile/selected-skills (map #(assoc (:tag %)
+                                                    :selected true
+                                                    :rating (:rating %)) (::profile/skills profile))
+             ::profile/selected-interests (map #(assoc % :selected true) (::profile/interests profile))
+             ::profile/edit-tech-changes? false
+             ::profile/editing-tech? true))))
 
 (defn skill->skill-input
   [{:keys [rating label id]}]
