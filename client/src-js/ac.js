@@ -1,11 +1,12 @@
 const HISTORY_SIZE = 20
 const HISTORY_LIST_SIZE = 4
 const DB_ID = "search_history"
-const WRAPPER_CLASS = "search_class"
-const HOVER_COLOR = '#f4ada4'
-const HOVER_COLOR_CANCEL = '#dddddd'
-const BG_COLOR = '#fefefe'
-const PRIMARY = '#ef8374'
+
+const cls = {
+  searchMenu: 'searchMenu',
+  cancelBtn: 'searchMenu__cancelBtn',
+  result: 'searchMenu__result'
+}
 
 function range(n) {
   let res = []
@@ -30,7 +31,7 @@ function deleteEntry(idx) {
 }
 
 function hideMenu(n) {
-  const e = n.parentNode.querySelector('.'+WRAPPER_CLASS)
+  const e = n.parentNode.querySelector('.'+cls.searchMenu)
   e && e.remove()
 }
 
@@ -70,14 +71,7 @@ function showMenu(n, results, q) {
     return
   }
   const w = document.createElement('div')
-  w.classList.add(WRAPPER_CLASS)
-  w.style.position = 'absolute'
-  w.style.top = '100%'
-  w.style.left = '0'
-  w.style.width = '100%'
-  w.style['font-size'] = '1.3em'
-  w.style.border = '2px solid ' + PRIMARY
-  w.style['border-radius'] = '4px'
+  w.classList.add(cls.searchMenu)
   n.parentNode.appendChild(w)
   results.map(({text, idx}) => {
     const el = document.createElement('div')
@@ -87,16 +81,8 @@ function showMenu(n, results, q) {
     el.appendChild(te)
 
     const cancel = document.createElement('div')
-    cancel.style['font-family'] = 'monospace'
-    cancel.style['font-size'] = '1.5em'
+    cancel.classList.add(cls.cancelBtn)
     cancel.innerText = '×'
-    cancel.style.width = '20px'
-    cancel.style.height = '20px'
-    cancel.style['line-height'] = '20px'
-    cancel.style['text-align'] = 'center'
-    cancel.style['border-radius'] = '100px'
-    cancel.addEventListener('mouseenter', () => cancel.style.background=HOVER_COLOR_CANCEL)
-    cancel.addEventListener('mouseleave', () => cancel.style.background='none')
     cancel.addEventListener('mousedown', e => {
       e.stopPropagation()
       e.preventDefault()
@@ -104,23 +90,12 @@ function showMenu(n, results, q) {
       el.remove()
     })
     el.appendChild(cancel)
+    el.classList.add(cls.result)
 
-    el.style.width = '100%'
-    el.style.height = '40px'
-    el.style['line-height'] = '40px'
-    el.style['box-shadow'] = '0 0 0.2em #bdbbbb'
-    el.style.padding = '0 0.5em 0 1em'
-    el.style.display = 'flex'
-    el.style.cursor = 'pointer'
-    el.style['justify-content'] = 'space-between'
-    el.style['align-items'] = 'center'
-    el.style.background = BG_COLOR
     el.addEventListener('mousedown', (e) => {
       n.value = text
       n.closest('form').submit()
     })
-    el.addEventListener('mouseenter', () => el.style.background=HOVER_COLOR)
-    el.addEventListener('mouseleave', () => el.style.background=BG_COLOR)
     return el
   }).forEach(el => w.appendChild(el))
 }

@@ -46,6 +46,39 @@ $font-family: Montserrat, serif
     align-items: center
     height: 100%
 
+  & :global(.searchMenu)
+    position: absolute;
+    top: 100%
+    left: 0
+    width: 100%
+    font-size: 1.3em
+    border: 2px solid #ef8374
+    border-radius: 4px
+    &__result
+      width: 100%
+      height: 40px
+      line-height: 40px
+      box-shadow: 0 0 0.2em #bdbbbb
+      padding: 0 0.5em 0 1em
+      display: flex
+      cursor: pointer
+      justify-content: space-between
+      align-items: center
+      background: #fefefe
+      &:hover
+        background: #f4ada4
+    &__cancelBtn
+      font-size: 1.5em
+      width: 20px
+      height: 20px
+      line-height: 20px
+      text-align: center
+      border-radius: 100px
+      &:hover
+        background: #dddddd
+
+
+
 .desktop-plus-only
   display: none
   +desktop-plus
