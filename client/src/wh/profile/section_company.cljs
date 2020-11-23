@@ -31,14 +31,17 @@
   (into [:div {:class styles/job-application__controls}] children))
 
 (defn control-buttons [{:keys [current-application] :as opts}]
-  (condp = (:state current-application)
-    (profile/application-state :pending)
-    [buttons [btn-pass opts] [btn-get-in-touch opts]]
-    (profile/application-state :pass)
-    [buttons [btn-get-in-touch opts]]
-    (profile/application-state :get-in-touch)
-    [buttons [btn-pass opts] [btn-hire opts]]
-    nil))
+  (let [state (:state current-application)]
+    (cond (#{(profile/application-state :pending)
+             (profile/application-state :approved)} state)
+          [buttons [btn-pass opts] [btn-get-in-touch opts]]
+          (#{(profile/application-state :pass)
+             (profile/application-state :rejected)} state)
+          [buttons [btn-get-in-touch opts]]
+          (= (profile/application-state :get-in-touch) state)
+          [buttons [btn-pass opts] [btn-hire opts]]
+          :else
+          nil)))
 
 (defn manager-note [note]
   (when note
@@ -102,4 +105,4 @@
            [components/job-list
             (for [application other-applications]
               ^{:key (:timestamp application)}
-              [:li [job-application :other application]])]]))]]])
+              [:li [job-application :other application opts]])]]))]]])

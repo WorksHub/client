@@ -12,8 +12,20 @@
     "get_in_touch" "Interviewing"
     "approved"     "Pending"
     "rejected"     "Rejected by WorksHub"
-    "hired"        "Hired"
     (str/capitalize s)))
+
+(def application-state
+  {:get-in-touch "get_in_touch"
+   :pass "pass"
+   :hired "hired"
+   :pending "pending"
+   :approved "approved"
+   :rejected "rejected"})
+
+(def application-action
+  {:get-in-touch "get_in_touch"
+   :pass "pass"
+   :hire "hire"})
 
 ;; ------------
 
@@ -31,13 +43,6 @@
   (assoc db updating-user-status-key nil))
 
 ;; ------------
-
-(def application-state
-  {:get-in-touch "get_in_touch"
-   :pass "pass"
-   :hire "hire"
-   :hired "hired"
-   :pending "pending"})
 
 (defn start-updating-application-state [db]
   (assoc db :setting-application-state? true))

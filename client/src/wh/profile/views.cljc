@@ -25,9 +25,9 @@
                  :other-applications  (<sub [::subs/other-applications])
                  :updating-state?     (<sub [::subs/updating-application-state?])
                  :company             (<sub [::subs/company])
-                 :on-get-in-touch     #(set-application-state (profile/application-state :get-in-touch))
-                 :on-pass             #(set-application-state (profile/application-state :pass))
-                 :on-hire             #(set-application-state (profile/application-state :hire))
+                 :on-get-in-touch     #(set-application-state (profile/application-action :get-in-touch))
+                 :on-pass             #(set-application-state (profile/application-action :pass))
+                 :on-hire             #(set-application-state (profile/application-action :hire))
                  :on-modal-close      #(dispatch [::profile-events/close-user-info-modal])
                  :modal-opened?       (<sub [::subs/user-info-modal-opened?])}]))))
 
