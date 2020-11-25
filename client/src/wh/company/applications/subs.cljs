@@ -63,7 +63,7 @@
   (fn [state]
     (case tab
       :interviewing (= "get_in_touch" state)
-      :pending      (if admin? (= "pending" state) (or (= "pending" state) (= "approved" state)))
+      :pending      (if admin? (= "pending" state) (= "approved" state))
       :approved     (if admin? (= "approved" state) false)
       :pass         (= "pass" state)
       :rejected     (= "rejected" state)
@@ -73,7 +73,9 @@
 (defn tab-frequency
   [freqs admin? tab]
   (let [app-state-freqs #(get freqs % 0)]
-    (cond (= tab :pending)               (+ (app-state-freqs :pending) (if admin? 0 (app-state-freqs :approved)))
+    (cond (= tab :pending)               (if admin?
+                                           (app-state-freqs :pending)
+                                           (app-state-freqs :approved))
           (= tab :interviewing)          (app-state-freqs :get_in_touch)
           (= tab :pass)                  (app-state-freqs :pass)
           (and admin? (= tab :approved)) (app-state-freqs :approved)
@@ -90,9 +92,9 @@
 (defn tabs
   [freqs admin?]
   (let [freq (partial tab-frequency freqs admin?)]
-    (merge {:pending      (gstr/format "Pending (%d)"              (freq :pending))}
+    (merge {:pending (gstr/format "Pending (%d)"                   (freq :pending))}
            (when admin?
-             {:approved (gstr/format "Approved (%d)" (freq :approved))})
+             {:approved (gstr/format "Approved (%d)"               (freq :approved))})
            {:interviewing (gstr/format "Interviewing (%d)"         (freq :interviewing))
             :hired        (gstr/format "Hired (%d)"                (freq :hired))
             :pass         (gstr/format "Pass (%d)"                 (freq :pass))

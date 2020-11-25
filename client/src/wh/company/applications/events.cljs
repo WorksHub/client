@@ -86,11 +86,11 @@
 (defn fetch-applications-by-job-query
   [job-id company-id admin?]
   {:venia/queries [[:applications
-                    (applications-query-args {:job-id job-id
-                                              :company-id company-id
+                    (applications-query-args {:job-id      job-id
+                                              :company-id  company-id
                                               :page-number 1
-                                              :page-size 3
-                                              :states (if admin? [:pending] [:pending :approved])})
+                                              :page-size   3
+                                              :states      (if admin? [:pending] [:approved])})
                     base-application-fields]
                    (-> (application-state-frequencies-query job-id company-id)
                        :venia/queries
