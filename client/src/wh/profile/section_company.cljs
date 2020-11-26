@@ -50,24 +50,27 @@
      [:div note]]))
 
 (defn job-application [type application {:keys [user] :as opts}]
-  (let [current? (= type :current)
+  (let [current?           (= type :current)
         {:keys [job note]} application
-        cover-letter-url (get-in application [:cover-letter :file :url])
-        cv-url (get-in user [:cv :file :url])]
+        cover-letter-url   (get-in application [:cover-letter :file :url])
+        cv-url             (get-in user [:cv :file :url])]
     [:div {:class styles/job-application__wrapper}
      [:div {:class styles/job-application}
-           [components/job-link job]
-           [components/application-state application user type]
-           (when current?
-             [:<>
-              (when cover-letter-url
-                [components/underline-link {:href cover-letter-url
-                                            :text "View cover letter"
-                                            :new-tab? true}])
-              [components/underline-link {:href cv-url
-                                          :text "View CV"
-                                          :new-tab? true}]
-              [manager-note note]])]
+      [components/job-link job]
+      [components/application-state application user type]
+      (when current?
+        [:<>
+         (when cover-letter-url
+           [components/underline-link {:href     cover-letter-url
+                                       :text     "View cover letter"
+                                       :new-tab? true}])
+         (if cv-url
+           [components/underline-link {:href     cv-url
+                                       :text     "View CV"
+                                       :new-tab? true}]
+           [:div {:class styles/job-application__missing}
+            "No CV provided."])
+         [manager-note note]])]
      (when current? [control-buttons opts])]))
 
 (defn modal-user-info [{:keys [user on-modal-close modal-opened?]}]

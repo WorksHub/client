@@ -131,6 +131,7 @@
 (def job-application__applied-on "profile__job-application__applied-on--XW08x")
 (def job-application__state "profile__job-application__state--kzUht")
 (def job-application__state-wrapper "profile__job-application__state-wrapper--2NDY_")
+(def job-application__missing "profile__job-application__missing--2HMHl")
 (def cta "profile__cta--2bON5")
 (def cta__content "profile__cta__content--EmL3x")
 (def cta__container "profile__cta__container--3lh4r")
