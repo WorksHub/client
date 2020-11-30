@@ -18,10 +18,18 @@ $action-block-height: 25px
   &--highlight
     box-shadow: inset 0 0 0 1px $primary-red
 
+  &--promote
+    box-shadow: inset 0 0 0 1px $aquamarine
+    .article__feature
+      // avoid covering card borders
+      margin: -20px -19px 0 -19px
+
   +tablet
     padding: 20px
     border-radius: 8px
 
+
+.promoter__logo,
 .company-info__logo
   grid-column: 1
   grid-row: 1/3
@@ -30,6 +38,13 @@ $action-block-height: 25px
   border-radius: 2px
   object-fit: cover
 
+.promoter
+  &__logo
+    border-radius: 50%
+  &__name
+    width: 100%
+
+.promoter__name,
 .company-info__name
   font-size: 16px
   font-weight: 600
@@ -39,15 +54,15 @@ $action-block-height: 25px
   grid-row: 1
   margin: 0
 
-
+.promoter__position,
 .company-info__job-count
+  height: 20px
   bottom: 4px
   color: $text-gray
   font-family: $font-family
   font-size: 14px
   grid-column: 2
   grid-row: 2
-  height: 20px
   position: relative
 
 .title-with-icon
@@ -61,12 +76,41 @@ $action-block-height: 25px
     width: 40px
     height: 20px
 
+
+.promoter__details,
 .company-info
   column-gap: 16px
   display: grid
   grid-template-columns: 40px 1fr
-  grid-template-rows: 1fr 18px
   padding-right: 40px
+
+
+.company-info--small
+  column-gap: 12px
+  display: grid
+  grid-template-columns: 24px 1fr
+  &:hover
+    .company-info--small__name
+      color: $primary-red
+  &__logo
+    grid-column: 1
+    grid-row: 1
+    height: 24px
+    width: 24px
+    border-radius: 2px
+    object-fit: cover
+  &__name
+    font-size: 14px
+    font-weight: 600
+    line-height: 20px
+    color: $text-black
+    grid-column: 2
+    grid-row: 1
+    margin: 0
+    align-self: center
+
+.company-info
+  grid-template-rows: 1fr 18px
   +tablet
     padding-right: 148px
   &:hover
@@ -74,6 +118,7 @@ $action-block-height: 25px
     .company-info__job-count
       color: $primary-red
 
+.quoted-description,
 .description
   font-family: $font-family
   font-size: 14px
@@ -82,6 +127,10 @@ $action-block-height: 25px
   margin: 0
   &--cropped
     @include line-clamp(2)
+
+.quoted-description
+  &--article
+    margin-bottom: 16px
 
 .title
   color: $text-black
@@ -320,6 +369,11 @@ $action-block-height: 25px
     background: $highlight-red
     color: $primary-red
 
+  &--promote
+    border-right: 1px solid $aquamarine
+    background: $aquamarine-light
+    color: $aquamarine
+
   &--adjective
     display: none
     +tablet
@@ -414,6 +468,7 @@ $action-block-height: 25px
   padding: 16px
   display: grid
   grid-gap: 18px
+  position: relative
   +tablet
     padding: 24px
 

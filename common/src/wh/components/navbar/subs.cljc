@@ -19,7 +19,8 @@
 (reg-sub
   ::search-value
   (fn [db _]
-    (db ::db/search-value)))
+    (or (::db/search-value db)
+        (get-in db [:wh.db/query-params "query"]))))
 
 (reg-sub
   ::can-publish-jobs?

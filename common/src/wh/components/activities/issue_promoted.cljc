@@ -1,11 +1,13 @@
-(ns wh.components.activities.issue-published
+(ns wh.components.activities.issue-promoted
   (:require [wh.components.activities.components :as components]
             [wh.components.activities.issue :as issue]))
 
-(defn card [{:keys [body] :as issue} actor type opts]
+(defn card [issue actor type opts]
   [components/card type
    [components/header
-    [components/company-info actor]
+    [components/promoter actor]
     [components/entity-description :issue type]]
-   [components/description {:type :cropped} body]
+
+   [components/quoted-description ""]
+
    [issue/base-card issue actor type opts]])

@@ -10,3 +10,4 @@ import './navigation.js';
 import './feed_paging.js';
 import './clipboard.js';
 import './init.js';
+import './ac.js';

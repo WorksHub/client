@@ -2,6 +2,7 @@
   (:require #?(:cljs [re-frame.core :refer [dispatch]])
             #?(:cljs [wh.components.navbar.events])
             [wh.common.url :as url]
+            [wh.common.user :as user-common]
             [wh.components.attract-card :as attract-card]
             [wh.components.branding :as branding]
             [wh.components.icons :refer [icon]]
@@ -14,7 +15,6 @@
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.styles.navbar :as styles]
-            [wh.common.user :as user-common]
             [wh.util :as util]))
 
 (defn logo [vertical env]
@@ -61,8 +61,12 @@
                     :placeholder   "Search…"
                     :value         search-value
                     autocomplete-k "off"}
+                   (interop/on-search-focus)
+                   (interop/on-search-key)
+                   (interop/on-search-query-edit)
                    #?(:cljs {:on-change
                              (fn [e]
+                               (js/onSearchQueryEdit e)
                                (dispatch [:wh.components.navbar.events/set-search-value
                                           (.-value (.-target e))]))}))]
          (when search-value

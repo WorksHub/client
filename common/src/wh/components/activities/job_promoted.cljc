@@ -1,13 +1,13 @@
-(ns wh.components.activities.job-published
+(ns wh.components.activities.job-promoted
   (:require [wh.components.activities.components :as components]
             [wh.components.activities.job :as job]))
 
 (defn card [job actor type opts]
   [components/card type
    [components/header
-    [components/company-info actor]
+    [components/promoter actor]
     [components/entity-description :job type]]
 
-   [components/description {:type :cropped} (:tagline job)]
+   [components/quoted-description ""]
 
    [job/base-card job actor type opts]])

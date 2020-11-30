@@ -1,11 +1,15 @@
 (ns wh.landing-new.views
   (:require #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
             [wh.common.url :as url]
+            [wh.components.activities.article-promoted :as article-promoted]
             [wh.components.activities.article-published :as article-published]
+            [wh.components.activities.company-promoted :as company-promoted]
             [wh.components.activities.company-published :as company-published]
             [wh.components.activities.components :as activities]
             [wh.components.activities.issue-published :as issue-published]
+            [wh.components.activities.issue-promoted :as issue-promoted]
             [wh.components.activities.issue-started :as issue-started]
+            [wh.components.activities.job-promoted :as job-promoted]
             [wh.components.activities.job-published :as job-published]
             [wh.components.attract-card :as attract-card]
             [wh.components.newsletter :as newsletter]
@@ -48,6 +52,18 @@
 
 (defmethod activity-card [:start_issue "issue"] [activity opts]
   [issue-started/card (:object activity) (:actor activity) :start_issue opts])
+
+(defmethod activity-card [:promote "job"] [activity opts]
+  [job-promoted/card (:object activity) (:actor activity) :promote opts])
+
+(defmethod activity-card [:promote "article"] [activity opts]
+  [article-promoted/card (:object activity) (:actor activity) :promote opts])
+
+(defmethod activity-card [:promote "company"] [activity opts]
+  [company-promoted/card (:object activity) (:actor activity) :promote opts])
+
+(defmethod activity-card [:promote "issue"] [activity opts]
+  [issue-promoted/card (:object activity) (:actor activity) :promote opts])
 
 (defmethod activity-card :default [_activity _opts]
   nil)

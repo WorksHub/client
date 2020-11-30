@@ -3,13 +3,12 @@
             [wh.common.data :refer [currency-symbols]]
             [wh.common.text :as text]
             [wh.common.time :as time]
-            [wh.components.common :refer [link wrap-img img base-img]]
+            [wh.components.common :refer [wrap-img img]]
             [wh.components.icons :as icons]
             [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
             [wh.interop :as interop]
             [wh.routes :as routes]
-            [wh.slug :as slug]
             [wh.styles.activities :as styles]
             [wh.util :as util]
             [wh.verticals :as verticals]))
@@ -65,6 +64,13 @@
    (when children
      [:p (description-class type) children])))
 
+(defn quoted-description
+  ([text]
+   (quoted-description nil text))
+  ([{:keys [class] :as _opts} text]
+   (let [text "This is a quote about promoted activity!"]
+     [:p (util/smc styles/quoted-description class) (str "“" text "”")])))
+
 (defn tag-component [tag]
   (let [href (routes/path :search :query-params {:query (:slug tag)})]
     [tag/tag :a (-> tag
@@ -86,37 +92,61 @@
                    [(= type :highlight) styles/entity-icon--highlight])
     [icons/icon icon-name :class styles/entity-icon__icon]]))
 
+
+(def promoted-entity-description
+  {:job     "Hiring Now "
+   :issue   "Help Needed "
+   :blog    "Our Pick "
+   :company "Hot Company "})
+
+(def promoted-entity-title
+  {:blog    "Article"
+   :issue   "Issue"
+   :company "Company"
+   :job     "Job"})
+
 (defn entity-description [type entity-type]
-  [:div (util/smc styles/entity-description
-                  [(= entity-type :highlight) styles/entity-description--highlight])
-   (cond->> (case type
-              :blog    "Article"
-              :issue   "Issue"
-              :company "Company"
-              :job     "Job")
-            (= :publish entity-type)   (str "New ")
-            (= :highlight entity-type) (conj [:span (util/smc styles/entity-description--icon-wrapper)
-                                              [:span (util/smc styles/entity-description--adjective) "Trending "]
-                                              [icons/icon "trends" :class styles/entity-description--icon]]))])
+  (let [title (promoted-entity-title type)]
+    [:div (util/smc styles/entity-description
+                    [(= entity-type :highlight) styles/entity-description--highlight]
+                    [(= entity-type :promote) styles/entity-description--promote])
+     (case entity-type
+       :publish   (str "New " title)
+       :highlight [:span (util/smc styles/entity-description--icon-wrapper)
+                   [:span (util/smc styles/entity-description--adjective)
+                    (str "Trending " title)]
+                   [icons/icon "trends" :class styles/entity-description--icon]]
+       :promote   [:span (util/smc styles/entity-description--icon-wrapper)
+                   [:span (util/smc styles/entity-description--adjective)
+                    (promoted-entity-description type)]
+                   [icons/icon "trends"
+                    :class styles/entity-description--icon]])]))
 
 (defn company-info [{:keys [image-url name slug] :as company}]
   (let [info-str (cond
                    (pos? (or (:total-published-issue-count company) 0))
                    (str "Live issues: " (get company :total-published-issue-count 0))
+
                    (pos? (or (:total-published-job-count company) 0))
                    (str "Live jobs: " (get company :total-published-job-count 0))
+
                    (:creation-date company)
                    (str "Joined " (-> (:creation-date company)
                                       (time/str->time :date-time)
-                                      (time/human-time)))
-                   :else nil)]
+                                      (time/human-time))))]
+
     [:a {:class styles/company-info
          :href  (routes/path :company :params {:slug slug})}
      (wrap-img img image-url {:w 40 :h 40 :class styles/company-info__logo})
      [:h1 (util/smc styles/company-info__name) name]
      (when info-str
-       [:span (util/smc styles/company-info__job-count)
-        info-str])]))
+       [:span (util/smc styles/company-info__job-count) info-str])]))
+
+(defn company-info-small [{:keys [image-url name slug] :as _company}]
+  [:a {:class styles/company-info--small
+       :href  (routes/path :company :params {:slug slug})}
+   (wrap-img img image-url {:w 30 :h 30 :class styles/company-info--small__logo})
+   [:h1 (util/smc styles/company-info--small__name) name]])
 
 (defn share-controls
   [share-opts share-id share-toggle-on-click]
@@ -237,7 +267,9 @@
    (keyed-collection children)])
 
 (defn card [type & children]
-  [:div (merge (util/smc styles/card [(= type :highlight) styles/card--highlight])
+  [:div (merge (util/smc styles/card
+                         [(= type :highlight) styles/card--highlight]
+                         [(= type :promote) styles/card--promote])
                {:data-test "activity"})
    (keyed-collection children)])
 
@@ -290,3 +322,14 @@
   [:div (util/smc styles/issue__tag-primary-language)
    [tag/tag :div  {:label (:primary-language repo)
                    :type  "tech"}]])
+
+(defn promoter
+  ([promoter-data]
+   [promoter {} promoter-data])
+  ([{:keys [class] :as _opts}
+    {:keys [image-url name] :as _promoter-data}]
+   [:div (when class (util/smc class))
+    [:div (util/smc styles/promoter__details)
+     (wrap-img img image-url {:w 40 :h 40 :class styles/promoter__logo})
+     [:h1 (util/smc styles/promoter__name) name]
+     [:span (util/smc styles/promoter__position) "Talent Manager, WorksHub"]]]))

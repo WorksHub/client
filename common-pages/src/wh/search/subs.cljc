@@ -47,6 +47,8 @@
          (mapcat :tags)
          distinct
          (filter #(#{"tech"} (:type %)))
+         ;; change algoia ids into tag ids
+         (map #(assoc % :id (:objectID %)))
          ;; magic number. too many tags would pollute UI. we want users to click
          ;; tags, not to spend half an hour scrolling through them
          (take 9))))

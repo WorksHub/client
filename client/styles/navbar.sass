@@ -46,6 +46,40 @@ $font-family: Montserrat, serif
     align-items: center
     height: 100%
 
+  & :global(.search-dropdown)
+    position: absolute
+    top: calc(100% - 0px)
+    left: 0
+    width: 100%
+    font-size: 1.3em
+    border: 2px solid $border-gray
+    border-radius: 4px
+    z-index: 1
+    &__result
+      width: 100%
+      height: 40px
+      line-height: 40px
+      box-shadow: 0 0 0.2em $grey200
+      padding: 0 0.5em 0 1em
+      display: flex
+      cursor: pointer
+      justify-content: space-between
+      align-items: center
+      background: $white
+      &:hover
+        background: $grey100
+    &__remove
+      font-size: 1.5em
+      width: 20px
+      height: 20px
+      line-height: 20px
+      text-align: center
+      border-radius: 100px
+      &:hover
+        background: #dddddd
+
+
+
 .desktop-plus-only
   display: none
   +desktop-plus
@@ -142,6 +176,8 @@ $font-family: Montserrat, serif
     border-top: 1px solid $grey200
     max-height: calc(100vh - var(--header-height))
     overflow-y: auto
+    & :global(.search-dropdown)
+      display: none
     +desktop
       display: none!important
     +tablet

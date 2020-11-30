@@ -4,7 +4,7 @@
   #?(:cljs
      (:require-macros [net.cgrand.macrovich :as macros]
                       ;; must self refer macros
-                      [wh.interop :refer [jsf]])))
+                      [wh.interop :refer [jsf jsf-argv]])))
 
 (defn unparse-arg
   [arg]
@@ -28,12 +28,20 @@
     (str fn-name "(" params ")")))
 
 (defmacro jsf [form]
-  (let [[f args] ((juxt first rest) form)
-        fname    (name f)]
+  (let [[f' args] ((juxt first rest) form)
+        fname     (name f')]
     (macros/case
         :clj `(~->jsfn ~fname ~@args)
         :cljs (let [f (symbol "js" fname)]
                 `(fn [_#] (~f ~@args))))))
+
+(defmacro jsf-argv [form]
+  (let [[f' args] ((juxt first rest) form)
+        fname     (name f')]
+    (macros/case
+        :clj `(~->jsfn ~fname ~@args)
+        :cljs (let [f (symbol "js" fname)]
+                `(fn [& x#] (apply ~f x#))))))
 
 (defn do
   [& fns]
@@ -85,9 +93,24 @@
 ;;
 
 (defn on-click-fn
-  [jsf]
-  #?(:clj  {:onClick jsf}
-     :cljs {:on-click jsf}))
+  [jsfunc]
+  #?(:clj  {:onClick jsfunc}
+     :cljs {:on-click jsfunc}))
+
+(defn on-focus-fn
+  [jsfunc]
+  #?(:clj  {:onFocus jsfunc}
+     :cljs {:on-focus jsfunc}))
+
+(defn on-key-down-fn
+  [jsfunc]
+  #?(:clj  {:onKeyDown jsfunc}
+     :cljs {:on-key-down jsfunc}))
+
+(defn on-change-fn
+  [jsfunc]
+  #?(:clj  {:onChange jsfunc}
+     :cljs {:on-change jsfunc}))
 
 (defn toggle-class-on-click
   [id cls]
@@ -132,6 +155,15 @@
 (defn copy-str-to-clipboard-on-click
   [s]
   (on-click-fn (jsf (copyStringToClipboard s))))
+
+(defn on-search-key []
+  (on-key-down-fn (jsf-argv (onSearchKey 'event 'onSearchQueryEdit))))
+
+(defn on-search-query-edit []
+  (on-change-fn (jsf-argv (onSearchQueryEdit 'event))))
+
+(defn on-search-focus []
+  (on-focus-fn (jsf-argv (onSearchFocus 'event))))
 
 (defn multiple-on-click
   [& fns]
