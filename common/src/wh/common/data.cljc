@@ -408,7 +408,6 @@
 
 (def managers
   (->> {"alex"            "Alex Mesropians"
-        "amelia"          "Amelia Parker"
         "andrei"          "Andrei Barbu"
         "charlie"         "Charlie Gower"
         "daniel.earnshaw" "Daniel Earnshaw"
