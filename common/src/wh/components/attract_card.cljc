@@ -10,19 +10,15 @@
             [wh.verticals :as verticals]))
 
 (defn intro
-  ([vertical]
-   [intro vertical :default])
-  ([vertical type]
-   [:div (merge (util/smc style/attract-card
-                          style/intro
-                          [(= type :main-column) style/intro--main-column])
-                {:data-test "intro-attract"})
-    [:div (util/smc style/intro__branding)
-     [icon vertical :class style/intro__icon]
-     [branding/vertical-title vertical {:size :small :type :multiline}]]
-    [:p (util/smc style/intro__description)
-     [:span (str (get-in data/in-demand-hiring-data [vertical :discover]) " with ")]
-     [:span (util/smc style/intro__vertical-title) (verticals/config vertical :platform-name)]]]))
+  [vertical]
+  [:div (merge (util/smc style/attract-card style/intro)
+               {:data-test "intro-attract"})
+   [:div (util/smc style/intro__branding)
+    [icon vertical :class style/intro__icon]
+    [branding/vertical-title vertical {:size :small :type :multiline}]]
+   [:p (util/smc style/intro__description)
+    [:span (str (get-in data/in-demand-hiring-data [vertical :discover]) " with ")]
+    [:span (util/smc style/intro__vertical-title) (verticals/config vertical :platform-name)]]])
 
 (defn contribute
   ([logged-in?]

@@ -166,7 +166,6 @@
        :blogs                 blogs
        :issues                issues
        :show-recommendations? show-recommendations?}]
-     [attract-card/intro vertical :main-column]
      (when (and (not activities-loading?)
                 (= 0 (count activities)))
        [activities/card-not-found selected-tags])

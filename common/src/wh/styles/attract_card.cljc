@@ -1,7 +1,6 @@
 (ns wh.styles.attract-card)
 (def attract-card "attract_card__attract-card--3GQdd")
 (def intro "attract_card__intro--2ezbQ")
-(def intro--main-column "attract_card__intro--main-column--zQ3uu")
 (def intro__branding "attract_card__intro__branding--CMhp_")
 (def intro__icon "attract_card__intro__icon--2s5N_")
 (def intro__description "attract_card__intro__description--2Snok")

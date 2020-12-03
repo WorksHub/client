@@ -14,11 +14,11 @@
                                "pod--no-shadow"
                                "newsletter-subscription"
                                (when (= type :landing) "newsletter-subscription--landing"))}
-                     [:div [:h3.newsletter-subscription__title "Join our newsletter!"]
+                     [:div [:h3.newsletter-subscription__title "Join our newsletter"]
                       [:p.newsletter-subscription__description "Join over 111,000 others and get access to exclusive content, job opportunities and more!"]
                       [:form#newsletter-subscription.newsletter-subscription__form
                        [:div.newsletter-subscription__input-wrapper
-                        [:label.newsletter-subscription__label {:for "email"} "your email address"]
+                        [:label.visually-hidden {:for "email"} "your email address"]
                         [:input.newsletter-subscription__input {:type "email" :name "email" :placeholder "email@address.com" :id "email"}]]
                        [:button.button.newsletter-subscription__button "Subscribe"]]
                       [:div.newsletter-subscription__success.is-hidden
