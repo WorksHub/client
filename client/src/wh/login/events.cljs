@@ -95,8 +95,8 @@
   (fn [{db :db} [success? response]]
     (if success?
       (let [user-db (r/read-string response)]
-        {:db      (update db :wh.user.db/sub-db merge user-db)
-         :set-url "/"})
+        {:db       (update db :wh.user.db/sub-db merge user-db)
+         :navigate [:homepage]})
       {:db (login/set-error db :invalid-arguments)})))
 
 ;; STACKOVERFLOW
