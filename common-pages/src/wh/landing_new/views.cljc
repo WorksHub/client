@@ -53,16 +53,16 @@
   [issue-started/card (:object activity) (:actor activity) :start_issue opts])
 
 (defmethod activity-card [:promote "job"] [activity opts]
-  [job-promoted/card (:object activity) (:actor activity) :promote opts])
+  [job-promoted/card (:object activity) (:actor activity) (:description activity) :promote opts])
 
 (defmethod activity-card [:promote "article"] [activity opts]
-  [article-promoted/card (:object activity) (:actor activity) :promote opts])
+  [article-promoted/card (:object activity) (:actor activity) (:description activity) :promote opts])
 
 (defmethod activity-card [:promote "company"] [activity opts]
-  [company-promoted/card (:object activity) (:actor activity) :promote opts])
+  [company-promoted/card (:object activity) (:actor activity) (:description activity) :promote opts])
 
 (defmethod activity-card [:promote "issue"] [activity opts]
-  [issue-promoted/card (:object activity) (:actor activity) :promote opts])
+  [issue-promoted/card (:object activity) (:actor activity) (:description activity) :promote opts])
 
 (defmethod activity-card :default [_activity _opts]
   nil)

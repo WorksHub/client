@@ -2,12 +2,12 @@
   (:require [wh.components.activities.components :as components]
             [wh.components.activities.issue :as issue]))
 
-(defn card [issue actor type opts]
+(defn card [issue actor description type opts]
   [components/card type
    [components/header
     [components/promoter actor]
     [components/entity-description :issue type]]
 
-   [components/quoted-description ""]
+   [components/quoted-description description]
 
-   [issue/base-card issue actor type opts]])
+   [issue/base-card issue (:issue-company issue) type opts]])

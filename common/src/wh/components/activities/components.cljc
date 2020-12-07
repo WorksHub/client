@@ -68,8 +68,7 @@
   ([text]
    (quoted-description nil text))
   ([{:keys [class] :as _opts} text]
-   (let [text "This is a quote about promoted activity!"]
-     [:p (util/smc styles/quoted-description class) (str "“" text "”")])))
+   [:p (util/smc styles/quoted-description class) (str "“" text "”")]))
 
 (defn tag-component [tag]
   (let [href (routes/path :search :query-params {:query (:slug tag)})]

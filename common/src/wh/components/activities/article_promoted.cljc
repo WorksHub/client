@@ -3,10 +3,10 @@
             [wh.components.activities.components :as components]
             [wh.styles.activities :as styles]))
 
-(defn card [blog actor type opts]
+(defn card [blog actor description type opts]
   [components/card type
    [components/promoter actor]
 
-   [components/quoted-description {:class styles/quoted-description--article} ""]
+   [components/quoted-description {:class styles/quoted-description--article} description]
 
-   [article/base-card blog actor type opts]])
+   [article/base-card blog (:author-info blog) type opts]])

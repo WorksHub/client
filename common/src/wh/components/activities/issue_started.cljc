@@ -25,9 +25,9 @@
    [:img {:src   "/images/feed/issue.svg"
           :class styles/issue-contributor__img}]])
 
-(defn issue-company-component [{:keys [logo name] :as company}]
+(defn issue-company-component [{:keys [image-url name] :as company}]
   [:div (util/smc styles/issue-company)
-   (wrap-img img logo {:w 25 :h 25 :crop "center" :class styles/issue-company__logo})
+   (wrap-img img image-url {:w 25 :h 25 :crop "center" :class styles/issue-company__logo})
    [:span (util/smc styles/issue-company__name) name]])
 
 (defn inner-card [{:keys [id title issue-company repo compensation] :as issue}]

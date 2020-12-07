@@ -162,7 +162,7 @@
   (s/keys :req-un [:wh.company/id
                    :wh.company/name
                    :wh.company/slug]
-          :opt-un [:wh.company/logo
+          :opt-un [:wh.spec.activities/image-url
                    :wh.company/total-published-job-count
                    :wh.company/total-published-issue-count]))
 

@@ -22,7 +22,7 @@
                                          :vertical        :$vertical}
                       [:first_page :last_page
                        [:activities
-                        [:id :verb :to :date
+                        [:id :verb :to :date :description
                          [:actor [:id [:actor_data
                                        [:id :slug :name :actor_type :image_url
                                         :creation_date :total_published_job_count
@@ -34,7 +34,7 @@
                                       [:currency :time_period :equity
                                        :min :max :competitive]]
                                      [:location [:city :state :country]]
-                                     [:job_company [:name :logo :slug
+                                     [:job_company [:name :image_url :slug
                                                     :total_published_job_count]]]]
                          [:feed_company [:id :slug :name :description :size
                                          :total_published_job_count :logo :creation_date
@@ -45,11 +45,11 @@
                                        :contributors_count :status :created_at
                                        [:repo [:primary_language]]
                                        [:compensation [:amount :currency]]
-                                       [:issue_company [:id :name :slug :logo
+                                       [:issue_company [:id :name :slug :image_url
                                                         :total_published_issue_count]]
                                        [:issue_contributor [:id :name :image_url]]
                                        [:tags :fragment/tagFields]]]
                          [:feed_blog [:id :title :author :creator :feature
                                       :reading_time :creation_date :upvote_count
-                                      [:author_info [:name :image_url]]
+                                      [:author_info [:id :name :image_url]]
                                       [:tags :fragment/tagFields]]]]]]]]})
