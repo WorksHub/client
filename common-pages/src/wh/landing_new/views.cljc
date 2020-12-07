@@ -93,7 +93,7 @@
         query-params       (<sub [:wh/query-params])]
     [:div (util/smc styles/side-column styles/side-column--left)
      [tag-selector/card-with-selector
-      tags tags-loading? {:admin? admin? :company? company?}]
+      tags tags-loading? {:admin? admin? :company? company?} :default]
      [side-cards/improve-your-recommendations logged-in?]
      [attract-card/contribute logged-in? :side-column]
      [:div (merge (util/smc styles/side-column styles/tablet-only)
@@ -158,7 +158,7 @@
     [:div {:class styles/main-column}
      [user-dashboard candidate?]
      [tag-selector/card-with-selector
-      tags tags-loading? {:admin? admin? :company? company?}]
+      tags tags-loading? {:admin? admin? :company? company?} :mobile]
      (when (and (not activities-loading?)
                 (= 0 (count activities)))
        [activities/card-not-found selected-tags])

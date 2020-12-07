@@ -1,5 +1,6 @@
 (ns wh.styles.tag-selector)
 (def card "tag_selector__card--2ODKJ")
+(def card--mobile "tag_selector__card--mobile--1YWDS")
 (def title "tag_selector__title--18wfY")
 (def status "tag_selector__status--1ZJzO")
 (def selected-counter "tag_selector__selected-counter--2j4Ie")
