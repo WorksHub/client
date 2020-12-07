@@ -78,13 +78,15 @@
   font-weight: 600
   letter-spacing: -0.01em
   line-height: 18px
-  margin: 0 0 16px 0
+  margin-bottom: 8px
+  +tablet
+    margin-bottom: 16px
 
 .section-row
   font-size: 13px
   line-height: 15px
   color: $text-black
-  margin: 8px 0
+  margin-top: 8px
   display: flex
 
 .section-row__value
@@ -111,14 +113,12 @@
     grid-column: 3
 
 .cta
-  border-top: 1px solid $border-gray
-  grid-column: 1/4
-  grid-row: 5
-  padding-top: 16px
   margin-top: 16px
   +tablet
-    margin-top: 8px
+    border-top: 1px solid $border-gray
+    padding-top: 16px
     grid-row: 3
+    grid-column: 1/4
 
 .cta__link
   color: $text-black
@@ -129,10 +129,10 @@
   align-items: center
   white-space: pre
   flex-wrap: wrap
-  margin: 8px -4px
+  margin: 0 -4px
   padding: 4px 4px
   +tablet
-    margin: 4px -8px
+    margin: 0 -8px
     padding: 4px 8px
   &:hover
     color: $primary-red

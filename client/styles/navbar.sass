@@ -515,12 +515,13 @@ $font-family: Montserrat, serif
   position: relative
 
 .user-profile
-  width: 48px
+  width: 66px
   +mobile
     width: 32px
   height: 100%
   display: flex
   align-items: center
+  justify-content: space-between
   & + .dropdown
     right: 0
     +smaller-than-desktop
@@ -533,10 +534,12 @@ $font-family: Montserrat, serif
 
 .profile-image
   width: 48px
+  min-width: 48px
   height: 48px
   object-fit: cover
   +mobile
     width: 32px
+    min-width: 32px
     height: 32px
   border-radius: 50%
   border: 1px solid transparent
@@ -590,7 +593,7 @@ $font-family: Montserrat, serif
 
   height: 100%
   align-items: center
-  margin-left: 16px
+  padding: 0 16px
   position: relative
 
   .bell-icon
@@ -608,5 +611,7 @@ $font-family: Montserrat, serif
     border-radius: 50%
     border: 1px solid $background-white
     position: absolute
-    top: 24px
+    top: 9px
     left: 13px
+    +tablet
+      top: 24px

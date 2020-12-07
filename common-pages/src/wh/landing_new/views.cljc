@@ -14,7 +14,6 @@
             [wh.components.attract-card :as attract-card]
             [wh.components.newsletter :as newsletter]
             [wh.components.side-card.side-card :as side-cards]
-            [wh.components.side-card.side-card-mobile :as side-cards-mobile]
             [wh.components.stat-card :as stat-card]
             [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.landing-new.components :as components]
@@ -128,21 +127,22 @@
    [side-cards/recent-issues issues issues-loading? company?]
    [side-cards/top-ranking-users users users-loading?]])
 
+(defn user-dashboard [candidate?]
+  (when candidate?
+    [:<>
+     [components/user-dashboard]
+     [:hr {:class styles/separator}]]))
+
 (defn activities-loading [candidate?]
   (into [:div {:class styles/main-column}
-         (when candidate?
-           [:<>
-            [components/user-dashboard]
-            [:hr]])
-
+         [user-dashboard candidate?]
          (for [i (range 6)]
            ^{:key i}
            [activities/card-skeleton])]))
 
 (defn activities-list
-  [{:keys [logged-in? candidate? jobs blogs issues show-recommendations?
-           vertical activities activities-loading? selected-tags not-enough-activities?
-           saved-jobs environment facebook-app-id]}]
+  [{:keys [logged-in? candidate? vertical activities activities-loading? selected-tags not-enough-activities?
+           saved-jobs environment facebook-app-id tags tags-loading? admin? company?]}]
 
   (let [[group1 group2 group3 group4] (split-into-4-groups activities)
         display-additional-info?      (and (> (count activities)
@@ -156,16 +156,9 @@
                                        :vertical        vertical
                                        :facebook-app-id facebook-app-id}]
     [:div {:class styles/main-column}
-     (when candidate?
-       [:<>
-        [components/user-dashboard]
-        [:hr]])
-
-     [side-cards-mobile/top-content
-      {:jobs                  jobs
-       :blogs                 blogs
-       :issues                issues
-       :show-recommendations? show-recommendations?}]
+     [user-dashboard candidate?]
+     [tag-selector/card-with-selector
+      tags tags-loading? {:admin? admin? :company? company?}]
      (when (and (not activities-loading?)
                 (= 0 (count activities)))
        [activities/card-not-found selected-tags])
@@ -190,12 +183,14 @@
 
      (when not-enough-activities?
        [:<>
-        [:hr]
+        [:hr {:class styles/separator}]
         [side-cards/improve-feed-recommendations]])
 
      [components/prev-next-buttons newer-than older-than]]))
 
-(defn main-column [logged-in? jobs blogs issues show-recommendations? vertical]
+
+
+(defn main-column [logged-in? jobs blogs issues vertical]
   (let [activities             (<sub [::subs/recent-activities])
         activities-loading?    (<sub [::subs/recent-activities-loading?])
         selected-tags          (<sub [::subs/selected-tags])
@@ -203,7 +198,11 @@
         not-enough-activities? (<sub [::subs/not-enough-activities?])
         facebook-app-id        (<sub [::subs/facebook-app-id])
         saved-jobs             (<sub [:user/liked-jobs])
-        environment            (<sub [:wh/env])]
+        environment            (<sub [:wh/env])
+        tags                   (<sub [::subs/top-tags])
+        tags-loading?          (<sub [::subs/top-tags-loading?])
+        company?               (<sub [:user/company?])
+        admin?                 (<sub [:user/admin?])]
     (if activities-loading?
       [activities-loading candidate?]
       [activities-list
@@ -215,11 +214,14 @@
         :facebook-app-id        facebook-app-id
         :issues                 issues
         :jobs                   jobs
+        :tags                   tags
+        :tags-loading?          tags-loading?
+        :admin?                 admin?
+        :company?               company?
         :logged-in?             logged-in?
         :not-enough-activities? not-enough-activities?
         :saved-jobs             saved-jobs
         :selected-tags          selected-tags
-        :show-recommendations?  show-recommendations?
         :vertical               vertical}])))
 
 
@@ -254,7 +256,7 @@
        admin? blogs-loading? users users-loading? blogs page]
 
       [main-column
-       logged-in? jobs blogs issues show-recommendations? vertical]
+       logged-in? jobs blogs issues vertical]
 
       [right-column
        jobs jobs-loading? show-recommendations? issues

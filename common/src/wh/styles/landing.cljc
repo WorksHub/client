@@ -16,3 +16,4 @@
 (def loader "landing__loader--3T80b")
 (def prev-next-buttons "landing__prev-next-buttons--NZ9Q3")
 (def prev-next-button__text "landing__prev-next-button__text---fDJ8")
+(def separator "landing__separator--3E_kH")

@@ -39,13 +39,16 @@ $black100: rgba(0, 0, 0, .2)
     display: none
 
 .main-column
+  padding: 16px 4px 0
   overflow: hidden
   display: grid
-  grid-gap: 24px
+  grid-gap: 16px
   grid-auto-rows: min-content
   grid-template-columns: 100%
   +tablet
+    padding: 0
     overflow: auto
+    grid-gap: 24px
 
 .card
   padding: 24px 16px
@@ -101,3 +104,8 @@ $black100: rgba(0, 0, 0, .2)
     height: 12px
     stroke: $text-white
     stroke-width: 4px
+
+.separator
+  display: none
+  +tablet
+    display: block

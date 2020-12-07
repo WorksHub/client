@@ -123,17 +123,19 @@
                     :class styles/entity-description--icon]])]))
 
 (defn company-info [{:keys [image-url name slug] :as company}]
-  (let [info-str (cond
-                   (pos? (or (:total-published-issue-count company) 0))
-                   (str "Live issues: " (get company :total-published-issue-count 0))
-
-                   (pos? (or (:total-published-job-count company) 0))
-                   (str "Live jobs: " (get company :total-published-job-count 0))
-
-                   (:creation-date company)
-                   (str "Joined " (-> (:creation-date company)
-                                      (time/str->time :date-time)
-                                      (time/human-time))))]
+  (let [info-str (let [live-issues (get company :total-published-issue-count 0)
+                       job-count (get company :total-published-job-count 0)]
+                   (cond
+                     (pos? live-issues)
+                     (str "has " live-issues " " (text/pluralize live-issues "issue"))
+                     ;;
+                     (pos? job-count)
+                     (str "has " job-count " " (text/pluralize job-count "live job"))
+                     ;;
+                     (:creation-date company)
+                     (str "Joined " (-> (:creation-date company)
+                                        (time/str->time :date-time)
+                                        (time/human-time)))))]
 
     [:a {:class styles/company-info
          :href  (routes/path :company :params {:slug slug})}

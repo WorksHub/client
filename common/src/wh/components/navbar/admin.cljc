@@ -170,6 +170,7 @@
       [:img {:class styles/profile-image
              :src   profile-image}]
 
-      [:div {:class styles/profile-image}])]
+      [:div {:class styles/profile-image}])
+    [components/arrow-down]]
 
    [components/dropdown-list admin-profile-submenu-list]])

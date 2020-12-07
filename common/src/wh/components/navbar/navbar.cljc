@@ -168,27 +168,6 @@
    [:div (util/smc styles/small-menu__search-wrapper)
     [search :small-menu]]])
 
-
-(defn profile-menu [{:keys [candidate? company?]}]
-  (let [company-slug (<sub [::subs/company-slug])]
-    [:div {:class styles/user-profile-container}
-     [:a {:href  (routes/path :profile)
-          :class styles/user-profile}
-      (if-let [profile-image (<sub [::subs/profile-image])]
-        [:img {:class styles/profile-image
-               :src   profile-image}]
-
-        [:div {:class styles/profile-image}])]
-
-     (cond
-       company?
-       [components/dropdown-list
-        (company/company-profile-submenu-list company-slug)]
-
-       candidate?
-       [components/dropdown-list
-        candidate/candidate-profile-submenu-list])]))
-
 (defn navbar-right [{:keys [logged-in? content? candidate? company? admin? query-params]}]
   (cond
     logged-in?

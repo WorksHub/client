@@ -1,32 +1,37 @@
-$white: #fff
-$black: #454E54
-$red: #ff7c6e
+@import 'mixins'
+@import 'colours'
 
 .card
   background: $white
-  padding: 24px 16px
+  padding: 16px
   border-radius: 8px
+  +tablet
+    padding: 24px 16px
 
 .title
   font-family: Montserrat, sans-serif
   font-weight: bold
   font-size: 18px
   line-height: 26px
-  color: $black
-  margin-bottom: 30px
+  color: $grey500
+  margin-bottom: 16px
+  +tablet
+    margin-bottom: 30px
 
 .status
   display: flex
   width: 100%
   justify-content: space-between
-  margin-top: 26px
   align-items: center
+  margin-top: 16px
+  +tablet
+    margin-top: 26px
 
 .selected-counter
   font-family: Montserrat, sans-serif
   font-size: 14px
   line-height: 16px
-  color: $black
+  color: $grey500
   font-feature-settings: 'case' on
 
 .reset-button
@@ -34,7 +39,7 @@ $red: #ff7c6e
   background: transparent
   font-size: 14px
   line-height: 16px
-  color: $black
+  color: $grey500
   text-transform: lowercase
   cursor: pointer
   display: flex
@@ -42,15 +47,15 @@ $red: #ff7c6e
   padding: 4px 2px
 
   &:hover
-    color: $red
+    color: $primary-red
     .reset-button__icon
-      fill: $red
+      fill: $primary-red
 
   &:focus
-    outline-color: $red
+    outline-color: $primary-red
 
 .reset-button__icon
   width: 15px
   height: 15px
-  fill: $black
+  fill: $grey500
   margin-left: 9px

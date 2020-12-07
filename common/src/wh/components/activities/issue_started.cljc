@@ -34,13 +34,13 @@
   [:a
    {:class (util/mc styles/inner-card styles/inner-card--started-issue)
     :href (routes/path :issue :params {:id id})}
+   [:div (util/smc styles/title)
+    title]
    [:div (util/smc styles/issue-tags__wrapper)
     [issue-company-component issue-company]
     [:div (util/smc styles/issue-tags)
      [components/compensation-amount compensation]
-     [components/primary-language repo]]]
-   [:div (util/smc styles/title)
-    title]])
+     [components/primary-language repo]]]])
 
 (defn card
   [{:keys [id issue-contributor title] :as issue} actor type

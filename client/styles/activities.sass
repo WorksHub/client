@@ -5,29 +5,32 @@
 @import 'animations'
 
 $action-block-height: 25px
+$space-mobile: 16px
+$space-tablet: 20px
 
 .card
   background-color: $background-white
   box-shadow: 0 4px 8px $card-shadow-color
+  border-radius: 8px
   overflow: hidden
-  padding: 16px
   display: grid
-  grid-gap: 24px
+  padding: $space-mobile
+  grid-gap: $space-mobile
   position: relative
+  border: 1px solid $grey200
 
   &--highlight
-    box-shadow: inset 0 0 0 1px $primary-red
+    border-color: $primary-red
 
   &--promote
-    box-shadow: inset 0 0 0 1px $aquamarine
+    border-color: $aquamarine
     .article__feature
       // avoid covering card borders
       margin: -20px -19px 0 -19px
 
   +tablet
-    padding: 20px
-    border-radius: 8px
-
+    padding: $space-tablet
+    grid-gap: $space-tablet
 
 .promoter__logo,
 .company-info__logo
@@ -353,12 +356,15 @@ $action-block-height: 25px
   text-transform: capitalize
   white-space: nowrap
   font-size: 10px
-  line-height: 22px
   margin-left: 4px
   letter-spacing: 0.02em
   position: absolute
-  right: 0
+  right: -1px
   top: 16px
+  height: 22px
+  display: flex
+  align-items: center
+
   +tablet
     font-size: 12px
     padding: 0 12px
@@ -417,13 +423,12 @@ $action-block-height: 25px
   display: flex
   align-items: center
   justify-content: flex-end
-  padding-top: 8px
   &--compound
     justify-content: space-between
 
   +tablet
     border-top: 1px solid $border-gray
-    padding-top: 16px
+    padding-top: $space-tablet
 
 .footer__buttons
   display: grid
@@ -465,24 +470,26 @@ $action-block-height: 25px
 .inner-card
   border-radius: 4px
   border: 1px solid $border-gray
-  padding: 16px
   display: grid
-  grid-gap: 18px
+  padding: $space-mobile
+  grid-gap: $space-mobile
   position: relative
   +tablet
-    padding: 24px
+    padding: $space-tablet
+    grid-gap: $space-tablet
 
   &--started-issue
     background-color: $grey100
     border-color: $grey100
-    padding: 12px 24px
     &:hover
-      border-color: $primary-red
+      border-color: $grey400
 
 .card-content
   display: grid
-  grid-gap: 18px
+  grid-gap: $space-mobile
   flex: 1
+  +tablet
+    grid-gap: $space-tablet
 
 .not-found
   display: grid

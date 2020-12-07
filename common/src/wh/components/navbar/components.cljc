@@ -6,6 +6,9 @@
             [wh.styles.navbar :as styles]
             [wh.util :as util]))
 
+(defn arrow-down []
+  [icon "arrow-down" :class styles/arrow-down])
+
 (defn dropdown-element [{:keys [route path icon-name icon-class
                                 text sub-text data-pushy-ignore]}
                         {:keys [mobile?]}]
@@ -85,6 +88,6 @@
               :for   label}
       [icon icon-name :class styles/link__icon]
       [:span (util/smc styles/link--with-dropdown) text]
-      [icon "arrow-down" :class styles/arrow-down]]
+      [arrow-down]]
 
      [dropdown-list dropdown {:mobile? true}]]))

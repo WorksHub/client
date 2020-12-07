@@ -5,7 +5,6 @@
             [wh.components.icons :refer [icon]]
             [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
-            [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
@@ -32,7 +31,6 @@
 
 (defn reset-icon []
   [icon "reset" :class styles/reset-button__icon])
-
 
 (defn selector [tags query-params-tags-slugs {:keys [admin? company?]}]
   [:div
