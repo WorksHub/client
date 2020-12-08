@@ -130,7 +130,7 @@
    {:logo "twitter-circle"
     :href (str "https://twitter.com/" (verticals/config vertical :twitter))}
    {:logo "facebook-circle"
-    :href "https://business.facebook.com/weareworkshub/"}
+    :href "https://facebook.com/weareworkshub/"}
    {:logo "github"
     :href "https://github.com/workshub"}])
 
