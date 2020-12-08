@@ -1,29 +1,27 @@
 (ns wh.company.listing.views
-  (:require
-    #?(:cljs [wh.user.subs])
-    [wh.common.text :as text]
-    [wh.company.listing.db :as listing]
-    [wh.company.listing.events :as events]
-    [wh.company.listing.subs :as subs]
-    [wh.components.common :refer [link wrap-img img base-img]]
-    [wh.components.forms :as forms]
-    [wh.components.icons :refer [icon]]
-    [wh.components.pagination :as pagination]
-    [wh.components.pods.candidates :as candidate-pods]
-    [wh.components.pods.companies :as company-pods]
-    [wh.components.tag :as tag]
-    [wh.interop.forms :as interop-forms]
-    [wh.re-frame.events :refer [dispatch dispatch-sync]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.util :as util]
-    [wh.interop :as interop]))
+  (:require #?(:cljs [wh.user.subs])
+            [wh.common.text :as text]
+            [wh.company.listing.db :as listing]
+            [wh.company.listing.events :as events]
+            [wh.company.listing.subs :as subs]
+            [wh.components.common :refer [link wrap-img img]]
+            [wh.components.forms :as forms]
+            [wh.components.icons :refer [icon]]
+            [wh.components.pagination :as pagination]
+            [wh.components.pods.candidates :as candidate-pods]
+            [wh.components.pods.companies :as company-pods]
+            [wh.components.tag :as tag]
+            [wh.interop.forms :as interop-forms]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
+            [wh.util :as util]))
 
-(defn add-onclick [tag]
-  (assoc tag :on-click (interop/click-tag (:label tag) (name (:type tag)))))
+(defn add-search [tag]
+  (assoc tag :href (routes/path :search :query-params {:query (:label tag)})))
 
 (defn company-card
-  [{:keys [logo id name slug tags size location description profile-enabled
-           total-published-job-count total-published-issue-count] :as _company}
+  [{:keys [logo name slug tags size location description profile-enabled
+           total-published-job-count] :as _company}
    & [{:keys [view-jobs-link?]
        :or {view-jobs-link? true}}]]
   [:section.companies__company.company-card
@@ -50,9 +48,7 @@
      [:div.companies__company__description
       [:p description]]
      [:div.companies__company__tags
-      [tag/tag-list :a (cond-> (mapv add-onclick tags)
-                               (and total-published-issue-count (pos? total-published-issue-count))
-                               (conj {:icon "pr" :id id :type :icon :label (str total-published-issue-count)}))]]]]
+      [tag/tag-list :a (mapv add-search tags)]]]]
    (when (and view-jobs-link? total-published-job-count (pos? total-published-job-count))
      [link
       [:div.companies__company__job-count

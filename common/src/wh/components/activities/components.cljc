@@ -71,7 +71,7 @@
    [:p (util/smc styles/quoted-description class) (str "“" text "”")]))
 
 (defn tag-component [tag]
-  (let [href (routes/path :search :query-params {:query (:slug tag)})]
+  (let [href (routes/path :search :query-params {:query (:label tag)})]
     [tag/tag :a (-> tag
                     (assoc :href href)
                     (update :label str/lower-case))]))
