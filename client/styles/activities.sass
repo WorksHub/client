@@ -490,12 +490,14 @@ $space-tablet: 20px
 
 .not-found
   display: grid
-  grid-gap: 28px
+  grid-gap: $space-mobile
   justify-items: center
+  +tablet
+    grid-gap: $space-tablet
   &__title
     font-family: $font-family
     font-size: 18px
-    line-height: 26px
+    line-height: 22px
     color: $text-black
     font-weight: 700
     text-align: center
@@ -506,6 +508,7 @@ $space-tablet: 20px
     color: $text-black
     font-weight: 500
     text-align: center
+    max-width: 385px
 
 .issue-company
   display: grid

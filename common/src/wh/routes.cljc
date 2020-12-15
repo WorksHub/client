@@ -135,9 +135,13 @@
               ["twitter-callback" :twitter-callback]
 
               ;;Private pages - app.js required
-              ["admin/" {"companies" :admin-companies
-                         "learn"     :admin-articles
-                         "feed"      :feed-preview}]
+              ["admin/" {"companies"  :admin-companies
+                         "learn"      :admin-articles
+                         "feed"       :feed-preview
+                         "promotions" {
+                                       ;; TODO: CH4423
+                                       ;; ""                   :promotions-preview
+                                       ["/new/" :type "/" :id] :create-promotion}}]
               ["candidates/" {""                    :candidates
                               "new"                 :create-candidate
                               [:id]                 :candidate

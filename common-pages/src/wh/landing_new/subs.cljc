@@ -6,6 +6,7 @@
             [clojure.string :as str]
             [clojure.walk :as walk]
             [re-frame.core :refer [reg-sub]]
+            [wh.common.blog :as blog]
             [wh.common.job :as jobc]
             [wh.common.time :as time]
             [wh.common.user :as user-common]
@@ -104,11 +105,6 @@
         :role-type #(-> % name (str/replace "_" " ")))
       jobc/translate-job))
 
-(defn translate-blog [blog]
-  (-> blog
-      (assoc
-        :display-date (time/human-time (time/str->time (:creation-date blog) :date-time)))))
-
 (defn translate-company [c]
   (-> c
       (assoc
@@ -121,7 +117,7 @@
         (cond
           feed-job     {:object      (translate-job feed-job)
                         :object-type "job"}
-          feed-blog    {:object      (translate-blog feed-blog)
+          feed-blog    {:object      (blog/translate-blog feed-blog)
                         :object-type "article"}
           feed-issue   {:object      feed-issue
                         :object-type "issue"}

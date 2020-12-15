@@ -32,6 +32,7 @@
                 :create-company
                 :create-company-offer
                 :create-job
+                :create-promotion
                 :edit-company
                 :edit-job
                 :employers

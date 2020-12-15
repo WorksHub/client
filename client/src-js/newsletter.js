@@ -1,7 +1,7 @@
 const listenNewsletterForm = () => {
   const selectors = {
-    formNewsletter: '#newsletter-subscription',
-    messageSuccess: '.newsletter-subscription__success'
+    formNewsletter: '#newsletter-subscription-form',
+    messageSuccess: '#newsletter-subscription-success'
   };
 
   const form = document.querySelector(selectors.formNewsletter);
@@ -18,10 +18,8 @@ const listenNewsletterForm = () => {
         body: new FormData(form)
       }).catch(console.error);
 
-      const elementToHide = form;
       const elementToDisplay = document.querySelector(selectors.messageSuccess);
 
-      toggleVisibility(elementToHide);
       toggleVisibility(elementToDisplay);
     });
   }

@@ -1,6 +1,5 @@
 (ns wh.blogs.blog.db
-  (:require
-    [#?(:cljs cljs.spec.alpha :clj clojure.spec.alpha) :as s]))
+  (:require [#?(:cljs cljs.spec.alpha :clj clojure.spec.alpha) :as s]))
 
 (defn id
   [db]

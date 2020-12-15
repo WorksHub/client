@@ -1,0 +1,5 @@
+(ns wh.styles.promotions)
+(def create-promotion "promotions__create-promotion--3zs0v")
+(def create-promotion__description "promotions__create-promotion__description--3N-At")
+(def create-promotion__send "promotions__create-promotion__send--2bToF")
+(def create-promotion__send__button "promotions__create-promotion__send__button--21nrY")

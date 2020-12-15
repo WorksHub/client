@@ -287,36 +287,6 @@
 
 ;; ─────────────────────────────────────────────────────────────────────────────
 
-(defn improve-feed-recommendations []
-  (let [set-public-feed (interop/on-click-fn
-                          #?(:clj  "setPublicFeed();"
-                             :cljs #(dispatch [::events/set-public-feed])))]
-    [:section (util/smc style/section style/section--improve-feed)
-     [:h1 (util/smc style/section__title style/section--improve-feed__title)
-      "Improve your recommendations"]
-
-     [:a {:href (routes/path :improve-recommendations)}
-      [:h3 (util/smc style/cta__link)
-       [:span "This is all the content we have selected for you. To see more great content (and become more attractive to employers!) "]
-       [:span (util/smc style/cta__link__accent)
-        "Add more skills to you profile."]]]
-
-     [:h3 (merge (util/smc style/cta__link)
-                 set-public-feed)
-      [:span "If you don't feel like it, go on and "]
-      [:span (util/smc style/cta__link__accent)
-       "View more content!"]]
-
-     [:div (util/smc style/improve-feed__buttons)
-      [c/section-button {:title    "View more Content"
-                         :on-click set-public-feed}]
-
-      [c/section-button {:title "Add skills"
-                         :href  (routes/path :improve-recommendations)
-                         :type  :filled}]]]))
-
-;; ─────────────────────────────────────────────────────────────────────────────
-
 (defn improve-your-recommendations
   [logged-in?]
   (when logged-in?

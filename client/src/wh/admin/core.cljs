@@ -12,7 +12,8 @@
             [wh.admin.create-offer.views :as create-offer]
             [wh.admin.tags.views :as tags]
             [wh.common.user :as user-common]
-            [wh.db :as db]))
+            [wh.db :as db]
+            [wh.promotions.create-promotion.views :as create-promotion]))
 
 (def page-mapping
   {:candidates           {:page candidates/page, :can-access? user-common/admin?}
@@ -21,7 +22,10 @@
    :admin-articles       {:page articles/page, :can-access? user-common/admin?}
    :create-company-offer {:page create-offer/page, :can-access? user-common/admin?}
    :tags-edit            {:page tags/page, :can-access? user-common/admin?}
-   :feed-preview         {:page activity-views/preview :can-access? user-common/admin?}})
+   :feed-preview         {:page activity-views/preview :can-access? user-common/admin?}
+   ;; TODO: CH4423
+   ;; :promotions-preview preview/page
+   :create-promotion     {:page create-promotion/page :can-access? user-common/admin?}})
 
 (reg-event-db
   ::initialize-page-mapping

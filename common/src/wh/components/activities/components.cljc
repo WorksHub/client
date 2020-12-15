@@ -8,6 +8,8 @@
             [wh.components.skeletons.components :as skeletons]
             [wh.components.tag :as tag]
             [wh.interop :as interop]
+            [wh.landing-new.events :as events]
+            [wh.re-frame.events :refer [dispatch]]
             [wh.routes :as routes]
             [wh.styles.activities :as styles]
             [wh.util :as util]
@@ -291,10 +293,10 @@
 
 (defn card-not-found [selected-tags]
   (let [[text1 text2] (if (< (count selected-tags) 2)
-                        ["Hmm, looks likes there’s currently no content that features that particular language"
-                         "Be the first to create some content for that language"]
-                        ["Hmm, looks likes there’s currently no content that features these languages"
-                         "Be the first to create some content for these languages"])]
+                        ["Hmm, looks likes there’s currently no content that features that particular tag."
+                         "Be the first to create some content."]
+                        ["Hmm, looks likes there’s currently no content that features these tags."
+                         "Be the first to create some content."])]
     [card :not-found
      [:div (util/smc styles/not-found)
       [tag/tag-list
@@ -303,9 +305,29 @@
                     :inverted? true
                     :label (:slug %))
             selected-tags)]
-      [:span (util/smc styles/not-found__title) text1]
+      [:span (util/smc styles/not-found__title) "Oops, it's empty"]
+      [:span (util/smc styles/not-found__subtitle) text1]
       [:span (util/smc styles/not-found__subtitle) text2]
       [button {:href (routes/path :contribute) :type :filled-short} "Write an article"]]]))
+
+(defn improve-feed-recommendations []
+  [card :default
+   [:div (util/smc styles/not-found)
+    [:span (util/smc styles/not-found__title) "Improve recommendations"]
+    [:span (util/smc styles/not-found__subtitle) "This is all the content we have selected for you. Add skills to see more great content."]
+    [button {:href (routes/path :improve-recommendations) :type :filled-short} "Add skills"]]])
+
+(defn see-all-content []
+  [card :default
+   [:div (util/smc styles/not-found)
+    [:span (util/smc styles/not-found__title) "See all content"]
+    [:span (util/smc styles/not-found__subtitle) "See all jobs, articles & issues without your personal filter."]
+    [button (merge
+              {:type :filled-short}
+              (interop/on-click-fn
+                #?(:clj  "setPublicFeed();"
+                   :cljs #(dispatch [::events/set-public-feed]))))
+     "See all content"]]])
 
 (defn currency-symbol [compensation]
   (some-> compensation

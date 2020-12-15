@@ -1,6 +1,6 @@
 (ns wh.graphql.jobs
-  (:require
-    [wh.graphql.fragments])
+  (:require [wh.graphql.fragments]
+            [wh.graphql-cache :refer [reg-query]])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery def-query-template def-query-from-template]]))
 
@@ -46,6 +46,8 @@
 
 (def-query-from-template job-query--default job-query
                          {:fields :fragment/jobFields})
+
+(reg-query :job job-query--default)
 
 (def-query-from-template job-query--company job-query
                          {:fields [[:fragment/jobFields] :matchingUsers]})

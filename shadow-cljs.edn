@@ -53,7 +53,9 @@
                  :search          {:entries    [wh.search.core]
                                    :depends-on #{:common :user :venia}}
                  :landing-page    {:entries    [wh.landing-page.core]
-                                   :depends-on #{:common}}}
+                                   :depends-on #{:common}}
+                 :profile         {:entries    [wh.profile.core]
+                                   :depends-on #{:common :venia}}}
 
                 :output-dir       "target/resources/public/js"
                 :asset-path       "/js"

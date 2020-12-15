@@ -67,9 +67,6 @@
 (defmethod activity-card :default [_activity _opts]
   nil)
 
-(defn tag-picker []
-  [:div (util/smc styles/card styles/card--tag-picker) "Tag picker"])
-
 (def additional-info-threshold 6)
 (defn split-into-4-groups [elms]
   (if (> (count elms) additional-info-threshold)
@@ -184,11 +181,11 @@
      (when not-enough-activities?
        [:<>
         [:hr {:class styles/separator}]
-        [side-cards/improve-feed-recommendations]])
+        [:<>
+         [activities/improve-feed-recommendations]
+         [activities/see-all-content]]])
 
      [components/prev-next-buttons newer-than older-than]]))
-
-
 
 (defn main-column [logged-in? jobs blogs issues vertical]
   (let [activities             (<sub [::subs/recent-activities])

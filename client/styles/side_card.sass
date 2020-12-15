@@ -277,16 +277,20 @@ $shadow: 0 0 0 2px $primary-red
       color: $text-white
 
 .input
-  height: 46px
-  border: 1px solid $grey200
+  height: 40px
+  border: 1px solid $color-border
   width: 100%
-  padding: 14px 16px
+  border-radius: 4px
+  padding: 16px
+  color: $color-form-text
+  font-size: 14px
+  font-weight: 500
 
   &:hover
     border: 1px solid $grey300
 
   &:focus
-    @include focus
+    outline-color: $color-border-focus
 
 .input--error
   border-color: $error-red
@@ -299,53 +303,3 @@ $shadow: 0 0 0 2px $primary-red
 .header-image
   padding: 0 18px
   margin-bottom: 12px
-
-.improve-feed__header-image
-  padding: 16px 54px
-  margin-bottom: 12px
-  width: 70%
-
-.improve-feed__button--cta
-  margin-top: 16px
-
-.improve-feed__codi
-  height: 40px
-  width: 40px
-  position: relative
-  top: -16px
-  left: -2px
-
-.improve-feed__buttons
-  display: grid
-  grid-template-columns: 1fr 1fr
-  grid-template-rows: 1fr
-  grid-gap: 16px
-  margin-top: 24px
-
-.section--improve-feed
-  padding: 20px
-  box-shadow: 0px 4px 8px $card-shadow-color
-
-.section--improve-feed__title
-  margin-bottom: 16px
-
-.cta__link
-  color: $text-black
-  font-size: 13px
-  font-weight: 500
-  line-height: 21px
-  white-space: pre-wrap
-  cursor: pointer
-  margin: 0 -4px 16px -4px
-  padding: 4px 4px
-  +tablet
-    margin: 4px -8px
-    padding: 4px 8px
-  &:hover
-    color: $primary-red
-    background-color: $grey100
-
-.cta__link__accent
-  color: $primary-red
-  font-weight: 600
-  letter-spacing: -0.01em

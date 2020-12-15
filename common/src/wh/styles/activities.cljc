@@ -88,3 +88,4 @@
 (def issue-contributor__title--link "activities__issue-contributor__title--link--16S9K")
 (def issue-contributor__avatar "activities__issue-contributor__avatar--2Yebu")
 (def issue-contributor__img "activities__issue-contributor__img--3MyQI")
+(def bounceInLeft "activities__bounceInLeft--3pCze")

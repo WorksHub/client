@@ -8,16 +8,19 @@
 (defquery fetch-company-query
   {:venia/operation {:operation/type :query
                      :operation/name "company"}
-   :venia/variables [{:variable/name "slug"
-                      :variable/type :String!}]
-   :venia/queries [[:company {:slug :$slug}
-                    [:id :slug :name :logo :profileEnabled :descriptionHtml :size
-                     :foundedYear :howWeWork :additionalTechInfo :hasPublishedProfile
-                     [:techScales [:testing :ops :timeToDeploy]]
-                     [:locations [:city :country :countryCode :region :subRegion :state]]
-                     [:tags :fragment/tagFields]
-                     [:videos [:youtubeId :thumbnail :description]]
-                     [:images [:url :width :height]]]]]})
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID}
+                     {:variable/name "slug"
+                      :variable/type :String}]
+   :venia/queries   [[:company {:slug :$slug
+                                :id   :$id}
+                      [:id :slug :name :logo :profileEnabled :descriptionHtml :size
+                       :foundedYear :howWeWork :additionalTechInfo :hasPublishedProfile
+                       [:techScales [:testing :ops :timeToDeploy]]
+                       [:locations [:city :country :countryCode :region :subRegion :state]]
+                       [:tags :fragment/tagFields]
+                       [:videos [:youtubeId :thumbnail :description]]
+                       [:images [:url :width :height]]]]]})
 
 (defquery fetch-company-query--card
   {:venia/operation {:operation/type :query

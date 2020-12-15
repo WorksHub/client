@@ -28,6 +28,7 @@ import './stream_preview.sass';
 import './iconsset.sass';
 import './register.sass';
 import './profile.sass';
+import './promotions.sass';
 
 // components
 import './branding.sass';
@@ -49,3 +50,4 @@ import './banner.sass';
 import './tasks.sass';
 import './modal_publish_job.sass'
 import './payment.sass';
+import './newsletter_subscription.sass'

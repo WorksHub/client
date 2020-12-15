@@ -66,7 +66,8 @@
    :applied                    :logged-in
    :tags-edit                  :admin
    :search                     :search
-   :user                       :profile})
+   :user                       :profile
+   :create-promotion           :admin})
 
 (defn module-for
   [handler user-type]
