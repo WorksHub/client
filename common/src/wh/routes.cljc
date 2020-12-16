@@ -173,6 +173,7 @@
 
               ;; Non UI routes - redirects, webhooks, API, xml
               ["sitemap.xml" :sitemapxml]
+              ["robots.txt" :robots]
               ["rss.xml" :rss]
               ["jooble/" {[:region ".xml"] :jooble}]
               ["magic-link/" {[:token] :magic-link}]
