@@ -37,9 +37,12 @@
        (-> issue issue->status str/capitalize)]
       [components/text-with-icon {:icon "git"} pr-count]
       [components/text-with-icon {:icon "couple"} contributors-count]
-      [components/text-with-icon {:icon (str "issue-level-" (name level))}
-       (-> level name str/capitalize)]
+      ;; it's unsafe to call (name) on possibly nil value
+      (when level
+        [components/text-with-icon {:icon (str "issue-level-" (name level))}
+         (-> level name str/capitalize)])
       [components/primary-language repo]
+
       [components/compensation-amount compensation]]]]))
 
 (defn base-card

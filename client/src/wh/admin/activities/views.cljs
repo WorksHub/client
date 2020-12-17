@@ -11,6 +11,7 @@
   (case verb
     "publish"   styles/activity--publish
     "highlight" styles/activity--highlight
+    "promote"   styles/activity--promote
     nil))
 
 (defn activity

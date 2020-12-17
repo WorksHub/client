@@ -716,12 +716,13 @@
 (defn target-value [ev]
   (-> ev .-target .-value))
 
-(defn text-field [value {:keys [label on-change placeholder class on-enter data-test] :as _opts}]
+(defn text-field [value {:keys [label on-change placeholder class on-enter data-test auto-focus] :as _opts}]
   [:input {:type        "text"
            :value       value
            :class       (util/mc styles/text-field class)
            :placeholder placeholder
            :data-test   data-test
+           :autoFocus   auto-focus
            :on-key-down (fn [e]
                           (when (and (= "Enter" (.-key e)) on-enter)
                             (on-enter)))

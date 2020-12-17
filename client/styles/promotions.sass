@@ -1,3 +1,5 @@
+@import 'colours'
+
 .create-promotion
   max-width: 674px
   &__description
@@ -5,6 +7,10 @@
     margin-bottom: 24px
   &__send
     margin-top: 24px
-    max-width: 200px
+    &__status
+      color: $primary-red
+      text-align: center
+      flex: 1
+      margin-bottom: 24px
     &__button
       width: 300px

@@ -2,6 +2,7 @@
 (def activity "stream_preview__activity--1G6k7")
 (def activity--publish "stream_preview__activity--publish--Cn3JZ")
 (def activity--highlight "stream_preview__activity--highlight--3KvTl")
+(def activity--promote "stream_preview__activity--promote--1ouwv")
 (def header "stream_preview__header--2f0MA")
 (def show-hide "stream_preview__show-hide--3CUsN")
 (def date "stream_preview__date--1ukXf")

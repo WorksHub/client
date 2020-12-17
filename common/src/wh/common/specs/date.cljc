@@ -13,7 +13,7 @@
     [spec-tools.core :as st]))
 
 (def leona-custom-scalar
-  {:parse     #(tf/parse (tf/formatters :date-time) %)
+  {:parse     #(tc/to-date (tf/parse (tf/formatters :date-time) %))
    :serialize #(cond (string? %) % ;; fingers crossed it's in the right format
                      (inst? %) (tf/unparse (tf/formatters :date-time) (tc/from-date %)))})
 
@@ -31,8 +31,8 @@
 
 ;; custom scalar provided in wh.graphql
 (s/def :wh/date (st/spec
-                 (s/with-gen
-                   (s/conformer conform-date-time identity)
-                   #(gen/return #?(:clj (java.util.Date.)
-                                   :cljs (js/Date.))))
-                 {:type '(custom :date)})) ;; required by leona
+                  (s/with-gen
+                    (s/conformer conform-date-time)
+                    #(gen/return #?(:clj (java.util.Date.)
+                                    :cljs (js/Date.))))
+                  {:type '(custom :date)})) ;; required by leona
