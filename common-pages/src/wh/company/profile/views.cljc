@@ -1,44 +1,44 @@
 (ns wh.company.profile.views
-  (:require
-    #?(:cljs [wh.common.logo])
-    #?(:cljs [wh.common.upload :as upload])
-    #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
-    #?(:cljs [wh.components.conversation.views :refer [codi-message]])
-    #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
-    #?(:cljs [wh.components.github :as github])
-    #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
-    #?(:cljs [wh.components.stats.views :refer [stats-item]])
-    #?(:cljs [wh.user.subs])
-    [clojure.string :as str]
-    [wh.common.data :as data]
-    [wh.common.data.company-profile :as company-data]
-    [wh.common.specs.company :as company-spec]
-    [wh.common.specs.tags :as tag-spec]
-    [wh.common.text :as txt]
-    [wh.company.profile.db :as profile]
-    [wh.company.profile.events :as events]
-    [wh.company.profile.subs :as subs]
-    [wh.components.cards :refer [blog-card]]
-    [wh.components.carousel :refer [carousel]]
-    [wh.components.common :refer [link wrap-img img base-img]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.info-icon :refer [info-icon]]
-    [wh.components.issue :refer [issue-card]]
-    [wh.components.job :refer [job-card]]
-    [wh.components.loader :refer [loader]]
-    [wh.components.not-found :as not-found]
-    [wh.components.pods.companies :as company-pods]
-    [wh.components.stats.impl :refer #?(:clj [stats-item] :cljs [])]
-    [wh.components.tag :as tag]
-    [wh.components.videos :as videos]
-    [wh.how-it-works.views :as how-it-works]
-    [wh.interop :as interop]
-    [wh.pages.util :as putil]
-    [wh.re-frame :as r]
-    [wh.re-frame.events :refer [dispatch dispatch-sync]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.util :as util]))
+  (:require #?(:cljs [wh.common.logo])
+            #?(:cljs [wh.common.upload :as upload])
+            #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
+            #?(:cljs [wh.components.conversation.views :refer [codi-message]])
+            #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
+            #?(:cljs [wh.components.github :as github])
+            #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+            #?(:cljs [wh.components.stats.views :refer [stats-item]])
+            #?(:cljs [wh.user.subs])
+            [clojure.string :as str]
+            [wh.common.data :as data]
+            [wh.common.data.company-profile :as company-data]
+            [wh.common.specs.company :as company-spec]
+            [wh.common.specs.tags :as tag-spec]
+            [wh.common.text :as txt]
+            [wh.company.profile.db :as profile]
+            [wh.company.profile.events :as events]
+            [wh.company.profile.subs :as subs]
+            [wh.components.cards :refer [blog-card]]
+            [wh.components.carousel :refer [carousel]]
+            [wh.components.common :refer [link wrap-img img base-img]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.info-icon :refer [info-icon]]
+            [wh.components.issue :refer [issue-card]]
+            [wh.components.job :refer [job-card]]
+            [wh.components.loader :refer [loader]]
+            [wh.components.not-found :as not-found]
+            [wh.components.pods.companies :as company-pods]
+            [wh.components.stats.impl :refer #?(:clj [stats-item] :cljs [])]
+            [wh.components.tag :as tag]
+            [wh.components.videos :as videos]
+            [wh.how-it-works.views :as how-it-works]
+            [wh.interop :as interop]
+            [wh.pages.util :as putil]
+            [wh.promotions.create-promotion.components :as promote]
+            [wh.re-frame :as r]
+            [wh.re-frame.events :refer [dispatch dispatch-sync]]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
+            [wh.util :as util]))
 
 (defn edit-button
   [editing-atom on-editing]
@@ -974,57 +974,65 @@
                       (<sub [::subs/stats-item :applications]))]])
 
 (defn edit-page
-  [admin-or-owner? loading?]
-  [:div
-   [:div.main.company-profile
-    (when admin-or-owner?
-      [publish-toggle (<sub [::subs/profile-enabled?])])
-    [header admin-or-owner?]
-    [:div.split-content
-     [:div.company-profile__main.split-content__main
-      [hash-anchor "company-profile__about-us"]
-      [about-us admin-or-owner?]
-      [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
-      [company-stats "is-hidden-desktop"]
-      [hash-anchor "company-profile__technology"]
-      (when-not loading?
-        [technology admin-or-owner?])
-      [hash-anchor "company-profile__benefits"]
-      (when-not loading?
-        [benefits admin-or-owner?])
-      [company-pods/company-cta-with-registration :companies "is-hidden-desktop"]
-      [hash-anchor "company-profile__jobs"]
-      (when-not loading?
-        [job-header admin-or-owner?])
-      (when-not loading?
-        [jobs admin-or-owner?])]
-     [:div.company-profile__side.split-content__side.is-hidden-mobile
-      [company-info admin-or-owner?]
-      [company-stats]
-      [company-pods/company-cta-with-registration :companies]]]
-    (when-not loading?
+  [admin-or-owner? admin? company-id loading?]
+  (let [profile-enabled? (<sub [::subs/profile-enabled?])]
+    [:div
+     [:div.main.company-profile
+      (when admin-or-owner?
+        [publish-toggle profile-enabled?])
+      [header admin-or-owner?]
       [:div.split-content
        [:div.company-profile__main.split-content__main
-        [issues-header admin-or-owner?]
-        [issues admin-or-owner?]
-        [hash-anchor "company-profile__how-we-work"]
-        [how-we-work-header admin-or-owner?]
-        [how-we-work admin-or-owner?]
-        [blogs admin-or-owner?]
-        [photos admin-or-owner?]
-        [videos admin-or-owner?]]
+        [hash-anchor "company-profile__about-us"]
+        [about-us admin-or-owner?]
+        (when (and admin? profile-enabled?)
+          [promote/promote-button {:id company-id :type :company :class "is-hidden-desktop"}])
+        [company-info admin-or-owner? "company-profile__section--headed is-hidden-desktop"]
+        [company-stats "is-hidden-desktop"]
+        [hash-anchor "company-profile__technology"]
+        (when-not loading?
+          [technology admin-or-owner?])
+        [hash-anchor "company-profile__benefits"]
+        (when-not loading?
+          [benefits admin-or-owner?])
+        [company-pods/company-cta-with-registration :companies "is-hidden-desktop"]
+        [hash-anchor "company-profile__jobs"]
+        (when-not loading?
+          [job-header admin-or-owner?])
+        (when-not loading?
+          [jobs admin-or-owner?])]
+
        [:div.company-profile__side.split-content__side.is-hidden-mobile
-        (cond
-          #?(:cljs (<sub [:user/company?])
-             :clj  false)
-          [how-it-works/pod--company]
-          (empty? (<sub [::subs/issues]))
-          [:div] ;; display nothing if no issues
-          :else
-          [how-it-works/pod--candidate])]])]
-   [sticky-nav-bar]
-   [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
-                                         (if admin-or-owner? 170 100))]])
+        (when (and admin? profile-enabled?)
+          [promote/promote-button {:id company-id :type :company}])
+        [company-info admin-or-owner?]
+        [company-stats]
+        [company-pods/company-cta-with-registration :companies]]]
+
+      (when-not loading?
+        [:div.split-content
+         [:div.company-profile__main.split-content__main
+          [issues-header admin-or-owner?]
+          [issues admin-or-owner?]
+          [hash-anchor "company-profile__how-we-work"]
+          [how-we-work-header admin-or-owner?]
+          [how-we-work admin-or-owner?]
+          [blogs admin-or-owner?]
+          [photos admin-or-owner?]
+          [videos admin-or-owner?]]
+         [:div.company-profile__side.split-content__side.is-hidden-mobile
+          (cond
+            #?(:cljs (<sub [:user/company?])
+               :clj  false)
+            [how-it-works/pod--company]
+            (empty? (<sub [::subs/issues]))
+            [:div] ;; display nothing if no issues
+            :else
+            [how-it-works/pod--candidate])]])]
+
+     [sticky-nav-bar]
+     [:script (interop/set-class-on-scroll "company-profile__sticky" "sticky--shown"
+                                           (if admin-or-owner? 170 100))]]))
 
 (defn create-profile-carousel
   []
@@ -1276,14 +1284,15 @@
   (let [loading?               (<sub [::subs/company-query-loading?])
         enabled?               (<sub [::subs/profile-enabled?])
         company-id             (<sub [::subs/id])
-        admin-or-owner?        (or (<sub [:user/admin?])
+        admin?                 (<sub [:user/admin?])
+        admin-or-owner?        (or admin?
                                    (<sub [:user/owner? company-id]))
         has-published-profile? (<sub [::subs/has-published-profile?])]
     (cond
       (and admin-or-owner? (not has-published-profile?) (not loading?))
       [create-new-profile admin-or-owner?]
       (or admin-or-owner? enabled? loading?)
-      [edit-page admin-or-owner? loading?]
+      [edit-page admin-or-owner? admin? company-id loading?]
       :else
       [:div.main.main--center-content
        [not-found/not-found]])))

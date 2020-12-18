@@ -19,6 +19,7 @@
             [wh.job.events :as events]
             [wh.job.subs :as subs]
             [wh.pages.util :as putil]
+            [wh.promotions.create-promotion.components :as promote]
             [wh.re-frame :as r]
             [wh.re-frame.events :refer [dispatch dispatch-sync]]
             [wh.re-frame.subs :refer [<sub]]
@@ -72,26 +73,33 @@
      :html-id "job-view__edit-button"]))
 
 (defn buttons-admin-and-company-owners [{:keys [force-view-applications? condensed?]}]
-  (let [can-edit? (<sub [::subs/can-edit-jobs?])
-        show-unpublished? (<sub [::subs/show-unpublished?])
+  (let [can-edit?          (<sub [::subs/can-edit-jobs?])
+        show-unpublished?  (<sub [::subs/show-unpublished?])
         view-applications? (or (not show-unpublished?) force-view-applications?)
-        show-modal? (not (<sub [::subs/can-edit-jobs-after-first-job-published?]))
-        publishing? (<sub [::subs/publishing?])]
+        show-modal?        (not (<sub [::subs/can-edit-jobs-after-first-job-published?]))
+        publishing?        (<sub [::subs/publishing?])
+        admin?             (<sub [:user/admin?])
+        published?         (<sub [::subs/published?])]
     (cond-> [:div
              (util/smc "job__admin-buttons" [condensed? "job__admin-buttons--condensed"])
              [edit-button can-edit?]
-             [modal-publish-job/modal {:on-close #(dispatch [::modal-publish-job/toggle-modal])
-                                       :on-publish #(dispatch [::events/publish-role])
-                                       :on-publish-and-upgrade #(dispatch [::events/publish-role nil :redirect-to-payment])}]]
+             [modal-publish-job/modal
+              {:on-close               #(dispatch [::modal-publish-job/toggle-modal])
+               :on-publish             #(dispatch [::events/publish-role])
+               :on-publish-and-upgrade #(dispatch [::events/publish-role nil :redirect-to-payment])}]]
             ;;
             show-unpublished?
             (conj [jc/publish-button {:publishing? publishing?
-                                      :on-click (if show-modal?
-                                                  [::modal-publish-job/toggle-modal]
-                                                  [::events/publish-role])}])
+                                      :on-click    (if show-modal?
+                                                     [::modal-publish-job/toggle-modal]
+                                                     [::events/publish-role])}])
             ;;
             view-applications?
-            (conj [jc/view-applications-button {:href (<sub [::subs/view-applications-link])}]))))
+            (conj [jc/view-applications-button {:href (<sub [::subs/view-applications-link])}])
+
+            ;;
+            (and admin? published?)
+            (conj [promote/promote-button {:id (<sub [::subs/id]) :type :job}]))))
 
 (defn buttons-user [{:keys [id condensed?]}]
   (let [already-applied? (<sub [::subs/applied?])

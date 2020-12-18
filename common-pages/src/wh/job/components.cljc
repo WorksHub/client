@@ -1,8 +1,8 @@
 (ns wh.job.components
   (:require #?(:cljs [wh.components.modal :as modal])
+            [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch dispatch-sync]]
-            [wh.re-frame.subs :refer [<sub]]
-            [wh.interop :as interop]))
+            [wh.re-frame.subs :refer [<sub]]))
 
 (defn publish-button [{:keys [on-click publishing?]}]
   [:button.button.button--medium
@@ -18,9 +18,9 @@
    "View Applications"])
 
 (defn apply-button [{:keys [applied? id job]}]
-  (let [company? (<sub [:user/company?])
-        logged-in? (<sub [:user/logged-in?])
-        applied-jobs (<sub [:user/applied-jobs])
+  (let [company?           (<sub [:user/company?])
+        logged-in?         (<sub [:user/logged-in?])
+        applied-jobs       (<sub [:user/applied-jobs])
         show-auth-popup-fn (interop/show-auth-popup :jobpage-apply
                                                     [:job
                                                      :params {:slug (:slug job)}
@@ -32,9 +32,9 @@
         :on-click #(dispatch [:apply/try-apply job :jobpage-apply])}
        (merge {:id (cond-> "job-view__logged-out-apply-button" id (str "__" id))}
               (interop/on-click-fn show-auth-popup-fn)))
-     (cond applied? "Applied"
+     (cond applied?             "Applied"
            (some? applied-jobs) "Instant Apply"
-           :else "Apply")]))
+           :else                "Apply")]))
 
 (defn more-jobs-link [{:keys [href condensed? company-name]}]
   [:a.button.button--medium.button--inverted.button--ellipsis {:href href}

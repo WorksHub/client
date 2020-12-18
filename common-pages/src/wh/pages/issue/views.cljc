@@ -1,22 +1,22 @@
 (ns wh.pages.issue.views
-  (:require
-    #?(:cljs [reagent.core :as r])
-    #?(:cljs [wh.components.forms.views :refer [radio-buttons]])
-    #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
-    [clojure.string :as str]
-    [wh.components.common :refer [link img wrap-img]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.issue :as issue :refer [issue-card level->str level->icon]]
-    [wh.components.job :refer [job-card]]
-    [wh.components.not-found :as not-found]
-    [wh.how-it-works.views :as how-it-works]
-    [wh.pages.issue.edit.views :as edit-issue]
-    [wh.pages.issue.events :as events]
-    [wh.pages.issue.subs :as subs]
-    [wh.pages.util :as putil]
-    [wh.re-frame.events :refer [dispatch]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.util :as util]))
+  (:require #?(:cljs [reagent.core :as r])
+            #?(:cljs [wh.components.forms.views :refer [radio-buttons]])
+            #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+            [clojure.string :as str]
+            [wh.components.common :refer [link img wrap-img]]
+            [wh.components.icons :refer [icon]]
+            [wh.components.issue :as issue :refer [issue-card level->str level->icon]]
+            [wh.components.job :refer [job-card]]
+            [wh.components.not-found :as not-found]
+            [wh.how-it-works.views :as how-it-works]
+            [wh.pages.issue.edit.views :as edit-issue]
+            [wh.pages.issue.events :as events]
+            [wh.pages.issue.subs :as subs]
+            [wh.pages.util :as putil]
+            [wh.promotions.create-promotion.components :as promote]
+            [wh.re-frame.events :refer [dispatch]]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.util :as util]))
 
 ; TODO: CH4302
 (defn show-popup-button []
@@ -307,12 +307,16 @@
 
 (defn render-page
   []
-  (let [logged-in? (<sub [:user/logged-in?])
-        hiw-pod (cond
-                  (<sub [:user/company?]) [how-it-works/pod--company]
-                  logged-in?              [how-it-works/pod--candidate]
-                  :else                   [how-it-works/pod--basic])
-        loading-failed? (<sub [::subs/issue-loading-failed?])]
+  (let [logged-in?      (<sub [:user/logged-in?])
+        hiw-pod         (cond
+                          (<sub [:user/company?]) [how-it-works/pod--company]
+                          logged-in?              [how-it-works/pod--candidate]
+                          :else                   [how-it-works/pod--basic])
+        loading-failed? (<sub [::subs/issue-loading-failed?])
+        issue-id        (<sub [::subs/id])
+        live?           (<sub [::subs/live?])
+        admin?          (<sub [:user/admin?])
+        can-promote?    (and live? admin?)]
     (cond
       loading-failed?
       [:div.main.main--center-content
@@ -324,6 +328,8 @@
          [:div.issue__main
           [header {:show-like-or-edit? logged-in?}]         ;; TODO implement likes
           [:div.is-hidden-desktop
+           (when can-promote?
+             [promote/promote-button {:id issue-id :type :issue}])
            [author]]
           [description]
           (when (<sub [::subs/show-contributors?])
@@ -334,6 +340,8 @@
           [other-issues]
           [company-jobs logged-in?]]
          [:div.issue__side.is-hidden-mobile
+          (when can-promote?
+            [promote/promote-button {:id issue-id :type :issue}])
           [author]
           hiw-pod
           [activity]]]]

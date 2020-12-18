@@ -35,6 +35,19 @@
              {:id (<sub [:wh/page-param :id])}]))))
 
 (reg-sub
+  ::id
+  :<- [::issue]
+  (fn [issue _]
+    (:id issue)))
+
+(reg-sub
+  ::live?
+  :<- [::issue]
+  (fn [issue _]
+    (and (= (keyword (:status issue)) :open)
+         (:published issue))))
+
+(reg-sub
   ::title
   :<- [::issue]
   (fn [issue _]

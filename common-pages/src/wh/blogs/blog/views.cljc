@@ -1,25 +1,25 @@
 (ns wh.blogs.blog.views
-  (:require
-    #?(:cljs [reagent.core :as reagent])
-    [bidi.bidi :as bidi]
-    [clojure.string :as str]
-    [wh.blogs.blog.events :as events]
-    [wh.blogs.blog.subs :as subs]
-    [wh.components.common :refer [link]]
-    [wh.components.icons :refer [icon url-icons]]
-    [wh.components.job :refer [job-card]]
-    [wh.components.newsletter :as newsletter]
-    [wh.components.pods.candidates :as candidate-pods]
-    [wh.components.recommendation-cards :as recommendation-cards]
-    [wh.components.tag :as tag]
-    [wh.components.not-found :as not-found]
-    [wh.interop :as interop]
-    [wh.pages.util :as putil]
-    [wh.re-frame :as r]
-    [wh.re-frame.events :refer [dispatch]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.util :as util])
+  (:require #?(:cljs [reagent.core :as reagent])
+            [bidi.bidi :as bidi]
+            [clojure.string :as str]
+            [wh.promotions.create-promotion.components :as promote]
+            [wh.blogs.blog.events :as events]
+            [wh.blogs.blog.subs :as subs]
+            [wh.components.common :refer [link]]
+            [wh.components.icons :refer [icon url-icons]]
+            [wh.components.job :refer [job-card]]
+            [wh.components.newsletter :as newsletter]
+            [wh.components.pods.candidates :as candidate-pods]
+            [wh.components.recommendation-cards :as recommendation-cards]
+            [wh.components.tag :as tag]
+            [wh.components.not-found :as not-found]
+            [wh.interop :as interop]
+            [wh.pages.util :as putil]
+            [wh.re-frame :as r]
+            [wh.re-frame.events :refer [dispatch]]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
+            [wh.util :as util])
   #?(:cljs (:require-macros [clojure.core.strint :refer [<<]])))
 
 (defn link-to-share []
@@ -195,20 +195,25 @@
   (case (<sub [::subs/blog-error])
     :blog-not-found [:div.main.main--center-content
                      [not-found/not-found]]
-    :unknown-error [:div.main "Loading error"]
+    :unknown-error  [:div.main "Loading error"]
     [:div {:class (util/merge-classes "blog" "main")}
      [blog-hero]
      [:div.split-content
       [:div.split-content__main
        [blog-content]]
-      (let [{:keys [blogs issues jobs]} (<sub [::subs/recommendations])]
+      (let [{:keys [blogs issues jobs]} (<sub [::subs/recommendations])
+            admin?                      (<sub [:user/admin?])
+            published?                  (<sub [::subs/published?])]
         [:div.split-content__side
+         (when (and admin? published?)
+           [promote/promote-button {:id (:id (<sub [::subs/blog])) :type :article}])
+
          [author-info]
          [recommendation-cards/jobs {:jobs           jobs
                                      :instant-apply? (some? (<sub [:user/applied-jobs]))
                                      :company-id     (<sub [:user/company-id])
                                      :logged-in?     (<sub [:user/logged-in?])
-                                     :admin?         (<sub [:user/admin?])}]
+                                     :admin?         admin?}]
          [recommendation-cards/blogs {:blogs blogs}]
          [recommendation-cards/issues {:issues issues}]
          [candidate-pods/candidate-cta]])]

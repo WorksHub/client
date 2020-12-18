@@ -4,3 +4,8 @@
 (def create-promotion__send "promotions__create-promotion__send--2bToF")
 (def create-promotion__send__status "promotions__create-promotion__send__status--2LdP9")
 (def create-promotion__send__button "promotions__create-promotion__send__button--21nrY")
+(def button--promote "promotions__button--promote--1uBjh")
+(def button--promote--inverted "promotions__button--promote--inverted--EmCPH")
+(def button--promote--inverted-highlighted "promotions__button--promote--inverted-highlighted--a0a3u")
+(def button--promote--short "promotions__button--promote--short--1xu4R")
+(def button--promote--dark "promotions__button--promote--dark--helEC")

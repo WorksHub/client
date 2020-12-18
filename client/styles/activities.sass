@@ -3,6 +3,7 @@
 @import 'vars'
 @import 'mixins'
 @import 'animations'
+@import 'button'
 
 $action-block-height: 25px
 $space-mobile: 16px
@@ -220,52 +221,7 @@ $space-tablet: 20px
     fill: $primary-red
 
 .button
-  border-radius: 4px
-  height: 40px
-  align-items: center
-  display: flex
-  justify-content: center
-  background: $primary-red
-  border: 1px solid $border-red
-  box-sizing: border-box
-  color: $text-white
-  padding: 0 20px
-
-  font-family: $font-family
-  font-size: 12px
-  white-space: nowrap
-  font-weight: 600
-  letter-spacing: 0.02em
-  line-height: 135%
-  text-transform: capitalize
-
-  +tablet
-    font-size: 13px
-    padding: 0 40px
-
-  &:hover
-    background: $highlight-red
-    color: $primary-red
-    cursor: pointer
-  &--inverted,
-  &--inverted-highlighted
-    background: transparent
-    border: none
-    color: $primary-red
-    padding: 0 20px
-  &--inverted-highlighted
-    border: 1px solid $border-red
-  &--short
-    padding: 0 40px
-
-  &--dark
-    border: 1px solid transparent
-    color: $text-white
-    background: $grey500
-
-    &:hover
-      background: $grey300
-      color: $text-white
+  @include button
 
 .article__feature
   height: 154px
