@@ -129,7 +129,8 @@
        (for [blog ch1]
          ^{:key (:id blog)}
          [blog-row  blog])
-       [newsletter/newsletter {:logged-in? (<sub [:user/logged-in?])}]
+       [newsletter/newsletter {:logged-in? (<sub [:user/logged-in?])
+                               :type :blog-list}]
        (when (> ch-size 1)
          [recommended-jobs-mobile])
        (for [blog ch2]

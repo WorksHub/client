@@ -13,7 +13,10 @@
                    :or {type :listing}}]
   (let [render (fn []
                  (when-not logged-in?
-                   [:div {:class styles/card__wrapper}
+                   [:div (util/smc styles/card__wrapper
+                                   [(= type :blog-list) styles/card__wrapper--blog-list]
+                                   [(= type :blog-content) styles/card__wrapper--blog-content]
+                                   [(= type :job-list) styles/card__wrapper--job-list])
                     [:form
                      {:class styles/card
                       :id    container-id-for-script}

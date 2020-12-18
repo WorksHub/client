@@ -174,7 +174,8 @@
         (when-not show-newsletter?
           [blog-original-source])]]]
      (when show-newsletter?
-       [newsletter/newsletter {:logged-in? user-logged-in?}])
+       [newsletter/newsletter {:logged-in? user-logged-in?
+                               :type :blog-content}])
      (when show-newsletter?
        [:div.blog__content
         [:div.blog-section__width
