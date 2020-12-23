@@ -1,10 +1,7 @@
-@import 'colours'
+@import 'admin_preview'
 
 .activity
-  background: $background-white
-  font-size: 16px
-  margin-bottom: 14px
-  padding: 14px
+  @extend .object
 
   &--publish
     border-top: 2px solid #44f
@@ -14,15 +11,3 @@
 
   &--promote
     border-top: 2px solid $aquamarine
-
-.header
-  display: flex
-  justify-content: space-between
-
-.show-hide
-  color: #00b
-  text-decoration: underline
-  font-size: 12px
-
-.date
-  margin-bottom: 10px

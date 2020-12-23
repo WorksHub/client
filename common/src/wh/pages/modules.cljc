@@ -37,7 +37,8 @@
    :homepage                   {"candidate" :logged-in
                                 "company"   :company
                                 "admin"     :company
-                                nil         :landing-page} ;; when there is no user type (i.e. not logged in)
+                                ;; when there is no user type (i.e. not logged in)
+                                nil         :landing-page}
    :homepage-dashboard         :logged-in
    :improve-recommendations    :logged-in
    :issue                      :issues
@@ -67,7 +68,8 @@
    :tags-edit                  :admin
    :search                     :search
    :user                       :profile
-   :create-promotion           :admin})
+   :create-promotion           :admin
+   :promotions-preview         :admin})
 
 (defn module-for
   [handler user-type]

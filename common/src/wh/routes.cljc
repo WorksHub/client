@@ -138,9 +138,7 @@
               ["admin/" {"companies"  :admin-companies
                          "learn"      :admin-articles
                          "feed"       :feed-preview
-                         "promotions" {
-                                       ;; TODO: CH4423
-                                       ;; ""                   :promotions-preview
+                         "promotions" {""                      :promotions-preview
                                        ["/new/" :type "/" :id] :create-promotion}}]
               ["candidates/" {""                    :candidates
                               "new"                 :create-candidate

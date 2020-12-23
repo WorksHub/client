@@ -1,5 +1,6 @@
 @import 'colours'
 @import 'button'
+@import 'admin_preview'
 
 .create-promotion
   max-width: 674px
@@ -18,3 +19,9 @@
 
 .button--promote
   @include button
+
+
+.preview
+  &__promotion
+    @extend .object
+    border-top: 2px solid $aquamarine
