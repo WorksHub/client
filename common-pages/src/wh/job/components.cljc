@@ -17,24 +17,34 @@
     :id   "job-view__view-applications-button"}
    "View Applications"])
 
-(defn apply-button [{:keys [applied? id job]}]
+(defn apply-button-options [{:keys [applied? _id job]}]
   (let [company?           (<sub [:user/company?])
         logged-in?         (<sub [:user/logged-in?])
         applied-jobs       (<sub [:user/applied-jobs])
         show-auth-popup-fn (interop/show-auth-popup :jobpage-apply
                                                     [:job
                                                      :params {:slug (:slug job)}
-                                                     :query-params {:apply "true"}])]
+                                                     :query-params {:apply "true"}])
+        options (if logged-in?
+                  {:disabled (or applied? company?)
+                   :on-click #(dispatch [:apply/try-apply job :jobpage-apply])}
+                  (interop/on-click-fn show-auth-popup-fn))
+        text (cond applied?             "Applied"
+                   (some? applied-jobs) "Instant Apply"
+                   :else                "Apply")]
+    {:text text
+     :options options}))
+
+(defn apply-button [{:keys [_applied? id _job] :as args}]
+  (let [logged-in?         (<sub [:user/logged-in?])
+        {:keys [text options]} (apply-button-options args)]
     [:button.button.button--medium
-     (if logged-in?
-       {:id       (cond-> "job-view__apply-button" id (str "__" id))
-        :disabled (or applied? company?)
-        :on-click #(dispatch [:apply/try-apply job :jobpage-apply])}
-       (merge {:id (cond-> "job-view__logged-out-apply-button" id (str "__" id))}
-              (interop/on-click-fn show-auth-popup-fn)))
-     (cond applied?             "Applied"
-           (some? applied-jobs) "Instant Apply"
-           :else                "Apply")]))
+     (merge
+       {:id (if logged-in?
+              (cond-> "job-view__apply-button" id (str "__" id))
+              (cond-> "job-view__logged-out-apply-button" id (str "__" id)))}
+       options)
+     text]))
 
 (defn more-jobs-link [{:keys [href condensed? company-name]}]
   [:a.button.button--medium.button--inverted.button--ellipsis {:href href}

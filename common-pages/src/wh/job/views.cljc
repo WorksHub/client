@@ -102,16 +102,14 @@
             (conj [promote/promote-button {:id (<sub [::subs/id]) :type :job}]))))
 
 (defn buttons-user [{:keys [id condensed?]}]
-  (let [already-applied? (<sub [::subs/applied?])
-        job (<sub [::subs/apply-job])
-        name (<sub [::subs/company-name])
+  (let [name (<sub [::subs/company-name])
         slug (<sub [::subs/company-slug])
         profile-enabled? (<sub [::subs/profile-enabled?])
         show-about? (and (not condensed?) profile-enabled?)]
     [:div
      (util/smc "job__apply-buttons" [condensed? "job__apply-buttons--condensed"])
-     [jc/apply-button {:applied? already-applied?
-                       :job      job
+     [jc/apply-button {:applied? (<sub [::subs/applied?])
+                       :job      (<sub [::subs/apply-job])
                        :id       id}]
      [:div
       [jc/more-jobs-link {:href         (routes/path :company-jobs :params {:slug slug})
@@ -447,12 +445,12 @@
       (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :class "logo"})
       [icon "codi"])]
    [:div.job__apply-sticky__title (<sub [::subs/title])]
-   [:button.button
-    {:id "job-apply-sticky__apply-button"
-     :on-click #(dispatch [:apply/try-apply (<sub [::subs/apply-job]) :jobpage-apply])}
-    (if (some? (<sub [:user/applied-jobs]))
-      "Instant Apply"
-      "Apply")]])
+   (let [{:keys [text options]} (jc/apply-button-options {:applied? (<sub [::subs/applied?])
+                                                          :job      (<sub [::subs/apply-job])})]
+     [:button.button
+      (merge {:id "job-apply-sticky__apply-button"}
+             options)
+      text])])
 
 (defn actions []
   (let [admin?   (<sub [:user/admin?])
@@ -504,9 +502,8 @@
          :on-change [::events/edit-note]
          :on-ok     #(dispatch [::events/hide-notes-overlay])
          :on-close  #(dispatch [::events/hide-notes-overlay])])]
-     (if true #_(<sub [::subs/show-apply-sticky?])
-         [apply-sticky]
-         [:span "nope"])]))
+     (when (<sub [::subs/show-apply-sticky?])
+         [apply-sticky])]))
 
 (defn admin-publish-prompt
   [permissions company-id success-event]

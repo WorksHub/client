@@ -365,11 +365,10 @@
 
 (reg-sub
   ::show-apply-sticky?
-  :<- [::sub-db]
   :<- [::applied?]
   :<- [:user/company?]
   :<- [:user/admin?]
-  (fn [[sub-db applied? company? admin?] _]
+  (fn [[applied? company? admin?] _]
     (not (or applied? company? admin?))))
 
 (reg-sub
