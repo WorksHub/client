@@ -152,7 +152,10 @@
                                   :label "Postcode / Zipcode")]
            [text-field nil (field ::create-job/location__state
                                   :label "State"
-                                  :help "USA only")]
+                                  :help "USA only"
+                                  :hide-icon? true
+                                  :suggestions (<sub [::subs/state-suggestions])
+                                  :on-select-suggestion [::events/select-state-suggestion])]
            [text-field nil (field ::create-job/location__country
                                   :label "* Country"
                                   :hide-icon? true

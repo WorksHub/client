@@ -133,6 +133,12 @@
     (::create-job/city-suggestions db)))
 
 (reg-sub
+  ::state-suggestions
+  :<- [::sub-db]
+  (fn [db _]
+    (::create-job/state-suggestions db)))
+
+(reg-sub
   ::country-suggestions
   :<- [::sub-db]
   (fn [db _]

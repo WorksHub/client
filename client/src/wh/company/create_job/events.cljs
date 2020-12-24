@@ -167,7 +167,7 @@
           variables         (create-mutation-variables db)]
       (if errors
         (do
-          (js/console.error "Errors in form:" errors)
+          (js/console.error "Errors in form:" (clj->js errors))
           (merge {:db                (-> db
                                          (assoc-in [::create-job/sub-db ::create-job/error] nil)
                                          (assoc-in [::create-job/sub-db ::create-job/saving?] false)
@@ -490,6 +490,12 @@
     (assoc db ::create-job/country-suggestions suggestions)))
 
 (reg-event-db
+  ::set-state-suggestions
+  create-job-interceptors
+  (fn [db [suggestions]]
+    (assoc db ::create-job/state-suggestions suggestions)))
+
+(reg-event-db
   ::process-cities
   create-job-interceptors
   (fn [db [new-value]]
@@ -510,6 +516,18 @@
          (mapv (fn [country] {:id country
                               :label country}))
          (assoc db ::create-job/country-suggestions))))
+
+(reg-event-db
+  ::process-states
+  create-job-interceptors
+  (fn [db [new-value]]
+    (->> data/us-states
+         (filter (fn [[state-full-name]]
+                   (str/includes? (str/lower-case state-full-name) (str/lower-case new-value))))
+         (mapv (fn [[state-full-name state-short-name]]
+                 {:id state-short-name
+                  :label (str state-full-name " - " state-short-name)}))
+         (assoc db ::create-job/state-suggestions))))
 
 (reg-event-db
   ::attempt-country-code-assignment
@@ -545,6 +563,13 @@
                   [::set-country-suggestions []]]}))
 
 (reg-event-fx
+  ::select-state-suggestion
+  create-job-interceptors
+  (fn [{db :db} [suggestion]]
+    {:db       (assoc db ::create-job/location__state suggestion)
+     :dispatch [::set-state-suggestions []]}))
+
+(reg-event-fx
   ::edit-location__country
   create-job-interceptors
   (fn [{db :db} [new-value]]
@@ -554,6 +579,16 @@
         {:dispatch-n [[::attempt-country-code-assignment new-value]
                       [::process-countries new-value]]}
         {:dispatch [::set-country-suggestions []]}))))
+
+(reg-event-fx
+  ::edit-location__state
+  create-job-interceptors
+  (fn [{db :db} [new-value]]
+    (merge
+      {:db (assoc db ::create-job/location__state new-value)
+       :dispatch (if (seq new-value)
+                   [::process-states new-value]
+                   [::set-state-suggestions []])})))
 
 (reg-event-db
   ::open-search-location-form
