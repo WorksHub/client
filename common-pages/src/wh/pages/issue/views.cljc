@@ -8,12 +8,12 @@
             [wh.components.issue :as issue :refer [issue-card level->str level->icon]]
             [wh.components.job :refer [job-card]]
             [wh.components.not-found :as not-found]
+            [wh.components.promote-button :as promote]
             [wh.how-it-works.views :as how-it-works]
             [wh.pages.issue.edit.views :as edit-issue]
             [wh.pages.issue.events :as events]
             [wh.pages.issue.subs :as subs]
             [wh.pages.util :as putil]
-            [wh.promotions.create-promotion.components :as promote]
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.util :as util]))

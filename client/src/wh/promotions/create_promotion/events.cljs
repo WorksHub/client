@@ -64,7 +64,7 @@
                      {:variable/name "start_date"
                       :variable/type :date!}
                      {:variable/name "description"
-                      :variable/type :String!}]
+                      :variable/type :String}]
    :venia/queries   [[:create_promotion {:object_type :$object_type
                                          :object_id   :$object_id
                                          :channel     :$channel
@@ -74,25 +74,29 @@
 
 (reg-event-fx
   ::send-promotion!
-  (fn [{db :db} [_ {:keys [object-type object-id start-date description] :as args}]]
-    {:db      (assoc db ::db/promotion-status :sending)
+  (fn [{db :db} [_ {:keys [channel object-type object-id start-date description] :as args}]]
+    {:db      (assoc-in db [::db/promotion-status channel] :sending)
      :graphql {:query      create-promotion-mutation
-               :variables  {:object_type object-type
-                            :object_id   object-id
-                            :channel     :feed
-                            ;; start date might become editable later, when developing new possibilities
-                            ;; for managing promoted content
-                            :start_date  (tf/unparse (tf/formatters :date-time) (t/now))
-                            :description description}
-               :on-success [::send-promotion-success]
-               :on-failure [::send-promotion-failure]}}))
+               :variables  (cond->
+                             {:object_type object-type
+                              :object_id   object-id
+                              :channel     channel
+                              :start_date  (tf/unparse (tf/formatters :date-time) (t/now))}
+                             description (merge {:description description}))
+               :on-success [::send-promotion-success channel]
+               :on-failure [::send-promotion-failure channel]}}))
 
 (reg-event-db
   ::send-promotion-success
-  (fn [db _]
-    (assoc db ::db/promotion-status :success)))
+  (fn [db [_ channel]]
+    (assoc-in db [::db/promotion-status channel] :success)))
 
 (reg-event-db
   ::send-promotion-failure
-  (fn [db _]
-    (assoc db ::db/promotion-status :failure)))
+  (fn [db [_ channel]]
+    (assoc-in db [::db/promotion-status channel] :failure)))
+
+(reg-event-db
+  ::select-channel
+  (fn [db [_ channel]]
+    (assoc db ::db/selected-channel channel)))

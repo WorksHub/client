@@ -1,4 +1,4 @@
-(ns wh.promotions.create-promotion.components
+(ns wh.components.promote-button
   (:require [wh.routes :as routes]
             [wh.styles.promotions :as styles]
             [wh.util :as util]))

@@ -2,7 +2,7 @@
   (:require #?(:cljs [reagent.core :as reagent])
             [bidi.bidi :as bidi]
             [clojure.string :as str]
-            [wh.promotions.create-promotion.components :as promote]
+            [wh.components.promote-button :as promote]
             [wh.blogs.blog.events :as events]
             [wh.blogs.blog.subs :as subs]
             [wh.components.common :refer [link]]

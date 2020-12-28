@@ -19,15 +19,22 @@
   (fn [id _] id))
 
 
-(defn- object-state [obj not-allowed]
+(defn- object-state
   "Takes object and condition that determines whether object should be blocked
   from promoting (when it's unpublished, or closed), and returns object,
   or information why object is not given, or nil when object is totally absent."
+  [obj not-allowed]
   (cond
     (nil? obj)  nil
     not-allowed :not-allowed
     (map? obj)  obj
     :else       :not-recognized))
+
+(defn- prepare-job-preview
+  "Prepare job data structure to be previewed safely on feed and jobsboard"
+  [job]
+  (->> (set/rename-keys (:company job) {:logo :image-url})
+       (assoc job :job-company)))
 
 (reg-sub-raw
   ::job
@@ -37,13 +44,8 @@
             ;; use some-> to make sure data is here, and we do not try to process absent data
             job (some-> (<sub [:graphql/result :job {:id id}])
                         (:job)
-                        (set/rename-keys
-                          {:company :job-company})
-                        (update
-                          :job-company
-                          (fn [company]
-                            (set/rename-keys company {:logo :image-url})))
-                        (job/translate-job))]
+                        (job/translate-job)
+                        (prepare-job-preview))]
         (object-state job (not (:published job)))))))
 
 (reg-sub-raw
@@ -100,17 +102,24 @@
   (fn [{:keys [::db/description] :as db} _]
     description))
 
-(reg-sub
+(reg-sub-raw
   ::can-publish?
-  :<- [::description]
-  :<- [::object]
-  :<- [::send-promotion-status]
-  (fn [[description object status] _]
-    (and (> (count description) 3)
-         (map? object)
-         (not (#{:sending :success} status)))))
+  (fn [_ [_ channel]]
+    (reaction
+      (let [status      (<sub [::send-promotion-status channel])
+            object      (<sub [::object])
+            description (<sub [::description])]
+        (and (map? object)
+             (not (#{:sending :success} status))
+             (or (not= channel :feed)
+                 (> (count description) 3)))))))
 
 (reg-sub
   ::send-promotion-status
-  (fn [db _]
-    (get db ::db/promotion-status)))
+  (fn [db [_ channel]]
+    (get-in db [::db/promotion-status channel])))
+
+(reg-sub
+  ::selected-channel
+  (fn [db [_ channel]]
+    (get db ::db/selected-channel :feed)))
