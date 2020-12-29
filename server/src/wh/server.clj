@@ -115,10 +115,14 @@
       wh-index-template
       html-response))
 
+(defn wrap-catchall [handler]
+  (fn [request] (or (handler request) (resp/not-found "The requested resource was not found."))))
+
 (def handler
   (-> (bidi-ring/make-handler routes/routes (constantly index-handler))
       (wrap-resource "public")
-      (wrap-content-type)))
+      (wrap-content-type)
+      (wrap-catchall)))
 
 (defonce server
   (atom nil))
