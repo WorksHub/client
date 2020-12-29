@@ -26,7 +26,7 @@
   (fn [_ [retry-fn _error]]
     {:dispatch [:error/set-global
                 "Something went wrong while we tried to fetch your data 😢"
-                [retry-fn]]}))
+                retry-fn]}))
 
 (reg-event-db
   ::fetch-issues-success
@@ -50,7 +50,7 @@
     (fn [{db :db} []]
       {:graphql {:query      queries/fetch-issues-languages
                  :on-success [::fetch-issues-languages-success]
-                 :on-failure [::failure ::fetch-issues-languages]}})))
+                 :on-failure [::failure [::fetch-issues-languages]]}})))
 
 #?(:cljs
    (reg-event-fx
@@ -69,7 +69,7 @@
                                :sort          (issues/issues-sort
                                                 (::db/query-params db))}
                   :on-success [::fetch-issues-success]
-                  :on-failure [::failure ::fetch-issues]}})))
+                  :on-failure [::failure [::fetch-issues company-id page-number language]]}})))
 
 #?(:cljs
    (reg-event-fx
