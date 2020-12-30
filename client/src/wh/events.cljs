@@ -1,17 +1,15 @@
 (ns wh.events
   (:require [cljs.reader :as r]
             [com.smxemail.re-frame-cookie-fx]
-            [re-frame.core :refer [dispatch reg-fx reg-event-db reg-event-fx reg-cofx inject-cofx]]
+            [re-frame.core :refer [reg-fx reg-event-db reg-event-fx inject-cofx]]
             [re-frame.db :refer [app-db]]
             [wh.common.fx]
-            [wh.common.url :as url]
             [wh.components.error.events]
             [wh.db :as db]
             [wh.logged-in.apply.common-events]
             [wh.pages.core :as pages]
             [wh.util :as util])
-  (:require-macros [clojure.core.strint :refer [<<]]
-                   [wh.graphql-macros :refer [defquery]]))
+  (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 ;; This is for external URLs only (e.g., GitHub callouts). For
 ;; internal navigation, see :navigate.
@@ -22,13 +20,15 @@
 
 (reg-event-fx
   :graphql/success
-  (fn [_ [_ response]]
+  db/default-interceptors
+  (fn [_ [response]]
     (js/console.log "GraphQL query success:" response)
     {:dispatch [::pages/unset-loader]}))
 
 (reg-event-fx
   :graphql/failure
-  (fn [_ [_ response]]
+  db/default-interceptors
+  (fn [_ [response]]
     (js/console.error "GraphQL query failed:" response)
     {:dispatch [::pages/unset-loader]}))
 
@@ -94,7 +94,7 @@
 (reg-event-fx
   ::set-job-like
   db/default-interceptors
-  (fn [{db :db} [job action liked?]]
+  (fn [{_db :db} [job action liked?]]
     (perform-job-like job action liked?)))
 
 (reg-event-fx
@@ -116,7 +116,7 @@
 (reg-event-fx
   ::blacklist-job
   db/default-interceptors
-  (fn [{db :db} [{:keys [id] :as job} action]]
+  (fn [{_db :db} [{:keys [id] :as job} action]]
     {:graphql         {:query      blacklist-job-mutation
                        :variables  {:id id}
                        :on-success (if (= action :reload-recommended)
@@ -128,7 +128,7 @@
 (reg-event-fx
   ::nav
   db/default-interceptors
-  (fn [{db :db} args]
+  (fn [{_db :db} args]
     {:navigate args}))
 
 (reg-event-fx

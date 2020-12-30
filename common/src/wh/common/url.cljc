@@ -1,9 +1,8 @@
 (ns wh.common.url
-  (:require
-    #?(:clj [taoensso.timbre :refer [error]])
-    #?(:cljs [goog.Uri :as uri])
-    [clojure.string :as str]
-    [wh.common.text :as text]))
+  (:require #?(:clj [taoensso.timbre :refer [error]])
+            #?(:cljs [goog.Uri :as uri])
+            [clojure.string :as str]
+            [wh.common.text :as text]))
 
 (def wh-cookie-names {:auth             "auth_token"
                       :tracking-consent "wh_tracking_consent"

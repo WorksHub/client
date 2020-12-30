@@ -3,12 +3,13 @@
             [cljs-time.format :as tf]
             [re-frame.core :refer [reg-event-db reg-event-fx]]
             [wh.blogs.blog.events]
+            [wh.db :as db]
             [wh.graphql-cache :refer [reg-query]]
             [wh.graphql.company]
             [wh.graphql.issues]
             [wh.graphql.jobs]
             [wh.pages.core :refer [on-page-load]]
-            [wh.promotions.create-promotion.db :as db])
+            [wh.promotions.create-promotion.db :as create-promotion])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (defn job-preview [{:keys [wh.db/page-params] :as db}]
@@ -48,7 +49,7 @@
   ::edit-description
   db/default-interceptors
   (fn [db [description]]
-    (assoc db ::db/description description)))
+    (assoc db ::create-promotion/description description)))
 
 
 
@@ -74,8 +75,9 @@
 
 (reg-event-fx
   ::send-promotion!
-  (fn [{db :db} [_ {:keys [channel object-type object-id start-date description] :as args}]]
-    {:db      (assoc-in db [::db/promotion-status channel] :sending)
+  db/default-interceptors
+  (fn [{db :db} [{:keys [channel object-type object-id start-date description] :as args}]]
+    {:db      (assoc-in db [::create-promotion/promotion-status channel] :sending)
      :graphql {:query      create-promotion-mutation
                :variables  (cond->
                              {:object_type object-type
@@ -88,15 +90,18 @@
 
 (reg-event-db
   ::send-promotion-success
-  (fn [db [_ channel]]
-    (assoc-in db [::db/promotion-status channel] :success)))
+  db/default-interceptors
+  (fn [db [channel]]
+    (assoc-in db [::create-promotion/promotion-status channel] :success)))
 
 (reg-event-db
   ::send-promotion-failure
-  (fn [db [_ channel]]
-    (assoc-in db [::db/promotion-status channel] :failure)))
+  db/default-interceptors
+  (fn [db [channel]]
+    (assoc-in db [::create-promotion/promotion-status channel] :failure)))
 
 (reg-event-db
   ::select-channel
-  (fn [db [_ channel]]
-    (assoc db ::db/selected-channel channel)))
+  db/default-interceptors
+  (fn [db [channel]]
+    (assoc db ::create-promotion/selected-channel channel)))
