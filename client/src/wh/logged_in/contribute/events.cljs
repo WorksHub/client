@@ -66,23 +66,23 @@
       (assoc  db ::contribute/original-source v))))
 
 (reg-event-db
- ::set-associated-jobs
- contribute-interceptors
- (fn [db [idx slug]]
-   (let [jobs (::contribute/associated-jobs db)]
-     (cond
-       (not (vector? jobs))
-       (assoc db ::contribute/associated-jobs [slug])
+  ::set-associated-jobs
+  contribute-interceptors
+  (fn [db [idx slug]]
+    (let [jobs (::contribute/associated-jobs db)]
+      (cond
+        (not (vector? jobs))
+        (assoc db ::contribute/associated-jobs [slug])
 
-       ;; When user clears slug, remove element from vector
-       (clojure.string/blank? slug)
-       (update db ::contribute/associated-jobs #(util/drop-ith idx %))
+        ;; When user clears slug, remove element from vector
+        (clojure.string/blank? slug)
+        (update db ::contribute/associated-jobs #(util/drop-ith idx %))
 
-       ;; Guards from IndexOutOfBoundsException
-       (> idx (dec (count jobs)))
-       (update db ::contribute/associated-jobs #(conj % slug))
+        ;; Guards from IndexOutOfBoundsException
+        (> idx (dec (count jobs)))
+        (update db ::contribute/associated-jobs #(conj % slug))
 
-       :else (assoc-in db [::contribute/associated-jobs idx] slug)))))
+        :else (assoc-in db [::contribute/associated-jobs idx] slug)))))
 
 (reg-event-fx
   ::hero-upload
@@ -98,7 +98,7 @@
 (reg-event-db
   ::hero-upload-success
   contribute-interceptors
-  (fn [db [filename {url :url}]]
+  (fn [db [_filename {url :url}]]
     (assoc db ::contribute/hero-upload-status :success
            ::contribute/feature url)))
 
@@ -160,9 +160,9 @@
   (fn [{::contribute/keys [body body-cursor-position] :as db} [filename {url :url}]]
     (let [[before-cursor after-cursor] (split-at body-cursor-position body)]
       (assoc db ::contribute/image-article-upload-status :success
-                ::contribute/body (str (apply str before-cursor)
-                                       (markdown-image url filename)
-                                       (apply str after-cursor))))))
+             ::contribute/body (str (apply str before-cursor)
+                                    (markdown-image url filename)
+                                    (apply str after-cursor))))))
 
 (reg-event-fx
   ::image-article-upload-failure
@@ -172,21 +172,21 @@
      :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
 (defquery query-blog-contribute
-          {:venia/operation {:operation/type :query
-                             :operation/name "blog"}
-           :venia/variables [{:variable/name "id"
-                              :variable/type :ID!}]
-           :venia/queries [[:blog {:id :$id}
-                            [:id :title :feature :author :authorId
-                             :published :archived :body :creator :originalSource
-                             :verticals :primaryVertical :associatedJobs
-                             [:company [:name :id]]
-                             [:tags :fragment/tagFields]]]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "blog"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID!}]
+   :venia/queries [[:blog {:id :$id}
+                    [:id :title :feature :author :authorId
+                     :published :archived :body :creator :originalSource
+                     :verticals :primaryVertical :associatedJobs
+                     [:company [:name :id]]
+                     [:tags :fragment/tagFields]]]]})
 
 (reg-event-fx
   ::fetch-blog
   contribute-interceptors
-  (fn [{db :db} [id]]
+  (fn [{_db :db} [id]]
     {:dispatch [::pages/set-loader]
      :graphql {:query query-blog-contribute
                :on-success [::fetch-blog-success]
@@ -214,7 +214,7 @@
 (reg-event-fx
   ::fetch-blog-failure
   contribute-interceptors
-  (fn [{db :db} [res]]
+  (fn [{_db :db} [_res]]
     {:dispatch [::pages/unset-loader]}))
 
 (def create-blog-mutation
@@ -236,7 +236,7 @@
 (reg-event-fx
   ::save-success
   contribute-interceptors
-  (fn [{db :db} [res]]
+  (fn [{db :db} [_res]]
     {:db (assoc db ::contribute/save-status :success)
      :dispatch-n [[::pages/unset-loader]
                   [:graphql/invalidate :blog {:id (::contribute/id db)}]
@@ -304,7 +304,7 @@
 (reg-event-fx
   ::save-blog
   db/default-interceptors
-  (fn [{db :db} [res]]
+  (fn [{db :db} [_res]]
     (let [blog (::contribute/sub-db db)
           ed (spec/explain-data (contribute/select-spec blog) blog)]
       (if ed
@@ -362,7 +362,7 @@
   ::search-authors
   db/default-interceptors
   (fn [{db :db} [query retry-num]]
-    (let [application-id (:wh.settings/algolia-application-id db)]
+    (let [_application-id (:wh.settings/algolia-application-id db)]
       {:db (assoc-in db [::contribute/sub-db ::contribute/author-searching?] true)
        :algolia {:index      :candidates
                  :params     {:query                query
@@ -521,19 +521,19 @@
 (reg-event-db
   ::avatar-upload-success
   author-info-interceptos
-  (fn [db [filename {:keys [url]}]]
+  (fn [db [_filename {:keys [url]}]]
     (assoc db
-      :avatar-url url
-      :avatar-uploading? false)))
+           :avatar-url url
+           :avatar-uploading? false)))
 
 (reg-event-fx
   ::avatar-upload-failure
   author-info-interceptos
   (fn [{db :db} [resp]]
     {:db       (assoc db :avatar-uploading? false)
-     :dispatch [::pages/set-error (errors/image-upload-error-message (:status resp))]}))
+     :dispatch [:error/set-global (errors/image-upload-error-message (:status resp))]}))
 
-(defmethod on-page-load :contribute [db]
+(defmethod on-page-load :contribute [_db]
   [[::init-contribute-db]
    [::fetch-tags]])
 

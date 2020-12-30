@@ -8,7 +8,6 @@
             [wh.common.user :as common-user]
             [wh.components.button-auth :as button-auth]
             [wh.components.common :refer [link link-user]]
-            [wh.components.error.views :refer [error-box]]
             [wh.components.forms.views :refer [field-container
                                                toggle
                                                labelled-checkbox
@@ -182,7 +181,6 @@
                  [:br]
                  [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]
      :component skill-field}]
-   [error-box]
    [:div.buttons-container.is-flex
     [:button.button.button--small {:data-test "save"
                                    :on-click  #(do (.preventDefault %)
@@ -306,7 +304,6 @@
     (<sub [::subs/remote])
     {:label     "Prefer remote work"
      :on-change [::events/set-remote]}]
-   [error-box]
    [:div.buttons-container
     [:button.button.button--small {:data-test "save"
                                    :on-click  #(do (.preventDefault %)
@@ -324,7 +321,6 @@
     {:label     "Your name"
      :validate  ::p/non-empty-string
      :on-change [::events/edit-name]}]
-   [error-box]
    [:div.buttons-container
     [:button.button.button--small {:on-click #(do (.preventDefault %)
                                                   (dispatch [::events/save-company-user]))} "Save"]
@@ -374,7 +370,6 @@
          (<sub [::subs/remote])
          {:label     "Prefer remote work"
           :on-change [::events/set-remote]}]
-        [error-box]
         [:div.buttons-container
          [:button.button.button--small
           {:on-click #(do (.preventDefault %)
@@ -591,7 +586,6 @@
          [cv-link cv-url]}   cv-data
         cv-present?          (or cv-url cv-link)]
     [components/content
-     [error-box]
      [edit-modal/profile-edit-modal]
      [section-public-access-settings]
      [section-admin/section-for-admin]

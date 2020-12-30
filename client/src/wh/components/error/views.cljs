@@ -1,9 +1,8 @@
 (ns wh.components.error.views
-  (:require
-    [re-frame.core :refer [dispatch]]
-    [wh.components.error.subs :as subs]
-    [wh.components.icons :refer [icon]]
-    [wh.subs :refer [<sub]]))
+  (:require [re-frame.core :refer [dispatch]]
+            [wh.components.error.subs :as subs]
+            [wh.components.icons :refer [icon]]
+            [wh.subs :refer [<sub]]))
 
 (defn global-status-box []
   (let [type (<sub [::subs/type])]
@@ -24,19 +23,6 @@
                                                     (dispatch [:error/retry-failed-action event]))
                                      :class    "global-status__try-again"}
                               "try again"]])]]])))
-
-;; TODO: eradicate this and use global-status-box everywhere instead
-(defn error-box []
-  (when-let [message (<sub [:wh.subs/errors])]
-    [:article.message.is-danger.wh-error
-     [:div.message-header
-      [:p "An error occurred"]
-      [:button.delete {:on-click #(do (.preventDefault %)
-                                      (dispatch [:wh.pages/clear-errors]))}]]
-     [:div.message-body (if (string? message)
-                          message
-                          [:ul (for [msg message]
-                                 [:li {:key msg} msg])])]]))
 
 (defn loading-error []
   [:div.container

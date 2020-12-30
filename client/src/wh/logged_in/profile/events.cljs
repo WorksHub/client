@@ -155,27 +155,27 @@
 
 (defmethod on-page-load :profile [db]
   [[::fetch-initial-data]
-   [::pages/clear-errors]
+   [:error/close-global]
    (when (seq (settings-from-query-params db))
      [::save-settings-from-url])])
 
-(defmethod on-page-load :profile-edit-header [db]
+(defmethod on-page-load :profile-edit-header [_db]
   [[::init-profile-edit]])
 
-(defmethod on-page-load :profile-edit-private [db]
+(defmethod on-page-load :profile-edit-private [_db]
   [[::init-profile-edit]])
 
-(defmethod on-page-load :candidate-edit-header [db]
+(defmethod on-page-load :candidate-edit-header [_db]
   [[:wh.company.candidate.events/load-candidate]])
 
-(defmethod on-page-load :candidate-edit-private [db]
+(defmethod on-page-load :candidate-edit-private [_db]
   [[:wh.company.candidate.events/load-candidate]])
 
-(defmethod on-page-load :improve-recommendations [db]
+(defmethod on-page-load :improve-recommendations [_db]
   [[::fetch-initial-data]
    [::init-profile-edit]])
 
-(defmethod on-page-load :profile-edit-company-user [db]
+(defmethod on-page-load :profile-edit-company-user [_db]
   [[::init-profile-edit]])
 
 (reg-event-db
@@ -374,7 +374,7 @@
   db/default-interceptors
   (fn [{db :db} _]
     (if-let [error (validate-profile (::profile/sub-db db))]
-      {:dispatch [::pages/set-error error]}
+      {:dispatch [:error/set-global error]}
       {:graphql  {:query      graphql/update-user-mutation--approval
                   :variables  {:update_user (graphql-company-user-update db)}
                   :on-success [::save-success]
@@ -440,7 +440,7 @@
   (fn [{db :db} res]
     ;; Hide "editing CV link" input
     {:db       (assoc-in db [::profile/sub-db ::profile/editing-cv-link?] false)
-     :dispatch [::pages/clear-errors]
+     :dispatch [:error/close-global]
      :navigate (cond (> (count res) 1)
                      (first res)
                      ;;
@@ -455,22 +455,22 @@
   (fn [{db :db} [resp]]
     (let [error-key (util/gql-errors->error-key resp)]
       {:dispatch-n [(if (= error-key :account-with-email-exists)
-                      [::pages/set-error (str "Account with email: " (::user/email db) " already exists.")]
-                      [::pages/set-error "An error occurred while saving your data."])
+                      [:error/set-global (str "Account with email: " (::user/email db) " already exists.")]
+                      [:error/set-global "An error occurred while saving your data."])
                     [::pages/unset-loader]]})))
 
 (reg-event-fx
   ::removal-success
   db/default-interceptors
-  (fn [{db :db} _res]
-    {:dispatch [::pages/clear-errors]
+  (fn [{_db :db} _res]
+    {:dispatch [:error/close-global]
      :navigate [:profile]}))
 
 (reg-event-fx
   ::removal-failure
   user-interceptors
-  (fn [{db :db} _res]
-    {:dispatch-n [[::pages/set-error "An error occurred while deleting your data."]
+  (fn [{_db :db} _res]
+    {:dispatch-n [[:error/set-global "An error occurred while deleting your data."]
                   [::pages/unset-loader]]}))
 
 
@@ -517,7 +517,7 @@
 (reg-event-db
   ::avatar-upload-success
   profile-interceptors
-  (fn [db [filename {:keys [url]}]]
+  (fn [db [_filename {:keys [url]}]]
     (assoc db
            ::profile/image-url url
            ::profile/avatar-uploading? false)))
@@ -555,7 +555,7 @@
   profile-interceptors
   (fn [{db :db} [error]]
     {:db       (assoc db ::profile/cover-letter-uploading? false)
-     :dispatch [::pages/set-error (case (:status error)
+     :dispatch [:error/set-global (case (:status error)
                                     413 "Your cover letter is too large, please upload a smaller file (less than 5 MB)."
                                     400 "Your cover letter is empty, please try again with a filled out cover letter."
                                     "There was an error uploading your cover letter, please try a smaller file (less than 5 MB).")]}))
@@ -581,7 +581,7 @@
   profile-interceptors
   (fn [{db :db} [error]]
     {:db       (assoc db ::profile/cv-uploading? false)
-     :dispatch [::pages/set-error (case (:status error)
+     :dispatch [:error/set-global (case (:status error)
                                     413 "Your CV is too large, please upload a smaller file (less than 5 MB)."
                                     400 "Your CV is empty, please try again with a filled out cv."
                                     "There was an error uploading your CV, please try a smaller file (less than 5 MB).")]}))
@@ -715,8 +715,8 @@
   (fn [{db :db} [success? _]]
     (if success?
       {:db       (profile/toggle-published db)
-       :dispatch [::pages/clear-errors]}
-      {:dispatch [::pages/set-error "An error occurred while changing visibility of your profile"]})))
+       :dispatch [:error/close-global]}
+      {:dispatch [:error/set-global "An error occurred while changing visibility of your profile"]})))
 
 (reg-event-fx
   ::toggle-profile-visibility
@@ -829,7 +829,7 @@
 (reg-event-fx
   ::on-save-edit-tech-result
   db/default-interceptors
-  (fn [{db :db} [{:keys [success?]}]]
+  (fn [{_db :db} [{:keys [success?]}]]
     (when-not success?
       {:dispatch [:error/set-global "A problem occurred whilst trying to save your profile"
                   [::on-save-edit-tech]]})))

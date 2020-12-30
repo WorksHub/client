@@ -1,13 +1,11 @@
 (ns wh.profile.update-private.views
-  (:require [wh.components.common :refer [link]]
-            [wh.components.error.views :refer [error-box]]
+  (:require [re-frame.core :refer [dispatch]]
             [wh.components.forms.views :as forms]
-            [wh.profile.update-private.subs :as subs]
             [wh.profile.update-private.events :as events]
+            [wh.profile.update-private.subs :as subs]
             [wh.styles.profile :as styles]
             [wh.subs :refer [<sub]]
-            [wh.util :as util]
-            [re-frame.core :refer [dispatch]]))
+            [wh.util :as util]))
 
 (defn current-location []
   [forms/text-field-with-label (<sub [::subs/current-location-label])

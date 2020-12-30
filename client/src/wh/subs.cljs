@@ -3,10 +3,7 @@
             [re-frame.registrar :as rf-registrar]
             [wh.common.subs] ;; required for inclusion
             [wh.db :as db]
-            [wh.routes :as routes]
-            [wh.user.db :as user]
-            [wh.common.user :as user-common])
-  (:require-macros [clojure.core.strint :refer [<<]]))
+            [wh.routes :as routes]))
 
 ;;; Functions useful in subscriptions
 
@@ -63,11 +60,6 @@
 (reg-sub ::loading?
          (fn [db _]
            (::db/loading? db)))
-
-;;; Do not use - superseeded by global error box
-(reg-sub ::errors
-         (fn [db _]
-           (::db/errors db)))
 
 (reg-sub ::scroll
          (fn [db _]

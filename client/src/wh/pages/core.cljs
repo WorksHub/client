@@ -3,7 +3,6 @@
             [cljs.loader :as loader]
             [clojure.string :as str]
             [goog.Uri :as uri]
-            [goog.Uri.QueryData :as query-data]
             [pushy.core :as pushy]
             [re-frame.core :refer [reg-fx reg-sub reg-event-db reg-event-fx dispatch dispatch-sync]]
             [re-frame.db :refer [app-db]]
@@ -39,7 +38,7 @@
   ::db/page)
 
 ;;other on-page-load method are installed from their events ns. e.g wh.blogs.learn.events/on-page-load
-(defmethod on-page-load :default [db]
+(defmethod on-page-load :default [_db]
   [])
 
 (defn parse-query-params
@@ -70,15 +69,15 @@
   "Return the page to redirect to when user is not allowed to
   access the requested page."
   [db handler]
-  (let [mapping (get-in db [::db/page-mapping handler])
+  (let [mapping     (get-in db [::db/page-mapping handler])
         can-access? (if (map? mapping)
                       (:can-access? mapping)
                       (constantly true))]
 
     (cond
-      (can-access? db) nil
+      (can-access? db)              nil
       (= can-access? db/logged-in?) :login
-      :otherwise :not-found)))
+      :else                         :not-found)))
 
 ;; Set current page and page params, if any.
 ;; NOTE: this is an internal event, meant to be dispatched by
@@ -86,7 +85,7 @@
 ;; use the :navigate fx defined below.
 (reg-event-fx ::set-page
               db/default-interceptors
-              (fn [{db :db} [{:keys [handler params uri route-params query-params] :as m} history-state]]
+              (fn [{db :db} [{:keys [handler params uri route-params query-params] :as _m} history-state]]
                 (let [handler   (resolve-handler db handler)
                       page-info {:page-name (routes/handler->name handler)
                                  :vertical  (:wh.db/vertical db)}]
@@ -112,8 +111,6 @@
                                                               ::db/uri uri
                                                               ::db/scroll scroll)
                                                     (update ::db/page-moves inc))
-                                                (not= (contains? #{:jobsboard :pre-set-search} handler))
-                                                (assoc-in [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/search :wh.search/query] nil) ;; TODO re-evaluate this when we switch the pre-set search to tags
                                                 (not (contains? #{:jobsboard :pre-set-search} handler))
                                                 (assoc ::db/search-term ""))]
                       (cond-> {:db                 new-db
@@ -265,19 +262,5 @@
   ::unset-loader
   db/default-interceptors
   (fn [{db :db} _]
-    {:db (assoc db ::db/loading? false)
+    {:db        (assoc db ::db/loading? false)
      :show-app? true}))
-
-;;; Do not use - superseeded by global error box
-(reg-event-db
-  ::set-error
-  db/default-interceptors
-  (fn [db [message]]
-    (assoc db ::db/errors [message])))
-
-;;; Do not use - superseeded by global error box
-(reg-event-db
-  ::clear-errors
-  db/default-interceptors
-  (fn [db _]
-    (dissoc db ::db/errors)))
