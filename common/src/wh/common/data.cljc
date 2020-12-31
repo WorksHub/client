@@ -9,7 +9,8 @@
 (def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN" "YEN"])
 (def time-periods ["Yearly" "Daily"])
 
-(def visa-options #{"US Citizenship" "US Greencard" "US H1B" "EU Citizenship" "EU Visa" "Other"})
+(def visa-options #{"US Citizenship" "US Greencard" "US H1B" "EU Citizenship"
+                    "EU Visa" "UK Citizenship" "UK Visa" "Other"})
 (def role-types #{"Full time" "Contract" "Intern"})
 
 (def currency-symbols
