@@ -321,8 +321,6 @@
                             :on-select-suggestion [::events/select-manager])]]
     [:div
      [:span "This role has been:"]
-     [labelled-checkbox nil (field ::create-job/promoted
-                                   :label "Promoted")]
      [labelled-checkbox nil (field ::create-job/approved
                                    :label "Approved")]]]])
 

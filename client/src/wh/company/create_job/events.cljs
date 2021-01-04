@@ -272,7 +272,7 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries [[:job {:id :$id}
-                    [:companyId :promoted :tagline
+                    [:companyId :tagline
                      :approved :sponsorshipOffered
                      [:tags :fragment/tagFields]
                      :remote :published :verticals
