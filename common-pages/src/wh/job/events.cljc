@@ -160,8 +160,10 @@
 (reg-event-fx
   ::fetch-failure
   job-interceptors
-  (fn [{db :db} [res]]
-    {:db (assoc db ::job/error (util/gql-errors->error-key res))}))
+  (fn [{db :db} [slug res]]
+    {:db (assoc db
+           ::job/error (util/gql-errors->error-key res)
+           ::job/slug  slug)}))
 
 (reg-event-fx
   ::fetch-company-failure
@@ -177,7 +179,7 @@
      :graphql       {:query      (job-query db)
                      :variables  {:slug slug}
                      :on-success [::fetch-job-success]
-                     :on-failure [::fetch-failure]}}))
+                     :on-failure [::fetch-failure slug]}}))
 
 (reg-event-db
   ::reset-error
@@ -578,7 +580,8 @@
            slug-in-db     (get-in db [::job/sub-db ::job/slug])
            preset-slug    (get-in db [::job/sub-db ::job/preset-slug])]
        ;; If you are changing below logic make sure that wh.response.handler.job is also updated
-       (if (get-in db [::job/sub-db :wh.job.db/error]) ;; if there's an error set on load, do nothing
+       (if (and (get-in db [::job/sub-db :wh.job.db/error])
+                (= requested-slug slug-in-db))  ;; if there's an error set on load, do nothing
          []
          [[::load-company-module-if-needed]
           (when (or (and preset-slug (not= requested-slug preset-slug))
