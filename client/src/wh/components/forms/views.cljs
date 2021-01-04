@@ -564,7 +564,7 @@
     text]])
 
 (defn toggle
-  [{:keys [value on-change]}]
+  [{:keys [value on-change data-test]}]
   [:div
    {:class (util/merge-classes "toggle"
                                (when value "toggle--enabled"))}
@@ -572,7 +572,9 @@
    [:div.toggle__thumb-wrapper
     [:div.toggle__thumb
      {:on-click #(when on-change
-                   (on-change (not value)))}]]])
+                   (on-change (not value)))
+      :data-test data-test
+      :data-value value}]]])
 
 (defn predefined-avatar-picker [{:keys [selected on-change]}]
   (into

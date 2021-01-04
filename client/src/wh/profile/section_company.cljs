@@ -91,7 +91,7 @@
 (defn controls [{:keys [current-application other-applications] :as opts}]
   [:<>
    [modal-user-info opts]
-   [components/section-custom :company
+   [components/section-custom {:type :company}
     [components/sec-title "Applications"]
     [:div {:class styles/subsection__wrapper}
       ;;

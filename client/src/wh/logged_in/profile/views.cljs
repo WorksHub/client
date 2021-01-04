@@ -555,7 +555,7 @@
 (defn section-public-access-settings []
   (let [profile-public? (<sub [::subs/published?])
         id              (<sub [::subs/id])]
-    [components/section-custom :highlighted
+    [components/section-custom {:type :highlighted}
      [:div {:class styles/access-settings}
 
       [:div {:class styles/access-settings__description}
@@ -563,11 +563,13 @@
         [:div {:class styles/access-settings__title}
          "Published"]
         [toggle {:value     profile-public?
-                 :on-change #(dispatch [::events/toggle-profile-visibility])}]]
+                 :on-change #(dispatch [::events/toggle-profile-visibility])
+                 :data-test "toggle-profile-visibility"}]]
        [:span (if profile-public?
                 [:span "Your profile is visible to everyone. " [components/underline-link
                                                                 {:href (routes/path :user :params {:id id})
-                                                                 :text "See it live!"}]]
+                                                                 :text "See it live!"
+                                                                 :data-test :public-profile-link}]]
                 "Your profile is hidden from everyone. Click the toggle to make it visible.")]]]]))
 
 (defn main-view []

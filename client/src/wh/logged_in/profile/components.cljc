@@ -65,9 +65,11 @@
                       (vector? on-click) #(dispatch on-click))})))
    text])
 
-(defn underline-link [{:keys [text href new-tab?]}]
+(defn underline-link [{:keys [text href new-tab? data-test]}]
   [:a
-   (cond-> {:class styles/underline-link :href href}
+   (cond-> {:class styles/underline-link
+            :href href
+            :data-test data-test}
            new-tab? (merge {:target "_blank" :rel "noopener"}))
    text])
 
@@ -134,7 +136,7 @@
                                               (map boolean)
                                               (some true?))]
     [:div {:class (util/mc styles/section styles/section--profile)
-           :data-test :public-info}
+           :data-test "public-info"}
      (when (and (not public?) display-toggle?)
        [edit-profile {:type     :default
                       :on-click on-edit}])
@@ -190,10 +192,11 @@
 (defn section-custom [_ & _]
   (let [company-cls (util/mc styles/section--highlighted
                              styles/section--admin)]
-    (fn [type & children]
-      (into [:div (util/smc styles/section
-                            [(= type :highlighted) styles/section--highlighted]
-                            [(= type :company) company-cls])]
+    (fn [{:keys [type data-test] :as opts} & children]
+      (into [:div {:class (util/mc styles/section
+                                   [(= type :highlighted) styles/section--highlighted]
+                                   [(= type :company) company-cls])
+                   :data-test data-test}]
             children))))
 
 (defn section-buttons [& children]
@@ -318,7 +321,8 @@
 
 (defn section-stats
   [{:keys [is-owner? percentile created articles-count issues-count]}]
-  [section
+  [section-custom
+   {:data-test "section-stats"}
    [sec-title "Activity & Stats"]
    [four-grid
     [stat-container
@@ -709,7 +713,8 @@
 
 (defn profile-hidden-message []
   [section
-   [:div {:class styles/profile-hidden}
+   [:div {:class styles/profile-hidden
+          :data-test "profile-hidden"}
     [icons/icon "lock" :class styles/profile-hidden__icon]
     "This user's profile is hidden"]])
 
