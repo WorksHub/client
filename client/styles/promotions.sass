@@ -30,10 +30,15 @@
       width: 300px
 
 .button--promote
-  @include button
-  // using !important to override display from legacy SASS on job page.
-  // might be deleted once we migrate Job page to new SASS.
-  display: flex!important
+  &,
+  // overriding job page buttons styles
+  \:global(.job__admin-buttons) &
+    @include button
+    display: flex
+    font-size: 11px
+    text-transform: uppercase
+    +tablet
+      font-size: 11px
 
 .preview
   &__promotion
