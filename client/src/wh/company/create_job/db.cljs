@@ -49,7 +49,6 @@
    ::ats-job-id         {:order 50 :initial "" :event? false}
 
    ::manager            {:order 60 :initial "", :validate ::manager}
-   ::promoted           {:order 61 :initial false}
    ::published          {:order 62 :initial false}
    ::approved           {:order 63 :initial false}
 
@@ -89,7 +88,6 @@
             (if-not (user-common/admin? db)
               (disj f
                     ::manager
-                    ::promoted
                     ::published)
               f))
           (remove-currency-fields [f]
