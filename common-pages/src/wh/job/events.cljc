@@ -226,12 +226,12 @@
 
 (reg-event-fx
   ::publish-job-success
-  job-interceptors
+  db/default-interceptors
   (fn [{db :db} [redirect-to-payment?]]
-    {:db (assoc db ::job/published true)
-     :dispatch-n (cond-> [[:success/set-global (str "Congratulations! Your role '" (::job/title db)"' is now live!")]]
-                         :always (conj [::fetch-permissions])
-                         redirect-to-payment? (conj [::navigate-payment]))}))
+    {:db         (assoc-in db [::job/sub-db ::job/published] true)
+     :dispatch-n (cond-> [[:success/set-global (str "Congratulations! Your role '" (get-in db [::job/sub-db ::job/title])"' is now live!")]]
+                         (user-common/company? db) (conj [::fetch-permissions])
+                         redirect-to-payment?      (conj [::navigate-payment]))}))
 
 (reg-event-db
   ::publish-job-failure
