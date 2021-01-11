@@ -6,8 +6,9 @@
 
 (defn publish-button [{:keys [on-click publishing?]}]
   [:button.button.button--medium
-   (merge {:id    "job-view__publish-button"
-           :class (when publishing? "button--inverted button--loading")}
+   (merge {:id        "job-view__publish-button"
+           :class     (when publishing? "button--inverted button--loading")
+           :data-test "publish-job"}
           #?(:cljs {:on-click #(dispatch on-click)}))
    "Publish"])
 

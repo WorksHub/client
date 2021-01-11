@@ -243,13 +243,13 @@
                :on-success [::create-job-success]
                :on-failure [::create-job-error]}}))
 
-(reg-event-fx
+(reg-event-db
   ::initialize-db
   db/default-interceptors
-  (fn [{db :db} _]
-    (let [page (:wh.db/page db)
+  (fn [db _]
+    (let [page   (:wh.db/page db)
           new-db (create-job/initial-db db (= page :edit-job))]
-      {:db (assoc db ::create-job/sub-db new-db)})))
+      (assoc db ::create-job/sub-db new-db))))
 
 (defn add-keyset-to-field
   [field-to-find keyset field]

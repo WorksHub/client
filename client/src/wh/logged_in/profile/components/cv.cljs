@@ -22,6 +22,7 @@ You can update it anytime from your profile."]
       [components/upload-button {:document   "resume"
                                  :uploading? (<sub [::subs/cv-uploading?])
                                  :inverted?  true
+                                 :data-test  "upload-resume"
                                  :on-change  (upload/handler
                                                :launch [::events/cv-upload]
                                                :on-upload-start [::events/cv-upload-start]

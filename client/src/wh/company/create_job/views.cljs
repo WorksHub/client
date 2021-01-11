@@ -25,8 +25,8 @@
 
 (defn field
   [k & {:as opts}]
-  (let [{:keys [disabled? label error]} opts
-        {:keys [message show-error?]} (when-not (false? error) (<sub [(error-sub-key k)]))]
+  (let [{:keys [disabled? label error data-test]} opts
+        {:keys [message show-error?]}             (when-not (false? error) (<sub [(error-sub-key k)]))]
     (merge {:value     (<sub [(keyword "wh.company.create-job.subs" (name k))])
             :id        (db/key->id k)
             :label     (when label [:span label])
@@ -34,7 +34,8 @@
             :read-only disabled?
             :validate  (get-in create-job/fields [k :validate])
             :dirty?    (when show-error? true)
-            :on-change [(keyword "wh.company.create-job.events" (str "edit-" (name k)))]}
+            :on-change [(keyword "wh.company.create-job.events" (str "edit-" (name k)))]
+            :data-test data-test}
            (dissoc opts :label))))
 
 (defn verify-lat-long-and-help-links []
@@ -59,7 +60,7 @@
 
 (defn remuneration
   []
-  (let [currency (<sub [::subs/remuneration__currency])
+  (let [currency    (<sub [::subs/remuneration__currency])
         competitive (<sub [::subs/remuneration__competitive])]
     [:fieldset.job-edit__remuneration
      [:h2 "Remuneration"]
@@ -71,7 +72,8 @@
           [select-field (<sub [::subs/remuneration__currency])
            (field ::create-job/remuneration__currency
                   :label "* Currency"
-                  :options   (<sub [::subs/currencies]))]]
+                  :options (<sub [::subs/currencies])
+                  :data-test "select-currency")]]
          (if currency
            [:div.column.job-edit__remuneration__salary__slider
             (field-container
@@ -118,7 +120,8 @@
        :tags               tags
        :on-change          [::events/set-tag-search]
        :on-toggle-collapse #(dispatch [::events/toggle-tags-collapsed])
-       :on-tag-click       #(dispatch [::events/toggle-tag %])}])])
+       :on-tag-click       #(dispatch [::events/toggle-tag %])
+       :tag-data-test      "job-skill-tag"}])])
 
 (defn location
   []
@@ -133,7 +136,8 @@
                              :placeholder "Type street address or postcode to search"
                              :auto-complete "off"
                              :suggestions (<sub [::subs/location-suggestions])
-                             :on-select-suggestion [::events/select-location-suggestion])]
+                             :on-select-suggestion [::events/select-location-suggestion]
+                             :data-test "job-location")]
       (when-not form-open?
         [:span "or " [:a.pseudo-link {:on-click #(dispatch [::events/set-editing-address true])}
                       "Enter the address manually"]])
@@ -191,7 +195,8 @@
    [rich-text-field (field ::create-job/description-html
                            :class "job-edit__description"
                            :label (if admin? "* Description"
-                                      "* Responsibilities, duties and detailed tech requirements"))]])
+                                      "* Responsibilities, duties and detailed tech requirements")
+                           :data-test "job-description")]])
 
 (defn select-company
   []
@@ -211,18 +216,19 @@
      [company-links]]))
 
 (defn role-details
-  [admin?]
+  [_admin?]
   [:fieldset.job-edit__details
-   [text-field nil (field ::create-job/title :label "* Role title")]
-   (let [tl (<sub [::subs/tagline])
+   [text-field nil (field ::create-job/title :label "* Role title" :data-test "role-title")]
+   (let [tl         (<sub [::subs/tagline])
          chars-left (- create-job/tagline-max-length (count tl))]
      [text-field nil (field ::create-job/tagline
-                            :label (<< "* Tagline (summarise the role in one sentence, ~{chars-left} characters remain)"))])
+                            :label (<< "* Tagline (summarise the role in one sentence, ~{chars-left} characters remain)")
+                            :data-test "role-tagline")])
    [:div.columns.is-mobile.is-variable.is-8.job-edit__details__role-type-sponsor-offer
     [:div.column
      [select-field (<sub [::subs/role-type])
-      {:options create-job/role-types
-       :label "* Role type"
+      {:options   create-job/role-types
+       :label     "* Role type"
        :on-change [::events/edit-role-type]}]]
     [:div.column
      [:div.job-edit__details__sponsorship-offered
@@ -240,71 +246,85 @@
     [location]
     [description admin?]]])
 
-(defn company-form
-  [_admin?]
-  (let [tags-collapsed? (r/atom true)]
-    (fn [admin?]
-      (when (or (not (<sub [::subs/validate-existing-company-fields])) admin?)
-        [:section.split-content-section
-         [:h2.title "Company details"]
-         (when admin?
-           [:form.wh-formx.wh-formx__layout
-            {:on-submit #(.preventDefault %)}
-            [select-company]])
-         (cond
-           (<sub [::subs/company-loading?])
-           [:div.create-job__inline-loader
-            [:div.is-loading-spinner]]
-           (<sub [::subs/company-id])
-           [:form.wh-formx.wh-formx__layout.create-job__company-form
-            {:on-submit #(.preventDefault %)}
-            (when (not (<sub [::subs/validate-existing-company-field :logo]))
-              (let [pending-logo                  (<sub [::subs/pending-logo])
-                    {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/logo)])]
-                [:div.create-job__company-form__logo-field
-                 {:id (db/key->id :wh.company.profile/logo)}
-                 [:label {:class (util/merge-classes "label"
-                                                     (when show-error? "field--invalid"))}
-                  "* Your company logo"]
-                 [logo-field
-                  {:error          message
-                   :dirty?         (when show-error? true)
-                   :value          pending-logo
-                   :loading?       (<sub [::subs/logo-uploading?])
-                   :on-select-file (upload/handler
-                                     :launch [:wh.common.logo/logo-upload]
-                                     :on-upload-start [::events/logo-upload-start]
-                                     :on-success [::events/logo-upload-success]
-                                     :on-failure [::events/logo-upload-failure])}]]))
-            (when (not (<sub [::subs/validate-existing-company-field :description-html]))
-              (let [pending-description           (<sub [::subs/pending-company-description])
-                    {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/description-html)])]
-                [rich-text-field {:value        pending-description
-                                  :id           (db/key->id :wh.company.profile/description-html)
-                                  :error        message
-                                  :dirty?       (when show-error? true)
-                                  :label        "* Company description"
-                                  :placeholder  "eg WorksHub enables companies to gain access to the right talent in a crowded market. Our smart personalised candidate experience gives users the ability to make better data-driven applications in real-time reducing the time to hire from weeks to days. We are striving to build something amazing! "
-                                  :on-change    #(dispatch [::events/set-pending-company-description %])}]))
+(defn- benefit-tags []
+  (r/with-let [tags-collapsed? (r/atom true)]
+    (let [selected-tag-ids              (<sub [::subs/selected-benefit-tag-ids])
+          matching-tags                 (<sub [::subs/matching-benefit-tags
+                                               {:include-ids selected-tag-ids :size 20}])
+          {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/benefit-tags)])]
+      [tags-field
+       (<sub [::subs/benefits-search])
+       {:tags               (map #(if (contains? selected-tag-ids (:key %))
+                                    (assoc % :selected true)
+                                    %) matching-tags)
+        :id                 (db/key->id :wh.company.profile/benefit-tags)
+        :collapsed?         @tags-collapsed?
+        :on-change          [::events/set-benefits-search]
+        :label              "* Benefits"
+        :error              message
+        :dirty?             (when show-error? true)
+        :placeholder        "e.g. flexible working, health insurance, child care, training etc"
+        :on-toggle-collapse #(swap! tags-collapsed? not)
+        :on-tag-click       #(dispatch [::events/toggle-selected-benefit-tag-id (:id %)])
+        :tag-data-test      "company-benefit-tag"}])))
 
-            (when (not (<sub [::subs/validate-existing-company-field :tags]))
-              (let [selected-tag-ids              (<sub [::subs/selected-benefit-tag-ids])
-                    matching-tags                 (<sub [::subs/matching-benefit-tags {:include-ids selected-tag-ids :size 20}])
-                    {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/benefit-tags)])]
-                [tags-field
-                 (<sub [::subs/benefits-search])
-                 {:tags               (map #(if (contains? selected-tag-ids (:key %))
-                                              (assoc % :selected true)
-                                              %) matching-tags)
-                  :id                 (db/key->id :wh.company.profile/benefit-tags)
-                  :collapsed?         @tags-collapsed?
-                  :on-change          [::events/set-benefits-search]
-                  :label              "* Benefits"
-                  :error              message
-                  :dirty?             (when show-error? true)
-                  :placeholder        "e.g. flexible working, health insurance, child care, training etc"
-                  :on-toggle-collapse #(swap! tags-collapsed? not)
-                  :on-tag-click       #(dispatch [::events/toggle-selected-benefit-tag-id (:id %)])}]))])]))))
+(defn- company-logo []
+  (let [pending-logo                  (<sub [::subs/pending-logo])
+        {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/logo)])]
+    [:div.create-job__company-form__logo-field
+     {:id (db/key->id :wh.company.profile/logo)}
+     [:label {:class (util/merge-classes "label"
+                                         (when show-error? "field--invalid"))}
+      "* Your company logo"]
+     [logo-field
+      {:error          message
+       :dirty?         (when show-error? true)
+       :value          pending-logo
+       :loading?       (<sub [::subs/logo-uploading?])
+       :on-select-file (upload/handler
+                         :launch [:wh.common.logo/logo-upload]
+                         :on-upload-start [::events/logo-upload-start]
+                         :on-success [::events/logo-upload-success]
+                         :on-failure [::events/logo-upload-failure])}]]))
+
+(defn- company-description []
+  (let [pending-description           (<sub [::subs/pending-company-description])
+        {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/description-html)])]
+    [rich-text-field {:value       pending-description
+                      :id          (db/key->id :wh.company.profile/description-html)
+                      :error       message
+                      :dirty?      (when show-error? true)
+                      :label       "* Company description"
+                      :placeholder "eg WorksHub enables companies to gain access to the right talent in a crowded market. Our smart personalised candidate experience gives users the ability to make better data-driven applications in real-time reducing the time to hire from weeks to days. We are striving to build something amazing! "
+                      :on-change   [::events/set-pending-company-description]
+                      :data-test   "company-description"}]))
+
+(defn company-form [admin?]
+  (when (or (not (<sub [::subs/validate-existing-company-fields])) admin?)
+    [:section.split-content-section
+     [:h2.title "Company details"]
+     (when admin?
+       [:form.wh-formx.wh-formx__layout
+        {:on-submit #(.preventDefault %)}
+        [select-company]])
+
+     (cond
+       (<sub [::subs/company-loading?])
+       [:div.create-job__inline-loader
+        [:div.is-loading-spinner]]
+
+       (<sub [::subs/company-id])
+       [:form.wh-formx.wh-formx__layout.create-job__company-form
+        {:on-submit #(.preventDefault %)}
+
+        (when-not (<sub [::subs/validate-existing-company-field :logo])
+          [company-logo])
+
+        (when-not (<sub [::subs/validate-existing-company-field :description-html])
+          [company-description])
+
+        (when-not (<sub [::subs/validate-existing-company-field :tags])
+          [benefit-tags])])]))
 
 (defn settings-pod
   []
@@ -398,15 +418,16 @@
       [:div.split-content__main
        [:div.is-flex.job-edit__footer
         [:button
-         {:id "job-edit__footer__save"
-          :on-click #(do (.preventDefault %)
-                         (dispatch [::events/create-job]))
-          :class    (cond-> (util/merge-classes "button" "button--medium" "job-edit__save-button")
-                            (<sub [::subs/saving?]) (util/merge-classes "button--inverted" "button--loading"))}
+         {:id        "job-edit__footer__save"
+          :on-click  #(do (.preventDefault %)
+                          (dispatch [::events/create-job]))
+          :class     (cond-> (util/merge-classes "button" "button--medium" "job-edit__save-button")
+                             (<sub [::subs/saving?]) (util/merge-classes "button--inverted" "button--loading"))
+          :data-test "create-role"}
          (when-not (<sub [::subs/saving?])
-           (cond published? "Save"
+           (cond published?            "Save"
                  (<sub [::subs/edit?]) "Save & Preview"
-                 :else "Create role"))]
+                 :else                 "Create role"))]
         (when published?
           [:button.button.button--medium.button--inverted.is-pulled-right
            {:id "job-edit__footer__unpublished"

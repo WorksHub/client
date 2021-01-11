@@ -48,16 +48,17 @@
 (defn field-container
   "A generic container for a field. Wraps one or more controls in a
   container widget. Provides support for labels and help messages."
-  [{:keys [label class error help id inline?]} & controls]
+  [{:keys [label class error help id inline? data-test]} & controls]
   (vec
    (concat
     [:div
-     {:id    id
-      :class (merge-classes
-              "field"
-              (when (> (count controls) 1) "grouped")
-              (when error "field--errored")
-              class)}
+     {:id        id
+      :class     (merge-classes
+                   "field"
+                   (when (> (count controls) 1) "grouped")
+                   (when error "field--errored")
+                   class)
+      :data-test data-test}
      (when label
        [(if (string? error)
           :label.label.field--invalid
@@ -104,11 +105,12 @@
               {:rows rows}))]))
 
 (defn text-input-new
-  [value {:keys [class-input]
+  [value {:keys [class-input data-test]
           :or {class-input styles/input}
           :as opts}]
-  [text-input value (merge opts {:class-input class-input
-                                 :class-textarea (util/mc styles/input styles/input--textarea)})])
+  [text-input value (merge opts {:class-input    class-input
+                                 :class-textarea (util/mc styles/input styles/input--textarea)
+                                 :data-test      data-test})])
 
 (defn label-text [{:keys [label required? hidden?]}]
   (when label [:span {:class (util/mc styles/label__text
@@ -244,10 +246,12 @@
            search-icon-comp
            suggestions-list-comp
            close-icon-comp]
-          [field-container (merge options
-                                  {:error (if (and (string? error) force-error?)
-                                            error
-                                            (text-field-error value options dirty focused))})
+          [field-container (-> options
+                               (dissoc :data-test)
+                               (merge
+                                 {:error (if (and (string? error) force-error?)
+                                           error
+                                           (text-field-error value options dirty focused))}))
                            [:div.text-field-control
                              {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
                                           (when suggestable? " text-field-control--suggestable")
@@ -309,13 +313,13 @@
   "A bare select input. Typically not used standalone, but wrapped as
   select-field. See that function for parameters description."
   [value {:keys [options on-change disabled class class-wrapper data-test]
-          :or {class-wrapper "select"}}]
+          :or   {class-wrapper "select"}}]
   (let [options (sanitize-select-options options)]
     [:div {:class class-wrapper}
      (into
        [:select
-        (merge {:value (str (util/index-of (mapv :id options) value))
-                :class class
+        (merge {:value     (str (util/index-of (mapv :id options) value))
+                :class     class
                 :data-test data-test}
                (when on-change
                  {:on-change #(let [id (:id (nth options (js/parseInt (target-value % nil))))]
@@ -338,10 +342,10 @@
     [select-input
      (or value (:value options))
      (assoc options :class (util/mc styles/input styles/input--select)
-                    :class-wrapper styles/input-wrapper--select)]
+            :class-wrapper styles/input-wrapper--select)]
     (field-container (if (or dirty? force-error?)
                        options
-                       (dissoc options :error))
+                       (dissoc options :error :data-test))
                      (select-input (or value (:value options)) options))))
 
 (defn select-field-with-label [value {:keys [label required?] :as options}]
@@ -426,11 +430,13 @@
   [:span.has-text-danger " *"])
 
 (defn tag
-  [{:keys [tag count selected class] :as full-tag} read-only on-tag-click]
-  [:li {:class (merge-classes "tag"
-                              (when selected "tag--selected")
-                              class)
-        :on-click #(when-not read-only (on-tag-click full-tag))}
+  [{:keys [tag count selected class] :as full-tag}
+   {:keys [read-only on-tag-click data-test] :as opts}]
+  [:li {:class     (merge-classes "tag"
+                                  (when selected "tag--selected")
+                                  class)
+        :on-click  #(when-not read-only (on-tag-click full-tag))
+        :data-test data-test}
    (if count (<< "~{tag} (~{count})") tag)
    (when selected
      [icon "close"])])
@@ -441,7 +447,8 @@
         focused (reagent/atom false)
         -collapsed? (reagent/atom true)]
     (fn [text {:keys [collapsed? error label placeholder tags dirty? read-only empty-label id
-                      on-change on-tag-click on-toggle-collapse on-blur on-focus on-add-tag] :as opts}]
+                     on-change on-tag-click on-toggle-collapse on-blur on-focus on-add-tag
+                     tag-data-test] :as opts}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
@@ -450,7 +457,7 @@
             collapsed? (cond
                          (not (str/blank? text)) false ;; can't be collapsed if we have text
                          (not (contains? opts :collapsed?)) @-collapsed? ;; use internal state if we're controlling it
-                         :otherwise collapsed?)
+                         :else collapsed?)
 
             on-toggle-collapse (or on-toggle-collapse #(swap! -collapsed? not))]
         [:div
@@ -472,7 +479,7 @@
                            (when on-blur (on-blur %)))
              :on-change on-change
              :on-key-press (when (and on-add-tag (not (str/blank? text)))
-                             #(if (= (.-key %) "Enter")
+                             #(when (= (.-key %) "Enter")
                                 (on-add-tag text)))
              :read-only read-only}
             (when (string? error)
@@ -489,18 +496,23 @@
              :class "tags-roll"
              :on-click on-toggle-collapse])
           (if has-tags?
-            (let [grouped-tags (group-by :selected tags)
-                  no-selected? (zero? (count (get grouped-tags true)))]
+            (let [grouped-tags  (group-by :selected tags)
+                  no-selected?  (zero? (count (get grouped-tags true)))
+                  tag-component (fn [tag-data]
+                                  [tag tag-data
+                                   {:read-only    read-only
+                                    :on-tag-click on-tag-click
+                                    :data-test    tag-data-test}])]
               (if no-selected?
                 [:div
                  (into [:ul.tags.tags--no-selected]
-                       (map #(tag % read-only on-tag-click) tags))]
+                       (map tag-component tags))]
                 [:div
                  (into [:ul.tags.tags--selected]
-                       (map #(tag % read-only on-tag-click) (get grouped-tags true)))
+                       (map tag-component (get grouped-tags true)))
                  (into [:ul.tags.tags--unselected]
-                       (map #(tag % read-only on-tag-click) (concat (get grouped-tags nil)
-                                                                    (get grouped-tags false))))]))
+                       (map tag-component (concat (get grouped-tags nil)
+                                                  (get grouped-tags false))))]))
             (if (str/blank? text)
               [:div.tags-loading "Loading..."]
               [:div.tags-empty (or empty-label "No results matched the search term.")]))]
@@ -519,13 +531,13 @@
   [_options]
   (let [dirty (reagent/atom false)]
     (fn [{:keys [value on-select-file loading? error id text dirty?] :as options
-          :or {text "logo"}}]
+         :or  {text "logo"}}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
       (let [error (and @dirty error)]
         [:div.logo
-         {:id id
+         {:id    id
           :class (when error "logo--errored")}
          (if loading?
            [:div.logo__is-loading]
@@ -535,6 +547,7 @@
               [:input.file-input {:type      "file"
                                   :name      [:span "logo"]
                                   :accept    "image/*"
+                                  :data-test "company-logo-input"
                                   :on-change #(do
                                                 (reset! dirty true)
                                                 (on-select-file %))}]

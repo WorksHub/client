@@ -90,14 +90,15 @@
          :class (util/mc styles/perk__icon [highlighted? styles/perk__icon--highlighted])]
         perk]))])
 
-(defn cta [{:keys [cta cta-info highlighted? on-click]}]
+(defn cta [{:keys [cta cta-info highlighted? on-click button-data-test]}]
   [:div {:class styles/button__wrapper}
-   [:button {:class (util/mc styles/button [highlighted? styles/button--highlighted])
-             :on-click on-click}
+   [:button {:class     (util/mc styles/button [highlighted? styles/button--highlighted])
+             :on-click  on-click
+             :data-test button-data-test}
     cta]
    (when cta-info
      [:span (util/smc styles/secondary-text styles/button__additional-info)
-      "No further edits without an upgrade"])])
+      cta-info])])
 
 (defn package [{:keys [highlighted?] :as opts}]
   [:div (util/smc styles/package [highlighted? styles/package--highlighted])
@@ -110,17 +111,19 @@
   [:div {:class styles/packages}
    [package (merge
               free-package
-              {:cta-info "No further edits without an upgrade"
-               :cta "Publish"
-               :on-click on-publish
-               :highlighted? false})]
+              {:cta-info         "No further edits without an upgrade"
+               :cta              "Publish"
+               :on-click         on-publish
+               :highlighted?     false
+               :button-data-test "publish-without-upgrade"})]
    [package (merge
               upgraded-package
-              {:period "per month"
-               :cta "Publish & Upgrade"
-               :on-click on-publish-and-upgrade
-               :highlighted? true
-               :multiple-options? true})]])
+              {:period            "per month"
+               :cta               "Publish & Upgrade"
+               :on-click          on-publish-and-upgrade
+               :highlighted?      true
+               :multiple-options? true
+               :button-data-test  "publish-with-upgrade"})]])
 
 (defn paragraph [& children]
   (into [:div {:class styles/paragraph}] children))

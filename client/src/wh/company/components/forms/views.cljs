@@ -13,7 +13,7 @@
   (let [dirty (reagent/atom false)
         focused (reagent/atom false)
         qid (name (gensym))]
-    (fn [{:keys [dirty? value error validate force-error?] :as options}]
+    (fn [{:keys [dirty? value error validate force-error? data-test] :as options}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?)
@@ -26,7 +26,8 @@
                {:error (if (and (string? error) force-error?)
                          error
                          (text-field-error value options dirty focused))
-                :label label})
+                :label label
+                :data-test data-test})
         [quill {:id qid
                 :theme "snow"
                 :bounds ".main"

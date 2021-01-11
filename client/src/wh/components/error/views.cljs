@@ -15,6 +15,7 @@
        [icon "close" :class "close is-pulled-right" :on-click #(dispatch [:error/close-global])]
        [:div.global-status__body
         [:div.global-status__message
+         {:data-test "global-status-message"}
          (when (= "success" type)
            [icon "tick" :class "tick is-hidden-mobile"])
          message

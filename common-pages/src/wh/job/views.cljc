@@ -233,6 +233,7 @@
   []
   (let [tagline (<sub [::subs/tagline])]
     [:section.job__tagline
+     {:data-test "job-tagline"}
      tagline]))
 
 (defn job-stats
