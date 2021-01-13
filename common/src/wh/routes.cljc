@@ -260,8 +260,8 @@
 (defn path [handler & {:keys [params query-params anchor]}]
   (try
     (cond->
-      (apply bidi/path-for routes handler (flatten (seq params)))
-      (seq query-params) (str "?" (serialize-query-params query-params))
+      (when handler           (apply bidi/path-for routes handler (flatten (seq params))))
+      (seq query-params)      (str "?" (serialize-query-params query-params))
       (text/not-blank anchor) (str "#" anchor))
     (catch #?(:clj Exception) #?(:cljs js/Object) _
            (let [message (str "Unable to construct link: " (pr-str (assoc params :handler handler)))]

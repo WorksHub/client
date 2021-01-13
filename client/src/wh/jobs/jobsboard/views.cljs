@@ -233,7 +233,7 @@
       [job-card {:id (str "skeleton-job-" i)}
        {:view-type view-type}])]])
 
-(defn jobs-board [view-type]
+(defn jobs-board [view-type preset-search?]
   (let [jobs         (<sub [::subs/jobs])
         logged-in?   (<sub [:user/logged-in?])
         has-applied? (some? (<sub [:user/applied-jobs]))
@@ -259,7 +259,7 @@
        [pagination/pagination
         (<sub [::subs/current-page])
         (<sub [::subs/pagination])
-        :jobsboard
+        (when-not preset-search? :jobsboard)
         (<sub [::subs/pagination-query-params])])]))
 
 (defn header [preset-search?] ;; TODO once SSR is finished, remove this component and only use CLCJ one
@@ -282,13 +282,14 @@
        [search-box])]))
 
 (defn page []
-  (let [logged-in? (<sub [:user/logged-in?])
-        searching? (<sub [:wh.search/searching?])
-        view-type  (<sub [::subs/view-type])]
+  (let [logged-in?     (<sub [:user/logged-in?])
+        searching?     (<sub [:wh.search/searching?])
+        view-type      (<sub [::subs/view-type])
+        preset-search? false]
     [:div.main.jobs-board
      (if logged-in?
        [search-box]
-       [header false])
+       [header preset-search?])
      [:div.search-results
       (when (and (seq (<sub [::subs/promoted-jobs]))
                  (not searching?)
@@ -302,16 +303,17 @@
                                          (when searching?
                                            "skeleton"))}
          (<sub [::subs/result-count-str])])
-      [jobs-board view-type]]]))
+      [jobs-board view-type preset-search?]]]))
 
 
 (defn pre-set-search-page []
-  (let [view-type (<sub [::subs/view-type])]
+  (let [view-type      (<sub [::subs/view-type])
+        preset-search? true]
     [:div.main.jobs-board__pre-set-search
-     [header true]
+     [header preset-search?]
      [:div.search-results
       [:h3 {:class (util/merge-classes "search-result-count"
                                        (when (<sub [:wh.search/searching?])
                                          "skeleton"))}
        (<sub [::subs/pre-set-search-result-count-str])]
-      [jobs-board view-type]]]))
+      [jobs-board view-type preset-search?]]]))

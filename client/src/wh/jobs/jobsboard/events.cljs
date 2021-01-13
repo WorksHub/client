@@ -5,6 +5,7 @@
             [wh.common.cases :as cases]
             [wh.common.job :as job]
             [wh.common.search :as search]
+            [wh.common.url :as url]
             [wh.db :as db]
             [wh.graphql.jobs]
             [wh.jobs.jobsboard.db :as jobsboard]
@@ -45,8 +46,9 @@
           remote?          (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote])    ;; for preset-search
           tags             (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/tags])      ;; for preset search
           preset-search?   (= :pre-set-search (::db/page db))
-          preset-search    (if initial-load? (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/preset-search])
-                               (str/replace (::db/uri db) #"/" ""))
+          preset-search    (if initial-load?
+                             (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/preset-search])
+                             (url/strip-query-params (str/replace (::db/uri db) #"/" "")))
           db-filters       (->
                              (merge (if (and initial-load? preset-search?)
                                       (cond-> {}

@@ -71,7 +71,7 @@
         [job/job-card job (job-card-opts (:company-id job))])]
 
      [newsletter/newsletter {:logged-in? (<sub [:user/logged-in?])
-                             :type :job-list}]
+                             :type       :job-list}]
 
      [:div
       {:class (jobs-container-class view-type)}
@@ -104,4 +104,5 @@
        [:div.search-results
         [:h3.search-result-count (<sub [::subs/search-result-count-str])]
         [:section
-         [jobs-board :preset-search query-params view-type]]])]))
+         ;; `nil` route means use current
+         [jobs-board nil query-params view-type]]])]))

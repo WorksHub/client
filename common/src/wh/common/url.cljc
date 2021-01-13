@@ -17,6 +17,10 @@
   (when domain
     (str/includes? domain website)))
 
+(defn strip-query-params
+  [uri]
+  (subs uri 0 (clojure.string/last-index-of uri "?")))
+
 (defn uri->domain [uri]
   (let [uri (str/trim uri)]
     #?(:cljs
