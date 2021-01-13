@@ -86,7 +86,7 @@
                                   :state
                                   :note
                                   [:coverLetter [:link [:file [:url]]]]
-                                  [:job [:id :slug :title [:company [:name]]]]]]
+                                  [:job [:id :slug :title [:company [:name :slug :package]]]]]]
                        :hubspotProfileUrl
                        [:likes [:id :slug :title [:company [:name]]]]]]
                      [:blogs {:user_id :$user_id}

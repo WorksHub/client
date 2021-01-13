@@ -37,6 +37,8 @@
 (defn job-application [{:keys [job] :as application}]
   [:div
    [components/job-link job]
+   [:br]
+   [components/company-link job]
    [components/application-state application nil nil]])
 
 (defn toggle-view [user admin-view?]

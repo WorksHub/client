@@ -13,23 +13,23 @@
                  profile-type (:type profile)
                  admin-view? (<sub [::subs/admin-view?])
                  set-approval-status #(dispatch [:wh.profile.section-admin.events/set-approval-status %])
-                 fetch-profile [:wh.logged-in.profile.events/fetch-initial-data]]
-             (when (and profile-loaded?
-                       admin-view?
-                       (not (user-common/admin-type? profile-type)))
-               [:<>
-                [section-admin/controls
-                 {:hs-url        (<sub [::subs/hs-url])
-                  :applications  (<sub [::subs/applications])
-                  :liked-jobs    (<sub [::subs/liked-jobs])
-                  :approval-info (<sub [::subs/approval-info])
-                  :on-approve    #(set-approval-status {:id     (:id profile)
-                                                        :status "approved"
-                                                        :fetch-profile fetch-profile})
-                  :on-reject #(set-approval-status {:id     (:id profile)
-                                                    :status "rejected"
-                                                    :fetch-profile fetch-profile})
-                  :updating-status (<sub [::subs/updating-status])}]]))))
+                 fetch-profile [:wh.logged-in.profile.events/fetch-initial-data]
+                 show-admin-controls? (and profile-loaded?
+                                           admin-view?
+                                           (not (user-common/admin-type? profile-type)))]
+             (when show-admin-controls?
+               [section-admin/controls
+                {:hs-url        (<sub [::subs/hs-url])
+                 :applications  (<sub [::subs/applications])
+                 :liked-jobs    (<sub [::subs/liked-jobs])
+                 :approval-info (<sub [::subs/approval-info])
+                 :on-approve    #(set-approval-status {:id     (:id profile)
+                                                       :status "approved"
+                                                       :fetch-profile fetch-profile})
+                 :on-reject #(set-approval-status {:id     (:id profile)
+                                                   :status "rejected"
+                                                   :fetch-profile fetch-profile})
+                 :updating-status (<sub [::subs/updating-status])}]))))
 
 (defn toggle-view
   "Toggle the look of a profile so admin can see the it as a guest"

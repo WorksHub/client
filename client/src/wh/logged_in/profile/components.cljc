@@ -3,6 +3,7 @@
             #?(:cljs [wh.logged-in.profile.subs])
             [clojure.string :as str]
             [re-frame.core :refer [dispatch-sync]]
+            [wh.common.data :as data]
             [wh.common.keywords :as keywords]
             [wh.common.text :refer [pluralize]]
             [wh.common.time :as time]
@@ -77,6 +78,14 @@
   [underline-link
    {:text (:title job)
     :href (routes/path :job :params {:slug (:slug job)})}])
+
+(defn company-link [{:keys [company] :as job}]
+  [underline-link
+   {:text (str (:name company) ", " (-> (:package company)
+                                        keyword
+                                        data/package-data
+                                        :name))
+    :href (routes/path :company :params {:slug (:slug company)})}])
 
 (defn application-state [{:keys [state timestamp job] :as _application} user type]
   (let [other? (= type :other)]
