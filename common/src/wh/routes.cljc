@@ -257,14 +257,14 @@
   :args (s/cat :m :http/query-params)
   :ret string?)
 
-(defn path [handler & {:keys [params query-params anchor]}]
+(defn path [handler & {:keys [params query-params anchor] :as opts}]
   (try
     (cond->
       (when handler           (apply bidi/path-for routes handler (flatten (seq params))))
       (seq query-params)      (str "?" (serialize-query-params query-params))
       (text/not-blank anchor) (str "#" anchor))
     (catch #?(:clj Exception) #?(:cljs js/Object) _
-           (let [message (str "Unable to construct link: " (pr-str (assoc params :handler handler)))]
+           (let [message (str "Unable to construct link: " (pr-str (assoc opts :handler handler)))]
              #?(:clj (warn message))
              #?(:cljs (js/console.warn message)))
            "")))
