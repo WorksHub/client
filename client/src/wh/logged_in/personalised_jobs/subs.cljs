@@ -30,10 +30,19 @@
     (filterv :liked all-jobs)))
 
 (reg-sub
+  ::selected-job-id
+  :<- [:wh/query-param "job-id"]
+  (fn [selected-job-id]
+    selected-job-id))
+
+(reg-sub
  ::applied-jobs
  :<- [::jobs]
- (fn [all-jobs]
-   (filterv :applied all-jobs)))
+ :<- [::selected-job-id]
+ (fn [[all-jobs selected-job-id] _]
+   (->> (filterv :applied all-jobs)
+        (sort-by #(= (:id %) selected-job-id))
+        reverse)))
 
 (reg-sub
  ::recommended-jobs
@@ -47,3 +56,4 @@
   :<- [::personalised-jobs]
   (fn [sub-db _]
     (::personalised-jobs/show-load-more? sub-db)))
+

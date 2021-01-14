@@ -147,11 +147,12 @@
            liked display-salary remuneration remote sponsorship-offered id]
     :or   {published true}
     :as   job}
-   {:keys [liked? applied? user-is-owner? small? view-type logged-in? on-close]
+   {:keys [liked? applied? user-is-owner? small? view-type logged-in? on-close highlighted?]
     :or   {liked?            (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
            applied?          (or applied false) ;; old style job handlers added 'applied' bool to the job itself
            user-is-owner?    false
-           small?            false}
+           small?            false
+           highlighted?      false}
     :as opts}]
   (let [skeleton? (and job (empty? (dissoc job :id :slug)))
         salary    (or display-salary (jobc/format-job-remuneration remuneration))
@@ -169,6 +170,7 @@
                                       (when remote "card--job--remote")
                                       (when small? "card--small")
                                       (when skeleton? "job-card--skeleton")
+                                      (when highlighted? "job-card--highlighted")
                                       (job-card-class view-type))}
      [:div
       {:class (util/merge-classes "card--job__control-bar"

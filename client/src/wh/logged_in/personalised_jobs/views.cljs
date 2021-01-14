@@ -1,6 +1,5 @@
 (ns wh.logged-in.personalised-jobs.views
   (:require
-    [clojure.string :as str]
     [re-frame.core :refer [dispatch]]
     [wh.components.common :refer [link]]
     [wh.components.icons :refer [icon]]
@@ -35,19 +34,23 @@
          [link [:button.button "Improve recommendations"] :improve-recommendations :class "level-item"]])]]
     (let [{:keys [on-close sub message]} (job-type-data type-of-jobs)
           parts                          (partition-all 3 (<sub sub))
-          has-applied?                   (some? (<sub [:user/applied-jobs]))]
+          has-applied?                   (some? (<sub [:user/applied-jobs]))
+          selected-job-id                (<sub [::subs/selected-job-id])]
       (cond
-        (seq parts) (conj (vec (for [part parts]
-                                 (into [:div.columns]
-                                       (for [job part]
-                                         [:div.column.is-4
-                                          [job-card job (merge {:user-has-applied? has-applied?
-                                                                :logged-in?        true
-                                                                :apply-source      (str "personalized-jobs-" (name type-of-jobs) "-job")}
-                                                               (when on-close
-                                                                 {:on-close on-close}))]]))))
-                          [:div.columns.is-centered.load-more-section
-                           [:div.column.is-4.has-text-centered
-                            (when (<sub [::subs/show-load-more?])
-                              [:button.button {:on-click #(dispatch [::events/load-more type-of-jobs])} "Load more Jobs"])]])
+        (seq parts)
+        (conj (vec (for [part parts]
+                     (into [:div.columns]
+                           (for [job part]
+                             [:div.column.is-4
+                              [job-card job (merge {:user-has-applied? has-applied?
+                                                    :highlighted?      (= selected-job-id (:id job))
+                                                    :logged-in?        true
+                                                    :apply-source      (str "personalized-jobs-" (name type-of-jobs) "-job")}
+                                                   (when on-close
+                                                     {:on-close on-close}))]]))))
+              [:div.columns.is-centered.load-more-section
+               [:div.column.is-4.has-text-centered
+                (when (<sub [::subs/show-load-more?])
+                  [:button.button {:on-click #(dispatch [::events/load-more type-of-jobs])} "Load more Jobs"])]])
+        ;;
         :else       (or message [[:p "No jobs found."]])))))
