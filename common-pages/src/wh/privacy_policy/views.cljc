@@ -8,7 +8,7 @@
      [:li
       [:span.heading "Introduction"]
       [:ol
-       [:li [:p "The WorksHub Privacy Policy (\"Policy\") sets out what, why and how personal data are collected and used by WorksHub (aka Functional Works Ltd.) [and its affiliates] ([collectively] “WorksHub”, \"we\". \"us\", \"our\") when you visit any of our online job matching websites (e.g. FunctionalWorks) (\"Websites\").  By continuing to use these Websites, you consent to your information being processed in accordance with this Policy.    All Data Subjects provide consent of which we keep record.  Data Subjects have ability to withdraw consent.\n"]]
+       [:li [:p "The WorksHub Privacy Policy (\"Policy\") sets out what, why and how personal data are collected and used by Functional Works Ltd [and its affiliates] ([collectively] “WorksHub”, \"we\". \"us\", \"our\") when you visit any of our online job matching websites (e.g. FunctionalWorks) (\"Websites\").  By continuing to use these Websites, you consent to your information being processed in accordance with this Policy.    All Data Subjects provide consent of which we keep record.  Data Subjects have ability to withdraw consent.\n"]]
        [:li [:p "If you have questions or need to contact us about this Privacy Policy, please email us at "
              [:span [:a {:href "mailto:hello@functionalworks.com"} "hello@functionalworks.com"]]
              " or our Data Controller/DPO, Antony Woods at "
@@ -129,5 +129,5 @@
      [:li
       [:span.heading "Questions about this Policy"]
       [:ol
-       [:li [:p "These Websites are maintained by WorksHub. If you have a question, concern or complaint about this Policy or our handling of your information, you can contact WorksHub by email on "
+       [:li [:p "These Websites are maintained by Functional Works Ltd. If you have a question, concern or complaint about this Policy or our handling of your information, you can contact WorksHub by email on "
              [:span [:a {:href "mailto:hello@functionalworks.com"} "hello@functionalworks.com"]]]]]]]]])
