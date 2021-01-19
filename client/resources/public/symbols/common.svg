@@ -220,10 +220,10 @@
       <path d="M9.33 1.33H4a1.33 1.33 0 00-1.33 1.34v10.66A1.33 1.33 0 004 14.67h8a1.33 1.33 0 001.33-1.34v-8l-4-4z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.33 1.33v4h4M10.67 8.67H5.33M10.67 11.33H5.33M6.67 6H5.33" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
     <symbol id="award" width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M8 10A4.67 4.67 0 108 .67 4.67 4.67 0 008 10z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.47 9.26l-.8 6.07 3.33-2 3.33 2-.8-6.08" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 10A4.67 4.67 0 108 .67 4.67 4.67 0 008 10z" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.47 9.26l-.8 6.07 3.33-2 3.33 2-.8-6.08" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
     <symbol id="globe" width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M8 14.67A6.67 6.67 0 108 1.33a6.67 6.67 0 000 13.34zM1.33 8h13.34" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 1.33A10.2 10.2 0 0110.67 8 10.2 10.2 0 018 14.67 10.2 10.2 0 015.33 8c.05-2.47 1-4.84 2.67-6.67z" stroke="#FD7D72" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 14.67A6.67 6.67 0 108 1.33a6.67 6.67 0 000 13.34zM1.33 8h13.34" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 1.33A10.2 10.2 0 0110.67 8 10.2 10.2 0 018 14.67 10.2 10.2 0 015.33 8c.05-2.47 1-4.84 2.67-6.67z" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
     <symbol id="job-sponsorship" viewBox="0 0 378 512">
         <path d="M188.969 107.972C138.945 107.972 98.2459 148.668 98.2459 198.691C98.2459 248.719 138.945 289.414 188.969 289.414C238.992 289.414 279.687 248.719 279.687 198.691C279.687 148.668 238.992 107.972 188.969 107.972Z" />

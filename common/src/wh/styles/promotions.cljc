@@ -16,4 +16,5 @@
 (def button--promote--inverted "promotions__button--promote--inverted--EmCPH")
 (def button--promote--inverted-highlighted "promotions__button--promote--inverted-highlighted--a0a3u")
 (def button--promote--short "promotions__button--promote--short--1xu4R")
+(def button--promote--disabled "promotions__button--promote--disabled--368dv")
 (def button--promote--dark "promotions__button--promote--dark--helEC")

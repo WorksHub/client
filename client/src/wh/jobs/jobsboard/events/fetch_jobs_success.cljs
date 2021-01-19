@@ -72,7 +72,7 @@
    [all-jobs? page-number {{jobs-search :jobs_search city-info :city_info remuneration-ranges :remuneration_ranges} :data}]]
   (let [search-params (:searchParams jobs-search)
         search-data   (get-search-data
-                       db (organize-search-params db jobs-search search-params remuneration-ranges city-info))
+                        db (organize-search-params db jobs-search search-params remuneration-ranges city-info))
         jobsboard-db  #:wh.jobs.jobsboard.db{:jobs                     (mapv job/translate-job (:jobs jobs-search))
                                              :promoted-jobs            (mapv job/translate-job (:promoted jobs-search))
                                              :number-of-search-results (:numberOfHits jobs-search)

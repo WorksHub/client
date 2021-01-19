@@ -20,7 +20,7 @@
 // In days of uncertainty find @Andrzej Fricze
 
 // css vars
-import './root.sass'
+import './root.sass';
 
 // pages
 import './landing.sass';
@@ -48,6 +48,7 @@ import './modal.sass';
 import './form.sass';
 import './banner.sass';
 import './tasks.sass';
-import './modal_publish_job.sass'
+import './modal_publish_job.sass';
 import './payment.sass';
-import './newsletter_subscription.sass'
+import './newsletter_subscription.sass';
+import './job_card.sass';

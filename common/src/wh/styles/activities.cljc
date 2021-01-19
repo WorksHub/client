@@ -42,6 +42,7 @@
 (def button--inverted "activities__button--inverted--1BM0H")
 (def button--inverted-highlighted "activities__button--inverted-highlighted--11aYu")
 (def button--short "activities__button--short--1-pEH")
+(def button--disabled "activities__button--disabled--2LphA")
 (def button--dark "activities__button--dark--1pdNs")
 (def article__feature "activities__article__feature--2e8wB")
 (def article__feature-img "activities__article__feature-img--GRf7b")

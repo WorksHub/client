@@ -6,8 +6,8 @@
 
 (deffragment jobCardFields :Job
   [:id :slug :title :tagline [:tags :fragment/tagFields] :published :userScore
-   :roleType :sponsorshipOffered :remote :companyId
-   [:company [:name :slug :logo]]
+   :roleType :sponsorshipOffered :remote :companyId :lastModified
+   [:company [:name :slug :logo :size]]
    [:location [:city :state :country :countryCode]]
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
 

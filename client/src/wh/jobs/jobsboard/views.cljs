@@ -5,7 +5,8 @@
             [wh.common.emoji :as emoji]
             [wh.components.forms.views :refer [labelled-checkbox multiple-checkboxes select-field text-input text-field radio-buttons]]
             [wh.components.icons :refer [icon]]
-            [wh.components.job :refer [job-card]]
+            [wh.components.job :as job]
+            [wh.components.job-new :as job-new]
             [wh.components.pagination :as pagination]
             [wh.jobs.jobsboard.events :as events]
             [wh.jobs.jobsboard.subs :as subs]
@@ -205,6 +206,11 @@
   {:cards "jobs-board__jobs-list__content"
    :list  ""})
 
+;; TODO [CH4779] remove once both card and list mode are implemented
+(def job-card
+  {:cards job/job-card
+   :list  job-new/job-card})
+
 (defn promoted-jobs [view-type]
   (let [jobs         (<sub [::subs/promoted-jobs])
         logged-in?   (<sub [:user/logged-in?])
@@ -217,12 +223,12 @@
      [:div {:class (jobs-container-class view-type)}
       (for [job jobs]
         ^{:key (:id job)}
-        [job-card job {:logged-in?        logged-in?
-                       :view-type         view-type
-                       :user-has-applied? has-applied?
-                       :user-is-company?  (not (nil? company-id))
-                       :user-is-owner?    (or admin? (= company-id (:company-id job)))
-                       :apply-source      "jobsboard-promoted-job"}])]]))
+        [(job-card view-type) job {:logged-in?        logged-in?
+                                   :view-type         view-type
+                                   :user-has-applied? has-applied?
+                                   :user-is-company?  (not (nil? company-id))
+                                   :user-is-owner?    (or admin? (= company-id (:company-id job)))
+                                   :apply-source      "jobsboard-promoted-job"}])]]))
 
 (defn- skeleton-jobs [view-type]
   [:section.jobs-board__jobs-list
@@ -230,7 +236,7 @@
     {:class (jobs-container-class view-type)}
     (for [i [1 2 3]]
       ^{:key i}
-      [job-card {:id (str "skeleton-job-" i)}
+      [(job-card view-type) {:id (str "skeleton-job-" i)}
        {:view-type view-type}])]])
 
 (defn jobs-board [view-type preset-search?]
@@ -248,12 +254,12 @@
           {:class (jobs-container-class view-type)}
           (for [job jobs]
             ^{:key (:id job)}
-            [job-card job {:logged-in?        logged-in?
-                           :view-type         view-type
-                           :user-has-applied? has-applied?
-                           :user-is-company?  (not (nil? company-id))
-                           :user-is-owner?    (or admin? (= company-id (:company-id job)))
-                           :apply-source      "jobsboard-job"}])]))
+            [(job-card view-type) job {:logged-in?        logged-in?
+                                       :view-type         view-type
+                                       :user-has-applied? has-applied?
+                                       :user-is-company?  (not (nil? company-id))
+                                       :user-is-owner?    (or admin? (= company-id (:company-id job)))
+                                       :apply-source      "jobsboard-job"}])]))
      (when (and (not (<sub [:wh.search/searching?]))
                 (seq jobs))
        [pagination/pagination
