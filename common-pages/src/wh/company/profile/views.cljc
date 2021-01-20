@@ -1,7 +1,7 @@
 (ns wh.company.profile.views
   (:require #?(:cljs [wh.common.logo])
             #?(:cljs [wh.common.upload :as upload])
-            #?(:cljs [wh.company.components.forms.views :refer [rich-text-field]])
+            #?(:cljs [wh.components.rich-text-field.loadable :refer [rich-text-field]])
             #?(:cljs [wh.components.conversation.views :refer [codi-message]])
             #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
             #?(:cljs [wh.components.github :as github])
@@ -37,7 +37,6 @@
             [wh.re-frame :as r]
             [wh.re-frame.events :refer [dispatch dispatch-sync]]
             [wh.re-frame.subs :refer [<sub]]
-            [wh.routes :as routes]
             [wh.util :as util]))
 
 (defn edit-button

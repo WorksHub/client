@@ -1,4 +1,4 @@
-(ns wh.company.components.forms.views
+(ns wh.components.rich-text-field.core
   (:require [prop-types]
             ["react-quill" :as ReactQuill]
             [re-frame.core :refer [dispatch dispatch-sync]]
@@ -9,10 +9,15 @@
 
 (defn rich-text-field
   "Like text-field, but renders a React Quill text area."
-  [{:keys [label on-change on-blur on-focus placeholder]}]
+  [{:keys [label on-change on-blur on-focus placeholder] :as props}]
   (let [dirty (reagent/atom false)
         focused (reagent/atom false)
-        qid (name (gensym))]
+        qid (name (gensym))
+        modules (clj->js {:toolbar [[{:header  [2, 3, false]}]
+                                    ["bold"] ["italic"] ["underline"] ["link"]
+                                    [{:list "ordered"}] [{:list "bullet"}]
+                                    ["image"] ["video"] ["code"]
+                                    ["clean"]]})]
     (fn [{:keys [dirty? value error validate force-error? data-test] :as options}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
@@ -31,11 +36,7 @@
         [quill {:id qid
                 :theme "snow"
                 :bounds ".main"
-                :modules (clj->js {:toolbar [[{:header  [2, 3, false]}]
-                                             ["bold"] ["italic"] ["underline"] ["link"]
-                                             [{:list "ordered"}] [{:list "bullet"}]
-                                             ["image"] ["video"] ["code"]
-                                             ["clean"]]})
+                :modules modules
                 :value value
                 :placeholder placeholder
                 :on-change-selection #(if (nil? %) ;; nil == on-blur

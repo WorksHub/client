@@ -4,7 +4,7 @@
             [re-frame.core :refer [dispatch]]
             [reagent.core :as r]
             [wh.common.upload :as upload]
-            [wh.company.components.forms.views :refer [rich-text-field]]
+            [wh.components.rich-text-field.loadable :refer [rich-text-field]]
             [wh.company.create-job.db :as create-job]
             [wh.company.create-job.events :as events]
             [wh.company.create-job.subs :as subs]

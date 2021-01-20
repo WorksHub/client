@@ -55,7 +55,9 @@
                  :landing-page    {:entries    [wh.landing-page.core]
                                    :depends-on #{:common}}
                  :profile         {:entries    [wh.profile.core]
-                                   :depends-on #{:common :venia}}}
+                                   :depends-on #{:common :venia}}
+                 :quill           {:entries    [wh.components.rich-text-field.core]
+                                   :depends-on #{:common}}}
 
                 :output-dir       "target/resources/public/js"
                 :asset-path       "/js"

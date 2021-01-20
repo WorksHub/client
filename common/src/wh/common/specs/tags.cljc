@@ -3,7 +3,6 @@
     #?(:clj [wh.spec.common :as sc])
     [#?(:clj clojure.spec.alpha
         :cljs cljs.spec.alpha) :as s]
-    [spec-tools.core :as st]
     [wh.common.specs.date]
     [wh.common.specs.primitives :as p]))
 
