@@ -1,4 +1,4 @@
 (ns wh.styles.iconsset)
-(def page "iconsset__page--lEJEc")
-(def icon "iconsset__icon--1iWKc")
-(def icon__wrapper "iconsset__icon__wrapper--1sPM9")
+(def page "iconsset__page--3Va6K")
+(def icon "iconsset__icon--1vuXW")
+(def icon__wrapper "iconsset__icon__wrapper--2zFCy")

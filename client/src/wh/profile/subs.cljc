@@ -232,3 +232,8 @@
   ::user-info-modal-opened?
   (fn [db]
     (profile/modal-opened? db)))
+
+(reg-sub
+ ::cv-visible?
+ (fn [db]
+   (profile/cv-visible? db)))

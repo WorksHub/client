@@ -744,6 +744,15 @@
                            (if (fn? on-change)
                              (on-change new-value)
                              (dispatch-sync (conj on-change new-value))))}])
+
+;;height do nothing here, not figuring out how to make this section higher
+(defn section-cv [url]
+  [section
+   [sec-title "CV"]
+   [:iframe {:src url
+             :title "CV"
+             :height "400px"
+             :width "100%"}]])
 ;; --------------------------------------------------------------------------------
 
 (defn itemize [items & {:keys [class no-data-message]}]

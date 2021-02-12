@@ -1,14 +1,15 @@
 (ns wh.profile.views
   (:require
-    [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
-    [wh.components.loader :refer [loader-full-page]]
-    [wh.components.not-found :as not-found]
-    [wh.logged-in.profile.components :as components]
-    #?(:cljs [wh.profile.section-company :as section-company])
-    [wh.profile.db :as profile]
-    [wh.profile.events :as profile-events]
-    [wh.profile.subs :as subs]
-    [wh.re-frame.subs :refer [<sub]]))
+   [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
+   [wh.components.loader :refer [loader-full-page]]
+   [wh.components.not-found :as not-found]
+   [wh.logged-in.profile.components :as components]
+   #?(:cljs [wh.profile.section-company :as section-company])
+   [wh.profile.db :as profile]
+   [wh.profile.events :as profile-events]
+   [wh.profile.subs :as subs]
+   [clojure.string :refer [ends-with?]]
+   [wh.re-frame.subs :refer [<sub]]))
 
 (defn section-for-company []
   #?(:cljs (let [user (<sub [::subs/profile])
@@ -29,7 +30,19 @@
                  :on-pass             #(set-application-state (profile/application-action :pass))
                  :on-hire             #(set-application-state (profile/application-action :hire))
                  :on-modal-close      #(dispatch [::profile-events/close-user-info-modal])
-                 :modal-opened?       (<sub [::subs/user-info-modal-opened?])}]))))
+                 :modal-opened?       (<sub [::subs/user-info-modal-opened?])
+                 :cv-visible?        (<sub [::subs/cv-visible?])}]))))
+
+;I only managed to test that the .pdf is loading fine if I substitute cv-url
+;with something line cv-url "http://www.africau.edu/images/default/sample.pdf" (or any valid .pdf link)
+(defn section-cv []
+  (let [company-view? (<sub [:user/company?])
+        cv-visible? (<sub [::subs/cv-visible?])
+        user-cv (get-in (<sub [::subs/profile]) [:cv :file])
+        cv-url (:url user-cv) 
+        cv-name (:name user-cv)]
+    (when (and (and company-view? cv-visible?) (ends-with? cv-name ".pdf"))
+      [components/section-cv cv-url])))
 
 (defn section-stats []
   (let [articles (<sub [::subs/blogs])
@@ -103,6 +116,7 @@
        [components/profile-hidden-message]
        [components/content
         [section-for-company]
+        [section-cv]
         [section-stats]
         [section-skills]
         [section-private-details]

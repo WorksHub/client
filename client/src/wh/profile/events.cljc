@@ -188,3 +188,15 @@
    (defmethod pages/on-page-load :user [_]
      [[:wh.pages.core/unset-loader]
       [::load-profile]]))
+
+(reg-event-db
+ ::close-user-cv
+ db/default-interceptors
+ (fn [db _]
+   (profile/close-cv db)))
+
+(reg-event-db
+ ::open-user-cv
+ db/default-interceptors
+ (fn [db _]
+   (profile/open-cv db)))
