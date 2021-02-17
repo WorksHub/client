@@ -190,13 +190,9 @@
       [::load-profile]]))
 
 (reg-event-db
- ::close-user-cv
+ ::show-user-cv
  db/default-interceptors
- (fn [db _]
-   (profile/close-cv db)))
-
-(reg-event-db
- ::open-user-cv
- db/default-interceptors
- (fn [db _]
-   (profile/open-cv db)))
+ (fn [db [cv-visible]]
+   (if cv-visible
+     (profile/open-cv db)
+     (profile/close-cv db))))

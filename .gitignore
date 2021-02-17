@@ -4,3 +4,6 @@
 .lein-repl-history
 .nrepl-port
 /public
+.lsp
+/client/resources
+/common/src

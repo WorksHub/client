@@ -1,5 +1,5 @@
 (ns wh.profile.section-company
-  (:require [re-frame.core :refer [dispatch subscribe]]
+  (:require [re-frame.core :refer [dispatch]]
             [wh.components.common :refer [link]]
             [wh.components.modal :as modal]
             [wh.logged-in.profile.components :as components]
@@ -7,7 +7,8 @@
             [wh.profile.events :as events]
             [wh.profile.subs :as subs]
             [wh.styles.profile :as styles]
-            [wh.util :as util]))
+            [wh.util :as util]
+            [wh.subs :refer [<sub]]))
 
 (def btn-cls (util/mc styles/button styles/button--small))
 (def btn-cls-inverted (util/mc styles/button styles/button--small styles/button--inverted))
@@ -57,7 +58,7 @@
         {:keys [job note]} application
         cover-letter-url   (get-in application [:cover-letter :file :url])
         cv-url             (get-in user [:cv :file :url])
-        cv-visible? @(subscribe [::subs/cv-visible?])]
+        cv-visible?        (<sub [::subs/cv-visible?])]
     [:div {:class styles/job-application__wrapper}
      [:div {:class styles/job-application}
       [components/job-link job]
@@ -69,9 +70,8 @@
                                        :text     "View cover letter"
                                        :new-tab? true}])
          (if cv-url
-           [:div (if cv-visible?
-                   [:a {:class styles/underline-link :on-click #(dispatch [::events/close-user-cv])} "Hide cv"]
-                   [:a {:class styles/underline-link :on-click #(dispatch [::events/open-user-cv])} "Show cv"])
+           [:div 
+            [:a {:class styles/underline-link :on-click #(dispatch [::events/show-user-cv (not cv-visible?)])} (if cv-visible? "Hide CV" "Show CV")]
             [:p ""]
             [components/underline-link {:href     cv-url
                                         :text     "Download CV"
