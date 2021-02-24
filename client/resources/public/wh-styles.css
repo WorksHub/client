@@ -1311,6 +1311,14 @@
   border: solid 1px #e8e8e8; }
   .profile__cv-link--10XGd {
   height: 34px; }
+  .profile__cv--3G-sV {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 24px;
+  grid-auto-rows: 400px; }
+  .profile__cv-iframe--vPe5Y {
+  height: 400px;
+  width: 100%; }
 
 .promotions__object--30kbS, .promotions__preview__promotion--11_OC {
   background: #fff;

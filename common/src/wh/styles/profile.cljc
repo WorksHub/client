@@ -153,3 +153,5 @@
 (def cta__section__seperator "profile__cta__section__seperator--1VKDI")
 (def text-field "profile__text-field--2kdzB")
 (def cv-link "profile__cv-link--10XGd")
+(def cv "profile__cv--3G-sV")
+(def cv-iframe "profile__cv-iframe--vPe5Y")

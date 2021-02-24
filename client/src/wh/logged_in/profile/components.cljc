@@ -747,12 +747,12 @@
 
 ;;height do nothing here, not figuring out how to make this section higher
 (defn section-cv [url]
-  [section
+  [section (util/smc styles/cv) 
    [sec-title "CV"]
-   [:iframe {:src url
-             :title "CV"
-             :height "400px"
-             :width "100%"}]])
+    [:div {:class styles/cv}
+     [:iframe {:src url
+              :title "CV"
+              :class styles/cv-iframe}]]])
 ;; --------------------------------------------------------------------------------
 
 (defn itemize [items & {:keys [class no-data-message]}]
