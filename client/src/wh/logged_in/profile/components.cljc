@@ -745,12 +745,10 @@
                              (on-change new-value)
                              (dispatch-sync (conj on-change new-value))))}])
 
-;;height do nothing here, not figuring out how to make this section higher
 (defn section-cv [url]
   [section (util/smc styles/cv) 
    [sec-title "CV"]
-    [:div {:class styles/cv}
-     [:iframe {:src url
+    [:div [:iframe {:src url
               :title "CV"
               :class styles/cv-iframe}]]])
 ;; --------------------------------------------------------------------------------
