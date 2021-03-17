@@ -6,14 +6,6 @@ $video-lower-height: 115px
   display: inline-block
   position: relative
   width: $video-width
-  flex: 1 0 245px
-  +desktop
-    max-width: 49%
-    &:nth-of-type(even)
-      margin-left: 12px
-  +mobile
-    margin-right: 12px
-  margin-bottom: 20px
 .video_upper
   height: $video-upper-height
   width: $video-width
@@ -87,8 +79,9 @@ $video-lower-height: 115px
     color: $dark-red
 
 .videos__list
-  display: flex
-  flex-wrap: wrap
+  display: grid
+  grid-gap: 16px
+  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr))
 
 #video-player-container
   display: none
