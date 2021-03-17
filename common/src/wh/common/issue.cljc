@@ -14,3 +14,7 @@
       (cases/->kebab-case)
       (util/update* :level keyword)
       (util/update* :status keyword)))
+
+(defn format-compensation [{:keys [compensation] :as _issue}]
+  (if (and compensation (:currency compensation) (pos? (:amount compensation)))
+    (str (name (:currency compensation)) " " (:amount compensation))))

@@ -2,9 +2,6 @@
 
 (def default-db {::search #:wh.search {:available-role-types []
                                        :query                nil
-                                       :tag-part             nil
-                                       :matching-tags        nil
-                                       :tags-collapsed?      true
                                        :role-types           #{}
                                        :tags                 #{}
                                        :cities               #{}

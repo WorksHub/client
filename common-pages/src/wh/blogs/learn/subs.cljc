@@ -107,11 +107,13 @@
   :<- [::db]
   :<- [::all-blogs]
   (fn [[liked applied db all-blogs] _]
-    (let [params (learn/params db)
-          query-name :recommended_jobs
-          state (graphql/state db query-name params)
+    (let [params            (learn/articles-jobs-params db)
+          query-name        (learn-events/query-name-for-articles-jobs db)
+          state             (graphql/state db query-name params)
           amount-to-display (max-amount-to-display all-blogs)
-          recommended (get-in (graphql/result db query-name params) [:jobs-search :promoted])]
+          recommended       (get-in (graphql/result db query-name params)
+                                    [:jobs-search
+                                     (if (learn/search-arguments? db) :jobs :promoted)])]
       (if (= state :executing)
         (util/maps-with-id amount-to-display)
         (->> (jobs/add-interactions liked applied recommended)
@@ -124,11 +126,11 @@
   :<- [::db]
   :<- [::all-blogs]
   (fn [[db all-blogs] _]
-    (let [params (learn/params db)
-          query-name :recommended_issues
-          state (graphql/state db query-name params)
+    (let [params            (learn/articles-issues-params db)
+          query-name        :recommended_issues
+          state             (graphql/state db query-name params)
           amount-to-display (max-amount-to-display all-blogs)
-          recommended (get-in (graphql/result db query-name params) [:query-issues :issues])]
+          recommended       (get-in (graphql/result db query-name params) [:query-issues :issues])]
       (if (= state :executing)
         (util/maps-with-id amount-to-display)
         (->> recommended

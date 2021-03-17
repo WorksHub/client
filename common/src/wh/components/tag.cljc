@@ -1,9 +1,8 @@
 (ns wh.components.tag
-  (:require
-    [clojure.string :as str]
-    [wh.components.icons :as icons]
-    [wh.interop :as interop]
-    [wh.util :as util]))
+  (:require [clojure.string :as str]
+            [wh.components.icons :as icons]
+            [wh.interop :as interop]
+            [wh.util :as util]))
 
 (defn ->tag
   [m]
@@ -62,7 +61,8 @@
     (->> tags
          (sort-by #(get % :weight 0) >)
          (map (fn [t] [tag element-type t]))
-         (into [:ul.tags.tags--inline.tags--profile]))))
+         (into [:ul.tags.tags--inline.tags--profile
+                {:data-test "tags-list"}]))))
 
 (defn strs->tag-list [element-type strs {:keys [f]
                                          :or   {f identity}}]

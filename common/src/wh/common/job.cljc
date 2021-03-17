@@ -6,16 +6,25 @@
     #?(:cljs [goog.i18n.NumberFormat :as nf])))
 
 (defn format-job-location
-  [{:keys [city state country country-code]} remote]
+  [{:keys [city state country country-code] :as location} remote]
   (cond
-    remote country
-    (and (not (str/blank? city))
-         country-code
-         (= "us" (str/lower-case country-code))) (str/join ", " (remove str/blank? [city state country-code]))
-    (not (str/blank? city)) (str city ", " country)
-    (and (str/blank? city)
-         (not (str/blank? state))) (str state ", " country)
-    (every? str/blank? [city state]) country))
+    remote
+    country
+    ;;
+    (and (not (str/blank? city)) country-code (= "us" (str/lower-case country-code)))
+    (str/join ", " (remove str/blank? [city state country-code]))
+    ;;
+    (not (str/blank? city))
+    (str city ", " country)
+    ;;
+    (and (str/blank? city) (not (str/blank? state)))
+    (str state ", " country)
+    ;;
+    (every? str/blank? [city state])
+    country))
+
+(defn format-location [job]
+  (format-job-location (:location job) (:remote job)))
 
 (defn add-currency-symbol
   [string-salary currency]
@@ -50,10 +59,18 @@
 (defn format-job-remuneration
   "Formats remuneration of a job to produce results like '£50K - 65K' or '$150K - 200K + Equity'"
   [{:keys [competitive] :as remuneration}]
-  (if competitive
+  (cond
+    (not remuneration)
+    nil
+    ;;
+    competitive
     "Competitive"
+    ;;
+    :else
     (format-salary remuneration)))
 
+(defn format-remuneration [job]
+  (format-job-remuneration (:remuneration job)))
 
 (defn format-job-remuneration-short
   "Formats remuneration of a job to produce results like '£50K/y' or '$300/day'"
@@ -79,4 +96,7 @@
 
 (defn sort-by-user-score [jobs]
   (sort-by #(or (get % :user-score 0) 0) > jobs))
+
+(defn published? [job]
+  (boolean (:published job)))
 

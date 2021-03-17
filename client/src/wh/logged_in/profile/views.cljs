@@ -350,31 +350,6 @@
       [:div.column.is-7
        [company-user-edit]]]]]])
 
-(defn improve-recommendations-page []
-  [:div.main-container
-   [:div.main.profile
-    [:div.wh-formx-page-container
-     [:div.columns.is-variable.is-2
-      [:div.column.is-7
-       [:form.wh-formx.header-edit
-        [:h1 "Improve recommendations"]
-        [:h3 "To improve or change your recommendations please add/remove skills and update or add multiple locations."]
-        [multi-edit
-         (<sub [::subs/rated-skills])
-         {:label     [:div "Skills" [:br] [:div.skills "If you are just getting started it's a 1 but if you could write a book on the skill give yourself a 5."]]
-          :component skill-field}]
-        [multi-edit (<sub [::subs/preferred-location-labels])
-         {:label     "Preferred locations"
-          :component preferred-location-field}]
-        [labelled-checkbox
-         (<sub [::subs/remote])
-         {:label     "Prefer remote work"
-          :on-change [::events/set-remote]}]
-        [:div.buttons-container
-         [:button.button.button--small
-          {:on-click #(do (.preventDefault %)
-                          (dispatch [::events/save-recommendations]))} "Save"]]]]]]]])
-
 ;; -----------------------------------------------------------------------------------------------------------
 
 (defn cv-section-view
@@ -454,7 +429,8 @@
 
 (defn cover-letter-section-view-new
   [user-type {:keys [cover-letter-filename cover-letter-url]}]
-  [components/section
+  [components/section-custom
+   {:data-test "section-cover-letter"}
    [components/sec-title "Default Cover Letter"]
 
    (when cover-letter-url
@@ -511,7 +487,8 @@
 
 (defn cv-section-view-new
   [user-type {:keys [cv-link cv-filename cv-url]}]
-  [components/section
+  [components/section-custom
+   {:data-test "section-career-history"}
    [components/sec-title "Career History"]
 
    (when (or cv-url cv-link)

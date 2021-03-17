@@ -275,21 +275,22 @@
               (dissoc :tag-ids))))
 
 (reg-event-fx
-  ::update-company
-  db/default-interceptors
-  (fn [{db :db} [changes scroll-to]]
-    (let [company (cached-company db)]
-      {:db (assoc-in db [::profile/sub-db ::profile/updating?] true)
-       :dispatch [:graphql/update-entry :company {:slug (:slug company)}
-                  :merge {:company (company-changes->cache db changes)}]
-       :graphql {:query (update-company-mutation-with-fields [:id :slug :profileEnabled
-                                                              [:tags [:id :label :slug :type :subtype]]])
-                 :variables {:update_company
-                             (merge {:id (:id company)}
-                                    (cases/->camel-case changes))}
-                 :on-success [::update-company-success]
-                 :on-failure [::update-company-failure changes company]}
-       :scroll-into-view scroll-to})))
+ ::update-company
+ db/default-interceptors
+ (fn [{db :db} [changes scroll-to]]
+   (let [company (cached-company db)]
+     {:db               (assoc-in db [::profile/sub-db ::profile/updating?] true)
+      :dispatch         [:graphql/update-entry :company {:slug (:slug company)}
+                         :merge {:company (company-changes->cache db changes)}]
+      :graphql          {:query      (update-company-mutation-with-fields [:id :slug :profileEnabled
+                                                                           [:tags [:id :label :slug :type :subtype]]])
+                         :variables  {:update_company
+                                      (->> (cases/->camel-case changes)
+                                           (merge {:id (:id company)})
+                                           (util/remove-nils))}
+                         :on-success [::update-company-success]
+                         :on-failure [::update-company-failure changes company]}
+      :scroll-into-view scroll-to})))
 
 (reg-event-fx
   ::update-company-failure

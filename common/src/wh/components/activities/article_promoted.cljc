@@ -7,6 +7,6 @@
   [components/card type
    [components/promoter actor]
 
-   [components/quoted-description {:class styles/quoted-description--article} description]
+   [components/description {:class styles/description--article} description]
 
    [article/base-card blog (:author-info blog) type opts]])

@@ -19,7 +19,7 @@
       [:div.column.is-7
        [:h3.notifications-explanation
         "Whenever we publish a match for your  "
-        [link "preferences" :improve-recommendations]
+        [link "preferences" :profile]
         ", you will receive notifications at "
         [:b (<sub [:user/email])] "."]
        [:p.label "Notify me when..."]

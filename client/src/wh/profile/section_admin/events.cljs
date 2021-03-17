@@ -33,3 +33,20 @@
                :on-success [::set-approval-status-success opts]
                :on-failure [::set-approval-status-failure opts]}}))
 
+(def delete-user-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "delete_user"}
+   :venia/variables [{:variable/name "id"
+                      :variable/type :ID!}]
+   :venia/queries   [[:delete_user {:id :$id}]]})
+
+(reg-event-fx
+  ::delete-user
+  profile-interceptors
+  (fn [{db :db} [user-id]]
+    (when (js/confirm "Are you sure you want to delete this user?")
+      {:graphql {:query      delete-user-mutation
+                 :variables  {:id user-id}
+                 :on-success [:success/set-global "User was deleted!"]
+                 :on-failure [:error/set-global "Failed to delete user"
+                              [::delete-user user-id]]}})))

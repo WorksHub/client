@@ -40,7 +40,6 @@
                                 ;; when there is no user type (i.e. not logged in)
                                 nil         :landing-page}
    :homepage-dashboard         :logged-in
-   :improve-recommendations    :logged-in
    :issue                      :issues
    :issues                     :issues
    :issues-by-language         :issues

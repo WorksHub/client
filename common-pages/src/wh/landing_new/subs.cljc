@@ -16,84 +16,76 @@
             [wh.landing-new.tags :as tags]
             [wh.util :as util]))
 
-(defn cache-results
-  [query-fn db ks]
-  (get-in (apply gqlc/result db (query-fn db)) ks))
-
-(defn cache-loading?
-  [query-fn db]
-  (boolean (#{:executing :initial} (apply gqlc/state db (query-fn db)))))
-
 (reg-sub
   ::top-blogs
   (fn [db _]
-    (cache-results events/top-blogs db [:top-blogs :results])))
+    (gqlc/cache-results events/top-blogs db [:top-blogs :results])))
 
 (reg-sub
   ::top-blogs-loading?
   (fn [db _]
-    (cache-loading? events/top-blogs db)))
+    (gqlc/cache-loading? events/top-blogs db)))
 
 (reg-sub
   ::top-companies
   (fn [db _]
-    (cache-results events/top-companies db [:top-companies :results])))
+    (gqlc/cache-results events/top-companies db [:top-companies :results])))
 
 (reg-sub
   ::top-companies-loading?
   (fn [db _]
-    (cache-loading? events/top-companies db)))
+    (gqlc/cache-loading? events/top-companies db)))
 
 (reg-sub
   ::top-tags
   (fn [db _]
-    (cache-results events/top-tags db [:top-tags :results])))
+    (gqlc/cache-results events/top-tags db [:top-tags :results])))
 
 (reg-sub
   ::top-tags-loading?
   (fn [db _]
-    (cache-loading? events/top-tags db)))
+    (gqlc/cache-loading? events/top-tags db)))
 
 (reg-sub
   ::top-users
   (fn [db _]
-    (cache-results events/top-users db [:top-users :results])))
+    (gqlc/cache-results events/top-users db [:top-users :results])))
 
 (reg-sub
   ::top-users-loading?
   (fn [db _]
-    (cache-loading? events/top-users db)))
+    (gqlc/cache-loading? events/top-users db)))
 
 (reg-sub
   ::recent-jobs
   (fn [db _]
-    (cache-results events/recent-jobs db [:recent-jobs :results])))
+    (gqlc/cache-results events/recent-jobs db [:recent-jobs :results])))
 
 (reg-sub
   ::recent-jobs-loading?
   (fn [db _]
-    (cache-loading? events/recent-jobs db)))
+    (gqlc/cache-loading? events/recent-jobs db)))
 
 (reg-sub
   ::recent-issues
   (fn [db _]
-    (cache-results events/recent-issues db [:recent-issues :results])))
+    (gqlc/cache-results events/recent-issues db [:recent-issues :results])))
 
 (reg-sub
   ::recent-issues-loading?
   (fn [db _]
-    (cache-loading? events/recent-issues db)))
+    (gqlc/cache-loading? events/recent-issues db)))
 
 (reg-sub
   ::recommended-jobs
   (fn [db _]
-    (some->> (cache-results events/recommended-jobs db [:jobs])
+    (some->> (gqlc/cache-results events/recommended-jobs db [:jobs])
              (map #(assoc % :company-info (:company %))))))
 
 (reg-sub
   ::recommended-jobs-loading?
   (fn [db _]
-    (cache-loading? events/recommended-jobs db)))
+    (gqlc/cache-loading? events/recommended-jobs db)))
 
 (defn translate-job [job]
   (-> job
@@ -137,12 +129,12 @@
 (reg-sub
   ::recent-activities-last-page
   (fn [db _]
-    (cache-results events/recent-activities db [:query-activities :last-page])))
+    (gqlc/cache-results events/recent-activities db [:query-activities :last-page])))
 
 (reg-sub
   ::recent-activities-first-page
   (fn [db _]
-    (cache-results events/recent-activities db [:query-activities :first-page])))
+    (gqlc/cache-results events/recent-activities db [:query-activities :first-page])))
 
 (reg-sub
   ::recent-activities-next-page
@@ -159,7 +151,7 @@
 (reg-sub
   ::recent-activities-loading?
   (fn [db _]
-    (cache-loading? events/recent-activities db)))
+    (gqlc/cache-loading? events/recent-activities db)))
 
 (reg-sub
   ::not-enough-activities?
@@ -192,7 +184,7 @@
 (reg-sub
   ::user-details
   (fn [db _]
-    (cache-results events/user-stats db [:query-user-stats])))
+    (gqlc/cache-results events/user-stats db [:query-user-stats])))
 
 (reg-sub
   ::user-skills

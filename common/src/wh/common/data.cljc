@@ -393,6 +393,9 @@
 (def country-codes
   (mapv first country-code-and-country))
 
+(def non-us-country-codes
+  (remove #(= % "US") (mapv first country-code-and-country)))
+
 (def countries
   (mapv second country-code-and-country))
 
@@ -415,7 +418,6 @@
         "natasha"         "Tash Laybourne"
         "nick"            "Nick Maraj"
         "nick.walker"     "Nick Walker"
-        "nikolaus"        "Nikolaus Krahé"
         "patrick"         "Patrick Gubbey"
         "sheryl"          "Sheryl Martin"}
        (map (fn [[k v]] [(->email k) v]))

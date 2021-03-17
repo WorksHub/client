@@ -44,12 +44,12 @@
     :icon-class styles/dropdown__link__icon-person
     :text       "My Open Source Issues"}])
 
-(defn jobs-company-submenu-list [can-publish?]
+(defn jobs-company-submenu-list [can-create?]
   [{:path       (routes/path :jobsboard)
     :icon-name  "board-rectangles"
     :icon-class styles/dropdown__link__icon-jobsboard
     :text       "Jobsboard"}
-   {:path       (if can-publish?
+   {:path       (if can-create?
                   (routes/path :create-job)
                   (routes/path :payment-setup
                                :params {:step :select-package}
@@ -84,13 +84,13 @@
 
 (defn company-mobile-menu []
   (let [company-slug (<sub [::subs/company-slug])
-        can-publish? (<sub [::subs/can-publish-jobs?])]
+        can-create? (<sub [::subs/can-create-jobs?])]
     [:div (util/smc styles/small-menu styles/small-menu--logged-in)
      [:div (util/smc styles/small-menu__column)
       [components/submenu
        {:text      "Jobs"
         :icon-name "suitcase"
-        :dropdown  (jobs-company-submenu-list can-publish?)}]
+        :dropdown  (jobs-company-submenu-list can-create?)}]
 
       [components/submenu
        {:text      "Issues"
@@ -111,7 +111,7 @@
   #?(:cljs [navbar-tasks/tasks-notifications opts]))
 
 (defn company-menu [{:keys [page]}]
-  (let [can-publish? (<sub [::subs/can-publish-jobs?])]
+  (let [can-create? (<sub [::subs/can-create-jobs?])]
     [:ul (util/smc styles/links)
      [components/link {:children [icons/icon "dashboard"
                                   :class styles/dashboard-icon]
@@ -126,7 +126,7 @@
       {:text     "Jobs"
        :route    :jobsboard
        :page     page
-       :dropdown (jobs-company-submenu-list can-publish?)}]
+       :dropdown (jobs-company-submenu-list can-create?)}]
 
      [components/link
       {:text     "Open Source Issues"

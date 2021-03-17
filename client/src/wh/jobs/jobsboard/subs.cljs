@@ -3,41 +3,95 @@
             [goog.i18n.NumberFormat :as nf]
             [re-frame.core :refer [reg-sub]]
             [wh.common.data :refer [currency-symbols]]
-            [wh.common.emoji :as emoji]
+            [wh.common.job :as job]
+            [wh.common.user :as user-common]
             [wh.components.pagination :as pagination]
             [wh.db :as db]
+            [wh.graphql-cache :as gqlc]
             [wh.graphql.jobs :as jobs]
+            [wh.job.db :as job-db]
             [wh.jobs.jobsboard.db :as jobsboard]
-            [wh.jobsboard-ssr.db :as jobsboard-ssr]
-            [wh.user.db :as user]
+            [wh.jobs.jobsboard.events :as events]
+            [wh.jobs.jobsboard.search-results :as search-results]
+            [wh.jobsboard.db :as jobsboard-ssr]
+            [wh.landing-new.events :as landing-events]
+            [wh.slug :as slug]
             [wh.verticals :as verticals])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (reg-sub
-  ::job-list-header
-  (fn [db _]
-    (when (get-in db [::jobsboard/sub-db ::jobsboard/all-jobs?])
-      "All Jobs")))
+  ::search-params
+  :<- [::results]
+  (fn [{:keys [jobs-search] :as _results} _]
+    (:search-params jobs-search)))
 
+;; used e.g. on preset search pages
 (reg-sub
-  ::jobsboard
+  ::search-tag
   (fn [db _]
-    (::jobsboard/sub-db db)))
+    (get-in db [:wh.db/page-params :tag])))
 
 (reg-sub
   ::search-term
-  (fn [db _]
-    (::db/search-term db)))
-
-(reg-sub
-  ::search-term-for-results
-  (fn [db _]
-    (get-in db [::jobsboard/sub-db ::jobsboard/search-term-for-results])))
+  :<- [::search-params]
+  :<- [::search-tag]
+  (fn [[{:keys [query] :as _search-params} search-tag] _]
+    (or (not-empty query) search-tag)))
 
 (reg-sub
   ::search-label
+  :<- [::search-params]
+  (fn [{:keys [label] :as _search-params} _]
+    label))
+
+(reg-sub
+  ::jobsboard
+  :<- [::results]
+  (fn [{:keys [jobs-search] :as _results} _]
+    (search-results/get-jobsboard-db jobs-search (:search-params jobs-search))))
+
+(reg-sub
+  ::admin?
   (fn [db _]
-    (::db/search-label db)))
+    (user-common/admin? db)))
+
+(reg-sub
+  ::user-email
+  (fn [db _]
+    (get-in db [:wh.user.db/sub-db :wh.user.db/email])))
+
+(reg-sub
+  ::search
+  :<- [::results]
+  :<- [::admin?]
+  :<- [::user-email]
+  (fn [[{:keys [jobs-search] :as _results} admin? user-email] _]
+    (let [params (search-results/organize-search-params
+                   user-email jobs-search (:search-params jobs-search))]
+      (search-results/get-search-data admin? params))))
+
+(reg-sub
+  ::filters
+  (fn [db _]
+    (get-in db [::jobsboard/search :wh.search/filters])))
+
+(reg-sub
+  ::result-count
+  :<- [::jobsboard]
+  (fn [db _]
+    (get-in db [::jobsboard/number-of-search-results] 0)))
+
+(reg-sub
+  ::current-page
+  :<- [::jobsboard]
+  (fn [db _]
+    (get-in db [::jobsboard/current-page])))
+
+(reg-sub
+  ::total-pages
+  :<- [::jobsboard]
+  (fn [db _]
+    (get-in db [::jobsboard/total-pages])))
 
 (reg-sub
   ::header-title
@@ -57,82 +111,68 @@
 (reg-sub
   ::header-description
   :<- [:wh.subs/vertical]
-  :<- [::search-term-for-results]
+  :<- [::search-term]
   (fn [[vertical search-term] _]
     (or (get (verticals/config vertical :jobsboard-tag-desc) search-term)
         (:description (verticals/config vertical :jobsboard-header)))))
 
 (reg-sub
-  ::filter-shown?
-  (fn [db _]
-    (::db/filter-shown? db)))
+  ::header-info
+  :<- [::header-title]
+  :<- [::header-subtitle]
+  :<- [::header-description]
+  (fn [[title subtitle description] _]
+    {:title title :subtitle subtitle :description description}))
 
+(reg-sub
+  ::results
+  (fn [db _]
+    (gqlc/cache-results events/jobs db [])))
+
+(reg-sub
+  ::jobs-search
+  :<- [::results]
+  (fn [results _]
+    (:jobs-search results)))
+
+(reg-sub
+  :wh.search/searching?
+  (fn [db _]
+    (gqlc/cache-loading? events/jobs db)))
 
 (reg-sub
   ::jobs
-  :<- [::jobsboard]
+  :<- [::jobs-search]
   :<- [:user/liked-jobs]
   :<- [:user/applied-jobs]
-  (fn [[jobsboard liked-jobs applied-jobs] _]
-    (->> (::jobsboard/jobs jobsboard)
-         (jobs/add-interactions liked-jobs applied-jobs))))
+  (fn [[jobs-search liked-jobs applied-jobs] _]
+    (->> (:jobs jobs-search)
+         (jobs/add-interactions liked-jobs applied-jobs)
+         (map job/translate-job))))
 
 (reg-sub
   ::promoted-jobs
-  :<- [::jobsboard]
+  :<- [::jobs-search]
   :<- [:user/liked-jobs]
   :<- [:user/applied-jobs]
-  (fn [[jobsboard liked-jobs applied-jobs] _]
-    (->> (::jobsboard/promoted-jobs jobsboard)
-         (jobs/add-interactions liked-jobs applied-jobs))))
-
-(reg-sub
-  ::search
-  (fn [db _]
-    (get-in db [::jobsboard/sub-db ::jobsboard/search])))
+  (fn [[jobs-search liked-jobs applied-jobs] _]
+    (->> (:promoted jobs-search)
+         (jobs/add-interactions liked-jobs applied-jobs)
+         (map job/translate-job))))
 
 (defn- checkbox-description
   [{:keys [value label cnt display-count?]
     :or {display-count? true}}]
   (let [cnt (or cnt 0)]
     {:value    value
-     :label    (str (or label value) (when (and display-count? (pos? cnt)) (str " (" cnt ")")))
-     :disabled (zero? cnt)}))
-
-(reg-sub
-  :wh.search/searching?
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/searching search)))
+     :label    (str (or label value) (when (and display-count? (pos? cnt)) (str " (" cnt ")")))}))
 
 (reg-sub
   :wh.search/available-role-types
-  :<- [::search]
-  (fn [search _]
-    (let [role-types (->> search
-                          :wh.search/available-role-types
-                          (map (juxt :value :count))
-                          (into {}))]
-      (for [role-type ["Full time" "Contract" "Intern"]]
-        (checkbox-description {:value          role-type
-                               :cnt            (get role-types role-type)
-                               :display-count? false})))))
-
-(reg-sub
-  :wh.search/sponsorship-desc
-  :<- [::search]
-  (fn [search _]
-    (checkbox-description {:label          "Sponsorship offered"
-                           :cnt            (:wh.search/sponsorship-count search)
-                           :display-count? false})))
-
-(reg-sub
-  :wh.search/remote-desc
-  :<- [::search]
-  (fn [search _]
-    (checkbox-description {:label          "Remote"
-                           :cnt            (:wh.search/remote-count search)
-                           :display-count? false})))
+  (fn [_db _]
+    (for [role-type job-db/role-types]
+      {:value role-type
+       :label role-type})))
 
 (reg-sub
   :wh.search/only-mine-desc
@@ -142,16 +182,9 @@
                            :cnt   (:wh.search/mine-count search)})))
 
 (reg-sub
-  :wh.search/available-tags
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/available-tags search)))
-
-(reg-sub
   :wh.search/role-types
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/role-types search)))
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/role-types])))
 
 (reg-sub
   :wh.search/query
@@ -160,108 +193,83 @@
     (:wh.search/query search)))
 
 (reg-sub
-  :wh.search/tag-part
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/tag-part search)))
-
-(reg-sub
-  :wh.search/tags
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/tags search)))
+  ::current-query
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/query])))
 
 (reg-sub
   :wh.search/sponsorship
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/sponsorship search)))
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/sponsorship])))
 
 (reg-sub
   :wh.search/remote
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/remote search)))
-
-(reg-sub
-  :wh.search/tags-collapsed?
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/tags-collapsed? search)))
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote])))
 
 (reg-sub
   :wh.search/show-competitive?
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/competitive search)))
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/competitive])))
 
 (reg-sub
-  :wh.search/flagged-tags
-  :<- [:wh.search/available-tags]
+  :wh.search/tags
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/tags])))
+
+(reg-sub
+  :wh.search/selected-tags
   :<- [:wh.search/tags]
-  (fn [[available-tags tags] _]
-    (for [{:keys [value count]} available-tags]
-      {:tag value, :selected (contains? tags value), :count count})))
+  (fn [tags _]
+    (->> tags
+         (map #(str (slug/tag-label->slug %) ":tech")))))
+
+(reg-sub
+  :wh.search/available-tags
+  :<- [::filters]
+  (fn [filters _]
+    (->>
+      (:wh.search/available-tags filters)
+      (map
+        (fn [{:keys [value attr count] :as tag}]
+          (merge
+            tag
+            {:label value
+             :slug  (slug/tag-label->slug value)
+             :type  "tech"})))
+      (sort-by :count >))))
 
 ;; Non-existing tags is a list of tags that appeared in URL
 ;; but are not available in application DB. We want to display
 ;; this tags so user may remove these from filters and clear URL
 (reg-sub
- :wh.search/non-existing-tags
- :<- [:wh.search/available-tags]
- :<- [:wh.search/tags]
- (fn [[available-tags tags] _]
-   (let [available-tags (into #{} (map :value available-tags))
-         non-existing-tags (filter (complement available-tags) tags)]
-     (for [value non-existing-tags]
-       {:tag value, :selected true, :count 0, :tag/non-existing true}))))
-
-(reg-sub
-  :wh.search/matching-tags
-  :<- [:wh.search/tag-part]
-  :<- [:wh.search/flagged-tags]
-  :<- [:wh.search/non-existing-tags]
+  :wh.search/non-existing-tags
+  :<- [:wh.search/available-tags]
   :<- [:wh.search/tags]
-  (fn [[substring tags non-existing-tags] _]
-    (->> (concat non-existing-tags tags)
-         (sort-by (juxt (comp not :selected) (comp - :count))) ;; selected first, then count
-         (filter #(or (str/blank? substring)
-                      (:selected %)
-                      (str/includes? (str/lower-case (:tag %))
-                                     (str/lower-case substring))))
-         (take 20))))
+  (fn [[available-tags tags] _]
+    (let [available-tags    (into #{} (map :value available-tags))
+          non-existing-tags (filter (complement available-tags) tags)]
+      (for [value non-existing-tags]
+        {:label            value
+         :slug             (slug/tag-label->slug value)
+         :type             "tech"
+         :value            value
+         :selected         true
+         :count            0
+         :tag/non-existing true}))))
 
 (reg-sub
-  :wh.search/wh-region-count
-  :<- [::search]
-  (fn [search [_ wh-region]]
-    (let [wh-regions (->> search
-                          :wh.search/available-wh-regions
-                          (map (juxt :value :count))
-                          (into {}))]
-      (wh-regions wh-region))))
+  :wh.search/visible-tags
+  :<- [:wh.search/non-existing-tags]
+  :<- [:wh.search/available-tags]
+  (fn [[non-existing-tags available-tags] _]
+    (concat non-existing-tags available-tags)))
 
 (reg-sub
   :wh.search/city-info
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/city-info search)))
-
-(reg-sub
-  :wh.search/countries-by-region
-  :<- [:wh.search/city-info]
-  (fn [city-info _]
-    (into {}
-          (map (fn [[k v]] [k (set (map :country-code v))]))
-          (group-by :region city-info))))
-
-(reg-sub
-  :wh.search/cities-by-country
-  :<- [:wh.search/city-info]
-  (fn [city-info _]
-    (into {}
-          (map (fn [[k v]] [k (set (filter seq (map :city v)))]))
-          (group-by :country-code city-info))))
+  :<- [::filters]
+  (fn [filters _]
+    (:wh.search/city-info filters)))
 
 (reg-sub
   :wh.search/country-names
@@ -270,116 +278,56 @@
     (into {} (map (juxt :country-code :country)) city-info)))
 
 (reg-sub
-  :wh.search/country-list
-  :<- [::search]
-  :<- [:wh.search/countries-by-region]
-  :<- [:wh.search/cities-by-country]
-  (fn [[{:keys [wh.search/available-countries] :as search} countries-by-region cities-by-country] [_ region]]
-    (sort-by :count >
-             (for [country available-countries
-                   :when (contains? (countries-by-region region) (:value country))]
-               (assoc country :cities
-                      (let [cities (cities-by-country (:value country))]
-                        (sort-by :count >
-                                 (for [city (:wh.search/available-cities search)
-                                       :when (contains? cities (:value city))]
-                                   city))))))))
+  :wh.search/available-locations
+  :<- [::filters]
+  :<- [:wh.search/country-names]
+  (fn [[{:keys [wh.search/available-countries wh.search/available-cities]} country-names] _]
+    (->> (concat
+           (map
+             (fn [{:keys [value] :as country}]
+               (assoc country :label (country-names value)))
+             available-countries)
+           available-cities)
+         (map
+           (fn [{:keys [label value attr count]}]
+             {:label (or label value)
+              :value value
+              :slug  (slug/tag-label->slug value)
+              :attr  attr
+              :type  "location"
+              :count count}))
+         (sort-by :count >)
+         (sort-by :value (fn [v _]
+                           (#{"UK" "GB" "US"} v))))))
 
 (reg-sub
   :wh.search/city
-  :<- [::search]
+  :<- [::current-search]
   (fn [search [_ city]]
-    (contains? (:wh.search/cities search) city)))
+    (contains? (get search :wh.search/cities) city)))
 
 (reg-sub
-  :wh.search/country
-  :<- [::search]
-  (fn [search [_ country]]
-    (contains? (:wh.search/countries search) country)))
+  ::selected-locations
+  :<- [::current-search]
+  (fn [search _]
+    (->> (select-keys search [:wh.search/cities :wh.search/countries])
+         (mapcat second)
+         (map #(str (slug/tag-label->slug %) ":location")))))
 
 (reg-sub
-  :wh.search/wh-region
-  :<- [::search]
-  (fn [search [_ wh-region]]
-    (contains? (:wh.search/wh-regions search) wh-region)))
-
-(reg-sub
-  :wh.search/show-search-everywhere?
-  :<- [::search]
-  (fn [{:keys [wh.search/cities wh.search/countries wh.search/wh-regions] :as search} _]
-    (not (or (seq cities) (seq countries) (seq wh-regions)))))
-
-(def region-names {:us "United States", :europe "Europe", :rest-of-world "Rest of the World"})
-(def region-flags {:us "US", :europe "EU", :rest-of-world "🌏"})
-
-(defn join-non-nils [sep s]
-  (when-let [s' (seq (remove nil? s))]
-    (str/join sep s')))
-
-;; FIXME: This is ugly, I know. But it works.
-
-(reg-sub
-  :wh.search/collapsed-location-description
-  :<- [::search]
-  (fn [{:keys [wh.search/cities wh.search/countries wh.search/wh-regions wh.search/city-info] :as search} _]
-    (if-not (or (seq wh-regions) (seq cities) (seq countries))
-      "Everywhere ✈️"
-      (let [region->countries (into {} (map (fn [[k v]] [k (distinct (map :country-code v))])) (group-by :region city-info))
-            country->cities (into {} (map (fn [[k v]] [k (filter seq (distinct (map :city v)))])) (group-by :country-code city-info))
-            country-name (into {} (map (juxt :country-code :country)) city-info)]
-        (->> (keys region->countries)
-             (map (fn [region]
-                    (let [flag (emoji/country-code->emoji (region-flags region))
-                          rname (region-names region)]
-                      (if (contains? wh-regions region)
-                        (str rname " " flag)
-                        (when-let [region-desc (join-non-nils "; "
-                                                (for [country (region->countries region)]
-                                                  (if (contains? countries country)
-                                                    (country-name country)
-                                                    (when-let [country-desc (join-non-nils ", "
-                                                                             (for [city (country->cities country)
-                                                                                   :when (contains? cities city)]
-                                                                               city))]
-                                                      (str
-                                                       (when-not (= country "US")
-                                                         (str (country-name country) " – "))
-                                                       country-desc)))))]
-                          (str rname " " flag " (" region-desc ")"))))))
-             (join-non-nils ", "))))))
-
-(reg-sub
-  :wh.search/result-count
+  ::current-search
   (fn [db _]
-    (or (get-in db [::jobsboard/sub-db ::jobsboard/number-of-search-results]) 0)))
-
+    (get-in db [::jobsboard/sub-db ::jobsboard/search])))
 
 (reg-sub
   ::result-count-str
-  :<- [:wh.search/result-count]
-  (fn [n _]
-    (if (zero? n)
-      "We found no jobs matching your criteria 😢"
-      (<< "We found ~{n} jobs matching your criteria"))))
-
-(reg-sub
-  ::pre-set-search-result-count-str
-  :<- [:wh.search/result-count]
-  :<- [::header-title]
-  (fn [[n title] _]
-    (if (zero? n)
-      (<< "We found no jobs matching '~{title}' 😢")
-      (<< "We found ~{n} jobs matching '~{title}'"))))
-
-(reg-sub
-  ::current-page
-  (fn [db _]
-    (get-in db [::jobsboard/sub-db ::jobsboard/current-page])))
-
-(reg-sub
-  ::total-pages
-  (fn [db _]
-    (get-in db [::jobsboard/sub-db ::jobsboard/total-pages])))
+  :<- [::result-count]
+  :<- [::search-label]
+  (fn [[n label] _]
+    (let [label (if label (str "'" label "'") "your criteria")]
+      (if (zero? n)
+        (<< "We found no jobs matching ~{label} 😢")
+        (<< "We found ~{n} jobs matching ~{label}")))))
 
 (reg-sub
   ::pagination
@@ -389,10 +337,10 @@
     (pagination/generate-pagination current-page total-pages)))
 
 (reg-sub
- ::view-type
- :<- [:wh.subs/query-params]
- (fn [params]
-   (keyword (get params jobsboard-ssr/view-type-param "cards"))))
+  ::view-type
+  :<- [:wh.subs/query-params]
+  (fn [params]
+    (keyword (get params jobsboard-ssr/view-type-param "cards"))))
 
 (reg-sub
   ::pagination-query-params
@@ -410,22 +358,23 @@
 
 (reg-sub
   :wh.search/currency
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/currency search)))
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/currency])))
 
 (reg-sub
   :wh.search/currencies
-  :<- [::search]
-  (fn [search _]
-    (conj (distinct (map :currency (:wh.search/salary-ranges search)))
-          "*")))
+  :<- [::filters]
+  (fn [filters _]
+    (let [currencies (->> filters
+                          :wh.search/salary-ranges
+                          (map :currency)
+                          distinct)]
+      (conj currencies "*"))))
 
 (reg-sub
   :wh.search/salary-type
-  :<- [::search]
-  (fn [search _]
-    (:wh.search/salary-type search)))
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/salary-type])))
 
 ;; This can return nil when salary ranges are not
 ;; yet fetched. In this case, the slider is not
@@ -433,9 +382,9 @@
 
 (reg-sub
   :wh.search/grouped-salary-ranges
-  :<- [::search]
-  (fn [search _]
-    (when-let [ranges (:wh.search/salary-ranges search)]
+  :<- [::filters]
+  (fn [filters _]
+    (when-let [ranges (:wh.search/salary-ranges filters)]
       (group-by (juxt :currency :time-period) ranges))))
 
 (reg-sub
@@ -461,12 +410,22 @@
     (or (:max minmax) 100000)))
 
 (reg-sub
+  :wh.search/current-salary-range
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/salary-range])))
+
+(reg-sub
+  :wh.search/salary-from
+  (fn [db _]
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/salary-from])))
+
+(reg-sub
   :wh.search/salary-range
-  :<- [::search]
+  :<- [:wh.search/current-salary-range]
   :<- [:wh.search/salary-min]
   :<- [:wh.search/salary-max]
-  (fn [[search min max] _]
-    (or (:wh.search/salary-range search) [min max])))
+  (fn [[current-salary-range min max] _]
+    (or current-salary-range [min max])))
 
 (reg-sub
   :wh.search/salary-range-js
@@ -474,20 +433,41 @@
   (fn [range _]
     (clj->js range)))
 
-(let [formatter (goog.i18n.NumberFormat. nf/Format.COMPACT_SHORT)]
-  (defn format-number [n]
+(defn format-number [n]
+  (let [formatter (goog.i18n.NumberFormat. nf/Format.COMPACT_SHORT)]
     (.format formatter n)))
 
 (reg-sub
-  :wh.search/salary-range-desc
+  :wh.search/salary-slider-description
   :<- [:wh.search/salary-range]
+  :<- [:wh.search/salary-from]
   :<- [:wh.search/currency]
-  (fn [[search currency] _]
-    (if-not search
-      "Unspecified"
-      (let [[min max] search
-            symbol (currency-symbols currency)]
-        (str symbol (format-number min) " – " symbol (format-number max))))))
+  (fn [[salary-range salary-from currency] _]
+    (let [[min max] salary-range
+          symbol (currency-symbols currency)
+          local-min (or salary-from min)]
+      (str symbol (format-number local-min) " – " symbol (format-number max)))))
+
+(reg-sub
+  :wh.search/salary-slider-min-max
+  :<- [:wh.search/salary-range]
+  :<- [:wh.search/salary-from]
+  :<- [:wh.search/currency]
+  (fn [[salary-range salary-from currency] _]
+    (let [[min max] salary-range
+          symbol (currency-symbols currency)
+          local-min (or salary-from min)]
+      [(str symbol (format-number local-min)) (str symbol (format-number max))])))
+
+(reg-sub
+  :wh.search/salary-slider-min
+  :<- [:wh.search/salary-slider-min-max]
+  (fn [[min] _] min))
+
+(reg-sub
+  :wh.search/salary-slider-max
+  :<- [:wh.search/salary-slider-min-max]
+  (fn [[_ max] _] max))
 
 (reg-sub
   :wh.search/only-mine
@@ -514,3 +494,77 @@
   (fn [search _]
     [(published-option search true "Published")
      (published-option search false "Unpublished")]))
+
+
+(reg-sub
+  ::salary-pristine?
+  :<- [:wh.search/currency]
+  :<- [:wh.search/salary-type]
+  :<- [:wh.search/salary-min-max]
+  :<- [:wh.search/show-competitive?]
+  (fn [[currency salary-type salary-min-max competitive?] _]
+    (every? not [currency salary-type salary-min-max (not competitive?)])))
+
+(reg-sub
+  ::query-pristine?
+  :<- [::current-query]
+  (fn [current-query _]
+    (empty? current-query)))
+
+(reg-sub
+  ::tags-pristine?
+  :<- [:wh.search/selected-tags]
+  (fn [selected-tags _]
+    (empty? selected-tags)))
+
+(reg-sub
+  ::locations-pristine?
+  :<- [::selected-locations]
+  :<- [:wh.search/sponsorship]
+  :<- [:wh.search/remote]
+  (fn [[selected-locations sponsorship remote] _]
+    (and (empty? selected-locations)
+         (every? not [sponsorship remote]))))
+
+(reg-sub
+  ::role-types-pristine?
+  :<- [:wh.search/role-types]
+  (fn [role-types _]
+    (empty? role-types)))
+
+(reg-sub
+  ::recommended-jobs
+  (fn [db _]
+    (some->> (gqlc/cache-results landing-events/recommended-jobs db [:jobs])
+             (map #(assoc % :company-info (:company %))))))
+
+(reg-sub
+  ::recent-jobs
+  (fn [db _]
+    (gqlc/cache-results landing-events/recent-jobs db [:recent-jobs :results])))
+
+(reg-sub
+  ::side-jobs
+  :<- [:user/has-recommendations?]
+  :<- [::recommended-jobs]
+  :<- [::recent-jobs]
+  (fn [[has-recommendations? recommended-jobs recent-jobs]]
+    (if has-recommendations? recommended-jobs recent-jobs)))
+
+(reg-sub
+  ::recommended-jobs-loading?
+  (fn [db _]
+    (gqlc/cache-loading? landing-events/recommended-jobs db)))
+
+(reg-sub
+  ::recent-jobs-loading?
+  (fn [db _]
+    (gqlc/cache-loading? landing-events/recent-jobs db)))
+
+(reg-sub
+  ::side-jobs-loading?
+  :<- [:user/has-recommendations?]
+  :<- [::recommended-jobs-loading?]
+  :<- [::recent-jobs-loading?]
+  (fn [[has-recommendations? recommended-jobs-loading? recent-jobs-loading?]]
+    (if has-recommendations? recommended-jobs-loading? recent-jobs-loading?)))

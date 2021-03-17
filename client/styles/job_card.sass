@@ -2,20 +2,29 @@
 @import button
 
 .card
-  padding: 16px 24px
+  padding: 24px
   background: $white
-  margin-bottom: 16px
+  box-shadow: 0 4px 8px $card-shadow-color
+  margin: 8px 0
   border-radius: 8px
   display: grid
-  grid-template-rows: fit-content(28px) 35px fit-content(35px) 40px
-  grid-template-columns: 40px 1fr min-content 0
-  &--with-perks
-    grid-template-columns: 40px 1fr min-content max-content
-  +mobile
+  &--list
+    grid-template-rows: fit-content(28px) 35px fit-content(35px) 40px
+    grid-template-columns: 40px 1fr min-content 0
+    .tagline
+      display: none
+    &.card--with-perks
+      grid-template-columns: 40px 1fr min-content max-content
+    +mobile
+      grid-template-columns: 40px 1fr 1fr
+      grid-template-rows: fit-content(60px) fit-content(38px) max-content 0 64px
+      .tagline
+        display: -webkit-box
+      &.card--with-perks
+        grid-template-rows: fit-content(60px) fit-content(38px) max-content fit-content(40px) 64px
+  &--block
     grid-template-columns: 40px 1fr 1fr
-    grid-template-rows: fit-content(24px) fit-content(17px) max-content 40px 64px 0
-    &--with-perks
-      grid-template-rows: fit-content(24px) fit-content(17px) fit-content(38px) max-content fit-content(40px) 64px
+    grid-template-rows: 60px min-content min-content min-content min-content 1fr
   grid-column-gap: 16px
   align-items: flex-start
   position: relative
@@ -34,13 +43,20 @@
       color: transparent !important
 
 .save
-  grid-row: 1
-  grid-column: 4
   justify-self: flex-end
   align-self: flex-end
   margin-bottom: 10px
   height: 20px
-  +mobile
+  .card--list &
+    grid-row: 1
+    grid-column: 4
+    justify-self: flex-end
+    +mobile
+      height: 18px
+      grid-row: 6
+      grid-column: 1
+      justify-self: flex-start
+  .card--block &
     height: 18px
     grid-row: 6
     grid-column: 1
@@ -63,12 +79,17 @@
   line-height: 17px
   font-weight: 500
   color: $grey500
-  grid-row: 3
-  grid-column: 2
   margin-left: -8px
-  +mobile
+  .card--list &
+    grid-row: 3
+    grid-column: 2/4
+    +mobile
+      grid-row: 4
+      grid-column: 1/4
+  .card--block &
     grid-row: 4
     grid-column: 1/4
+    padding-bottom: 16px
   &__item
     height: 17px
     display: flex
@@ -90,15 +111,19 @@
   font-weight: 600
 
 .header
-  grid-row: 1/3
-  grid-column: 1/3
-  +mobile
-    grid-column: 1/4
   display: grid
   grid-template-columns: 40px 1fr
   grid-template-rows: fit-content(100px) fit-content(35px)
   grid-column-gap: 16px
-  margin-bottom: 13px
+  .card--list &
+    grid-row: 1/3
+    grid-column: 1/3
+    +mobile
+      grid-row: 1
+      grid-column: 1/4
+  .card--block &
+    grid-row: 1
+    grid-column: 1/4
   &:hover
     .title
       color: $primary-red
@@ -110,13 +135,17 @@
   // height is needed for skeleton
   min-height: 24px
   color: $grey500
-  grid-row: 1
-  grid-column: 2
   margin-bottom: 6px
   white-space: nowrap
   overflow: hidden
   text-overflow: ellipsis
-  +mobile
+  .card--list &
+    grid-row: 1
+    grid-column: 2
+    +mobile
+      grid-row: 1
+      grid-column: 2/4
+  .card--block &
     grid-row: 1
     grid-column: 2/4
 
@@ -132,15 +161,21 @@
     font-weight: 500
     font-size: 14px
     line-height: 17px
-    // height is needed for skeleton
-    min-height: 17px
     display: flex
     align-items: center
     color: $grey300
-    grid-row: 2
-    grid-column: 2
-    +mobile
-      min-height: auto
+    .card--list &
+      // height is used for skeleton
+      min-height: 17px
+      grid-row: 2
+      grid-column: 2
+      +mobile
+        min-height: auto
+        grid-row: 2
+        grid-column: 2/4
+        margin-bottom: 12px
+    .card--block &
+      @include line-clamp(1)
       grid-row: 2
       grid-column: 2/4
       margin-bottom: 12px
@@ -171,13 +206,18 @@
 
 .buttons
   display: flex
-  grid-row: 4
-  grid-column: 3/5
   align-self: flex-end
   justify-self: flex-end
-  +mobile
+  .card--list &
+    grid-row: 4
+    grid-column: 3/5
+    +mobile
+      grid-row: 6
+      grid-column: 2/4
+  .card--block &
     grid-row: 6
     grid-column: 2/4
+    margin-top: 16px
 
 .button
   @include button
@@ -186,7 +226,7 @@
 
 .label
   &--unpublished
-    color: #fff
+    color: $white
     background: $orange
     border-radius: 2px
     padding: 5px 12px
@@ -194,39 +234,54 @@
     display: flex
     align-items: center
     margin: 0 4px
-    +mobile
+    .card--list &
+      +mobile
+        margin-bottom: 8px
+    .card--block &
       margin-bottom: 8px
 
 .tags
-  grid-row: 4
-  grid-column: 2
-  align-self: flex-end
-  +mobile
-    align-self: flex-start
-    grid-row: 3
-    grid-column: 1/4
-    height: 66px
-    margin-bottom: 16px
-  height: 30px
   overflow: hidden
+  .card--list &
+    align-self: flex-end
+    grid-row: 4
+    grid-column: 2
+    height: 30px
+    +mobile
+      grid-row: 2
+      grid-column: 1/4
+      max-height: 66px
+      margin-bottom: 16px
+  .card--block &
+    grid-row: 2
+    grid-column: 1/4
+    max-height: 66px
+    margin-bottom: 16px
+    margin-top: 6px
 
 .perks
   display: flex
   color: $iceberg-dark
   text-transform: uppercase
   font-weight: 600
-  grid-row: 1
-  grid-column: 3
-  justify-self: flex-end
-  margin-left: 26px
-  +mobile
-    align-self: flex-end
+  .card--list &
+    grid-row: 1
+    grid-column: 3
+    justify-self: flex-end
+    margin-left: 26px
+    +mobile
+      grid-row: 5
+      grid-column: 1/4
+      margin-left: -4px
+      justify-self: flex-start
+      flex-wrap: wrap
+      padding-top: 16px
+  .card--block &
     grid-row: 5
     grid-column: 1/4
     margin-left: -4px
-    justify-self: flex-start
     flex-wrap: wrap
-    margin-top: 10px
+    width: 100%
   &:empty
     margin-left: 0
   &__item
@@ -239,8 +294,8 @@
     margin: 0 4px
     +mobile
       margin-bottom: 8px
-    &--small
-      padding: 5px
+    .card--block &
+      margin-bottom: 8px
     &__name
       margin-left: 8px
       line-height: 17px
@@ -252,3 +307,11 @@
     &--sponsorship
       height: 17px
       stroke-width: 1.5
+
+.tagline
+  @include line-clamp(2)
+  grid-row: 3
+  grid-column: 1/4
+  font-size: 14px
+  line-height: 20px
+  margin-bottom: 16px

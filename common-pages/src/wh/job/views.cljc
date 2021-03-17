@@ -5,7 +5,7 @@
             #?(:cljs [wh.components.stats.views :refer [stats-item]])
             [clojure.string :as str]
             [wh.common.data :refer [get-manager-name]]
-            [wh.common.text :refer [pluralize]]
+            [wh.common.text :refer [pluralize not-blank]]
             [wh.company.listing.views :refer [company-card]]
             [wh.components.cards :refer [match-circle]]
             [wh.components.common :refer [wrap-img link img]]
@@ -76,7 +76,6 @@
   (let [can-edit?          (<sub [::subs/can-edit-jobs?])
         show-unpublished?  (<sub [::subs/show-unpublished?])
         view-applications? (or (not show-unpublished?) force-view-applications?)
-        show-modal?        (not (<sub [::subs/can-edit-jobs-after-first-job-published?]))
         publishing?        (<sub [::subs/publishing?])
         admin?             (<sub [:user/admin?])
         published?         (<sub [::subs/published?])]
@@ -90,9 +89,7 @@
             ;;
             show-unpublished?
             (conj [jc/publish-button {:publishing? publishing?
-                                      :on-click    (if show-modal?
-                                                     [::modal-publish-job/toggle-modal]
-                                                     [::events/publish-role])}])
+                                      :on-click    [::events/attempt-publish-role]}])
             ;;
             view-applications?
             (conj [jc/view-applications-button {:href (<sub [::subs/view-applications-link])}])
@@ -102,16 +99,16 @@
             (conj [promote/promote-button {:id (<sub [::subs/id]) :type :job}]))))
 
 (defn buttons-user [{:keys [id condensed?]}]
-  (let [name (<sub [::subs/company-name])
-        slug (<sub [::subs/company-slug])
+  (let [name             (<sub [::subs/company-name])
+        slug             (<sub [::subs/company-slug])
         profile-enabled? (<sub [::subs/profile-enabled?])
-        show-about? (and (not condensed?) profile-enabled?)]
+        show-about?      (and (not condensed?) profile-enabled?)]
     [:div
      (util/smc "job__apply-buttons" [condensed? "job__apply-buttons--condensed"])
      [jc/apply-button {:applied? (<sub [::subs/applied?])
                        :job      (<sub [::subs/apply-job])
                        :id       id}]
-     [:div
+     [:<>
       [jc/more-jobs-link {:href         (routes/path :company-jobs :params {:slug slug})
                           :condensed?   condensed?
                           :company-name name}]
@@ -208,7 +205,7 @@
             logo-img))
         [:div.logo--skeleton]))]
    [:div.job__company-header__info
-    [:h1.job__header-job-title (<sub [::subs/title])]
+    [:h1.job__header-job-title {:data-test "job-header-job-title"} (<sub [::subs/title])]
     (cond
       (<sub [::subs/profile-enabled?])
       [link [:h2.job__header-company-link (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
@@ -218,11 +215,12 @@
 
       :else
       [:h2.job__header-company-link (<sub [::subs/company-name])])
-    [:h3.job__header-company-location (if (<sub [::subs/remote?])
-                                        [:div [icon "globe"
-                                               :class "job__icon--small"]
-                                              "Remote"]
-                                        (<sub [::subs/location]))]]
+    [:h3.job__header-company-location
+     (when (<sub [::subs/remote?])
+       [:div
+        [icon "globe" :class "job__icon--small"]
+        [:span "Remote"] [:span " | "]])
+     (<sub [::subs/location])]]
    [:div.job__company-header__last-modified
     (<sub [::subs/last-modified])]
    (when (<sub [::subs/like-icon-shown?])
@@ -295,6 +293,7 @@
       (when salary "Salary")
       "job-money"
       [:div.job__salary
+       {:data-test "job-salary"}
        salary]])
    ;;
    (let [role-type (<sub [::subs/role-type])]
@@ -364,10 +363,6 @@
        {:id id}
        body])))
 
-;; taken from taoensso.encore; we're not using it to avoid increasing
-;; compiled file size (see README)
-(defn as-?nblank [x] (when (string?  x) (if (str/blank? x) nil x)))
-
 (defn information
   []
   [:section.job__information
@@ -378,16 +373,17 @@
    (let [description  (<sub [::subs/location-description])
          position     (<sub [::subs/location-position])
          address      (<sub [::subs/location-address-parts])
-         description? (as-?nblank description)
-         address?     (and (or position (seq address)) (<sub [::subs/show-address?]))]
-     (when (or description? address?)
+         description? (and (string? description) (not-blank description))
+         address?     (and (or position (seq address)) (<sub [::subs/show-address?]))
+         remote?      (<sub [::subs/remote?])]
+     (when (and (or description? address?) (not remote?))
        [:div.job__location
         [:h2 "Location"]
         [content
          [:div
           (when description?
             [putil/html description])
-          (when address?
+          (when (and address? (not remote?))
             [:div.is-flex
              #?(:cljs (when (and (<sub [:google/maps-loaded?]) position (<sub [::subs/show-address?]))
                         [google-map {:position position, :title (<sub [::subs/company-name])} "job__map"]))
@@ -536,7 +532,8 @@
      :no-matching-job
      [:div.main-wrapper
       [:div.main
-       [:h2 "Sorry! That job is either no longer live or never existed."]
+       [:h2 {:data-test "job-doesnt-exist"}
+        "Sorry! That job is either no longer live or never existed."]
        [:h3 "If you think this might be a mistake, double check the link, otherwise browse the available jobs on our "
         [link "Job board." :jobsboard :class "a--underlined"]]]]
      :unknown-error

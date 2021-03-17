@@ -13,6 +13,7 @@ $tag-spacing: 3px
         height: 1 * ($tag-height + 2 * $tag-padding) + $tag-spacing
 
 .tags li, .tag
+  user-select: none
   font-size: 11px
   line-height: $tag-height
   padding: $tag-padding
@@ -51,20 +52,42 @@ $tag-spacing: 3px
 
 .tags-container
   position: relative
+
+  &:not(.tags-container--new-design)
+    .tags-selection
+      @include splitter-hr(15px)
+    .field
+      margin: 0
+      input
+        border-bottom: 0
+    &:hover, &:focus-within
+      .tags-selection
+        @include hover-focus-state
+        @include splitter-hr(14px)
+        padding: 1px 0 0 0
+      input
+        @include hover-focus-state
+
+  &.tags-container--new-design
+    background: $white
+    .text-field-control
+      input
+        border: none
+        border-bottom: 1px solid $grey
+        height: 27px
+        padding: 0
+        color: $grey-darker
+        font-size: 14px
+        &::placeholder
+          font-size: 14px
+          color: #728088
+        &:hover, &:focus
+          padding: 0
+          border-width: 1px
   .field
     .field__error
       display: none
-  .field
-    margin: 0
-    input
-      border-bottom: 0
-  &:hover, &:focus-within
-    .tags-selection
-      @include hover-focus-state
-      @include splitter-hr(14px)
-      padding: 1px 0 0 0
-    input
-      @include hover-focus-state
+
 .tags-selection
   color: $steel-gray
   border: 1px solid $steel-gray
@@ -72,7 +95,12 @@ $tag-spacing: 3px
   background-color: white
   position: relative
   padding: 1px
-  @include splitter-hr(15px)
+  .tags-container--new-design &
+    border: none
+    .tags
+      padding: 0
+      .tag--selected
+        padding-right: 8px
   .tags
     padding: 10px 0px 5px 10px
     overflow: hidden
@@ -96,14 +124,20 @@ $tag-spacing: 3px
   cursor: pointer
   transition: transform 0.3s ease
   transform: rotate(180deg)
-  margin-top: 10px
+
 .tags-container--collapsed
+  &.tags-container--new-design
+    .tags-selection--tags-container
+      max-height: 98px
+      min-height: auto
+      overflow: hidden
   .tags-roll
     transform: none
   .tags
     transform: none
   .tags--unselected
     display: none
+
 .tags-container--collapsed.tags-container--alternative
   .tags--no-selected
     max-height: 40px
@@ -183,7 +217,8 @@ $tag-spacing: 3px
 .tag-add--with-label
   top: 18px
 
-.tag--type-benefit, .tag.tag--type-benefit
+.tag--type-benefit, .tag.tag--type-benefit,
+.tag.tag--type-location, .tag--type-location
   background-color: $tag-bg-green
   color: $tag-green
   .icon
@@ -302,6 +337,11 @@ $tag-spacing: 3px
   min-height: 46px
   .tags
     padding-right: 16px
+    .tags-container--new-design &
+      padding-right: 0
+      display: inline
+      .tag-group
+        display: inline
   .tags--selected:not(.tags--has-selected-tags)
     padding: 0
   .tags--selected

@@ -26,5 +26,20 @@
        :vertical_blogs  (when-not (tag db) (:wh.db/vertical db))
        :promoted_amount 8
        :issues_amount   8
-       :search_term     (search-term db)}
+       :search_term     (or (search-term db) (tag db))}
       util/remove-nils))
+
+(defn search-arguments? [db]
+  (or (not (empty? (search-term db)))
+      (not (empty? (tag db)))))
+
+(defn articles-jobs-params [db]
+  (cond-> (params db)
+          (search-arguments? db)
+          ;; we want only 8 recommended jobs
+          (assoc :page_size 8)))
+
+(defn articles-issues-params [db]
+  (cond-> (params db)
+          (tag db)
+          (assoc :repo_language (tag db))))

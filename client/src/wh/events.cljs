@@ -4,6 +4,7 @@
             [re-frame.core :refer [reg-fx reg-event-db reg-event-fx inject-cofx]]
             [re-frame.db :refer [app-db]]
             [wh.common.fx]
+            [wh.company.create-job.common-events]
             [wh.components.error.events]
             [wh.db :as db]
             [wh.logged-in.apply.common-events]

@@ -2,6 +2,7 @@
   (:require #?(:cljs [reagent.core :as reagent])
             [bidi.bidi :as bidi]
             [clojure.string :as str]
+            [wh.common.url :as url]
             [wh.components.promote-button :as promote]
             [wh.blogs.blog.events :as events]
             [wh.blogs.blog.subs :as subs]
@@ -31,30 +32,30 @@
        :clj  (wh.url/base-url vertical path))))
 
 (defn share-buttons []
-  (let [message-prefix "Check out this blog on "
-        normal-message (str message-prefix (<sub [:wh/platform-name]))
+  (let [message-prefix  "Check out this blog on "
+        normal-message  (str message-prefix (<sub [:wh/platform-name]))
         twitter-message (str message-prefix (<sub [:wh/twitter]))
-        link (link-to-share)
-        enc-link (bidi/url-encode link)
-        enc-normal-message (bidi/url-encode normal-message)
-        enc-twitter-message (bidi/url-encode twitter-message)]
+        link            (link-to-share)
+        share-urls      (url/share-urls {:url          link
+                                         :text         normal-message
+                                         :text-twitter twitter-message})]
     [:div.share-links
      [:a
-      {:href   (str "http://www.facebook.com/sharer/sharer.php?u=" enc-link)
-       :target "_blank"
-       :rel    "noopener"
+      {:href       (:facebook share-urls)
+       :target     "_blank"
+       :rel        "noopener"
        :aria-label "Share blog on Facebook"}
       [icon "facebook-circle" :class "share-links__facebook"]]
      [:a
-      {:href   (str "https://twitter.com/intent/tweet?text=" enc-twitter-message "&url=" enc-link)
-       :target "_blank"
-       :rel    "noopener"
+      {:href       (:twitter share-urls)
+       :target     "_blank"
+       :rel        "noopener"
        :aria-label "Share blog on Twitter"}
       [icon "twitter-circle" :class "share-links__twitter"]]
      [:a
-      {:href   (str "https://www.linkedin.com/shareArticle?mini=true&url=" enc-link "&title=" enc-normal-message "&summary=&origin=")
-       :target "_blank"
-       :rel    "noopener"
+      {:href       (:linkedin share-urls)
+       :target     "_blank"
+       :rel        "noopener"
        :aria-label "Share blog on Linkedin"}
       [icon "linkedin-circle" :class "share-links__linkedin"]]]))
 

@@ -25,16 +25,21 @@
 
 (defn- tags [tags]
   [:ul (util/smc styles/tags "tags")
-   (map tag tags)])
-
+   (->> tags
+        (filter identity)
+        (map-indexed
+          (fn [idx {:keys [id] :as tag-data}]
+            ^{:key (or id idx)}
+            [tag tag-data])))])
 
 (defn- buttons [{:keys [slug id published] :as _job}
-                    {:keys [user-is-owner? user-is-company? applied?
-                            logged-in? apply-source skeleton?]}]
+                {:keys [user-is-owner? user-is-company? applied?
+                        logged-in? apply-source skeleton?]}]
   [:div (util/smc styles/buttons)
-   [:a {:href  (routes/path :job :params {:slug slug})
-        :class (util/mc styles/button
-                        styles/button--inverted-highlighted)}
+   [:a {:href      (when-not skeleton? (routes/path :job :params {:slug slug}))
+        :class     (util/mc styles/button
+                            styles/button--inverted-highlighted)
+        :data-test "job-info"}
     (if user-is-owner? "View" "More Info")]
 
    (cond
@@ -49,9 +54,10 @@
                              (and user-is-company?
                                   (not user-is-owner?)))]
        [:a (merge
-             {:id    (str "job-card__apply-button_job-" id)
-              :class (util/mc styles/button
-                              [disabled? styles/button--disabled])}
+             {:id        (str "job-card__apply-button_job-" id)
+              :class     (util/mc styles/button
+                                  [disabled? styles/button--disabled])
+              :data-test "job-apply"}
              (when disabled?
                {:disabled true})
              (if logged-in?
@@ -67,19 +73,21 @@
       "Edit"])])
 
 
-(defn- save [{:keys [id] :as job} logged-in? skeleton? liked?]
-  [:div (util/smc styles/save)
-   (when (and logged-in? (not skeleton?))
+(defn- save [{:keys [id] :as job} logged-in? skeleton? liked? on-save]
+  [:div (merge (util/smc styles/save)
+               on-save
+               {:data-test "job-save"})
+   (when-not skeleton?
      [icon "save"
       :id (str "job-card__like-button_job-" id)
       :class (util/mc styles/save__icon
                       styles/save__icon--save
                       [liked? styles/save__icon--selected])
+      :on-click (when logged-in?
+                  #(dispatch [:wh.events/toggle-job-like job]))])])
 
-      :on-click #(dispatch [:wh.events/toggle-job-like job])])])
 
-
-(defn- job-match [score]
+(defn- match [score]
   (let [percentage     (* score 100)
         percentage-fmt #?(:cljs (gstring/format "%d%%" percentage)
                           :clj (format "%s%%" (int percentage)))
@@ -99,8 +107,9 @@
      [:div (str percentage-fmt " Match")]]))
 
 
-(defn- job-unpublished []
-  [:div (util/smc styles/label--unpublished)
+(defn- unpublished []
+  [:div {:class     (util/mc styles/label--unpublished)
+         :data-test "job-unpublished"}
    "Unpublished"])
 
 (defn- perks [remote sponsorship-offered score unpublished?]
@@ -117,10 +126,10 @@
                        [:span (util/smc styles/perks__item__name) "Sponsored"]]]
 
     (cond-> container
-            score               (conj [job-match score])
+            score               (conj [match score])
             remote              (conj remote-job)
             sponsorship-offered (conj sponsored-job)
-            unpublished?        (conj [job-unpublished]))))
+            unpublished?        (conj [unpublished]))))
 
 
 (defn- header
@@ -129,25 +138,29 @@
    {:keys [skeleton?]}]
 
   [:a {:class (util/mc styles/header)
-       :href  (routes/path :job :params {:slug slug})}
-   [:div (util/smc styles/title)
+       :href  (when-not skeleton? (routes/path :job :params {:slug slug}))}
+   [:div {:class     (util/mc styles/title)
+          :data-test "job-title"}
     title]
 
-   [:div (util/smc styles/company__name)
+   [:div {:class     (util/mc styles/company__name)
+          :data-test "company-name"}
     (str/join ", " (remove nil? [company-name display-location]))]
 
-   [:div (util/smc styles/company__logo)
+   [:div {:class     (util/mc styles/company__logo)
+          :data-test "company-logo"}
     (if (or skeleton? (not logo))
       [:div]
       (wrap-img img logo {:alt (str company-name " logo") :w 40 :h 40 :fit "clamp"}))]])
 
 
 (defn- details
-  [{:keys [salary last-modified role-type unpublished?] :as _job}
+  [{:keys [salary last-modified role-type] :as _job}
    {:keys [size] :as _company}]
   [:div (util/smc styles/details)
    (when salary
-     [:div (util/smc styles/salary styles/details__item)
+     [:div {:class     (util/mc styles/salary styles/details__item)
+            :data-test "job-salary"}
       salary])
 
    (when role-type
@@ -158,14 +171,14 @@
 
    (when (string? last-modified)
      [:div (util/smc styles/details__item)
-      [icon "couple" :class (util/mc styles/details__icon
-                                     styles/details__icon--couple)]
+      [icon "calendar" :class (util/mc styles/details__icon
+                                       styles/details__icon--calendar)]
       (time/str->human-time last-modified)])
 
    (when size
      [:div (util/smc styles/details__item)
-      [icon "calendar" :class (util/mc styles/details__icon
-                                       styles/details__icon--calendar)]
+      [icon "couple" :class (util/mc styles/details__icon
+                                     styles/details__icon--couple)]
       (str (company/size->range (keyword size)) " Staff")])])
 
 
@@ -179,11 +192,15 @@
        (range 6)))
 
 
+(defn- tagline [value]
+  [:div (util/smc styles/tagline) value])
+
+
 (defn job-card
   [{:keys [company published score user-score applied liked
            display-salary remuneration remote sponsorship-offered]
     :as   job}
-   {:keys [liked? applied? user-is-owner? logged-in?]
+   {:keys [liked? applied? user-is-owner? logged-in? view-type on-save]
     :or   {liked?         (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
            applied?       (or applied false) ;; old style job handlers added 'applied' bool to the job itself
            user-is-owner? false}
@@ -197,18 +214,22 @@
                              :applied?  applied?})
         unpublished? (and (not published) user-is-owner?)
         show-perks?  (or sponsorship-offered score remote unpublished?)]
-    [:div (util/smc styles/card
-                    [show-perks? styles/card--with-perks]
-                    [skeleton? styles/card--skeleton])
+    [:div {:class     (util/mc styles/card
+                               [show-perks? styles/card--with-perks]
+                               [skeleton? styles/card--skeleton]
+                               [(= view-type :cards) styles/card--block]
+                               [(= view-type :list) styles/card--list])
+           :data-test "job-card"}
      [header job company opts]
 
      [details (assoc job :salary salary) company]
 
      [tags (if skeleton? (skeleton-tags) (:tags job))]
 
+     [tagline (:tagline job)]
+
      [buttons job opts]
 
-     (when show-perks?
-       [perks remote sponsorship-offered score unpublished?])
+     [perks remote sponsorship-offered score unpublished?]
 
-     [save job logged-in? skeleton? liked?]]))
+     [save job logged-in? skeleton? liked? on-save]]))

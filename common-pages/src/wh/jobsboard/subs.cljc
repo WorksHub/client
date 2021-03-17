@@ -1,8 +1,8 @@
-(ns wh.jobsboard-ssr.subs
-  (:require
-    [re-frame.core :refer [reg-sub]]
-    [wh.jobsboard-ssr.db :as jobsboard-ssr]
-    [wh.verticals :as verticals]))
+(ns wh.jobsboard.subs
+  (:require [re-frame.core :refer [reg-sub]]
+            [wh.job.db :as job-db]
+            [wh.jobsboard.db :as jobsboard]
+            [wh.verticals :as verticals]))
 
 ;; TODO: a lot of these may probably be shared with wh.jobs.jobsboard.subs
 
@@ -18,10 +18,10 @@
     (:wh.jobs.jobsboard.db/jobs sub-db)))
 
 (reg-sub
-  ::all-jobs?
+  ::promoted-jobs
   :<- [::sub-db]
   (fn [sub-db _]
-    (:wh.jobs.jobsboard.db/all-jobs? sub-db)))
+    (:wh.jobs.jobsboard.db/promoted-jobs sub-db)))
 
 (reg-sub
   ::current-page
@@ -34,6 +34,12 @@
   :<- [::sub-db]
   (fn [sub-db _]
     (or (:wh.jobs.jobsboard.db/total-pages sub-db) 1)))
+
+(reg-sub
+  ::currencies
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (conj (get sub-db :wh.jobs.jobsboard.db/currencies []) "*")))
 
 (reg-sub
   ::search-term
@@ -53,7 +59,7 @@
     (:wh.db/search-label db)))
 
 (reg-sub
-  ::search-result-count-str
+  ::result-count-str
   :<- [::search-result-count]
   :<- [::search-label]
   (fn [[count label] _]
@@ -68,11 +74,21 @@
     (let [search-term (get-in db [:wh.db/page-params :tag])]
       (-> (verticals/config vertical :jobsboard-header)
           (update :title #(or search-label %))
-          (update :description #(if search-term
-                                  (get (verticals/config vertical :jobsboard-tag-desc) search-term)
-                                  %))))))
+          (update :description #(get (verticals/config vertical :jobsboard-tag-desc) search-term %))))))
 
 (reg-sub
- ::view-type
- (fn [db _]
-   (keyword (get-in db [:wh.db/query-params jobsboard-ssr/view-type-param] "cards"))))
+  ::view-type
+  (fn [db _]
+    (keyword (get-in db [:wh.db/query-params jobsboard/view-type-param] "cards"))))
+
+(reg-sub
+  ::role-types
+  (fn [_ _]
+    (for [role-type job-db/role-types]
+      {:value role-type
+       :label role-type})))
+
+;; used to achieve parity with cljs version
+(reg-sub
+  ::side-jobs
+  (fn [_ _] []))

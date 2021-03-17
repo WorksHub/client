@@ -30,6 +30,12 @@
     (and admin? (not (= type "public")))))
 
 (reg-sub
+  ::user-id
+  :<- [::profile]
+  (fn [profile _]
+    (:id profile)))
+
+(reg-sub
   ::hs-url
   :<- [::profile]
   (fn [profile _]

@@ -18,11 +18,10 @@
 (reg-event-fx
   :success/set-global
   error-interceptors
-  (fn [{db :db} [message retry-event]]
-    (let [new-fields (merge {::error/message message
-                             ::error/type :success}
-                            (when retry-event
-                              {::error/retry-event retry-event}))]
+  (fn [{db :db} [message]]
+    (let [new-fields (merge {::error/message     message
+                             ::error/type        :success
+                             ::error/retry-event nil})]
       {:db (merge db new-fields)})))
 
 (reg-event-db

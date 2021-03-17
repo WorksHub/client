@@ -8,6 +8,7 @@
   (-> s
       (str/lower-case)
       (str/trim)
+      (str/replace #"\," "-")
       (str/replace #"\s+" "-")))
 
 (defn slug+encode [s]

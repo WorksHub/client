@@ -16,11 +16,8 @@
 .dashboard__jobs .dashboard__jobs__jobs-list__content
   display: grid
   grid-template-columns: repeat(auto-fill, minmax($max-job-card-width, 1fr))
-  grid-gap: 9px
+  grid-column-gap: 16px
   flex-wrap: wrap
-  margin-top: 1.5rem
-  &.jobs-board__jobs-list--ssr
-    margin-top: 16px
 
 .dashboard__jobs__jobs-with-codi
   display: flex
@@ -111,6 +108,8 @@
 
   .job__header-company-location
     font-size: 14px
+    display: flex
+    white-space: pre
 
   .job__company-header__info
     flex: 1
@@ -601,11 +600,12 @@ $description-height: 400px
   display: flex
   justify-content: flex-end
   flex-wrap: wrap
-  .button, div
-    display: inline
+
   .button
+    display: inline-flex
     margin-left: 5px
     margin-bottom: 5px
+
   div:nth-of-type(2)
     min-width: 305px
 

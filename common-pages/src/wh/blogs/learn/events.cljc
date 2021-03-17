@@ -50,36 +50,64 @@
 (def search-blogs-path [:search-blogs :results])
 
 (defquery recommended-jobs-query
-          {:venia/operation {:operation/type :query
-                             :operation/name "recommended_jobs"}
-           :venia/variables [{:variable/name "vertical"
-                              :variable/type :vertical}
-                             {:variable/name "promoted_amount"
-                              :variable/type :Int}]
-           :venia/queries   [[:jobs_search {:vertical        :$vertical
-                                            :promoted_amount :$promoted_amount}
-                              [[:promoted [:fragment/jobCardFields]]]]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "recommended_jobs"}
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}
+                     {:variable/name "search_term"
+                      :variable/type :String}
+                     {:variable/name "page_size"
+                      :variable/type :Int}]
+   :venia/queries   [[:jobs_search {:vertical    :$vertical
+                                    :search_term :$search_term
+                                    :page_size   :$page_size}
+                      [[:jobs [:fragment/jobCardFields]]]]]})
+
 (reg-query :recommended_jobs recommended-jobs-query)
+
+(defquery promoted-jobs-query
+  {:venia/operation {:operation/type :query
+                     :operation/name "promoted_jobs"}
+   :venia/variables [{:variable/name "vertical"
+                      :variable/type :vertical}
+                     {:variable/name "promoted_amount"
+                      :variable/type :Int}]
+   :venia/queries   [[:jobs_search {:vertical        :$vertical
+                                    :promoted_amount :$promoted_amount}
+                      [[:promoted [:fragment/jobCardFields]]]]]})
+
+(reg-query :promoted_jobs promoted-jobs-query)
 
 (defquery recommended-issues-query
   {:venia/operation {:operation/type :query
                      :operation/name "recommended_issues"}
    :venia/variables [{:variable/name "issues_amount"
-                      :variable/type :Int}]
+                      :variable/type :Int}
+                     {:variable/name "repo_language"
+                      :variable/type :String}]
    :venia/queries   [[:query_issues
-                      {:page_size :$issues_amount
-                       :published true}
+                      {:page_size     :$issues_amount
+                       :published     true
+                       :repo_language :$repo_language}
                       [[:issues [:fragment/issueListFields]]]]]})
 (reg-query :recommended_issues recommended-issues-query)
 
 (defn std-blogs [db]
   [:blogs (learn/params db)])
+
 (defn search-blogs [db]
   [:search_blogs (learn/params db)])
+
+(defn query-name-for-articles-jobs [db]
+  (if (learn/search-arguments? db)
+    :recommended_jobs
+    :promoted_jobs))
+
 (defn jobs [db]
-  [:recommended_jobs (learn/params db)])
+  [(query-name-for-articles-jobs db) (learn/articles-jobs-params db)])
+
 (defn issues [db]
-  [:recommended_issues (learn/params db)])
+  [:recommended_issues (learn/articles-issues-params db)])
 
 (reg-event-fx
   ::load-blogs

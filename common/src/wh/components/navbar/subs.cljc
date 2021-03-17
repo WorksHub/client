@@ -26,3 +26,8 @@
   ::can-publish-jobs?
   (fn [db _]
     (job/can-publish-jobs? db)))
+
+(reg-sub
+  ::can-create-jobs?
+  (fn [db _]
+    (job/can-create-jobs? db)))

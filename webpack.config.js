@@ -30,7 +30,7 @@ module.exports = {
             loader: MiniCssExtractPlugin.loader
           },
           {
-            loader: path.resolve(__dirname, 'cljc-css-loader/index.js'),
+            loader: 'cljc-css-loader',
             options: {
               path: path.resolve(__dirname, 'common/src/wh/styles'),
               nsPrefix: 'wh.styles'

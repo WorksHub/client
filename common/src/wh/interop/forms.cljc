@@ -15,6 +15,14 @@
   #?(:clj {:oninput jsf}
      :cljs {:on-input jsf}))
 
+(defn on-press-enter-fn
+  [jsf]
+  #?(:clj {:onkeypress (str "if (event.key === 'Enter') { " jsf "}")}
+     :cljs {:on-key-press
+            (fn [e]
+              (when (= (aget e "key") "Enter")
+                (jsf)))}))
+
 (defn multiple-on-change
   [& fns]
   (let [fns (remove nil? fns)]
@@ -42,15 +50,32 @@
              (let [v (nth (map (comp name :id) options) (js/parseInt (.-value (.-target e))))]
                (dispatch [:wh.events/nav--set-query-param (name query-param-name) v])))))
 
-(defn add-tag-value-to-url
-  [query-param-name on-change-event]
-  #?(:clj (str "let url = handleTagChange(this, \"" (name query-param-name) "\"); if(url){window.location = url.href;} ")
-     :cljs (fn [focused-tag-query-id focused-tag]
-             (this-as this
+(defn add-input-value-to-url
+  [query-param-name event]
+  #?(:clj (str "window.location = " (remove-page-add-interaction-qps
+                                      (symbol (->jsfn "setQueryParam" false (name query-param-name) 'this.value))))
+     :cljs (fn [_e]
+             (dispatch [event]))))
+
+(defn dispatch-tag-select-event [on-change-event query-param-name]
+  (fn [focused-tag-query-id focused-tag value attr]
+    #?(:cljs (this-as this
                (dispatch [on-change-event
-                          (name query-param-name)
-                          (or focused-tag-query-id (.-focusedTagQueryId this))
-                          (or focused-tag (.-focusedTag this))])))))
+                          {:query-param  (some-> query-param-name name)
+                           :tag-query-id (or focused-tag-query-id (.-focusedTagQueryId this))
+                           :tag          (or focused-tag (.-focusedTag this))
+                           :value        value
+                           :attr         attr}])))))
+
+(defn add-tag-value-to-url
+  ([on-change-event]
+   #?(:clj (str "let url = handleTagChange(this);
+                if (url){window.location = url.href;} ")
+      :cljs (dispatch-tag-select-event on-change-event nil)))
+  ([query-param-name on-change-event]
+   #?(:clj (str "let url = handleTagChange(this, \"" (name query-param-name) "\");
+                if (url){window.location = url.href;} ")
+      :cljs (dispatch-tag-select-event on-change-event query-param-name))))
 
 (defn add-check-value-to-url
   ([query-param-name]
@@ -66,11 +91,11 @@
                 (dispatch [:wh.events/nav--set-query-param (name query-param-name) v]))))))
 
 (defn filter-tags
-  [tag-field-id text-atom]
-  #?(:clj  (->jsfn "filterTags" tag-field-id 'this)
+  [tag-field-id text-atom collapsable?]
+  #?(:clj  (->jsfn "filterTags" tag-field-id 'this collapsable?)
      :cljs (fn [e]
              (reset! text-atom (.. e -target -value))
-             (js/filterTags tag-field-id (.-target e)))))
+             (js/filterTags tag-field-id (.-target e) collapsable?))))
 
 (defn dispatch-events-on-change
   "Dispatches re-frame event. noop on clj"

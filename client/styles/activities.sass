@@ -119,19 +119,15 @@ $space-tablet: 20px
     .company-info__job-count
       color: $primary-red
 
-.quoted-description,
 .description
   font-family: $font-family
   font-size: 14px
   line-height: 1.5
-  max-height: 44px
   margin: 0
-  &--cropped
-    @include line-clamp(2)
-
-.quoted-description
   &--article
     margin-bottom: 16px
+  &--cropped
+    @include line-clamp(2)
 
 .title
   color: $text-black

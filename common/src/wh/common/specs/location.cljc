@@ -1,11 +1,12 @@
 (ns wh.common.specs.location
   (:require
-    [#?(:clj clojure.spec.alpha
+    [#?(:clj  clojure.spec.alpha
         :cljs cljs.spec.alpha) :as s]
-    [#?(:clj clojure.spec.gen.alpha
+    [#?(:clj  clojure.spec.gen.alpha
         :cljs cljs.spec.gen.alpha) :as gen]
     [spec-tools.core :as st]
-    [wh.common.data :as data]))
+    [wh.common.data :as data]
+    [wh.common.specs.primitives :as p]))
 
 (s/def :wh.location/street string?)
 (s/def :wh.location/post-code string?)
@@ -15,8 +16,9 @@
                             (s/and string? (set (map second data/us-states)))
                             #(gen/elements (map second data/us-states))))
 (s/def :wh.location/administrative string?)
-(s/def :wh.location/country string?)
+(s/def :wh.location/country ::p/non-empty-string)
 (s/def :wh.location/country-code (st/spec (set data/country-codes) {:type 'String}))
+(s/def :wh.location/non-us-country-code (st/spec (set data/non-us-country-codes) {:type 'String}))
 (s/def :wh.location/country-codes (s/coll-of :wh.location/country-code :distinct true))
 (s/def :wh.location/sub-region (s/nilable string?))
 (s/def :wh.location/region (s/nilable string?))
@@ -38,16 +40,5 @@
                                      :wh.location/longitude
                                      :wh.location/administrative
                                      :wh.location/state
-                                     :wh.location/timezone]))
-
-(s/def :wh/location-with-region
-  (s/keys :req-un [:wh.location/city
-                   :wh.location/country
-                   :wh.location/country-code
-                   :wh.location/sub-region
-                   :wh.location/region]
-          :opt-un [:wh.location/latitude
-                   :wh.location/longitude
-                   :wh.location/administrative
-                   :wh.location/state
-                   :wh.location/timezone]))
+                                     :wh.location/timezone
+                                     :wh.location/post-code]))

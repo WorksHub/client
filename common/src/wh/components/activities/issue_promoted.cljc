@@ -8,6 +8,6 @@
     [components/promoter actor]
     [components/entity-description :issue type]]
 
-   [components/quoted-description description]
+   [components/description description]
 
    [issue/base-card issue (:issue-company issue) type opts]])

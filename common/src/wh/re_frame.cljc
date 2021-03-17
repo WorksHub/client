@@ -1,7 +1,6 @@
 (ns wh.re-frame
-  (:require
-    #?(:cljs [reagent.core :as r])
-    [re-frame.db :as r-db])
+  (:require #?(:cljs [reagent.core :as r])
+            [re-frame.db :as r-db])
   (:refer-clojure :exclude [atom]))
 
 (defn set-app-db!

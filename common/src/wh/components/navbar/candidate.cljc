@@ -19,7 +19,8 @@
    {:route      :liked
     :icon-name  "save"
     :icon-class styles/dropdown__link__icon-save
-    :text       "Saved Jobs"}
+    :text       "Saved Jobs"
+    :data-test  "saved-jobs"}
    {:route      :applied
     :icon-name  "document"
     :icon-class styles/dropdown__link__icon-document

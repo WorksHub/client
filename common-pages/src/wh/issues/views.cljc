@@ -156,7 +156,7 @@
       [:img {:src "/images/hiw/header.svg"
              :alt "Hero graphic"}]]]
     [:div.issues__header--public__copy
-     [:h1 "Use Open Source to hire or get hired"]
+     [:h1 {:data-test "issues-header"} "Use Open Source to hire or get hired"]
      [:p data/www-hero-copy]
      [:div.issues__header__buttons
       [link [:button.button "Get Started"] :get-started :query-params {:redirect "issues"}]
@@ -176,7 +176,8 @@
       :class     "issues__sorting__dropdown"
       :options   (<sub [::subs/sorting-options])
       :on-change (interop-forms/add-select-value-to-url
-                   :sort (<sub [::subs/sorting-options]))}]]])
+                   :sort (<sub [::subs/sorting-options]))
+      :data-test "issues-sort-select"}]]])
 
 (defn languages-list [class]
   (let [languages (some->> (<sub [::subs/issues-languages])

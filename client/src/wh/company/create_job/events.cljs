@@ -159,7 +159,7 @@
 (reg-event-fx
   ::create-job
   db/default-interceptors
-  (fn [{db :db} _]
+  (fn [{db :db} [publish-immediately?]]
     (let [errors            (not-empty
                               (concat (create-job/invalid-fields db)
                                       (create-job/invalid-company-fields db)))
@@ -185,7 +185,7 @@
                                  update-job-mutation
                                  create-job-mutation)
                    :variables  variables
-                   :on-success [::create-job-success]
+                   :on-success [::create-job-success publish-immediately?]
                    :on-failure [::create-job-error]}}))))
 
 (reg-event-fx
@@ -219,10 +219,12 @@
 (reg-event-fx
   ::create-job-success
   db/default-interceptors
-  (fn [{db :db} [{data :data}]]
+  (fn [{db :db} [publish-immediately? {data :data}]]
     (let [slug (-> data vals first :slug)]
       {:db       (assoc-in db [::job/sub-db ::job/slug] "")
-       :dispatch [::save-company [:job :params {:slug slug}]]})))
+       :dispatch [::save-company [:job
+                                  :params {:slug slug}
+                                  :query-params (when publish-immediately? {:publish true})]]})))
 
 (reg-event-db
   ::create-job-error
@@ -240,7 +242,7 @@
      :graphql {:query      update-job-mutation
                :variables  {:update_job {:id (get-in db [::db/page-params :id])
                                          :published false}}
-               :on-success [::create-job-success]
+               :on-success [::create-job-success false]
                :on-failure [::create-job-error]}}))
 
 (reg-event-db
@@ -374,7 +376,7 @@
                :on-failure [::fetch-company-failure]}}))
 
 (defmethod on-page-load :create-job [db]
-  (if (job/can-publish-jobs? db)
+  (if (job/can-create-jobs? db)
     (list [::initialize-db]
           [:google/load-maps]
           [::fetch-tags]

@@ -160,11 +160,12 @@
                            "edit"         :profile-edit-company-user
                            [:id]          (bidi/tag :profile :profile-by-id)}]
               ["notifications/" {"settings" :notifications-settings}]
-              ["improve-recommendations" :improve-recommendations]
               ["payment/" {"package"  (with-params :payment-setup :step :select-package)
                            "confirm"  (with-params :payment-setup :step :pay-confirm)
                            "complete" (with-params :payment-setup :step :pay-success)}]
               ["tags" {"/edit" :tags-edit}]
+
+              ["tags-collection/" {[:id] :tags-collection}]
 
               ;; Non UI routes - form submissions
               ["create-company" :create-company-form]
@@ -203,7 +204,8 @@
                        ["cover-letter" {""              :cover-letter-upload
                                         ["/" :filename] :cover-letter-file}]
                        ["reset-fixtures" :reset-fixtures]
-                       ["admin/" {[:command] :admin-command}]
+                       ["admin/" {""         :admin-command-list
+                                  [:command] :admin-command}]
                        ["prospect" :prospect]]]
               ["health/" {[:commit-sha] :health-by-commit-sha}]]])
 
@@ -254,30 +256,31 @@
        (.toString usp))))
 
 (s/fdef serialize-query-params
-  :args (s/cat :m :http/query-params)
-  :ret string?)
+        :args (s/cat :m :http/query-params)
+        :ret string?)
 
 (defn path [handler & {:keys [params query-params anchor] :as opts}]
   (try
     (cond->
-      (when handler           (apply bidi/path-for routes handler (flatten (seq params))))
-      (seq query-params)      (str "?" (serialize-query-params query-params))
+      (when handler (apply bidi/path-for routes handler (flatten (seq params))))
+      (seq query-params) (str "?" (serialize-query-params query-params))
       (text/not-blank anchor) (str "#" anchor))
     (catch #?(:clj Exception) #?(:cljs js/Object) _
-           (let [message (str "Unable to construct link: " (pr-str (assoc opts :handler handler)))]
-             #?(:clj (warn message))
-             #?(:cljs (js/console.warn message)))
-           "")))
+                                                  (let [message (str "Unable to construct link: " (pr-str (assoc opts :handler handler)))]
+                                                    #?(:clj (warn message))
+                                                    #?(:cljs (js/console.warn message)))
+                                                  "")))
+
 
 (s/fdef path
-  :args (s/cat :handler keyword?
-               :kwargs (s/keys* :opt-un [:http.path/params
-                                         :http/query-params]))
-  :ret string?)
+        :args (s/cat :handler keyword?
+                     :kwargs (s/keys* :opt-un [:http.path/params
+                                               :http/query-params]))
+        :ret string?)
 
 (s/fdef bidi/path-for
-  :args (s/cat :routes vector?
-               :handler keyword?)
+        :args (s/cat :routes vector?
+                     :handler keyword?)
   :ret string?)
 
 (defn handler->name [handler]

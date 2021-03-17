@@ -49,7 +49,7 @@
     [:span "Have something you want to share? "]
     [:span {:class dashboard-styles/cta__link__accent} "Write an article"]]
    [:a {:class dashboard-styles/cta__link
-        :href  (routes/path :improve-recommendations)}
+        :href  (routes/path :profile)}
     [:span "Add "]
     [:span {:class dashboard-styles/cta__link__accent} "more skills "]
     [:span "to improve your recommendations"]]
