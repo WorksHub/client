@@ -1,6 +1,7 @@
 (ns wh.pages.issue.subs
   (:require [re-frame.core :refer [reg-sub reg-sub-raw subscribe]]
             [wh.re-frame.subs :refer [<sub]]
+            [wh.common.repo :as common-repo]
             [wh.db :as db]
             [wh.pages.issue.db :as issue]
             #?(:clj [wh.re-frame.subs :refer [reaction]])
@@ -116,10 +117,10 @@
       (:repo issue))))
 
 (reg-sub
-  ::repo-url
-  :<- [::repo]
-  (fn [{:keys [name owner]} _]
-    (str "https://github.com/" owner "/" name)))
+ ::repo-url
+ :<- [::repo]
+ (fn [repo _]
+   (common-repo/github-url repo)))
 
 (reg-sub
   ::repo-prs-url
