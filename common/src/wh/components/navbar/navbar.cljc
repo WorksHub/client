@@ -1,5 +1,5 @@
 (ns wh.components.navbar.navbar
-  (:require #?(:cljs [re-frame.core :refer [dispatch]])
+  (:require #?(:cljs [re-frame.core :refer [dispatch dispatch-sync]])
             #?(:cljs [wh.components.navbar.events])
             [wh.common.url :as url]
             [wh.common.user :as user-common]
@@ -67,8 +67,8 @@
                    #?(:cljs {:on-change
                              (fn [e]
                                (js/onSearchQueryEdit e)
-                               (dispatch [:wh.components.navbar.events/set-search-value
-                                          (.-value (.-target e))]))}))]
+                               (dispatch-sync [:wh.components.navbar.events/set-search-value
+                                               (.-value (.-target e))]))}))]
          (when search-value
            [:a
             (merge {:href  (routes/path :search)

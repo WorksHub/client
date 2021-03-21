@@ -1,9 +1,9 @@
 (ns wh.common.location
   (:require
-    [clojure.string :as str]
+    #?(:cljs [wh.common.fx.google-maps :as google-maps])
     [camel-snake-kebab.core :as c]
-    [wh.common.data :as data]
-    #?(:cljs [wh.common.fx.google-maps :as google-maps])))
+    [clojure.string :as str]
+    [wh.common.data :as data]))
 
 (defn format-location
   [{:keys [city state country country-code]}]
@@ -41,13 +41,12 @@
            (extract-address-components address_components)
            {:keys [latitude longitude] :as geolocation}
            (google-maps/unlatlng (:location geometry))]
-       {:street (str/trim (str street-number " " route))
-        :city (or (match-city locality) (match-city postal-town) locality postal-town)
-        :country (get data/country-code->country country-code country)
-        :country-code country-code
-        :state (if (= country-code "US")
-                 state-code
-                 "")
-        :post-code postal-code
-        :latitude latitude
-        :longitude longitude})))
+       (merge {:street       (str/trim (str street-number " " route))
+               :city         (or (match-city locality) (match-city postal-town) locality postal-town)
+               :country      (get data/country-code->country country-code country)
+               :country-code country-code
+               :post-code    postal-code
+               :latitude     latitude
+               :longitude    longitude}
+              (when (= country-code "US")
+                {:state state-code})))))

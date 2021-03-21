@@ -25,16 +25,17 @@
 (defn container [& elms]
   (into [:div {:class styles/container}] elms))
 
-(defn meta-row [{:keys [text icon href new-tab? on-click social-provider]}]
-  [:a (cond-> {:class (util/mc styles/meta-row
-                               [(= social-provider :stackoverflow) styles/meta-row--stackoverflow]
-                               [(= social-provider :twitter) styles/meta-row--twitter])}
-              on-click (merge (interop/on-click-fn on-click))
-              href     (assoc :href href)
-              new-tab? (merge {:target "_blank"
-                               :rel    "noopener"}))
-   [icons/icon icon :class styles/meta-row__icon]
-   [:span (when href {:class styles/meta-row__description})  text]])
+(defn meta-row [{:keys [type text icon href new-tab? on-click social-provider]}]
+  (let [tag (if (= type :text) :div :a)]
+    [tag (cond-> {:class (util/mc styles/meta-row
+                                  [(= social-provider :stackoverflow) styles/meta-row--stackoverflow]
+                                  [(= social-provider :twitter) styles/meta-row--twitter])}
+                 on-click (merge (interop/on-click-fn on-click))
+                 href (assoc :href href)
+                 new-tab? (merge {:target "_blank"
+                                  :rel    "noopener"}))
+     [icons/icon icon :class styles/meta-row__icon]
+     [:span (when href {:class styles/meta-row__description}) text]]))
 
 (defn social-row [social-provider {:keys [display url] :as social} type]
   (let [public? (= type :public)]
@@ -43,7 +44,7 @@
                  :icon     (name social-provider)
                  :href     url
                  :new-tab? true}]
-      (when-not public?
+      (when (and (not public?) (not (= social-provider :web)))
         [meta-row {:text            (str "Connect " (str/capitalize (name social-provider)))
                    :icon            (name social-provider)
                    :on-click        (interop/save-redirect [:profile])
@@ -110,11 +111,11 @@
   (if uploading?
     [small-button {:disabled true :inverted? inverted?} "Uploading..."]
     [:label {:class     (util/mc styles/button styles/button--small
-                                 [inverted? styles/button--inverted])
-             :data-test data-test}
+                                 [inverted? styles/button--inverted])}
      [:input.visually-hidden {:type      "file"
                               :name      "avatar"
-                              :on-change on-change}]
+                              :on-change on-change
+                              :data-test data-test}]
      [:span (str "Upload " document)]]))
 
 (defn edit-link [{:keys [href text data-test type on-click]
@@ -159,11 +160,13 @@
         [:div {:class styles/meta-rows}
          (when last-seen
            [meta-row {:icon "clock"
+                      :type :text
                       :text (->> (time/str->time last-seen :date-time)
                                  time/human-time
                                  (str "Last seen "))}])
          (when updated
            [meta-row {:icon "refresh"
+                      :type :text
                       :text (->> (time/str->time updated :date-time)
                                  time/human-time
                                  (str "Updated "))}])
@@ -318,15 +321,17 @@
 (defn percentile->title
   [p]
   (cond
+    nil "New user"
     (<= p 25) (str "Top " p "% user")
     (<= p 50) (str "Rising star")
-    :else     (str "New user")))
+    :else (str "New user")))
 
 (defn percentile->image
   [p]
   (cond
+    nil "/images/profile/new_user.svg"
     (<= p 50) "/images/profile/top_user.svg"
-    :else     "/images/profile/new_user.svg"))
+    :else "/images/profile/new_user.svg"))
 
 (defn section-stats
   [{:keys [is-owner? percentile created articles-count issues-count]}]

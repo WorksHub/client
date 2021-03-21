@@ -4,15 +4,16 @@
             [re-frame.core :refer [dispatch]]
             [reagent.core :as r]
             [wh.common.upload :as upload]
-            [wh.components.rich-text-field.loadable :refer [rich-text-field]]
             [wh.company.create-job.db :as create-job]
             [wh.company.create-job.events :as events]
             [wh.company.create-job.subs :as subs]
             [wh.components.common :refer [link]]
+            [wh.components.forms :as forms]
             [wh.components.forms.views :as f
              :refer [labelled-checkbox field-container
-                     select-field text-field radio-buttons tags-field logo-field]]
+                     select-field text-field tags-field logo-field]]
             [wh.components.icons :refer [icon]]
+            [wh.components.rich-text-field.loadable :refer [rich-text-field]]
             [wh.components.verticals :as vertical-views]
             [wh.db :as db]
             [wh.subs :refer [<sub error-sub-key]]
@@ -95,7 +96,7 @@
           {:class   "job-edit__remuneration__salary__time-period"
            :label   "* Salary rate is:"
            :inline? true}
-          [radio-buttons (<sub [::subs/remuneration__time-period])
+          [forms/radio-buttons (<sub [::subs/remuneration__time-period])
            {:options   (<sub [::subs/time-periods])
             :on-change [::events/edit-remuneration__time-period]}])])
      [:div.job-edit__remuneration__additional-options
@@ -108,12 +109,12 @@
 (defn skills
   [admin?]
   [:fieldset.job-edit__skills
-   [:h2 "Skills"]
+   [:h2 "Technologies & frameworks"]
    (let [tags (<sub [::subs/matching-tags])]
      ;; TODO: use new tags-filter-field component here
      [tags-field
       (<sub [::subs/tag-search])
-      {:label              "* Enter any of the key skills required for this role"
+      {:label              "* Enter the technologies and frameworks that will be used in this role"
        :id                 "_wh_company_create-job_db_tags"
        :collapsed?         (<sub [::subs/tags-collapsed?])
        :placeholder        "e.g. Clojure, Haskell, Scala"
@@ -133,7 +134,7 @@
       [text-field nil (field ::create-job/search-address
                              :error false
                              :label "* Address finder"
-                             :placeholder "Type street address or postcode to search"
+                             :placeholder "Type post/zip code or street address to search"
                              :auto-complete "off"
                              :suggestions (<sub [::subs/location-suggestions])
                              :on-select-suggestion [::events/select-location-suggestion]
@@ -395,20 +396,22 @@
       :company :slug slug]]))
 
 (defn page []
-  (let [admin? (<sub [:user/admin?])
+  (let [admin?     (<sub [:user/admin?])
         published? (<sub [::subs/published])]
     [:div.main.job-edit
      [:h1 (<sub [::subs/page-title])]
      [:div.split-content
       [:div.split-content__main
        [company-form admin?]
-       [main-form admin?]]
-      [:div.job-edit__side-pods.split-content__side
+
+       [main-form admin?]
+
        [vertical-views/verticals-pod
-        {:on-verticals (<sub [::subs/verticals])
+        {:on-verticals  (<sub [::subs/verticals])
          :off-verticals (set/difference (set verticals/future-job-verticals) (<sub [::subs/verticals]))
-         :toggle-event [::events/toggle-vertical]
-         :class-prefix "job-edit"}]
+         :toggle-event  [::events/toggle-vertical]
+         :class-prefix  "job-edit"}]]
+      [:div.job-edit__side-pods.split-content__side
        (when (<sub [::subs/show-integrations?])
          [ats-pod])
        (if admin?
@@ -417,24 +420,43 @@
      [:div.split-content
       [:div.split-content__main
        [:div.is-flex.job-edit__footer
-        [:button
-         {:id        "job-edit__footer__save"
-          :on-click  #(do (.preventDefault %)
-                          (dispatch [::events/create-job]))
-          :class     (cond-> (util/merge-classes "button" "button--medium" "job-edit__save-button")
-                             (<sub [::subs/saving?]) (util/merge-classes "button--inverted" "button--loading"))
-          :data-test "create-role"}
-         (when-not (<sub [::subs/saving?])
-           (cond published?            "Save"
-                 (<sub [::subs/edit?]) "Save & Preview"
-                 :else                 "Create role"))]
+
+        (let [edit?   (<sub [::subs/edit?])
+              saving? (<sub [::subs/saving?])]
+          [:button
+           {:id        "job-edit__footer__save"
+            :on-click  #(do (.preventDefault %)
+                            (dispatch [::events/create-job]))
+            :class     (cond-> (util/mc "button" "button--medium" "job-edit__save-button")
+                               (not published?) (util/mc "button--inverted")
+                               saving?          (util/mc "button--inverted" "button--loading"))
+            :data-test "create-role"}
+           (when-not saving?
+             (cond published? "Save"
+                   edit?      "Save & Preview"
+                   :else      "Create"))])
+
+        (when-not published?
+          [:button
+           {:id        "job-edit__footer__save_and_publish"
+            :on-click  #(do (.preventDefault %)
+                            (dispatch [::events/create-job true]))
+            :class     (cond-> (util/merge-classes "button" "button--medium" "job-edit__save-button")
+                               (<sub [::subs/saving?]) (util/merge-classes "button--inverted" "button--loading"))
+            :data-test "save-and-publish"}
+           (when-not (<sub [::subs/saving?])
+             (if (<sub [::subs/edit?])
+               "Save & Publish"
+               "Create & Publish"))])
+
         (when published?
           [:button.button.button--medium.button--inverted.is-pulled-right
-           {:id "job-edit__footer__unpublished"
+           {:id       "job-edit__footer__unpublished"
             :on-click #(do (.preventDefault %)
                            (dispatch [::events/unpublish-job]))
             :class    (when (<sub [::subs/saving?])
                         "button--loading")}
            (when-not (<sub [::subs/saving?]) "Unpublish")])
+
         (when-let [error (<sub [::subs/error])]
-          (f/error-component-outdated error { :id "company-edit-error-desktop"}))]]]]))
+          (f/error-component-outdated error {:id "company-edit-error-desktop"}))]]]]))

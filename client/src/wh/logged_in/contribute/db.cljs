@@ -70,13 +70,13 @@
           ::body-rows                   10
           ::associated-jobs             []
           ::hide-codi?                  false
-          ::verticals                   #{(::db/vertical db)}
+          ::verticals                   #{"www" (::db/vertical db)}
           ::primary-vertical            (::db/vertical db)
-          ::author-info                 {:summary    ""
-                                         :other-urls []
-                                         :skills     []
+          ::author-info                 {:summary           ""
+                                         :other-urls        []
+                                         :skills            []
                                          :avatar-uploading? false
-                                         :avatar-url nil}}
+                                         :avatar-url        nil}}
          (when-not (user-common/admin? db)
            {::author (user/user-name db)})
          (when (user-common/company? db)

@@ -309,7 +309,7 @@
       {:db      (apply/set-loading db)
        :graphql {:query      graphql/update-user-mutation--current-location
                  :variables  {:update_user (keywords/transform-keys {:id               (user/id db)
-                                                                 :current-location current-location})}
+                                                                     :current-location current-location})}
                  :on-success [::update-current-location-success]
                  :on-failure [::update-current-location-failure]}})))
 

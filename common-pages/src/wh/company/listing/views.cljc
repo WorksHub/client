@@ -66,11 +66,11 @@
 
 (defn page
   []
-  (let [result              (<sub [::subs/companies])
-        companies           (or (some-> (:companies result) insert-registration-prompt insert-candidate-prompt)
-                                (util/maps-with-id 10))
-        query-params        (<sub [:wh/query-params])
-        loading?            (<sub [::subs/loading?])]
+  (let [result       (<sub [::subs/companies])
+        companies    (or (some-> (:companies result) insert-registration-prompt insert-candidate-prompt)
+                         (util/maps-with-id 10))
+        query-params (<sub [:wh/query-params])
+        loading?     (<sub [::subs/loading?])]
     [:div
      [:div.main.companies
       [:h1 "Companies using WorksHub"]
@@ -82,8 +82,9 @@
            :solo?              true
            :hide-error?        true
            :placeholder        "Search company tags, such as technologies (java, scala, etc) or benefits (remote, pension, etc)"
-           :init-from-js-tags? true
-           :on-change          (interop-forms/add-tag-value-to-url :tag ::events/on-tag-change)}]
+           :init-from-js-tags? #?(:clj true :cljs false)
+           :tags-url           (routes/path :tags-collection :params {:id :companies})
+           :on-tag-select      (interop-forms/add-tag-value-to-url :tag ::events/on-tag-change)}]
          [forms/labelled-checkbox
           {:id          (str listing/tag-field-id "__live-jobs")
            :value       (<sub [::subs/live-jobs-only?])

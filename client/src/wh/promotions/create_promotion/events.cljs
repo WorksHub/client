@@ -43,7 +43,8 @@
 (defmethod on-page-load :create-promotion [{:keys [wh.db/page-params] :as db}]
   (let [type     (keyword (:type page-params))
         query-fn (preview-query type)]
-    [(into [:graphql/query] (query-fn db))]))
+    [(into [:graphql/query] (query-fn db))
+     [::init-db]]))
 
 (reg-event-db
   ::edit-description
@@ -51,6 +52,13 @@
   (fn [db [description]]
     (assoc db ::create-promotion/description description)))
 
+(reg-event-db
+  ::init-db
+  db/default-interceptors
+  (fn [db _]
+    (-> db
+        (assoc ::create-promotion/promotion-status {})
+        (assoc ::create-promotion/description ""))))
 
 
 (defquery create-promotion-mutation

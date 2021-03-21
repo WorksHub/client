@@ -8,6 +8,6 @@
     [components/promoter actor]
     [components/entity-description :job type]]
 
-   [components/quoted-description description]
+   [components/description description]
 
    [job/base-card job (:job-company job) type opts]])

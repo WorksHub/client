@@ -41,54 +41,55 @@
 ;; simplification of this code.
 
 ;; TODO: convert to defquery, CH4692
-(def initial-data-query
+(defn initial-data-query
+  [candidate?]
   {:venia/operation {:operation/type :query
                      :operation/name "profile"}
    :venia/variables [{:variable/name "user_id" :variable/type :ID}]
    :venia/queries   [[:user {:id :$user_id}
-                      [[:skills [:name :rating
-                                 [:tag [:id :slug :type :subtype :label :weight]]]]
-                       ;; TODO CH4692 [:interests :fragment/tagFields]
-                       [:interests [:id :slug :type :subtype :label :weight]]
-                       [:companyPerks [:name]]
-                       [:otherUrls [:url]]
-                       :imageUrl :id :githubId
-                       :phone :published :name :summary
-                       :email :jobSeekingStatus :roleTypes
-                       :visaStatus :visaStatusOther :remote
-                       :percentile :created :lastSeen :updated
-                       [:contributionsCollection
-                        [:totalCommitContributions
-                         :totalRepositoriesWithContributedCommits
-                         [:contributionCalendar
-                          [[:weeks
-                            [[:contributionDays
-                              [:contributionCount
-                               :date :weekday :color]]]]]]]]
+                      (cond-> [[:skills [:name :rating
+                                         [:tag [:id :slug :type :subtype :label :weight]]]]
+                               ;; TODO CH4692 [:interests :fragment/tagFields]
+                               [:interests [:id :slug :type :subtype :label :weight]]
+                               [:companyPerks [:name]]
+                               [:otherUrls [:url]]
+                               :imageUrl :id :githubId
+                               :phone :published :name :summary
+                               :email :jobSeekingStatus :roleTypes
+                               :visaStatus :visaStatusOther :remote
+                               :percentile :created :lastSeen :updated
+                               [:contributionsCollection
+                                [:totalCommitContributions
+                                 :totalRepositoriesWithContributedCommits
+                                 [:contributionCalendar
+                                  [[:weeks
+                                    [[:contributionDays
+                                      [:contributionCount
+                                       :date :weekday :color]]]]]]]]
 
-                       [:cv [:link
-                             [:file [:type :name :url :hash]]]]
-                       [:coverLetter [:link
-                                      [:file [:type :name :url :hash]]]]
-                       [:salary [:currency :min :timePeriod]]
-                       [:currentLocation
-                        [:city :administrative :country :countryCode
-                         :subRegion :region :longitude :latitude]]
-                       [:preferredLocations
-                        [:city :administrative :country :countryCode
-                         :subRegion :region :longitude :latitude]]
-                       [:stackoverflowInfo [:reputation]]
-                       [:twitterInfo [:id]]
-                       ;; -----------------
-                       [:approval [:status :source :time]]
-                       :type
-                       [:applied [:timestamp
-                                  :state
-                                  :note
-                                  [:coverLetter [:link [:file [:url]]]]
-                                  [:job [:id :slug :title [:company [:name :slug :package]]]]]]
-                       :hubspotProfileUrl
-                       [:likes [:id :slug :title [:company [:name]]]]]]
+                               [:cv [:link
+                                     [:file [:type :name :url :hash]]]]
+                               [:coverLetter [:link
+                                              [:file [:type :name :url :hash]]]]
+                               [:salary [:currency :min :timePeriod]]
+                               [:currentLocation
+                                [:city :administrative :country :countryCode
+                                 :subRegion :region :longitude :latitude]]
+                               [:preferredLocations
+                                [:city :administrative :country :countryCode
+                                 :subRegion :region :longitude :latitude]]
+                               [:stackoverflowInfo [:reputation]]
+                               [:twitterInfo [:id]]
+                               ;; -----------------
+                               [:approval [:status :source :time]]
+                               :type
+                               :hubspotProfileUrl
+                               [:likes [:id :slug :title [:company [:name]]]]]
+                              (not candidate?) (conj [:applied [:timestamp
+                                                                :state
+                                                                :note
+                                                                [:coverLetter [:link [:file [:url]]]]
+                                                                [:job [:id :slug :title [:company [:name :slug :package]]]]]]))]
                      [:blogs {:user_id :$user_id}
                       [[:blogs [:id :title :formattedCreationDate
                                 :readingTime :upvoteCount :published]]]]
@@ -101,7 +102,7 @@
 (reg-event-fx
   ::fetch-initial-data
   (fn [{db :db} _]
-    (cond-> {:graphql {:query      initial-data-query
+    (cond-> {:graphql {:query      (initial-data-query (common-user/candidate? db))
                        :variables  {:user_id (profile/user-id db)}
                        :on-success [::fetch-initial-data-success]}}
             (:wh.db/initial-load? db) (assoc :dispatch [::pages/set-loader]))))
@@ -170,10 +171,6 @@
 
 (defmethod on-page-load :candidate-edit-private [_db]
   [[:wh.company.candidate.events/load-candidate]])
-
-(defmethod on-page-load :improve-recommendations [_db]
-  [[::fetch-initial-data]
-   [::init-profile-edit]])
 
 (defmethod on-page-load :profile-edit-company-user [_db]
   [[::init-profile-edit]])

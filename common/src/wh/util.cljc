@@ -241,7 +241,6 @@
   [coll el idx]
   (apply concat (interpose [el] (split-at idx coll))))
 
-;;;;
 (defn trunc [n s]
   (when (pos-int? n)
     (->> (count s)
@@ -259,3 +258,8 @@
 
 (defn string->boolean [x]
   (= "true" x))
+
+(defn fmap
+  "applies f to each value inside a hashmap"
+  [m f]
+  (into {} (for [[k v] m] [k (f v)])))

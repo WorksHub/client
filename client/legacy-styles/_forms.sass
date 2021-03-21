@@ -130,7 +130,7 @@ $field-padding: 13px
 
 .checkbox
   input[type=checkbox]
-    visibility: hidden
+    display: none
     &:checked + label
       .checkbox__box
         background-repeat: no-repeat
@@ -146,9 +146,9 @@ $field-padding: 13px
   display: inline-block
   input[type=radio]
     visibility: hidden
-    &:checked + label
+    &:checked + .circle
       background-color: $metal-blue
-  label
+  .circle
     @include checkbox-and-radio
     border: none
     border-radius: 10px

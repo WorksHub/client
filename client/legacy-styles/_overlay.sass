@@ -1,11 +1,9 @@
 .is-full-panel-overlay
   @include overlay(0)
   background: $steel-gray-with-alpha
-  top: $navbar-height
+  top: var(--header-height)
   z-index: 3000
   position: fixed
-  +mobile
-    top: $navbar-mobile-height
 
 .is-full-screen-overlay
   @include overlay(0)
@@ -96,6 +94,7 @@
     left: 10px
     right: 10px
     margin: auto 10px
+    top: var(--header-height)
   padding: 18px
   margin: auto 0;
   background: white

@@ -16,6 +16,7 @@
             [wh.components.stats.views :refer [stats-item]]
             [wh.components.tag :as tag]
             [wh.job.views :as job]
+            [wh.routes :as routes]
             [wh.subs :refer [<sub]]))
 
 (defn- date->str [d]
@@ -228,11 +229,11 @@
          :on-close     #(dispatch [::events/close-publish-celebration id])}])]))
 
 (defn add-job-card []
-  (let [can-publish? (<sub [::subs/can-publish-jobs?])
+  (let [can-create? (<sub [::subs/can-create-jobs?])
         element      [:div.card.add-job
                       [:div.add-job__icon [icon "add-new-2"]]
                       [:div.add-job__add "Add new role"]]]
-    (if can-publish?
+    (if can-create?
       [link element :create-job]
 
       [link element
@@ -240,18 +241,15 @@
        :step :select-package
        :query-params {:action "publish"}])))
 
-(defn roles [class-name title jobs live-roles?]
-  (into
-    [:section {:class class-name}
-     [:h2 title]]
-    (let [cards (concat
-                  (for [job jobs] [job-card job])
-                  (when live-roles?
-                    [[add-job-card]]))]
-      (for [part (partition-all 2 cards)]
-        (into [:div.columns]
-              (for [card part]
-                [:div.column.is-6 card]))))))
+(defn roles-list [jobs live-roles?]
+  (let [cards (concat
+                (for [job jobs] [job-card job])
+                (when live-roles?
+                  [[add-job-card]]))]
+    (for [part (partition-all 2 cards)]
+      (into [:div.columns]
+            (for [card part]
+              [:div.column.is-6 card])))))
 
 (defn complete-profile-text
   [amount]
@@ -312,17 +310,22 @@
               :alt ""}]]])])
 
 (defn live-roles []
-  (roles "live-roles"
-         "Live Roles"
-         (<sub [::subs/published-jobs])
-         true))
+  (into
+    [:section {:class "live-roles"}
+     [:div {:class "live-roles__header"}
+      [:h2
+       [:span "Live Roles | "]
+       [:a {:href  (routes/path :company-applications)
+            :class "a--underlined"}
+        "All Applications"]]]]
+    (roles-list (<sub [::subs/published-jobs]) true)))
 
 (defn unpublished-roles []
   (when-let [jobs (seq (<sub [::subs/unpublished-jobs]))]
-    (roles "unpublished-roles"
-           "Unpublished Roles"
-           jobs
-           false)))
+    (into
+      [:section {:class "unpublished-roles"}
+       [:h2 "Unpublished Roles"]]
+      (roles-list jobs false))))
 
 (defmulti activity-item-content :type)
 

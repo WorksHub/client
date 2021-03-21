@@ -16,20 +16,17 @@
 
 (ns wh.components.forms.views
   "Form building blocks."
-  (:require
-    [cljs.spec.alpha :as s]
-    [clojure.string :as str]
-    [re-frame.core :refer [dispatch dispatch-sync]]
-    [reagent.core :as reagent]
-    [wh.common.emoji :as emoji]
-    [wh.common.specs.primitives :as p]
-    [wh.common.user :as common-user]
-    [wh.components.icons :refer [icon]]
-    [wh.styles.form :as styles]
-    [wh.subs :refer [<sub]]
-    [wh.util :as util :refer [merge-classes]])
-  (:require-macros
-    [clojure.core.strint :refer [<<]]))
+  (:require [cljs.spec.alpha :as s]
+            [clojure.string :as str]
+            [re-frame.core :refer [dispatch dispatch-sync]]
+            [reagent.core :as reagent]
+            [wh.common.emoji :as emoji]
+            [wh.common.specs.primitives :as p]
+            [wh.common.user :as common-user]
+            [wh.components.icons :refer [icon]]
+            [wh.styles.form :as styles]
+            [wh.util :as util :refer [merge-classes]])
+  (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defn target-value [^js/Event ev _]
   (-> ev .-target .-value))
@@ -48,28 +45,32 @@
 (defn field-container
   "A generic container for a field. Wraps one or more controls in a
   container widget. Provides support for labels and help messages."
-  [{:keys [label class error help id inline? data-test]} & controls]
+  [{:keys [label class error help id inline? data-test no-error?] :as _options} & controls]
   (vec
-   (concat
-    [:div
-     {:id        id
-      :class     (merge-classes
-                   "field"
-                   (when (> (count controls) 1) "grouped")
-                   (when error "field--errored")
-                   class)
-      :data-test data-test}
-     (when label
-       [(if (string? error)
-          :label.label.field--invalid
-          :label.label)
-        {:class (when inline? "is-pulled-left")} label])]
-    (when help
-      [[:div.help help]])
-    (conj (mapv (fn [control] [:div.control control]) controls)
-          (if (string? error)
-            [:div.field__error.field--invalid error]
-            [:div.field__error.field--invalid.is-invisible "errors go here"])))))
+    (concat
+      [:div
+       {:id        id
+        :class     (merge-classes
+                     "field"
+                     (when (> (count controls) 1) "grouped")
+                     (when error "field--errored")
+                     class)
+        :data-test data-test}
+       (when label
+         [(if (string? error)
+            :label.label.field--invalid
+            :label.label)
+          {:class (when inline? "is-pulled-left")} label])]
+
+      (when help
+        [[:div.help help]])
+
+      (mapv (fn [control] [:div.control control]) controls)
+
+      (when-not no-error?
+        [(if (string? error)
+           [:div.field__error.field--invalid error]
+           [:div.field__error.field--invalid.is-invisible "errors go here"])]))))
 
 (defn text-input
   "A bare text input. Typically not used standalone, but wrapped as
@@ -78,7 +79,7 @@
   If supplied, the `dirty` option should be an atom which holds
   a boolean value; it will be reset to true upon first change of
   the input. This is used by text-field."
-  [value {:keys [type on-change placeholder on-scroll
+  [value {:keys [type on-change placeholder on-scroll on-enter
                  rows dirty data-test class-textarea class-input]
           :or {type :text
                class-textarea "textarea"
@@ -91,6 +92,11 @@
             {:value value
              :placeholder placeholder
              :class (if textarea? class-textarea class-input)}
+            (when on-enter
+              {:on-key-press
+               (fn [e]
+                 (when (= (.-key e) "Enter")
+                   (on-enter)))})
             (when on-change
               {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) % options)]
                              (when dirty
@@ -216,28 +222,30 @@
   :suggestions - a list of suggestions displayed beneath the field.
   :on-select-suggestion - the event dispatched when a suggestion is selected."
   [_value options]
-  (let [dirty (reagent/atom false)
+  (let [dirty   (reagent/atom false)
         focused (reagent/atom false)
-        new? (:new? options)]
-    (fn [value {:keys [suggestions dirty? error force-error? read-only on-select-suggestion on-remove hide-icon?] :as options}]
+        new?    (:new? options)]
+    (fn [value {:keys [suggestions dirty? error force-error? read-only
+                      on-select-suggestion on-remove hide-icon?]
+               :as   options}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
-      (let [value (or value (:value options))
-            suggestable? (and (or (seq suggestions) on-select-suggestion) (not hide-icon?))
-            show-suggestion? (and (seq suggestions) @focused (not read-only))
-            removable? (and on-remove value (not @focused))
+      (let [value                    (or value (:value options))
+            suggestable?             (and (or (seq suggestions) on-select-suggestion) (not hide-icon?))
+            show-suggestion?         (and (seq suggestions) @focused (not read-only))
+            removable?               (and on-remove value (not @focused))
             ;;
-            search-icon-class (if new? styles/suggestions__search-icon "search-icon")
-            search-icon-comp (when suggestable? [icon "search-new" :class search-icon-class])
+            search-icon-class        (if new? styles/suggestions__search-icon "search-icon")
+            search-icon-comp         (when suggestable? [icon "search-new" :class search-icon-class])
             ;;
             suggestions-list-options (cond-> options new? (assoc
                                                             :class styles/suggestions__suggestions
                                                             :class-suggestion styles/suggestions__suggestion))
-            suggestions-list-comp (when show-suggestion? [suggestions-list suggestions suggestions-list-options])
+            suggestions-list-comp    (when show-suggestion? [suggestions-list suggestions suggestions-list-options])
             ;;
-            close-icon-class (if new? styles/suggestions__delete-icon "remove-text-field-btn")
-            close-icon-comp (when removable? [icon "close" :class close-icon-class :on-click #(dispatch-sync on-remove)])]
+            close-icon-class         (if new? styles/suggestions__delete-icon "remove-text-field-btn")
+            close-icon-comp          (when removable? [icon "close" :class close-icon-class :on-click #(dispatch-sync on-remove)])]
         (if new?
           [:div {:class styles/suggestions__wrapper}
            [text-input-new value (merge options
@@ -252,14 +260,14 @@
                                  {:error (if (and (string? error) force-error?)
                                            error
                                            (text-field-error value options dirty focused))}))
-                           [:div.text-field-control
-                             {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
-                                          (when suggestable? " text-field-control--suggestable")
-                                          (when removable? " text-field-control--removable"))}
-                             (text-input value (merge options (text-field-input-options dirty focused options)))
-                             search-icon-comp
-                             suggestions-list-comp
-                             close-icon-comp]])))))
+           [:div.text-field-control
+            {:class (str (when show-suggestion? "text-field-control--showing-suggestions")
+                         (when suggestable? " text-field-control--suggestable")
+                         (when removable? " text-field-control--removable"))}
+            (text-input value (merge options (text-field-input-options dirty focused options)))
+            search-icon-comp
+            suggestions-list-comp
+            close-icon-comp]])))))
 
 (defn text-field-with-label [value {:keys [label required?] :as options}]
   [:label
@@ -354,31 +362,6 @@
                 :required? required?}]
    [select-field value (assoc options :new? true)]])
 
-(defn radio-buttons
-  "Renders a set of radio buttons wrapped together in a div."
-  [value {options :options, name- :name, on-change :on-change}]
-  (let [options (sanitize-select-options options)
-        name- (or name- (name (gensym)))]
-    (into
-      [:div.radios]
-      (for [[i {:keys [id label]}] (map-indexed vector options)
-            :let [el-id (str name- i)]]
-        [:span.radio-item
-         [:input {:id el-id
-                  :type :radio
-                  :checked (= value id)
-                  :on-change #(when on-change
-                                (if (fn? on-change)
-                                  (on-change id)
-                                  (dispatch (conj on-change id))))}]
-         [:label {:for el-id}]
-         label]))))
-
-(defn radio-field
-  "A selection of radio controls + label"
-  [value args]
-  (field-container args (radio-buttons value args)))
-
 (defn multiple-buttons
   "An input widget allowing to pick zero or more of the given options.
   value should be a set (a sub-set of :options)."
@@ -396,16 +379,20 @@
 
 (defn multiple-checkboxes
   "Like multiple-buttons, but renders a set of labelled checkboxes."
-  [multi-value {:keys [options on-change class-wrapper]
-                :or {class-wrapper "multiple-checkboxes"}}]
+  [multi-value {:keys [options on-change class-wrapper item-class label-class selected-class]
+                :or   {class-wrapper "multiple-checkboxes"}}]
   (into [:div {:class class-wrapper}]
         (map
-         (fn [{:keys [value label disabled] :as option}]
-           [labelled-checkbox (contains? multi-value value)
-            {:label label
-             :disabled disabled
-             :on-change (conj on-change value)}])
-         options)))
+          (fn [{:keys [value label disabled] :as option}]
+            (let [selected? (contains? multi-value value)]
+              [labelled-checkbox selected?
+               {:label       label
+                :class       (util/mc item-class
+                                      [selected? selected-class])
+                :label-class label-class
+                :disabled    disabled
+                :on-change   (conj on-change value)}]))
+          options)))
 
 (defn multi-edit
   "A multiplexer of text fields (or other fields). Renders as many

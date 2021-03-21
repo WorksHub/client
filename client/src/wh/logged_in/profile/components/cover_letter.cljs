@@ -18,6 +18,7 @@ achievements in a clear and concise way. Don’t forget to
 double-check the spelling and grammar."]
 
     [components/upload-button {:document     "cover letter"
+                               :data-test    "upload-cover-letter"
                                :inverted?    true
                                :uploading?   (<sub [::subs/cover-letter-uploading?])
                                :on-change    (upload/handler

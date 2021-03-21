@@ -1,15 +1,15 @@
 (ns wh.pages.issue.edit.views
-  (:require
-    #?(:cljs [wh.components.forms.views :refer [radio-buttons text-input]])
-    #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
-    [wh.components.common :refer [link img wrap-img]]
-    [wh.components.icons :refer [icon]]
-    [wh.components.issue :as issue]
-    [wh.components.selector :refer [selector]]
-    [wh.pages.issue.edit.events :as events]
-    [wh.pages.issue.edit.subs :as subs]
-    [wh.re-frame.events :refer [dispatch]]
-    [wh.re-frame.subs :refer [<sub]]))
+  (:require #?(:cljs [wh.components.forms.views :refer [text-input]])
+            #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+            [wh.components.common :refer [link img wrap-img]]
+            [wh.components.forms :as forms]
+            [wh.components.icons :refer [icon]]
+            [wh.components.issue :as issue]
+            [wh.components.selector :refer [selector]]
+            [wh.pages.issue.edit.events :as events]
+            [wh.pages.issue.edit.subs :as subs]
+            [wh.re-frame.events :refer [dispatch]]
+            [wh.re-frame.subs :refer [<sub]]))
 
 (defn edit-dialog []
   #?(:cljs
@@ -39,7 +39,7 @@
          [:div.issue__edit__level
           [:div.issue__edit__label "Level:"]
           [:div.wh-formx
-           [radio-buttons (<sub [::subs/pending-level])
+           [forms/radio-buttons (<sub [::subs/pending-level])
             {:options   (map #(hash-map :id % :label (issue/level->str %))
                              [:beginner :intermediate :advanced])
              :on-change [::events/set-pending-level]}]]]

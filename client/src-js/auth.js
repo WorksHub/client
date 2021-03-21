@@ -3,19 +3,27 @@ import customLocalStorage from './local_storage';
 
 const messageType = {
     apply: 'apply',
+    publish: 'publish',
     contribute: 'contribute',
     searchJobs: 'search-jobs',
     seeMore: 'see-more',
     upvote: 'upvote',
     issue: 'issue',
-    save: 'save'
+    save: 'save',
+    savedJobs: 'saved-jobs',
+    recommendedJobs: 'recommended-jobs',
+    appliedJobs: 'applied-jobs',
 };
 const contextToMessageType = {
     'homepage-jobcard-apply': messageType.apply,
     contribute: messageType.contribute,
     'jobcard-apply': messageType.apply,
+    'jobsboard-recommended': messageType.recommendedJobs,
+    'jobsboard-save': messageType.savedJobs,
     'jobcard-save': messageType.save,
+    'jobsboard-applied': messageType.appliedJobs,
     'jobpage-apply': messageType.apply,
+    'jobpage-publish': messageType.publish,
     'search-jobs': messageType.searchJobs,
     'jobpage-see-more': messageType.seeMore,
     upvote: messageType.upvote,
@@ -36,7 +44,9 @@ const messageId = s => id.authPopup + '__' + s;
 const fiveMinutes = 5 * 60;
 
 function showMessage(context) {
-    Object.values(messageType).forEach(mt => setClass(messageId(mt), cls.isVisible, false));
+    Object.values(messageType).forEach(mt =>
+        setClass(messageId(mt), cls.isVisible, false)
+    );
     const messageTypeToShow = contextToMessageType[context];
     if (messageTypeToShow) {
         setClass(messageId(messageTypeToShow), cls.isVisible, true);
@@ -48,7 +58,7 @@ function saveRedirect(redirect) {
 }
 
 function showAuthPopUp(context, redirect) {
-    saveRedirect(redirect)
+    saveRedirect(redirect);
     showMessage(context);
     setClass(id.authPopup, cls.isOpen, true);
     setNoScroll(id.authPopup, true);

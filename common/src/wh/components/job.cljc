@@ -37,7 +37,8 @@
   [icon "bookmark"
    :id (str "job-card__like-button_job-" id)
    :class (util/merge-classes "job__icon" "like" (when saved? "selected"))
-   :on-click #(dispatch [:wh.events/toggle-job-like job on-close])])
+   :on-click #(dispatch [:wh.events/toggle-job-like job on-close])
+   :data-test "job-save"])
 
 
 (defn job-card--tag [tag]
@@ -113,7 +114,9 @@
     [:div
      {:class (util/merge-classes "info" (when perks? "info--with-perks"))}
      [:div.basic-info
-      [:div.job-title title]
+      [:div.job-title
+       {:data-test "job-title"}
+       title]
 
       [:div.salary salary]
 
@@ -171,7 +174,8 @@
                                       (when small? "card--small")
                                       (when skeleton? "job-card--skeleton")
                                       (when highlighted? "job-card--highlighted")
-                                      (job-card-class view-type))}
+                                      (job-card-class view-type))
+           :data-test "job-card"}
      [:div
       {:class (util/merge-classes "card--job__control-bar"
                                   (when state "card--job__control-bar--with-state"))}

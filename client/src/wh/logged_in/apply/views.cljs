@@ -1,21 +1,18 @@
 (ns wh.logged-in.apply.views
-  (:require [re-frame.core :refer [dispatch dispatch-sync]]
+  (:require [re-frame.core :refer [dispatch]]
             [reagent.core :as r]
             [wh.common.data :as data]
             [wh.common.upload :as upload]
             [wh.common.user :as user]
             [wh.components.common :refer [link]]
             [wh.components.conversation.views :refer [codi-message error-message button]]
-            [wh.components.forms.views :refer
-             [labelled-checkbox multiple-checkboxes select-field text-input
-              text-field radio-buttons]]
+            [wh.components.forms.views :refer [text-field]]
             [wh.components.icons :refer [icon]]
             [wh.logged-in.apply.events :as events]
             [wh.logged-in.apply.subs :as subs]
             [wh.logged-in.profile.events :as profile-events]
             [wh.subs :refer [<sub]]
             [wh.user.subs :as user-subs]
-            [wh.util :as util]
             [wh.views]))
 
 (defn add-full-name-step []
@@ -64,9 +61,10 @@
      [:div.animatable
       [:button.conversation-button.update-current-location
        (when (= :step/current-location (<sub [::subs/current-step]))
-         {:class    (when (<sub [::subs/updating?]) "button--loading")
-          :id       "application-bot_update-current-location"
-          :on-click #(dispatch [::events/update-current-location])})
+         {:class     (when (<sub [::subs/updating?]) "button--loading")
+          :data-test "update-current-location"
+          :id        "application-bot_update-current-location"
+          :on-click  #(dispatch [::events/update-current-location])})
        "Next"]]]))
 
 (defn cv-upload-step []
@@ -80,6 +78,7 @@
                           :type      "file"
                           :name      "avatar"
                           :disabled  (not current-step?)
+                          :data-test "upload-cv"
                           :on-change (when current-step?
                                        (upload/handler
                                          :launch [::profile-events/cv-upload]
@@ -162,11 +161,12 @@
           "Sure, I'd love to add one!")]]]
 
      [button "I'm good, thanks :)" [::events/discard-cover-letter]
-      :disabled updating?]]))
+      :disabled updating?
+      :data-test "discard-cover-letter"]]))
 
 (defn visa-step []
   (let [selected-options (r/atom #{})
-        other (r/atom nil)]
+        other            (r/atom nil)]
     (fn []
       [:div.add-visa
        (if (<sub [::subs/update-visa-failed?])
@@ -175,10 +175,12 @@
           [codi-message "Thanks for applying! \uD83D\uDC4F "]
           [codi-message "In order to correctly process your application, could you add your visa information?"]])
        [:div.animatable.visa-options
-        [:div.multiple-buttons
+        [:div
+         {:data-test "visa-options"
+          :class     "multiple-buttons"}
          (doall
            (for [option (sort data/visa-options)
-                 :let [selected? (contains? @selected-options option)]]
+                 :let   [selected? (contains? @selected-options option)]]
              [:button.button.visa-option
               {:key      option
                :class    (when-not selected?
@@ -196,9 +198,10 @@
                     :aria-label "Name input"}]]])
        [:div.animatable
         [:button.conversation-button.update-visa
-         {:class    (when (<sub [::subs/updating?]) "button--loading")
-          :id       "application-bot_update-visa"
-          :on-click #(dispatch [::events/update-visa @selected-options @other])}
+         {:class     (when (<sub [::subs/updating?]) "button--loading")
+          :id        "application-bot_update-visa"
+          :data-test "update-visa"
+          :on-click  #(dispatch [::events/update-visa @selected-options @other])}
          "Next"]]])))
 
 (defn skills-step []

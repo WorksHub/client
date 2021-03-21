@@ -131,6 +131,14 @@
      :cljs
      (throw (js/Error. "pre-execute is not supported in ClojureScript."))))
 
+(defn cache-results
+  [query-fn db ks]
+  (get-in (apply result db (query-fn db)) ks))
+
+(defn cache-loading?
+  [query-fn db]
+  (boolean (#{:executing :initial} (apply state db (query-fn db)))))
+
 (reg-sub
   :graphql/state
   (fn [db [_ query-id variables]]

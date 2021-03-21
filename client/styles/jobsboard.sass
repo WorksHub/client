@@ -1,0 +1,242 @@
+@import mixins
+
+.header
+  background: transparent
+  grid-column: span 2
+  display: flex
+  flex-direction: row
+  margin: 8px 0 24px 0
+  margin-left: -8px
+  flex-wrap: wrap
+  +mobile
+    margin-top: 0
+
+.jobs-section
+  &__title
+    margin-bottom: 2px
+
+.button
+  height: 40px
+  border-radius: 4px
+  font-weight: 600
+  font-size: 14px
+  line-height: 19px
+  padding: 10px 24px 10px 16px
+  display: flex
+  background: $white
+  color: $grey500
+  white-space: nowrap
+  margin: 0 8px
+  margin-top: 16px
+  +mobile
+    margin: 4px
+    height: 32px
+    border-radius: 16px
+    font-size: 13px
+    line-height: 19px
+    padding: 6px 16px 8px 16px
+  &:hover,
+  &--active
+    background: $grey500
+    color: $white
+    .button__icon
+      fill: $white
+  &__icon
+    fill: $grey500
+    margin-right: 16px
+    +mobile
+      display: none
+
+.view-types
+  display: flex
+  height: 40px
+  background: $white
+  border-radius: 4px
+  padding: 10px 18px
+  margin-left: auto
+  margin-top: 16px
+  +mobile
+    display: none
+  &__item
+    display: flex
+    align-items: center
+    cursor: pointer
+    & + &
+      margin-left: 28px
+
+.icon
+  &:hover
+    fill: $grey500
+  fill: $grey250
+  &--selected
+    fill: $grey500
+  &--list
+    width: 20px
+    height: 14px
+  &--card
+    width: 20px
+    height: 20px
+
+.search-box
+  width: 280px
+  margin-right: 16px
+  height: fit-content
+  +mobile
+    display: none
+  &__title
+    font-weight: 600
+    font-size: 16px
+    line-height: 22px
+    margin-bottom: 16px
+    color: $grey500
+  &__form
+    margin-bottom: 24px
+    background: $white
+    border-radius: 8px
+    padding: 20px 16px
+
+.perks
+  display: flex
+  flex-direction: column
+  margin-top: 12px
+  margin-bottom: 24px
+  user-select: none
+
+.salary
+  margin-bottom: 40px
+
+  \:global(.rc-slider)
+    margin: 0 10px 0
+    width: calc(100% - 20px)
+
+  &__amount
+    min-width: 45px
+    line-height: 12px
+    font-size: 14px
+
+    &--left
+      text-align: right
+
+  &__hyphen
+    padding: 0 8px
+
+  &__amount-wrapper
+    display: flex
+    align-items: center
+
+  &__currency-selector:global(.field)
+    margin-bottom: 0
+    font-size: 14px
+
+  &__wrapper
+    display: grid
+    grid-gap: 16px
+
+  &__currency-selector-wrapper
+    display: grid
+    grid-template-columns: min-content auto
+    grid-gap: 14px
+    align-items: center
+
+    \:global(.select)
+      font-size: 14px
+      margin-bottom: 0
+
+  &__type
+    display: grid
+    grid-template-columns: min-content min-content
+    grid-gap: 8px
+    margin-left: -6px
+
+    \:global(.radio-item)
+      font-size: 14px
+      margin-right: 6px
+      display: flex
+      align-items: center
+
+.role-types
+  margin-bottom: 40px
+
+.checkboxes
+  display: flex
+  flex-direction: column
+  &__icon
+    stroke: $iceberg-dark
+    margin-top: 4px
+    margin-left: 5px
+  &__item
+    user-select: none
+    margin-bottom: 16px
+    \:global(.checkbox__box)
+      margin-top: 1px
+    &--selected
+      font-weight: 500
+    &__label
+      font-size: 14px
+      color: $grey500
+      display: flex
+      font-weight: 300
+      line-height: 24px
+
+.input
+  width: 100%
+  font-size: 14px
+  line-height: 22px
+  border: none
+  outline: none
+  border-bottom: 1px solid #dedede
+  height: 27px
+  padding: 0
+  color: $text-black
+  box-shadow: none
+  padding: 0
+  border-radius: 0
+  &::placeholder
+    color: $grey300
+  &:focus
+    box-shadow: none
+
+.query,
+.tags
+  margin-bottom: 32px
+
+.location
+  margin-bottom: 0
+
+.page
+  display: flex
+
+.search-results
+  flex: 1
+
+.reset-filters
+  color: #454E54
+  display: block
+  font-size: 14px
+  font-weight: 500
+  line-height: 16px
+  margin-top: 32px
+  text-align: center
+
+.section-header
+  display: flex
+  align-items: baseline
+
+.clear-section
+  user-select: none
+  margin-left: auto
+  text-decoration: none
+  color: $text-black
+  display: flex
+  align-items: center
+  height: 18px
+  font-size: 14px
+  line-height: 15px
+  &:hover
+    color: $primary-red-hover
+    text-decoration: underline
+
+.compensation-interval
+  height: 14px
+  line-height: 16px
+  font-style: italic

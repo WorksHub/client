@@ -118,6 +118,11 @@
     (:wh.db/vertical db)))
 
 (reg-sub
+  :wh/build
+  (fn [db _]
+    (:wh.db/build db)))
+
+(reg-sub
   :wh/vertical-label
   :<- [:wh/vertical]
   (fn [vertical _]

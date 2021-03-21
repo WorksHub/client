@@ -1,6 +1,5 @@
 (ns wh.pages.issue.views
   (:require #?(:cljs [reagent.core :as r])
-            #?(:cljs [wh.components.forms.views :refer [radio-buttons]])
             #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
             [clojure.string :as str]
             [wh.components.common :refer [link img wrap-img]]

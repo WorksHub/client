@@ -17,11 +17,35 @@
    {:id (build-sub-id "apply")}
    [:h1 "Login or register" [:br] "to apply for this job!"]])
 
+(defn overlay-content-publish
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "publish")}
+   [:h1 "Login or register" [:br] "to publish this job!"]])
+
 (defn overlay-content-save
   []
   [:div.auth-popup__content
    {:id (build-sub-id "save")}
    [:h1 "Login or register" [:br] "to save this job!"]])
+
+(defn overlay-content-saved-jobs
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "saved-jobs")}
+   [:h1 "Login or register" [:br] "to save interesting jobs!"]])
+
+(defn overlay-content-recommended-jobs
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "recommended-jobs")}
+   [:h1 "Login or register" [:br] "to get personalised job recommendations!"]])
+
+(defn overlay-content-applied-jobs
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "applied-jobs")}
+   [:h1 "Login or register" [:br] "to get access to all your job applications!"]])
 
 (defn overlay-content-see-more
   []
@@ -71,7 +95,11 @@
      [icon "close"]]
     [:div
      [overlay-content-apply]
+     [overlay-content-publish]
      [overlay-content-save]
+     [overlay-content-saved-jobs]
+     [overlay-content-recommended-jobs]
+     [overlay-content-applied-jobs]
      [overlay-content-contribute]
      [overlay-content-see-more]
      [overlay-content-blog]

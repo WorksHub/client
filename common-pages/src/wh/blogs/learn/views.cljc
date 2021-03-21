@@ -78,7 +78,8 @@
   (let [icon-name (if search? "search-new" "close")
         aria-label (if search? "Search button" "Reset search")]
     [:button.search-button
-     {:aria-label aria-label}
+     {:aria-label aria-label
+      :data-test "blog-search-button"}
      [icons/icon icon-name]]))
 
 (defn search []
@@ -102,7 +103,8 @@
                   :placeholder "Search articles..."
                   :type "text"
                   :id "blog-search-box"
-                  :value @local-search}
+                  :value @local-search
+                  :data-test "blog-search-input"}
                  #?(:cljs {:on-change #(reset! local-search (.. % -target -value))}))]
          [:input {:type "hidden"
                   :name "interaction"

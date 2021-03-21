@@ -5,9 +5,10 @@
             [wh.common.job :refer [format-job-location]]
             [wh.company.profile.db :as profile]
             [wh.re-frame.subs :refer [<sub]]
-            [wh.company.jobs.db :as jobs])
+            [wh.company.jobs.db :as jobs]
+            [wh.graphql.jobs :as graphql-jobs])
   (#?(:clj :require :cljs :require-macros)
-    [wh.re-frame.subs :refer [reaction]]))
+   [wh.re-frame.subs :refer [reaction]]))
 
 (reg-sub
   ::company-slug
@@ -39,9 +40,12 @@
 (reg-sub
   ::jobs
   :<- [::jobs-raw]
-  (fn [jobs-raw _]
+  :<- [:user/liked-jobs]
+  :<- [:user/applied-jobs]
+  (fn [[jobs-raw liked-jobs applied-jobs] _]
     (->> (get-in jobs-raw [:jobs :jobs])
-         (map #(assoc % :display-location (format-job-location (:location %) (:remote %)))))))
+         (map #(assoc % :display-location (format-job-location (:location %) (:remote %))))
+         (graphql-jobs/add-interactions liked-jobs applied-jobs))))
 
 (reg-sub
   ::total-number-of-jobs

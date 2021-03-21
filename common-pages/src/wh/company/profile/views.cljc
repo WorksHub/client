@@ -1,11 +1,11 @@
 (ns wh.company.profile.views
   (:require #?(:cljs [wh.common.logo])
             #?(:cljs [wh.common.upload :as upload])
-            #?(:cljs [wh.components.rich-text-field.loadable :refer [rich-text-field]])
             #?(:cljs [wh.components.conversation.views :refer [codi-message]])
-            #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field radio-field logo-field toggle]])
+            #?(:cljs [wh.components.forms.views :refer [tags-field text-field select-field logo-field toggle]])
             #?(:cljs [wh.components.github :as github])
             #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
+            #?(:cljs [wh.components.rich-text-field.loadable :refer [rich-text-field]])
             #?(:cljs [wh.components.stats.views :refer [stats-item]])
             #?(:cljs [wh.user.subs])
             [clojure.string :as str]
@@ -13,6 +13,7 @@
             [wh.common.data.company-profile :as company-data]
             [wh.common.specs.company :as company-spec]
             [wh.common.specs.tags :as tag-spec]
+            [wh.common.subs]
             [wh.common.text :as txt]
             [wh.company.profile.db :as profile]
             [wh.company.profile.events :as events]
@@ -20,6 +21,7 @@
             [wh.components.cards :refer [blog-card]]
             [wh.components.carousel :refer [carousel]]
             [wh.components.common :refer [link wrap-img img base-img]]
+            [wh.components.forms :as forms]
             [wh.components.icons :refer [icon]]
             [wh.components.info-icon :refer [info-icon]]
             [wh.components.issue :refer [issue-card]]
@@ -394,6 +396,18 @@
   [img]
   (update img :url base-img))
 
+(defn add-css [links]
+  (let [build (<sub [:wh/build])]
+    [:<> (for [link links]
+           ^{:key link}
+           [:link {:rel  "stylesheet"
+                   :type "text/css"
+                   :href (str build link)}])]))
+
+(def external-css
+  ["/pswp/photoswipe.css"
+   "/pswp/default-skin/default-skin.css"])
+
 (defn photos
   [admin-or-owner?]
   (let [editing? (r/atom false)]
@@ -405,6 +419,7 @@
                          (map-indexed (fn [i si] {:index i :simage si})))]
         (when (or admin-or-owner? (not-empty images))
           [:section.compan-profile__photos
+           [add-css external-css]
            [:h2.title "Photos"]
            (cond (not-empty images)
                  [:div.company-profile__photos__gallery
@@ -802,7 +817,7 @@
                :on-change #(reset! new-industry-tag %)}]
              [:div.company-profile__company-info__industry-check
               [:i "Don't see your industry? " [:a {:href "mailto:hello@functionalworks.com" :target "_blank"} "Get in touch"]]]
-             [radio-field (or @new-size (<sub [::subs/size]))
+             [forms/radio-field (or @new-size (<sub [::subs/size]))
               {:options   (map #(hash-map :id % :label (company-spec/size->range %)) (reverse company-spec/sizes))
                :label     "How many people work for your company?"
                :on-change #(reset! new-size %)}]
@@ -1147,7 +1162,7 @@
               :on-change #(do
                             (reset! new-funding-tag %)
                             (dispatch [::events/check-field {:funding-tag @new-funding-tag}]))}]
-            [radio-field (or @new-size (<sub [::subs/size]))
+            [forms/radio-field (or @new-size (<sub [::subs/size]))
              {:id "company-profile-new-compay-info--size"
               :options   (map #(hash-map :id % :label (company-spec/size->range %)) (reverse company-spec/sizes))
               :label     "* How many people work for your company?"

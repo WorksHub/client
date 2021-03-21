@@ -1,8 +1,10 @@
 (ns wh.common.url
   (:require #?(:clj [taoensso.timbre :refer [error]])
             #?(:cljs [goog.Uri :as uri])
+            [bidi.bidi :as bidi]
             [clojure.string :as str]
-            [wh.common.text :as text]))
+            [wh.common.text :as text]
+            [wh.util :as util]))
 
 (def wh-cookie-names {:auth             "auth_token"
                       :tracking-consent "wh_tracking_consent"
@@ -19,7 +21,9 @@
 
 (defn strip-query-params
   [uri]
-  (subs uri 0 (clojure.string/last-index-of uri "?")))
+  (if-let [?-index (str/last-index-of uri "?")]
+    (subs uri 0 ?-index)
+    uri))
 
 (defn uri->domain [uri]
   (let [uri (str/trim uri)]
@@ -74,6 +78,14 @@
   robust - but less portable - version of ths fn"
   [env vertical]
   (case (name env)
-    "prod"  (str "https://" (name vertical) ".works-hub.com")
+    "prod" (str "https://" (name vertical) ".works-hub.com")
     "stage" (str "/?vertical=" (name vertical))
-    "dev"   (str "http://" (name vertical) ".localdomain:3449")))
+    "dev" (str "http://" (name vertical) ".localdomain:3449")))
+
+(defn share-urls [args]
+  (let [{:keys [text text-twitter text-linkedin url]} (util/fmap args bidi/url-encode)]
+    {:twitter  (str "https://twitter.com/intent/tweet?text="
+                    (or text-twitter text) "&url=" url)
+     :facebook (str "http://www.facebook.com/sharer/sharer.php?u=" url)
+     :linkedin (str "https://www.linkedin.com/shareArticle?mini=true&url="
+                    url "&title=" (or text-linkedin text) "&summary=&origin=")}))

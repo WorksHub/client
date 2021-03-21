@@ -37,13 +37,14 @@
      :options options}))
 
 (defn apply-button [{:keys [_applied? id _job] :as args}]
-  (let [logged-in?         (<sub [:user/logged-in?])
+  (let [logged-in?             (<sub [:user/logged-in?])
         {:keys [text options]} (apply-button-options args)]
     [:button.button.button--medium
      (merge
-       {:id (if logged-in?
-              (cond-> "job-view__apply-button" id (str "__" id))
-              (cond-> "job-view__logged-out-apply-button" id (str "__" id)))}
+       {:id        (if logged-in?
+                     (cond-> "job-view__apply-button" id (str "__" id))
+                     (cond-> "job-view__logged-out-apply-button" id (str "__" id)))
+        :data-test "job-apply"}
        options)
      text]))
 

@@ -1,6 +1,5 @@
 (ns wh.re-frame.events
-  (:require
-    [re-frame.core :as re-frame]))
+  (:require [re-frame.core :as re-frame]))
 
 #?(:clj
    (defn dispatch
@@ -29,3 +28,17 @@
      [& _])
    :cljs
    (def reg-event-fx re-frame/reg-event-fx))
+
+#?(:clj
+   (defn reg-cofx
+     "no-op"
+     [& _])
+   :cljs
+   (def reg-cofx re-frame/reg-cofx))
+
+#?(:clj
+   (defn inject-cofx
+     "no-op"
+     [_])
+   :cljs
+   (def inject-cofx re-frame/inject-cofx))

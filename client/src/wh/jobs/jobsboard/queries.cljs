@@ -8,12 +8,14 @@
                      {:variable/name "search_term" :variable/type :String!}
                      {:variable/name "preset_search" :variable/type :String}
                      {:variable/name "page" :variable/type :Int!}
+                     {:variable/name "promoted_amount" :variable/type :Int!}
                      {:variable/name "filters" :variable/type :SearchFiltersInput}]
-   :venia/queries   [[:jobs_search {:vertical      :$vertical
-                                    :search_term   :$search_term
-                                    :preset_search :$preset_search
-                                    :page          :$page
-                                    :filters       :$filters}
+   :venia/queries   [[:jobs_search {:vertical        :$vertical
+                                    :search_term     :$search_term
+                                    :preset_search   :$preset_search
+                                    :page            :$page
+                                    :promoted_amount :$promoted_amount
+                                    :filters         :$filters}
                       [:numberOfPages
                        :numberOfHits
                        :hitsPerPage

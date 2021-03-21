@@ -49,7 +49,6 @@
                 :homepage-not-logged-in
                 :search
                 :how-it-works
-                :improve-recommendations
                 :issue
                 :issues
                 :issues-by-language

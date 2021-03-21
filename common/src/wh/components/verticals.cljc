@@ -1,20 +1,20 @@
 (ns wh.components.verticals
   (:require
+    #?(:cljs [wh.components.forms.views :as views])
     [re-frame.core :refer [dispatch]]
-    [wh.components.icons :refer [icon]]
     [wh.components.branding :as branding]
-    [wh.components.forms.views :as views]
+    [wh.components.icons :refer [icon]]
     [wh.util :as util]))
 
 
 (defn vertical-line [status vertical toggle-event]
-  ;; we should not be able unselect www vertical
-  (when-not (and (= vertical "www") toggle-event)
-    (views/labelled-checkbox status
-      (merge {:label [:div {:class "verticals-pod__vertical-toggle"}
-                      [icon vertical] (branding/vertical-title vertical {:size :small})]
-              :label-class "verticals-pod__vertical-toggle-wrapper"}
-             (when toggle-event {:on-change (conj toggle-event vertical)})))))
+  (when toggle-event
+    #?(:cljs (views/labelled-checkbox
+               status
+               (merge {:label       [:div {:class "verticals-pod__vertical-toggle"}
+                                     [icon vertical] (branding/vertical-title vertical {:size :small})]
+                       :label-class "verticals-pod__vertical-toggle-wrapper"}
+                      (when toggle-event {:on-change (conj toggle-event vertical)}))))))
 
 (defn verticals-pod
   [{:keys [on-verticals off-verticals toggle-event]}]
@@ -26,16 +26,15 @@
     [:span "Will be posted on: "]
     [:div
      {:class (util/merge-classes
-              "verticals-pod__verticals"
-              "verticals-pod__verticals--on")}
-     [vertical-line true "www" nil]
+               "verticals-pod__verticals"
+               "verticals-pod__verticals--on")}
      (doall (for [vertical on-verticals]
               ^{:key vertical}
               [vertical-line true vertical toggle-event]))]
     [:div
      {:class (util/merge-classes
-              "verticals-pod__verticals"
-              "verticals-pod__verticals--off")}
+               "verticals-pod__verticals"
+               "verticals-pod__verticals--off")}
      (doall (for [vertical off-verticals]
               ^{:key vertical}
               [vertical-line false vertical toggle-event]))]]])

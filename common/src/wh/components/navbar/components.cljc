@@ -10,7 +10,8 @@
   [icon "arrow-down" :class styles/arrow-down])
 
 (defn dropdown-element [{:keys [route path icon-name icon-class
-                                text sub-text data-pushy-ignore]}
+                                text sub-text data-pushy-ignore
+                                data-test]}
                         {:keys [mobile?]}]
   [:li (merge (util/smc styles/dropdown__element)
               ;; Close mobile menu when you click link in the menu
@@ -18,8 +19,9 @@
                 (interop/on-click-fn #?(:clj "toggleMenuDisplay()"
                                         :cljs #(js/toggleMenuDisplay)))))
    [:a (merge
-         {:class (util/mc styles/dropdown__link)
-          :href  (or path (routes/path route))}
+         {:class     (util/mc styles/dropdown__link)
+          :href      (or path (routes/path route))
+          :data-test data-test}
          (when data-pushy-ignore {:data-pushy-ignore data-pushy-ignore}))
     [icons/icon icon-name
      :class (util/mc styles/dropdown__link__icon icon-class)]

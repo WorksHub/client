@@ -112,6 +112,7 @@
         [:ul.tags
          [:li] [:li] [:li]]]
        [:div.blog-info
+        {:data-test "blog-info"}
         (link [:div.title title] :blog :id id)
         (link [:div.author author] :blog :id id)
         (link [:div.datetime formatted-creation-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)

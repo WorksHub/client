@@ -280,7 +280,7 @@ $logo-dimension: 62px
   height: 20px
   display: inline-block
   vertical-align: middle
-  margin-right: 5px
+  margin-right: 8px
   cursor: pointer
   background: white
 
@@ -315,7 +315,7 @@ $logo-dimension: 62px
   input[type=radio]
     width: 0
     visibility: hidden
-    &:checked + label, &:checked + .radio > label
+    &:checked + .circle, &:checked + .radio > .circle
       background-color: white
       &::after
         position: absolute
@@ -327,7 +327,7 @@ $logo-dimension: 62px
         height: 12px
         top: 2px
         left: 2px
-  label
+  .circle
     @include checkbox-and-radio
     border: 1px solid $steel-gray
     border-radius: 10px
@@ -335,6 +335,7 @@ $logo-dimension: 62px
     transition: background-color 0.3s linear
     background-color: white
     margin: 0 6px 0 6px
+    flex: 0 0 18px
     width: 18px
     height: 18px
     position: relative

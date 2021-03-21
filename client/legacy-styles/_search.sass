@@ -21,30 +21,7 @@ $search-gap: 2.5px
     margin-top: 200px
     align-self: flex-start
 
-.search__form
-  display: grid
-  grid-template-columns: 1fr 400px
-  grid-template-rows: 53px auto auto
-  margin-left: - $search-gap
-  margin-right: - $search-gap
-
-.search
-  +mobile
-    display: none // TBD
-
-.search-results
-  position: relative
-
 .search__box
-  background-color: white
-  margin: $search-gap
-  &.search__box-no-margin
-    margin: $search-gap 0
-  .label
-    color: $greyish
-    display: inline
-    margin: 0
-
   .input
     border: none
     outline: none
@@ -54,28 +31,6 @@ $search-gap: 2.5px
     border-bottom: 1px solid $grey
     +desktop
       width: auto
-
-.search__view-type
-  grid-area: 6 / 1 / 7 / 3
-  padding: 9px 10px 9px 23px
-  display: flex
-  +mobile
-    &.search__view-type--ssr
-      display: none
-
-.search__view-type__button
-  display: flex
-  align-items: center
-  cursor: pointer
-  color: $greyish
-  .icon
-    fill: $greyish
-    margin-left: 12px
-    margin-right: 9px
-  &:hover, &--selected
-    color: $red
-    .icon
-      fill: $red
 
 .search__query
   padding: 0 10px
@@ -87,12 +42,6 @@ $search-gap: 2.5px
     align-items: flex-start
   .input
     flex: 1
-
-.search__role-type
-  grid-area: 1 / 2 / 3 / 3
-
-.search__perks
-  grid-area: 2 / 2 / 3 / 3
 
 .search__location-wrapper
   grid-area: 3 / 1 / 4 / 3
@@ -116,85 +65,13 @@ $search-gap: 2.5px
   .search__roll
     float: none
 
-.search__salary
-  grid-area: 4 / 1 / 5 / 2
-  display: flex
-  align-items: center
-  padding: 9px 10px 9px 23px
-  .search__salary__range
-    width: 11ch
-  .rc-slider
-    flex: 1
-    margin: 0 20px
-    .rc-slider-handle
-      border-color: $metal-blue
-    .rc-slider-track
-      background-color: $metal-blue
-  .rc-slider-disabled
-    .rc-slider-handle
-      border-color: $greyish
-    .rc-slider-track
-      background-color: $greyish
-
-  .field
-    margin: 0 0 0 10px
-    display: inline-block
-    .field__error.is-invisible
-      display: none
-    .select select
-      font-size: 1rem
-    .input
-      border: none
-      height: 30px
-      font-size: 1rem
-
-.search__salary-extra
-  grid-area: 4 / 2 / 5 / 3
-  display: flex
-  align-items: center
-  padding: 9px 10px 9px 23px
-
-.search__admin
-  grid-area: 5 / 1 / 6 / 3
-  padding: 9px 10px 9px 23px
-  .multiple-checkboxes
-    display: inline-block
-  .checkbox:not(:first-child)
-    margin-left: 15px
-
-.search__reset
-  vertical-align: middle
-  float: right
-  fill: white
-  transition: fill 0.3s linear
-  cursor: pointer
-
-.search__box:hover .search__reset
-  fill: $red
-
 .search__region
   flex: 1 0 0%
   padding: 9px 10px 9px 23px
 
-.search__role-type, .search__perks
-  display: flex
-  height: 48px
-  +desktop
-    align-self: start
-    align-items: center
-    justify-content: center
-  +mobile
-    flex-direction: column
-    align-items: flex-start
-  .checkbox
-    margin-left: 15px
-    margin-right: 5px
-
 .search__tags
-  grid-area: 1 / 1 / 3 / 2
-  padding: 9px 10px 9px 23px
   .tags
-    max-height: 1000px
+    max-height: 200px
     overflow: hidden
     li
       cursor: pointer
@@ -265,12 +142,7 @@ $search-gap: 2.5px
   vertical-align: middle
 
 .jobs-board__header
-  .jobs-board__header__filter-toggle
-    display: block
-    min-height: 15px
-    +mobile
-     display: none
-  .skeleton
+  &.skeleton
     text-indent: -9999px
     h1
       @include skeleton

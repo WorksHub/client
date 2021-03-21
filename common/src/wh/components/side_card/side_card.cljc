@@ -295,5 +295,5 @@
             :src   "/images/hiw/card.svg"}]
      [:h3 (util/smc style/footer__title) "Want to improve your feed recommendations?"]
      [c/section-button {:title "Improve Recommendations"
-                        :href  (routes/path :improve-recommendations)
+                        :href  (routes/path :profile)
                         :type  :dark}]]))

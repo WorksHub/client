@@ -54,23 +54,17 @@
     children]])
 
 (def description-class
-  {:full-text (util/smc styles/description)
-   :cropped   (util/smc styles/description styles/description--cropped)})
+  {:full-text (util/mc styles/description)
+   :cropped   (util/mc styles/description styles/description--cropped)})
 
 (defn description
   ([children]
    (description {} children))
-  ([{:keys [type]
+  ([{:keys [type class]
      :or   {type :full-text}}
     children]
    (when children
-     [:p (description-class type) children])))
-
-(defn quoted-description
-  ([text]
-   (quoted-description nil text))
-  ([{:keys [class] :as _opts} text]
-   [:p (util/smc styles/quoted-description class) (str "“" text "”")]))
+     [:p (util/smc (description-class type) class) children])))
 
 (defn tag-component [tag]
   (let [href (routes/path :search :query-params {:query (:label tag)})]
@@ -151,6 +145,7 @@
    (wrap-img img image-url {:w 30 :h 30 :class styles/company-info--small__logo})
    [:h1 (util/smc styles/company-info--small__name) name]])
 
+;; TODO, ch5663, reuse share-urls function
 (defn share-controls
   [share-opts share-id share-toggle-on-click]
   (let [social-button-opts (merge share-toggle-on-click
@@ -315,7 +310,7 @@
    [:div (util/smc styles/not-found)
     [:span (util/smc styles/not-found__title) "Improve recommendations"]
     [:span (util/smc styles/not-found__subtitle) "This is all the content we have selected for you. Add skills to see more great content."]
-    [button {:href (routes/path :improve-recommendations) :type :filled-short} "Add skills"]]])
+    [button {:href (routes/path :profile) :type :filled-short} "Add skills"]]])
 
 (defn see-all-content []
   [card :default

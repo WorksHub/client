@@ -39,16 +39,17 @@
 (defn issue-card
   [{:keys [id title repo pr-count company compensation contributors level] :as issue}
    & [{:keys [edit-fn edit-success-fn small?]}]]
-  (let [skeleton? (empty? (dissoc issue :id))
-        logo (:logo company)
+  (let [skeleton?      (empty? (dissoc issue :id))
+        logo           (:logo company)
         derived-status (issue->status issue)
-        amount (or (:amount compensation) 0)
-        issue-icon (fn [id] [icon (if skeleton? "circle" id)])
-        edit-icon (when edit-fn [icon "edit" :on-click #(dispatch [edit-fn issue edit-success-fn])])]
+        amount         (or (:amount compensation) 0)
+        issue-icon     (fn [id] [icon (if skeleton? "circle" id)])
+        edit-icon      (when edit-fn [icon "edit" :on-click #(dispatch [edit-fn issue edit-success-fn])])]
     [:div
-     {:class (util/merge-classes "card issue-card"
-                                 (when skeleton? "skeleton")
-                                 (when small? "issue-card--small"))}
+     {:class     (util/merge-classes "card issue-card"
+                                     (when skeleton? "skeleton")
+                                     (when small? "issue-card--small"))
+      :data-test "issue-card"}
      [:div.header.is-hidden-desktop
       [:span (str (:owner repo) " / " (:name repo))]
       edit-icon]
@@ -58,7 +59,8 @@
        [:div.header.is-hidden-mobile
         [:span (str (:owner repo) " / " (:name repo))]
         edit-icon]
-       [:div.title (when-not skeleton? [link title :issue :id id :class "a--hover-red"])]]]
+       [:div.title {:data-test "issue-title"}
+        (when-not skeleton? [link title :issue :id id :class "a--hover-red"])]]]
      [:div
       {:class (util/merge-classes
                 "issue-details"

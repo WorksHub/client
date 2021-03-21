@@ -27,11 +27,6 @@
           true
           (conj "body-scroll-lock/bodyScrollLock.js")))
 
-(defn external-css
-  []
-  ["/pswp/photoswipe.css"
-   "/pswp/default-skin/default-skin.css"])
-
 (defn icons-to-load
   [page]
   (let [base ["symbols/wh_logos.svg""symbols/common.svg" "symbols/tags.svg"]]
@@ -67,10 +62,10 @@
                   [{:keys [app-db page] :as ctx}]
                   [:script#data-init] (html/content (pr-str app-db))
                   [:script#google-maps] (html/content (format "window.googleMapsURL = 'https://maps.googleapis.com/maps/api/js?key=%s&libraries=places';" (:google-maps-key config)))
-                  [:script.inline-js]  (html/clone-for [filename (inline-js page)]
-                                                       (html/do->
-                                                         (html/content (slurp (io/resource filename)))
-                                                         (html/set-attr :id filename)))
+                  [:script.inline-js] (html/clone-for [filename (inline-js page)]
+                                                      (html/do->
+                                                        (html/content (slurp (io/resource filename)))
+                                                        (html/set-attr :id filename)))
                   ;;TODO is this needed?
                   [:script.load-icons] (html/clone-for [filename (icons-to-load page)]
                                                        (html/do->
@@ -86,11 +81,7 @@
                   [:div#tracking-popup-container] (html/content (->html (tracking/popup)))
                   [:div#auth-popup-container] (html/content (->html (auth/popup (verticals/config (:wh.db/vertical app-db) :platform-name))))
                   [:style#legacy-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href "/wh-legacy.css"}})
-                  [:style#main-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href  "/wh-styles.css"}})
-                  [:link.external-css]  (html/clone-for [filename (external-css)]
-                                                        (html/set-attr :href filename
-                                                                       :rel "stylesheet"
-                                                                       :type "text/css")))
+                  [:style#main-style] (constantly {:tag :link, :attrs {:rel "stylesheet", :type "text/css", :href "/wh-styles.css"}}))
 
 (defn html-response
   [^String s]

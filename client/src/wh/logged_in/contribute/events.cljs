@@ -188,10 +188,10 @@
   contribute-interceptors
   (fn [{_db :db} [id]]
     {:dispatch [::pages/set-loader]
-     :graphql {:query query-blog-contribute
-               :on-success [::fetch-blog-success]
-               :on-failure [::fetch-blog-failure]
-               :variables {:id id}}}))
+     :graphql  {:query      query-blog-contribute
+                :on-success [::fetch-blog-success]
+                :on-failure [::fetch-blog-failure]
+                :variables  {:id id}}}))
 
 (defn translate-blog [blog]
   (-> (keywords/namespace-map "wh.logged-in.contribute.db" (cases/->kebab-case blog))
@@ -477,14 +477,18 @@
 
 (reg-event-db
   ::toggle-vertical
-  contribute-interceptors
-  (fn [db [new-value]]
-    (let [new-db (update db ::contribute/verticals util/toggle-unless-empty new-value)]
-      (if (zero? (count (::contribute/verticals new-db)))
-        db ;; abort - we can't have an empty set
-        (if (contains? (::contribute/verticals new-db) (::contribute/primary-vertical new-db)) ;; ensure primary vertical is one of the selected verticals
-          new-db
-          (assoc new-db ::contribute/primary-vertical (first (::contribute/verticals new-db))))))))
+  db/default-interceptors
+  (fn [db [vertical]]
+    (if (and (not (user-common/admin? db))
+             (= "www" vertical))
+      db ;; abort - only admins can deselect 'www' vertical
+      (let [new-db     (update-in db [::contribute/sub-db ::contribute/verticals] util/toggle-unless-empty vertical)
+            new-sub-db (::contribute/sub-db new-db)]
+        (if (zero? (count (::contribute/verticals new-sub-db)))
+          db ;; abort - we can't have an empty set
+          (if (contains? (::contribute/verticals new-sub-db) (::contribute/primary-vertical new-sub-db)) ;; ensure primary vertical is one of the selected verticals
+            new-db
+            (assoc-in new-db [::contribute/sub-db ::contribute/primary-vertical] (first (::contribute/verticals new-sub-db)))))))))
 
 ;; AUTHOR info
 
