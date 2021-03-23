@@ -227,8 +227,11 @@
   (let [container (if id candidate-container author-container)]
     [container {:id id}
      (when img
+       ^{:key "author-img"}
        [:img {:class (util/mc styles/author__img)
               :src   img}])
+
+     ^{:key "author-name"}
      [:p
       (util/smc styles/author__name
                 [id styles/author__name--candidate])
