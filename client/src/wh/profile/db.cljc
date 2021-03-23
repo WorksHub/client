@@ -100,3 +100,18 @@
       (update :preferred-locations preferred-location-strings)
       (update :remote boolean)
       (select-keys [:email :job-seeking-status :company-perks :salary :visa-status :current-location :preferred-locations :remote :role-types :phone])))
+
+(def cv-path
+  [:cv-visible])
+
+(defn close-cv [db]
+  (assoc-in db cv-path false))
+
+(defn open-cv [db]
+  (assoc-in db cv-path true))
+
+(defn cv-visible? [db]
+  (boolean (get-in db cv-path)))
+
+(def default-db
+  (open-cv {}))

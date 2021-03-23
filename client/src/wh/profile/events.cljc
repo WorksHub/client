@@ -125,7 +125,7 @@
   ::set-application-state-failure
   profile-interceptors
   (fn [{db :db} _]
-    {:db (profile/finish-updating-application-state db)
+    {:db       (profile/finish-updating-application-state db)
      :dispatch [:error/set-global "Something went wrong while we tried to change this application's state, please retry"]}))
 
 #?(:cljs
@@ -143,7 +143,22 @@
 
 ;; ----------------------------------------------------------
 
+(reg-event-db
+  ::init
+  profile-interceptors
+  (fn [db _]
+    (merge db profile/default-db)))
+
 #?(:cljs
    (defmethod pages/on-page-load :user [_]
      [[:wh.pages.core/unset-loader]
+      [::init]
       [::load-profile]]))
+
+(reg-event-db
+  ::toggle-show-user-cv
+  profile-interceptors
+  (fn [db [cv-visible]]
+    (if cv-visible
+      (profile/open-cv db)
+      (profile/close-cv db))))

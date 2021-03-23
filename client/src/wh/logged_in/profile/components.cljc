@@ -749,6 +749,13 @@
                            (if (fn? on-change)
                              (on-change new-value)
                              (dispatch-sync (conj on-change new-value))))}])
+
+(defn section-cv [url]
+  [section (util/smc styles/cv)
+   [sec-title "CV"]
+    [:div [:iframe {:src url
+              :title "CV"
+              :class styles/cv-iframe}]]])
 ;; --------------------------------------------------------------------------------
 
 (defn itemize [items & {:keys [class no-data-message]}]

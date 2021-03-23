@@ -1,8 +1,10 @@
 (ns wh.profile.section-company
-  (:require [wh.components.common :refer [link]]
+  (:require [re-frame.core :refer [dispatch]]
+            [wh.components.common :refer [link]]
             [wh.components.modal :as modal]
             [wh.logged-in.profile.components :as components]
             [wh.profile.db :as profile]
+            [wh.profile.events :as events]
             [wh.styles.profile :as styles]
             [wh.util :as util]))
 
@@ -11,19 +13,19 @@
 
 (defn btn-get-in-touch [{:keys [on-get-in-touch updating-state?] :as opts}]
   [:button {:on-click on-get-in-touch
-            :class btn-cls
+            :class    btn-cls
             :disabled updating-state?}
    "Get in touch"])
 
 (defn btn-hire [{:keys [on-hire updating-state?]}]
   [:button {:on-click on-hire
-            :class btn-cls
+            :class    btn-cls
             :disabled updating-state?}
    "Hire"])
 
 (defn btn-pass [{:keys [on-pass updating-state?]}]
   [:button {:on-click on-pass
-            :class btn-cls-inverted
+            :class    btn-cls-inverted
             :disabled updating-state?}
    "Pass"])
 
@@ -49,7 +51,7 @@
      [:div {:class styles/job-application__note-title} "Manager note:"]
      [:div note]]))
 
-(defn job-application [type application {:keys [user] :as opts}]
+(defn job-application [type application {:keys [user cv-visible?] :as opts}]
   (let [current?           (= type :current)
         {:keys [job note]} application
         cover-letter-url   (get-in application [:cover-letter :file :url])
@@ -65,9 +67,14 @@
                                        :text     "View cover letter"
                                        :new-tab? true}])
          (if cv-url
-           [components/underline-link {:href     cv-url
-                                       :text     "View CV"
-                                       :new-tab? true}]
+           [:div
+            #_[:a {:class    styles/underline-link
+                   :on-click #(dispatch [::events/toggle-show-user-cv (not cv-visible?)])}
+               (if cv-visible? "Hide CV" "Show CV")]
+            [components/underline-link {:href     cv-url
+                                        :text     "Download CV"
+                                        :new-tab? true
+                                        :download true}]]
            [:div {:class styles/job-application__missing}
             "No CV provided."])
          [manager-note note]])]
