@@ -47,20 +47,28 @@
   align-self: flex-end
   margin-bottom: 10px
   height: 20px
+  padding: 0
+  background: transparent
+  border: none
+  outline: none
+
   .card--list &
     grid-row: 1
     grid-column: 4
     justify-self: flex-end
+
     +mobile
       height: 18px
       grid-row: 6
       grid-column: 1
       justify-self: flex-start
+
   .card--block &
     height: 18px
     grid-row: 6
     grid-column: 1
     justify-self: flex-start
+
   &__icon
     fill: $grey500
     cursor: pointer

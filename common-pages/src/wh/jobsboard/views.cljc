@@ -122,14 +122,16 @@
                              (interop/show-auth-popup type [:jobsboard])))}))])
 
 (defn jobsboard-page []
-  (let [logged-in?     (<sub [:user/logged-in?])
-        searching?     #?(:cljs (<sub [:wh.search/searching?])
-                          :clj false)
-        view-type      (<sub [::subs/view-type])
-        preset-search? false
-        query-params   (<sub [:wh/query-params])]
-
-    [:div (util/smc "main")
+  (let [logged-in?             (<sub [:user/logged-in?])
+        view-type              (<sub [::subs/view-type])
+        preset-search?         false
+        query-params           (<sub [:wh/query-params])
+        jobs-loaded?           (seq (<sub [::subs/jobs]))
+        promoted-jobs-present? (seq (<sub [::subs/promoted-jobs]))
+        searching? #?(:cljs (<sub [:wh.search/searching?])
+                      :clj     false)]
+    [:div (merge {:class "main"}
+                 (when jobs-loaded? {:data-test "jobs-loaded"}))
      (when-not logged-in?
        [header])
 
@@ -140,7 +142,7 @@
        [components/search-box]
 
        [:div (util/smc styles/search-results)
-        (when (and (seq (<sub [::subs/promoted-jobs]))
+        (when (and promoted-jobs-present?
                    (not searching?))
           [components/promoted-jobs view-type])
 

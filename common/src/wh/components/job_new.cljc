@@ -74,9 +74,9 @@
 
 
 (defn- save [{:keys [id] :as job} logged-in? skeleton? liked? on-save]
-  [:div (merge (util/smc styles/save)
-               on-save
-               {:data-test "job-save"})
+  [:button (merge (util/smc styles/save)
+                  on-save
+                  {:data-test "job-save"})
    (when-not skeleton?
      [icon "save"
       :id (str "job-card__like-button_job-" id)
