@@ -20,7 +20,7 @@
 (def default-vertical "functional")
 (def company-vertical "www")
 
-(def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/take-off-demo")
+(def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/product-demo")
 (def demo-link             "https://app.hubspot.com/meetings/workshub/product-demo")
 
 (def vertical-config
