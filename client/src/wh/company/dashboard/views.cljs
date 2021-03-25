@@ -66,7 +66,7 @@
         [ellipsis (<sub [::subs/name]) {:vcenter? true}]]
        (when (<sub [:user/admin?])
          [profile-page-link (<sub [::subs/profile-enabled?]) (<sub [::subs/slug])])
-       [company-edit-link "Edit"
+       [company-edit-link "Settings"
         :class "button button--inverted your-company__edit"]]
       (when-let [description-html (<sub [::subs/description-html])]
         [:div.your-company__blurb {:dangerouslySetInnerHTML {:__html description-html}}])

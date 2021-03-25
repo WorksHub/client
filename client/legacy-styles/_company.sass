@@ -251,6 +251,7 @@ $column-gap: 1.5rem
 
 .your-company__name-line
   display: flex
+  flex-wrap: wrap
   font-weight: $font-semi-bold
   align-items: center
   color: $grey-darker
@@ -338,8 +339,7 @@ $column-gap: 1.5rem
     display: none
 
 .your-company__edit
-  width: 60px
-  margin-left: 10px
+  width: 100px
 
 .live-roles
   &__header
@@ -1519,10 +1519,11 @@ $description-height: 300px
 .company-dashboard__profile-banner__img
   display: flex
   align-items: center
+  max-width: 250px
   +desktop
     justify-content: flex-end
   +mobile
-    justify-content: center
+    display: none
 
 .company-dashboard__profile-banner__complete__info
   margin-top: 12px
