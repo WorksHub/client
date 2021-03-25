@@ -348,9 +348,10 @@
   ([promoter-data]
    [promoter {} promoter-data])
   ([{:keys [class] :as _opts}
-    {:keys [image-url name] :as _promoter-data}]
+    {:keys [image-url name id] :as _promoter-data}]
    [:div (when class (util/smc class))
-    [:div (util/smc styles/promoter__details)
+    [:a {:href  (routes/path :user :params {:id id})
+         :class styles/promoter__details}
      (wrap-img img image-url {:w 40 :h 40 :class styles/promoter__logo})
      [:h1 (util/smc styles/promoter__name) name]
      [:span (util/smc styles/promoter__position) "Talent Manager, WorksHub"]]]))

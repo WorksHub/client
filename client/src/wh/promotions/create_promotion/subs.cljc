@@ -93,9 +93,10 @@
 (reg-sub
   ::promoter
   :<- [:user/sub-db]
-  (fn [{:keys [wh.user.db/name wh.user.db/image-url] :as user} _]
+  (fn [{:keys [wh.user.db/name wh.user.db/image-url wh.user.db/id] :as user} _]
     {:image-url image-url
-     :name      name}))
+     :name      name
+     :id        id}))
 
 (reg-sub
   ::description
