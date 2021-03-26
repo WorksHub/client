@@ -6,7 +6,6 @@
             #?(:cljs [wh.components.github :as github])
             #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
             #?(:cljs [wh.components.rich-text-field.loadable :refer [rich-text-field]])
-            #?(:cljs [wh.components.stats.views :refer [stats-item]])
             #?(:cljs [wh.user.subs])
             [clojure.string :as str]
             [wh.common.data :as data]
@@ -30,7 +29,7 @@
             [wh.components.not-found :as not-found]
             [wh.components.pods.companies :as company-pods]
             [wh.components.promote-button :as promote]
-            [wh.components.stats.impl :refer #?(:clj [stats-item] :cljs [])]
+            [wh.components.stats.views :refer [stats-item]]
             [wh.components.tag :as tag]
             [wh.components.videos :as videos]
             [wh.how-it-works.views :as how-it-works]

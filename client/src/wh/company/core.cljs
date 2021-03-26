@@ -18,7 +18,7 @@
             [wh.company.payment.views :as payment]
             [wh.company.register.db :as register-db]
             [wh.company.register.views :as register]
-            [wh.components.stats.impl]
+            [wh.components.stats.views]
             [wh.db :as db]))
 
 (def page-mapping

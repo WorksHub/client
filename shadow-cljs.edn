@@ -56,7 +56,9 @@
                                    :depends-on #{:common}}
                  :profile         {:entries    [wh.profile.core]
                                    :depends-on #{:common :venia}}
-                 :quill           {:entries    [wh.components.rich-text-field.core]
+                 :rich-editor     {:entries    [wh.components.rich-text-field.core]
+                                   :depends-on #{:common}}
+                 :chart           {:entries    [wh.components.stats.core]
                                    :depends-on #{:common}}}
 
                 :output-dir       "target/resources/public/js"
