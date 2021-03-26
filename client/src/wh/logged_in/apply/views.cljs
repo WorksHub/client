@@ -1,5 +1,6 @@
 (ns wh.logged-in.apply.views
-  (:require [re-frame.core :refer [dispatch]]
+  (:require ["react-dom" :as react-dom]
+            [re-frame.core :refer [dispatch]]
             [reagent.core :as r]
             [wh.common.data :as data]
             [wh.common.upload :as upload]
@@ -12,8 +13,7 @@
             [wh.logged-in.apply.subs :as subs]
             [wh.logged-in.profile.events :as profile-events]
             [wh.subs :refer [<sub]]
-            [wh.user.subs :as user-subs]
-            [wh.views]))
+            [wh.user.subs :as user-subs]))
 
 (defn add-full-name-step []
   (let [full-name (r/atom (<sub [::user-subs/name]))
@@ -264,9 +264,8 @@
 
 
 (defn overlay-apply []
-  (when (and (<sub [::subs/display-chatbot?])
-             (<sub [::subs/current-step]))
-    [chatbot]))
-
-;; TODO: CH4623, find a way to remove extra-overlays from codebase and implement overlays in more sane manner
-(swap! wh.views/extra-overlays conj [overlay-apply])
+  (let [el    (.. js/document (getElementById "overlays"))
+        show? (and (<sub [::subs/display-chatbot?])
+                   (<sub [::subs/current-step]))]
+    (when show?
+      (react-dom/createPortal (r/as-element [chatbot]) el))))

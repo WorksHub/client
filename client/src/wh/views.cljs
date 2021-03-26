@@ -1,16 +1,18 @@
 (ns wh.views
-  (:require [clojure.walk :as walk]
+  (:require ["smoothscroll-polyfill"]
+            [clojure.walk :as walk]
             [reagent.core :as r]
-            ["smoothscroll-polyfill"]
+            [wh.components.banner :as banner]
             [wh.components.error.subs :as error-subs]
             [wh.components.error.views :refer [global-status-box]]
-            [wh.components.banner :as banner]
             [wh.components.footer :as footer]
             [wh.components.icons :refer [icon]]
             [wh.components.loader :refer [loader]]
             [wh.components.navbar.navbar :as navbar]
+            [wh.logged-in.apply.views :as apply-views]
             [wh.pages.router :refer [current-page]]
-            [wh.subs :as subs :refer [<sub]]))
+            [wh.subs :as subs :refer [<sub]]
+            [wh.user.views :as user-views]))
 
 (defn version-mismatch []
   [:div.version-mismatch
@@ -19,16 +21,6 @@
    [:p "...but we've just released a new version of our platform and we need you to reload the page so you can use it."]
    [:button.button.button--medium {:on-click #(js/window.location.reload true)}
     "Reload"]])
-
-;; when other modules are loaded, extra components are conj'd onto this atom
-;; (currently used by user, logged-in and blogs modules)
-(def extra-overlays (r/atom []))
-
-;; DO NOT add anything to this function; things are being moved out and into SSR-land
-(defn overlays []
-  (into
-   [:div.overlays]
-   @extra-overlays))
 
 (defn main-panel []
   (let [page             (<sub [:wh.pages.core/page])
@@ -43,6 +35,9 @@
     (if (<sub [::subs/version-mismatch])
       [version-mismatch]
       [:div.main-panel
+       [user-views/consent-popup]
+       [apply-views/overlay-apply]
+
        [banner/banner {:page       page
                        :logged-in? logged-in?}]
        [navbar/top-bar
@@ -64,8 +59,7 @@
             [loader]]]
           [current-page])
         (when (<sub [::subs/show-footer?])
-          [footer/footer (<sub [::subs/vertical]) logged-in?])]
-       [overlays]])))
+          [footer/footer (<sub [::subs/vertical]) logged-in?])]])))
 
 (defonce remove-all-bsl-locks-when-app-loads
   (js/disableNoScroll))

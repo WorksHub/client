@@ -7,9 +7,6 @@
             [wh.landing-new.views :as landing]
             [wh.logged-in.apply.db :as apply-db]
             [wh.logged-in.apply.events :as apply-events]
-            ;; We need to req this ns to add overlay-apply to extra-overlays atom.
-            ;; I really do not like this construct.
-            [wh.logged-in.apply.views]
             [wh.logged-in.contribute.views :as contribute]
             [wh.logged-in.notifications.settings.views :as notif-settings]
             [wh.logged-in.personalised-jobs.views :as personalised-jobs]
