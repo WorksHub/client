@@ -1,21 +1,18 @@
 (ns wh.company.applications.views
-  (:require
-    [clojure.string :as str]
-    [re-frame.core :refer [dispatch dispatch-sync]]
-    [reagent.core :as r]
-    [wh.common.data :refer [get-manager-name]]
-    [wh.company.applications.db :as db]
-    [wh.company.applications.events :as events]
-    [wh.company.applications.subs :as subs]
-    [wh.components.cards :refer [match-circle]]
-    [wh.components.common :refer [link link-user]]
-    [wh.components.ellipsis.views :refer [ellipsis]]
-    [wh.components.forms.views :as forms]
-    [wh.components.icons :refer [icon]]
-    [wh.components.overlay.views :refer [popup-wrapper]]
-    [wh.components.tabs.views :refer [tabs]]
-    [wh.routes :as routes]
-    [wh.subs :refer [<sub]]))
+  (:require [clojure.string :as str]
+            [re-frame.core :refer [dispatch dispatch-sync]]
+            [wh.common.data :refer [get-manager-name]]
+            [wh.company.applications.db :as db]
+            [wh.company.applications.events :as events]
+            [wh.company.applications.subs :as subs]
+            [wh.components.cards :refer [match-circle]]
+            [wh.components.common :refer [link link-user]]
+            [wh.components.forms.views :as forms]
+            [wh.components.icons :refer [icon]]
+            [wh.components.overlay.views :refer [popup-wrapper]]
+            [wh.components.tabs.views :refer [tabs]]
+            [wh.routes :as routes]
+            [wh.subs :refer [<sub]]))
 
 (defn infobox-row [icon-name content]
   [:div.company-application__infobox-row
@@ -171,10 +168,10 @@
             :on-click (when job-id #(dispatch [::events/show-notes-overlay user-id job-id]))}
            (if (str/blank? note)
              [:div (if job-id "Add applicant notes" "Select a job to add a note")]
-             [ellipsis note])]]
+             [:div {:class "company-application__notes__note"} note])]]
          [:div.company-application__notes.is-flex
           {:class (when (str/blank? note) "company-application__notes--empty")}
-          [ellipsis note]]))
+          [:div {:class "company-application__notes__note"} note]]))
      [:div.company-application__cta-buttons
       (when-not skeleton?
         (if admin?

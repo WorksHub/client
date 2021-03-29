@@ -1,16 +1,14 @@
 (ns wh.job.views
-  (:require #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
-            #?(:cljs [wh.components.forms.views :refer [text-field error-component-outdated]])
+  (:require #?(:cljs [wh.components.forms.views :refer [text-field error-component-outdated]])
             #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
             #?(:cljs [wh.components.stats.views :refer [stats-item]])
             [clojure.string :as str]
-            [wh.common.data :refer [get-manager-name]]
             [wh.common.text :refer [pluralize not-blank]]
             [wh.company.listing.views :refer [company-card]]
             [wh.components.cards :refer [match-circle]]
             [wh.components.common :refer [wrap-img link img]]
             [wh.components.icons :refer [icon]]
-            [wh.components.issue :refer [level->str level->icon issue-card]]
+            [wh.components.issue :refer [level->str level->icon]]
             [wh.components.job :refer [job-card highlight]]
             [wh.components.modal-publish-job :as modal-publish-job]
             [wh.components.pods.candidates :as candidate-pods]
@@ -21,7 +19,7 @@
             [wh.job.subs :as subs]
             [wh.pages.util :as putil]
             [wh.re-frame :as r]
-            [wh.re-frame.events :refer [dispatch dispatch-sync]]
+            [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.util :as util]))
@@ -161,12 +159,11 @@
      {:class (str class-prefix "__apply-on-behalf-note" (when (str/blank? note) " company-application__notes--empty"))}
      [:div.apply-on-behalf__edit-icon
       [icon "edit"]]
-     [:div.clickable
+     [:div.clickable.apply-on-behalf__note
       {:on-click #(dispatch [::events/show-notes-overlay])}
-      #?(:cljs
-         [ellipsis (if (str/blank? note)
-                     "Add applicant notes"
-                     note)])]]))
+      (if (str/blank? note)
+        "Add applicant notes"
+        note)]]))
 
 (defn apply-on-behalf [class-prefix]
   #?(:cljs

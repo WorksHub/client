@@ -17,6 +17,7 @@
 (ns wh.components.forms.views
   "Form building blocks."
   (:require [cljs.spec.alpha :as s]
+            [clojure.set :as set]
             [clojure.string :as str]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
@@ -310,12 +311,16 @@
                          (dispatch-sync (conj on-change (target-checked %))))}))]
      [:label {:for id
               :class label-class}
-       [:div {:class "checkbox__box"}]
-       label]]))
+      [:div {:class "checkbox__box"}]
+      label]]))
 
 (defn- sanitize-select-options
   [vals]
-  (mapv #(if (string? %) {:id %, :label %} %) vals))
+  (mapv (fn [val]
+          (if (string? val)
+            {:id val, :label val}
+            (set/rename-keys val {:option :id})))
+        vals))
 
 (defn select-input
   "A bare select input. Typically not used standalone, but wrapped as
@@ -434,8 +439,8 @@
         focused (reagent/atom false)
         -collapsed? (reagent/atom true)]
     (fn [text {:keys [collapsed? error label placeholder tags dirty? read-only empty-label id
-                     on-change on-tag-click on-toggle-collapse on-blur on-focus on-add-tag
-                     tag-data-test] :as opts}]
+                      on-change on-tag-click on-toggle-collapse on-blur on-focus on-add-tag
+                      tag-data-test] :as opts}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))
@@ -518,7 +523,7 @@
   [_options]
   (let [dirty (reagent/atom false)]
     (fn [{:keys [value on-select-file loading? error id text dirty?] :as options
-         :or  {text "logo"}}]
+          :or  {text "logo"}}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
         (reset! dirty dirty?))

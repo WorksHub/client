@@ -261,6 +261,7 @@ $column-gap: 1.5rem
   flex: 1
   font-size: 18px
   height: 60px
+  @include line-clamp(2)
 
 .your-company__blurb
   line-height: 18px
@@ -987,17 +988,12 @@ $description-height: 300px
 .clickable
   cursor: pointer
 
-.ellipsis-container
-    width: 100%
-    height: 100%
-.ellipsis-container--vcenter
-  display: flex
-  align-items: center
-
 .company-application__notes
   white-space: pre-wrap
   margin-top: 16px
   color: $steel-gray
+  &__note
+    @include line-clamp(2)
   svg
     margin-right: 8px
   &>div

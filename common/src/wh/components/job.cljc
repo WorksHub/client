@@ -1,16 +1,15 @@
 (ns wh.components.job
-  (:require #?(:cljs [wh.components.ellipsis.views :refer [ellipsis]])
+  (:require [clojure.string :as str]
             [wh.common.job :as jobc]
             [wh.components.cards :refer [match-circle]]
-            [wh.components.common :refer [wrap-img link img]]
+            [wh.components.common :refer [wrap-img img]]
             [wh.components.icons :refer [icon]]
-            [wh.interop :as interop]
             [wh.components.tag :as tag]
+            [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch]]
             [wh.routes :as routes]
             [wh.slug :as slug]
-            [wh.util :as util]
-            [clojure.string :as str]))
+            [wh.util :as util]))
 
 (defn state->candidate-status
   [s]
@@ -198,8 +197,7 @@
 
      [:div.tagline
       (when-not small?
-        [:div.tagline-content #?(:cljs [ellipsis tagline]
-                                 :clj tagline)])]
+        [:div.tagline-content tagline])]
 
      [card-perks remote role-type sponsorship-offered score small?]
 

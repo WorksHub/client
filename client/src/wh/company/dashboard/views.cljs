@@ -9,7 +9,6 @@
             [wh.company.dashboard.subs :as subs]
             [wh.company.payment.views :as payment]
             [wh.components.common :refer [link link-user]]
-            [wh.components.ellipsis.views :refer [ellipsis]]
             [wh.components.icons :refer [icon]]
             [wh.components.loader :refer [loader]]
             [wh.components.modal-publish-job :as modal-publish-job]
@@ -20,15 +19,15 @@
             [wh.subs :refer [<sub]]))
 
 (defn- date->str [d]
-  (let [t (t/today-at-midnight)
-        t-1 (t/minus (t/today-at-midnight) (t/days 1))
-        t+1 (t/plus (t/today-at-midnight) (t/days 1))
-        today (t/interval t t+1)
+  (let [t         (t/today-at-midnight)
+        t-1       (t/minus (t/today-at-midnight) (t/days 1))
+        t+1       (t/plus (t/today-at-midnight) (t/days 1))
+        today     (t/interval t t+1)
         yesterday (t/interval t-1 t)]
     (cond
       (t/within? today d)     "today"
       (t/within? yesterday d) "yesterday"
-      :otherwise              (str "on " (tf/unparse (tf/formatters :date) d)))))
+      :else                   (str "on " (tf/unparse (tf/formatters :date) d)))))
 
 (defn company-edit-link [link-title & args]
   (if (<sub [:user/company?])
@@ -63,7 +62,7 @@
          :else [company-edit-link [icon "add-new-2"]
                 :class "button button--inverted your-company__logo"])
        [:div.your-company__name
-        [ellipsis (<sub [::subs/name]) {:vcenter? true}]]
+        (<sub [::subs/name])]
        (when (<sub [:user/admin?])
          [profile-page-link (<sub [::subs/profile-enabled?]) (<sub [::subs/slug])])
        [company-edit-link "Settings"

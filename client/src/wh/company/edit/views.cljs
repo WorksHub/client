@@ -7,26 +7,22 @@
             [wh.common.logo]
             [wh.common.text :refer [pluralize]]
             [wh.common.upload :as upload]
-            [wh.components.rich-text-field.loadable :refer [rich-text-field]]
             [wh.company.edit.db :as edit]
             [wh.company.edit.events :as events]
             [wh.company.edit.subs :as subs]
-            [wh.company.payment.db :as payment-db]
             [wh.company.payment.views :as payment]
             [wh.company.views :refer [double->dollars int->dollars]]
             [wh.components.common :refer [link]]
-            [wh.components.ellipsis.views :refer [ellipsis]]
             [wh.components.forms.views :as f
-             :refer [labelled-checkbox field-container select-field
-                     text-field select-input logo-field]]
+             :refer [labelled-checkbox select-field text-field logo-field]]
             [wh.components.github :as github]
             [wh.components.icons :refer [icon]]
             [wh.components.overlay.views :refer [popup-wrapper]]
+            [wh.components.rich-text-field.loadable :refer [rich-text-field]]
             [wh.components.selector :refer [selector]]
             [wh.db :as db]
             [wh.routes :as routes]
             [wh.subs :refer [<sub error-sub-key]]
-            [wh.user.subs :as user-subs]
             [wh.util :as util]
             [wh.verticals :as verticals]))
 

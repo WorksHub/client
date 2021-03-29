@@ -492,8 +492,11 @@ $description-height: 400px
   .form-error
     margin-top: 5px
 
-.apply-on-behalf__edit-icon
-  width: 18px
+.apply-on-behalf
+  &__note
+    @include line-clamp(2)
+  &__edit-icon
+    width: 18px
 
 .job__apply-on-behalf-note
   line-height: 18px
