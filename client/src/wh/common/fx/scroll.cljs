@@ -8,13 +8,41 @@
   ([_ & rest]
    (scroll-to-top)))
 
+;;
+
+(defn verticalPosition
+  "distance between page top and element top"
+  [elm]
+  (let [page-top-to-viewport-top (.-pageYOffset js/window)
+        viewport-top-to-elm-top  (-> elm
+                                     (.getBoundingClientRect)
+                                     (.-top))]
+    (+ page-top-to-viewport-top viewport-top-to-elm-top)))
+
+;;
+
+(defn current-header-height
+  "returns current header height, different values for different viewports"
+  []
+  (let [css-var-header-height "--header-height"]
+    (-> js/document
+        (.-documentElement)
+        (js/getComputedStyle)
+        (.getPropertyValue css-var-header-height)
+        js/parseInt)))
+
+;;
+
 (defn scroll-into-view-effect
   [id]
   (when id
     (cond
       (string? id)
-      (when-let [el (.getElementById js/document id)]
-        (.scrollIntoView el #js {:behavior "smooth"}))
+      (when-let [elm (.getElementById js/document id)]
+        (.scrollTo js/window
+                   #js {:top      (- (verticalPosition elm)
+                                     (current-header-height))
+                        :behavior "smooth"}))
       (sequential? id)
       (doseq [id' id]
         (scroll-into-view-effect id'))
