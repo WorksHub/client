@@ -70,7 +70,7 @@
 
 ;; TODO remove this when spec is cljc
 #?(:clj (s/def :wh.issue/contributor :wh/user))
-#?(:clj (s/def :wh.issue/contributors (s/coll-of :wh.issue/contributor)))
+#?(:clj (s/def :wh.issue/contributors (s/coll-of :wh.issue/contributor :gen-max 3)))
 
 (s/def :wh.issue/level #{:beginner :intermediate :advanced})
 (s/def :wh.issue.raw/level #{"beginner" "intermediate" "advanced"})
@@ -148,7 +148,7 @@
                  {:wh.issue.compensation/currency :wh.issue.raw.compensation/currency}))
      :cljs :wh/issue))
 
-(s/def :wh/issues (s/coll-of :wh/issue))
+(s/def :wh/issues (s/coll-of :wh/issue :gen-max 3))
 
 (s/def :wh.issues/sort #{:published :compensation})
 

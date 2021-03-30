@@ -1,10 +1,11 @@
 (ns wh.common.specs.company
-  (:require [#?(:clj clojure.spec.alpha
+  (:require [#?(:clj  clojure.spec.alpha
                 :cljs cljs.spec.alpha) :as s]
             [wh.common.data :as data]
             [wh.common.specs.date]
             [wh.common.specs.primitives :as p]
-            [wh.common.specs.tags]))
+            [wh.common.specs.tags]
+            [clojure.test.check.generators :as gen]))
 
 (def description-placeholder "Please enter a valid description for your company")
 
@@ -78,12 +79,17 @@
 (s/def :wh.company.profile/description-html (s/and ::p/non-empty-string
                                                    description-is-not-placeholder?
                                                    description-is-not-empty-html?))
-(s/def :wh.company.profile/tags (s/and :wh/tags
-                                       includes-industry?
-                                       includes-funding?
-                                       includes-tech?
-                                       includes-benefit?
-                                       includes-company?))
+(s/def :wh.company.profile/tags (s/with-gen (s/and :wh/tags
+                                                   includes-industry?
+                                                   includes-funding?
+                                                   includes-tech?
+                                                   includes-benefit?
+                                                   includes-company?)
+                                  (fn [] (gen/tuple (gen/fmap #(assoc % :type :tech) (s/gen :wh/tag))
+                                                    (gen/fmap #(assoc % :type :industry) (s/gen :wh/tag))
+                                                    (gen/fmap #(assoc % :type :funding) (s/gen :wh/tag))
+                                                    (gen/fmap #(assoc % :type :benefit) (s/gen :wh/tag))
+                                                    (gen/fmap #(assoc % :type :company) (s/gen :wh/tag))))))
 
 (s/def :wh.company.profile/blogs (s/coll-of map? :min-count 1))
 (s/def :wh.company.profile/images (s/coll-of map? :min-count 1))
