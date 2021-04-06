@@ -526,7 +526,7 @@
 (defn page []
   [:div
    (case (<sub [::subs/error])
-     :no-matching-job
+     :job-not-found
      [:div.main-wrapper
       [:div.main
        [:h2 {:data-test "job-doesnt-exist"}

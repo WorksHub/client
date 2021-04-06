@@ -1,13 +1,14 @@
 (ns wh.graphql-cache
   (:require
     #?(:clj [com.walmartlabs.lacinia.util :as lac-util])
-    #?(:clj [taoensso.timbre :refer [errorf]])
+    #?(:clj [taoensso.timbre :as log :refer [errorf]])
     #?(:clj [wh.graphql :as graphql])
     [re-frame.core :refer [reg-event-db reg-event-fx reg-sub]]
     [re-frame.registrar :refer [get-handler register-handler]]
     [wh.common.cases :as cases]
     [wh.common.time :as time]
-    [wh.db :as db]))
+    [wh.db :as db]
+    [clojure.set :as set]))
 
 (defn reg-query
   [id query]
@@ -124,9 +125,14 @@
                     (catch Exception e
                       (errorf e "An exception was thrown whilst pre-executing %s (%s) - %s %s"
                               query variables (graphql/error-map e query variables) (.getMessage e))
-                      {:errors [(graphql/error-map e query variables)]}))]
-       (when (:errors result)
-         (errorf "An error occurred whilst pre-executing %s (%s) - %s" query variables (pr-str (:errors result))))
+                      {:errors [(graphql/error-map e query variables)]}))
+           errors (:errors result)]
+       (when errors
+         (cond
+           (graphql/result-with-404-errors-only? result)
+           (log/warnf "404 error occurred whilst pre-executing %s (%s) - %s" query variables (pr-str errors))
+           :else
+           (log/errorf "An error occurred whilst pre-executing %s (%s) - %s" query variables (pr-str errors))))
        (store-result db query-id variables result))
      :cljs
      (throw (js/Error. "pre-execute is not supported in ClojureScript."))))

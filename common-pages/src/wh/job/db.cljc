@@ -28,8 +28,8 @@
   (or (user/admin? db)
       (contains? (company-permissions db) :can_create_job)))
 
-;; The :no-matching-job is also used in wh.response.handler.job
-(s/def ::error (s/nilable #{:no-matching-job :unknown-error :unauthorised}))
+;; The :job-not-found is also used in wh.response.handler.job
+(s/def ::error (s/nilable #{:job-not-found :unknown-error :unauthorised}))
 
 (s/def ::title string?)
 ;;

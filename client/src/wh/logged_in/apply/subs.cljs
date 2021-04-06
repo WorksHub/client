@@ -41,7 +41,7 @@
     (::apply/error db)))
 
 (def error-mapping
-  {:no-matching-job            "Whoops, looks like you attempted to apply for a nonexistent job!"
+  {:job-not-found              "Whoops, looks like you attempted to apply for a nonexistent job!"
    :application-already-exists "You have already applied for this job!"
    :incorrect-user-type        "You should be a registered candidate to apply."
    :incomplete-profile         "Looks like you have an incomplete profile. We need your name, email, current location and either an uploaded CV or a link to one."
