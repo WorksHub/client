@@ -404,21 +404,34 @@
          ;; optimistic update
          :db       (-> db
                        (assoc-in [::profile/sub-db ::profile/cv :link] cv-link)
-                       (assoc-in
-                         [::profile/sub-db ::profile/editing-cv-link?] false))
+                       (assoc-in [::profile/sub-db ::profile/cv :file] nil)
+                       (assoc-in [::profile/sub-db ::profile/editing-cv-link?] false))
          :dispatch [:error/close-global]}
 
         {:dispatch
          [:error/set-global "CV link is not valid. Please amend and try again."]})
-
+      (= type :remove-cv-link)
+      {:graphql  {:query      graphql/update-user-mutation--approval
+                  :variables  {:update_user (graphql-cv-update db {:link nil})}
+                  :on-success [::save-success]
+                  :on-failure [::save-failure]}
+       ;; optimistic update
+       :db       (-> db
+                     (assoc-in [::profile/sub-db ::profile/cv :link] nil)
+                     (assoc-in [::profile/sub-db ::profile/cv-link-editable] nil)
+                     (assoc-in [::profile/sub-db ::profile/editing-cv-link?] false))
+       :dispatch [:error/close-global]}
+      ;;
       (= type :upload-cv)
-      {:graphql    {:query      graphql/update-user-mutation--approval
-                    :variables  {:update_user (graphql-cv-update db)}
-                    :on-success [::save-success]
-                    :on-failure [::save-failure]}
-       :dispatch-n [[::pages/set-loader]
-                    [:error/close-global]]})))
-
+      (let [file-info (get-in db [::profile/sub-db ::profile/cv :file])]
+        {:graphql    {:query      graphql/update-user-mutation--approval
+                      :variables  {:update_user (graphql-cv-update db {:file file-info})}
+                      :on-success [::save-success]
+                      :on-failure [::save-failure]}
+         :db         (-> db
+                         (assoc-in [::profile/sub-db ::profile/cv :link] nil))
+         :dispatch-n [[::pages/set-loader]
+                      [:error/close-global]]}))))
 
 (reg-event-fx
   ::save-cover-letter-info

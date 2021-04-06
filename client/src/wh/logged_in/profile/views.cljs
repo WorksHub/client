@@ -445,7 +445,7 @@
 
    (when (owner-or-admin? user-type)
      [components/section-buttons
-      [components/upload-button {:document   "cover letter"
+      [components/upload-button {:text       "Upload cover letter"
                                  :data-test  "upload-cover-letter"
                                  :uploading? (<sub [::subs/cover-letter-uploading?])
                                  :on-change  (upload/handler
@@ -462,24 +462,29 @@
   (let [editing-cv-link? (<sub [::subs/editing-cv-link?])]
     [:div
      (if editing-cv-link?
-       (let [cv-link-val (<sub [::subs/cv-link-editable])
-             save-link!  #(dispatch [::events/save-cv-info
-                                     {:type    :update-cv-link
-                                      :cv-link cv-link-val}])]
+       (let [cv-link-val  (<sub [::subs/cv-link-editable])
+             save-link!   #(dispatch [::events/save-cv-info
+                                      {:type    :update-cv-link
+                                       :cv-link cv-link-val}])
+             remove-link! #(dispatch [::events/save-cv-info
+                                      {:type :remove-cv-link}])]
          [:div (util/smc styles/cta__text-field-container)
           [components/text-field cv-link-val
            {:on-change   [::events/edit-cv-link-editable]
             :on-enter    save-link!
             :placeholder "Enter link to resume"
-            :data-test   "enter-cv-link"
-            :class       styles/cta__text-field}]
+            :data-test   "enter-cv-link"}]
 
           [components/small-button {:on-click  save-link!
                                     :data-test "save-cv-link"}
-           "Save"]])
+           "Save"]
+          [components/small-button {:on-click  remove-link!
+                                    :data-test "remove-cv-link"
+                                    :inverted? true}
+           "Remove"]])
 
        (when cv-link
-         [:p (util/smc styles/cv-link)
+         [:p
           (if (owner? user-type) "Your external CV: " "External CV: ")
           [components/resource {:href      cv-link
                                 :text      cv-link
@@ -507,10 +512,11 @@
        "No uploaded cv yet"))
 
    (when (owner-or-admin? user-type)
-     (let [editing-cv-link? (<sub [::subs/editing-cv-link?])]
+     (let [editing-cv-link? (<sub [::subs/editing-cv-link?])
+           cv-link          (<sub [::subs/cv-link])]
        [components/section-buttons
         (when-not editing-cv-link?
-          [components/upload-button {:document   "CV"
+          [components/upload-button {:text       (if cv-link "Replace with file" "Change file")
                                      :data-test  "upload-resume"
                                      :uploading? (<sub [::subs/cv-uploading?])
                                      :on-change  (upload/handler
@@ -525,8 +531,8 @@
           :data-test "change-cv-link"
           :text      (cond
                        (and cv-link editing-cv-link?) "Cancel"
-                       cv-link                        "Change link to CV"
-                       :else                          "Add link to CV")}]]))])
+                       cv-link "Change CV link"
+                       :else "Replace with link")}]]))])
 
 
 (defn section-public-access-settings []

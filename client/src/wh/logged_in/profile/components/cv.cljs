@@ -19,7 +19,7 @@
 You can update it anytime from your profile."]
 
      [:div (util/smc styles/cta__section)
-      [components/upload-button {:document   "resume"
+      [components/upload-button {:text       "Upload resume"
                                  :uploading? (<sub [::subs/cv-uploading?])
                                  :inverted?  true
                                  :data-test  "upload-resume"
@@ -40,8 +40,7 @@ You can update it anytime from your profile."]
           {:on-change   [::events/edit-cv-link-editable]
            :on-enter    save-link!
            :placeholder "Enter link to resume"
-           :data-test   "enter-cv-link"
-           :class       styles/cta__text-field}]
+           :data-test   "enter-cv-link"}]
 
          [components/small-button
           {:on-click  save-link!

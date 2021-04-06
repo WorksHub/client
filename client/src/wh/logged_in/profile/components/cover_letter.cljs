@@ -17,15 +17,15 @@
 achievements in a clear and concise way. Don’t forget to
 double-check the spelling and grammar."]
 
-    [components/upload-button {:document     "cover letter"
-                               :data-test    "upload-cover-letter"
-                               :inverted?    true
-                               :uploading?   (<sub [::subs/cover-letter-uploading?])
-                               :on-change    (upload/handler
-                                               :launch [::events/cover-letter-upload]
-                                               :on-upload-start [::events/cover-letter-upload-start]
-                                               :on-success [::events/cover-letter-upload-success]
-                                               :on-failure [::events/cover-letter-upload-failure])}]]
+    [components/upload-button {:text       "Upload cover letter"
+                               :data-test  "upload-cover-letter"
+                               :inverted?  true
+                               :uploading? (<sub [::subs/cover-letter-uploading?])
+                               :on-change  (upload/handler
+                                             :launch [::events/cover-letter-upload]
+                                             :on-upload-start [::events/cover-letter-upload-start]
+                                             :on-success [::events/cover-letter-upload-success]
+                                             :on-failure [::events/cover-letter-upload-failure])}]]
 
    [:div (util/smc styles/cta__image__container--people
                    styles/cta__image__container)

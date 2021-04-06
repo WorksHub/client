@@ -102,8 +102,15 @@
 (defn translate-permissions [permissions]
   (into #{} (map keyword permissions)))
 
-(defn cv-url [user]
+(defn cv-file-url [user]
   (get-in user [:cv :file :url]))
+
+(defn cv-link-url [user]
+  (get-in user [:cv :link]))
+
+(defn cv-url [user]
+  (or (cv-file-url user)
+      (cv-link-url user)))
 
 (defn company-member? [{:keys [user company]}]
   (= (:id company) (:company-id user)))
