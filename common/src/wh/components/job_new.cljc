@@ -39,7 +39,7 @@
    [:a {:href      (when-not skeleton? (routes/path :job :params {:slug slug}))
         :class     (util/mc styles/button
                             styles/button--inverted-highlighted)
-        :data-test "job-info"}
+        :data-test (when-not skeleton? "job-info")}
     (if user-is-owner? "View" "More Info")]
 
    (cond
@@ -219,7 +219,7 @@
                                [skeleton? styles/card--skeleton]
                                [(= view-type :cards) styles/card--block]
                                [(= view-type :list) styles/card--list])
-           :data-test "job-card"}
+           :data-test (when-not skeleton? "job-card")}
      [header job company opts]
 
      [details (assoc job :salary salary) company]

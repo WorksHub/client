@@ -202,7 +202,7 @@
             logo-img))
         [:div.logo--skeleton]))]
    [:div.job__company-header__info
-    [:h1.job__header-job-title {:data-test "job-header-job-title"} (<sub [::subs/title])]
+    [:h1.job__header-job-title {:data-test "job-title-jobpage"} (<sub [::subs/title])]
     (cond
       (<sub [::subs/profile-enabled?])
       [link [:h2.job__header-company-link (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
