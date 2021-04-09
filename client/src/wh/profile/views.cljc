@@ -41,7 +41,7 @@
         user-cv       (get-in (<sub [::subs/profile]) [:cv :file])
         cv-url        (:url user-cv)
         cv-name       (:name user-cv)]
-    (when (and (and company-view? cv-visible?) (ends-with? cv-name ".pdf"))
+    (when (and company-view? cv-visible? cv-url cv-name (ends-with? cv-name ".pdf"))
       [components/section-cv cv-url])))
 
 (defn section-stats []
