@@ -88,7 +88,8 @@
             {:class class}]
            (case state
              "pending"
-             [[:button.button {:on-click on-approve} "Approve"]
+             [[:button.button {:on-click on-approve :data-test "approve-application"}
+               "Approve"]
               [:button.button.button--inverted {:on-click on-reject} "Reject"]]
              "approved"
              [[:button.button {:on-click on-get-in-touch} "Get in touch"]
@@ -121,7 +122,12 @@
       [:div.company-application__view-documents
        [:div.company-application__view-document
         (if (or cv skeleton?)
-          [:a.a--underlined.company-application__view-cv {:href cv, :target "_blank", :rel "noopener"} (when-not skeleton? "View CV")]
+          [:a.a--underlined.company-application__view-cv
+           {:href      cv
+            :target    "_blank"
+            :data-test (when cv "applicant-cv-link")
+            :rel       "noopener"}
+           (when-not skeleton? "View CV")]
           [:i "No CV provided"])]
        [:div.company-application__view-document
         (when-not skeleton?

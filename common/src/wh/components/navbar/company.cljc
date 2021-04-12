@@ -12,6 +12,7 @@
 (defn company-profile-submenu-list [company-slug]
   [{:path      (routes/path :company :params {:slug company-slug})
     :icon-name "company-building"
+    :data-test "company-profile-link"
     :text      "Company profile"}
    {:route     :edit-company
     :icon-name "settings"
@@ -70,6 +71,7 @@
    {:path       (routes/path :company :params {:slug company-slug})
     :icon-name  "company-building"
     :icon-class styles/dropdown__link__icon-company
+    :data-test  "company-profile-link"
     :text       "Company profile"}])
 
 (def articles-company-submenu-list

@@ -14,8 +14,9 @@
 
 (defn view-applications-button [{:keys [href]}]
   [:a.button.button--medium
-   {:href href
-    :id   "job-view__view-applications-button"}
+   {:href      href
+    :data-test "view-applications"
+    :id        "job-view__view-applications-button"}
    "View Applications"])
 
 (defn apply-button-options [{:keys [applied? _id job]}]
