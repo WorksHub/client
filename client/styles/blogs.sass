@@ -1,0 +1,171 @@
+@import 'colours'
+@import 'mixins'
+
+$card-hover-color: rgba(0, 0, 0, 0.015)
+
+.blog
+  padding: 16px
+  grid-gap: 16px
+  background: white
+  border-radius: 8px
+  display: grid
+  box-shadow: $card-shadow-color
+  // for linking area
+  position: relative
+  +tablet
+    padding: 24px
+    grid-gap: 20px
+    grid-template-columns: auto 1fr
+
+  &__image
+    width: 100%
+    height: 141px
+    max-height: 141px
+    object-fit: cover
+    border-radius: 4px
+    +tablet
+      width: 250px
+      max-width: 250px
+
+    &--skeleton
+      background: $skeleton-grey
+
+    &--unpublished
+      position: relative
+
+      &::before
+        content: ""
+        position: absolute
+        width: 100%
+        height: 100%
+        opacity: 0.7
+        background: $white
+
+      &::after
+        content: "unpublished"
+        position: absolute
+        display: flex
+        justify-content: center
+        bottom: 0
+        width: 100%
+        font-weight: 600
+        font-size: 14px
+        text-transform: capitalize
+        color: $grey500
+
+  &__tag
+    z-index: 2
+
+  &__title
+    font-size: 16px
+    line-height: 24px
+    // line-height compensation
+    margin-top: -2px
+    margin-bottom: -11px
+    font-weight: bold
+    @include line-clamp(2)
+
+    +tablet
+      margin-bottom: -8px
+      font-size: 18px
+      line-height: 26px
+      margin-top: 0
+
+    &--skeleton
+      @include skeleton(70%, 22px, $skeleton-grey-dark)
+
+    // for linking area
+    &::after
+      content: ""
+      display: inline-block
+      position: absolute
+      top: 0
+      right: 0
+      width: 100%
+      height: 100%
+      z-index: 1
+
+    &:hover::after
+      background: $card-hover-color
+
+  &__body
+    display: grid
+    grid-gap: 20px
+    align-content: start
+    align-items: start
+    +tablet
+      grid-gap: 16px
+
+  &__meta
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    column-gap: 16px
+    row-gap: 6px
+
+    &--skeleton
+      @include skeleton(90%, 18px)
+
+.upvotes
+  display: flex
+  gap: 6px
+  align-items: center
+
+  &__icon-wrapper
+    padding: 3px
+    display: inline-flex
+    background: $grey100
+    border-radius: 50%
+    fill: $grey400
+
+  &__icon
+    width: 16px
+    height: 16px
+
+.secondary-text
+  font-size: 14px
+  line-height: 16px
+  font-weight: 500
+  color: $grey300
+
+.author
+  display: flex
+  gap: 8px
+  align-items: center
+
+  &__avatar
+    width: 24px
+    height: 24px
+    border-radius: 50%
+    background-color: $highlight-red
+
+  &__name
+    @include truncate(250px)
+
+.page
+  max-width: 1232px
+  margin: 0 auto
+  flex: 1
+  width: 100%
+  padding: 32px 16px
+
+.page-columns
+  display: grid
+  grid-template-columns: 1fr
+  grid-gap: 32px
+  +desktop
+    grid-template-columns: 1fr 280px
+
+.main-column
+  display: grid
+  grid-gap: 24px
+
+.blog-list
+  display: grid
+  grid-gap: 16px
+
+.tag-selector
+  background: white
+  padding: 24px
+  border-radius: 8px
+

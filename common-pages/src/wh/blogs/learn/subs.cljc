@@ -36,17 +36,25 @@
 (reg-sub
   ::all-blogs
   (fn [db _]
-    (let [params (learn/params db)
+    (let [params      (learn/params db)
           search-term (learn/search-term db)
-          query-name (if search-term
-                       :search_blogs
-                       :blogs)
-          data-path (if search-term
-                      learn-events/search-blogs-path
-                      learn-events/std-blogs-path)]
-      (if (= (graphql/state db query-name params) :executing)
-        (util/maps-with-id learn/page-size)
-        (get-in (graphql/result db query-name params) data-path)))))
+          query-name  (if search-term
+                        :search_blogs
+                        :blogs)
+          data-path   (if search-term
+                        learn-events/search-blogs-path
+                        learn-events/std-blogs-path)]
+      (get-in (graphql/result db query-name params) data-path))))
+
+(reg-sub
+  ::all-blogs-loading?
+  (fn [db _]
+    (let [params      (learn/params db)
+          search-term (learn/search-term db)
+          query-name  (if search-term
+                        :search_blogs
+                        :blogs)]
+      (= (graphql/state db query-name params) :executing))))
 
 (reg-sub
   ::current-tag

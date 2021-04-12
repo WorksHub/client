@@ -28,6 +28,12 @@
   overflow: hidden
   text-overflow: ellipsis
 
+@mixin truncate($max-width)
+  max-width: $max-width
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
 @mixin number-circle($radius)
   min-width: $radius
   width: $radius

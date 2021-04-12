@@ -35,11 +35,11 @@
 
 (defn articles-jobs-params [db]
   (cond-> (params db)
-          (search-arguments? db)
-          ;; we want only 8 recommended jobs
-          (assoc :page_size 8)))
+    (search-arguments? db)
+    ;; we want only 3 recommended jobs
+    (assoc :page_size 3)))
 
 (defn articles-issues-params [db]
   (cond-> (params db)
-          (tag db)
-          (assoc :repo_language (tag db))))
+    (tag db) (assoc :repo_language (tag db))
+    :always (assoc :issues_amount 3)))

@@ -191,7 +191,6 @@
           :slug    ""})
        (range 6)))
 
-
 (defn- tagline [value]
   [:div (util/smc styles/tagline) value])
 

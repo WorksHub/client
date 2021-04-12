@@ -19,10 +19,10 @@
                               :variable/type :String}
                              {:variable/name "vertical_blogs"
                               :variable/type :vertical}]
-           :venia/queries   [[:blogs {:tag             :$tag
-                                      :page_size       :$page_size
-                                      :page_number     :$page_number
-                                      :vertical        :$vertical_blogs}
+           :venia/queries   [[:blogs {:tag         :$tag
+                                      :page_size   :$page_size
+                                      :page_number :$page_number
+                                      :vertical    :$vertical_blogs}
                               [[:pagination [:total]]
                                [:blogs :fragment/blogCardFields]]]]})
 (reg-query :blogs blogs-query)
@@ -109,14 +109,15 @@
 (defn issues [db]
   [:recommended_issues (learn/articles-issues-params db)])
 
+
 (reg-event-fx
   ::load-blogs
   db/default-interceptors
   (fn [{db :db} _]
     {:scroll-to-top true
      :dispatch-n    (->> [(if (learn/search-term db) search-blogs std-blogs)
-                          jobs
-                          issues]
+                          #_jobs
+                          #_issues]
                          (map #(% db))
                          (mapv #(into [:graphql/query] %)))}))
 
