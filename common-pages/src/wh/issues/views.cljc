@@ -171,13 +171,14 @@
    [:div.issues__sorting__dropdown__container.wh-formx
     [:span.issues__sorting__dropdown__label "Sort by:"]
     [forms/select-field
-     {:solo?     true
-      :value     (<sub [::subs/sorting-by])
-      :class     "issues__sorting__dropdown"
-      :options   (<sub [::subs/sorting-options])
-      :on-change (interop-forms/add-select-value-to-url
-                   :sort (<sub [::subs/sorting-options]))
-      :data-test "issues-sort-select"}]]])
+     {:solo?           true
+      :value           (<sub [::subs/sorting-by])
+      :class-container "issues__sorting__dropdown"
+      :class           "issues__sorting__dropdown__input"
+      :options         (<sub [::subs/sorting-options])
+      :on-change       (interop-forms/add-select-value-to-url
+                         :sort (<sub [::subs/sorting-options]))
+      :data-test       "issues-sort-select"}]]])
 
 (defn languages-list [class]
   (let [languages (some->> (<sub [::subs/issues-languages])

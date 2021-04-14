@@ -97,6 +97,8 @@ $tag-spacing: 3px
   padding: 1px
   .tags-container--new-design &
     border: none
+    .tags-roll
+      margin-top: 0
     .tags
       padding: 0
       .tag--selected
@@ -108,6 +110,9 @@ $tag-spacing: 3px
       cursor: pointer
       opacity: 0.4
       transition: opacity 200ms linear
+      span
+        text-overflow: ellipsis
+        overflow: hidden
       &.tag--selected
         opacity: 1
         padding-right: 28px
@@ -124,6 +129,7 @@ $tag-spacing: 3px
   cursor: pointer
   transition: transform 0.3s ease
   transform: rotate(180deg)
+  margin-top: 10px
 
 .tags-container--collapsed
   &.tags-container--new-design

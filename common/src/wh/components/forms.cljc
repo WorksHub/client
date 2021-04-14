@@ -269,10 +269,13 @@
 
 (defn select-field
   [{:keys [dirty? force-error? value] :as options}]
-  (field-container (if (or dirty? force-error?)
-                     options
-                     (dissoc options :error :data-test))
-                   (select-input value options)))
+  (let [field-options (cond-> options
+                              (not (or dirty? force-error?))
+                              (dissoc :error :data-test)
+                              :always
+                              (assoc :class (:class-container options)))]
+    (field-container field-options
+                     (select-input value options))))
 
 #?(:cljs
    (defn target-checked [^js/Event ev]

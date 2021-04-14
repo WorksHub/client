@@ -44,15 +44,17 @@
    ::location__latitude     {:order 37 :initial nil :validate (s/nilable :wh.location/latitude)}
    ::location__longitude    {:order 38 :initial nil :validate (s/nilable :wh.location/longitude)}
 
-   ::description-html  {:order 40 :initial "", :validate ::p/non-empty-string}
+   ::description-html {:order 40 :initial "", :validate ::p/non-empty-string}
 
-   ::ats-job-id         {:order 50 :initial "" :event? false}
+   ::ats-job-id {:order 50 :initial "" :event? false}
 
-   ::manager            {:order 60 :initial "", :validate ::manager}
-   ::published          {:order 62 :initial false}
-   ::approved           {:order 63 :initial false}
+   ::manager   {:order 60 :initial "", :validate ::manager}
+   ::published {:order 62 :initial false}
+   ::approved  {:order 63 :initial false}
 
-   ::verticals (s/coll-of ::p/non-empty-string :distinct true :min-count 1)})
+   ::verticals           (s/coll-of ::p/non-empty-string :distinct true :min-count 1)
+   ::timezones           {}
+   ::region-restrictions {}})
 
 (defn initial-db [db editing?]
   (let [clean-form (merge (forms/initial-value fields)
@@ -64,20 +66,22 @@
     (merge (when editing? ;; if editing, we want expect values to be overwritten
              clean-form)
            (::sub-db db)
-           {::tag-search ""
-            ::tags-collapsed? true
-            ::benefits-search ""
-            ::benefits-collapsed? true
-            ::editing-address? false
-            ::company-loading? false
-            ::pending-logo nil
+           {::tag-search                  ""
+            ::tags-collapsed?             true
+            ::benefits-search             ""
+            ::benefits-collapsed?         true
+            ::editing-address?            false
+            ::company-loading?            false
+            ::pending-logo                nil
             ::pending-company-description nil
-            ::logo-uploading? false
-            ::search-address ""
-            ::workable-subdomain ""
-            ::form-errors nil}
+            ::logo-uploading?             false
+            ::search-address              ""
+            ::workable-subdomain          ""
+            ::form-errors                 nil
+            ::timezones                   [{}]
+            ::region-restrictions         #{}}
            (when-let [company (get-in db [::user/sub-db ::user/company])]
-             {::company-id (:id company)
+             {::company-id      (:id company)
               ::company-package (keyword (:package company))})
            (when-not editing? ;; if not editing, we want to reset any previous values
              clean-form))))

@@ -100,11 +100,13 @@
          [:div.companies__sorting__dropdown-container
           [:span.companies__sorting__dropdown-label "Sort by:"]
           [forms/select-field
-           {:solo?     true
-            :value     (<sub [::subs/sorting-by])
-            :class     "companies__sorting__dropdown"
-            :options   (<sub [::subs/sorting-options])
-            :on-change (interop-forms/add-select-value-to-url :sort (<sub [::subs/sorting-options]))}]]]
+           {:solo?           true
+            :value           (<sub [::subs/sorting-by])
+            :class-container "companies__sorting__dropdown"
+            :class           "companies__sorting__dropdown__input"
+            :options         (<sub [::subs/sorting-options])
+            :on-change       (interop-forms/add-select-value-to-url
+                               :sort (<sub [::subs/sorting-options]))}]]]
         (doall
           (for [company companies]
             (cond

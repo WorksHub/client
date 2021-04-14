@@ -1,21 +1,21 @@
 (ns wh.company.create-job.subs
   (:require [cljs.spec.alpha :as s]
-            [clojure.set :refer [rename-keys]]
-            [clojure.set :as set]
+            [clojure.set :as set :refer [rename-keys]]
             [clojure.string :as str]
             [goog.i18n.NumberFormat :as nf]
             [goog.string :as gstring]
             [goog.string.format]
             [re-frame.core :refer [reg-sub reg-sub-raw]]
-            [wh.common.data :as data :refer [currency-symbols managers get-manager-email salary-ranges]]
+            [wh.common.data :as data :refer
+             [currency-symbols managers]]
             [wh.common.errors :as errors]
             [wh.common.specs.primitives :as p]
+            [wh.common.timezones :as timezones]
             [wh.company.create-job.db :as create-job]
             [wh.components.tag :refer [->tag tag->form-tag]]
-            [wh.db :as db]
             [wh.re-frame.subs :refer [<sub]]
-            [wh.subs :refer [with-unspecified-option error-sub-key]]
-            [wh.user.subs :as user])
+            [wh.slug :as slug]
+            [wh.subs :refer [with-unspecified-option error-sub-key]])
   (:require-macros
     [clojure.core.strint :refer [<<]]
     [wh.re-frame.subs :refer [reaction]]))
@@ -241,8 +241,8 @@
     ;; TODO: refactor, and normalize with other tag selectors [ch4750]
     (let [matching-but-not-selected
           (filter (fn [tag] (and (or (str/blank? tag-search)
-                                    (str/includes? (str/lower-case (:label tag)) tag-search))
-                                (not (contains? selected-tag-ids (:id tag))))) tags)
+                                     (str/includes? (str/lower-case (:label tag)) tag-search))
+                                 (not (contains? selected-tag-ids (:id tag))))) tags)
           selected-tags (->> tags
                              (filter
                                (fn [tag] (contains? selected-tag-ids (:id tag))))
@@ -487,5 +487,103 @@
   (fn [db _]
     (::create-job/saving-workable-account? db)))
 
+;; remote-info
+(reg-sub
+  ::all-regions
+  :<- [::sub-db]
+  (fn [_ _]
+    (->>
+      (map (fn [country]
+             {:label country
+              :value country
+              :slug  (slug/tag-label->slug country)
+              :type  "location"})
+           data/countries-and-regions)
+      (sort-by
+        :value
+        (fn [v _]
+          (#{"United Kingdom" "United States"} v))))))
+
+(def formatted-timezones
+  (map
+    (fn [[id country offset]]
+      {:label  (str id " " offset " (" country ")")
+       :id     id
+       :offset offset})
+    timezones/timezones))
+
+(reg-sub
+  ::timezones
+  (fn [_ _]
+    formatted-timezones))
+
+(reg-sub
+  ::timezone-label
+  :<- [::sub-db]
+  (fn [db [_ idx]]
+    (get-in db [::create-job/timezones idx :label] "")))
+
+(reg-sub
+  ::delta-plus
+  (fn [_ _]
+    (concat ["0"] (map #(str "+" %) (range 1 15)))))
+
+(reg-sub
+  ::delta-minus
+  (fn [_ _]
+    (concat ["0"] (map #(str "-" %) (range 1 13)))))
+
+(reg-sub
+  ::added-timezones
+  :<- [::sub-db]
+  (fn [db _]
+    (get-in db [::create-job/timezones] [])))
+
+(reg-sub
+  ::added-timezones-ids
+  :<- [::added-timezones]
+  (fn [timezones _]
+    (set (map :id timezones))))
+
+(reg-sub
+  ::empty-timezone?
+  :<- [::added-timezones]
+  (fn [timezones _]
+    (some (complement :id) timezones)))
+;;
 
 
+(reg-sub
+  ::region-restrictions
+  :<- [::sub-db]
+  (fn [db]
+    (::create-job/region-restrictions db)))
+
+(reg-sub
+  ::selected-regions
+  :<- [::region-restrictions]
+  (fn [restrictions]
+    (map #(str (slug/tag-label->slug %) ":location") restrictions)))
+
+(reg-sub
+  ::missing-timezone-slot?
+  :<- [::empty-timezone?]
+  (fn [empty-timezone?]
+    (not empty-timezone?)))
+
+;; suggestions for specific timezone input identified by idx
+(reg-sub-raw
+  ::timezone-suggestions
+  (fn [_db [_ idx]]
+    (reaction
+      (let [timezone-label  (<sub [::timezone-label idx])
+            added-timezones (<sub [::added-timezones-ids])
+            all-timezones   (<sub [::timezones])
+            includes-label? #(->>
+                               (map str/lower-case [(:label %) timezone-label])
+                               (apply str/includes?))
+            not-added?      #(not (added-timezones (:id %)))]
+        (->> all-timezones
+             (filter includes-label?)
+             (filter not-added?)
+             (take 7))))))

@@ -53,4 +53,5 @@ import './payment.sass';
 import './newsletter_subscription.sass';
 import './job_card.sass';
 import './jobsboard.sass';
+import './create_job.sass';
 import './blogs.sass';

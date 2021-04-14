@@ -1,8 +1,9 @@
 (ns wh.company.create-job.views
   (:require ["rc-slider" :as slider]
             [clojure.set :as set]
-            [re-frame.core :refer [dispatch]]
+            [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as r]
+            [wh.common.numbers :as numbers]
             [wh.common.upload :as upload]
             [wh.company.create-job.db :as create-job]
             [wh.company.create-job.events :as events]
@@ -16,6 +17,8 @@
             [wh.components.rich-text-field.loadable :refer [rich-text-field]]
             [wh.components.verticals :as vertical-views]
             [wh.db :as db]
+            [wh.interop.forms :as interop-forms]
+            [wh.styles.create-job :as styles]
             [wh.subs :refer [<sub error-sub-key]]
             [wh.util :as util]
             [wh.verticals :as verticals])
@@ -99,15 +102,17 @@
           [forms/radio-buttons (<sub [::subs/remuneration__time-period])
            {:options   (<sub [::subs/time-periods])
             :on-change [::events/edit-remuneration__time-period]}])])
-     [:div.job-edit__remuneration__additional-options
+     [:div
       (when-not competitive
-        [labelled-checkbox nil (field ::create-job/remuneration__equity
-                                      :label "Equity offered")])
-      [labelled-checkbox nil (field ::create-job/remuneration__competitive
-                                    :label "Competitive")]]]))
+        [labelled-checkbox nil (merge (field ::create-job/remuneration__equity
+                                             :label "Equity offered")
+                                      (util/smc styles/remuneration__checkbox))])
+      [labelled-checkbox nil (merge (field ::create-job/remuneration__competitive
+                                           :label "Competitive")
+                                    (util/smc styles/remuneration__checkbox))]]]))
 
 (defn skills
-  [admin?]
+  []
   [:fieldset.job-edit__skills
    [:h2 "Technologies & frameworks"]
    (let [tags (<sub [::subs/matching-tags])]
@@ -124,70 +129,152 @@
        :on-tag-click       #(dispatch [::events/toggle-tag %])
        :tag-data-test      "job-skill-tag"}])])
 
-(defn location
-  []
-  (let [form-open? (<sub [::subs/search-location-form-open?])]
+
+(defn location-details []
+  (if (<sub [::subs/editing-address?])
+    [:div
+     [:hr]
+     [text-field nil (field ::create-job/location__street
+                            :label "Street")]
+     [text-field nil (field ::create-job/location__city
+                            :label (str (when-not (<sub [::subs/remote]) "* ")  "City")
+                            :hide-icon? true
+                            :suggestions (<sub [::subs/city-suggestions])
+                            :on-select-suggestion [::events/select-city-suggestion])]
+     [text-field nil (field ::create-job/location__post-code
+                            :label "Postcode / Zipcode")]
+     [text-field nil (field ::create-job/location__state
+                            :label "State"
+                            :help "USA only"
+                            :hide-icon? true
+                            :suggestions (<sub [::subs/state-suggestions])
+                            :on-select-suggestion [::events/select-state-suggestion])]
+     [text-field nil (field ::create-job/location__country
+                            :label "* Country"
+                            :hide-icon? true
+                            :suggestions (<sub [::subs/country-suggestions])
+                            :on-select-suggestion [::events/select-country-suggestion])]
+     [:div.columns.job-edit__location__latlon
+      [:div.column
+       [text-field nil (field ::create-job/location__latitude :label "Latitude"
+                              :type :number
+                              :error false)]]
+      [:div.column
+       [text-field nil (field ::create-job/location__longitude :label "Longitude"
+                              :type :number
+                              :error false)]]]
+     [:div.job-edit__location__latlon__help
+      (verify-lat-long-and-help-links)]]
+
+    (field-container
+      {:label "Address"}
+      [:div.job-edit__location__condensed-address
+       [:div
+        (for [[idx part] (map-indexed vector (<sub [::subs/condensed-address]))]
+          ^{:key (str idx part)}
+          [:span part])]
+       [:div.job-edit__location__condensed-address__edit
+        {:on-click #(dispatch [::events/set-editing-address true])}
+        [icon "edit"]]])))
+
+
+(defn timezone-selector [idx timezone]
+  (let [suggestions              (<sub [::subs/timezone-suggestions idx])
+        on-select-suggestion     #(dispatch [::events/select-timezone-suggestion idx %])
+        on-change                #(dispatch [::events/set-timezone-label idx %])
+        select-disabled?         (not (:id timezone))]
+    [:div (util/smc styles/timezone)
+     [:div (util/smc styles/timezone__item)
+      [text-field (:label timezone)
+       {:id                   (db/key->id ::create-job/timezone)
+        :placeholder          "Type and select from list"
+        :no-error?            true
+        :suggestions          suggestions
+        :on-select-suggestion on-select-suggestion
+        :on-change            on-change}]]
+
+     [:div (util/smc styles/timezone__item)
+      (let [options (<sub [::subs/delta-minus])]
+        [forms/select-field
+         {:options     options
+          :disabled    select-disabled?
+          :value       (get-in timezone [:delta :minus] nil)
+          :on-change   #(let [value (nth options (js/parseInt (aget % "target" "value")))]
+                          (dispatch-sync [::events/set-delta-minus idx value]))
+          :hide-error? true}])]
+
+     [:div (util/smc styles/timezone__item)
+      (let [options (<sub [::subs/delta-plus])]
+        [forms/select-field
+         {:options     options
+          :disabled    select-disabled?
+          :value       (get-in timezone [:delta :plus] nil)
+          :on-change   #(let [value (nth options (js/parseInt (aget % "target" "value")))]
+                          (dispatch-sync [::events/set-delta-plus idx value]))
+          :hide-error? true}])]
+
+     [icon "close"
+      :on-click #(dispatch [::events/remove-timezone idx])
+      :class styles/timezone__close]]))
+
+(defn remote-info []
+  [:div (util/smc styles/remote-info)
+   [:div (util/smc styles/remote-info__section)
+    (let [selected (<sub [::subs/selected-regions])
+          all-tags (<sub [::subs/all-regions])]
+      [forms/tags-filter-field
+       {:id            "location-box"
+        :label         "Are there any location restrictions for candidate? Choose all that apply"
+        :solo?         true
+        :placeholder   "Type to search locations"
+        :selected      selected
+        :tags          all-tags
+        :on-tag-select (fn [_ _ country]
+                         (dispatch [::events/toggle-region country]))}])]
+
+   [:div (util/smc styles/remote-info__section)
+    [:p.label "Are there any timezone restrictions? For example, 'CET -1 to +2 hours'"]
+
+    (map-indexed
+      (fn [idx value]
+        ^{:key (or (:id value) idx)}
+        [timezone-selector idx value])
+      (<sub [::subs/added-timezones]))]
+
+   (when (<sub [::subs/missing-timezone-slot?])
+     [:button.button.button--inverted
+      {:on-click #(dispatch [::events/add-timezone])}
+      "Add timezone"])])
+
+(defn address [form-open?]
+  [:div
+   [text-field nil (field ::create-job/search-address
+                          :error false
+                          :label "* Address finder"
+                          :placeholder "Type post/zip code or street address to search"
+                          :auto-complete "off"
+                          :suggestions (<sub [::subs/location-suggestions])
+                          :on-select-suggestion [::events/select-location-suggestion]
+                          :data-test "job-location")]
+   (if form-open?
+     [location-details]
+
+     [:span "or "
+      [:a.pseudo-link {:on-click #(dispatch [::events/set-editing-address true])}
+       "Enter the address manually"]])])
+
+(defn location []
+  (let [form-open? (<sub [::subs/search-location-form-open?])
+        remote?    (<sub [::subs/remote])]
     [:fieldset.job-edit__location
      [:h2 "Location"]
-     [labelled-checkbox nil (field ::create-job/remote :label "Remote")]
-     [:div
-      [text-field nil (field ::create-job/search-address
-                             :error false
-                             :label "* Address finder"
-                             :placeholder "Type post/zip code or street address to search"
-                             :auto-complete "off"
-                             :suggestions (<sub [::subs/location-suggestions])
-                             :on-select-suggestion [::events/select-location-suggestion]
-                             :data-test "job-location")]
-      (when-not form-open?
-        [:span "or " [:a.pseudo-link {:on-click #(dispatch [::events/set-editing-address true])}
-                      "Enter the address manually"]])
-      (when form-open?
-        (if (<sub [::subs/editing-address?])
-          [:div
-           [:hr]
-           [text-field nil (field ::create-job/location__street
-                                  :label "Street")]
-           [text-field nil (field ::create-job/location__city
-                                  :label (str (when-not (<sub [::subs/remote]) "* ")  "City")
-                                  :hide-icon? true
-                                  :suggestions (<sub [::subs/city-suggestions])
-                                  :on-select-suggestion [::events/select-city-suggestion])]
-           [text-field nil (field ::create-job/location__post-code
-                                  :label "Postcode / Zipcode")]
-           [text-field nil (field ::create-job/location__state
-                                  :label "State"
-                                  :help "USA only"
-                                  :hide-icon? true
-                                  :suggestions (<sub [::subs/state-suggestions])
-                                  :on-select-suggestion [::events/select-state-suggestion])]
-           [text-field nil (field ::create-job/location__country
-                                  :label "* Country"
-                                  :hide-icon? true
-                                  :suggestions (<sub [::subs/country-suggestions])
-                                  :on-select-suggestion [::events/select-country-suggestion])]
-           [:div.columns.job-edit__location__latlon
-            [:div.column
-             [text-field nil (field ::create-job/location__latitude :label "Latitude"
-                                    :type :number
-                                    :error false)]]
-            [:div.column
-             [text-field nil (field ::create-job/location__longitude :label "Longitude"
-                                    :type :number
-                                    :error false)]]]
-           [:div.job-edit__location__latlon__help
-            (verify-lat-long-and-help-links)]]
 
-          (field-container
-            {:label "Address"}
-            [:div.job-edit__location__condensed-address
-             [:div
-              (for [[idx part] (map-indexed vector (<sub [::subs/condensed-address]))]
-                ^{:key (str idx part)}
-                [:span part])]
-             [:div.job-edit__location__condensed-address__edit
-              {:on-click #(dispatch [::events/set-editing-address true])}
-              [icon "edit"]]])))]]))
+     [labelled-checkbox nil (field ::create-job/remote :label "Remote")]
+
+     (when remote?
+       [remote-info])
+
+     [address form-open?]]))
 
 (defn description
   [admin?]
@@ -243,7 +330,7 @@
     {:on-submit #(.preventDefault %)}
     [role-details admin?]
     [remuneration]
-    [skills admin?]
+    [skills]
     [location]
     [description admin?]]])
 
@@ -330,9 +417,12 @@
 (defn settings-pod
   []
   [:div
-   [:div.wh-formx [:h2.is-hidden-desktop "Settings"]]
-   [:div.pod.job-edit__settings-pod
-    [:h1.is-hidden-mobile "Settings"]
+   [:div.wh-formx
+    [:h2 (util/smc styles/settings-card__title "is-hidden-desktop")
+     "Settings"]]
+   [:div (util/smc styles/settings-card)
+    [:h1 (util/smc styles/settings-card__title "is-hidden-mobile")
+     "Settings"]
     [:form.wh-formx.wh-formx__layout
      {:on-submit #(.preventDefault %)}
      [text-field nil (field ::create-job/manager
@@ -342,17 +432,18 @@
                             :on-select-suggestion [::events/select-manager])]]
     [:div
      [:span "This role has been:"]
-     [labelled-checkbox nil (field ::create-job/approved
-                                   :label "Approved")]]]])
+     [labelled-checkbox nil (merge (field ::create-job/approved
+                                          :label "Approved")
+                                   (util/smc styles/checkbox))]]]])
 
 (defn ats-pod
   []
   (let [heading (str (<sub [::subs/ats-name]) " Integration")]
     [:div
-     [:div
-      [:h2.is-hidden-desktop heading]]
-     [:div.pod.job-edit__settings-pod.pod__ats
-      [:h1.is-hidden-mobile heading]
+     [:div.wh-formx
+      [:h2 (util/smc styles/settings-card__title "is-hidden-desktop") heading]]
+     [:div (util/smc styles/settings-card)
+      [:h1 (util/smc styles/settings-card__title "is-hidden-mobile") heading]
       [:form.wh-formx.wh-formx__layout
        {:on-submit #(.preventDefault %)}
        (if (<sub [::subs/need-to-select-account?])

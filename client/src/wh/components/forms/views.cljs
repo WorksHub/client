@@ -81,25 +81,32 @@
   a boolean value; it will be reset to true upon first change of
   the input. This is used by text-field."
   [value {:keys [type on-change placeholder on-scroll on-enter
-                 rows dirty data-test class-textarea class-input]
-          :or {type :text
-               class-textarea "textarea"
-               class-input "input"}
-          :as options}]
+                 rows dirty data-test class-textarea class-input
+                 min max]
+          :or   {type           :text
+                 class-textarea "textarea"
+                 class-input    "input"}
+          :as   options}]
   (let [textarea? (= type :textarea)]
     [(if textarea? :textarea :input)
      (merge (when-not textarea? {:type type})
             (when data-test {:data-test data-test})
-            {:value value
+            {:value       value
              :placeholder placeholder
-             :class (if textarea? class-textarea class-input)}
+             :class       (if textarea? class-textarea class-input)}
             (when on-enter
               {:on-key-press
                (fn [e]
                  (when (= (.-key e) "Enter")
                    (on-enter)))})
+            (when (and min (= type :number))
+              {:min min})
+            (when (and max (= type :number))
+              {:max max})
             (when on-change
-              {:on-change #(let [new-value ((if (= type :number) target-numeric-value target-value) % options)]
+              {:on-change #(let [get-value (if (= type :number)
+                                             target-numeric-value target-value)
+                                 new-value (get-value % options)]
                              (when dirty
                                (reset! dirty true))
                              (if (fn? on-change)
@@ -107,7 +114,8 @@
                                (dispatch-sync (conj on-change new-value))))})
             (when on-scroll
               {:on-scroll #(dispatch on-scroll)})
-            (select-keys options [:on-focus :on-blur :auto-complete :disabled :read-only :on-key-press :step])
+            (select-keys options [:on-focus :on-blur :auto-complete :disabled
+                                  :read-only :on-key-press :step])
             (when (and rows (= type :textarea))
               {:rows rows}))]))
 
@@ -171,18 +179,22 @@
 (defn suggestions-list
   "A list of suggestions for a text-field."
   [items {:keys [on-select-suggestion class class-suggestion data-test]
-          :or {class "input__suggestions"}}]
+          :or   {class "input__suggestions"}}]
   (into [:ul (cond-> {:class class}
                      data-test (assoc :data-test (str (name data-test)  "-suggestions")))]
         (map (fn [{:keys [id label]}]
                ;; use 'onmousedown' as well as 'onclick' as in some sitations 'onclick' wont
                ;; fire because the suggestions list is removed too quickly due to !focused parent
-               [:li {:class class-suggestion
-                     :on-click #(when on-select-suggestion
-                                  (dispatch (conj on-select-suggestion id)))
-                     :on-mouse-down #(when on-select-suggestion
-                                       (dispatch (conj on-select-suggestion id)))}
-                label])
+               (let [handler (cond
+                               (fn? on-select-suggestion)     #(on-select-suggestion id)
+                               (vector? on-select-suggestion) #(dispatch (conj on-select-suggestion id))
+                               :else                          #())]
+                 [:li {:class         class-suggestion
+                       :on-click      #(when on-select-suggestion
+                                         (handler))
+                       :on-mouse-down #(when on-select-suggestion
+                                         (handler))}
+                  label]))
              items)))
 
 (defmulti error-message identity)

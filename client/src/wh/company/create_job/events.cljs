@@ -1,6 +1,7 @@
 (ns wh.company.create-job.events
   (:require [camel-snake-kebab.core :as c]
             [camel-snake-kebab.extras :as ce]
+            [clojure.set :as set]
             [clojure.string :as str]
             [re-frame.core :refer [path reg-event-db reg-event-fx]]
             [wh.common.cases :as cases]
@@ -8,8 +9,10 @@
             [wh.common.errors :as common-errors]
             [wh.common.keywords :as keywords]
             [wh.common.location :as location]
+            [wh.common.numbers :as numbers]
             [wh.common.user :as user-common]
             [wh.company.create-job.db :as create-job]
+            [wh.company.create-job.subs :as subs]
             [wh.components.tag :as tag]
             [wh.db :as db]
             [wh.graphql.company
@@ -40,20 +43,42 @@
                                    [[:greenhouse [:enabled [:jobs [:id :name]]]]
                                     [:workable [:enabled [:jobs [:id :name]]]]]]]]]]]})
 
+(defn db->remote-info [db]
+  (if (::create-job/remote db)
+    (let [timezones (->> (::create-job/timezones db)
+                         (filter :id)
+                         (map (fn [{:keys [id delta]}]
+                                {:timezone-name id
+                                 :timezone-delta
+                                 {:plus  (or (numbers/parse-int (:plus delta)) 0)
+                                  :minus (or (numbers/parse-int (:minus delta)) 0)}})))
+          countries (::create-job/region-restrictions db)]
+
+      (cond-> {}
+              (not-empty countries)
+              (merge {:region-restrictions countries})
+
+              (not-empty timezones)
+              (merge {:timezone-restrictions timezones})))
+    {}))
+
 (defn db->graphql-job
   [db]
-  (let [sub-db (::create-job/sub-db db)]
-    (as-> sub-db sub-db
-          (update sub-db ::create-job/manager get-manager-email) ;; at the top because it might be culled
-          (select-keys sub-db (create-job/relevant-fields db))
-          (util/unflatten-map sub-db)
-          (dissoc sub-db ::create-job/company)
-          (assoc sub-db :tag-ids (::create-job/tags sub-db))
-          (dissoc sub-db ::create-job/tags)
-          (update sub-db ::create-job/remuneration util/remove-nils)
-          (update sub-db ::create-job/location (fn [l] (util/dissoc-selected-keys-if-blank l (set (keys l)))))
-          (update sub-db ::create-job/verticals vec)
-          (ce/transform-keys c/->camelCaseString sub-db))))
+  (as-> (::create-job/sub-db db) sub-db
+        ;; at the top because it might be culled
+        (update sub-db ::create-job/manager get-manager-email)
+        (select-keys sub-db (create-job/relevant-fields db))
+        (util/unflatten-map sub-db)
+        (assoc sub-db :tag-ids (::create-job/tags sub-db))
+        (assoc sub-db :remote-info (db->remote-info sub-db))
+        (dissoc sub-db
+                ::create-job/company ::create-job/tags
+                ::create-job/timezones ::create-job/region-restrictions)
+        (update sub-db ::create-job/remuneration util/remove-nils)
+        (update sub-db ::create-job/location
+                (fn [l] (util/dissoc-selected-keys-if-blank l (set (keys l)))))
+        (update sub-db ::create-job/verticals vec)
+        (ce/transform-keys c/->camelCaseString sub-db)))
 
 (defn create-mutation-variables
   [db]
@@ -62,16 +87,42 @@
       {:update_job (assoc job "id" (get-in db [::db/page-params :id]))}
       {:create_job job})))
 
+(defn gql->remote-info [remote-info]
+  (->> remote-info
+       :timezone-restrictions
+       (mapv
+         #(set/rename-keys % {:timezone-name  :id
+                              :timezone-delta :delta}))
+       (mapv (fn [tz]
+               (-> tz
+                   ;; add + sign to plus value, since we use strings as options
+                   ;; in select fields
+                   (util/update-in* [:delta :plus] #(str "+" %))
+                   (util/update-in* [:delta :minus] str))))
+       (mapv
+         (fn [{:keys [id] :as tz}]
+           (merge
+             tz
+             (some (fn [tz']
+                     (when (= id (:id tz'))
+                       tz'))
+                   subs/formatted-timezones))))))
+
 (defn graphql-job->sub-db
   [job]
-  (as-> job job
-        (util/remove-nils job)
-        (cases/->kebab-case job)
-        (util/flatten-map job)
-        (keywords/namespace-map "wh.company.create-job.db" job)
-        (update job ::create-job/verticals set)
-        (update job ::create-job/manager get-manager-name)
-        (update job ::create-job/tags #(set (map :id %)))))
+  (let [job         (-> job util/remove-nils cases/->kebab-case)
+        remote-info (:remote-info job)
+        job         (dissoc job :remote-info)
+        regions     (:region-restrictions remote-info)
+        timezones   (gql->remote-info remote-info)]
+    (as-> job job
+          (util/flatten-map job)
+          (keywords/namespace-map "wh.company.create-job.db" job)
+          (assoc job ::create-job/region-restrictions regions)
+          (assoc job ::create-job/timezones timezones)
+          (update job ::create-job/verticals set)
+          (update job ::create-job/manager get-manager-name)
+          (update job ::create-job/tags #(set (map :id %))))))
 
 (defn company-by-id [db id]
   (->> db ::create-job/companies (filter #(= (:id %) id)) first))
@@ -273,20 +324,24 @@
                      :operation/name "fetch_job"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
-   :venia/queries [[:job {:id :$id}
-                    [:companyId :tagline
-                     :approved :sponsorshipOffered
-                     [:tags :fragment/tagFields]
-                     :remote :published :verticals
-                     :descriptionHtml :title :roleType
-                     :manager :atsJobId
-                     [:location
-                      [:state
-                       :city :street :countryCode :country
-                       :latitude :longitude :postCode]]
-                     [:remuneration
-                      [:competitive :equity :currency :min :timePeriod :max]]
-                     [:company [:name]]]]]})
+   :venia/queries   [[:job {:id :$id}
+                      [:companyId :tagline
+                       :approved :sponsorshipOffered
+                       [:tags :fragment/tagFields]
+                       :remote :published :verticals
+                       :descriptionHtml :title :roleType
+                       :manager :atsJobId
+                       [:remoteInfo
+                        [:regionRestrictions
+                         [:timezoneRestrictions [:timezoneName
+                                                 [:timezoneDelta [:plus :minus]]]]]]
+                       [:location
+                        [:state
+                         :city :street :countryCode :country
+                         :latitude :longitude :postCode]]
+                       [:remuneration
+                        [:competitive :equity :currency :min :timePeriod :max]]
+                       [:company [:name]]]]]})
 
 (reg-event-fx
   ::load-job
@@ -505,7 +560,7 @@
          (filter (fn [city]
                    (str/includes? (str/lower-case city) (str/lower-case new-value))))
          (mapv (fn [city] {:id    city
-                           :label city}))
+                          :label city}))
          (assoc db ::create-job/city-suggestions))))
 
 (reg-event-db
@@ -515,8 +570,8 @@
     (->> data/countries
          (filter (fn [country]
                    (str/includes? (str/lower-case country) (str/lower-case new-value))))
-         (mapv (fn [country] {:id country
-                              :label country}))
+         (mapv (fn [country] {:id    country
+                             :label country}))
          (assoc db ::create-job/country-suggestions))))
 
 (reg-event-db
@@ -773,3 +828,66 @@
     {:navigate [:payment-setup
                 :params {:step :select-package}
                 :query-params {:action "publish"}]}))
+
+(reg-event-db
+  ::set-delta-minus
+  create-job-interceptors
+  (fn [db [idx delta]]
+    (assoc-in db [::create-job/timezones idx :delta :minus]
+              (min 0 (max -12 delta)))))
+
+(reg-event-db
+  ::set-delta-plus
+  create-job-interceptors
+  (fn [db [idx delta]]
+    (assoc-in db [::create-job/timezones idx :delta :plus]
+              (min 14 (max 0 delta)))))
+
+(reg-event-db
+  ::set-timezone-label
+  create-job-interceptors
+  (fn [db [idx label]]
+    (-> db
+        (assoc-in [::create-job/timezones idx :label] label)
+        (assoc-in [::create-job/timezones idx :id] nil))))
+
+(reg-event-db
+  ::select-timezone-suggestion
+  create-job-interceptors
+  (fn [db [idx timezone-id]]
+    (let [timezone (some
+                     (fn [{:keys [id] :as tz}] (when (= id timezone-id) tz))
+                     subs/formatted-timezones)]
+      (-> db
+          (assoc-in [::create-job/timezones idx :label] (:label timezone))
+          (assoc-in [::create-job/timezones idx :id] (:id timezone))
+          (update
+            ::create-job/timezones
+            (fn [timezones]
+              (->> (if (every? :id timezones)
+                     (conj timezones {})
+                     timezones)
+                   (sort-by (fn [tz] (boolean (tz :id))) >)
+                   (vec))))))))
+
+(reg-event-db
+  ::remove-timezone
+  create-job-interceptors
+  (fn [db [idx]]
+    (update db ::create-job/timezones
+            #(if (> (count %) 1)
+               (util/drop-ith idx %)
+               [{}]))))
+
+(reg-event-db
+  ::add-timezone
+  create-job-interceptors
+  (fn [db _]
+    (update db ::create-job/timezones #(conj (or % []) {}))))
+
+(reg-event-db
+  ::toggle-region
+  create-job-interceptors
+  (fn [db [region]]
+    (update db ::create-job/region-restrictions
+            #(util/toggle (or % #{}) region))))
