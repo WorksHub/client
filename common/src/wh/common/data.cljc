@@ -6,7 +6,9 @@
 
 (def default-contact-email "hello@works-hub.com")
 
-(def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN" "YEN"])
+(def currencies ["EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD"
+                 "NOK" "SEK" "SGD" "PLN" "YEN" "BRL" "INR"])
+
 (def time-periods ["Yearly" "Daily"])
 
 (def visa-options #{"US Citizenship" "US Greencard" "US H1B" "EU Citizenship"
@@ -23,7 +25,9 @@
    "CAD" "C$"
    "HKD" "HK$"
    "PLN" "zł"
-   "YEN" "¥"})
+   "YEN" "¥"
+   "BRL" "R$"
+   "INR" "₹"})
 
 ;; TODO there are far too few cities on this list
 (def cities
@@ -453,6 +457,8 @@
    ["GBP" "Yearly"] {:min 20000, :max 300000},
    ["SGD" "Yearly"] {:min 80000, :max 300000},
    ["PLN" "Yearly"] {:min 10000, :max 900000},
+   ["INR" "Yearly"] {:min 100000, :max 15000000},
+   ["BRL" "Yearly"] {:min 10000, :max 1200000},
    ["YEN" "Yearly"] {:min 5000000 :max 40000000}})
 
 (defn get-min-salary
