@@ -84,12 +84,13 @@
                                [:approval [:status :source :time]]
                                :type
                                :hubspotProfileUrl
-                               [:likes [:id :slug :title [:company [:name]]]]]
-                              (not candidate?) (conj [:applied [:timestamp
-                                                                :state
-                                                                :note
-                                                                [:coverLetter [:link [:file [:url]]]]
-                                                                [:job [:id :slug :title [:company [:name :slug :package]]]]]]))]
+                               [:likes [(util/inline-fragment :Job
+                                                              [:id :slug :title [:company [:name]]])]]]
+                        (not candidate?) (conj [:applied [:timestamp
+                                                          :state
+                                                          :note
+                                                          [:coverLetter [:link [:file [:url]]]]
+                                                          [:job [:id :slug :title [:company [:name :slug :package]]]]]]))]
                      [:blogs {:user_id :$user_id}
                       [[:blogs [:id :title :formattedCreationDate
                                 :readingTime :upvoteCount :published]]]]

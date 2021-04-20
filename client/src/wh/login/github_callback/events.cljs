@@ -59,9 +59,10 @@
                        [:cv [:link
                              [:file [:type :name :url]]]]
                        [:salary [:min :currency]]
-                       [:likes [:id]]
+                       [:likes [:fragment/likedJobId]]
                        [:applied [:jobId]]
                        [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]]})
+
 
 (reg-event-fx
   ::github-callback

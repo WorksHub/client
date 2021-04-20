@@ -263,3 +263,8 @@
   "applies f to each value inside a hashmap"
   [m f]
   (into {} (for [[k v] m] [k (f v)])))
+
+;; from https://github.com/Vincit/venia/issues/34
+(defn inline-fragment
+  [type fields]
+  [(keyword (str "... on " (name type))) fields])

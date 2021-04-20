@@ -54,13 +54,13 @@
                      :operation/name "Me"}
    :venia/queries   [[:me
                       [:id :name :visaStatus :visaStatusOther [:approval [:status]]
-                       :type :email :new :githubId :consented [:skills [:name]]
+                       :type :email :new :githubId :consented :imageUrl [:skills [:name]]
                        [:githubInfo [:name [:skills [:name]]]]
                        [:twitterInfo [:id]]
                        [:cv [:link
                              [:file [:type :name :url]]]]
                        [:salary [:min :currency]]
-                       [:likes [:id]]
+                       [:likes [:fragment/likedJobId]]
                        [:applied [:jobId]]
                        [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]]})
 

@@ -72,5 +72,5 @@
   (let [vertical (<sub [:wh/vertical])
         sitemap  (<sub [:wh/sitemap])]
     (if (= "www" vertical)
-      (www-sitemap-page sitemap)
-      (sitemap-page vertical (sitemap vertical)))))
+      [www-sitemap-page sitemap]
+      [sitemap-page vertical (get sitemap vertical)])))

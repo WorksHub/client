@@ -35,7 +35,8 @@
                        (if (user-common/admin? db)
                          [[:companyPerks [:name]]
                           [:approval [:status :source :time]]
-                          [:likes [:id :slug :title [:company [:name]]]]
+                          [:likes [(util/inline-fragment :Job
+                                                         [:id :slug :title [:company [:name]]])]]
                           [:applied [:timestamp :state
                                      [:job [:id :slug :title [:company [:name]]]]]]
                           :jobSeekingStatus :roleTypes

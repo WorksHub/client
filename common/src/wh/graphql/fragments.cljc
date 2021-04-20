@@ -55,3 +55,6 @@
               :formattedCreationDate :readingTime
               :creator :upvoteCount :published
               [:tags :fragment/tagFields]])
+
+(deffragment likedJobId :Job
+             [:id])
