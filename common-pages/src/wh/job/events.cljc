@@ -138,12 +138,12 @@
   ::fetch-job-success
   db/default-interceptors
   (fn [{db :db} [publish-after-load? res]]
-    (let [job (translate-job (get-in res [:data :job]))
+    (let [job       (translate-job (get-in res [:data :job]))
           ;; the current job is now the preset one
-          db (update db ::job/sub-db
-                     merge job
-                     {::job/error       nil
-                      ::job/preset-slug (::job/slug job)})
+          db        (update db ::job/sub-db
+                            merge job
+                            {::job/error       nil
+                             ::job/preset-slug (::job/slug job)})
           can-edit? (company/can-edit-jobs-after-first-job-published? db)]
       (merge
         {:db         db

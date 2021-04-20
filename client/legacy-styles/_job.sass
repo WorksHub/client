@@ -112,6 +112,7 @@
     white-space: pre
 
   .job__company-header__info
+    max-width: 100%
     flex: 1
     h1:empty
       @include skeleton(250px, 30px)
@@ -415,23 +416,6 @@ $description-height: 400px
 
 .job__benefits
   list-style-type: none !important
-
-  li
-    font-size: 14px
-    line-height: 24px
-    display: flex
-
-  li::before
-    content: ''
-    background-color: $red
-    display: inline-block
-    width: 6px
-    height: 6px
-    min-width: 6px
-    min-height: 6px
-    border-radius: 50%
-    margin-right: 8px
-    align-self: center
 
 .did-you-know
   list-style-type: none !important

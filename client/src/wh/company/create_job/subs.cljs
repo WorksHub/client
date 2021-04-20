@@ -502,7 +502,7 @@
       (sort-by
         :value
         (fn [v _]
-          (#{"United Kingdom" "United States"} v))))))
+          (#{"United Kingdom" "United States" "North America" "European Union"} v))))))
 
 (def formatted-timezones
   (map

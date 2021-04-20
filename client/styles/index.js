@@ -52,6 +52,7 @@ import './modal_publish_job.sass';
 import './payment.sass';
 import './newsletter_subscription.sass';
 import './job_card.sass';
+import './job.sass';
 import './jobsboard.sass';
 import './create_job.sass';
 import './blogs.sass';

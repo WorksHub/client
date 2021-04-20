@@ -12,11 +12,16 @@
    [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
 
 (deffragment jobFields :Job
-  [:id :slug :title :companyId :tagline :descriptionHtml [:tags :fragment/tagFields] :roleType :manager
+  [:id :slug :title :companyId :tagline :descriptionHtml
+   [:tags :fragment/tagFields] :roleType :manager
    :locationDescription :remote :sponsorshipOffered :applied :published :lastModified
    [:company :fragment/companyCardFields]
    [:location [:street :city :country :countryCode :state :postCode :longitude :latitude]]
-   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]])
+   [:remuneration [:competitive :currency :timePeriod :min :max :equity]]
+   [:remoteInfo
+    [:regionRestrictions
+     [:timezoneRestrictions [:timezoneName
+                             [:timezoneDelta [:plus :minus]]]]]]])
 
 ;; Company
 

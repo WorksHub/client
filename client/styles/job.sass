@@ -1,0 +1,30 @@
+@import mixins
+
+.highlight
+  &__content
+    font-size: 14px
+    line-height: 20px
+    margin-bottom: 8px
+  &__icon
+    stroke: $grey-old
+  &__list__element
+    font-size: 14px
+    line-height: 24px
+    display: flex
+    &::before
+      content: ''
+      background-color: $primary-red
+      display: inline-block
+      width: 6px
+      height: 6px
+      min-width: 6px
+      min-height: 6px
+      border-radius: 50%
+      margin-right: 8px
+      align-self: center
+
+.remote-info
+  font-size: 14px
+  line-height: 20px
+  overflow: hidden
+  text-overflow: ellipsis

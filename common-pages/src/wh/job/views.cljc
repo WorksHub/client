@@ -22,6 +22,7 @@
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
+            [wh.styles.job :as styles]
             [wh.util :as util]))
 
 #?(:cljs
@@ -190,34 +191,78 @@
       (when-let [error (<sub [::subs/apply-on-behalf-error])]
         (error-component-outdated error {:id "error-on-behalf-of"}))]))
 
+(defn minutes->str [offset]
+  (let [diff (- offset (int offset))]
+    (int (* diff 60))))
+
+(defn plus-offset->str [offset]
+  (let [minutes (minutes->str offset)]
+    (str "+" (int offset)
+         (when (pos? minutes) (str ":" minutes)))))
+
+(defn minus-offset->str [offset]
+  (let [minutes (minutes->str offset)]
+    (str (when (zero? offset) "-") (int offset)
+         (when (pos? minutes) (str ":" minutes)))))
+
+(defn job-timezone
+  ([tz]
+   (job-timezone {} tz))
+  ([opts {tz :timezone-name gmt :gmt delta :timezone-delta}]
+   [:li opts
+    (if (some #(not= 0 %) (vals delta))
+      (str tz
+           " ("
+           (minus-offset->str (:minus delta)) "/"
+           (plus-offset->str (:plus delta)) " hours)")
+      tz)]))
+
 (defn company-header
   []
   [:section.is-flex.job__company-header
    [:div.job__company-header__logo
     (let [logo (<sub [::subs/logo])]
       (if (or logo (<sub [::subs/loaded?]))
-        (let [logo-img (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 80 :h 80 :class "logo" :fit "clamp"})]
+        (let [alt      (str (<sub [::subs/company-name]) " logo")
+              logo-img (wrap-img img logo {:alt alt :w 80 :h 80 :class "logo" :fit "clamp"})]
           (if (<sub [::subs/profile-enabled?])
             [link logo-img :company :slug (<sub [::subs/company-slug])]
             logo-img))
         [:div.logo--skeleton]))]
    [:div.job__company-header__info
-    [:h1.job__header-job-title {:data-test "job-title-jobpage"} (<sub [::subs/title])]
+    [:h1.job__header-job-title
+     {:data-test "job-title-jobpage"}
+     (<sub [::subs/title])]
     (cond
       (<sub [::subs/profile-enabled?])
-      [link [:h2.job__header-company-link (<sub [::subs/company-name])] :company :slug (<sub [::subs/company-slug])]
+      [link
+       [:h2.job__header-company-link (<sub [::subs/company-name])]
+       :company :slug (<sub [::subs/company-slug])]
 
       (<sub [:user/admin?])
-      [link [:h2.job__header-company-link (<sub [::subs/company-name])] :company-dashboard :id (<sub [::subs/company-id])]
+      [link
+       [:h2.job__header-company-link (<sub [::subs/company-name])]
+       :company-dashboard :id (<sub [::subs/company-id])]
 
       :else
       [:h2.job__header-company-link (<sub [::subs/company-name])])
-    [:h3.job__header-company-location
-     (when (<sub [::subs/remote?])
+    (let [remote? (<sub [::subs/remote?])
+          regions (<sub [::subs/region-restrictions])]
+      [:h3.job__header-company-location
        [:div
-        [icon "globe" :class "job__icon--small"]
-        [:span "Remote"] [:span " | "]])
-     (<sub [::subs/location])]]
+        (when remote?
+          [:<> [icon "globe" :class "job__icon--small"]
+           [:span "Remote"]])
+
+        (if (and remote? regions)
+          [:span " within "]
+          [:span " | "])
+
+        (if regions
+          [:span (util/smc styles/remote-info)
+           (interpose ", " (map str (take 3 regions)))]
+          (<sub [::subs/location]))]])]
+
    [:div.job__company-header__last-modified
     (<sub [::subs/last-modified])]
    (when (<sub [::subs/like-icon-shown?])
@@ -287,46 +332,70 @@
   [:section.job__job-highlights
    (let [salary (<sub [::subs/salary])]
      [highlight
-      (when salary "Salary")
-      "job-money"
-      [:div.job__salary
-       {:data-test "job-salary"}
-       salary]])
+      {:title     (when salary "Salary")
+       :icon-name "job-money"
+       :children  [:div.job__salary
+                   {:data-test "job-salary"}
+                   salary]}])
+   ;;
+   (let [regions   (<sub [::subs/region-restrictions])
+         timezones (<sub [::subs/timezone-restrictions])]
+     (when (or timezones regions)
+       [highlight
+        {:title      "Remote within"
+         :icon-name  "world"
+         :icon-class styles/highlight__icon
+         :children   [:div
+                      [:ul (util/smc styles/highlight__content)
+                       (map (fn [r] [:li (util/smc styles/highlight__list__element) r])
+                            regions)]
+
+                      [:span
+                       (util/smc "job__highlight__title")
+                       "Timezones"]
+                      [:ul (util/smc styles/highlight__content)
+                       (map
+                         (partial job-timezone
+                                  (util/smc styles/highlight__list__element))
+                         timezones)]]}]))
    ;;
    (let [role-type (<sub [::subs/role-type])]
      [highlight
-      (when role-type "Contract type")
-      "job-contract"
-      [:div.job__contract-type
-       [:div role-type]
-       (when (<sub [::subs/sponsorship-offered?]) [:div "Sponsorship offered"])
-       (when (<sub [::subs/remote?]) [:div "Remote working"])]])
+      {:title     (when role-type "Contract type")
+       :icon-name "job-contract"
+       :children  [:div.job__contract-type
+                   [:div role-type]
+                   (when (<sub [::subs/sponsorship-offered?])
+                     [:div "Sponsorship offered"])
+                   (when (<sub [::subs/remote?]) [:div "Remote working"])]}])
    ;;
 
    (let [tags (<sub [::subs/tags])]
      [highlight
-      (when tags "Technologies & frameworks")
-      "job-tech"
-      [:div.job__technology
-       [:div.row.summary__row__with-tags
-        (let [skeleton? (nil? tags)
-              tags      (if skeleton? (create-skeleton-tags) tags)]
-          (into [:ul.tags.tags--inline]
-                (map (fn [{:keys [label _key] :as tag}]
-                       [:li {:class (when skeleton? "tag--skeleton")
-                             :key   (or _key label)}
-                        label])
-                     tags)))]]])
+      {:title     (when tags "Technologies & frameworks")
+       :icon-name "job-tech"
+       :children  [:div.job__technology
+                   [:div.row.summary__row__with-tags
+                    (let [skeleton? (nil? tags)
+                          tags      (if skeleton? (create-skeleton-tags) tags)]
+                      (into [:ul.tags.tags--inline]
+                            (map (fn [{:keys [label _key] :as tag}]
+                                   [:li {:class (when skeleton? "tag--skeleton")
+                                         :key   (or _key label)}
+                                    label])
+                                 tags)))]]}])
    ;;
    (when-let [benefits (<sub [::subs/benefits])]
      [highlight
-      "Benefits & perks"
-      "job-benefits"
-      [:div.job__benefits
-       [:div.row
-        (into [:ul]
-              (for [item benefits]
-                [:li {:key item} item]))]]])])
+      {:title     "Benefits & perks"
+       :icon-name "job-benefits"
+       :children  [:div.job__benefits
+                   [:div.row
+                    (into [:ul]
+                          (for [item benefits]
+                            [:li (merge (util/smc styles/highlight__list__element)
+                                        {:key item})
+                             item]))]]}])])
 
 (defn issue
   [{:keys [id title repo level]}]

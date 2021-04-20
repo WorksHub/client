@@ -210,11 +210,10 @@
      (when (and (not published) (not small?) user-is-owner?)
        unpublished-label)]))
 
-(defn highlight
-  [title icon-name body]
+(defn highlight [{:keys [title icon-name children icon-class]}]
   [:div.job__highlight
    [:div.job__highlight_icon
-    (when title [icon icon-name])]
+    (when (and title icon-name) [icon icon-name :class icon-class])]
    [:div.job__highlight__content
     [:h2.job__highlight__title title]
-    body]])
+    children]])

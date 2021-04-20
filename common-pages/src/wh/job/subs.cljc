@@ -9,7 +9,8 @@
             [wh.graphql.jobs :as jobs]
             [wh.job.db :as job]
             [wh.routes :as routes]
-            [wh.company.listing.db :as listing])
+            [wh.company.listing.db :as listing]
+            [wh.common.timezones :as timezones])
   (#?(:cljs :require-macros :clj :require)
     [clojure.core.strint :refer [<<]]))
 
@@ -94,6 +95,29 @@
   ::description
   (fn [db _]
     (get-in db [::job/sub-db ::job/description-html])))
+
+(reg-sub
+  ::remote-info
+  (fn [db _]
+    (get-in db [::job/sub-db ::job/remote-info])))
+
+(reg-sub
+  ::region-restrictions
+  :<- [::remote-info]
+  (fn [remote-info _]
+    (seq (:region-restrictions remote-info))))
+
+(reg-sub
+  ::timezone-restrictions
+  :<- [::remote-info]
+  (fn [remote-info _]
+    (->> remote-info
+         :timezone-restrictions
+         (map (fn [{:keys [timezone-name] :as tz}]
+                (assoc tz :gmt
+                       (some (fn [[id _ _ gmt]] (when (= id timezone-name) gmt))
+                             timezones/timezones))))
+         (seq))))
 
 (reg-sub
   ::issues

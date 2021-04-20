@@ -224,7 +224,7 @@
           all-tags (<sub [::subs/all-regions])]
       [forms/tags-filter-field
        {:id            "location-box"
-        :label         "Are there any location restrictions for candidate? Choose all that apply"
+        :label         "Are there any location restrictions for candidates? Choose all that apply"
         :solo?         true
         :placeholder   "Type to search locations"
         :selected      selected
