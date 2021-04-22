@@ -5,11 +5,11 @@
             [wh.util :as util]))
 
 (def type->href
-  {:github (routes/path :login :params {:step :github})
+  {:github        (routes/path :login :params {:step :github})
    :stackoverflow (routes/path :login :params {:step :stackoverflow})
-   :twitter (routes/path :login :params {:step :twitter})
-   :email-signin (routes/path :login :params {:step :email})
-   :email-signup (routes/path :get-started)})
+   :twitter       (routes/path :login :params {:step :twitter})
+   :email-signin  (routes/path :login :params {:step :email})
+   :email-signup  (routes/path :register)})
 
 (defn github
   ([]
@@ -58,3 +58,10 @@
         :href  (routes/path :login :params {:step :email})}
     [icon "mail" :class (util/mc style/icon style/icon--email)]
     [:span text]]))
+
+(defn employers []
+  [:a {:class     (util/mc style/button style/button--auth)
+       :href      (routes/path :register-company)
+       :data-test "for-employers"}
+   [icon "company-building" :class (util/mc style/icon)]
+   [:span "For employers"]])

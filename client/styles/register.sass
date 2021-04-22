@@ -226,3 +226,28 @@
 .invalid-link-image
   margin: 0 auto
 
+.header
+  display: flex
+  align-items: baseline
+  justify-content: space-between
+  line-height: 20px
+  +tablet
+    line-height: 24px
+
+.create-profile
+  .arrow
+    fill: $primary-red
+    height: 10px
+    margin-left: -8px
+  &:hover
+    color: $grey500
+    .arrow
+      fill: $grey500
+
+.post-job
+  .arrow
+    height: 10px
+    margin-left: 2px
+  &:hover
+    .arrow
+      fill: $primary-red

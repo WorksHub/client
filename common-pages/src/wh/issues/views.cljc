@@ -134,7 +134,7 @@
         [link [:button.button "View Jobs At This Company"] :jobsboard :query-params {:search company-name}]]
        [:div.issues__hiring-pod__sign-up
         [:p "Sign up to Workshub to view all their available positions"]
-        [link [:button.button "Get Started"] :get-started]])]))
+        [link [:button.button "Get Started"] :register]])]))
 
 (defn company-pod [class]
   (let [company (<sub [::subs/company])]
@@ -159,7 +159,7 @@
      [:h1 {:data-test "issues-header"} "Use Open Source to hire or get hired"]
      [:p data/www-hero-copy]
      [:div.issues__header__buttons
-      [link [:button.button "Get Started"] :get-started :query-params {:redirect "issues"}]
+      [link [:button.button "Get Started"] :register :query-params {:redirect "issues"}]
       [link [:button.button.button--inverted.find-out-more "Find out more"] :how-it-works]]]]])
 
 (defn sorting-component []

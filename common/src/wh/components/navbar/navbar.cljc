@@ -84,9 +84,15 @@
 
 (defn button-signup []
   [:a {:class     (util/mc styles/button styles/button--signup)
-       :href      (routes/path :get-started)
+       :href      (routes/path :register)
        :data-test "register"}
    "Sign Up"])
+
+(defn button-employers []
+  [:a {:class     (util/mc styles/button styles/button--signup)
+       :href      (routes/path :register-company)
+       :data-test "for-employers"}
+   "For employers"])
 
 (defn button-signin []
   [:a {:class (util/mc styles/button styles/button--signin)
@@ -168,7 +174,8 @@
    [:div (util/smc styles/small-menu__search-wrapper)
     [search :small-menu]]])
 
-(defn navbar-right [{:keys [logged-in? content? candidate? company? admin? query-params]}]
+(defn navbar-right [{:keys [logged-in? content? candidate? company?
+                            admin? register? query-params]}]
   (cond
     logged-in?
     [:div (util/smc styles/navbar__right)
@@ -190,12 +197,14 @@
 
       [mobile-toggle-navigation-button]]]
 
-    content?
+    (or content? register?)
     [:div (util/smc styles/navbar__right)
-     [search :navbar]
+     (when-not register? [search :navbar])
+
      [:div (util/smc styles/navbar__buttons)
       [button-signup]
       [button-signin]
+      [button-employers]
       [mobile-toggle-navigation-button]]]
 
     :else nil))
@@ -221,17 +230,17 @@
 
 
 (defn navbar [{:keys [vertical env content? page
-                      candidate? company? admin?]
+                      candidate? company? admin? register?]
                :as   opts}]
-  [:nav {:class     styles/navbar__wrapper
-         :data-test "navbar"
+  [:nav {:class      styles/navbar__wrapper
+         :data-test  "navbar"
          :id         "wh-navbar"
          :role       "navigation"
          :aria-label "main navigation"}
    [:div (util/smc styles/navbar)
     [logo vertical env]
 
-    (when content?
+    (when (and (not register?) content?)
       (cond
         company?
         [company/company-menu opts]
@@ -253,7 +262,8 @@
   (let [candidate? (user-common/candidate-type? user-type)
         company?   (user-common/company-type? user-type)
         admin?     (user-common/admin-type? user-type)
-        content?   (not (contains? routes/no-nav-link-pages page))]
+        content?   (not (contains? routes/no-content page))
+        register?  (contains? routes/register-link-pages page)]
     [navbar {:vertical     vertical
              :page         page
              :content?     content?
@@ -262,4 +272,5 @@
              :company?     company?
              :admin?       admin?
              :logged-in?   logged-in?
-             :query-params query-params}]))
+             :query-params query-params
+             :register?    register?}]))

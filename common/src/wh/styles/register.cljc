@@ -30,3 +30,7 @@
 (def option__subtitle "register__option__subtitle--3zs4g")
 (def option__icon "register__option__icon--oK7np")
 (def invalid-link-image "register__invalid-link-image--6jhVN")
+(def header "register__header--3o1A9")
+(def create-profile "register__create-profile--25N3j")
+(def arrow "register__arrow--3RsKs")
+(def post-job "register__post-job--1V_T0")

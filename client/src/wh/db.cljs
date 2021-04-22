@@ -39,7 +39,6 @@
                 :employers
                 :feed
                 :feed-preview
-                :get-started
                 :github-callback
                 :stackoverflow-callback
                 :twitter-callback

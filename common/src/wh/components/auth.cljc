@@ -1,14 +1,19 @@
 (ns wh.components.auth
   (:require [wh.components.icons :refer [icon]]
             [wh.components.signin-buttons :as signin-button]
+            [wh.routes :as routes]
             [wh.styles.register :as styles]
             [wh.util :as util]))
 
 (defn title [text]
   [:div (util/smc styles/title) text])
 
-(defn link [{:keys [text href]}]
-  [:a {:class styles/link :href href} text])
+(defn header [& children]
+  [:div (util/smc styles/header)
+   children])
+
+(defn link [{:keys [text href class]}]
+  [:a {:class (util/mc styles/link [class class]) :href href} text])
 
 (defn paragraph [& children]
   (into [:p (util/smc styles/paragraph)] children))
@@ -18,6 +23,15 @@
 
 (defn separator []
   [:hr (util/smc styles/separator)])
+
+(defn button [{:keys [submitting? text on-click data-test]
+               :or   {text "Continue"}}]
+  [:button {:class     styles/button
+            :on-click  on-click
+            :data-test data-test
+            :disabled  submitting?}
+   (cond-> text
+           submitting? (str "..."))])
 
 (defn social-buttons []
   (let [stackoverflow-button-content
@@ -32,7 +46,8 @@
                              :data-test "auth-twitter"}]
      [signin-button/stack-overflow {:text      stackoverflow-button-content
                                     :type      :auth
-                                    :data-test "auth-stackoverflow"}]]))
+                                    :data-test "auth-stackoverflow"}]
+     [signin-button/employers]]))
 
 (defn page [& children]
   (into [:div {:class styles/container}] children))
@@ -63,12 +78,3 @@
    label
    [:input (merge opts {:class (util/mc styles/input [error styles/input--error])})]
    [error-message error]])
-
-(defn button [{:keys [submitting? text on-click data-test]
-               :or   {text "Continue"}}]
-  [:button {:class     styles/button
-            :on-click  on-click
-            :data-test data-test
-            :disabled  submitting?}
-   (cond-> text
-           submitting? (str "..."))])

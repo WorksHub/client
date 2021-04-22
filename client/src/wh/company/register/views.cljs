@@ -5,8 +5,12 @@
             [wh.company.register.subs :as subs]
             [wh.components.common :refer [companies-section]]
             [wh.components.forms.views :as f]
+            [wh.components.icons :refer [icon]]
             [wh.db :as db]
-            [wh.subs :refer [<sub error-sub-key]]))
+            [wh.routes :as routes]
+            [wh.styles.register :as styles]
+            [wh.subs :refer [<sub error-sub-key]]
+            [wh.util :as util]))
 
 (defn register-button []
   (let [loading? (<sub [::subs/loading?])]
@@ -15,8 +19,7 @@
       :id        "company-signup__content--company-details-next"
       :data-test "signup-company"
       :on-click  #(when-not loading? (dispatch [::events/register]))}
-     (when-not loading? "Register")
-     [:img {:src "/arrow-right.svg"}]]))
+     (when-not loading? "Register")]))
 
 (defn form-row [{:keys [label key input spec suggestions]}
                 {:keys [force-dirty? disabled?]}]
@@ -88,7 +91,11 @@
      [:div.main
       [:div.company-signup
        [:div.company-signup__steps
-        [:span.company-signup__steps--current "Company Details"]]
+        [:span.company-signup__steps--current "Sign Up"]
+        [:a {:href  (routes/path :register)
+             :class (util/mc "a--underlined" styles/create-profile)}
+         [:span "Create personal profile"]
+         [icon "arrow-right" :class styles/arrow]]]
        [:div.company-signup__content-container
         [:div.columns
          [:div.column.company-signup__content.is-8

@@ -24,8 +24,9 @@
                          :jobsboard
                          :contribute-edit})
 
-(def no-footer-pages #{:register :register-company :payment-setup :get-started :login :invalid-magic-link})
-(def no-nav-link-pages #{:register :register-company :payment-setup :get-started})
+(def no-footer-pages #{:register :register-company :payment-setup :login :invalid-magic-link})
+(def no-content #{:payment-setup :register :register-company})
+(def register-link-pages #{:register :register-company})
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation
@@ -129,7 +130,6 @@
                         "/github"        (with-params :login :step :github)
                         "/stackoverflow" (with-params :login :step :stackoverflow)
                         "/twitter"       (with-params :login :step :twitter)}]
-              ["get-started" :get-started]
               ["github-callback" :github-callback]
               ["stackoverflow-callback" :stackoverflow-callback]
               ["twitter-callback" :twitter-callback]

@@ -112,7 +112,7 @@
 
 (defn explanation
   ([selected-site github?]
-   [explanation selected-site github? :get-started])
+   [explanation selected-site github? :register])
 
   ([selected-site github? get-started-route]
    [:div
@@ -157,7 +157,7 @@
 
 (defn benefits
   ([selected-site github?]
-   [benefits selected-site github? :get-started])
+   [benefits selected-site github? :register])
   ([selected-site github? get-started-route]
    [:div.how-it-works__benefits.how-it-works__benefits--company
     [:div.how-it-works__benefits__inner
@@ -184,7 +184,7 @@
 
 (defn stats
   ([selected-site github?]
-   [stats selected-site github? :get-started])
+   [stats selected-site github? :register])
   ([selected-site github? get-started-route]
    (let [{:keys [title subtitle info blue grey orange]} (get data/how-it-works-stats selected-site)]
      [:div
@@ -213,7 +213,7 @@
 
 (defn faq
   ([selected-site github?]
-   [faq selected-site github? :get-started])
+   [faq selected-site github? :register])
   ([selected-site github? get-started-route]
    [:div.how-it-works__faq.how-it-works__faq--company
     [:div.how-it-works__faq__inner

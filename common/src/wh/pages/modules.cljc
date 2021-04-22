@@ -30,7 +30,6 @@
    :edit-job                   :company
    :feed                       :landing-page
    :feed-preview               :admin
-   :get-started                :login
    :github-callback            :login
    :stackoverflow-callback     :login
    :twitter-callback           :login

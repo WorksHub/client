@@ -195,7 +195,7 @@
 
 (defn testimonials
   ([]
-   [testimonials :get-started])
+   [testimonials :register])
 
   ([get-started-route]
    [:div.homepage__testimonials
@@ -234,7 +234,7 @@
    (homepage nil))
   ([{:keys [template]}]
    (let [logged-in?        (<sub [:user/logged-in?])
-         get-started-route (if logged-in? :register-company :get-started)
+         get-started-route (if logged-in? :register-company :register)
          hiring-target     (data/find-hiring-target template)]
      [:div.homepage
       [:div.homepage__top-content

@@ -52,7 +52,7 @@
   [auth/paragraph
    "Don't have an account?"
    [auth/link {:text " Sign Up"
-               :href (routes/path :get-started)}]])
+               :href (routes/path :register)}]])
 
 (defn page []
   [auth/page
