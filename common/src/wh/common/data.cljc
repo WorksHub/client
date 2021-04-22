@@ -412,7 +412,12 @@
 
 (def business-regions
   ["European Union"
-   "North America"])
+   "North America"
+   "South America"
+   "Africa"
+   "Europe"
+   "Asia"
+   "Middle East"])
 
 (def countries-and-regions
   (concat countries business-regions))

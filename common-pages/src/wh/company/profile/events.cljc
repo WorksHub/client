@@ -287,7 +287,7 @@
                          :variables  {:update_company
                                       (->> (cases/->camel-case changes)
                                            (merge {:id (:id company)})
-                                           (util/remove-nils))}
+                                           (util/remove-nil-blank-or-empty))}
                          :on-success [::update-company-success]
                          :on-failure [::update-company-failure changes company]}
       :scroll-into-view scroll-to})))
