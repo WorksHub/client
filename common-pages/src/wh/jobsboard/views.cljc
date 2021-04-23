@@ -107,19 +107,17 @@
 
 (defn navigation [view-type query-params logged-in?]
   [components/navigation
-   (merge
-     {:view-type           view-type
-      :on-list-type-change #?(:clj (fn [type]
-                                     {:href (routes/path
-                                              :jobsboard
-                                              :query-params (assoc query-params "view-type" (name type)))})
-                              :cljs (fn [type]
-                                      {:on-click #(dispatch [:wh.events/nav--set-query-param
-                                                             jobsboard/view-type-param (name type)])}))}
-     (when-not logged-in?
-       {:on-button-click (fn [type]
-                           (interop/on-click-fn
-                             (interop/show-auth-popup type [:jobsboard])))}))])
+   {:view-type           view-type
+    :logged-in?          logged-in?
+    :on-list-type-change #?(:clj  (fn [type]
+                                    {:href (routes/path
+                                             :jobsboard
+                                             :query-params (assoc query-params "view-type" (name type)))})
+                            :cljs (fn [type]
+                                    {:on-click #(dispatch [:wh.events/nav--set-query-param
+                                                           jobsboard/view-type-param (name type)])}))}])
+
+
 
 (defn jobsboard-page []
   (let [logged-in?             (<sub [:user/logged-in?])

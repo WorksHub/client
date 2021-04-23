@@ -5,6 +5,7 @@
     [wh.blogs.learn.db :as learn-db]
     [wh.blogs.learn.subs :as subs]
     [wh.blogs.learn.components :as learn-components]
+    [wh.components.buttons-page-navigation :as buttons-page-navigation]
     [wh.components.cards :refer [blog-row]]
     [wh.components.carousel :refer [carousel]]
     [wh.components.icons :as icons]
@@ -25,28 +26,18 @@
 
 (defn learn-header
   []
-  (let [logged-in? (<sub [:user/logged-in?])]
-    [:div
-     [:h1 (<sub [::subs/header])]
-     [:div.spread-or-stack
-      [:h3 (<sub [::subs/sub-header])]
-      [:div.has-bottom-margin
-       (when (<sub [::subs/show-contribute?])
-         [:button#learn_contribute.button.learn--contribute-button
-          #?(:clj (when-not logged-in?
-                    (interop/on-click-fn
-                      (interop/show-auth-popup :contribute [:contribute])))
-             :cljs {:on-click #(dispatch (if logged-in?
-                                           [:wh.events/nav :contribute]
-                                           [:wh.events/contribute]))}) "Write Article"])]]]))
+  [:div
+   [:h1 (<sub [::subs/header])]
+   [:div.spread-or-stack
+    [:h3 (<sub [::subs/sub-header])]]])
 
 (def carousel-size 6)
 
 (defn recommended-issues-mobile []
   (let [issues (take carousel-size (<sub [::subs/recommended-issues]))
-        steps (for [issue issues]
-                ^{:key (:id issue)}
-                [issue/issue-card issue {:small? true}])]
+        steps  (for [issue issues]
+                 ^{:key (:id issue)}
+                 [issue/issue-card issue {:small? true}])]
     (when-not (= (count issues) 0)
       [:div.recommendation.recommendation--mobile.recommendation--issues.is-hidden-desktop
        [:h2.recommendation__title "Recommended Issues"]
@@ -112,23 +103,31 @@
 (defn blog-list-comp [ctx blogs]
   [:div {:class styles/blog-list}
    (cond
+     (= (count blogs) 0)
+     [:div {:class styles/not-found} "We found no blogs matching your criteria \uD83D\uDE22"]
+     ;;
      (:loading? ctx)
      (for [i (range 10)]
        ^{:key i}
        [learn-components/blog-comp ctx nil])
+     ;;
      :else
      (for [blog blogs]
        ^{:key (:id blog)}
        [learn-components/blog-comp ctx blog]))])
 
 (defn page []
-  (let [blogs    (<sub [::subs/all-blogs])
-        tag      (<sub [:wh/page-param :tag])
-        tags     (<sub [::subs/tagbox-tags])
-        loading? (<sub [::subs/all-blogs-loading?])]
+  (let [blogs      (<sub [::subs/all-blogs])
+        tag        (<sub [:wh/page-param :tag])
+        tags       (<sub [::subs/tagbox-tags])
+        loading?   (<sub [::subs/all-blogs-loading?])
+        logged-in? (<sub [:user/logged-in?])]
     [:div {:class     styles/page
            :data-test "page"}
-     [learn-header]
+     (when-not logged-in?
+       [learn-header])
+     [:div {:class styles/navigation-buttons-wrapper}
+      [buttons-page-navigation/buttons-articles {:logged-in? logged-in?}]]
      [:div {:class styles/page-columns}
       ;; remove unnecessary space from pagination
       [:div {:class styles/main-column}

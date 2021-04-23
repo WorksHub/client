@@ -3,6 +3,7 @@
             #?(:cljs [reagent.core :as r])
             #?(:cljs [wh.jobs.jobsboard.subs :as subs]
                :clj [wh.jobsboard.subs :as subs])
+            [wh.components.buttons-page-navigation :as buttons-page-navigation]
             [wh.components.forms :as forms]
             [wh.components.icons :refer [icon]]
             [wh.components.job-new :as job]
@@ -320,41 +321,9 @@
                     styles/icon
                     [selected styles/icon--selected])]]))]))
 
-
-(defn- button [{:keys [text on-click ic-name class]}]
-  [:a (merge (util/smc styles/button class)
-             on-click)
-   [icon ic-name :class styles/button__icon]
-   [:span text]])
-
-(defn- buttons [on-click]
-  [:<>
-   (map (fn [opts]
-          ^{:key (:ic-name opts)}
-          [button opts])
-        [{:text     "All jobs"
-          :class    styles/button--active
-          :ic-name  "board-rectangles"}
-         {:text     "Recommended jobs"
-          :on-click (if on-click
-                      (on-click :jobsboard-recommended)
-                      {:href (routes/path :recommended)})
-          :ic-name  "robot-face"}
-         {:text     "Saved jobs"
-          :on-click (if on-click
-                      (on-click :jobsboard-save)
-                      {:href (routes/path :liked)})
-          :ic-name  "save"}
-         {:text     "Applied to"
-          :on-click (if on-click
-                      (on-click :jobsboard-applied)
-                      {:href (routes/path :applied)})
-          :ic-name  "document-filled"}])])
-
-
-(defn navigation [{:keys [view-type on-button-click on-list-type-change]}]
+(defn navigation [{:keys [view-type logged-in? on-list-type-change]}]
   [:div (util/smc styles/header)
-   [buttons on-button-click]
+   [buttons-page-navigation/buttons-jobsboard {:logged-in? logged-in?}]
    [view-types view-type on-list-type-change]])
 
 (def jobs-container-class

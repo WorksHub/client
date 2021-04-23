@@ -27,13 +27,6 @@
     (learn/search-term db)))
 
 (reg-sub
-  ::show-contribute?
-  :<- [:wh/vertical]
-  :<- [:user/admin?]
-  (fn [[vertical admin?] _]
-    (or admin? (not= "www" vertical))))
-
-(reg-sub
   ::all-blogs
   (fn [db _]
     (let [params      (learn/params db)

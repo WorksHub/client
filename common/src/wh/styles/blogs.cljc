@@ -21,3 +21,5 @@
 (def main-column "blogs__main-column--2vFqI")
 (def blog-list "blogs__blog-list--cJRM7")
 (def tag-selector "blogs__tag-selector--1mvYs")
+(def navigation-buttons-wrapper "blogs__navigation-buttons-wrapper--3jgF2")
+(def not-found "blogs__not-found--3yWQK")

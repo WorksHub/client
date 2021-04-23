@@ -1,51 +1,15 @@
 @import mixins
+@import colours
 
 .header
-  background: transparent
-  grid-column: span 2
   display: flex
-  flex-direction: row
-  margin: 8px 0 24px 0
-  margin-left: -8px
-  flex-wrap: wrap
+  margin-bottom: 24px
   +mobile
-    margin-top: 0
+    margin-bottom: 16px
 
 .jobs-section
   &__title
     margin-bottom: 2px
-
-.button
-  height: 40px
-  border-radius: 4px
-  font-weight: 600
-  font-size: 14px
-  line-height: 19px
-  padding: 10px 24px 10px 16px
-  display: flex
-  background: $white
-  color: $grey500
-  white-space: nowrap
-  margin: 0 8px
-  margin-top: 16px
-  +mobile
-    margin: 4px
-    height: 32px
-    border-radius: 16px
-    font-size: 13px
-    line-height: 19px
-    padding: 6px 16px 8px 16px
-  &:hover,
-  &--active
-    background: $grey500
-    color: $white
-    .button__icon
-      fill: $white
-  &__icon
-    fill: $grey500
-    margin-right: 16px
-    +mobile
-      display: none
 
 .view-types
   display: flex
@@ -54,7 +18,6 @@
   border-radius: 4px
   padding: 10px 18px
   margin-left: auto
-  margin-top: 16px
   +mobile
     display: none
   &__item
@@ -189,7 +152,6 @@
   padding: 0
   color: $text-black
   box-shadow: none
-  padding: 0
   border-radius: 0
   &::placeholder
     color: $grey300

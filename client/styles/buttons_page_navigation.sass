@@ -1,0 +1,41 @@
+@import mixins
+@import colours
+
+.buttons
+  display: flex
+  flex-wrap: wrap
+  gap: 8px
+  +tablet
+    gap: 16px
+
+.button
+  height: 40px
+  border-radius: 4px
+  font-weight: 600
+  font-size: 14px
+  line-height: 19px
+  padding: 10px 24px 10px 16px
+  display: flex
+  background: $white
+  color: $grey500
+  white-space: nowrap
+  +mobile
+    height: 32px
+    border-radius: 16px
+    font-size: 13px
+    line-height: 19px
+    padding: 6px 16px 8px 16px
+
+  &:hover,
+  &--active
+    background: $grey500
+    color: $white
+
+    .button__icon
+      fill: $white
+
+  &__icon
+    fill: $grey500
+    margin-right: 12px
+    +mobile
+      display: none
