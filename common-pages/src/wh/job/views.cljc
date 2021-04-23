@@ -246,22 +246,23 @@
 
       :else
       [:h2.job__header-company-link (<sub [::subs/company-name])])
-    (let [remote? (<sub [::subs/remote?])
-          regions (<sub [::subs/region-restrictions])]
+    (let [remote?   (<sub [::subs/remote?])
+          regions   (<sub [::subs/region-restrictions])
+          timezones (<sub [::subs/timezone-restrictions])]
       [:h3.job__header-company-location
-       [:div
-        (when remote?
-          [:<> [icon "globe" :class "job__icon--small"]
-           [:span "Remote"]])
+       (if remote?
+         [:div
+          [icon "globe" :class "job__icon--small"]
+          (cond
+            regions   [:span (util/smc styles/remote-info)
+                       "Remote within " (interpose ", " (map str (take 3 regions)))]
+            timezones [:span (util/smc styles/remote-info)
+                       "Remote within "
+                       [:ul (util/smc styles/timezones-list)
+                        (interpose ", " (map job-timezone (take 3 timezones)))]]
+            :else     "Remote | Worldwide")]
 
-        (if (and remote? regions)
-          [:span " within "]
-          [:span " | "])
-
-        (if regions
-          [:span (util/smc styles/remote-info)
-           (interpose ", " (map str (take 3 regions)))]
-          (<sub [::subs/location]))]])]
+         [:div (<sub [::subs/location])])])]
 
    [:div.job__company-header__last-modified
     (<sub [::subs/last-modified])]

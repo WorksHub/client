@@ -3,3 +3,4 @@
 (def highlight__icon "job__highlight__icon--1zZbQ")
 (def highlight__list__element "job__highlight__list__element--_psPk")
 (def remote-info "job__remote-info--2reJG")
+(def timezones-list "job__timezones-list--1sJJ1")
