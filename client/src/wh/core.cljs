@@ -35,4 +35,4 @@
 (re-frame/dispatch-sync [:init])
 
 (loader/set-loaded! :wh)
-(js/console.log "ok")
+(js/console.log "js app loaded")

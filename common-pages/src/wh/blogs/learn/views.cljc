@@ -103,13 +103,13 @@
 (defn blog-list-comp [ctx blogs]
   [:div {:class styles/blog-list}
    (cond
-     (= (count blogs) 0)
-     [:div {:class styles/not-found} "We found no blogs matching your criteria \uD83D\uDE22"]
-     ;;
      (:loading? ctx)
      (for [i (range 10)]
        ^{:key i}
        [learn-components/blog-comp ctx nil])
+     ;;
+     (= (count blogs) 0)
+     [:div {:class styles/not-found} "We found no blogs matching your criteria \uD83D\uDE22"]
      ;;
      :else
      (for [blog blogs]

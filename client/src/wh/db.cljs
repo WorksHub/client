@@ -54,6 +54,7 @@
                 :job
                 :jobsboard
                 :learn
+                :liked-blogs
                 :learn-by-tag
                 :liked
                 :login

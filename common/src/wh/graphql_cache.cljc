@@ -93,9 +93,9 @@
   db/default-interceptors
   (fn [db [query-id variables method data]]
     (case method
-      :merge     (-> db
-                     (update-in [::cache [query-id variables] :result] #(merge-with merge % (cases/->kebab-case data)))
-                     (assoc-in  [::cache [query-id variables] :state] :success))
+      :merge (-> db
+                 (update-in [::cache [query-id variables] :result] #(merge-with merge % (cases/->kebab-case data)))
+                 (assoc-in [::cache [query-id variables] :state] :success))
       :overwrite (-> db
                      (assoc-in [::cache [query-id variables] :result] (cases/->kebab-case data))
                      (assoc-in [::cache [query-id variables] :state] :success)))))

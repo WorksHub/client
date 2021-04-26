@@ -70,8 +70,8 @@
                       :variable/type :String!}
                      {:variable/name "add"
                       :variable/type :Boolean!}]
-   :venia/queries [[:mark_job {:job_id :$id, :add :$add, :job_mark_action :like}
-                    [:marked]]]})
+   :venia/queries   [[:mark_entity {:id :$id, :add :$add, :action :like, :entity_type :job}
+                      [:marked]]]})
 
 (reg-event-fx
   ::perform-job-like-success
@@ -110,7 +110,7 @@
                      :operation/name "BlacklistJob"}
    :venia/variables [{:variable/name "id"
                       :variable/type :String!}]
-   :venia/queries   [[:mark_job {:job_id :$id, :add true, :job_mark_action :blacklist}
+   :venia/queries   [[:mark_entity {:id :$id, :add true, :action :blacklist, :entity_type :job}
                       [:marked]]]})
 
 ;; TODO: move it away

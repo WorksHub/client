@@ -9,6 +9,8 @@
 (def blog__body "blogs__blog__body--Zodhx")
 (def blog__meta "blogs__blog__meta--187An")
 (def blog__meta--skeleton "blogs__blog__meta--skeleton--1_3EU")
+(def blog__bottom "blogs__blog__bottom--3_fVl")
+(def blog__bottom--hidden "blogs__blog__bottom--hidden--2DA3W")
 (def upvotes "blogs__upvotes--2Jmh7")
 (def upvotes__icon-wrapper "blogs__upvotes__icon-wrapper--37mEo")
 (def upvotes__icon "blogs__upvotes__icon--ts89p")

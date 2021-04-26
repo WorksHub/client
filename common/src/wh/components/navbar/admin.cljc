@@ -79,7 +79,11 @@
    {:path       (routes/path :contribute)
     :icon-name  "plus-circle"
     :icon-class styles/dropdown__link__icon-plus
-    :text       "Write an article"}])
+    :text       "Write an article"}
+   {:path       (routes/path :liked-blogs)
+    :icon-name  "bookmark"
+    :icon-class styles/dropdown__link__icon-plus
+    :text       "Saved blogs"}])
 
 (def candidates-admin-submenu-list
   [{:path       (routes/path :candidates)

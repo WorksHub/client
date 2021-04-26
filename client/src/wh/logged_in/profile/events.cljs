@@ -84,8 +84,11 @@
                                [:approval [:status :source :time]]
                                :type
                                :hubspotProfileUrl
-                               [:likes [(util/inline-fragment :Job
-                                                              [:id :slug :title [:company [:name]]])]]]
+                               [:likes [:__typename
+                                        (util/inline-fragment :Job
+                                                              [:id :slug :title [:company [:name]]])
+                                        (util/inline-fragment :Blog
+                                                              [:id])]]]
                         (not candidate?) (conj [:applied [:timestamp
                                                           :state
                                                           :note

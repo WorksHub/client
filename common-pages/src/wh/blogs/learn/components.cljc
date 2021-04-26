@@ -1,8 +1,11 @@
 (ns wh.blogs.learn.components
-  (:require [wh.components.common :as components-common]
+  (:require [re-frame.core :refer [dispatch]]
+            [wh.components.common :as components-common]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.styles.blogs :as styles]
             [wh.components.icons :as icons]
             [wh.components.tag :as tag]
+            [wh.like-blog-mutation :as like-blog-mutation]
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.util :as util]))
@@ -73,6 +76,21 @@
           (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))
      {:class styles/blog__tag}]))
 
+(defn like-comp
+  [{:keys [test?] :as ctx}
+   {:keys [id] :as blog}]
+  (let [liked-blogs (<sub [::like-blog-mutation/liked-blogs-by-user])
+        liked?      (contains? liked-blogs id)]
+    (let [executing? (<sub [::like-blog-mutation/executing? blog])]
+      [:div (util/smc styles/blog__bottom [(not test?) styles/blog__bottom--hidden])
+       [:button
+        {:on-click (if liked? #(dispatch [::like-blog-mutation/unlike blog])
+                              #(dispatch [::like-blog-mutation/like blog]))}
+        (cond
+          executing? "Wait..."
+          liked? "Unsave"
+          :else "Save")]])))
+
 (defn blog-comp [ctx blog]
   [:div {:class     styles/blog
          :data-test "blog-info"}
@@ -80,7 +98,8 @@
    [:div (util/smc styles/blog__body)
     [title-comp ctx blog]
     [meta-comp ctx blog]
-    [tags-comp ctx blog]]])
+    [tags-comp ctx blog]
+    [like-comp ctx blog]]])
 
 ;;
 

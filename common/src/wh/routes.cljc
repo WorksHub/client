@@ -102,9 +102,10 @@
               ["search" :search]
 
               ;; Mixed routes
-              ["learn/" {""            :learn ;;Public SSR
+              ["learn/" {""            :learn               ;;Public SSR
                          "create"      :contribute
-                         [:id]         :blog  ;;Public yet to be SSR CH2655
+                         "saved"       :liked-blogs
+                         [:id]         :blog                ;;Public SSR
                          [:id "/edit"] :contribute-edit}]
               ["companies/" {""                    :companies        ;;Public SSR
                              "new"                 :create-company

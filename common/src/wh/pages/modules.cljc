@@ -46,6 +46,7 @@
    :jobsboard                  :jobs
    :learn                      :blogs
    :learn-by-tag               :blogs
+   :liked-blogs                :blogs
    :login                      :login
    :manage-issues              :issues
    :manage-repository-issues   :issues
