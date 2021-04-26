@@ -351,14 +351,16 @@
                        (map (fn [r] [:li (util/smc styles/highlight__list__element) r])
                             regions)]
 
-                      [:span
-                       (util/smc "job__highlight__title")
-                       "Timezones"]
-                      [:ul (util/smc styles/highlight__content)
-                       (map
-                         (partial job-timezone
-                                  (util/smc styles/highlight__list__element))
-                         timezones)]]}]))
+                      (when timezones
+                        [:<>
+                         [:span
+                          (util/smc styles/highlight__subtitle)
+                          "Timezones"]
+                         [:ul (util/smc styles/highlight__content)
+                          (map
+                            (partial job-timezone
+                                     (util/smc styles/highlight__list__element))
+                            timezones)]])]}]))
    ;;
    (let [role-type (<sub [::subs/role-type])]
      [highlight
