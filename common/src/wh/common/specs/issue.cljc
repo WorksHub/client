@@ -9,6 +9,7 @@
     #?(:clj [wh.spec.company])
     #?(:clj [wh.spec.user :as user])
     #?(:clj [wh.url :as url])
+    [wh.common.data :as data]
     [wh.common.specs.date]
     [wh.common.specs.primitives]
     [wh.common.specs.repo]
@@ -62,8 +63,10 @@
 (s/def :wh.issue/repo :wh/repo)
 
 (s/def :wh.issue.compensation/amount nat-int?)
-(s/def :wh.issue.compensation/currency     #{:EUR  :GBP  :USD  :BTC  :AUD  :CAD  :CHF  :KHD  :NOK  :SEK  :SGD  :PLN  :YEN})
-(s/def :wh.issue.raw.compensation/currency #{"EUR" "GBP" "USD" "BTC" "AUD" "CAD" "CHF" "KHD" "NOK" "SEK" "SGD" "PLN" "YEN"})
+(def currencies (set (map keyword data/currencies)))
+(def currencies-raw (set data/currencies))
+(s/def :wh.issue.compensation/currency currencies)
+(s/def :wh.issue.raw.compensation/currency currencies-raw)
 
 (s/def :wh.issue/compensation (s/keys :req-un [:wh.issue.compensation/amount
                                                :wh.issue.compensation/currency]))
