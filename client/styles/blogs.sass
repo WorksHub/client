@@ -106,8 +106,19 @@ $card-hover-color: rgba(0, 0, 0, 0.015)
     &--skeleton
       @include skeleton(90%, 18px)
 
-  &__bottom
+  &__save
+    display: inline-flex
+    background: transparent
+    border: none
+    cursor: pointer
     z-index: 10
+
+    &--saved
+      fill: $primary-red
+
+  &__actions
+    margin-left: -6px
+    display: inline-flex
 
     &--hidden
       display: none

@@ -29,6 +29,12 @@
    {:id (build-sub-id "save")}
    [:h1 "Login or register" [:br] "to save this job!"]])
 
+(defn overlay-content-save-blog
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "save-blog")}
+   [:h1 "Login or register" [:br] "to save articles!"]])
+
 (defn overlay-content-saved-jobs
   []
   [:div.auth-popup__content
@@ -104,9 +110,10 @@
      [overlay-content-see-more]
      [overlay-content-blog]
      [overlay-content-search-jobs]
-     [overlay-content-issue]]
+     [overlay-content-issue]
+     [overlay-content-save-blog]]
     [:div
-     [:p "Engineers who find a new job through " platform-name  " average a 15% increase in salary \uD83D\uDE80 "]]
+     [:p "Engineers who find a new job through " platform-name " average a 15% increase in salary \uD83D\uDE80 "]]
     [:div.overlay__buttons
      [button-auth/button :github button-params]
      [button-auth/button :twitter button-params]

@@ -5,7 +5,8 @@
             [wh.styles.blogs :as styles]
             [wh.components.icons :as icons]
             [wh.components.tag :as tag]
-            [wh.like-blog-mutation :as like-blog-mutation]
+            [wh.interop :as interop]
+            [wh.blogs.like :as blogs-like]
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.util :as util]))
@@ -76,20 +77,25 @@
           (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))
      {:class styles/blog__tag}]))
 
-(defn like-comp
-  [{:keys [test?] :as ctx}
-   {:keys [id] :as blog}]
-  (let [liked-blogs (<sub [::like-blog-mutation/liked-blogs-by-user])
-        liked?      (contains? liked-blogs id)]
-    (let [executing? (<sub [::like-blog-mutation/executing? blog])]
-      [:div (util/smc styles/blog__bottom [(not test?) styles/blog__bottom--hidden])
-       [:button
-        {:on-click (if liked? #(dispatch [::like-blog-mutation/unlike blog])
-                              #(dispatch [::like-blog-mutation/like blog]))}
-        (cond
-          executing? "Wait..."
-          liked? "Unsave"
-          :else "Save")]])))
+(defn actions-comp
+  [{:keys [test? logged-in? loading?] :as ctx} blog]
+  (let [executing?   (<sub [::blogs-like/executing? blog])
+        liked?       (<sub [::blogs-like/liked-by-user? blog])
+        current-page (<sub [:wh/page])]
+    [:div (util/smc styles/blog__actions [(not test?) styles/blog__actions--hidden])
+     [:button (merge {:class    styles/blog__save
+                      :disabled executing?}
+                     (when-not loading?
+                       (if logged-in?
+                         {:on-click (if liked? #(dispatch [::blogs-like/unlike blog])
+                                               #(dispatch [::blogs-like/like blog]))}
+                         (interop/on-click-fn
+                           (interop/show-auth-popup
+                             :save-blog
+                             [current-page])))))
+      [icons/icon "save"
+       :class (when liked? styles/blog__save--saved)]]]))
+
 
 (defn blog-comp [ctx blog]
   [:div {:class     styles/blog
@@ -98,8 +104,8 @@
    [:div (util/smc styles/blog__body)
     [title-comp ctx blog]
     [meta-comp ctx blog]
-    [tags-comp ctx blog]
-    [like-comp ctx blog]]])
+    [tags-comp ctx blog]]
+   [actions-comp ctx blog]])
 
 ;;
 

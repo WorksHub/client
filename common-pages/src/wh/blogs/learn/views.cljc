@@ -134,7 +134,10 @@
        [search]
        [:div.is-hidden-desktop
         [learn-components/tag-picker-comp tags]]
-       [blog-list-comp {:loading? loading?} blogs]
+       [blog-list-comp
+        {:loading?   loading?
+         :logged-in? (<sub [:user/logged-in?])}
+        blogs]
        [pagination
         (<sub [::subs/current-page])
         (<sub [::subs/pagination])

@@ -8,8 +8,10 @@
 (reg-sub
   ::liked-blogs
   (fn [db _]
-    (let [params     (learn/params db)
-          data-path  events/blogs-path
-          cache-data (graphql/result db events/query-name params)]
-      {:blogs    (get-in cache-data data-path)
-       :loading? (= cache-data :executing)})))
+    (let [params    (learn/params db)
+          data-path events/blogs-path
+          data      (graphql/result db events/query-name params)
+          state     (graphql/state db events/query-name params)]
+      {:blogs    (get-in data data-path)
+       :loading? (or (= state :executing)
+                     (= state :initial))})))

@@ -1,4 +1,4 @@
-(ns wh.like-blog-mutation
+(ns wh.blogs.like
   (:require
     [re-frame.core :refer [reg-event-fx reg-sub]]
     [wh.db :as db]
@@ -36,15 +36,17 @@
   ::like-success
   db/default-interceptors
   (fn [{db :db} [{:keys [blog]}]]
-    {:db (-> db
-             (stop-executing (:id blog))
-             (toggle-like (:id blog)))}))
+    {:db (stop-executing db (:id blog))}))
+
 
 (reg-event-fx
   ::like-failure
   db/default-interceptors
   (fn [{db :db} [{:keys [blog]}]]
-    {:db (stop-executing db (:id blog))}))
+    {:db       (-> db
+                   (stop-executing (:id blog))
+                   (toggle-like (:id blog)))
+     :dispatch [:error/set-global "Failed to bookmark the article."]}))
 
 ;;
 
@@ -52,7 +54,8 @@
   [{:keys [db blog like?]}]
   (let [event-name (str "Blog " (if like? "liked" "unliked"))
         id         (:id blog)]
-    {:db              (start-executing db id)
+    {:db              (-> (start-executing db id)
+                          (toggle-like (:id blog)))
      :graphql         {:query      like-blog-mutation
                        :variables  {:id id :add like?}
                        :on-success [::like-success {:blog blog}]
@@ -61,13 +64,19 @@
 
 (reg-sub
   ::executing?
-  (fn [db [blog]]
+  (fn [db [_ blog]]
     (executing? db (:id blog))))
 
 (reg-sub
   ::liked-blogs-by-user
   (fn [db _]
     (get-in db [:wh.user.db/sub-db :wh.user.db/liked-blogs])))
+
+(reg-sub
+  ::liked-by-user?
+  :<- [::liked-blogs-by-user]
+  (fn [liked-blogs [_ blog]]
+    (contains? liked-blogs (:id blog))))
 
 (reg-event-fx
   ::like

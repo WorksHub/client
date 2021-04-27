@@ -28,7 +28,8 @@
      [:div {:class styles/page-columns}
       [:div {:class styles/main-column}
        [blog-list-comp
-        {:loading?    loading?
-         :test?       true}
+        {:loading?   loading?
+         :logged-in? (<sub [:user/logged-in?])
+         :test?      true}
         blogs]]
       [:div.is-hidden-mobile]])])
