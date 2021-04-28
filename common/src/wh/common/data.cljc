@@ -429,13 +429,18 @@
 (def managers
   (->> {"alex"            "Alex Mesropians"
         "andrei"          "Andrei Barbu"
+        "antony"          "Antony Woods"
         "charlie"         "Charlie Gower"
         "daniel.earnshaw" "Daniel Earnshaw"
+        "jim"             "Jim Murrell"
+        "lisa.redmond"    "Lisa Redmond"
         "natasha"         "Tash Laybourne"
         "nick"            "Nick Maraj"
         "nick.walker"     "Nick Walker"
         "patrick"         "Patrick Gubbey"
-        "sheryl"          "Sheryl Martin"}
+        "sarah"           "Sarah Hunter"
+        "sheryl"          "Sheryl Martin"
+        "sophie"          "Sophie Ayres"}
        (map (fn [[k v]] [(->email k) v]))
        (into {})))
 
