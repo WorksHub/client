@@ -1,13 +1,14 @@
 (ns wh.components.navbar.candidate
   (:require [wh.components.icons :as icons]
             [wh.components.navbar.components :as components]
+            [wh.components.navbar.shared :as navbar-shared]
             [wh.components.navbar.subs :as subs]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.styles.navbar :as styles]
             [wh.util :as util]))
 
-(def jobs-candidate-submenu-list
+(def candidate-jobs-submenu-list
   [{:route      :jobsboard
     :icon-name  "board-rectangles"
     :icon-class styles/dropdown__link__icon-jobsboard
@@ -44,17 +45,17 @@
     [components/submenu
      {:text      "Jobs"
       :icon-name "suitcase"
-      :dropdown  jobs-candidate-submenu-list}]
+      :dropdown  candidate-jobs-submenu-list}]
     [components/link-with-icon
      {:icon-name "git"
       :text      "Issues"
       :route     :issues}
      {:mobile? true}]
-    [components/link-with-icon
+    [components/submenu
      {:icon-name "document"
       :text      "Articles"
-      :route     :learn}
-     {:mobile? true}]
+      :route     :learn
+      :dropdown  navbar-shared/articles-submenu-list}]
     [components/link-with-icon
      {:icon-name "union"
       :text      "Companies"
@@ -88,15 +89,16 @@
     {:text     "Jobs"
      :route    :jobsboard
      :page     page
-     :dropdown jobs-candidate-submenu-list}]
+     :dropdown candidate-jobs-submenu-list}]
    [components/link
     {:text  "Open Source Issues"
      :route :issues
      :page  page}]
    [components/link
-    {:text  "Articles"
-     :route :learn
-     :page  page}]
+    {:text     "Articles"
+     :route    :learn
+     :page     page
+     :dropdown navbar-shared/articles-submenu-list}]
    [components/link
     {:text  "Companies"
      :route :companies

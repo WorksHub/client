@@ -2,8 +2,8 @@
   (:require #?(:cljs [reagent.core :as r])
             [wh.components.icons :as icons]
             [wh.components.navbar.components :as components]
+            [wh.components.navbar.shared :as navbar-shared]
             [wh.components.navbar.subs :as subs]
-            [wh.components.navbar.tasks :as navbar-tasks]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.styles.navbar :as styles]
@@ -66,25 +66,6 @@
     :icon-class styles/dropdown__link__icon-union
     :text       "Create company"}])
 
-
-(def articles-admin-submenu-list
-  [{:path       (routes/path :learn)
-    :icon-name  "document"
-    :icon-class styles/dropdown__link__icon-document
-    :text       "All articles"}
-   {:path       (routes/path :admin-articles)
-    :icon-name  "document-filled"
-    :icon-class styles/dropdown__link__icon-document
-    :text       "Unpublished articles"}
-   {:path       (routes/path :contribute)
-    :icon-name  "plus-circle"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Write an article"}
-   {:path       (routes/path :liked-blogs)
-    :icon-name  "bookmark"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Saved blogs"}])
-
 (def candidates-admin-submenu-list
   [{:path       (routes/path :candidates)
     :icon-name  "profile"
@@ -105,7 +86,7 @@
     [components/submenu
      {:text      "Articles"
       :icon-name "document"
-      :dropdown  articles-admin-submenu-list}]
+      :dropdown  navbar-shared/articles-admin-submenu-list}]
 
     [components/submenu
      {:text      "Companies"
@@ -157,7 +138,7 @@
     {:text     "Articles"
      :route    :learn
      :page     page
-     :dropdown articles-admin-submenu-list}]
+     :dropdown navbar-shared/articles-admin-submenu-list}]
 
    [components/link
     {:text     "Candidates"

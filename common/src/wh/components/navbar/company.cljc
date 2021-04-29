@@ -2,6 +2,7 @@
   (:require #?(:cljs [reagent.core :as r])
             [wh.components.icons :as icons]
             [wh.components.navbar.components :as components]
+            [wh.components.navbar.shared :as navbar-shared]
             [wh.components.navbar.subs :as subs]
             [wh.components.navbar.tasks :as navbar-tasks]
             [wh.re-frame.subs :refer [<sub]]
@@ -74,16 +75,6 @@
     :data-test  "company-profile-link"
     :text       "Company profile"}])
 
-(def articles-company-submenu-list
-  [{:path       (routes/path :learn)
-    :icon-name  "document"
-    :icon-class styles/dropdown__link__icon-document
-    :text       "All articles"}
-   {:path       (routes/path :contribute)
-    :icon-name  "plus-circle"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Write an article"}])
-
 (defn company-mobile-menu []
   (let [company-slug (<sub [::subs/company-slug])
         can-create? (<sub [::subs/can-create-jobs?])]
@@ -102,7 +93,7 @@
       [components/submenu
        {:text      "Articles"
         :icon-name "document"
-        :dropdown  articles-company-submenu-list}]]
+        :dropdown  navbar-shared/articles-submenu-list}]]
 
      [:div (util/smc styles/small-menu__column)
       [components/dropdown-list
@@ -150,7 +141,7 @@
       {:text     "Articles"
        :route    :learn
        :page     page
-       :dropdown articles-company-submenu-list}]
+       :dropdown navbar-shared/articles-submenu-list}]
 
      [notifications {}]]))
 

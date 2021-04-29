@@ -127,7 +127,7 @@
      (when-not logged-in?
        [learn-header])
      [:div {:class styles/navigation-buttons-wrapper}
-      [buttons-page-navigation/buttons-articles {:logged-in? logged-in?}]]
+      [buttons-page-navigation/buttons-articles]]
      [:div {:class styles/page-columns}
       ;; remove unnecessary space from pagination
       [:div {:class styles/main-column}
@@ -136,7 +136,8 @@
         [learn-components/tag-picker-comp tags]]
        [blog-list-comp
         {:loading?   loading?
-         :logged-in? (<sub [:user/logged-in?])}
+         :logged-in? (<sub [:user/logged-in?])
+         :test?      true}
         blogs]
        [pagination
         (<sub [::subs/current-page])

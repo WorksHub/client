@@ -28,7 +28,7 @@
 (reg-query query-name liked-blogs-query)
 
 (defn initial-query [db]
-  [query-name (learn/params db)])
+  [query-name (learn/params db) {:force true}])
 
 (reg-event-fx
   ::load-liked-blogs

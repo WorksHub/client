@@ -4,6 +4,7 @@
             [wh.components.branding :as branding]
             [wh.components.icons :as icons]
             [wh.components.signin-buttons :as signin-button]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.styles.buttons-page-navigation :as styles]
             [wh.interop :as interop]
@@ -14,12 +15,17 @@
   (let [classes (util/mc styles/button
                          [active? styles/button--active])]
     [:a (cond
-          on-click (merge (interop/on-click-fn on-click)
-                          {:class classes})
-          href {:href  href
-                :class classes}
-          :else {:href  "#"
-                 :class classes})
+          (and (not active?) on-click)
+          (merge (interop/on-click-fn on-click)
+                 {:class classes})
+          ;;
+          (and (not active?) href)
+          {:href  href
+           :class classes}
+          ;;
+          :else
+          {:href  "#"
+           :class classes})
      [icons/icon icon :class styles/button__icon]
      [:span text]]))
 
@@ -51,12 +57,21 @@
              :on-click (add-on-click-for-guest logged-in? :jobsboard-applied)
              :icon     "document-filled"}]])
 
-(defn buttons-articles [{:keys [logged-in?]}]
-  [buttons [{:text    "All articles"
-             :active? true
-             :icon    "document"}
-            {:text     "Write an article"
-             :href     (routes/path :contribute)
-             :on-click (when-not logged-in?
-                         (interop/show-auth-popup :contribute [:publish]))
-             :icon     "plus-circle"}]])
+(defn buttons-articles []
+  (let [logged-in? (<sub [:user/logged-in?])
+        page       (<sub [:wh/page])]
+    [buttons [{:text    "All articles"
+               :active? (= page :learn)
+               :href    (routes/path :learn)
+               :icon    "document"}
+              {:text     "Saved articles"
+               :href     (routes/path :liked-blogs)
+               :on-click (when-not logged-in?
+                           (interop/show-auth-popup :save-blog [:liked-blogs]))
+               :active?  (= page :liked-blogs)
+               :icon     "save"}
+              {:text     "Write an article"
+               :href     (routes/path :contribute)
+               :on-click (when-not logged-in?
+                           (interop/show-auth-popup :contribute [:contribute]))
+               :icon     "plus-circle"}]]))
