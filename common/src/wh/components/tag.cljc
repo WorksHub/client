@@ -75,14 +75,15 @@
 (defn tag-list
   ([element-type tags]
    [tag-list element-type tags nil])
-  ([element-type tags {:keys [skeleton?] :as opts}]
+  ([element-type tags {:keys [skeleton? class-wrapper] :as opts}]
    (let [tags' (if skeleton? (skeleton-tags opts) tags)]
      (when (not-empty tags')
        (->> tags'
             (sort-by #(get % :weight 0) >)
             (map (fn [t] [tag element-type t opts]))
-            (into [:ul.tags.tags--inline.tags--profile
-                   {:data-test "tags-list"}]))))))
+            (into [:ul
+                   {:class     (util/mc "tags" "tags--inline" "tags--profile" class-wrapper)
+                    :data-test "tags-list"}]))))))
 
 (defn strs->tag-list [element-type strs {:keys [f]
                                          :or   {f identity}}]

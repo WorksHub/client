@@ -20,16 +20,17 @@
    [rocket-icon]
    [:div (util/smc styles/secondary-text) upvote-count " boosts"]])
 
-(defn reading-time-comp [ctx {:keys [reading-time] :as blog}]
-  [:div (util/smc styles/secondary-text) reading-time " min read"])
+(defn date-and-read-time-comp [ctx {:keys [formatted-creation-date reading-time] :as blog}]
+  [:div (util/smc styles/secondary-text) formatted-creation-date " • " reading-time " min read"])
 
-(defn creation-date-comp [ctx {:keys [formatted-creation-date] :as blog}]
-  [:div (util/smc styles/secondary-text) formatted-creation-date])
-
-(defn author-comp [ctx {:keys [author] :as blog}]
-  [:div (util/smc styles/author)
-   #_[:div (util/smc styles/author__avatar)]
-   [:div (util/smc styles/secondary-text styles/author__name) author]])
+(defn author-comp [ctx {:keys [author-info] :as blog}]
+  (when author-info
+    [:a {:class styles/author
+         :href  (routes/path :user :params {:id (:id author-info)})}
+     (when-let [image-url (:image-url author-info)]
+       [:img {:class styles/author__avatar
+              :src   image-url}])
+     [:div (util/smc styles/secondary-text styles/author__name) (:name author-info)]]))
 
 (defn image-comp [ctx {:keys [feature published] :as blog}]
   (let [imgix-url (components-common/base-img feature)]
@@ -62,9 +63,8 @@
     :else
     [:div (util/smc styles/blog__meta)
      [author-comp ctx blog]
-     [reading-time-comp ctx blog]
-     [upvotes-comp ctx blog]
-     [creation-date-comp ctx blog]]))
+     [date-and-read-time-comp ctx blog]
+     [upvotes-comp ctx blog]]))
 
 (defn tags-comp [ctx blog]
   (cond
@@ -75,7 +75,8 @@
      :a
      (->> (:tags blog)
           (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))
-     {:class styles/blog__tag}]))
+     {:class         styles/blog__tag
+      :class-wrapper styles/blog__tags}]))
 
 (defn actions-comp
   [{:keys [test? logged-in? loading?] :as ctx} blog]
@@ -94,17 +95,18 @@
                              :save-blog
                              [current-page])))))
       [icons/icon "save"
-       :class (when liked? styles/blog__save--saved)]]]))
+       :class (when liked? styles/blog__save--saved)]]
+     [:button {:class (util/mc styles/button styles/button--inverted-highlighted)} "View Article"]]))
 
 
 (defn blog-comp [ctx blog]
   [:div {:class     styles/blog
          :data-test "blog-info"}
-   [image-comp ctx blog]
    [:div (util/smc styles/blog__body)
     [title-comp ctx blog]
     [meta-comp ctx blog]
     [tags-comp ctx blog]]
+   [image-comp ctx blog]
    [actions-comp ctx blog]])
 
 ;;

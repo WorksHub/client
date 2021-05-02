@@ -59,6 +59,7 @@
              [:id :title :feature :author
               :formattedCreationDate :readingTime
               :creator :upvoteCount :published
+              [:authorInfo [:id :imageUrl :name]]
               [:tags :fragment/tagFields]])
 
 (deffragment likedJobId :Job

@@ -51,20 +51,21 @@
        (str/join ", ")))
 
 (defn base-img
+  "hides image under imgix"
   ([src]
    (base-img src nil))
   ([src {:keys [fit crop auto]
-         :or {fit "crop" crop "entropy" auto "format"}}]
+         :or   {fit "crop" crop "entropy" auto "format"}}]
    (when src
-     (let [img-hash (some-> src (str/split #"/") last)
-           params {:fit fit :crop crop :auto auto}
+     (let [img-hash         (some-> src (str/split #"/") last)
+           params           {:fit fit :crop crop :auto auto}
            conf-env #?(:cljs @(subscribe [:wh.subs/env])
                        :clj (keyword (config/get :environment)))
-           env (if (= :prod conf-env)
-                 conf-env
-                 (or (some-> (re-find aws-bucket-regex src) second keyword) conf-env))]
+           env              (if (= :prod conf-env)
+                              conf-env
+                              (or (some-> (re-find aws-bucket-regex src) second keyword) conf-env))]
        (str "https://"
-            (if ( = env :prod) "workshub" "workshub-dev")
+            (if (= env :prod) "workshub" "workshub-dev")
             ".imgix.net/" img-hash "?" (routes/serialize-query-params params))))))
 
 (defn og-img [src]

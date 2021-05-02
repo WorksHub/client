@@ -1,6 +1,7 @@
 (ns wh.blogs.liked.views
   (:require
     [wh.blogs.liked.subs :as subs]
+    [wh.blogs.learn.subs :as learn-subs]
     [wh.blogs.learn.components :as learn-components]
     [wh.components.buttons-page-navigation :as buttons-page-navigation]
     [wh.styles.blogs :as styles]
@@ -35,4 +36,6 @@
          :logged-in? (<sub [:user/logged-in?])
          :test?      true}
         blogs]]
-      [:div.is-hidden-mobile]])])
+      [:div.is-hidden-mobile
+       [learn-components/tag-picker-comp (<sub [::learn-subs/tagbox-tags])]]])])
+
