@@ -80,8 +80,9 @@
   (fn [{db :db} _]
     (let [query-variables (get-query-variables db)]
       (when-not (= query-variables (::jobsboard/query-variables db))
-        {:db       (assoc db ::jobsboard/query-variables query-variables)
-         :dispatch (into [:graphql/query] (conj (jobs db) {:on-success [::fetch-jobs-success]}))}))))
+        {:scroll-to-top true
+         :db            (assoc db ::jobsboard/query-variables query-variables)
+         :dispatch      (into [:graphql/query] (conj (jobs db) {:on-success [::fetch-jobs-success]}))}))))
 
 (reg-event-db
   ::fetch-jobs-success
@@ -261,14 +262,10 @@
            (into [:graphql/query]
                  (if (user-common/candidate? db)
                    (landing-events/recommended-jobs db)
-                   (landing-events/recent-jobs db)))]
-
-          (when (::db/initial-load? db)
-            [[:wh.events/scroll-to-top]])))
+                   (landing-events/recent-jobs db)))]))
 
 (defmethod pages/on-page-load :pre-set-search [_db]
-  [[::set-jobs-query]
-   [:wh.events/scroll-to-top]])
+  [[::set-jobs-query]])
 
 (defn- update-min-max
   "updates possible values for salary selector"
