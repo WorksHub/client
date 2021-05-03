@@ -251,8 +251,10 @@
           timezones (<sub [::subs/timezone-restrictions])]
       [:h3.job__header-company-location
        (if remote?
-         [:div
-          [icon "globe" :class "job__icon--small"]
+         [:<>
+          [icon "globe" :class (util/mc
+                                 styles/remote-info__icon
+                                 "job__icon--small")]
           (cond
             regions   [:span (util/smc styles/remote-info)
                        "Remote within " (interpose ", " (map str (take 3 regions)))]
