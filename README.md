@@ -47,7 +47,7 @@ npm run dev
 
 Now point your browser to: http://localhost:3449 and you should see the WorksHub UI.
 
-(If you're curious, we're using shadow-cljs to watch and compile our frontend. Fell free to run shadow server by yourself and access shadow-cljs Inspect. We have globally available `tap>` in our code. It also means that you can freely install any npm packages with `npm install` and require these in code. Go crazy!)
+(If you're curious, we're using shadow-cljs to watch and compile our frontend. Feel free to run shadow server by yourself and access shadow-cljs Inspect. We have globally available `tap>` in our code. It also means that you can freely install any npm packages with `npm install` and require these in code. Go crazy!)
 
 Now, after a refresh, you should see the landing page.
 
