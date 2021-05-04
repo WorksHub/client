@@ -29,16 +29,18 @@
 
 (defn get-db-filters [{:keys [preset-search? db]}]
   (let [cities    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities])
+        regions   (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/regions])
         countries (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/countries])
         remote?   (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/remote])
         tags      (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/tags])]
     (->
       (if preset-search?
         (cond-> {}
-                (seq tags) (assoc :tags tags)
-                (seq cities) (update-in [:location :cities] (fnil concat []) cities)
+                (seq tags)      (assoc :tags tags)
+                (seq cities)    (update-in [:location :cities] (fnil concat []) cities)
+                (seq regions)   (update-in [:location :regions] (fnil concat []) regions)
                 (seq countries) (update-in [:location :country-codes] (fnil concat []) countries)
-                remote? (assoc :remote true))
+                remote?         (assoc :remote true))
         {})
       (merge (search/query-params->filters (::db/query-params db)))
       (util/update* "sponsorship-offered" util/string->boolean)
@@ -123,6 +125,13 @@
      :dispatch [:wh.search/search]}))
 
 (reg-event-fx
+  :wh.search/toggle-region
+  jobsboard-interceptors
+  (fn [{db :db} [region]]
+    {:db       (update-in db [::jobsboard/search :wh.search/regions] util/toggle region)
+     :dispatch [:wh.search/search]}))
+
+(reg-event-fx
   :wh.search/toggle-country
   jobsboard-interceptors
   (fn [{db :db} [country]]
@@ -197,6 +206,7 @@
                       :wh.search/tags         (val-set "tags")
                       :wh.search/role-types   (val-set "role-type")
                       :wh.search/cities       (val-set "location.city")
+                      :wh.search/regions      (val-set "location.region")
                       :wh.search/countries    (val-set "location.country-code")
                       :wh.search/remote       (val-bool "remote")
                       :wh.search/sponsorship  (val-bool "sponsorship-offered")
@@ -228,7 +238,7 @@
   (let [criteria                         (cond-> criteria query-only? (select-keys [:wh.search/query]))
         {:keys [:wh.search/query :wh.search/tags :wh.search/role-types
                 :wh.search/remote :wh.search/sponsorship :wh.search/currency
-                :wh.search/cities :wh.search/countries
+                :wh.search/cities :wh.search/countries :wh.search/regions
                 :wh.search/salary-type :wh.search/only-mine :wh.search/published
                 :wh.search/competitive]} criteria
         view-type                        (get-in app-db [:wh.db/query-params jobsboard-ssr/view-type-param])]
@@ -239,6 +249,7 @@
                            sponsorship                             (assoc :sponsorship-offered "true")
                            (seq tags)                              (assoc :tags (str/join ";" tags))
                            (seq cities)                            (assoc :location.city (str/join ";" cities))
+                           (seq regions)                           (assoc :location.region (str/join ";" regions))
                            (seq countries)                         (assoc :location.country-code (str/join ";" countries))
                            (seq role-types)                        (assoc :role-type (str/join ";" role-types))
                            (or (and (not= "*" currency) salary-type)

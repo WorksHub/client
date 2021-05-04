@@ -6,9 +6,7 @@
                                        :tags                 #{}
                                        :cities               #{}
                                        :countries            #{}
-                                       ;; :wh-regions thusly called to distinguish it from location regions
-                                       ;; :us, :europe, or :rest-of-world
-                                       :wh-regions           #{}
+                                       :regions              #{}
                                        :salary-type          nil
                                        :salary-range         nil
                                        :currency             nil

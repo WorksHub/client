@@ -281,13 +281,22 @@
   :wh.search/available-locations
   :<- [::filters]
   :<- [:wh.search/country-names]
-  (fn [[{:keys [wh.search/available-countries wh.search/available-cities]} country-names] _]
-    (->> (concat
+  (fn [[{:keys [wh.search/available-countries
+               wh.search/available-cities
+               wh.search/available-regions]}
+       country-names]
+      _]
+    (->> available-cities
+         (concat
+           (map
+             (fn [{:keys [value] :as region}]
+               (assoc region :label value))
+             available-regions))
+         (concat
            (map
              (fn [{:keys [value] :as country}]
                (assoc country :label (country-names value)))
-             available-countries)
-           available-cities)
+             available-countries))
          (map
            (fn [{:keys [label value attr count]}]
              {:label (or label value)
@@ -298,7 +307,7 @@
               :count count}))
          (sort-by :count >)
          (sort-by :value (fn [v _]
-                           (#{"UK" "GB" "US"} v))))))
+                           (#{"UK" "GB" "US" "Europe"} v))))))
 
 (reg-sub
   :wh.search/city
@@ -310,7 +319,7 @@
   ::selected-locations
   :<- [::current-search]
   (fn [search _]
-    (->> (select-keys search [:wh.search/cities :wh.search/countries])
+    (->> (select-keys search [:wh.search/cities :wh.search/countries :wh.search/regions])
          (mapcat second)
          (map #(str (slug/tag-label->slug %) ":location")))))
 

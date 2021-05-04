@@ -68,5 +68,6 @@
                 :available-tags       (ui-tags (facets "tags.label"))
                 :available-cities     (facets "location.city")
                 :available-countries  (facets "location.country-code")
+                :available-regions    (facets "location.region")
                 :city-info            city-info
                 :salary-ranges        salary-ranges}))

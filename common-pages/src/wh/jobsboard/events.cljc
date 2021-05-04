@@ -7,6 +7,7 @@
   db/default-interceptors
   (fn [_ [{:keys [attr value]}]]
     {:dispatch (cond
+                 (= attr "location.region")       [:wh.search/toggle-region value]
                  (= attr "location.city")         [:wh.search/toggle-city value]
                  (= attr "location.country-code") [:wh.search/toggle-country value])}))
 
