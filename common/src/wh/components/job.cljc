@@ -60,7 +60,7 @@
     [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
      (if user-is-owner? "View" "More Info")]
 
-    (let [apply-id (str "job-card__apply-button_job-" id)
+    (let [apply-id    (str "job-card__apply-button_job-" id)
           button-opts (merge {:id apply-id}
                              (when (or applied?
                                        (and user-is-company?
@@ -70,7 +70,9 @@
         (when published
           (let [job-page-path [:job
                                :params {:slug slug}
-                               :query-params {"apply" true "apply_source" apply-source}]]
+                               :query-params (merge {"apply" true}
+                                                    (when apply-source
+                                                      {"apply_source" apply-source}))]]
             [:a (if logged-in?
                   {:href (apply routes/path job-page-path)}
                   (interop/on-click-fn
@@ -86,8 +88,8 @@
          [:button.button "Edit"]]))
 
     (when (and logged-in? (not skeleton?) small?)
-      [save-button job {:on-close   on-close
-                        :saved? liked?}])]])
+      [save-button job {:on-close on-close
+                        :saved?   liked?}])]])
 
 (defn card-perks [remote role-type sponsorship-offered score small?]
   (cond-> [:div.card__perks]
