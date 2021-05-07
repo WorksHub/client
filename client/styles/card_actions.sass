@@ -1,0 +1,67 @@
+@import 'colours'
+@import 'mixins'
+
+$action-block-height: 25px
+$space-mobile: 16px
+$space-tablet: 20px
+
+.actions
+  display: block
+  flex: 1
+  max-height: $action-block-height
+  height: $action-block-height
+  overflow-y: hidden
+  position: relative
+  overflow-x: hidden
+
+.actions__inner
+  position: absolute
+  top: calc(-#{$action-block-height} - 4px)
+  transition: top ease-out 0.2s
+
+  &--open
+    top: 0
+
+.actions__share
+  display: grid
+  align-items: center
+  height: $action-block-height
+  grid-template-columns: repeat(5, 25px)
+  grid-gap: 10px
+  margin-top: 1px
+
+.actions__share-button
+  cursor: pointer
+
+.actions__share-button--center
+  margin: 0 auto
+
+.actions__share-image
+  border-radius: 4px
+
+.actions__container
+  display: grid
+  grid-template-columns: repeat(4, 25px)
+  grid-gap: 10px
+  margin-top: 4px
+
+.actions__action
+  border: none
+  background: transparent
+  display: inline-block
+  padding: 0
+  cursor: pointer
+
+  &--save, &--share
+    fill: $grey500
+
+    svg
+      height: 18px
+      width: 20px
+
+  &--share
+    +mobile
+      display: none
+
+  &--saved-icon
+    fill: $primary-red

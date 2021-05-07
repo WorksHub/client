@@ -19,6 +19,7 @@
 (s/def ::selected?         boolean?)
 (s/def ::selected-tag-ids  (s/coll-of ::tag-id :distinct true :min-count 1))
 (s/def ::published         boolean?)
+(s/def ::paid              boolean?)
 
 (s/def ::blog-publish (s/keys :req [::title ::author ::feature ::body ::selected-tag-ids]
                               :opt [::original-source ::company-id]))
@@ -66,6 +67,7 @@
           ::hero-upload-status          :not-started
           ::body-editing?               true
           ::published                   false
+          ::paid                        false
           ::body-cursor-position        0
           ::body-rows                   10
           ::associated-jobs             []

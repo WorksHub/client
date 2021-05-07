@@ -193,7 +193,7 @@
         selected-tags          (<sub [::subs/selected-tags])
         candidate?             (<sub [::subs/candidate?])
         not-enough-activities? (<sub [::subs/not-enough-activities?])
-        facebook-app-id        (<sub [::subs/facebook-app-id])
+        facebook-app-id        (<sub [:wh/facebook-app-id])
         saved-jobs             (<sub [:user/liked-jobs])
         environment            (<sub [:wh/env])
         tags                   (<sub [::subs/top-tags])

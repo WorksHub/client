@@ -118,6 +118,11 @@
     (:wh.db/vertical db)))
 
 (reg-sub
+  :wh/facebook-app-id
+  (fn [db _]
+    (:wh.settings/facebook-app-id db)))
+
+(reg-sub
   :wh/build
   (fn [db _]
     (:wh.db/build db)))

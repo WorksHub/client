@@ -1,5 +1,6 @@
 (ns wh.blogs.learn.components
   (:require [re-frame.core :refer [dispatch]]
+            [wh.components.card-actions.components :as card-actions]
             [wh.components.common :as components-common]
             [wh.re-frame.subs :refer [<sub]]
             [wh.styles.blogs :as styles]
@@ -9,6 +10,7 @@
             [wh.blogs.like :as blogs-like]
             [wh.routes :as routes]
             [wh.slug :as slug]
+            [wh.common.url :as url]
             [wh.util :as util]))
 
 (defn rocket-icon []
@@ -79,23 +81,35 @@
       :class-wrapper styles/blog__tags}]))
 
 (defn actions-comp
-  [{:keys [test? logged-in? loading?] :as ctx} blog]
-  (let [executing?   (<sub [::blogs-like/executing? blog])
-        liked?       (<sub [::blogs-like/liked-by-user? blog])
-        current-page (<sub [:wh/page])]
+  [{:keys [test? logged-in? loading?] :as ctx}
+   {:keys [id title author-info] :as blog}]
+  (let [executing?      (<sub [::blogs-like/executing? blog])
+        liked?          (<sub [::blogs-like/liked-by-user? blog])
+        current-page    (<sub [:wh/page])
+        vertical        (<sub [:wh/vertical])
+        environment     (<sub [:wh/env])
+        facebook-app-id (<sub [:wh/facebook-app-id])
+        base-uri        (url/vertical-homepage-href environment vertical)]
     [:div (util/smc styles/blog__actions [(not test?) styles/blog__actions--hidden])
-     [:button (merge {:class    styles/blog__save
-                      :disabled executing?}
-                     (when-not loading?
-                       (if logged-in?
-                         {:on-click (if liked? #(dispatch [::blogs-like/unlike blog])
-                                               #(dispatch [::blogs-like/like blog]))}
-                         (interop/on-click-fn
-                           (interop/show-auth-popup
-                             :save-blog
-                             [current-page])))))
-      [icons/icon "save"
-       :class (when liked? styles/blog__save--saved)]]
+     [card-actions/actions
+      (cond-> {:saved?        liked?
+               :class-wrapper styles/blog__actions-wrapper
+               :save-opts     (merge {:disabled executing?}
+                                     (when-not loading?
+                                       (if logged-in?
+                                         {:on-click (if liked? #(dispatch [::blogs-like/unlike blog])
+                                                               #(dispatch [::blogs-like/like blog]))}
+                                         (interop/on-click-fn
+                                           (interop/show-auth-popup
+                                             :save-blog
+                                             [current-page])))))}
+        (:published blog) (assoc :share-opts {:url             (str (url/strip-path base-uri)
+                                                                    (routes/path :blog :params {:id id}))
+                                              :id              id
+                                              :content-title   title
+                                              :content         (str "'" title "'" " an article from " (:name author-info))
+                                              :vertical        vertical
+                                              :facebook-app-id facebook-app-id}))]
      [:button {:class (util/mc styles/button styles/button--inverted-highlighted)} "View Article"]]))
 
 

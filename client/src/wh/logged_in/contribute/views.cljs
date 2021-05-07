@@ -229,18 +229,24 @@
          :force-error? (<sub [::subs/validation-error?])}]
 
        (when admin?
-         [:div.control
-          [labelled-checkbox
-           (<sub [::subs/published?])
-           {:label     "Published?"
-            :on-change [::events/set-published]}]])
+         [:<>
+          [:div.control
+           [labelled-checkbox
+            (<sub [::subs/published?])
+            {:label     "Published?"
+             :on-change [::events/set-published]}]]
 
-       (when admin?
-         [:div.control
-          [labelled-checkbox
-           (<sub [::subs/archived?])
-           {:label     "Archived?"
-            :on-change [::events/toggle-archived]}]])
+          [:div.control
+           [labelled-checkbox
+            (<sub [::subs/archived?])
+            {:label     "Archived?"
+             :on-change [::events/toggle-archived]}]]
+
+          [:div.control
+           [labelled-checkbox
+            (<sub [::subs/paid?])
+            {:label     "Paid?"
+             :on-change [::events/set-paid]}]]])
 
        [:div.contribute__checklist
         [:strong [:i "Before you submit..."]]

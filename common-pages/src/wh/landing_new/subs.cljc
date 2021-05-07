@@ -191,8 +191,3 @@
   :<- [:user/sub-db]
   (fn [user _]
     (:wh.user.db/skills user)))
-
-(reg-sub
-  ::facebook-app-id
-  (fn [db _]
-    (:wh.settings/facebook-app-id db)))

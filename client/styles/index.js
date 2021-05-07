@@ -58,3 +58,4 @@ import './blogs.sass';
 import './buttons_page_navigation.sass';
 import './create_job.sass';
 import './blogs.sass';
+import './card_actions.sass'

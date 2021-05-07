@@ -1,6 +1,7 @@
 @import 'colours'
 @import 'mixins'
 @import 'button'
+@import 'vars'
 
 $card-hover-color: rgba(0, 0, 0, 0.015)
 $image-width-desktop: 250px
@@ -61,7 +62,7 @@ $image-height: 141px
         color: $grey500
 
   &__tag
-    z-index: 2
+    z-index: $card-element-z-index
 
   &__tags
     +tablet
@@ -95,7 +96,7 @@ $image-height: 141px
       right: 0
       width: 100%
       height: 100%
-      z-index: 1
+      z-index: $card-z-index
 
     &:hover::after
       background: $card-hover-color
@@ -120,15 +121,8 @@ $image-height: 141px
     &--skeleton
       @include skeleton(90%, 18px)
 
-  &__save
-    display: inline-flex
-    background: transparent
-    border: none
-    cursor: pointer
-    z-index: 10
-
-    &--saved
-      fill: $primary-red
+  &__actions-wrapper
+    z-index: $card-element-z-index
 
   &__actions
     margin-left: -6px
@@ -164,7 +158,7 @@ $image-height: 141px
   display: flex
   gap: 8px
   align-items: center
-  z-index: 2
+  z-index: $card-element-z-index
 
   &__avatar
     width: 24px

@@ -10,8 +10,7 @@
             [wh.logged-in.contribute.db :as contribute]
             [wh.pages.core :as pages]
             [wh.verticals :as verticals])
-  (:require-macros [clojure.core.strint :refer [<<]]
-                   [reagent.ratom :refer [reaction]]))
+  (:require-macros [clojure.core.strint :refer [<<]]))
 
 (reg-sub
   ::contribute
@@ -255,6 +254,12 @@
   :<- [::contribute]
   (fn [db]
     (boolean (::contribute/archived db))))
+
+(reg-sub
+  ::paid?
+  :<- [::contribute]
+  (fn [db]
+    (boolean (::contribute/paid db))))
 
 (reg-sub
   ::creator
