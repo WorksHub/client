@@ -321,17 +321,17 @@
 (defn percentile->title
   [p]
   (cond
-    nil "New user"
+    (nil? p)  "New user"
     (<= p 25) (str "Top " p "% user")
     (<= p 50) (str "Rising star")
-    :else (str "New user")))
+    :else     (str "New user")))
 
 (defn percentile->image
   [p]
   (cond
-    nil "/images/profile/new_user.svg"
+    (nil? p)  "/images/profile/new_user.svg"
     (<= p 50) "/images/profile/top_user.svg"
-    :else "/images/profile/new_user.svg"))
+    :else     "/images/profile/new_user.svg"))
 
 (defn section-stats
   [{:keys [is-owner? percentile created articles-count issues-count]}]
