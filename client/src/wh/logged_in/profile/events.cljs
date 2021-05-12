@@ -109,7 +109,7 @@
     (cond-> {:graphql {:query      (initial-data-query (common-user/candidate? db))
                        :variables  {:user_id (profile/user-id db)}
                        :on-success [::fetch-initial-data-success]}}
-            (:wh.db/initial-load? db) (assoc :dispatch [::pages/set-loader]))))
+      (:wh.db/initial-load? db) (assoc :dispatch [::pages/set-loader]))))
 
 (defn init-avatar [profile]
   (let [predefined-avatar (common-user/url->predefined-avatar (::profile/image-url profile))]
@@ -132,6 +132,7 @@
   ::fetch-initial-data-success
   db/default-interceptors
   (fn [{db :db} [{{:keys [user blogs query_issues]} :data}]]
+
     (let [issues (:issues query_issues)
           user   (user/translate-user user)]
       {:db         (merge-with merge

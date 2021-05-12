@@ -5,18 +5,12 @@
     [wh.db :as db]
     [wh.login.db :as login]
     [wh.login.github-callback.db :as github-callback]
+    [wh.login.shared :as login-shared]
     [wh.pages.core :as pages :refer [on-page-load]]
     [wh.user.db :as user]
     [wh.util :as util])
   (:require-macros
     [wh.graphql-macros :refer [defquery]]))
-
-(defn- initialize-associated-jobs
-  [{:keys [likes applied] :as user}]
-  (-> user
-      (assoc :liked-jobs (set (map :id likes))
-             :applied-jobs (set (map :jobId applied)))
-      (dissoc :likes :applied)))
 
 (reg-event-fx
   ::gh-auth-success
@@ -24,7 +18,7 @@
   (fn [{db :db} [{{{:keys [email new] :as user} :githubUserSession} :data}]]
     (let [db (-> db
                  (update ::user/sub-db merge (-> user
-                                                 initialize-associated-jobs
+                                                 login-shared/initialize-associated-jobs-and-blogs
                                                  util/remove-nils
                                                  user/translate-user))
                  (assoc-in [::github-callback/sub-db :callback-status] :success))
@@ -59,7 +53,9 @@
                        [:cv [:link
                              [:file [:type :name :url]]]]
                        [:salary [:min :currency]]
-                       [:likes [:fragment/likedJobId]]
+                       [:likes [:__typename
+                                [:fragment/likedJobId]
+                                [:fragment/likedBlogId]]]
                        [:applied [:jobId]]
                        [:preferredLocations [:city :administrative :country :countryCode :subRegion :region :longitude :latitude]]]]]})
 

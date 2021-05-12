@@ -64,3 +64,6 @@
 
 (deffragment likedJobId :Job
              [:id])
+
+(deffragment likedBlogId :Blog
+             [:id])
