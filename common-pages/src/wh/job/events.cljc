@@ -571,13 +571,14 @@
   ::set-page-title
   db/default-interceptors
   (fn [{db :db} _]
-    {:page-title {:page-name
-                  (str (job/seo-job-title (get-in db [::job/sub-db ::job/remote])
-                                          (get-in db [::job/sub-db ::job/title])
-                                          (get-in db [::job/sub-db ::job/location]))
-                       " - "
-                       (get-in db [::job/sub-db ::job/company :name]))
-                  :vertical (:wh.db/vertical db)}}))
+    {:page-title
+     {:page-name
+                (str (job/seo-job-title {:remote   (get-in db [::job/sub-db ::job/remote])
+                                         :title    (get-in db [::job/sub-db ::job/title])
+                                         :location (get-in db [::job/sub-db ::job/location])})
+                     " - "
+                     (get-in db [::job/sub-db ::job/company :name]))
+      :vertical (:wh.db/vertical db)}}))
 
 (reg-event-db
   ::initialize-db

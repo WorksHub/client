@@ -130,18 +130,23 @@
                               ::recommended-jobs
                               ::preset-slug]))
 
-(def default-db {::error nil
-                 ::publishing? false
-                 ::show-apply-sticky? false
-                 ::show-admin-publish-prompt? false
+(def default-db {::error                         nil
+                 ::publishing?                   false
+                 ::show-apply-sticky?            false
+                 ::show-admin-publish-prompt?    false
                  ::admin-publish-prompt-loading? false})
 
 (defn show-unpublished? [admin? owner? published?]
   (and (false? published?) (or admin? owner?)))
 
+(defn add-remote?
+  [{:keys [remote title] :as _job}]
+  (and remote
+       (not (re-find #"(?i)remote" title))))
+
 (defn seo-job-title
-  [remote title location]
+  [{:keys [title location] :as job}]
   (cond
-    remote (str "Remote " title)
+    (add-remote? job) (str "Remote " title)
     (seq (when location (util/remove-nils location))) (str title " in " (:city location))
     :else title))
