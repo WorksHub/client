@@ -39,6 +39,7 @@
             results      (<sub [:graphql/result :recommendations-query-for-blogs (blog/params @db)])
             liked-jobs   (<sub [:user/liked-jobs])
             applied-jobs (<sub [:user/applied-jobs])
+            this-blog-id (:id (blog/params @db))
             stub         (util/maps-with-id blog/page-size)]
         (if (= :executing state)
           {:issues stub
@@ -51,7 +52,9 @@
                         (jobs/add-interactions liked-jobs applied-jobs)
                         (common-job/sort-by-user-score)
                         (map common-job/translate-job))
-           :blogs  (get-in results [:blogs :blogs])})))))
+           ;; this `remove` takes out 'this' blog from the recommendations
+           ;; really, it should never be in this list anyway but here we are.
+           :blogs  (remove #(= this-blog-id (:id %)) (get-in results [:blogs :blogs]))})))))
 
 (reg-sub
   ::id
