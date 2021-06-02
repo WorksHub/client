@@ -233,6 +233,16 @@
    :venia/queries   [[:update_blog {:update_blog :$update_blog}
                       [:id]]]})
 
+(def cross-post-blog-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "cross_post"}
+   :venia/variables [{:variable/name "id" :variable/type :String!}
+                     {:variable/name "publisher" :variable/type :publisher!}]
+   :venia/queries   [[:cross_post {:id :$id :publisher :$publisher}
+                      [:date
+                       :publisher
+                       :url]]]})
+
 (reg-event-fx
   ::save-success
   contribute-interceptors
@@ -342,6 +352,28 @@
            :db         (assoc-in db [::contribute/sub-db ::contribute/save-status] :tried)
            :dispatch-n [[:error/close-global]
                         [::pages/set-loader]]})))))
+
+
+(reg-event-fx
+  ::cross-post-blog
+  db/default-interceptors
+  (fn [{db :db} [publisher]]
+    (let [id (get-in db [:wh.db/page-params :id])]
+      {:graphql {:query      cross-post-blog-mutation
+                 :variables  {:id id :publisher publisher}
+                 :on-success [::cross-post-success]
+                 :on-failure [::cross-post-failure]}})))
+
+(reg-event-db
+  ::cross-post-success
+  contribute-interceptors
+  (fn [db _]))
+
+(reg-event-db
+  ::cross-post-failure
+  contribute-interceptors
+  (fn [db _]))
+
 
 (reg-event-db
   ::set-published

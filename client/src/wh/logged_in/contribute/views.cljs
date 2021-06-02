@@ -230,6 +230,7 @@
 
        (when admin?
          [:<>
+          #_[:button {:on-click #(dispatch [::events/cross-post-blog "hashnode"])} "Cross Post to Hashnode"]
           [:div.control
            [labelled-checkbox
             (<sub [::subs/published?])
