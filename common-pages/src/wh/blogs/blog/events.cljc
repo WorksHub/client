@@ -18,16 +18,16 @@
                      :operation/name "blog"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
-   :venia/queries [[:blog {:id :$id}
-                    [:id :title :feature :creator :published
-                     :htmlBody :readingTime :author :authorId
-                     :originalSource :formattedCreationDate :upvoteCount
-                     :primaryVertical :verticals :associatedJobs :creationDate
-                     [:tags :fragment/tagFields]
-                     [:authorInfo [:name :summary :imageUrl
-                                   [:skills [:name]]
-                                   [:otherUrls [:url :title]]]]
-                     [:company [:logo :name :id]]]]]})
+   :venia/queries   [[:blog {:id :$id}
+                      [:id :title :feature :creator :published
+                       :htmlBody :readingTime :author :authorId
+                       :originalSource :formattedDate :upvoteCount
+                       :primaryVertical :verticals :associatedJobs :creationDate
+                       [:tags :fragment/tagFields]
+                       [:authorInfo [:name :summary :imageUrl
+                                     [:skills [:name]]
+                                     [:otherUrls [:url :title]]]]
+                       [:company [:logo :name :id]]]]]})
 
 (reg-query :blog blog-query)
 
@@ -40,26 +40,26 @@
                       :variable/type :Int}
                      {:variable/name "vertical"
                       :variable/type :vertical}]
-   :venia/queries [[:jobs
-                    {:filter_type "recommended"
-                     :entity_id   :$id
-                     :entity_type "blog"
-                     :page_size   :$page_size
-                     :page_number 1}
-                    :fragment/jobCardFields]
+   :venia/queries   [[:jobs
+                      {:filter_type "recommended"
+                       :entity_id   :$id
+                       :entity_type "blog"
+                       :page_size   :$page_size
+                       :page_number 1}
+                      :fragment/jobCardFields]
 
-                   [:query_issues
-                    {:page_size   :$page_size}
-                    [[:issues [:fragment/issueListFields]]]]
+                     [:query_issues
+                      {:page_size :$page_size}
+                      [[:issues [:fragment/issueListFields]]]]
 
-                   [:blogs
-                    {:page_size :$page_size
-                     :page_number 1
-                     :vertical :$vertical}
-                    [[:blogs [:id :title :feature :author :creator :published
-                              :formattedCreationDate :readingTime :upvoteCount
-                              [:tags :fragment/tagFields]]]
-                     [:pagination [:total :count]]]]]})
+                     [:blogs
+                      {:page_size   :$page_size
+                       :page_number 1
+                       :vertical    :$vertical}
+                      [[:blogs [:id :title :feature :author :creator :published
+                                :formattedDate :readingTime :upvoteCount
+                                [:tags :fragment/tagFields]]]
+                       [:pagination [:total :count]]]]]})
 
 (reg-query :recommendations-query-for-blogs recommendations-query)
 
@@ -115,12 +115,12 @@
            {:graphql         {:query      upvote-blog-mutation
                               :variables  {:id id}
                               :on-success [:graphql/update-entry
-                                             :blog (blog/params db)
-                                             :merge {:blog {:upvote-count (-> blog
-                                                                              :upvote-count
-                                                                              inc)}}]
+                                           :blog (blog/params db)
+                                           :merge {:blog {:upvote-count (-> blog
+                                                                            :upvote-count
+                                                                            inc)}}]
                               :on-failure [::upvote-failure]}
-            :analytics/track ["Blog Boosted" (select-keys blog [:id :reading-time :title :tags :author :formatted-creation-date])]}
+            :analytics/track ["Blog Boosted" (select-keys blog [:id :reading-time :title :tags :author :formatted-date])]}
            {:show-auth-popup {:context  :upvote
                               :redirect [:blog :params {:id id} :query-params {:upvote true}]}})))))
 

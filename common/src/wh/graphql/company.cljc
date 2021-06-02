@@ -35,28 +35,28 @@
                      :operation/name "company"}
    :venia/variables [{:variable/name "slug"
                       :variable/type :String!}]
-   :venia/queries [[:company {:slug :$slug}
-                    [[:blogs {:pageSize 2 :pageNumber 1}
-                      [[:blogs
-                        [:id :title :feature :author :formattedCreationDate :readingTime
-                         :upvoteCount :creator :published
-                         [:tags :fragment/tagFields]]]
-                       [:pagination [:total]]]]
-                     [:jobs {:pageSize 2 :pageNumber 1}
-                      [[:jobs
-                        [:fragment/jobCardFields]]
-                       [:pagination [:total]]]]
-                     [:issues {:pageSize 2 :pageNumber 1 :published true}
-                      [[:issues
-                        [:id :url :number :body :title :pr_count :level :status :published :created_at
-                         [:compensation [:amount :currency]]
-                         [:contributors [:id]]
-                         [:labels [:name]]
-                         [:repo [:name :owner :primary_language]]]]
-                       [:pagination [:total]]]]
-                     [:repos {:pageSize 10 :pageNumber 1 :hasIssues false}
-                      [[:repos
-                        [:github_id :name :description :primary_language :owner]]]]]]]})
+   :venia/queries   [[:company {:slug :$slug}
+                      [[:blogs {:pageSize 2 :pageNumber 1}
+                        [[:blogs
+                          [:id :title :feature :author :formattedDate :readingTime
+                           :upvoteCount :creator :published
+                           [:tags :fragment/tagFields]]]
+                         [:pagination [:total]]]]
+                       [:jobs {:pageSize 2 :pageNumber 1}
+                        [[:jobs
+                          [:fragment/jobCardFields]]
+                         [:pagination [:total]]]]
+                       [:issues {:pageSize 2 :pageNumber 1 :published true}
+                        [[:issues
+                          [:id :url :number :body :title :pr_count :level :status :published :created_at
+                           [:compensation [:amount :currency]]
+                           [:contributors [:id]]
+                           [:labels [:name]]
+                           [:repo [:name :owner :primary_language]]]]
+                         [:pagination [:total]]]]
+                       [:repos {:pageSize 10 :pageNumber 1 :hasIssues false}
+                        [[:repos
+                          [:github_id :name :description :primary_language :owner]]]]]]]})
 
 (defquery fetch-all-company-jobs-query
   {:venia/operation {:operation/type :query

@@ -106,10 +106,10 @@
             (clojure.string/split #"<div class=\"divider\"></div>"))))
 
 (reg-sub
-  ::formatted-creation-date
+  ::formatted-date
   :<- [::blog]
   (fn [blog _]
-    (:formatted-creation-date blog)))
+    (:formatted-date blog)))
 
 (reg-sub
   ::creator

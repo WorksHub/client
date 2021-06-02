@@ -29,23 +29,23 @@
 (def std-blogs-path [:blogs :blogs])
 
 (defquery search-blogs-query
-          {:venia/operation {:operation/type :query
-                             :operation/name "search_blogs"}
-           :venia/variables [{:variable/name "search_term"
-                              :variable/type :String}
-                             {:variable/name "page_size"
-                              :variable/type :Int}
-                             {:variable/name "page_number"
-                              :variable/type :Int}]
-           :venia/queries   [[:search_blogs
-                              {:page_size :$page_size
-                               :page_number :$page_number
-                               :search_term :$search_term}
-                              [[:results [:id :title :feature :author
-                                          :formatted_creation_date :reading_time
-                                          :creator :upvote_count :published
-                                          [:tags :fragment/tagFields]]]
-                               [:pagination [:total :count]]]]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "search_blogs"}
+   :venia/variables [{:variable/name "search_term"
+                      :variable/type :String}
+                     {:variable/name "page_size"
+                      :variable/type :Int}
+                     {:variable/name "page_number"
+                      :variable/type :Int}]
+   :venia/queries   [[:search_blogs
+                      {:page_size   :$page_size
+                       :page_number :$page_number
+                       :search_term :$search_term}
+                      [[:results [:id :title :feature :author
+                                  :formatted_date :reading_time
+                                  :creator :upvote_count :published
+                                  [:tags :fragment/tagFields]]]
+                       [:pagination [:total :count]]]]]})
 (reg-query :search_blogs search-blogs-query)
 (def search-blogs-path [:search-blogs :results])
 

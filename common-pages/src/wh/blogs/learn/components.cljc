@@ -1,16 +1,16 @@
 (ns wh.blogs.learn.components
   (:require [re-frame.core :refer [dispatch]]
+            [wh.blogs.like :as blogs-like]
+            [wh.common.url :as url]
             [wh.components.card-actions.components :as card-actions]
             [wh.components.common :as components-common]
-            [wh.re-frame.subs :refer [<sub]]
-            [wh.styles.blogs :as styles]
             [wh.components.icons :as icons]
             [wh.components.tag :as tag]
             [wh.interop :as interop]
-            [wh.blogs.like :as blogs-like]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.slug :as slug]
-            [wh.common.url :as url]
+            [wh.styles.blogs :as styles]
             [wh.util :as util]))
 
 (defn rocket-icon []
@@ -22,8 +22,8 @@
    [rocket-icon]
    [:div (util/smc styles/secondary-text) upvote-count " boosts"]])
 
-(defn date-and-read-time-comp [ctx {:keys [formatted-creation-date reading-time] :as blog}]
-  [:div (util/smc styles/secondary-text) formatted-creation-date " • " reading-time " min read"])
+(defn date-and-read-time-comp [ctx {:keys [formatted-date reading-time] :as blog}]
+  [:div (util/smc styles/secondary-text) formatted-date " • " reading-time " min read"])
 
 (defn author-comp [ctx {:keys [author-info] :as blog}]
   (when author-info

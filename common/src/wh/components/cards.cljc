@@ -69,7 +69,7 @@
        [:div.text percentage-fmt])]))
 
 (defn blog-card
-  [{:keys [id title feature author formatted-creation-date reading-time upvote-count tags creator published] :as blog}]
+  [{:keys [id title feature author formatted-date reading-time upvote-count tags creator published] :as blog}]
   (let [skeleton? (and blog (empty? (dissoc blog :id)))]
     [:div {:class (util/merge-classes "card"
                                       "card--blog"
@@ -86,7 +86,7 @@
        [:div.blog-info
         (link [:div.title title] :blog :id id)
         (link [:div.author author] :blog :id id)
-        (link [:div.datetime formatted-creation-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)
+        (link [:div.datetime formatted-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)
         [tag/tag-list :a (->> tags
                               (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]
         #?(:cljs
@@ -98,7 +98,7 @@
 
 
 (defn blog-row
-  [{:keys [id title author formatted-creation-date reading-time upvote-count tags creator published] :as blog}]
+  [{:keys [id title author formatted-date reading-time upvote-count tags creator published] :as blog}]
   (let [skeleton? (and blog (empty? (dissoc blog :id)))]
     [:div {:class (util/merge-classes "card"
                                       "card--blog"
@@ -115,7 +115,7 @@
         {:data-test "blog-info"}
         (link [:div.title title] :blog :id id)
         (link [:div.author author] :blog :id id)
-        (link [:div.datetime formatted-creation-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)
+        (link [:div.datetime formatted-date " | " reading-time " min read | " upvote-count " " (pluralize upvote-count "boost")] :blog :id id)
         [tag/tag-list :a (->> tags
                               (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]
         #?(:cljs

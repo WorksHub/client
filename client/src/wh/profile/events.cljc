@@ -51,7 +51,7 @@
                                :date :weekday :color]]]]]]]]]]
 
                      [:blogs {:user_id :$id}
-                      [[:blogs [:id :title :formattedCreationDate
+                      [[:blogs [:id :title :formattedDate
                                 :readingTime :upvoteCount :published]]]]
 
                      [:query_issues {:user_id :$id}

@@ -89,13 +89,13 @@
                                                               [:id :slug :title [:company [:name]]])
                                         (util/inline-fragment :Blog
                                                               [:id])]]]
-                        (not candidate?) (conj [:applied [:timestamp
-                                                          :state
-                                                          :note
-                                                          [:coverLetter [:link [:file [:url]]]]
-                                                          [:job [:id :slug :title [:company [:name :slug :package]]]]]]))]
+                              (not candidate?) (conj [:applied [:timestamp
+                                                                :state
+                                                                :note
+                                                                [:coverLetter [:link [:file [:url]]]]
+                                                                [:job [:id :slug :title [:company [:name :slug :package]]]]]]))]
                      [:blogs {:user_id :$user_id}
-                      [[:blogs [:id :title :formattedCreationDate
+                      [[:blogs [:id :title :formattedDate
                                 :readingTime :upvoteCount :published]]]]
                      [:query_issues {:user_id :$user_id}
                       [[:issues [:id :title :level

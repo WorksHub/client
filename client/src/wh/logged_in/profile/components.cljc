@@ -247,7 +247,7 @@
 (defn meta-separator []
   [:span {:class styles/meta-separator} "•"])
 
-(defn article-card [{:keys [id title formatted-creation-date reading-time upvote-count published editable?] :as article-data}]
+(defn article-card [{:keys [id title formatted-date reading-time upvote-count published editable?] :as article-data}]
   [:div {:class styles/article}
    (when editable? [edit-link {:href (routes/path :contribute-edit :params {:id id})
                                :type :small}])
@@ -256,7 +256,7 @@
    [:div {:class styles/article__meta}
     (when-not published [:<> [:span "not published"]
                          [meta-separator]])
-    formatted-creation-date
+    formatted-date
     [meta-separator]
     reading-time " min read"
     [meta-separator]

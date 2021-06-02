@@ -51,16 +51,16 @@
    [:repo [:name :owner :primary_language]]])
 
 (deffragment tagFields :tag
-             [:id :slug :type :subtype :label :weight])
+  [:id :slug :type :subtype :label :weight])
 
 ;; Articles/Blogs
 
 (deffragment blogCardFields :Blog
-             [:id :title :feature :author
-              :formattedCreationDate :readingTime
-              :creator :upvoteCount :published
-              [:authorInfo [:id :imageUrl :name]]
-              [:tags :fragment/tagFields]])
+  [:id :title :feature :author
+   :formattedDate :readingTime
+   :creator :upvoteCount :published
+   [:authorInfo [:id :imageUrl :name]]
+   [:tags :fragment/tagFields]])
 
 (deffragment likedJobId :Job
              [:id])

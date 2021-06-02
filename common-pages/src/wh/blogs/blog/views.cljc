@@ -132,7 +132,7 @@
        (:name (<sub [::subs/author-info]))
        (<sub [::subs/author]))] " "
     [:span.blog-info__datetime
-     (<sub [::subs/formatted-creation-date]) " "
+     (<sub [::subs/formatted-date]) " "
      (when (> (<sub [::subs/reading-time]) 0)
        (str "| " (<sub [::subs/reading-time]) " min read"))]]])
 

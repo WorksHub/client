@@ -7,12 +7,12 @@
             [wh.subs :refer [<sub]]))
 
 (defn article
-  [{:keys [id title formatted-creation-date creator author author-id author-info verticals company tags]}]
+  [{:keys [id title formatted-date creator author author-id author-info verticals company tags]}]
   (let [author-name (or (:name author-info) author)]
     [:div.admin-article
      [link [:h3 title] :blog :id id]
      [:div.admin-article__info
-      [:span "Submitted: " formatted-creation-date]
+      [:span "Submitted: " formatted-date]
       [:span "Creator: " [:a.a--underlined {:href (str "mailto:" creator)} creator]]
       [:span "Author: " (if author-id
                           [link author-name :candidates :id author-id :class "a--underlined"]
