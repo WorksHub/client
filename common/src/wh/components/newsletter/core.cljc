@@ -1,7 +1,7 @@
-(ns wh.components.newsletter
+(ns wh.components.newsletter.core
   (:require
     #?(:cljs [reagent.core :as r])
-    [wh.styles.newsletter-subscription :as styles]
+    [wh.components.newsletter.styles :as styles]
     [wh.interop :as interop]
     [wh.util :as util]))
 
@@ -10,7 +10,7 @@
 (def global-class-to-hide-elements "is-hidden")
 
 (defn newsletter [{:keys [logged-in? type]
-                   :or {type :listing}}]
+                   :or   {type :listing}}]
   (let [render (fn []
                  (when-not logged-in?
                    [:div (util/smc styles/card__wrapper
@@ -29,11 +29,11 @@
                       [:button {:class styles/button} "Subscribe"]]]
                     [:div
                      {:class (util/mc styles/success global-class-to-hide-elements)
-                      :id container-id-for-script*}
+                      :id    container-id-for-script*}
                      [:div {:class styles/success__text} "Thanks for signing up. " [:br.is-hidden-desktop] "We'll see you soon \uD83D\uDC4B"]]]))]
 
     #?(:cljs (r/create-class
                {:component-did-mount (interop/listen-newsletter-form)
-                :reagent-render render})
+                :reagent-render      render})
        :clj  (some-> (render)
                      (conj [:script (interop/listen-newsletter-form)])))))

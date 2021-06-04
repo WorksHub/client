@@ -9,7 +9,7 @@
             [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon url-icons]]
             [wh.components.job :refer [job-card]]
-            [wh.components.newsletter :as newsletter]
+            [wh.components.newsletter.core :as newsletter]
             [wh.components.pods.candidates :as candidate-pods]
             [wh.components.recommendation-cards :as recommendation-cards]
             [wh.components.tag :as tag]

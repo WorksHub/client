@@ -11,7 +11,7 @@
     [wh.components.icons :as icons]
     [wh.components.issue :as issue]
     [wh.components.job :refer [job-card]]
-    [wh.components.newsletter :as newsletter]
+    [wh.components.newsletter.core :as newsletter]
     [wh.components.pagination :refer [pagination]]
     [wh.components.pods.candidates :as candidate-pods]
     [wh.components.recommendation-cards :as recommendation-cards]

@@ -12,7 +12,7 @@
             [wh.components.activities.job-promoted :as job-promoted]
             [wh.components.activities.job-published :as job-published]
             [wh.components.attract-card :as attract-card]
-            [wh.components.newsletter :as newsletter]
+            [wh.components.newsletter.core :as newsletter]
             [wh.components.side-card.side-card :as side-cards]
             [wh.components.stat-card :as stat-card]
             [wh.components.tag-selector.tag-selector :as tag-selector]

@@ -2,7 +2,7 @@
   (:require #?(:cljs [wh.jobs.jobsboard.subs :as subs]
                :clj [wh.jobsboard.subs :as subs])
             [wh.components.job-new :as job]
-            [wh.components.newsletter :as newsletter]
+            [wh.components.newsletter.core :as newsletter]
             [wh.components.pagination :as pagination]
             [wh.interop :as interop]
             [wh.jobsboard.components :as components]
