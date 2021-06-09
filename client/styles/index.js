@@ -59,4 +59,5 @@ import './create_job.sass';
 import './blogs.sass';
 import './card_actions.sass';
 
+import '../src/wh/logged_in/contribute/styles.sass';
 import '../../common/src/wh/components/newsletter/styles.sass';

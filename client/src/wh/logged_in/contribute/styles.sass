@@ -1,0 +1,39 @@
+@import "colours"
+@import "vars"
+@import "button"
+
+.cross-posting
+  line-height: 1.8
+  margin-top: 32px
+  color: $grey500
+
+  h2, h3
+    color: $grey500
+    font-weight: 600
+
+  h2
+    margin-bottom: 16px
+
+  h3
+    font-size: 16px
+    margin-bottom: 4px
+
+  &__publishers
+    display: grid
+    gap: 16px
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))
+
+  &__publisher
+    height: 180px
+    background-color: $white
+    padding: 16px
+    font-size: 13px
+    display: flex
+    flex-direction: column
+
+  &__a
+    text-decoration: underline
+
+  &__button
+    @include button
+    margin-top: auto

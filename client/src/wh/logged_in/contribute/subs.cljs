@@ -262,6 +262,12 @@
     (boolean (::contribute/paid db))))
 
 (reg-sub
+  ::cross-posts
+  :<- [::contribute]
+  (fn [db]
+    (::contribute/cross-posts db)))
+
+(reg-sub
   ::creator
   :<- [::contribute]
   (fn [db]

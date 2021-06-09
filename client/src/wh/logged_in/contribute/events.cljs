@@ -176,12 +176,13 @@
                      :operation/name "blog"}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
-   :venia/queries [[:blog {:id :$id}
-                    [:id :title :feature :author :authorId
-                     :published :archived :paid :body :creator :originalSource
-                     :verticals :primaryVertical :associatedJobs
-                     [:company [:name :id]]
-                     [:tags :fragment/tagFields]]]]})
+   :venia/queries   [[:blog {:id :$id}
+                      [:id :title :feature :author :authorId
+                       :published :archived :paid :body :creator :originalSource
+                       :verticals :primaryVertical :associatedJobs
+                       [:company [:name :id]]
+                       [:tags :fragment/tagFields]
+                       [:crossPosts [:url :publisher :date]]]]]})
 
 (reg-event-fx
   ::fetch-blog
@@ -364,16 +365,19 @@
                  :on-success [::cross-post-success]
                  :on-failure [::cross-post-failure]}})))
 
-(reg-event-db
+(reg-event-fx
   ::cross-post-success
   contribute-interceptors
-  (fn [db _]))
+  (fn [{db :db} [res]]
+    (let [new-cross-post (-> res :data :cross_post)]
+      {:db       (update db ::contribute/cross-posts conj new-cross-post)
+       :dispatch [:success/set-global "Cross posted successfully"]})))
 
-(reg-event-db
+(reg-event-fx
   ::cross-post-failure
   contribute-interceptors
-  (fn [db _]))
-
+  (fn [{db :db} [resp]]
+    {:dispatch [:error/set-global (str "Cross posting failed " (util/gql-errors->error-key resp))]}))
 
 (reg-event-db
   ::set-published

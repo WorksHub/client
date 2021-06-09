@@ -1,6 +1,7 @@
 (ns wh.logged-in.contribute.views
   (:require [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
+            [wh.common.time :as time]
             [wh.common.upload :as upload]
             [wh.components.common :refer [link]]
             [wh.components.conversation.views :as codi :refer [codi-message]]
@@ -17,9 +18,11 @@
             [wh.logged-in.contribute.db :as contribute]
             [wh.logged-in.contribute.events :as events]
             [wh.logged-in.contribute.subs :as subs]
+            [wh.logged-in.contribute.styles :as styles]
             [wh.pages.util :as putil]
             [wh.subs :refer [<sub]]
-            [wh.util :refer [merge-classes]]))
+            [wh.util :refer [merge-classes]]
+            [wh.util :as util]))
 
 (defn hero []
   [:div.contribute__hero
@@ -160,19 +163,50 @@
                                                           :on-failure [::events/avatar-upload-failure])}]]
       [multi-edit
        (<sub [::subs/skills])
-       {:label "Skills"
+       {:label     "Skills"
         :component skill-field}]
       [multi-edit
        (<sub [::subs/other-urls])
-       {:label "Websites"
+       {:label       "Websites"
         :placeholder "Link to user web page, profile, portfolio, etc..."
-        :on-change [::events/edit-url]}]
+        :on-change   [::events/edit-url]}]
       [text-field
        (<sub [::subs/summary])
        {:type        :textarea
         :label       "Summary"
         :placeholder "Story about user"
         :on-change   [::events/edit-summary]}]])])
+
+(def publisher->string
+  {"dev_to"   "Dev To"
+   "hashnode" "Hashnode"})
+
+(defn cross-post-card [publisher {:keys [url date] :as cross-post}]
+  [:div {:class styles/cross-posting__publisher}
+   [:h3 (publisher->string publisher)]
+   (if url
+     [:<>
+      [:div "Posted " (-> date time/str->human-time)]
+      [:a {:href   url
+           :target "_blank"
+           :rel    "noopener"
+           :class  styles/cross-posting__a} "View Post"]]
+     [:span "Not yet posted"])
+   [:button {:on-click #(dispatch [::events/cross-post-blog publisher])
+             :class    styles/cross-posting__button
+             :disabled (boolean url)}
+    "Cross Post"]])
+
+(defn cross-posting []
+  [:section {:class styles/cross-posting}
+   [:h2 "Cross Posting"]
+   [:ul {:class styles/cross-posting__publishers}
+    (let [all-publishers (keys publisher->string)
+          cross-posts    (<sub [::subs/cross-posts])]
+      (for [publisher all-publishers]
+        (let [cross-post (some #(if (= publisher (:publisher %)) % nil) cross-posts)]
+          [cross-post-card publisher cross-post])))]])
+
 
 (defn main [new?]
   (let [admin? (<sub [:user/admin?])]
@@ -230,7 +264,6 @@
 
        (when admin?
          [:<>
-          #_[:button {:on-click #(dispatch [::events/cross-post-blog "hashnode"])} "Cross Post to Hashnode"]
           [:div.control
            [labelled-checkbox
             (<sub [::subs/published?])
@@ -255,7 +288,8 @@
         [:p "If there is video in post make sure that following tags have specified clasess to enable responsive behaviour:" [:code "<center class=\"embed-responsive embed-responsive-16by9\"><iframe class=\"embed-responsive-item\" ...></center>"]]
         (when (<sub [:user/admin?])
           [:p "Check that all the images in the post are hosted by us, if they are not, upload them and update links."])]
-       [submit-button true]]]
+       [submit-button true]
+       [cross-posting]]]
      [:div.column.is-offset-1.is-4.contribute__side
       (cond
         (<sub [::subs/show-vertical-selector?])
