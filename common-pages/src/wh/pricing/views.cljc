@@ -21,8 +21,9 @@
                                       package        (assoc :package (name package))
                                       billing-period (assoc :billing (name billing-period)))))}
      [:button#employers_demo-btn
-      {:class (util/merge-classes "button button__public"
-                                  (when secondary? "button--inverted"))}
+      {:class     (util/merge-classes "button button__public"
+                                      (when secondary? "button--inverted"))
+       :data-test "request-demo"}
       label]]))
 
 (defn signup-button [label package billing-period quantity _]
@@ -54,12 +55,13 @@
          (->> data/billing-data
               (filter (fn [[k v]] (contains? data/billing-periods k)))
               (map (fn [[k v]] {:id    k
-                               :label [:span (:title v)
-                                       (when-let [discount (:discount v)]
-                                         [:small (str "(" (* 100 discount) "% off)")])]
-                               :href  (routes/path
-                                        :pricing
-                                        :query-params {:billing-period (name k)})})))]]]
+                                :label [:span (:title v)
+                                        (when-let [discount (:discount v)]
+                                          [:small (str "(" (* 100 discount) "% off)")])]
+                                :href  (routes/path
+                                         :pricing
+                                         :query-params {:billing-period (name k)})})))
+         {:data-test "billing-periods"}]]]
       [package-selector
        {:signup-button                 signup-button
         :show-billing-period-selector? false

@@ -156,7 +156,8 @@
        [:div.public__header-selector
         [forms/fake-radio-buttons
          (<sub [::subs/time-period])
-         (map (partial time-period-button selected-vertical) [:week :month])]]]]
+         (map (partial time-period-button selected-vertical) [:week :month])
+         nil]]]]
      [init-charts admin?]
      (when admin?
        [:div.public-content

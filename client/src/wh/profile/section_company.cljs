@@ -11,11 +11,11 @@
 (def btn-cls (util/mc styles/button styles/button--small))
 (def btn-cls-inverted (util/mc styles/button styles/button--small styles/button--inverted))
 
-(defn btn-get-in-touch [{:keys [on-get-in-touch updating-state?] :as opts}]
+(defn btn-get-in-touch [{:keys [on-get-in-touch updating-state? current-state] :as opts}]
   [:button {:on-click on-get-in-touch
             :class    btn-cls
             :disabled updating-state?}
-   "Get in touch"])
+   (if (= current-state :hired) "Move back to Interviewing" "Get in touch")])
 
 (defn btn-hire [{:keys [on-hire updating-state?]}]
   [:button {:on-click on-hire
@@ -42,6 +42,8 @@
           [buttons [btn-get-in-touch opts]]
           (= (profile/application-state :get-in-touch) state)
           [buttons [btn-pass opts] [btn-hire opts]]
+          (= (profile/application-state :hired) state)
+          [buttons [btn-get-in-touch (assoc opts :current-state :hired)]]
           :else
           nil)))
 
@@ -68,6 +70,7 @@
                                        :new-tab? true}])
          (if cv-url
            [:div
+            ;; if we want to put CV preview toggle back
             #_[:a {:class    styles/underline-link
                    :on-click #(dispatch [::events/toggle-show-user-cv (not cv-visible?)])}
                (if cv-visible? "Hide CV" "Show CV")]

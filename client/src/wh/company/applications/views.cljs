@@ -68,7 +68,8 @@
 
 (defn application-buttons
   [& {:keys [class state on-get-in-touch on-pass on-hire could-hire?]}]
-  (when (not= state "hired")
+  (if (= state "hired")
+    [:div [:button.button {:on-click on-get-in-touch} "Move back to Interviewing"]]
     [:div
      {:class class}
      (when (and (not= state "get_in_touch")
@@ -83,25 +84,26 @@
 
 (defn admin-buttons
   [& {:keys [class state on-approve on-reject on-get-in-touch on-pass on-hire]}]
-  (vec
-   (concat [:div
-            {:class class}]
-           (case state
-             "pending"
-             [[:button.button {:on-click on-approve :data-test "approve-application"}
-               "Approve"]
-              [:button.button.button--inverted {:on-click on-reject} "Reject"]]
-             "approved"
-             [[:button.button {:on-click on-get-in-touch} "Get in touch"]
-              [:button.button.button--inverted {:on-click on-pass} "Pass"]]
-             "pass"
-             [[:button.button {:on-click on-get-in-touch} "Get in touch"]]
-             "get_in_touch"
-             [[:button.button {:on-click on-hire} "Hire"]
-              [:button.button.button--inverted {:on-click on-pass} "Pass"]]
-             "rejected"
-             [[:button.button {:on-click on-approve} "Approve"]]
-             nil))))
+  [:div
+   {:class class}
+   (case state
+     "pending"
+     [:<> [:button.button {:on-click on-approve :data-test "approve-application"}
+           "Approve"]
+      [:button.button.button--inverted {:on-click on-reject} "Reject"]]
+     "approved"
+     [:<> [:button.button {:on-click on-get-in-touch} "Get in touch"]
+      [:button.button.button--inverted {:on-click on-pass} "Pass"]]
+     "pass"
+     [:<> [:button.button {:on-click on-get-in-touch} "Get in touch"]]
+     "get_in_touch"
+     [:<> [:button.button {:on-click on-hire} "Hire"]
+      [:button.button.button--inverted {:on-click on-pass} "Pass"]]
+     "rejected"
+     [:<> [:button.button {:on-click on-approve} "Approve"]]
+     "hired"
+     [:<> [:button.button {:on-click on-get-in-touch} "Move back to Interviewing"]]
+     nil)])
 
 (defn format-job-title [{{name :name} :company title :title}]
   [:div.company-application__job-details

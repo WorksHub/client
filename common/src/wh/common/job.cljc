@@ -100,3 +100,8 @@
 (defn published? [job]
   (boolean (:published job)))
 
+(defn company-id
+  "associated company's id"
+  [job]
+  (:company-id job))
+

@@ -337,17 +337,17 @@
           options)))
 
 (defn fake-radio-buttons
-  [value options]
-  [:div.radios
-   (for [{:keys [id label href]} options]
+  [value data-list options]
+  [:div.radios {:data-test (:data-test options)}
+   (for [{:keys [id label href]} data-list]
      ^{:key id}
      [:a
       {:class
-       (util/mc "radio"
-                (when (= id value)
-                  "radio--checked"))
+             (util/mc "radio"
+                      (when (= id value)
+                        "radio--checked"))
        :href href
-       :id id}
+       :id   id}
       (when (= id value)
         [:div.radio__checked])
       [:div.radio__label label]])])

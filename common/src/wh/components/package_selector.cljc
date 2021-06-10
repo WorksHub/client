@@ -32,12 +32,12 @@
 
 (defn package-quota [{:keys [quota active-quota open? job-quota
                              coupon package billing-data]}]
-  (let [checked    (= (:cost active-quota)
+  (let [selected?  (= (:cost active-quota)
                       (:cost quota))
         quota-name (:name quota)]
     [:div {:class     (util/mc styles/job-quota
-                               [checked styles/job-quota--checked])
-           :data-test (str "package-quota-" (:id quota))
+                               [selected? styles/job-quota--checked])
+           :data-test (if selected? "package-quota-selected" "package-quota")
            :on-click  (fn []
                         (when @open?
                           (reset! job-quota quota))
@@ -47,7 +47,8 @@
       [:span (util/smc styles/job-quota__name__quantity) quota-name]
       [:span " live " (text/pluralize (:quota quota) "job")]]
 
-     [:div (util/smc styles/package-selector__price)
+     [:div {:class     (util/mc styles/package-selector__price)
+            :data-test "package-price"}
       [:span (util/smc styles/package-selector__amount)
        (cost/int->dollars
          (cost/calculate-monthly-cost
@@ -61,13 +62,14 @@
   "Main responsibility of this component is using click-outside
   functionality on client side."
   [open? & children]
-  #?(:cljs
-     [co/click-outside {:on-click-outside #(reset! open? false)
-                        :class            (util/mc styles/job-quota-list)}
-      children]
-     :clj
-     [:div (util/smc styles/job-quota-list)
-      children]))
+  [:div {:data-test (when @open? "package-quota-list")}
+   #?(:cljs
+      [co/click-outside {:on-click-outside #(reset! open? false)
+                         :class            (util/mc styles/job-quota-list)}
+       children]
+      :clj
+      [:div (util/smc styles/job-quota-list)
+       children])])
 
 (defn package-quotas [quotas coupon package job-quota billing-data]
   (let [open? (atom false)]
@@ -132,10 +134,11 @@
            billing-period signup-button contact-button job-quota upgrade-quota?]}]
   (let [billing-data (get billing-data billing-period)]
     [:div
-     {:key   id
-      :class (util/merge-classes "package-selector__column column"
-                                 (when restricted? "package-selector__restricted"))
-      :style style}
+     {:key       id
+      :class     (util/merge-classes "package-selector__column column"
+                                     (when restricted? "package-selector__restricted"))
+      :data-test "pricing-package"
+      :style     style}
      [:div.package-selector__column-inner
 
       [:div (util/smc styles/package-selector__header)
@@ -191,15 +194,15 @@
     (let [job-quota (atom (or current-quota
                               (get-in data/package-data [:launch_pad :job-quotas 0])))]
       (fn [{:keys [signup-button contact-button mobile-fullscreen? show-billing-period-selector?
-                  show-trials? show-extras? exclude-packages restrict-packages billing-period
-                  current-package coupon info-message package-data current-quota]
-           :or     {mobile-fullscreen?            false
-                    show-billing-period-selector? true
-                    show-trials?                  true
-                    show-extras?                  true
-                    exclude-packages              #{}
-                    restrict-packages             #{}
-                    package-data                  data/package-data}}]
+                   show-trials? show-extras? exclude-packages restrict-packages billing-period
+                   current-package coupon info-message package-data current-quota]
+            :or   {mobile-fullscreen?            false
+                   show-billing-period-selector? true
+                   show-trials?                  true
+                   show-extras?                  true
+                   exclude-packages              #{}
+                   restrict-packages             #{}
+                   package-data                  data/package-data}}]
         (let [billing-period    (or billing-period @selected-billing-period)
               packages          (filter data/packages (set/difference
                                                         (set (keys package-data)) (set exclude-packages)))

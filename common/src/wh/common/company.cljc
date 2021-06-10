@@ -22,3 +22,6 @@
        name
        verticals/vertical-config
        :platform-name))
+
+(defn manager-email [c] (:manager c))
+(defn hubspot-id [c] (get-in c [:hubspot :id]))

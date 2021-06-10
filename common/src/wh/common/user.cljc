@@ -118,3 +118,9 @@
 (defn has-access-to-company? [{:keys [user company]}]
   (or (company-member? {:company company, :user user})
       (admin-type? (:type user))))
+
+(defn hubspot-id [{:keys [hubspot-profile-url] :as user}]
+  (some-> hubspot-profile-url
+          (str/split #"/")
+          reverse
+          first))
