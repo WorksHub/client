@@ -465,10 +465,11 @@
   apply-interceptors
   (fn [{db :db} [success? resp]]
     (cond-> {:db (assoc db
-                   ::apply/submit-success? success?
-                   ::apply/updating? false
-                   ::apply/error (when-not success?
-                                   (util/gql-errors->error-key resp)))}
-            success? (assoc :dispatch-n [[::check-visa]
-                                         [:wh.job.events/set-applied]]
-                            :analytics/track ["Job Applied" (::apply/job db)]))))
+                        ::apply/submit-success? success?
+                        ::apply/updating? false
+                        ::apply/error (when-not success?
+                                        (util/gql-errors->error-key resp)))}
+      success? (assoc :dispatch-n [[::check-visa]
+                                   [:wh.job.events/set-applied]]
+                      :analytics/track ["Job Applied" (::apply/job db)]
+                      :tracking-pixels/init-application-pixels true))))
