@@ -335,7 +335,7 @@
   [:section.job__job-highlights
    (let [salary (<sub [::subs/salary])]
      [highlight
-      {:title     (when salary "Salary")
+      {:title     (when salary "Compensation")
        :icon-name "job-money"
        :children  [:div.job__salary
                    {:data-test "job-salary"}

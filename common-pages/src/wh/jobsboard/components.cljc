@@ -181,7 +181,7 @@
 (defn salary-box []
   [:div (util/smc styles/salary)
    [section-header
-    {:title     "Salary / Rate"
+    {:title     "Compensation"
      :pristine? #?(:cljs (<sub [::subs/salary-pristine?]) :clj true)
      :on-clear  #(dispatch [:wh.search/reset-salary])}]
    [:div (util/smc styles/salary__wrapper)
@@ -233,7 +233,7 @@
     (let [competitive? #?(:cljs (<sub [:wh.search/show-competitive?]) :clj true)]
       [:div.search__box
        [forms/labelled-checkbox
-        {:label       "Display 'Competitive' salary"
+        {:label       "Display 'Competitive' compensation"
          :value       competitive?
          :on-change   [:wh.search/toggle-show-competitive]
          :label-class styles/checkboxes__item__label

@@ -77,11 +77,11 @@
    [:div {:class styles/private-update__salary}
     [forms/text-input-with-label
      (<sub [::subs/salary-min])
-     {:label       "Minimum Salary"
-      :placeholder "Salary"
+     {:label       "Minimum Compensation"
+      :placeholder "Salary + other compensation etc"
       :type        "number"
       :on-change   [::events/edit-salary-min]
-      :data-test :salary}]
+      :data-test   :salary}]
     [forms/select-field
      (<sub [::subs/salary-currency])
      {:new?      true

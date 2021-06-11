@@ -784,7 +784,7 @@
     (when (:email fields) [view-field "Email:" [email-link email]])
     (when (:phone fields) [view-field "Phone Number:" (or phone "Not specified")])
     (when (:status fields) [view-field "Status:" (or job-seeking-status "Not specified")])
-    (when (:salary fields) [view-field "Expected salary:" salary])
+    (when (:salary fields) [view-field "Expected compensation:" salary])
     (when (:visa fields) [view-field "Visa status:" (or visa-status "Not specified")])
     (when (:remote fields) [view-field "Prefer remote working:" (if remote "Yes" "No")])
     (when (:preferred-types fields) [view-field "Preferred role types:" (itemize

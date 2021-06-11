@@ -68,7 +68,7 @@
         competitive (<sub [::subs/remuneration__competitive])]
     [:fieldset.job-edit__remuneration
      [:h2 "Remuneration"]
-     [:p "Fill in the salary details below, or select ‘Competitive’"]
+     [:p "Fill in the compensation details below, or select ‘Competitive’"]
      (when (<sub [::subs/show-salary-details?])
        [:div.job-edit__remuneration__salary
         [:div.columns.is-variable.is-4
@@ -81,7 +81,7 @@
          (if currency
            [:div.column.job-edit__remuneration__salary__slider
             (field-container
-              {:label "* Salary range"}
+              {:label "* Compensation range"}
               [slider-range
                {:value     (<sub [::subs/salary-range-js])
                 :min       (<sub [::subs/salary-min])
@@ -91,13 +91,13 @@
                              50)
                 :on-change #(dispatch [::events/set-salary-range (js->clj %)])}])]
            [:div.column.job-edit__remuneration__currency__prompt
-            "Select a currency in order to define the salary range"])
+            "Select a currency in order to define the compensation range"])
          (when currency
            [:div.column.is-narrow.job-edit__remuneration__salary__label
             [:span (<sub [::subs/salary-label])]])]
         (field-container
           {:class   "job-edit__remuneration__salary__time-period"
-           :label   "* Salary rate is:"
+           :label   "* Compensation rate is:"
            :inline? true}
           [forms/radio-buttons (<sub [::subs/remuneration__time-period])
            {:options   (<sub [::subs/time-periods])

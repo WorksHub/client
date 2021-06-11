@@ -265,7 +265,7 @@
      :on-change   [::events/edit-perk]
      :placeholder "Type what you're looking for"}]
    [field-container
-    {:label "Salary" :class "private-edit__salary"}
+    {:label "Compensation" :class "private-edit__salary"}
     [:div.columns
      [:div.column
       [:div.text-field-control
@@ -404,7 +404,7 @@
     (when (:phone fields)               [view-field "Phone Number:" phone])
     (when (:status fields)              [view-field "Status:" job-seeking-status])
     (when (:traits fields)              [view-field "Company traits:" (itemize company-perks :no-data-message "No perks selected.")])
-    (when (:salary fields)              [view-field "Expected salary:" salary])
+    (when (:salary fields)              [view-field "Expected compensation:" salary])
     (when (:visa fields)                [view-field "Visa status:" visa-status])
     (when (:remote fields)              [view-field "Prefer remote working:" (if remote "Yes" "No")])
     (when (:preferred-types fields)     [view-field "Preferred role types:" (itemize (map #(str/replace % #"_" " ") role-types) :no-data-message "None")])

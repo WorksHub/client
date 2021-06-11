@@ -720,19 +720,19 @@
                                                              in-demand-location-data))))
 
 (def pricing-questions
-  [{:title "Why should I sign up?"
+  [{:title  "Why should I sign up?"
     :answer "Signing up to WorksHub is really easy. Just click “Get Started”, and we’ll get your dashboard set up with just a couple of clicks. From here if you select our Launch Pad or Take-Off plans you will be able to create as many jobs as you like across all of our hubs. You can also manage all of your applications and add colleagues to your account. Once signed up your jobs will be seen by a highly qualified pool of candidates — both full-time and contract — that are ready to interview now."}
-   {:title "How does the 'free job' work?"
+   {:title  "How does the 'free job' work?"
     :answer "When you first sign up you will automatically be put on our 'Explore' package. This will enable you to get to know how our platform works, create a company profile, import open-source issues etc. Once you're ready to start hiring, just create a job from your dashboard and after you hit the publish button, that's it; the job will be live! In order to access some of our integrations and add more jobs you will need to upgrade allowing you to post unlimited jobs. Get in touch if you want to find out how we can do more to help with your hiring."}
-   {:title "How much does Take-Off cost?"
+   {:title  "How much does Take-Off cost?"
     :answer "Depending on your company size and headcount goals, our Take-Off package is built to be flexible for you. Whether you're hiring two or two hundred, combining a subscription plan with a success fee will help give you access to our direct sourcing team to ensure you hit your hiring goals. Your account manager who you can find in your settings page will discuss the best option with you and create a custom pricing plan."}
-   {:title "Are there discounts?"
+   {:title  "Are there discounts?"
     :answer "Yes! If you pay for six or three months in advance you save 10% or 5% compared to paying per month. You can see what that does to your monthly cost by changing the payment toggle on the top right of this page."}
-   {:title "How do you vet your candidates?"
-    :answer "In order to provide you with a high-quality pipeline, all candidates are approved before being given access to the WorksHub platform. To do this we use a combination of human and artificial curation to review all candidate profiles, both for experience, technical knowledge and their interest in finding a new job. We look at the type of roles the candidate is looking for, the location, skills, salary expectations and match that to the open positions across our platform. Because we focus on creating engaged and active candidates across our hubs, you can expect to see highly relevant candidates applying to your jobs."}
-   {:title "GitHub integration, what does that do?"
+   {:title  "How do you vet your candidates?"
+    :answer "In order to provide you with a high-quality pipeline, all candidates are approved before being given access to the WorksHub platform. To do this we use a combination of human and artificial curation to review all candidate profiles, both for experience, technical knowledge and their interest in finding a new job. We look at the type of roles the candidate is looking for, the location, skills, compensation expectations and match that to the open positions across our platform. Because we focus on creating engaged and active candidates across our hubs, you can expect to see highly relevant candidates applying to your jobs."}
+   {:title  "GitHub integration, what does that do?"
     :answer "With one click you can connect your company GitHub account, allowing you to test, engage, and develop your own community of Software Engineers. With 84% of our users more open to joining a company whose open source they had already contributed to and 90% more likely to consider companies with open source code it’s a great way to increase your hiring pipeline. You can find out how to get started with connecting your GitHub and posting open source issues here."}
-   {:title "How does WorksHub compare with Hired, Vettery, Triplebyte, and others?"
+   {:title  "How does WorksHub compare with Hired, Vettery, Triplebyte, and others?"
     :answer "Whether it’s hiring managers or CTOs looking to hire Software Engineers, our aim is to connect the right engineers with the right companies. When we decided to build WorksHub, we knew that in order to tackle the hiring problem, we needed a tech-first platform with a human touch for understanding nuance. Unlike competitors, we have built our hubs around specific technologies, ensuring you have no delay in gaining instant visibility for your company into the right (vetted) talent pools. With one account, you will be able to test, hire and engage candidates across all of our hubs."}])
 
 (def how-it-works-benefits
