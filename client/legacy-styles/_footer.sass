@@ -144,13 +144,7 @@
   img
     height: 32px
     display: block
-.footer__legal__item + .footer__legal__item:not(:last-child)
+.footer__legal__item + .footer__legal__item:not(:first-child)
   &::before
     content: '|'
     padding: 0 10px
-
-.footer__legal__item:last-child
-  margin-left: 0
-  +tablet
-    margin-left: 20px
-
