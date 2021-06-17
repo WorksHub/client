@@ -138,23 +138,27 @@
   ::fetch-job-success
   db/default-interceptors
   (fn [{db :db} [publish-after-load? res]]
-    (let [job       (translate-job (get-in res [:data :job]))
+    (let [job'      (get-in res [:data :job])
+          job       (translate-job job')
           ;; the current job is now the preset one
           db        (update db ::job/sub-db
                             merge job
                             {::job/error       nil
                              ::job/preset-slug (::job/slug job)})
-          can-edit? (company/can-edit-jobs-after-first-job-published? db)]
+          can-edit? (company/can-edit-jobs-after-first-job-published? db)
+          env       (:wh.settings/environment db)]
       (merge
-        {:db         db
-         :dispatch-n [[::fetch-issues-and-analytics]
-                      [::set-page-title]
-                      (when publish-after-load?
-                        (if-not can-edit?
-                          [::modal-publish-job/toggle-modal]
-                          [::publish-role]))
-                      (when (admin-or-job-owner? db)
-                        [::fetch-company])]}))))
+        {:db                              db
+         :dispatch-n                      [[::fetch-issues-and-analytics]
+                                           [::set-page-title]
+                                           (when publish-after-load?
+                                             (if-not can-edit?
+                                               [::modal-publish-job/toggle-modal]
+                                               [::publish-role]))
+                                           (when (admin-or-job-owner? db)
+                                             [::fetch-company])]
+         :tracking-pixels/init-job-pixels {:job job'
+                                           :env env}}))))
 
 (reg-event-fx
   ::fetch-company-success

@@ -453,7 +453,7 @@
   apply-interceptors
   (fn [{db :db} _]
     {:graphql {:query      apply-mutation
-               :variables  (-> (or (some->> (get-in db [::apply/job :id])   (hash-map :id))
+               :variables  (-> (or (some->> (get-in db [::apply/job :id]) (hash-map :id))
                                    (some->> (get-in db [::apply/job :slug]) (hash-map :slug)))
                                (assoc :applySource (:apply-source (::apply/job db))))
                :on-success [::handle-apply true]
@@ -470,6 +470,14 @@
                         ::apply/error (when-not success?
                                         (util/gql-errors->error-key resp)))}
       success? (assoc :dispatch-n [[::check-visa]
-                                   [:wh.job.events/set-applied]]
-                      :analytics/track ["Job Applied" (::apply/job db)]
-                      :tracking-pixels/init-application-pixels true))))
+                                   [:wh.job.events/set-applied]
+                                   [::init-application-pixels]]
+                      :analytics/track ["Job Applied" (::apply/job db)]))))
+
+(reg-event-fx
+  ::init-application-pixels
+  (fn [{db :db} _]
+    (let [job (get-in db [::apply/sub-db ::apply/job])
+          env (:wh.settings/environment db)]
+      {:tracking-pixels/init-application-pixels {:env env
+                                                 :job job}})))
