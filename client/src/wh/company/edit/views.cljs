@@ -167,6 +167,9 @@
     (when admin? [labelled-checkbox nil (field ::edit/auto-approve
                                                :class "company-edit__checkbox"
                                                :label [:span "Automatically approve candidates?"])])
+    (when admin? [labelled-checkbox nil (field ::edit/override-edit-restriction
+                                               :class "company-edit__checkbox"
+                                               :label [:span "Allow company to edit jobs on Explore package?"])])
 
     [:div.is-flex.company-edit__field-footer
      (let [saving? (<sub [::subs/saving?])]

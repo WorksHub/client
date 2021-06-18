@@ -45,18 +45,19 @@
 (s/def ::disable-loading? boolean?)
 
 (def fields
-  {::name             {:initial "", :validate ::p/non-empty-string :event? false}
-   ::logo             {:initial "", :validate ::p/non-empty-string}
-   ::description-html {:initial "", :validate ::p/non-empty-string :event? false}
-   ::manager          {:initial "", :validate ::manager}
-   ::vertical         {:initial verticals/default-vertical, :validate ::vertical}
-   ::auto-approve     {:initial false, :validate boolean?}
-   ::profile-enabled  {:initial false, :validate boolean?}
+  {::name                      {:initial "", :validate ::p/non-empty-string :event? false}
+   ::logo                      {:initial "", :validate ::p/non-empty-string}
+   ::description-html          {:initial "", :validate ::p/non-empty-string :event? false}
+   ::manager                   {:initial "", :validate ::manager}
+   ::vertical                  {:initial verticals/default-vertical, :validate ::vertical}
+   ::auto-approve              {:initial false, :validate boolean?}
+   ::override-edit-restriction {:initial false, :validate boolean?}
+   ::profile-enabled           {:initial false, :validate boolean?}
    ;; TODO MOVE THIS TO COMPANY PROFILE
-   ::videos           {:initial false, :validate boolean?}
+   ::videos                    {:initial false, :validate boolean?}
    ;;
-   ::new-user-name    {:initial "", :validate ::p/non-empty-string}
-   ::new-user-email   {:initial "", :validate ::p/email}})
+   ::new-user-name             {:initial "", :validate ::p/non-empty-string}
+   ::new-user-email            {:initial "", :validate ::p/email}})
 
 (def company-fields [::name ::logo ::description-html])
 (def company-fields-extended (concat company-fields [::manager ::package]))

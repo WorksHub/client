@@ -1,11 +1,11 @@
 (ns wh.common.specs.company
   (:require [#?(:clj  clojure.spec.alpha
                 :cljs cljs.spec.alpha) :as s]
+            [clojure.test.check.generators :as gen]
             [wh.common.data :as data]
             [wh.common.specs.date]
             [wh.common.specs.primitives :as p]
-            [wh.common.specs.tags]
-            [clojure.test.check.generators :as gen]))
+            [wh.common.specs.tags]))
 
 (def description-placeholder "Please enter a valid description for your company")
 
@@ -17,6 +17,7 @@
    :medium "50-249"
    :large  "250+"})
 
+(s/def :wh.company/override-edit-restriction boolean?)
 (s/def :wh.company/auto-approve boolean?)
 (s/def :wh.company/connected-github boolean?)
 (s/def :wh.company/description ::p/non-empty-string)

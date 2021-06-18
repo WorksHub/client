@@ -1,6 +1,5 @@
 (ns wh.company.edit.events
-  (:require [camel-snake-kebab.core :as c]
-            [cljs-time.coerce :as tc]
+  (:require [cljs-time.coerce :as tc]
             [cljs-time.core :as t]
             [cljs-time.format :as tf]
             [clojure.set :as set]
@@ -138,60 +137,55 @@
   (if-not old
     new
     (not-empty
-     (reduce
-      (fn [new k]
-        (if (= (get new k) (get old k))
-          (dissoc new k)
-          new))
-      new
-      (set (clojure.set/union (keys old) (keys new)))))))
+      (reduce
+        (fn [new k]
+          (if (= (get new k) (get old k))
+            (dissoc new k)
+            new))
+        new
+        (set (clojure.set/union (keys old) (keys new)))))))
 
 (defn subdb->graphql-company [db id]
   (let [c (some-> (naive-diff
-                   {:name             (::edit/name db)
-                    :logo             (::edit/logo db)
-                    :vertical         (::edit/vertical db)
-                    :auto-approve     (::edit/auto-approve db)
-                    :profile-enabled  (::edit/profile-enabled db)
-                    :description-html (::edit/description-html db)
-                    :manager          (get-manager-email (::edit/manager db))
-                    :package          (name (or (::edit/package db) ""))}
-                   (::edit/original-company db))
-                  (set/rename-keys {:description-html :descriptionHtml
-                                    :auto-approve     :autoApprove
-                                    :profile-enabled  :profileEnabled}))]
+                    {:name                      (::edit/name db)
+                     :logo                      (::edit/logo db)
+                     :vertical                  (::edit/vertical db)
+                     :auto-approve              (::edit/auto-approve db)
+                     :override-edit-restriction (::edit/override-edit-restriction db)
+                     :profile-enabled           (::edit/profile-enabled db)
+                     :description-html          (::edit/description-html db)
+                     :manager                   (get-manager-email (::edit/manager db))
+                     :package                   (name (or (::edit/package db) ""))}
+                    (::edit/original-company db))
+                  (cases/->camel-case))]
     (if (and c id)
       (assoc c :id id)
       (dissoc c :package :profileEnabled))))
 
 (defn subdb->graphql-company-user [db]
-  {:name (str/trim (::edit/new-user-name db))
-   :email (str/trim (::edit/new-user-email db))
+  {:name      (str/trim (::edit/new-user-name db))
+   :email     (str/trim (::edit/new-user-email db))
    :companyId (::edit/id db)})
-
-(defn map-keys->kebab-case
-  [m]
-  (reduce-kv (fn [a k v] (assoc a (c/->kebab-case-keyword k) v)) {} m))
 
 (reg-event-fx
   ::save-company
   db/default-interceptors
   (fn [{db :db} _]
     (if-let [errors (edit/form-errors (::edit/sub-db db) (= :create-company (::db/page db)))]
-      {:db (-> db
-               (assoc-in [::edit/sub-db ::edit/form-errors] errors)
-               (assoc-in [::edit/sub-db ::edit/error] nil))
+      {:db               (-> db
+                             (assoc-in [::edit/sub-db ::edit/form-errors] errors)
+                             (assoc-in [::edit/sub-db ::edit/error] nil))
        :scroll-into-view (db/key->id (first errors))}
-      (let [id (get-in db [::edit/sub-db ::edit/id])
-            company-update (subdb->graphql-company (::edit/sub-db db) id)
-            company-update-kebab (map-keys->kebab-case company-update)]
+      (let [id                   (get-in db [::edit/sub-db ::edit/id])
+            company-update       (subdb->graphql-company (::edit/sub-db db) id)
+            company-update-kebab (cases/->kebab-case company-update)]
         (when company-update
-          {:db (-> db
-                   (assoc-in [::edit/sub-db ::edit/saving?] true)
-                   (assoc-in [::edit/sub-db ::edit/error] nil)
-                   (update-in [::edit/sub-db ::edit/original-company] merge company-update-kebab))
-           :graphql {:query (if id update-company-mutation create-company-mutation)
-                     :variables {(if id :update_company :create_company) company-update}
+          {:db      (-> db
+                        (assoc-in [::edit/sub-db ::edit/saving?] true)
+                        (assoc-in [::edit/sub-db ::edit/error] nil)
+                        (update-in [::edit/sub-db ::edit/original-company] merge company-update-kebab))
+           :graphql {:query      (if id update-company-mutation create-company-mutation)
+                     :variables  {(if id :update_company :create_company) company-update}
                      :on-success [::save-company-success company-update-kebab]
                      :on-failure [::save-company-failure]}})))))
 
