@@ -5,7 +5,7 @@
             [wh.db :as db]
             [wh.pages.core :refer [on-page-load] :as pages]))
 
-(def client (algoliasearch "MVK698T35T" "11cd904aa52288a239214960e2433f97"))
+(def client (algoliasearch "MVK698T35T" "bb5e4b1d90411ced5d34fc33c3a6e747"))
 
 (reg-event-fx
   ::go-to-tab
