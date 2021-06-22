@@ -1,0 +1,8 @@
+(ns wh.blogs.blog.styles)
+(def publisher "styles__publisher--1uJcc")
+(def publisher--devto "styles__publisher--devto--1fPmU")
+(def publisher--hashnode "styles__publisher--hashnode--2w-KF")
+(def publisher__name "styles__publisher__name--E8Dnr")
+(def publishers "styles__publishers--gvJKg")
+(def comment-section "styles__comment-section--WvJmU")
+(def comment-section-header "styles__comment-section-header--3dJuG")

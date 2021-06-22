@@ -16,7 +16,7 @@
    ::author-info-visible? false
    ::upvotes {}})
 
-(def page-size 9)
+(def page-size 4)
 
 (defn params [db]
   {:id        (id db)

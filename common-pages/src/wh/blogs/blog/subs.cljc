@@ -230,3 +230,9 @@
   :<- [::published?]
   (fn [[admin? creator email published?] _]
     (show-blog-unpublished? admin? creator email published?)))
+
+(reg-sub
+  ::cross-posts
+  :<- [::blog]
+  (fn [blog _]
+    (:cross-posts blog)))

@@ -1,0 +1,49 @@
+@import 'colours'
+
+.publisher
+  display: block
+  width: 300px
+  height: 120px
+  border-radius: 8px
+
+  &--devto
+    background-color: white
+    display: flex
+    align-items: center
+    padding: 24px
+
+    svg
+      width: 70px
+      height: 70px
+
+  &--hashnode
+    display: flex
+    align-items: center
+    justify-content: center
+    background-color: white
+
+    svg
+      width: 210px
+      height: 36px
+      position: relative
+
+  &__name
+    font-size: 32px
+    font-weight: 700
+    color: black
+    margin-left: 24px
+    letter-spacing: 0
+
+
+.publishers
+  display: flex
+  gap: 16px
+  flex-wrap: wrap
+
+.comment-section
+  margin: 32px 0 64px
+
+.comment-section-header
+  font-size: 20px
+  font-weight: 600
+  color: $grey500

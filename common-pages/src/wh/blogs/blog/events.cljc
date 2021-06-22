@@ -27,7 +27,8 @@
                        [:authorInfo [:name :summary :imageUrl
                                      [:skills [:name]]
                                      [:otherUrls [:url :title]]]]
-                       [:company [:logo :name :id]]]]]})
+                       [:company [:logo :name :id]]
+                       [:crossPosts [:url :publisher]]]]]})
 
 (reg-query :blog blog-query)
 

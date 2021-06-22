@@ -1,9 +1,9 @@
 (ns wh.blogs.blog.views
   (:require #?(:cljs [reagent.core :as reagent])
-            [bidi.bidi :as bidi]
             [clojure.string :as str]
             [wh.common.url :as url]
             [wh.components.promote-button :as promote]
+            [wh.blogs.blog.styles :as styles]
             [wh.blogs.blog.events :as events]
             [wh.blogs.blog.subs :as subs]
             [wh.components.common :refer [link]]
@@ -193,19 +193,46 @@
         {:src feature
          :alt "Blog hero image"}])]))
 
+(defn comments-section [cross-posts]
+  (when-not (empty? cross-posts)
+    [:div {:class styles/comment-section}
+     [:h3 {:class styles/comment-section-header}
+      "Discuss this article on"]
+     [:div {:class styles/publishers}
+      (for [cp cross-posts
+            :let [publisher (-> cp
+                              :publisher
+                              name)]]
+        ^{:key publisher}
+        [:a {:href   (:url cp)
+             :target "_blank"
+             :rel    "nofollow noopener"
+             :class  (util/mc
+                       styles/publisher
+                       "track-click"
+                       (case publisher
+                         "dev_to" styles/publisher--devto
+                         "hashnode" styles/publisher--hashnode
+                         nil))}
+         [icon publisher]
+         (when (= "dev_to" publisher)
+           [:div {:class styles/publisher__name}
+            "dev.to"])])]]))
+
 (defn page-render []
   (case (<sub [::subs/blog-error])
     :blog-not-found [:div.main.main--center-content
                      [not-found/not-found]]
-    :unknown-error  [:div.main "Loading error"]
+    :unknown-error [:div.main "Loading error"]
     [:div {:class (util/merge-classes "blog" "main")}
      [blog-hero]
      [:div.split-content
       [:div.split-content__main
-       [blog-content]]
+       [blog-content]
+       [comments-section (<sub [::subs/cross-posts])]]
       (let [{:keys [blogs issues jobs]} (<sub [::subs/recommendations])
-            admin?                      (<sub [:user/admin?])
-            published?                  (<sub [::subs/published?])]
+            admin?     (<sub [:user/admin?])
+            published? (<sub [::subs/published?])]
         [:div.split-content__side
          (when (and admin? published?)
            [promote/promote-button {:id (:id (<sub [::subs/blog])) :type :article}])

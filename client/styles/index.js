@@ -61,3 +61,4 @@ import './card_actions.sass';
 
 import '../src/wh/logged_in/contribute/styles.sass';
 import '../../common/src/wh/components/newsletter/styles.sass';
+import '../../common-pages/src/wh/blogs/blog/styles.sass';
