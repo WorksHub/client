@@ -238,3 +238,11 @@
   :<- [::db]
   (fn [db _]
     (profile/cv-visible? db)))
+
+(reg-sub
+  ::show-auth-popup?
+  (fn [db _]
+    (-> db
+        :wh.db/query-params
+        (get "job-id")
+        boolean)))

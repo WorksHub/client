@@ -11,6 +11,9 @@
   [s]
   (str auth-popup-id "__" s))
 
+(defn build-additional-content-id [s]
+  (str "additional-content__" s))
+
 (defn overlay-content-apply
   []
   [:div.auth-popup__content
@@ -84,6 +87,26 @@
    {:id (build-sub-id "contribute")}
    [:h1 "Login or register to start contributing with an article!"]])
 
+(defn overlay-content-see-application
+  []
+  [:div.auth-popup__content
+   {:id (build-sub-id "see-application")}
+   [:h1 "Login to see the application"]])
+
+;;
+
+(defn ac-default [platform-name]
+  [:div.auth-popup__additional-content
+   {:id (build-additional-content-id "default")}
+   [:p "Engineers who find a new job through " platform-name " average a 15% increase in salary \uD83D\uDE80 "]])
+
+(defn ac-see-application []
+  [:div.auth-popup__additional-content
+   {:id (build-additional-content-id "see-application")}
+   [:p "You will be redirected back to this page right after signin"]])
+
+;;
+
 (def button-params {:on-click (interop/hide-auth-popup)})
 (def email-signup-params (-> {:text "Signup with Email"}
                              (merge button-params)))
@@ -111,9 +134,11 @@
      [overlay-content-blog]
      [overlay-content-search-jobs]
      [overlay-content-issue]
-     [overlay-content-save-blog]]
+     [overlay-content-save-blog]
+     [overlay-content-see-application]]
     [:div
-     [:p "Engineers who find a new job through " platform-name " average a 15% increase in salary \uD83D\uDE80 "]]
+     [ac-default platform-name]
+     [ac-see-application]]
     [:div.overlay__buttons
      [button-auth/button :github button-params]
      [button-auth/button :twitter button-params]

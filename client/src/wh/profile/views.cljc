@@ -5,6 +5,7 @@
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
     [wh.components.loader :refer [loader-full-page]]
     [wh.components.not-found :as not-found]
+    [wh.interop :as interop]
     [wh.logged-in.profile.components :as components]
     [wh.profile.db :as profile]
     [wh.profile.events :as profile-events]
@@ -101,25 +102,32 @@
               :title "Details"
               :fields (if contacted-or-hired? extended-fields default-fields))]])))))
 
+(defn show-auth-popup-ssr []
+  #?(:clj (when (and (not (<sub [:user/logged-in?]))
+                  (<sub [::subs/show-auth-popup?]))
+            [:script (interop/show-auth-popup :see-application :current-url)])))
+
 (defn page []
-  (cond
-    (<sub [::subs/error?])
-    [not-found/not-found-profile]
-    ;;
-    (<sub [::subs/loader?])
-    [loader-full-page]
-    ;;
-    :else
-    [components/container
-     [profile-column]
-     (if (<sub [::subs/hide-profile?])
-       [components/profile-hidden-message]
-       [components/content
-        [section-for-company]
-        [section-cv]
-        [section-stats]
-        [section-skills]
-        [section-private-details]
-        [section-contributions]
-        [section-articles]
-        [section-issues]])]))
+  [:<>
+   (cond
+     (<sub [::subs/error?])
+     [not-found/not-found-profile]
+     ;;
+     (<sub [::subs/loader?])
+     [loader-full-page]
+     ;;
+     :else
+     [components/container
+      [profile-column]
+      (if (<sub [::subs/hide-profile?])
+        [components/profile-hidden-message]
+        [components/content
+         [section-for-company]
+         [section-cv]
+         [section-stats]
+         [section-skills]
+         [section-private-details]
+         [section-contributions]
+         [section-articles]
+         [section-issues]])])
+   [show-auth-popup-ssr]])
