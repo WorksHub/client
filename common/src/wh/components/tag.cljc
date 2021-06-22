@@ -43,6 +43,7 @@
      [element-type
       (merge {:key        id
               :data-label label
+              :data-test  "tag"
               :class      (util/merge-classes "tag"
                                               (when class class)
                                               (when inverted? "tag--inverted")

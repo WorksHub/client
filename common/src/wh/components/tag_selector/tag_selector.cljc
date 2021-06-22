@@ -63,8 +63,9 @@
        "Reset selection" [reset-icon]])]])
 
 (defn card-with-selector [tags loading? user-types type]
-  [:div (util/smc styles/card
-                 [(= type :mobile) styles/card--mobile])
+  [:div {:class     (util/mc styles/card
+                             [(= type :mobile) styles/card--mobile])
+         :data-test "tag-picker"}
    [:div {:class styles/title}
     "Show me more of…"]
    (if loading?

@@ -15,7 +15,8 @@
             [wh.util :as util]))
 
 (defn card-issue [{:keys [company title id level repo compensation] :as _issue}]
-  [:section {:class style/section__element}
+  [:section {:class     style/section__element
+             :data-test "side-issue"}
    [c/connected-entity {:title    (:name company)
                         :subtitle (str "Level: " (str/capitalize (name level)))
                         :href     (routes/path :company :params {:slug (:slug company)})
@@ -32,7 +33,8 @@
                      :type  "funding"}]))]])
 
 (defn recent-issues [issues loading? company?]
-  [:section {:class style/section}
+  [:section {:class     style/section
+             :data-test "side-issues"}
    [c/section-title "Live Open Source Issues"]
    (if loading?
      [c/section-elements-skeleton {:type :tags}]
@@ -57,8 +59,9 @@
        (tf/unparse (tf/formatter "yyyy"))))
 
 (defn card-user [{:keys [blog-count issue-count created name image-url id] :as _user}]
-  [:a {:class (util/mc style/section__element style/section__element--link)
-       :href (routes/path :user :params {:id id})}
+  [:a {:class     (util/mc style/section__element style/section__element--link)
+       :href      (routes/path :user :params {:id id})
+       :data-test "side-user"}
    [c/connected-entity {:title      name
                         :title-type :primary
                         :subtitle   (str "Joined in " (format-user-date created))
@@ -74,7 +77,8 @@
                      :icon   "commit"}]]])
 
 (defn top-ranking-users [users loading?]
-  [:section {:class style/section}
+  [:section {:class     style/section
+             :data-test "side-users"}
    [c/section-title "Top Ranking Users"]
    (if loading?
      [c/section-elements-skeleton {:type :default}]
@@ -87,7 +91,8 @@
 ;; -----------------------------------------------
 
 (defn card-job [{:keys [title company-info slug user-score remote] :as _job}]
-  [:section {:class style/section__element}
+  [:section {:class     style/section__element
+             :data-test "side-job"}
    (let [jobs-count (:total-published-job-count company-info)
          text       (str jobs-count (text/pluralize jobs-count " live job"))]
      [c/connected-entity {:title    (:name company-info)
@@ -115,7 +120,8 @@
      [c/section-elements-skeleton {:type :default}]
      [c/section-elements jobs card-job {:data-test "recommended-jobs"}])
    (when-not loading?
-     [:div {:class (util/mc style/footer style/footer--jobs)}
+     [:div {:class     (util/mc style/footer style/footer--jobs)
+            :data-test "side-jobs"}
       [c/section-button {:title "All live jobs"
                          :href  (routes/path :jobsboard)}]
       [c/footer-link {:text      "Hiring?"
@@ -128,7 +134,8 @@
 ;; -----------------------------------------------
 
 (defn card-company [{:keys [total-published-issue-count total-published-job-count logo slug locations tags] :as company}]
-  [:section {:class style/section__element}
+  [:section {:class     style/section__element
+             :data-test "side-company"}
    (let [location     (first locations)
          location-str (str (:city location) ", " (:country location))]
      [c/connected-entity {:title    (:name company)
@@ -214,7 +221,8 @@
        (tf/unparse (tf/formatter "MMM d"))))
 
 (defn card-blog [{:keys [title author-info tags creation-date id upvote-count reading-time] :as _blog}]
-  [:section {:class style/section__element}
+  [:section {:class     style/section__element
+             :data-test "side-blog"}
    [c/card-link {:title title
                  :href  (routes/path :blog :params {:id id})}]
    [c/connected-entity {:title    (:name author-info)
@@ -234,7 +242,8 @@
                       :type  :no-border}]])
 
 (defn top-ranking-blogs [blogs loading?]
-  [:div {:class (util/mc style/tabs__tab-content style/tabs__tab-content--blogs)}
+  [:div {:class     (util/mc style/tabs__tab-content style/tabs__tab-content--blogs)
+         :data-test "side-blogs"}
    (if loading?
      [c/section-elements-skeleton {:type :default}]
      [:div
@@ -251,18 +260,19 @@
   (let [input1-id  (gensym "top-ranking-input")
         input2-id  (gensym "top-ranking-input")
         input-name (gensym "top-ranking-name")]
-    [:section {:class (util/mc style/section style/section--with-tabs)}
+    [:section {:class     (util/mc style/section style/section--with-tabs)
+               :data-test "side-top-ranking"}
      [c/section-title "Top rankings"]
      [:input (cond-> {:id    input1-id
                       :class (util/mc style/tabs__input style/tabs__input--companies)
                       :type  "radio"
                       :name  input-name}
-                     (= :companies default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
+               (= :companies default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:input (cond-> {:id    input2-id
                       :class (util/mc style/tabs__input style/tabs__input--blogs)
                       :type  "radio"
                       :name  input-name}
-                     (= :blogs default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
+               (= :blogs default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:nav {:class style/tabs__wrapper}
       [:ul {:class style/tabs}
        [:li

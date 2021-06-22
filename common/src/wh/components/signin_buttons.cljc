@@ -13,7 +13,8 @@
 
 (defn github
   ([]
-   [github {:text "GitHub"}])
+   [github {:text      "GitHub"
+            :data-test "signin-github"}])
   ([{:keys [text type data-test]}]
    [:a {:class     (util/mc
                      style/button
@@ -26,7 +27,8 @@
 
 (defn stack-overflow
   ([]
-   [stack-overflow {:text "Stack Overflow"}])
+   [stack-overflow {:text      "Stack Overflow"
+                    :data-test "signin-stackoverflow"}])
   ([{:keys [text type data-test]}]
    [:a {:class     (util/mc
                      style/button
@@ -39,7 +41,8 @@
 
 (defn twitter
   ([]
-   [twitter {:text "Twitter"}])
+   [twitter {:text      "Twitter"
+             :data-test "signin-twitter"}])
   ([{:keys [text type data-test]}]
    [:a {:class     (util/mc
                      style/button
@@ -52,10 +55,12 @@
 
 (defn email
   ([]
-   [email {:text "Email"}])
-  ([{:keys [text]}]
-   [:a {:class (util/mc style/button)
-        :href  (routes/path :login :params {:step :email})}
+   [email {:text      "Email"
+           :data-test "signin-email"}])
+  ([{:keys [text data-test]}]
+   [:a {:class     (util/mc style/button)
+        :href      (routes/path :login :params {:step :email})
+        :data-test data-test}
     [icon "mail" :class (util/mc style/icon style/icon--email)]
     [:span text]]))
 
