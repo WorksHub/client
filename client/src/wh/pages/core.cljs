@@ -6,6 +6,7 @@
             [pushy.core :as pushy]
             [re-frame.core :refer [reg-fx reg-sub reg-event-db reg-event-fx dispatch dispatch-sync]]
             [re-frame.db :refer [app-db]]
+            [wh.common.user :as user-common]
             [wh.db :as db]
             [wh.pages.modules :as modules]
             [wh.routes :as routes]
@@ -75,9 +76,11 @@
                       (constantly true))]
 
     (cond
-      (can-access? db)              nil
+      (can-access? db) nil
       (= can-access? db/logged-in?) :login
-      :else                         :not-found)))
+      (and (not (db/logged-in? db))
+           (= can-access? user-common/company?)) :login
+      :else :not-found)))
 
 ;; Set current page and page params, if any.
 ;; NOTE: this is an internal event, meant to be dispatched by
