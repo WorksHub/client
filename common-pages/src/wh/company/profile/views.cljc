@@ -125,6 +125,9 @@
              (not-empty (<sub [::subs/videos])))
      (header-link "How we work" "company-profile__how-we-work"))])
 
+(defn logo [{:keys [size]}]
+  (wrap-img img (<sub [::subs/logo]) {:w size :h size :fit "clip" :class "company-profile__logo-img"}))
+
 (defn header
   [_admin-or-owner?]
   (let [editing?         (r/atom false)
@@ -159,7 +162,7 @@
               (reset! new-company-name nil))}
           [:div.company-profile__header__inner
            [:div.company-profile__logo
-            (wrap-img img (<sub [::subs/logo]) {:w 60 :h 60 :fit "clamp"})]
+            [logo {:size 60}]]
            [:div.company-profile__name
             (when-let [n (txt/not-blank (<sub [::subs/name]))]
               (if (<sub [:user/admin?])
@@ -970,7 +973,7 @@
     :id "company-profile__sticky"}
    [:div.main
     [:div.company-profile__sticky_logo
-     (wrap-img img (<sub [::subs/logo]) {:w 32 :h 32})]
+     [logo {:size 32}]]
     [header-links]]])
 
 (defn company-stats
