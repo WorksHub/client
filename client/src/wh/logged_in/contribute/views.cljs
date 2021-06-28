@@ -17,8 +17,8 @@
             [wh.interop :as interop]
             [wh.logged-in.contribute.db :as contribute]
             [wh.logged-in.contribute.events :as events]
-            [wh.logged-in.contribute.subs :as subs]
             [wh.logged-in.contribute.styles :as styles]
+            [wh.logged-in.contribute.subs :as subs]
             [wh.pages.util :as putil]
             [wh.subs :refer [<sub]]
             [wh.util :refer [merge-classes]]
@@ -299,7 +299,7 @@
            :off-verticals (<sub [::subs/off-verticals])
            :toggle-event  [::events/toggle-vertical]
            :class-prefix  "contribute"}]
-         (when (<sub [:wh.user/super-admin?])
+         (when (<sub [:user/admin?])
            [:div.wh-formx
             [select-field (<sub [::subs/primary-vertical])
              {:options   (<sub [::subs/verticals])
