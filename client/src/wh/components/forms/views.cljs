@@ -369,7 +369,7 @@
      (assoc options :class (util/mc styles/input styles/input--select)
             :class-wrapper styles/input-wrapper--select)]
     (field-container (if (or dirty? force-error?)
-                       options
+                       (dissoc options :data-test)
                        (dissoc options :error :data-test))
                      (select-input (or value (:value options)) options))))
 

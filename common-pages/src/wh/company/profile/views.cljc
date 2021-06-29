@@ -163,7 +163,7 @@
           [:div.company-profile__header__inner
            [:div.company-profile__logo
             [logo {:size 60}]]
-           [:div.company-profile__name
+           [:div.company-profile__name {:data-test "company-name"}
             (when-let [n (txt/not-blank (<sub [::subs/name]))]
               (if (<sub [:user/admin?])
                 [link [:h1 n]
@@ -521,7 +521,7 @@
           [:div
            [:h2.title "About us"]
            [:h2.subtitle "Who are we?"]
-           [:div.company-profile__about-us__description
+           [:div.company-profile__about-us__description {:data-test "company-about-us"}
             [putil/html description]]
            (when-let [tags (not-empty (<sub [::subs/tags tag-type]))]
              [:div.company-profile__about-us__company-tags
@@ -674,7 +674,7 @@
                                              {:tech-scales (merge tech-scales @new-tech-scales)})))]
                          (dispatch-sync [::events/update-company changes "company-profile__technology"]))
                        (reset! new-tech-scales {}))}
-          [:div
+          [:div {:data-test "company-technology"}
            [:h2.title "Technology"]
            (doall
              (for [k (keys company-data/dev-setup-data)]
@@ -797,13 +797,13 @@
              {:class (util/merge-classes "company-profile__company-info__list"
                                          (when admin-or-owner? "company-profile__company-info__list--editable"))}
              (when industry
-               [:li [icon "industry"] [tag/tag :div industry]])
+               [:li {:data-test "company-industry"} [icon "industry"] [tag/tag :div industry]])
              (when funding
-               [:li [icon "funding"] [tag/tag :div funding]])
+               [:li {:data-test "company-funding"} [icon "funding"] [tag/tag :div funding]])
              (when size
-               [:li [icon "people"] "People: " size])
+               [:li {:data-test "company-size"} [icon "people"] "People: " size])
              (when founded-year
-               [:li [icon "founded"] "Founded: " founded-year])
+               [:li {:data-test "company-founded"} [icon "founded"] "Founded: " founded-year])
              (when locations
                (for [location locations]
                  ^{:key (:location/name location)}
@@ -932,7 +932,7 @@
                                            (when (not= selected-tag-ids @existing-tag-ids)
                                              {:tag-ids (concat selected-tag-ids (<sub [::subs/current-tag-ids--inverted tag-type]))})))]
                          (dispatch-sync [::events/update-company changes "company-profile__benefits"])))}
-          [:div
+          [:div {:data-test "company-benefits"}
            [:h2.title "Benefits"]
            (doall
              (for [k (keys company-data/benefits-data)]
@@ -1115,6 +1115,7 @@
               {:type :text
                :error (<sub [::subs/error-message :name])
                :force-error? true
+               :data-test "company-name-input"
                :label "* Your company name"
                :class "company-profile__header__edit-name"
                :on-blur #(dispatch [::events/check-field {:name @new-company-name}])
@@ -1131,6 +1132,7 @@
                              :error       (<sub [::subs/error-message :description])
                              :on-blur #(dispatch [::events/check-field {:description @new-desc}])
                              :force-error? true
+                             :data-test "company-about-us-area"
                              :placeholder "eg WorksHub enables companies to gain access to the right talent in a crowded market. Our smart personalised candidate experience gives users the ability to make better data-driven applications in real-time reducing the time to hire from weeks to days. We are striving to build something amazing! "
                              :on-change   #(if (= % description)
                                              (reset! new-desc nil)
@@ -1149,6 +1151,7 @@
               :options   (into [{:id nil, :label "--"}] ;; add unselected
                                (sort-by :label (<sub [::subs/all-tags-of-type :industry])))
               :error     (<sub [::subs/error-message :industry-tag])
+              :data-test "company-industry-select"
               :force-error? true
               :label     "* Select an industry that best describes your company"
               :on-change #(do
@@ -1159,6 +1162,7 @@
               :options   (into [{:id nil, :label "--"}] ;; add unselected
                                (sort-by :label (<sub [::subs/all-tags-of-type :funding])))
               :error     (<sub [::subs/error-message :funding-tag])
+              :data-test "company-funding-select"
               :force-error? true
               :label     "* Select the primary source of funding for your company"
               :on-change #(do
@@ -1177,6 +1181,7 @@
               :type      :number
               :label     "* When was your company founded?"
               :error (<sub [::subs/error-message :founded-year])
+              :data-test "company-founded-year-input"
               :force-error? true
               :on-blur   #(do
                             (when (str/blank? @new-founded-year)
@@ -1200,7 +1205,8 @@
             (when-let [error (<sub [::subs/error-message error-field])]
               [:span.is-error error])
             [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
-             {:on-submit #(.preventDefault %)}
+             {:on-submit #(.preventDefault %)
+              :data-test (str "company-" (name tag-type) "-tags")}
              [tags-field
               tag-search
               {:tags               (map #(if (contains? selected-tag-ids (:key %))
@@ -1282,6 +1288,7 @@
               [:button.button.button--medium
                {:id "company-profile-new-create-profile--submit"
                 :class (when (<sub [::subs/updating?]) "button--loading button--inverted")
+                :data-test "publish-profile-button"
                 :on-click #(dispatch [::events/create-new-profile {:name         @new-name
                                                                    :description  @new-desc
                                                                    :industry-tag @new-industry-tag
