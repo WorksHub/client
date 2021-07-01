@@ -3,6 +3,7 @@
             [clojure.string :as str]
             [goog.string :as gstr]
             [re-frame.core :refer [reg-sub]]
+            [wh.common.attachments :as att]
             [wh.common.user :as user-common]
             [wh.company.applications.db :as sub-db]
             [wh.db :as db]))
@@ -42,6 +43,8 @@
   [job-tags application]
   (let [tags (set (->> job-tags (map :label) (map str/lower-case)))]
     (-> application
+        (assoc :cv-downloadable? (att/downloadable? (get-in application [:cv :file :name])))
+        (assoc :cover-letter-downloadable? (att/downloadable? (get-in application [:cover-letter :file :name])))
         (update :name #(if (str/blank? %)
                          [:i "Unnamed user"]
                          (capitalize %)))

@@ -110,7 +110,8 @@
    [:div.company-name name] [:div (str \u2002 "- " title)]])
 
 (defn application-card
-  [{:keys [user-id timestamp display-location other-urls email skills score cv cover-letter state note job] :as app} job-id]
+  [{:keys [user-id timestamp display-location other-urls email skills score cv cover-letter state note job cv-downloadable? cover-letter-downloadable?]
+    :as   app} job-id]
   (let [admin?    (<sub [:user/admin?])
         skeleton? (empty? app)
         job-id    (or job-id (:job-id app))]
@@ -128,7 +129,8 @@
            {:href      cv
             :target    "_blank"
             :data-test (when cv "applicant-cv-link")
-            :rel       "noopener"}
+            :rel       "noopener"
+            :download  cv-downloadable?}
            (when-not skeleton? "View CV")]
           [:i "No CV provided"])]
        [:div.company-application__view-document
@@ -136,7 +138,11 @@
           [link-user "View Profile" (<sub [:user/admin?]) :id user-id :class "a--underlined" :query-params {:job-id job-id}])]
        [:div.company-application__view-document
         (if (or cover-letter skeleton?)
-          [:a.a--underlined.company-application__view-cover-letter {:href cover-letter, :target "_blank", :rel "noopener"} (when-not skeleton? "View Cover Letter")]
+          [:a.a--underlined.company-application__view-cover-letter {:href     cover-letter
+                                                                    :target   "_blank"
+                                                                    :rel      "noopener"
+                                                                    :download cover-letter-downloadable?}
+           (when-not skeleton? "View Cover Letter")]
           [:i "No Cover Letter provided"])]]
       (when (and job admin?)
         (format-job-title job))]

@@ -214,8 +214,12 @@
 (defn section-buttons [& children]
   (into [:div {:class styles/section__buttons}] children))
 
-(defn resource [{:keys [href text data-test]}]
-  [:a (merge {:class styles/resource :href href :target "_blank" :rel "noopener"}
+(defn resource [{:keys [href text data-test download]}]
+  [:a (merge {:class    styles/resource
+              :href     href
+              :target   "_blank"
+              :rel      "noopener"
+              :download download}
              (when data-test {:data-test data-test}))
    text])
 

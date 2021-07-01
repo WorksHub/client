@@ -39,9 +39,9 @@
 
 (def base-application-fields
   [:state :timestamp :score :userId :jobId :note
-   [:coverLetter [:link [:file [:url]]]]
+   [:coverLetter [:link [:file [:url :name]]]]
    [:user [:name :email
-           [:cv [:link [:file [:url]]]]
+           [:cv [:link [:file [:url :name]]]]
            [:otherUrls [:url :title]]
            [:currentLocation [:city :state :country :countryCode]]
            [:preferredLocations [:city :state :country :countryCode]]

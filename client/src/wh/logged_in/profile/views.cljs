@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.core :as reagent]
+            [wh.common.attachments :as att]
             [wh.common.specs.primitives :as p]
             [wh.common.text :refer [pluralize]]
             [wh.common.upload :as upload]
@@ -361,7 +362,10 @@
 
      (when cv-url
        [:p (if (owner? user-type) "You uploaded " "Uploaded CV: ")
-        [:a.a--underlined {:href cv-url, :target "_blank", :rel "noopener"}
+        [:a.a--underlined {:href     cv-url
+                           :target   "_blank"
+                           :rel      "noopener"
+                           :download (att/downloadable? cv-filename)}
          (if (owner? user-type) cv-filename "Click here to download")]])
 
      (when cv-link
@@ -436,6 +440,7 @@
    (when cover-letter-url
      [:p (if (owner? user-type) "You uploaded " "Uploaded Cover Letter: ")
       [components/resource {:href cover-letter-url
+                            :download (att/downloadable? cover-letter-filename)
                             :text (if (owner? user-type) cover-letter-filename "Click here to download")}]])
 
    (when-not cover-letter-url
@@ -458,7 +463,7 @@
          {:on-click #(dispatch [::events/remove-cover-letter])}
          "Remove cover letter"])])])
 
-(defn- cv-link-section [cv-link user-type]
+(defn- cv-link-section [cv-link cv-filename user-type]
   (let [editing-cv-link? (<sub [::subs/editing-cv-link?])]
     [:div
      (if editing-cv-link?
@@ -488,6 +493,7 @@
           (if (owner? user-type) "Your external CV: " "External CV: ")
           [components/resource {:href      cv-link
                                 :text      cv-link
+                                :download  (att/downloadable? cv-filename)
                                 :data-test "cv-link"}]]))]))
 
 (defn cv-section-view-new
@@ -501,10 +507,11 @@
              [:p {:data-test "upload-resume-success"}
               (if (owner? user-type) "You uploaded " "Uploaded CV: ")
               [components/resource {:href cv-url
+                                    :download (att/downloadable? cv-filename)
                                     :text (if (owner? user-type) cv-filename "Click here to download")}]])
 
 
-      [cv-link-section cv-link user-type]])
+      [cv-link-section cv-link cv-filename user-type]])
 
    (when-not (or cv-url cv-link)
      (if (owner? user-type)
