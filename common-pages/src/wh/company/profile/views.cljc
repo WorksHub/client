@@ -979,15 +979,15 @@
 (defn company-stats
   [& [class]]
   (let [profile-views (<sub [::subs/stats-item :profile-views])
-        applications (<sub [::subs/stats-item :applications])]
+        applications  (<sub [::subs/stats-item :applications])]
     [:section {:class (util/merge-classes
-                       "sidebar__stats stats company-profile__stats"
-                       (when class class))}
+                        "sidebar__stats stats company-profile__stats"
+                        (when class class))}
      [:h2 (<sub [::subs/stats-title])]
      [stats-item (merge {:icon-name "views"
                          :caption   "Company Views"}
                         profile-views)]
-     (when (> (:total applications) 0)
+     (when (pos? (or (:total applications) 0))
        [stats-item (merge {:icon-name "applications"
                            :caption   "Applications"}
                           applications)])]))
