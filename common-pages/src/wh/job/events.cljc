@@ -135,30 +135,39 @@
                :on-failure [::fetch-company-failure]}}))
 
 (reg-event-fx
-  ::fetch-job-success
-  db/default-interceptors
-  (fn [{db :db} [publish-after-load? res]]
-    (let [job'      (get-in res [:data :job])
-          job       (translate-job job')
-          ;; the current job is now the preset one
-          db        (update db ::job/sub-db
-                            merge job
-                            {::job/error       nil
-                             ::job/preset-slug (::job/slug job)})
-          can-edit? (company/can-edit-jobs-after-first-job-published? db)
-          env       (:wh.settings/environment db)]
-      (merge
-        {:db                              db
-         :dispatch-n                      [[::fetch-issues-and-analytics]
-                                           [::set-page-title]
-                                           (when publish-after-load?
-                                             (if-not can-edit?
-                                               [::modal-publish-job/toggle-modal]
-                                               [::publish-role]))
-                                           (when (admin-or-job-owner? db)
-                                             [::fetch-company])]
-         :tracking-pixels/init-job-pixels {:job job'
-                                           :env env}}))))
+ ::fetch-job-success
+ db/default-interceptors
+ (fn [{db :db} [publish-after-load? res]]
+   (let [job       (-> (get-in res [:data :job])
+                       translate-job)
+         ;; the current job is now the preset one
+         db        (update db ::job/sub-db
+                           merge job
+                           {::job/error       nil
+                            ::job/preset-slug (::job/slug job)})
+         can-edit? (company/can-edit-jobs-after-first-job-published? db)]
+     (merge
+      {:db         db
+       :dispatch-n [[::fetch-issues-and-analytics]
+                    [::set-page-title]
+                    [::init-job-pixels]
+                    (when publish-after-load?
+                      (if-not can-edit?
+                        [::modal-publish-job/toggle-modal]
+                        [::publish-role]))
+                    (when (admin-or-job-owner? db)
+                      [::fetch-company])]}))))
+
+(reg-event-fx
+ ::init-job-pixels
+ db/default-interceptors
+ (fn [{db :db} _]
+   (when (db/logged-in? db)
+     (let [env (:wh.settings/environment db)
+           job (-> (get db ::job/sub-db)
+                   (keywords/strip-ns-from-map-keys))]
+       {:tracking-pixels/init-job-pixels {:job job
+                                          :env env}}))))
 
 (reg-event-fx
   ::fetch-company-success
@@ -602,6 +611,7 @@
    (defmethod on-page-load :job [db]
      (let [requested-slug      (get-in db [::db/page-params :slug])
            slug-in-db          (get-in db [::job/sub-db ::job/slug])
+           job-loaded?         (= requested-slug slug-in-db)
            preset-slug         (get-in db [::job/sub-db ::job/preset-slug])
            publish-after-load? (get-in db [:wh.db/query-params "publish"])
            publish-event       [:publish/try-publish {:job-slug   requested-slug
@@ -615,9 +625,11 @@
           (when (or (and preset-slug (not= requested-slug preset-slug))
                     (and (not preset-slug) (not (::db/initial-load? db))))
             [::initialize-db])
-          (if (not= requested-slug slug-in-db)
+          (if (not job-loaded?)
             [::fetch-job requested-slug publish-after-load?]
             [::fetch-issues-and-analytics])
+          (when job-loaded?
+            [::init-job-pixels])
           (when (and (= requested-slug slug-in-db)
                      (admin-or-job-owner? db))
             [::fetch-company])

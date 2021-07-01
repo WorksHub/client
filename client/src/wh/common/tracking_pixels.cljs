@@ -38,7 +38,7 @@
 (def url-adzuna-germany "https://www.adzuna.de/app_complete/7618")
 (def url-adzuna-canada "https://www.adzuna.ca/app_complete/8188")
 (def url-adzuna-netherlands "https://www.adzuna.nl/app_complete/7617")
-(def url-jooble "https://jooble.org/js/conversion.js")
+(def url-jooble "https://jooble.org/conversion/htmlpixel?clientId=16094")
 
 ;;
 
@@ -91,21 +91,9 @@
          :content (str "<iframe src='" (-> info second)
                        "' scrolling='no' frameborder='0' width='1' height='1' />")})))
 
-
 (defmethod tracking-pixel :jooble []
-  (let [wrapper (.createElement js/document "div")
-        script  (let [script (.createElement js/document "script")
-                      onload (fn []
-                               (js/window.jbl_et)
-                               (js/window.jbl_cc))]
-                  (set! (.-async script) true)
-                  (set! (.-type script) "text/javascript")
-                  (set! (.-src script) url-jooble)
-                  (set! (.-onload script) onload)
-                  script)]
-    (set! (.-id wrapper) "jooble")
-    (.appendChild wrapper script)
-    wrapper))
+  (tp {:id      "jooble"
+       :content (str "<img src='" url-jooble "' />")}))
 
 (defmethod tracking-pixel :default []
   nil)

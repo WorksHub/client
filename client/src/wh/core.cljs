@@ -2,7 +2,6 @@
   (:require [cljs.loader :as loader]
             [re-frame.core :as re-frame]
             [reagent.core :as reagent]
-            [wh.common.tracking-pixels :as tracking-pixels]
             [wh.events]
             [wh.pages.core :as pages]
             [wh.subs]
@@ -28,7 +27,6 @@
 
 (defn ^:export init []
   (when (= @init-called? false)
-    (tracking-pixels/add-registration-tracking-pixels)
     (pages/hook-browser-navigation!)
     (mount-root)
     (reset! init-called? true)))
