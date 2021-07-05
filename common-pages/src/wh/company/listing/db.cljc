@@ -64,7 +64,7 @@
   [company]
   (let [company (profile/->company company)
         tag-type-cull (->> (:tags company)
-                           (sort-by :weight)
+                           (sort-by :weight >)
                            (reduce (fn [a tag]
                                      (let [tag-type  (:type tag)
                                            new-count (inc (get-in a [:count tag-type] 0))]
@@ -75,7 +75,7 @@
                                                             identity))))) {:count {} :tags []}))
         tags          (->> (:tags tag-type-cull)
                            (map #(assoc % :score (tag-sort (:type %))))
-                           (sort-by :score))
+                           (sort-by :score >))
         location      (some-> company :locations first location/format-location)
         size          (company-specs/size->range (:size company))]
     (assoc company

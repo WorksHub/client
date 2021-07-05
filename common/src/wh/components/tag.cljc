@@ -80,7 +80,6 @@
    (let [tags' (if skeleton? (skeleton-tags opts) tags)]
      (when (not-empty tags')
        (->> tags'
-            (sort-by #(get % :weight 0) >)
             (map (fn [t] [tag element-type t opts]))
             (into [:ul
                    {:class     (util/mc "tags" "tags--inline" "tags--profile" class-wrapper)
