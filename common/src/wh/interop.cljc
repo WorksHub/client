@@ -148,6 +148,10 @@
   []
   (on-click-fn (jsf (toggleMenuDisplay))))
 
+(defn toggle-jobs-filters-display
+  []
+  (jsf (toggleJobsFilters)))
+
 (defn agree-to-tracking-on-click
   []
   (on-click-fn (jsf (agreeToTracking))))

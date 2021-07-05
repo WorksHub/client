@@ -6,6 +6,7 @@
   flex-wrap: wrap
   gap: 8px
   +tablet
+    overflow: unset
     gap: 16px
 
 .button
@@ -19,6 +20,7 @@
   background: $white
   color: $grey500
   white-space: nowrap
+  border: none
   +mobile
     height: 32px
     border-radius: 16px
@@ -38,4 +40,17 @@
     fill: $grey500
     margin-right: 12px
     +mobile
+      margin-right: 8px
+
+  &--filters
+    background: $primary-red
+    color: white
+    +tablet
       display: none
+
+.filters-toggle
+  display: flex
+  margin-bottom: 12px
+  justify-content: flex-end
+  +tablet
+    display: none

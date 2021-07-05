@@ -10,7 +10,7 @@
             [wh.re-frame.events :refer [dispatch]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.styles.jobsboard :as styles]
+            [wh.jobsboard.styles :as styles]
             [wh.util :as util]))
 
 (def jobs-container-class
@@ -137,16 +137,17 @@
       [navigation view-type query-params logged-in?]
 
       [:div (util/smc styles/page)
-       [components/search-box]
+       [components/search-box {:mobile? true}]
+       [components/search-box nil]
 
        [:div (util/smc styles/search-results)
         (when (and promoted-jobs-present?
-                   (not searching?))
+                (not searching?))
           [components/promoted-jobs view-type])
 
         [:h3 (util/smc "search-result-count"
-                       styles/jobs-section__title
-                       (when searching? "skeleton"))
+               styles/jobs-section__title
+               (when searching? "skeleton"))
          (<sub [::subs/result-count-str])]
 
         [jobs-board

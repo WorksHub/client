@@ -5,7 +5,7 @@
                :clj [wh.jobsboard.subs :as subs])
             [wh.components.buttons-page-navigation :as buttons-page-navigation]
             [wh.components.forms :as forms]
-            [wh.components.icons :refer [icon]]
+            [wh.components.icons :as icons :refer [icon]]
             [wh.components.job-new :as job]
             [wh.components.side-card.side-card :as side-cards]
             [wh.interop :as interop]
@@ -14,7 +14,7 @@
             [wh.re-frame.events :refer [dispatch dispatch-sync]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.styles.jobsboard :as styles]
+            [wh.jobsboard.styles :as styles]
             [wh.util :as util]))
 
 (defn section-title [children]
@@ -261,38 +261,56 @@
              :value mine?
              :on-change [:wh.search/toggle-only-mine]
              :class (util/mc styles/checkboxes__item
-                             [mine? styles/checkboxes__item--selected])
+                      [mine? styles/checkboxes__item--selected])
              :label-class styles/checkboxes__item__label)])])
 
-(defn search-box []
-  [:section (util/smc styles/search-box)
-   [:form {:class     (util/mc styles/search-box__form)
+(def toggle-filters (interop/on-click-fn
+                      (interop/toggle-jobs-filters-display)))
+
+(defn filters-header []
+  [:div {:class styles/filter-header}
+   [:div {:class styles/filter-header__title}
+    "Filter"]
+   [:button (merge
+             {:class styles/filter-header__close
+              :type  "button"}
+             toggle-filters)
+    [icons/icon "close" :class styles/filter-header__close-icon]]])
+
+
+(defn search-box [{:keys [mobile?] :as args}]
+  [:section#search-box (util/smc styles/search-box
+                         [mobile? styles/search-box--overlay]
+                         ;; search-box--hidden will be used by external js to toggle overlay
+                         [mobile? "search-box--hidden"])
+   [:form {:class     (util/mc styles/search-box__form
+                        [mobile? styles/search-box__form--overlay])
+           :id        "filter"
            :on-submit #?(:cljs #(do (.preventDefault %)
                                     (dispatch [:wh.search/search]))
-                         :clj "")}
-
+                         :clj  "")}
+    (when mobile? [filters-header])
     [query-box]
-
     [tags-box]
-
     [location-box]
-
     [perks-box]
-
     [salary-box]
-
     [role-type-box]
-
     (when (<sub [:user/admin?])
       [admin-filters-box])
-
+    [:button
+     (merge
+      {:class (util/mc styles/bottom-button styles/bottom-button--apply)
+       :type  "button"}
+      toggle-filters)
+     "Apply filters"]
     [:a
      (merge
-       {:class (util/mc styles/reset-filters)}
+       {:class (util/mc styles/bottom-button)}
        #?(:cljs {:on-click #(do
                               (dispatch [:wh.jobs.jobsboard.events/initialize-db])
                               (dispatch [:wh.search/search]))}
-          :clj {:href "?interaction=1"}))
+          :clj  {:href "?interaction=1"}))
      "Reset all filters"]]
 
    (let [jobs (<sub [::subs/side-jobs])]

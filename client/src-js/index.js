@@ -11,3 +11,4 @@ import './feed_paging.js';
 import './clipboard.js';
 import './init.js';
 import './ac.js';
+import './jobs_filters';

@@ -1,7 +1,7 @@
 /* global bodyScrollLock */
 
 /* Toggles class on element of given ID */
-function toggleClass(id, cls) {
+export function toggleClass(id, cls) {
   var d = document.getElementById(id);
   if (d) {
     d.classList.toggle(cls);
