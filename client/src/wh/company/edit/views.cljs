@@ -52,13 +52,14 @@
        [:form.wh-formx.wh-formx__layout
         [text-field nil (field ::edit/manager
                                :label [:span "Assign manager:"]
+                               :data-test "company-manager-input"
                                :placeholder "Type to search Managers"
                                :suggestions (<sub [::subs/manager-suggestions])
                                :on-select-suggestion [::events/select-manager])]]
        (when email
          [:a.company-edit__manager-pod__contact
           {:href (if email (str "mailto:" email) "#")
-           :id "company-edit__manager-pod__contact"}
+           :id   "company-edit__manager-pod__contact"}
           "Get in touch"]))]))
 
 (defn invoices-pod
@@ -153,12 +154,14 @@
        [:div.column
         [text-field nil (field ::edit/name
                                :label [:span "* Company name"]
+                               :data-test "company-name-input"
                                :suggestions (<sub [::subs/suggestions])
                                :on-select-suggestion [::events/select-suggestion])]]])
 
     (when-not edit?
       [rich-text-field (field ::edit/description-html
                               :placeholder "Tell our community all about your company and how great it is to work for you…"
+                              :data-test "company-description-input"
                               :class "company-edit__description"
                               :label [:span "* Company introduction"])])
     (when admin? [select-field nil (field ::edit/vertical
@@ -174,10 +177,11 @@
     [:div.is-flex.company-edit__field-footer
      (let [saving? (<sub [::subs/saving?])]
        [:button.button.button--small.company-edit__save-details
-        {:on-click #(do (.preventDefault %)
-                        (dispatch [::events/save-company]))
-         :class    (str (when edit? "button--inverted ")
-                        (when saving? "button--inverted button--loading"))}
+        {:data-test "create-company-submit-button"
+         :on-click  #(do (.preventDefault %)
+                         (dispatch [::events/save-company]))
+         :class     (str (when edit? "button--inverted ")
+                         (when saving? "button--inverted button--loading"))}
         (when-not saving? (if edit? "Save" "Create"))])
      (when-let [error (<sub [::subs/error])]
        (f/error-component-outdated error { :id "company-edit-error-desktop"}))]]])

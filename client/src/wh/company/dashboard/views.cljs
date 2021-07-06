@@ -58,26 +58,30 @@
       [:div.your-company__name-line
        (cond
          (<sub [:wh.company.register.subs/logo-uploading?]) [:div.your-company__logo [:div.your-company__logo--loading]]
-         (<sub [::subs/logo]) [:img.your-company__logo {:src (<sub [::subs/logo])}]
-         :else [company-edit-link [icon "add-new-2"]
-                :class "button button--inverted your-company__logo"])
+         (<sub [::subs/logo])                               [:img.your-company__logo {:data-test "your-company-logo"
+                                                                                      :src       (<sub [::subs/logo])}]
+         :else                                              [company-edit-link [icon "add-new-2"]
+                                                             :class "button button--inverted your-company__logo"])
        [:div.your-company__name
+        {:data-test "your-company-name"}
         (<sub [::subs/name])]
        (when (<sub [:user/admin?])
          [profile-page-link (<sub [::subs/profile-enabled?]) (<sub [::subs/slug])])
        [company-edit-link "Settings"
         :class "button button--inverted your-company__edit"]]
       (when-let [description-html (<sub [::subs/description-html])]
-        [:div.your-company__blurb {:dangerouslySetInnerHTML {:__html description-html}}])
+        [:div.your-company__blurb
+         {:data-test               "your-company-description"
+          :dangerouslySetInnerHTML {:__html description-html}}])
       [:hr]
       (cond
         (<sub [::subs/disabled?])
         [:div.your-company__payment-setup.your-company__payment-setup--disabled
          [:p "Your company account has been disabled. If you believe it was done by mistake, please get in touch."]
          [:a
-          {:href "mailto:hello@works-hub.com"
+          {:href   "mailto:hello@works-hub.com"
            :target "_blank"
-           :rel "noopener"}
+           :rel    "noopener"}
           [:button.button "Get in touch"]]]
         ;;
         (<sub [::subs/has-offer?])
@@ -102,9 +106,9 @@
              (upgrade-link "")])] ; content specified in CSS
          [:div.your-company__package-description
           (case (<sub [::subs/package])
-            :take_off [:p "Now that you are our premium client with a Take-Off package, why not "
-                       (mailto-link "talk to us")
-                       " about what we can do for you?"]
+            :take_off   [:p "Now that you are our premium client with a Take-Off package, why not "
+                         (mailto-link "talk to us")
+                         " about what we can do for you?"]
             :launch_pad "It’s great to start out with this, but if you have more ambitious hiring plans you should upgrade to our Take-Off Package."
             (str "Once you have had time to explore, upgrade and start hiring!"))]])]]))
 
