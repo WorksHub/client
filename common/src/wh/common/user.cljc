@@ -112,11 +112,14 @@
   (or (cv-file-url user)
       (cv-link-url user)))
 
-(defn company-member? [{:keys [user company]}]
+(defn connected-company-id [user]
+  (:company-id user))
+
+(defn belong-to-company? [{:keys [user company]}]
   (= (:id company) (:company-id user)))
 
 (defn has-access-to-company? [{:keys [user company]}]
-  (or (company-member? {:company company, :user user})
+  (or (belong-to-company? {:company company, :user user})
       (admin-type? (:type user))))
 
 (defn hubspot-id [{:keys [hubspot-profile-url] :as user}]
