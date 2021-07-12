@@ -127,12 +127,12 @@
   (fn [{db :db} [_res]]))
 
 (reg-event-fx
-  ::fetch-company
-  (fn [{db :db} _]
-    {:graphql {:query      company-query
-               :variables  {:id (get-in db [::job/sub-db ::job/company-id])}
-               :on-success [::fetch-company-success]
-               :on-failure [::fetch-company-failure]}}))
+ ::fetch-company
+ (fn [{db :db} _]
+   {:graphql {:query      company-query
+              :variables  {:id (get-in db [::job/sub-db ::job/company-id])}
+              :on-success [::fetch-company-success]
+              :on-failure [::fetch-company-failure]}}))
 
 (reg-event-fx
  ::fetch-job-success
@@ -170,14 +170,14 @@
                                           :env env}}))))
 
 (reg-event-fx
-  ::fetch-company-success
-  db/default-interceptors
-  (fn [{db :db} [res]]
-    (let [company (-> res
-                      (get-in [:data :company])
-                      (update :permissions #(set (map keyword %)))
-                      (cases/->kebab-case))]
-      {:db (update-in db [::job/sub-db ::job/company] merge company)})))
+ ::fetch-company-success
+ db/default-interceptors
+ (fn [{db :db} [res]]
+   (let [company (-> res
+                     (get-in [:data :company])
+                     (update :permissions #(set (map keyword %)))
+                     (cases/->kebab-case))]
+     {:db (update-in db [::job/sub-db ::job/company] merge company)})))
 
 (reg-event-fx
   ::fetch-failure
@@ -628,6 +628,10 @@
           (if (not job-loaded?)
             [::fetch-job requested-slug publish-after-load?]
             [::fetch-issues-and-analytics])
+          ;; publish event is dependent on a job's id from db
+          ;; that's why we wait for a job to load
+          (when (and publish-after-load? job-loaded?)
+            publish-event)
           (when job-loaded?
             [::init-job-pixels])
           (when (and (= requested-slug slug-in-db)
@@ -641,5 +645,5 @@
             [:apply/try-apply {:slug requested-slug} (get-in db [::db/query-params "apply_source"] "jobpage-apply")])
           [::fetch-recommended-jobs requested-slug]
           [:google/load-maps]
-          [:wh.pages.core/unset-loader]
-          (when publish-after-load? publish-event)]))))
+          [:wh.pages.core/unset-loader]]))))
+
