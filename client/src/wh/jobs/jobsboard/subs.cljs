@@ -73,7 +73,7 @@
 (reg-sub
   ::filters
   (fn [db _]
-    (get-in db [::jobsboard/search :wh.search/filters])))
+    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/filters])))
 
 (reg-sub
   ::result-count

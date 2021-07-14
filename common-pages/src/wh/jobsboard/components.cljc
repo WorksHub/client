@@ -11,10 +11,10 @@
             [wh.interop :as interop]
             [wh.interop.forms :as interop-forms]
             [wh.jobsboard.events :as events]
+            [wh.jobsboard.styles :as styles]
             [wh.re-frame.events :refer [dispatch dispatch-sync]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.jobsboard.styles :as styles]
             [wh.util :as util]))
 
 (defn section-title [children]
@@ -59,15 +59,16 @@
                   :clj nil)
     :on-enter  (interop-forms/add-input-value-to-url :search :wh.search/search)}])
 
-(defn location-box* [{:keys [on-clear pristine? locations selected
-                             tags-url init-from-js-tags? on-tag-select]}]
+(defn location-box* [{:keys [on-clear pristine? locations selected id
+                             tags-url init-from-js-tags? on-tag-select]
+                      :or   {id "location-box"}}]
   [:div (util/smc styles/location)
    [section-header {:title     "Location"
                     :on-clear  on-clear
                     :pristine? pristine?}]
 
    [forms/tags-filter-field
-    (merge {:id                 "location-box"
+    (merge {:id                 id
             :solo?              true
             :show-icons         false
             :placeholder        "Type to search locations"
@@ -78,9 +79,10 @@
            (when on-tag-select {:on-tag-select on-tag-select})
            (when tags-url {:tags-url tags-url}))]])
 
-(defn location-box []
+(defn location-box [opts]
   [location-box*
-   (merge {:on-tag-select (interop-forms/add-tag-value-to-url ::events/on-location-select)}
+   (merge opts
+          {:on-tag-select (interop-forms/add-tag-value-to-url ::events/on-location-select)}
           #?(:clj {:pristine?          true
                    :init-from-js-tags? true
                    :tags-url           (routes/path :tags-collection :params {:id :locations})}
@@ -89,15 +91,16 @@
                     :locations (<sub [:wh.search/available-locations])
                     :selected  (<sub [::subs/selected-locations])}))])
 
-(defn tags-box* [{:keys [on-clear pristine? tags selected
-                         tags-url init-from-js-tags? on-tag-select]}]
+(defn tags-box* [{:keys [on-clear pristine? tags selected id
+                         tags-url init-from-js-tags? on-tag-select]
+                  :or   {id "tags-box"}}]
   [:div (util/smc styles/tags)
    [section-header {:title     "Tags"
                     :on-clear  on-clear
                     :pristine? pristine?}]
 
    [forms/tags-filter-field
-    (merge {:id                 "tags-box"
+    (merge {:id                 id
             :solo?              true
             :show-icons         false
             :placeholder        "Type to search tags"
@@ -108,9 +111,10 @@
            (when on-tag-select {:on-tag-select on-tag-select})
            (when tags-url {:tags-url tags-url}))]])
 
-(defn tags-box []
+(defn tags-box [opts]
   [tags-box*
-   (merge {:on-tag-select (interop-forms/add-tag-value-to-url ::events/on-tag-select)}
+   (merge opts
+          {:on-tag-select (interop-forms/add-tag-value-to-url ::events/on-tag-select)}
           #?(:clj {:pristine?          true
                    :init-from-js-tags? true
                    :tags-url           (routes/path :tags-collection :params {:id :jobs})}
@@ -280,19 +284,19 @@
 
 (defn search-box [{:keys [mobile?] :as args}]
   [:section#search-box (util/smc styles/search-box
-                         [mobile? styles/search-box--overlay]
-                         ;; search-box--hidden will be used by external js to toggle overlay
-                         [mobile? "search-box--hidden"])
+                                 [mobile? styles/search-box--overlay]
+                                 ;; search-box--hidden will be used by external js to toggle overlay
+                                 [mobile? "search-box--hidden"])
    [:form {:class     (util/mc styles/search-box__form
-                        [mobile? styles/search-box__form--overlay])
+                               [mobile? styles/search-box__form--overlay])
            :id        "filter"
            :on-submit #?(:cljs #(do (.preventDefault %)
                                     (dispatch [:wh.search/search]))
                          :clj  "")}
     (when mobile? [filters-header])
     [query-box]
-    [tags-box]
-    [location-box]
+    [tags-box {:id (str "tags-box" (when mobile? "-mobile"))}]
+    [location-box {:id (str "locations-box" (when mobile? "-mobile"))}]
     [perks-box]
     [salary-box]
     [role-type-box]
@@ -300,9 +304,9 @@
       [admin-filters-box])
     [:button
      (merge
-      {:class (util/mc styles/bottom-button styles/bottom-button--apply)
-       :type  "button"}
-      toggle-filters)
+       {:class (util/mc styles/bottom-button styles/bottom-button--apply)
+        :type  "button"}
+       toggle-filters)
      "Apply filters"]
     [:a
      (merge

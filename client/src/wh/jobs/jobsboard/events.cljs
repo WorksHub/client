@@ -91,10 +91,10 @@
   db/default-interceptors
   (fn [db _]
     (let [result  (gqlc/cache-results jobs db [])
-          filters (get-in db [::jobsboard/search :wh.search/filters])]
+          filters (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/filters])]
       ;; we want to update filters at first possible opportunity, and do not update them anymore
       (if (and result (not filters))
-        (assoc-in db [::jobsboard/search :wh.search/filters] (search-results/get-search-filters result))
+        (assoc-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/filters] (search-results/get-search-filters result))
         db))))
 
 (reg-event-db
