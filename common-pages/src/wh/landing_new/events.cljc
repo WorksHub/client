@@ -14,12 +14,12 @@
 
 (reg-query :recent-activities activities-queries/recent-activities-query)
 
-(defn- get-activities-tags [{:keys [wh.db/query-params] :as _db}]
+(defn- get-activities-tags [{:keys [wh.db/query-params] :as db}]
   (let [public-feed   (get query-params "public")
         skills        (map (fn [{:keys [name]}]
                              {:slug (slug/tag-label->slug name)
                               :type "tech"})
-                           (<sub [:wh.landing-new.subs/user-skills]))
+                           (get-in db [:wh.user.db/sub-db :wh.user.db/skills]))
         selected-tags (tags/param->tags (get query-params "tags"))]
     ;; Selected tags have precedence over skills so once user selected
     ;; tags we don't need to send skills anymore. If tags are not present
