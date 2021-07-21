@@ -829,3 +829,5 @@
 (def uk-address-maps-link "https://goo.gl/maps/EsxvKXSbdTL35uxc6")
 (def us-address "108 E 16th Street, New York, NY 10003")
 (def us-address-maps-link "https://goo.gl/maps/aymEPiDebYS2")
+
+(def affiliates #{"talent" "zip-recruiter" "adzuna" "jooble"})

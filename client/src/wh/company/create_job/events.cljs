@@ -243,12 +243,12 @@
   ::save-workable-account
   db/default-interceptors
   (fn [{db :db} _]
-    (let [sub-db (::create-job/sub-db db)
-          company {:id (::create-job/company-id sub-db)
+    (let [sub-db  (::create-job/sub-db db)
+          company {:id           (::create-job/company-id sub-db)
                    :integrations {:workable {:accountSubdomain (::create-job/workable-subdomain sub-db)}}}]
       {:db      (assoc-in db [::create-job/sub-db ::create-job/saving-workable-account?] true)
-       :graphql {:query update-company-mutation
-                 :variables {:update_company company}
+       :graphql {:query      update-company-mutation
+                 :variables  {:update_company company}
                  :on-success [::save-workable-account-success]
                  :on-failure [::save-workable-account-error]}})))
 
@@ -326,7 +326,7 @@
                       :variable/type :ID!}]
    :venia/queries   [[:job {:id :$id}
                       [:companyId :tagline
-                       :approved :sponsorshipOffered
+                       :archived :approved :sponsorshipOffered
                        [:tags :fragment/tagFields]
                        :remote :published :verticals
                        :descriptionHtml :title :roleType

@@ -51,6 +51,7 @@
    ::manager   {:order 60 :initial "", :validate ::manager}
    ::published {:order 62 :initial false}
    ::approved  {:order 63 :initial false}
+   ::archived  {:order 64 :initial false}
 
    ::verticals           (s/coll-of ::p/non-empty-string :distinct true :min-count 1)
    ::timezones           {}

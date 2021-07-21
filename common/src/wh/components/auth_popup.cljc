@@ -1,6 +1,5 @@
 (ns wh.components.auth-popup
   (:require [wh.components.button-auth :as button-auth]
-            [wh.components.common :refer [link]]
             [wh.components.icons :refer [icon]]
             [wh.interop :as interop]
             [wh.util :as util]))
@@ -13,12 +12,6 @@
 
 (defn build-additional-content-id [s]
   (str "additional-content__" s))
-
-(defn overlay-content-apply
-  []
-  [:div.auth-popup__content
-   {:id (build-sub-id "apply")}
-   [:h1 "Login or register" [:br] "to apply for this job!"]])
 
 (defn overlay-content-publish
   []
@@ -123,7 +116,6 @@
        (interop/hide-auth-popup))
      [icon "close"]]
     [:div
-     [overlay-content-apply]
      [overlay-content-publish]
      [overlay-content-save]
      [overlay-content-saved-jobs]

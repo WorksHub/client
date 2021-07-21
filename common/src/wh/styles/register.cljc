@@ -7,6 +7,7 @@
 (def title--center "register__title--center--Z1aF7")
 (def paragraph "register__paragraph--HgjP7")
 (def paragraph--bold "register__paragraph--bold--PabcN")
+(def paragraph--chatbox "register__paragraph--chatbox--34dXz")
 (def info "register__info--v7CT-")
 (def auth-buttons "register__auth-buttons--1sW_P")
 (def button "register__button--2sf0R")

@@ -12,8 +12,8 @@
   [:div (util/smc styles/header)
    children])
 
-(defn link [{:keys [text href class]}]
-  [:a {:class (util/mc styles/link [class class]) :href href} text])
+(defn link [{:keys [text href class target]}]
+  [:a {:class (util/mc styles/link [class class]) :href href :target target} text])
 
 (defn paragraph [& children]
   (into [:p (util/smc styles/paragraph)] children))

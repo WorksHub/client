@@ -2,7 +2,6 @@ import { setClass, setNoScroll } from './public';
 import customLocalStorage from './local_storage';
 
 const messageType = {
-    apply: 'apply',
     publish: 'publish',
     contribute: 'contribute',
     searchJobs: 'search-jobs',
@@ -17,15 +16,12 @@ const messageType = {
     seeApplication: 'see-application'
 };
 const contextToMessageType = {
-    'homepage-jobcard-apply': messageType.apply,
     contribute: messageType.contribute,
-    'jobcard-apply': messageType.apply,
     'jobsboard-recommended': messageType.recommendedJobs,
     'jobsboard-save': messageType.savedJobs,
     'jobcard-save': messageType.save,
     'save-blog': messageType.saveBlog,
     'jobsboard-applied': messageType.appliedJobs,
-    'jobpage-apply': messageType.apply,
     'jobpage-publish': messageType.publish,
     'search-jobs': messageType.searchJobs,
     'jobpage-see-more': messageType.seeMore,

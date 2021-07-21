@@ -8,8 +8,12 @@
             [wh.graphql.jobs :as graphql-jobs]
             [wh.logged-in.apply.db :as apply]
             [wh.logged-in.profile.location-events :as location-events]
+            [wh.register.events :as register-events]
+            [wh.login.events :as login-events]
             [wh.user.db :as user]
-            [wh.util :as util])
+            [wh.util :as util]
+            [wh.routes :as r]
+            [wh.common.user :as common-user])
   (:require-macros [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
 (def apply-interceptors (into db/default-interceptors
@@ -42,14 +46,15 @@
 ;; START JOB APPLICATION ─────────────────────────────────────────────────────────────────────────────
 
 (reg-event-fx
-  :apply/start-apply-for-job
-  db/default-interceptors
-  (fn [{db :db} [job apply-source]]
-    (let [job (assoc job :apply-source apply-source)]
-      {:db              (assoc-in db [::apply/sub-db ::apply/job] job)
-       :dispatch-n      [[::check-name]
-                         [::fetch-job-company-details job]]
-       :analytics/track ["Job Application Started" job]})))
+ :apply/start-apply-for-job
+ db/default-interceptors
+ (fn [{db :db} [job apply-source]]
+   (let [job (assoc job :apply-source apply-source)
+         logged-in? (boolean (get-in db [:wh.user.db/sub-db :wh.user.db/id]))]
+     {:db              (assoc-in db [::apply/sub-db ::apply/job] job)
+      :dispatch-n      [(if logged-in? [::check-name] [::check-email]) 
+                        [::fetch-job-company-details job]]
+      :analytics/track ["Job Application Started" job]})))
 
 (reg-event-fx
   ::fetch-job-company-details
@@ -115,6 +120,104 @@
            ::apply/updating? false
            ::apply/cv-upload-failed? true)}))
 
+;; EMAIL ─────────────────────────────────────────────────────────────────────────────
+
+(reg-event-fx
+  ::check-email
+  db/default-interceptors
+  (fn [{db :db} [_]]
+    (when-not (user/valid-email? db)
+      {:db (-> db
+               (apply/update-current-step :step/email)
+               (apply/update-taken-steps :step/email))
+       :dispatch scroll-to-bottom})))
+
+;; Here we assume that the user has an account already
+;; In case the email is found we send the user a magic link and end the application process
+;; In case the email is not found we will prompt him to enter their name
+(reg-event-fx
+  ::send-magic-link
+  db/default-interceptors
+  (fn [{db :db} [email]]
+    (let [slug (get-in db [:wh.db/page-params :slug])
+          apply-source (get-in db [:wh.db/query-params "apply_source"])
+          base-params {:interaction 1
+                       :apply       true}
+          redirect-url (r/path :job
+                               :params {:slug slug}
+                               :query-params (if apply-source
+                                                (merge base-params {:apply-source apply-source})
+                                                base-params))]
+      {:db       (apply/set-loading db)
+       :graphql  {:query login-events/magic-link-mutation
+                  :variables {:email email
+                              :redirect redirect-url}
+                  :on-success [::send-magic-link-success email]
+                  :on-failure [::send-magic-link-failure email]}})))
+
+;; Refresh the page with apply=true and interaction=1 and apply_source
+;; The user shouldn't have to do the email step again
+(reg-event-fx
+  ::send-magic-link-success
+  db/default-interceptors
+  (fn [{db :db} [email resp]]
+    (if (seq (:errors resp))
+      {:dispatch [::send-magic-link-failure email resp]}
+      {:db (-> (apply/unset-loading db)
+               (assoc-in [::apply/sub-db ::apply/email-magic-link-sent?] true))})))
+
+(reg-event-fx
+  ::send-magic-link-failure
+  db/default-interceptors
+  (fn [{db :db} [email resp]]
+    ;; If sending the magic link failed because the user doesn't have an account
+    ;; we move to the name step, so that the user can enter his name.
+    (if (common-user/no-user-found-for-email? resp)
+      {:db (-> db
+               (apply/unset-loading)
+               (user/update-email email))
+       :dispatch [::check-name]}
+       ;; In case the failure is due to a reason other than email not found, show an error to the user
+      {:db (-> db
+               (apply/unset-loading)
+               (assoc-in [::apply/sub-db ::apply/email-magic-link-failed?] true))})))
+
+;; We can only create a user after getting both the email and name of the user
+(reg-event-fx
+  ::create-user
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:db       (apply/set-loading db)
+     :graphql  {:query register-events/create-user-mutation
+                :variables {:create_user {:email (get-in db [::user/sub-db ::user/email])
+                                          :name  (get-in db [::user/sub-db ::user/name])
+                                          :consented (.toISOString (js/Date.))}
+                            :force_unapproved true}
+                :on-success [::create-user-success]
+                :on-failure [::create-user-failure]}}))
+
+;; When a user is created successfully we can continue the application process, 
+;; no need to refresh the page, because we already have the infos we need
+(reg-event-fx
+  ::create-user-success
+  db/default-interceptors
+  (fn [{db :db} [resp]]
+    (let [user (get-in resp [:data :create_user])]
+      {:db     (-> db
+               (assoc-in [::user/sub-db ::user/id] (:id user))
+               ;; We set the user consented to prevent the agreement modal from showing up
+               (assoc-in [::user/sub-db ::user/consented] (:consented user))
+               (apply/unset-loading))
+       :reload true})))
+
+(reg-event-fx
+  ::create-user-failure
+  db/default-interceptors
+  (fn [_ [resp]]
+    (js/console.error resp)
+    {:dispatch [::initialize-db]}))
+
+
 ;; NAME ─────────────────────────────────────────────────────────────────────────────
 
 (reg-event-fx
@@ -132,12 +235,15 @@
   ::update-name
   db/default-interceptors
   (fn [{db :db} [name]]
-    {:db      (apply/set-loading db)
-     :graphql {:query      graphql/update-user-mutation--name
-               :variables  {:update_user {:id   (user/id db)
-                                          :name name}}
-               :on-success [::update-name-success]
-               :on-failure [::update-name-failure]}}))
+    (if (user/id db) ;; If we already have a user
+      {:db      (apply/set-loading db)
+       :graphql {:query      graphql/update-user-mutation--name
+                 :variables  {:update_user {:id   (user/id db)
+                                            :name name}}
+                 :on-success [::update-name-success]
+                 :on-failure [::update-name-failure]}}
+      {:db (user/update-name db name)
+       :dispatch [::create-user]})))
 
 (reg-event-fx
   ::update-name-success

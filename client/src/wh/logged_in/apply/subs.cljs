@@ -159,3 +159,17 @@
   ::skill-update-failed?
   (fn [db _]
     (apply/skills-update-failed? db)))
+
+;; EMAIL ------------------------------------------------------------------------
+
+(reg-sub
+ ::email-magic-link-sent?
+ :<- [::sub-db]
+ (fn [db _]
+   (::apply/email-magic-link-sent? db)))
+
+(reg-sub
+  ::email-magic-link-failed?
+  :<- [::sub-db]
+  (fn [db _]
+    (::apply/email-magic-link-failed? db)))

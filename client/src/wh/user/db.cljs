@@ -15,6 +15,9 @@
 (defn update-visa-status-other [db visa-status-other]
   (assoc-in db [::sub-db ::visa-status-other] visa-status-other))
 
+(defn update-email [db email]
+  (assoc-in db [::sub-db ::email] email))
+
 (defn update-name [db name]
   (assoc-in db [::sub-db ::name] name))
 
@@ -42,6 +45,9 @@
 
 (defn has-full-name? [db]
   (user/full-name? (get-in db [::sub-db ::name])))
+
+(defn valid-email? [db]
+  (user/valid-email? (get-in db [::sub-db ::email])))
 
 (defn has-current-location? [db]
   (get-in db [::sub-db ::current-location]))

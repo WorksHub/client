@@ -434,6 +434,9 @@
      [:span "This role has been:"]
      [labelled-checkbox nil (merge (field ::create-job/approved
                                           :label "Approved")
+                                   (util/smc styles/checkbox))]
+     [labelled-checkbox nil (merge (field ::create-job/archived
+                                          :label "Archived")
                                    (util/smc styles/checkbox))]]]])
 
 (defn ats-pod
@@ -453,7 +456,7 @@
             :on-change [::events/edit-workable-subdomain]
             :options   (<sub [::subs/workable-accounts])}]
           [:button.button.button--medium.is-pulled-right
-           {:id "save-workable-account"
+           {:id       "save-workable-account"
             :on-click #(dispatch [::events/save-workable-account])
             :class    (when (<sub [::subs/saving-workable-account?])
                         "button--inverted button--loading")}

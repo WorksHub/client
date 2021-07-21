@@ -8,7 +8,6 @@
             [wh.components.common :refer [wrap-img img]]
             [wh.components.icons :refer [icon]]
             [wh.components.tag :as tag]
-            [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch]]
             [wh.routes :as routes]
             [wh.slug :as slug]
@@ -49,21 +48,20 @@
      (and (not user-is-owner?) published)
      (let [job-page-path [:job
                           :params {:slug slug}
-                          :query-params {"apply" true "apply_source" apply-source}]
+                          :query-params {"apply" true
+                                         "apply_source" apply-source
+                                         "interaction" 1}]
            disabled?     (or applied?
                              (and user-is-company?
                                   (not user-is-owner?)))]
        [:a (merge
-             {:id        (str "job-card__apply-button_job-" id)
-              :class     (util/mc styles/button
-                                  [disabled? styles/button--disabled])
-              :data-test "job-apply"}
-             (when disabled?
-               {:disabled true})
-             (if logged-in?
-               {:href (apply routes/path job-page-path)}
-               (interop/on-click-fn
-                 (interop/show-auth-popup :jobcard-apply job-page-path))))
+            {:id        (str "job-card__apply-button_job-" id)
+             :class     (util/mc styles/button
+                                 [disabled? styles/button--disabled])
+             :data-test "job-apply"}
+            (when disabled?
+              {:disabled true})
+            {:href (apply routes/path job-page-path)})
 
         (if applied? "Applied" "Apply")])
 

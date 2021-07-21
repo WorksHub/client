@@ -57,7 +57,7 @@
            applied? logged-in? small? liked? skeleton? on-close apply-source]}]
   [:div.apply
    [:div.buttons
-    [:a.button.button--inverted {:href (routes/path :job :params {:slug slug})}
+    [:a.button.button--inverted {:href (routes/path :job :params {:slug slug} :query-params {:interaction 1})}
      (if user-is-owner? "View" "More Info")]
 
     (let [apply-id    (str "job-card__apply-button_job-" id)
@@ -70,13 +70,11 @@
         (when published
           (let [job-page-path [:job
                                :params {:slug slug}
-                               :query-params (merge {"apply" true}
+                               :query-params (merge {"apply" true
+                                                     :interaction 1}
                                                     (when apply-source
                                                       {"apply_source" apply-source}))]]
-            [:a (if logged-in?
-                  {:href (apply routes/path job-page-path)}
-                  (interop/on-click-fn
-                    (interop/show-auth-popup :jobcard-apply job-page-path)))
+            [:a {:href (apply routes/path job-page-path)}
              [:button.button button-opts
               (cond applied?
                     "Applied"

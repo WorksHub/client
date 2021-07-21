@@ -62,13 +62,10 @@
     [components/button
      (let [job-page-params [:job
                             :params {:slug slug}
-                            :query-params {:apply "true"}]]
-       (merge {:type :inverted-highlighed}
-              (if logged-in?
-                {:href (apply routes/path job-page-params)}
-                {:on-click (interop/show-auth-popup
-                             :jobpage-apply
-                             job-page-params)})))
+                            :query-params {:apply       "true"
+                                           :interaction 1}]]
+       {:type :inverted-highlighed
+        :href (apply routes/path job-page-params)})
      "Apply Now"]
     [components/button
      {:href (routes/path :job :params {:slug slug})}

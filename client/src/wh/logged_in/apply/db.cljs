@@ -3,7 +3,7 @@
             [wh.job.db :as job]
             [wh.util :as util]))
 
-(def steps #{:step/name :step/cv-upload :step/thanks :step/current-location
+(def steps #{:step/name :step/email :step/cv-upload :step/thanks :step/current-location
              :step/visa :step/rejection :step/cover-letter :step/skills})
 
 (s/def ::steps-taken (s/coll-of steps))

@@ -49,6 +49,10 @@
          (fn [db _]
            (get-in db [::user/sub-db ::user/name])))
 
+(reg-sub ::email
+         (fn [db _]
+           (get-in db [::user/sub-db ::user/email])))
+
 (reg-sub ::skills-names
          (fn [db _]
            (mapv :name (get-in db [::user/sub-db ::user/skills]))))

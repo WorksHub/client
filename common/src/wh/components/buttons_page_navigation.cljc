@@ -50,18 +50,18 @@
   [buttons [{:text    "All jobs"
              :active? true
              :icon    "board-rectangles"}
-            {:text     "Recommended jobs"
-             :href     (routes/path :recommended)
+            {:text "Recommended jobs"
+             :href (routes/path :recommended)
              :on-click (add-on-click-for-guest logged-in? :jobsboard-recommended)
-             :icon     "robot-face"}
+             :icon "robot-face"}
             {:text     "Saved jobs"
              :href     (routes/path :liked)
-             :on-click (add-on-click-for-guest logged-in? :jobsboard-save)
-             :icon     "save"}
+             :icon     "save"
+             :on-click (add-on-click-for-guest logged-in? :jobsboard-save)}
             {:text     "Applied to"
              :href     (routes/path :applied)
-             :on-click (add-on-click-for-guest logged-in? :jobsboard-applied)
-             :icon     "document-filled"}
+             :icon     "document-filled"
+             :on-click (add-on-click-for-guest logged-in? :jobsboard-applied)}
             {:text     "Filters"
              :type     :filters
              :icon     "filters"

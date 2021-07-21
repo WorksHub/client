@@ -13,13 +13,17 @@
             [wh.logged-in.apply.subs :as subs]
             [wh.logged-in.profile.events :as profile-events]
             [wh.subs :refer [<sub]]
+            [wh.components.auth :as auth]
+            [wh.routes :as routes]
+            [wh.styles.register :as register-styles]
             [wh.user.subs :as user-subs]))
 
 (defn add-full-name-step []
-  (let [full-name (r/atom (<sub [::user-subs/name]))
-        validation-error? (r/atom false)]
+  (let [full-name         (r/atom (<sub [::user-subs/name]))
+        validation-error? (r/atom false)
+        logged-in?        (<sub [:user/logged-in?])]
     (fn []
-      [:div.add-full-name
+      [:div.add-full-name {:data-test "full-name"}
        (if (<sub [::subs/update-name-failed?])
          [error-message "There was an error updating your name, please try again."]
          [codi-message "What is your full name?"])
@@ -27,6 +31,7 @@
         [:div.conversation-element.user
          [:input {:type       :text
                   :auto-focus true
+                  :data-test  "full-name-input"
                   :value      @full-name
                   :on-change  #(do (reset! full-name (-> % .-target .-value))
                                    (reset! validation-error? false))
@@ -34,14 +39,61 @@
        [:div.animatable
         [:button.conversation-button.update-name
          (when (= :step/name (<sub [::subs/current-step]))
-           {:class    (when (<sub [::subs/updating?]) "button--loading")
-            :id       "application-bot_update-name"
-            :on-click #(if (user/full-name? @full-name)
-                         (dispatch [::events/update-name @full-name])
-                         (reset! validation-error? true))})
+           {:class     (when (<sub [::subs/updating?]) "button--loading")
+            :id        "application-bot_update-name"
+            :data-test "full-name-next"
+            :on-click  #(if (user/full-name? @full-name)
+                          (dispatch [::events/update-name @full-name])
+                          (reset! validation-error? true))})
          "Next"]]
+       (when-not logged-in?
+         [:div.animatable
+          [:div {:class-name register-styles/paragraph--chatbox}
+           "By continuing, you agree to our"
+           [auth/link {:text   " Terms of Service"
+                       :href   (routes/path :terms-of-service)
+                       :target "_blank"}]
+           " and" [auth/link {:text   " Privacy Policy"
+                              :href   (routes/path :privacy-policy)
+                              :target "_blank"}]]])
        (when @validation-error?
          [:div.conversation-button--error "Please enter at least two words"])])))
+
+(defn add-email-step []
+  (let [email             (r/atom (<sub [::user-subs/email]))
+        validation-error? (r/atom false)]
+    (fn []
+      [:div.add-email {:data-test "email"}
+       (cond
+         (<sub [::subs/email-magic-link-failed?])
+         [error-message "Couldn't send a magic link to your email, please try again."]
+         :else [codi-message "What is your email?"])
+       [:div.animatable
+        [:div.conversation-element.user
+         [:input {:type       :email
+                  :data-test  "email-input"
+                  :auto-focus true
+                  :value      @email
+                  :on-change  #(do (reset! email (-> % .-target .-value))
+                                   (reset! validation-error? false))
+                  :aria-label "Email input"}]]]
+       [:div.animatable
+        [:button.conversation-button.add-email
+         (when (= :step/email (<sub [::subs/current-step]))
+           {:class     (when (<sub [::subs/updating?]) "button--loading")
+            :id        "application-bot_update-email"
+            :data-test "email-next"
+            :on-click  #(if (user/valid-email? @email)
+                          (dispatch [::events/send-magic-link @email])
+                          (reset! validation-error? true))})
+         "Next"]]
+       (when (<sub [::subs/email-magic-link-sent?])
+         [:div {:data-test "magic-link-sent"}
+          [codi-message "A magic link was sent to your email, please check it out to continue the application process."]
+          [:div.animatable
+           [:button.conversation-button {:on-click #(dispatch [::events/close-chatbot])} "Close"]]])
+       (when @validation-error?
+         [:div.conversation-button--error "Please enter a valid email"])])))
 
 
 (defn current-location-step []
@@ -180,7 +232,7 @@
           :class     "multiple-buttons"}
          (doall
            (for [option (sort data/visa-options)
-                 :let   [selected? (contains? @selected-options option)]]
+                 :let [selected? (contains? @selected-options option)]]
              [:button.button.visa-option
               {:key      option
                :class    (when-not selected?
@@ -212,7 +264,7 @@
        [error-message "There was an error updating your skills, please try again."]
        [codi-message "Please select your skills"])
      [:div.animatable.visa-options
-      [:div {:class "multiple-buttons"
+      [:div {:class     "multiple-buttons"
              :data-test "skills"}
        (for [skill required-skills
              :let [selected? (some #(= % skill) selected-skills)]]
@@ -224,10 +276,10 @@
           skill])]]
      [:div.animatable
       [:button.conversation-button.update-visa
-       {:class    (when (<sub [::subs/updating?]) "button--loading")
-        :disabled (empty? selected-skills)
+       {:class     (when (<sub [::subs/updating?]) "button--loading")
+        :disabled  (empty? selected-skills)
         :data-test "update-skills"
-        :on-click #(dispatch [::events/update-skills])}
+        :on-click  #(dispatch [::events/update-skills])}
        "Update skills"]]]))
 
 (defn pre-application []
@@ -239,6 +291,8 @@
     [:div.multiple-conversations
      [:div
       [codi-message "Oh, snap! \uD83E\uDD14 We need a few more details about you"]]
+     (when (<sub [::subs/step-taken? :step/email])
+       [add-email-step])
      (when (<sub [::subs/step-taken? :step/name])
        [add-full-name-step])
      (when (<sub [::subs/step-taken? :step/current-location])
@@ -256,10 +310,10 @@
     :id "application-bot_close-bot"
     :on-click #(dispatch [::events/close-chatbot])]
    (case (<sub [::subs/current-step])
-     :step/thanks       [thanks-step]
+     :step/thanks [thanks-step]
      :step/cover-letter [cover-letter-step]
-     :step/rejection    [rejection-step]
-     :step/visa         [visa-step]
+     :step/rejection [rejection-step]
+     :step/visa [visa-step]
      [pre-application])])
 
 

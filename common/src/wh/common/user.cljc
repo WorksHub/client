@@ -36,6 +36,12 @@
   (not (or (str/blank? name)
            (str/blank? (second (re-find #"(.*) (.*)$" (str/trim (str/replace name #"\s+" " "))))))))
 
+;; https://www.regextester.com/115911
+(def regex-email-rfc-5322 "(?:[a-z0-9!#$%&'*+/=?^_`\\{|\\}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`\\{|\\}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")
+
+(defn valid-email? [email]
+  (and email (not (str/blank? email)) (re-matches (re-pattern regex-email-rfc-5322) email)))          
+
 (defn user->segment-traits
   [{:keys [id email name skills visa-status visa-status-other
            approval salary image-url summary created
@@ -127,3 +133,7 @@
           (str/split #"/")
           reverse
           first))
+ 
+ ;; Check the errors array of a Graphql mutation for the no-user-found-with-email error
+ (defn no-user-found-for-email? [resp]
+   (some (fn [err] (= (:message err) "no-user-found-with-email")) (:errors resp)))
