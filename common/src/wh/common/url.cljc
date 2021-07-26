@@ -78,9 +78,10 @@
   robust - but less portable - version of ths fn"
   [env vertical]
   (case (name env)
-    "prod" (str "https://" (name vertical) ".works-hub.com")
+    "prod"  (str "https://" (name vertical) ".works-hub.com")
     "stage" (str "/?vertical=" (name vertical))
-    "dev" (str "http://" (name vertical) ".localdomain:3449")))
+    ;;else
+    (str "http://" (name vertical) ".localdomain:3449")))
 
 (defn share-urls [args]
   (let [{:keys [text text-twitter text-linkedin url]} (util/fmap args bidi/url-encode)]
