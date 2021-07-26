@@ -2,7 +2,8 @@
   (:require #?(:cljs [wh.components.modal :as modal])
             [wh.routes :as routes]
             [wh.re-frame.events :refer [dispatch dispatch-sync]]
-            [wh.re-frame.subs :refer [<sub]]))
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.util :as util]))
 
 (defn publish-button [{:keys [on-click publishing?]}]
   [:button.button.button--medium
@@ -20,25 +21,28 @@
    "View Applications"])
 
 (defn apply-button-options [{:keys [applied? _id job]}]
-  (let [company?           (<sub [:user/company?])
-        applied-jobs       (<sub [:user/applied-jobs])
-        options            (merge {:on-click #(dispatch [:apply/try-apply job :jobpage-apply])}
-                                  (when (or applied? company?) {:disabled (or applied? company?)}))
-
-        text (cond applied?             "Applied"
-                   (some? applied-jobs) "Instant Apply"
-                   :else                "Apply")]
-    {:text text
+  (let [company?        (<sub [:user/company?])
+        applied-jobs    (<sub [:user/applied-jobs])
+        options #?(:cljs {:disabled (or applied? company?)
+                          :on-click #(dispatch [:apply/try-apply job :jobpage-apply])}
+                   :clj {:href (routes/path :job :params {:slug (:slug job)}
+                                            :query-params {:interaction 1 :apply true})})
+        text            (cond applied? "Applied"
+                              (some? applied-jobs) "Instant Apply"
+                              :else "Apply")]
+    {:text    text
      :options options}))
 
 (defn apply-button [{:keys [_applied? id job] :as args}]
-  (let [{:keys [text options]} (apply-button-options args)]
-    [:a.button.button--medium 
+  (let [{:keys [text options]} (apply-button-options args)
+        href (:href options)
+        tag  (if href :a :button)]
+    [tag
      (merge
        {:id        (cond-> "job-view__apply-button" id (str "__" id))
         :data-test "job-apply"
-        :href      (routes/path :job :params {:slug (:slug job)}
-                                 :query-params {:interaction 1 :apply true})}
+        :href      href
+        :class     (util/mc "button" "button--medium")}
        options)
      text]))
 

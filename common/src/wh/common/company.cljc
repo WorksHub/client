@@ -25,3 +25,5 @@
 
 (defn manager-email [c] (:manager c))
 (defn hubspot-id [c] (get-in c [:hubspot :id]))
+
+(defn has-published-profile? [c] (:has-published-profile c))
