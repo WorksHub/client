@@ -19,7 +19,7 @@
    :venia/variables [{:variable/name "id"
                       :variable/type :ID!}]
    :venia/queries   [[:blog {:id :$id}
-                      [:id :title :feature :creator :published
+                      [:id :title :feature :creatorId :published
                        :htmlBody :readingTime :author :authorId
                        :originalSource :formattedDate :upvoteCount
                        :primaryVertical :verticals :associatedJobs :creationDate
@@ -57,7 +57,7 @@
                       {:page_size   :$page_size
                        :page_number 1
                        :vertical    :$vertical}
-                      [[:blogs [:id :title :feature :author :creator :published
+                      [[:blogs [:id :title :feature :author :creatorId :published
                                 :formattedDate :readingTime :upvoteCount
                                 [:tags :fragment/tagFields]]]
                        [:pagination [:total :count]]]]]})

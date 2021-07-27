@@ -69,7 +69,7 @@
        [:div.text percentage-fmt])]))
 
 (defn blog-card
-  [{:keys [id title feature author formatted-date reading-time upvote-count tags creator published] :as blog}]
+  [{:keys [id title feature author formatted-date reading-time upvote-count tags creator-id published] :as blog}]
   (let [skeleton? (and blog (empty? (dissoc blog :id)))]
     [:div {:class (util/merge-classes "card"
                                       "card--blog"
@@ -91,14 +91,14 @@
                               (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]
         #?(:cljs
            [:div
-            (when (<sub [:blog-card/can-edit? creator published])
+            (when (<sub [:blog-card/can-edit? creator-id published])
               [link [:button.button.button--edit-blog "Edit"] :contribute-edit :id id])
-            (when (<sub [:blog-card/show-unpublished? creator published])
+            (when (<sub [:blog-card/show-unpublished? creator-id published])
               [:span.card__label.card__label--unpublished.card__label--blog "unpublished"])])])]))
 
 
 (defn blog-row
-  [{:keys [id title author formatted-date reading-time upvote-count tags creator published] :as blog}]
+  [{:keys [id title author formatted-date reading-time upvote-count tags creator-id published] :as blog}]
   (let [skeleton? (and blog (empty? (dissoc blog :id)))]
     [:div {:class (util/merge-classes "card"
                                       "card--blog"
@@ -120,7 +120,7 @@
                               (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))]
         #?(:cljs
            [:div
-            (when (<sub [:blog-card/can-edit? creator published])
+            (when (<sub [:blog-card/can-edit? creator-id published])
               [link [:button.button.button--edit-blog "Edit"] :contribute-edit :id id])
-            (when (<sub [:blog-card/show-unpublished? creator published])
+            (when (<sub [:blog-card/show-unpublished? creator-id published])
               [:span.card__label.card__label--unpublished.card__label--blog "unpublished"])])])]))

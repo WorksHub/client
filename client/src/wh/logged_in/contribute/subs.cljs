@@ -268,10 +268,10 @@
     (::contribute/cross-posts db)))
 
 (reg-sub
-  ::creator
-  :<- [::contribute]
-  (fn [db]
-    (::contribute/creator db)))
+ ::creator-id
+ :<- [::contribute]
+ (fn [db]
+   (::contribute/creator-id db)))
 
 (reg-sub
   ::author-suggestions
@@ -294,17 +294,17 @@
             (::contribute/company-suggestions db)))))
 
 (reg-sub
-  ::edit-page-authorized?
-  :<- [:user/admin?]
-  :<- [:user/email]
-  :<- [::contribute]
-  :<- [::published?]
-  :<- [::creator]
-  (fn [[admin? email db published? creator] _]
-    (or admin?
-        (not (::contribute/id db))
-        (and (= creator email)
-             (not published?)))))
+ ::edit-page-authorized?
+ :<- [:user/admin?]
+ :<- [:user/id]
+ :<- [::contribute]
+ :<- [::published?]
+ :<- [::creator-id]
+ (fn [[admin? user-id db published? creator-id] _]
+   (or admin?
+       (not (::contribute/id db))
+       (and (= user-id creator-id)
+            (not published?)))))
 
 (reg-sub
   ::contribute-page?

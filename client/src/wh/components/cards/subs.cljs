@@ -1,5 +1,6 @@
 (ns wh.components.cards.subs
   (:require [re-frame.core :refer [reg-sub]]
+            [wh.common.blog :as common-blog]
             [wh.common.user :as user-common]
             [wh.user.db :as user-db]))
 
@@ -17,26 +18,22 @@
       ;; we can't use wh.job.db/show-unpublished? since it may not be loaded
       (and (false? published?) (or admin? owner?)))))
 
-(defn show-blog-unpublished? [admin? creator user-email published?]
-  (and (and (not (nil? published?)) (not published?))
-       (or admin?
-           (and user-email (= creator user-email)))))
-
-(defn can-edit-blog? [admin? creator user-email published?]
-  (or admin?
-      (and (and creator (= creator user-email))
-           (and (not (nil? published?)) (not published?)))))
+(reg-sub
+ :blog-card/show-unpublished?
+ :<- [:user/admin?]
+ :<- [:user/id]
+ (fn [[admin? user-id] [_ creator-id published]]
+   (common-blog/show-unpublished? {:admin?     admin?
+                                   :published? published
+                                   :creator-id creator-id
+                                   :user-id    user-id})))
 
 (reg-sub
-  :blog-card/show-unpublished?
-  :<- [:user/admin?]
-  :<- [:user/email]
-  (fn [[admin? email] [_ creator published]]
-    (show-blog-unpublished? admin? creator email published)))
-
-(reg-sub
-  :blog-card/can-edit?
-  :<- [:user/admin?]
-  :<- [:user/email]
-  (fn [[admin? email] [_ creator published]]
-    (can-edit-blog? admin? creator email published)))
+ :blog-card/can-edit?
+ :<- [:user/admin?]
+ :<- [:user/id]
+ (fn [[admin? user-id] [_ creator-id published]]
+   (common-blog/can-edit? {:admin?     admin?
+                           :published? published
+                           :creator-id creator-id
+                           :user-id    user-id})))

@@ -178,7 +178,7 @@
                       :variable/type :ID!}]
    :venia/queries   [[:blog {:id :$id}
                       [:id :title :feature :author :authorId
-                       :published :archived :paid :body :creator :originalSource
+                       :published :archived :paid :body :creatorId :originalSource
                        :verticals :primaryVertical :associatedJobs
                        [:company [:name :id]]
                        [:tags :fragment/tagFields]
@@ -224,7 +224,7 @@
    :venia/variables [{:variable/name "create_blog"
                       :variable/type :CreateBlogInput!}]
    :venia/queries   [[:create_blog {:create_blog :$create_blog}
-                      [:id :creator]]]})
+                      [:id :creatorId]]]})
 
 (def update-blog-mutation
   {:venia/operation {:operation/type :mutation
@@ -260,10 +260,10 @@
   (fn [{db :db} [res]]
     (let [blog (get-in res [:data :create_blog])
           blog-id (:id blog)]
-      {:db (assoc db ::contribute/save-status :success
-                  ::contribute/id blog-id
-                  ::contribute/creator (:creator blog))
-       :navigate [:contribute-edit :params {:id blog-id}]
+      {:db         (assoc db ::contribute/save-status :success
+                          ::contribute/id blog-id
+                          ::contribute/creator-id (:creatorId blog))
+       :navigate   [:contribute-edit :params {:id blog-id}]
        :dispatch-n [[::pages/unset-loader]
                     [:graphql/invalidate-all-for-id :blogs]
                     [:wh.events/scroll-to-top]]})))
@@ -315,7 +315,7 @@
 
 (def save-blog-fields
   [:id :title :feature :author :authorId
-   :published :archived :paid :body :creator :originalSource
+   :published :archived :paid :body :creatorId :originalSource
    :verticals :primaryVertical :companyId :tagIds
    :associatedJobs :authorInfo])
 
@@ -341,7 +341,7 @@
                                           ::contribute/author-info (prepare-author-info db))
                                    cases/->camel-case-keys-str
                                    (select-keys (map name save-blog-fields))
-                                   (dissoc (when id "creator"))
+                                   (dissoc (when id "creatorId"))
                                    (util/remove-nils)
                                    ;; authorId should be nil sometimes
                                    (assoc "authorId" (get-in db [::contribute/sub-db ::contribute/author-id]))

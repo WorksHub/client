@@ -22,7 +22,7 @@
                        :published   :$published}
                       [[:pagination [:total :count]]
                        [:blogs [:id :title :verticals :published :author
-                                :authorId :formattedDate :creator
+                                :authorId :formattedDate :creatorId
                                 [:authorInfo [:name :imageUrl]]
                                 [:company [:slug :name]]
                                 [:tags :fragment/tagFields]]]]]]})

@@ -4,6 +4,7 @@
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.blogs.blog.db :as blog]
+    [wh.common.blog :as common-blog]
     [wh.common.job :as common-job]
     [wh.common.issue :as common-issue]
     [wh.common.user :as common-user]
@@ -112,10 +113,10 @@
     (:formatted-date blog)))
 
 (reg-sub
-  ::creator
-  :<- [::blog]
-  (fn [blog _]
-    (:creator blog)))
+ ::creator-id
+ :<- [::blog]
+ (fn [blog _]
+   (:creator-id blog)))
 
 (reg-sub
   ::original-source
@@ -203,33 +204,29 @@
 ;; Finally, these ones return visibility of UI items based on other pieces
 ;; of app's state.
 
-(defn can-edit-blog? [admin? creator user-email published?]
-  (or admin?
-      (and (and creator (= creator user-email))
-           (and (not (nil? published?)) (not published?)))))
+(reg-sub
+ ::can-edit?
+ :<- [::creator-id]
+ :<- [:user/admin?]
+ :<- [:user/id]
+ :<- [::published?]
+ (fn [[creator-id admin? user-id published?] _]
+   (common-blog/can-edit? {:admin?     admin?
+                           :published? published?
+                           :creator-id creator-id
+                           :user-id    user-id})))
 
 (reg-sub
-  ::can-edit?
-  :<- [::creator]
-  :<- [:user/admin?]
-  :<- [:user/email]
-  :<- [::published?]
-  (fn [[creator admin? email published?] _]
-    (can-edit-blog? admin? creator email published?)))
-
-(defn show-blog-unpublished? [admin? creator user-email published?]
-  (and (and (not (nil? published?)) (not published?))
-       (or admin?
-           (and user-email (= creator user-email)))))
-
-(reg-sub
-  ::show-unpublished?
-  :<- [:user/admin?]
-  :<- [::creator]
-  :<- [:user/email]
-  :<- [::published?]
-  (fn [[admin? creator email published?] _]
-    (show-blog-unpublished? admin? creator email published?)))
+ ::show-unpublished?
+ :<- [:user/admin?]
+ :<- [::creator-id]
+ :<- [:user/id]
+ :<- [::published?]
+ (fn [[admin? creator-id user-id published?] _]
+   (common-blog/show-unpublished? {:admin?     admin?
+                                   :published? published?
+                                   :creator-id creator-id
+                                   :user-id    user-id})))
 
 (reg-sub
   ::cross-posts

@@ -19,3 +19,17 @@
 
 (defn created-by-user? [blog]
   (boolean (:author-id blog)))
+
+;;
+
+(defn can-edit? [{:keys [admin? published? creator-id user-id]}]
+  (or admin?
+      (and (and creator-id (= creator-id user-id))
+           (false? published?))))
+
+;;
+
+(defn show-unpublished? [{:keys [admin? published? creator-id user-id]}]
+  (and (false? published?)
+       (or admin?
+           (and creator-id (= creator-id user-id)))))

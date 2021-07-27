@@ -49,7 +49,7 @@
                                                         :total_published_issue_count]]
                                        [:issue_contributor [:id :name :image_url]]
                                        [:tags :fragment/tagFields]]]
-                         [:feed_blog [:id :title :author :creator :feature
+                         [:feed_blog [:id :title :author :feature
                                       :reading_time :creation_date :upvote_count
                                       [:author_info [:id :name :image_url]]
                                       [:tags :fragment/tagFields]]]]]]]]})
