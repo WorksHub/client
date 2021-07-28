@@ -36,10 +36,12 @@
                                   :launch [::events/hero-upload]
                                   :on-upload-start [::events/hero-upload-start]
                                   :on-success [::events/hero-upload-success]
-                                  :on-failure [::events/hero-upload-failure])}]
+                                  :on-failure [::events/hero-upload-failure])
+                :data-test      "input-hero"}]
    (case (<sub [::subs/hero-upload-status])
      :failure [:span.field__error.field--invalid "Failed to upload the hero image."]
      :failure-too-big [:span.field__error.field--invalid "The image was too large (max. 5MB)"]
+     :success [:span.visually-hidden {:data-test "hero-uploaded"}]
      nil)])
 
 (defn body []
@@ -81,7 +83,8 @@
        [text-input (<sub [::subs/body])
         {:type      :textarea
          :on-change [::events/set-body]
-         :on-blur   #(dispatch [::events/set-body-cursor-position (-> % .-target .-selectionStart)])}]
+         :on-blur   #(dispatch [::events/set-body-cursor-position (-> % .-target .-selectionStart)])
+         :data-test "input-body"}]
        [:div.contribute__textarea.blog-body
         [putil/html (<sub [::subs/body-html]) nil]])
      [:div.contribute__body__post
@@ -104,7 +107,8 @@
      :else
      [:div])
    [:button.button.button--medium
-    {:on-click #(dispatch [::events/save-blog])}
+    {:on-click #(dispatch [::events/save-blog])
+     :data-test "submit-blog"}
     (str (if (and (<sub [::subs/contribute-page?])
                   (not (<sub [:user/admin?]))) "Submit" "Save") " Article")]])
 
@@ -123,7 +127,8 @@
           :label              "* Type to search"
           :placeholder        "e.g. clojure, python, java, aws, heroku, azure, docker etc"
           :on-toggle-collapse #(swap! tags-collapsed? not)
-          :on-tag-click       #(dispatch [::events/toggle-tag %])}]))))
+          :on-tag-click       #(dispatch [::events/toggle-tag %])
+          :tag-data-test      "tag"}]))))
 
 (defn admin-title [title]
   (when (<sub [:user/admin?])
@@ -241,7 +246,8 @@
          :label        "* Title"
          :on-change    [::events/set-title]
          :error        (<sub [::subs/title-validation-error])
-         :force-error? (<sub [::subs/validation-error?])}]
+         :force-error? (<sub [::subs/validation-error?])
+         :data-test    "input-title"}]
 
        [body]
 
@@ -260,7 +266,8 @@
          :placeholder  "URL to original article, leave empty if publishing on WorksHub originally"
          :on-change    [::events/set-original-source]
          :error        (<sub [::subs/original-source-validation-error])
-         :force-error? (<sub [::subs/validation-error?])}]
+         :force-error? (<sub [::subs/validation-error?])
+         :data-test    "input-original-url"}]
 
        (when admin?
          [:<>

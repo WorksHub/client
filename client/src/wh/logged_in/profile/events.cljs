@@ -94,7 +94,7 @@
                                                                 :note
                                                                 [:coverLetter [:link [:file [:url]]]]
                                                                 [:job [:id :slug :title [:company [:name :slug :package]]]]]]))]
-                     [:blogs {:user_id :$user_id}
+                     [:blogs {:creator_id :$user_id}
                       [[:blogs [:id :title :formattedDate
                                 :readingTime :upvoteCount :published]]]]
                      [:query_issues {:user_id :$user_id}

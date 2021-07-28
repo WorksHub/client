@@ -195,11 +195,12 @@
 
 (defn section [& children]
   (let [opts         (first children)
-        {:keys [class]
+        {:keys [class data-test]
          :or   {class ""}
          :as   opts} (when (map? opts) opts)
         children     (if opts (rest children) children)]
-    (into [:div (util/smc styles/section class)] children)))
+    (into [:div {:class (util/mc styles/section class)
+                 :data-test data-test}] children)))
 
 (defn section-custom [_ & _]
   (let [company-cls (util/mc styles/section--highlighted
@@ -601,6 +602,7 @@
         message (if public? "User hasn't written any articles yet. "
                     "You haven't written any articles yet.")]
     [section
+     {:data-test "user-articles"}
      [internal-anchor "articles"]
      [sec-title "Articles"]
      (if (seq articles)

@@ -534,7 +534,7 @@
 (defn logo-field
   [_options]
   (let [dirty (reagent/atom false)]
-    (fn [{:keys [value on-select-file loading? error id text dirty?] :as options
+    (fn [{:keys [value on-select-file loading? error id text dirty? data-test] :as options
           :or  {text "logo"}}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
@@ -548,13 +548,13 @@
            (field-container
              {}
              [:label
-              [:input.file-input {:type      "file"
-                                  :name      [:span "logo"]
-                                  :accept    "image/*"
-                                  :data-test "company-logo-input"
-                                  :on-change #(do
-                                                (reset! dirty true)
-                                                (on-select-file %))}]
+              [:input.visually-hidden {:type      "file"
+                                       :name      [:span "logo"]
+                                       :accept    "image/*"
+                                       :data-test (or data-test "company-logo-input")
+                                       :on-change #(do
+                                                     (reset! dirty true)
+                                                     (on-select-file %))}]
               (if-not (clojure.string/blank? value)
                 [:img.logo__add-new {:src (:value options)}]
                 [:div.logo__add-new.logo__add-new--empty
