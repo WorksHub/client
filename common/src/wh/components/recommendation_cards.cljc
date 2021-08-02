@@ -11,7 +11,9 @@
            logged-in?]}]
   (when (seq jobs)
     [:div.recommendation-cards
-     [:h2.recommendation-cards__title "Related Jobs"]
+     {:data-test "recommended-jobs"}
+     [:h2.recommendation-cards__title
+      "Related Jobs"]
      (for [job jobs]
        ^{:key (:id job)}
         [job/job-card job {:logged-in?        logged-in?
