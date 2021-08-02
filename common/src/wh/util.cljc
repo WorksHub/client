@@ -268,3 +268,18 @@
 (defn inline-fragment
   [type fields]
   [(keyword (str "... on " (name type))) fields])
+
+(defn do-batching [{:keys [total-size batch-size time-between-runs]} callback]
+  (let [batch-count (quot total-size batch-size)]
+    (doseq [batch-index (range (inc batch-count))
+            :let [offset (* batch-index batch-size)
+                  batch-size (if (= batch-index batch-count)
+                               (mod total-size batch-size)
+                               batch-size)]]
+      (when (pos? batch-size)
+        (callback {:batch-index batch-index
+                   :batch-size batch-size
+                   :offset offset
+                   :batch-count batch-count}))
+      (when time-between-runs
+        (Thread/sleep time-between-runs)))))
