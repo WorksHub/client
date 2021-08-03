@@ -204,12 +204,25 @@
   db/default-interceptors
   (fn [{db :db} [resp]]
     (let [user (get-in resp [:data :create_user])]
-      {:db     (-> db
-                   (assoc-in [::user/sub-db ::user/id] (:id user))
-                   ;; We set the user consented to prevent the agreement modal from showing up
-                   (assoc-in [::user/sub-db ::user/consented] (:consented user))
-                   (apply/unset-loading))
-       :reload true})))
+      {:db       (-> db
+                     (assoc-in [::user/sub-db ::user/id] (:id user))
+                     ;; We set the user consented to prevent the agreement modal from showing up
+                     (assoc-in [::user/sub-db ::user/consented] (:consented user))
+                     (apply/unset-loading))
+       :dispatch [::post-create-user-success (:email user)]})))
+
+(reg-event-fx
+  ::post-create-user-success
+  db/default-interceptors
+  (fn [_ [email]]
+    {:dispatch-n  [[:register/track-account-created {:source :streamline-apply :email email}]
+                   [::post-create-user-reload]]}))
+
+(reg-event-fx
+  ::post-create-user-reload
+  db/default-interceptors
+  (fn [_ _]
+    {:reload true}))
 
 (reg-event-fx
   ::create-user-failure
