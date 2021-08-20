@@ -28,6 +28,9 @@
   (and (= (:wh.settings/environment db) :dev)
        (not (get-in db [::db/query-params "force-email"]))))
 
+(defn is-stage-env? [db]
+  (= (:wh.settings/environment db) :stage))
+
 (defn email-sent? [db]
   (get-in db [::db/query-params "sent"]))
 
@@ -83,8 +86,15 @@
 (defn set-email [db email]
   (assoc db :email email))
 
+(defn set-password [db email]
+  (assoc db :password email))
+
 (defn email [db]
   (some->> (get-in db [::sub-db :email])
+           str/trim))
+
+(defn password [db]
+  (some->> (get-in db [::sub-db :password])
            str/trim))
 
 (defn set-error [db error]

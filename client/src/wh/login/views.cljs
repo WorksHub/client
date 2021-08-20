@@ -25,11 +25,23 @@
                :on-change   #(dispatch-sync [::events/set-email (-> % .-target .-value)])
                :autoFocus   true}])
 
+(defn field-password []
+  (when (contains? #{:dev :stage} (<sub [:wh.subs/env]))
+    [auth/field {:type        :text
+                 :placeholder "Password"
+                 :aria-label  "Password"
+                 :data-test   "password"
+                 :label       "Password"
+                 :value       (<sub [::subs/password])
+                 :on-change   #(dispatch-sync [::events/set-password (-> % .-target .-value)])
+                 :autoFocus   false}]))
+
 (defn form-signin []
   [auth/form
    {:on-submit #(do (.preventDefault %)
                     (dispatch [::events/send-login-link]))}
    [field-email]
+   [field-password]
    [auth/error-message (<sub [::subs/error-message])]
    [auth/button {:data-test   "signin"
                  :submitting? (<sub [::subs/submitting?])}]])

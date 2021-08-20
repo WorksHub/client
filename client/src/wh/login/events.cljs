@@ -36,17 +36,23 @@
   (fn [db [email]]
     (login/set-email db email)))
 
-
+(reg-event-db
+ ::set-password
+ login-interceptors
+ (fn [db [password]]
+   (login/set-password db password)))
 
 (reg-event-fx
   ::send-login-link
   (fn [{db :db} _]
-    (let [email (login/email db)]
+    (let [email (login/email db)
+          password (login/password db)]
       ;; NOTE set this condition to `false` if you want to send magic emails in dev
       #_{:navigate [:login :params {:step :email} :query-params {:sent true}]}
       (cond
         (not (login/valid-email? email)) {:db (login/set-error db :invalid-arguments)}
-        (login/is-dev-env? db)           {:dispatch [::login-as email]}
+        (or (login/is-dev-env? db)
+            (login/is-stage-env? db))    {:dispatch [::login-as email password]}
         :always                          {:db      (login/set-submitting db)
                                           :graphql {:query      magic-link-mutation
                                                     :variables  {:email    email
@@ -76,12 +82,15 @@
 (reg-event-fx
   ::login-as
   db/default-interceptors
-  (fn [{db :db} [email]]
+  (fn [{db :db} [email password]]
     {:dispatch   [::pages/set-loader]
      :http-xhrio {:method           :post
                   :headers          {"Accept" "application/edn"}
-                  :uri              (str (::db/api-server db)
-                                         (routes/path :login-as :query-params {"email" email}))
+                  :uri              (->> {"email" email
+                                          "password" password}
+                                         util/remove-nils
+                                         (routes/path :login-as :query-params)
+                                         (str (::db/api-server db)))
                   :format           (text-request-format)
                   :response-format  (raw-response-format)
                   :with-credentials true
