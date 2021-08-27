@@ -394,24 +394,41 @@
   create-job-interceptors
   (fn [db _] db))
 
-(reg-event-db
+(defquery update-external-jobs-mutation
+  {:venia/operation {:operation/type :mutation
+                     :operation/name "UpdateExternalJobs"}
+   :venia/variables [{:variable/name "company_id"
+                      :variable/type :String!}]
+   :venia/queries [[:update_external_jobs {:company_id :$company_id}
+                    [:result]]]})
+
+(reg-event-fx
+ ::update-external-jobs
+ create-job-interceptors
+ (fn [_ [company-id]]
+   {:graphql {:query      update-external-jobs-mutation
+              :variables  {:company_id company-id}
+              :on-failure [:error/set-global "Failed to update external jobs."]}}))
+
+(reg-event-fx
   ::fetch-company-success
   create-job-interceptors
-  (fn [db [company-id {{company :company} :data}]]
+  (fn [{db :db} [company-id {{company :company} :data}]]
     (let [company (-> company
                       (cases/->kebab-case)
                       (update :tags (partial map tag/->tag)))]
-      (assoc db
-             ::create-job/company (dissoc company :slug)
-             ::create-job/company-id company-id
-             ::create-job/company-slug (:slug company)
-             ::create-job/company-loading? false
-             ::create-job/company__integrations (:integrations company)
-             ;;
-             ::create-job/selected-benefit-tag-ids (->> (:tags company)
-                                                        (filter (fn [t] (= :benefit (:type t))))
-                                                        (map :id)
-                                                        (set))))))
+      {:db (assoc db
+                  ::create-job/company (dissoc company :slug)
+                  ::create-job/company-id company-id
+                  ::create-job/company-slug (:slug company)
+                  ::create-job/company-loading? false
+                  ::create-job/company__integrations (:integrations company)
+                  ;;
+                  ::create-job/selected-benefit-tag-ids (->> (:tags company)
+                                                             (filter (fn [t] (= :benefit (:type t))))
+                                                             (map :id)
+                                                             (set)))
+       :dispatch [::update-external-jobs company-id]})))
 
 (reg-event-fx
   ::fetch-company-failure

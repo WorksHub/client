@@ -27,3 +27,14 @@
 (defn hubspot-id [c] (get-in c [:hubspot :id]))
 
 (defn has-published-profile? [c] (:has-published-profile c))
+
+;; greenhouse
+
+(defn greenhouse-token [c] (get-in c [:integrations :greenhouse :token]))
+(defn has-greenhouse? [c] (-> c greenhouse-token boolean))
+
+;; workable
+
+(defn workable-subdomain [c] (get-in c [:integrations :workable :account-subdomain]))
+(defn has-workable? [c] (-> c workable-subdomain boolean))
+(defn workable-token [c] (get-in c [:integrations :workable :token]))
