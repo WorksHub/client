@@ -31,17 +31,18 @@
 
 (def companies-query-page-size 10)
 
+(defn ats-job->label
+  [ats-job]
+  (str (:name ats-job) " - " (:id ats-job)))
+
 (defn companies-query
   [search]
   {:venia/queries [[:companies
                     {:search_term search
                      :page_number 1
-                     :page_size companies-query-page-size}
+                     :page_size   companies-query-page-size}
                     [[:pagination [:total :count :pageNumber]]
-                     [:companies [:id :name
-                                  [:integrations
-                                   [[:greenhouse [:enabled [:jobs [:id :name]]]]
-                                    [:workable [:enabled [:jobs [:id :name]]]]]]]]]]]})
+                     [:companies [:id :name]]]]]})
 
 (defn db->remote-info [db]
   (if (::create-job/remote db)
@@ -118,8 +119,9 @@
     (as-> job job
           (util/flatten-map job)
           (keywords/namespace-map "wh.company.create-job.db" job)
-          (assoc job ::create-job/region-restrictions regions)
-          (assoc job ::create-job/timezones timezones)
+          (assoc job
+                 ::create-job/region-restrictions regions
+                 ::create-job/timezones timezones)
           (update job ::create-job/verticals set)
           (update job ::create-job/manager get-manager-name)
           (update job ::create-job/tags #(set (map :id %))))))
@@ -128,9 +130,9 @@
   (->> db ::create-job/companies (filter #(= (:id %) id)) first))
 
 (doseq [[field {:keys [event?] :or {event? true}}] create-job/fields
-        :when event?
-        :let [event-name (keyword "wh.company.create-job.events" (str "edit-" (name field)))
-              db-field (keyword "wh.company.create-job.db" (name field))]]
+        :when                                      event?
+        :let                                       [event-name (keyword "wh.company.create-job.events" (str "edit-" (name field)))
+                                                    db-field (keyword "wh.company.create-job.db" (name field))]]
   (reg-event-db event-name
                 create-job-interceptors
                 (fn [db [new-value]]
@@ -141,26 +143,31 @@
   create-job-interceptors
   (fn [{db :db} [id]]
     (let [company (company-by-id db id)]
-      {:db (-> db
-               (assoc ::create-job/company-id id)
-               (assoc ::create-job/company__name (:name company))
-               (assoc ::create-job/company__integrations (:integrations company)))
+      {:db       (-> db
+                     (assoc ::create-job/company-id id)
+                     (assoc ::create-job/company__name (:name company))
+                     (assoc ::create-job/company__integrations (:integrations company)))
        :dispatch [::fetch-company id]})))
 
 (reg-event-fx
   ::edit-company__name
   create-job-interceptors
   (fn [{db :db} [new-value]]
-    {:db (assoc db
-                ::create-job/company__name new-value
-                ::create-job/company-id nil)
+    {:db       (assoc db
+                      ::create-job/company__name new-value
+                      ::create-job/company-id nil)
      :dispatch [::fetch-companies new-value]}))
 
 (reg-event-db
   ::edit-ats-job-id
   create-job-interceptors
-  (fn [db [new-value]]
-    (assoc db ::create-job/ats-job-id new-value)))
+  (fn [db [selected-id]]
+    (let [ats-jobs     (::create-job/ats-search-results db)
+          ats-job-name (some #(when (= selected-id (:id %))
+                                (ats-job->label %)) ats-jobs)]
+      (assoc db
+             ::create-job/ats-job-id selected-id
+             ::create-job/ats-search-term ats-job-name))))
 
 (reg-event-db
   ::edit-workable-subdomain
@@ -172,7 +179,7 @@
   ::toggle-vertical
   create-job-interceptors
   (fn [db [new-value]]
-    (let  [new-db (update db ::create-job/verticals util/toggle-unless-empty new-value)
+    (let  [new-db           (update db ::create-job/verticals util/toggle-unless-empty new-value)
            remote-vertical? (contains? (::create-job/verticals new-db) "remote")]
       (assoc new-db ::create-job/remote remote-vertical?))))
 
@@ -195,8 +202,8 @@
   db/default-interceptors
   (fn [{db :db} [nav-path]]
     (let [company (create-job/db->gql-company db)]
-      {:graphql {:query update-company-mutation
-                 :variables {:update_company company}
+      {:graphql {:query      update-company-mutation
+                 :variables  {:update_company company}
                  :on-success [::save-company-success nav-path]
                  :on-failure [::create-job-error]}})))
 
@@ -291,7 +298,7 @@
     {:db      (-> db (assoc-in [::create-job/sub-db ::create-job/error] nil)
                   (assoc-in [::create-job/sub-db ::create-job/saving?] true))
      :graphql {:query      update-job-mutation
-               :variables  {:update_job {:id (get-in db [::db/page-params :id])
+               :variables  {:update_job {:id        (get-in db [::db/page-params :id])
                                          :published false}}
                :on-success [::create-job-success false]
                :on-failure [::create-job-error]}}))
@@ -330,7 +337,7 @@
                        [:tags :fragment/tagFields]
                        :remote :published :verticals
                        :descriptionHtml :title :roleType
-                       :manager :atsJobId
+                       :manager :atsJobId :atsJobName
                        [:remoteInfo
                         [:regionRestrictions
                          [:timezoneRestrictions [:timezoneName
@@ -399,16 +406,16 @@
                      :operation/name "UpdateExternalJobs"}
    :venia/variables [{:variable/name "company_id"
                       :variable/type :String!}]
-   :venia/queries [[:update_external_jobs {:company_id :$company_id}
-                    [:result]]]})
+   :venia/queries   [[:update_external_jobs {:company_id :$company_id}
+                      [:result]]]})
 
 (reg-event-fx
- ::update-external-jobs
- create-job-interceptors
- (fn [_ [company-id]]
-   {:graphql {:query      update-external-jobs-mutation
-              :variables  {:company_id company-id}
-              :on-failure [:error/set-global "Failed to update external jobs."]}}))
+  ::update-external-jobs
+  create-job-interceptors
+  (fn [_ [company-id]]
+    {:graphql {:query      update-external-jobs-mutation
+               :variables  {:company_id company-id}
+               :on-failure [:error/set-global "Failed to update external jobs."]}}))
 
 (reg-event-fx
   ::fetch-company-success
@@ -417,33 +424,33 @@
     (let [company (-> company
                       (cases/->kebab-case)
                       (update :tags (partial map tag/->tag)))]
-      {:db (assoc db
-                  ::create-job/company (dissoc company :slug)
-                  ::create-job/company-id company-id
-                  ::create-job/company-slug (:slug company)
-                  ::create-job/company-loading? false
-                  ::create-job/company__integrations (:integrations company)
-                  ;;
-                  ::create-job/selected-benefit-tag-ids (->> (:tags company)
-                                                             (filter (fn [t] (= :benefit (:type t))))
-                                                             (map :id)
-                                                             (set)))
+      {:db       (assoc db
+                        ::create-job/company (dissoc company :slug)
+                        ::create-job/company-id company-id
+                        ::create-job/company-slug (:slug company)
+                        ::create-job/company-loading? false
+                        ::create-job/company__integrations (:integrations company)
+                        ;;
+                        ::create-job/selected-benefit-tag-ids (->> (:tags company)
+                                                                   (filter (fn [t] (= :benefit (:type t))))
+                                                                   (map :id)
+                                                                   (set)))
        :dispatch [::update-external-jobs company-id]})))
 
 (reg-event-fx
   ::fetch-company-failure
   create-job-interceptors
   (fn [{db :db} _]
-    {:db (assoc db ::create-job/company-loading? false)
+    {:db       (assoc db ::create-job/company-loading? false)
      :dispatch [:error/set-global "Failed to fetch the user's company"]}))
 
 (reg-event-fx
   ::fetch-company
   db/default-interceptors
   (fn [{db :db} [company-id]]
-    {:db (assoc-in db [::create-job/sub-db ::create-job/company-loading?] true)
-     :graphql {:query company-queries/edit-job-company-query
-               :variables {:company_id company-id}
+    {:db      (assoc-in db [::create-job/sub-db ::create-job/company-loading?] true)
+     :graphql {:query      company-queries/edit-job-company-query
+               :variables  {:company_id company-id}
                :on-success [::fetch-company-success company-id]
                :on-failure [::fetch-company-failure]}}))
 
@@ -489,16 +496,16 @@
   (fn [{db :db} [google-response]]
     (let [{:keys [street city country country-code state post-code latitude longitude]}
           (location/google-place->location google-response)]
-      {:db (merge db
-                  (util/remove-nil-blank-or-empty
-                    {::create-job/location__street street
-                     ::create-job/location__city city
-                     ::create-job/location__country country
-                     ::create-job/location__country-code country-code
-                     ::create-job/location__state state
-                     ::create-job/location__post-code post-code
-                     ::create-job/location__latitude latitude
-                     ::create-job/location__longitude longitude}))
+      {:db         (merge db
+                          (util/remove-nil-blank-or-empty
+                            {::create-job/location__street       street
+                             ::create-job/location__city         city
+                             ::create-job/location__country      country
+                             ::create-job/location__country-code country-code
+                             ::create-job/location__state        state
+                             ::create-job/location__post-code    post-code
+                             ::create-job/location__latitude     latitude
+                             ::create-job/location__longitude    longitude}))
        :dispatch-n [[::set-location-suggestions []]
                     [::open-search-location-form]]})))
 
@@ -577,7 +584,7 @@
          (filter (fn [city]
                    (str/includes? (str/lower-case city) (str/lower-case new-value))))
          (mapv (fn [city] {:id    city
-                          :label city}))
+                           :label city}))
          (assoc db ::create-job/city-suggestions))))
 
 (reg-event-db
@@ -588,7 +595,7 @@
          (filter (fn [country]
                    (str/includes? (str/lower-case country) (str/lower-case new-value))))
          (mapv (fn [country] {:id    country
-                             :label country}))
+                              :label country}))
          (assoc db ::create-job/country-suggestions))))
 
 (reg-event-db
@@ -599,7 +606,7 @@
          (filter (fn [[state-full-name]]
                    (str/includes? (str/lower-case state-full-name) (str/lower-case new-value))))
          (mapv (fn [[state-full-name state-short-name]]
-                 {:id state-short-name
+                 {:id    state-short-name
                   :label (str state-full-name " - " state-short-name)}))
          (assoc db ::create-job/state-suggestions))))
 
@@ -632,7 +639,7 @@
   ::select-country-suggestion
   create-job-interceptors
   (fn [{db :db} [suggestion]]
-    {:db       (assoc db ::create-job/location__country suggestion)
+    {:db         (assoc db ::create-job/location__country suggestion)
      :dispatch-n [[::attempt-country-code-assignment suggestion]
                   [::set-country-suggestions []]]}))
 
@@ -659,7 +666,7 @@
   create-job-interceptors
   (fn [{db :db} [new-value]]
     (merge
-      {:db (assoc db ::create-job/location__state new-value)
+      {:db       (assoc db ::create-job/location__state new-value)
        :dispatch (if (seq new-value)
                    [::process-states new-value]
                    [::set-state-suggestions []])})))
@@ -691,7 +698,7 @@
   ::edit-remuneration__competitive
   create-job-interceptors
   (fn [{db :db} [competitive]]
-    {:db (assoc db ::create-job/remuneration__competitive competitive)
+    {:db       (assoc db ::create-job/remuneration__competitive competitive)
      :dispatch [::clear-salary-remuneration-values]}))
 
 (reg-event-db
@@ -805,7 +812,7 @@
   ::logo-upload-failure
   create-job-interceptors
   (fn [{db :db} [resp]]
-    {:db (assoc db ::create-job/logo-uploading? false)
+    {:db       (assoc db ::create-job/logo-uploading? false)
      :dispatch [:error/set-global
                 (common-errors/image-upload-error-message (:status resp))]}))
 
@@ -908,3 +915,72 @@
   (fn [db [region]]
     (update db ::create-job/region-restrictions
             #(util/toggle (or % #{}) region))))
+
+(reg-event-fx
+  ::search-ats-jobs-success
+  create-job-interceptors
+  (fn [{db :db} [{data :data}]]
+    (let [jobs   (get-in data [:external_jobs :results])
+          new-db (assoc db ::create-job/ats-search-loading? false)]
+      {:db (->> jobs
+                (map #(assoc % :label (ats-job->label %)))
+                (assoc new-db ::create-job/ats-search-results))})))
+
+(defquery search-ats-jobs
+  {:venia/operation {:operation/type :query
+                     :operation/name "SearchAtsJobs"}
+   :venia/variables [{:variable/name "company_id"
+                      :variable/type :String!}
+                     {:variable/name "search_term"
+                      :variable/type :String!}
+                     {:variable/name "source"
+                      :variable/type :source!}]
+   :venia/queries   [[:external_jobs {:company_id  :$company_id
+                                      :source      :$source
+                                      :search_term :$search_term}
+                      [[:results
+                        [:name :id]]]]]})
+
+(reg-event-fx
+  ::search-ats-jobs-failure
+  create-job-interceptors
+  (fn [{db :db} _]
+    {:db       (assoc db ::create-job/ats-search-loading? false)
+     :dispatch [:error/set-global "Oops! Failed to retrieve external jobs" []]}))
+
+(reg-event-fx
+  ::search-ats-jobs
+  create-job-interceptors
+  (fn [{db :db} [search-term]]
+    {:db      (assoc db ::create-job/ats-search-loading? true)
+     :graphql {:query      search-ats-jobs
+               :variables  {:search_term search-term
+                            :company_id  (::create-job/company-id db)
+                            :source      (cond
+                                           (create-job/greenhouse-enabled? db)
+                                           :greenhouse
+                                           (create-job/workable-enabled? db)
+                                           :workable
+                                           :else
+                                           nil)}
+               :on-success [::search-ats-jobs-success]
+               :on-failure [:error/set-global "Oops! Failed to retrieve external jobs" []]}
+     }))
+
+(def search-term-min-length 2)
+
+(reg-event-fx
+  ::on-change-ats-search-term
+  create-job-interceptors
+  (fn [{db :db} [search-term]]
+    (if (str/blank? search-term)
+      {:db (assoc db
+                  ::create-job/ats-search-term ""
+                  ::create-job/ats-job-id nil
+                  ::create-job/ats-job-name nil)}
+      (merge
+        {:db (assoc db ::create-job/ats-search-term search-term)}
+        (when (> (count (str/trim search-term)) search-term-min-length)
+          {:dispatch-debounce {:id       :ats-job-search
+                               :timeout  350
+                               :dispatch [::search-ats-jobs search-term]}})))))

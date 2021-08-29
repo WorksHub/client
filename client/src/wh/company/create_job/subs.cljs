@@ -306,13 +306,13 @@
   ::greenhouse-integration?
   :<- [::sub-db]
   (fn [db _]
-    (get-in db [::create-job/company__integrations :greenhouse :enabled])))
+    (create-job/greenhouse-enabled? db)))
 
 (reg-sub
   ::workable-integration?
   :<- [::sub-db]
   (fn [db _]
-    (get-in db [::create-job/company__integrations :workable :enabled])))
+    (create-job/workable-enabled? db)))
 
 (reg-sub
   ::need-to-select-account?
@@ -321,7 +321,7 @@
   (fn [[integrations workable?] _]
     (and workable?
          (not (get-in integrations [:workable :account-subdomain]))
-         (< 1 (count (get-in integrations [:workable :accounts]))))))
+         (seq (get-in integrations [:workable :accounts])))))
 
 (reg-sub
   ::ats-name
@@ -330,20 +330,14 @@
   (fn [[greenhouse? workable?] _]
     (cond
       greenhouse? "Greenhouse"
-      workable? "Workable"
-      :esle "")))
+      workable?   "Workable"
+      :esle       "")))
 
 (reg-sub
   ::ats-jobs
   :<- [::sub-db]
-  :<- [::ats-name]
-  (fn [[db ats-name ] _]
-    (->> (get-in db [::create-job/company__integrations (-> ats-name str/lower-case keyword) :jobs])
-         (mapv (fn [{:keys [id name] :as job}]
-                 (assoc job :label (str name " (" id ")"))))
-         (filter #(str/includes?
-                    (str/lower-case (:label %))
-                    (str/lower-case (or (::create-job/ats-job-id db) "")))))))
+  (fn [db _]
+    (::create-job/ats-search-results db)))
 
 (reg-sub
   ::workable-accounts
@@ -353,7 +347,7 @@
     (->> (get-in integrations [:workable :accounts])
          (mapv (fn [{:keys [name subdomain] :as account}]
                  {:label (str name " (" subdomain ")")
-                  :id subdomain}))
+                  :id    subdomain}))
          (concat [{:label "Select an account"}]))))
 
 (reg-sub
@@ -587,3 +581,21 @@
              (filter includes-label?)
              (filter not-added?)
              (take 7))))))
+
+;;
+
+(reg-sub
+  ::ats-search-term
+  :<- [::sub-db]
+  (fn [db]
+    (or
+      (::create-job/ats-search-term db)
+      (when (and (::create-job/ats-job-name db) (::create-job/ats-job-id db))
+        (str (::create-job/ats-job-name db) " - " (::create-job/ats-job-id db)))
+      (::create-job/ats-job-id db))))
+
+(reg-sub
+  ::ats-search-loading?
+  :<- [::sub-db]
+  (fn [sub-db]
+    (::create-job/ats-search-loading? sub-db)))

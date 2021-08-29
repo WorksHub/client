@@ -191,9 +191,8 @@
    :venia/queries   [[:company {:id :$company_id}
                       [:descriptionHtml :logo :slug
                        [:tags :fragment/tagFields]
-                       [:integrations [[:greenhouse [:enabled [:jobs [:id :name]]]]
+                       [:integrations [[:greenhouse [:enabled]]
                                        [:workable [:enabled :accountSubdomain
-                                                   [:jobs [:id :name]]
                                                    [:accounts [:subdomain :name]]]]]]]]]})
 
 (defn company-query

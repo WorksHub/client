@@ -23,7 +23,6 @@
   :graphql/success
   db/default-interceptors
   (fn [_ [response]]
-    (js/console.log "GraphQL query success:" response)
     {:dispatch [::pages/unset-loader]}))
 
 (reg-event-fx

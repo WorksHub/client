@@ -5,6 +5,7 @@
 (def input-wrapper--select "form__input-wrapper--select--nTSfw")
 (def suggestions__wrapper "form__suggestions__wrapper--2tJ_S")
 (def suggestions__search-icon "form__suggestions__search-icon--2EBwy")
+(def suggestions__loading "form__suggestions__loading--3wdi7")
 (def suggestions__delete-icon "form__suggestions__delete-icon--8zbHH")
 (def suggestions__input "form__suggestions__input--378J_")
 (def suggestions__suggestions "form__suggestions__suggestions--N_eYx")

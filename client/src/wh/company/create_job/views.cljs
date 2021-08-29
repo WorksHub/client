@@ -455,16 +455,20 @@
            {:label     [:span "Workable Account"]
             :on-change [::events/edit-workable-subdomain]
             :options   (<sub [::subs/workable-accounts])}]
-          [:button.button.button--medium.is-pulled-right
+          [:button.button.button--medium.button--inverted
            {:id       "save-workable-account"
             :on-click #(dispatch [::events/save-workable-account])
             :class    (when (<sub [::subs/saving-workable-account?])
-                        "button--inverted button--loading")}
+                        "button--loading")}
            (when-not (<sub [::subs/saving-workable-account?])
-             "Save")]]
+             "Save Account")]]
          [text-field nil (field ::create-job/ats-job-id
-                                :label (str (<sub [::subs/ats-name]) " Job ID")
+                                :label       (str (<sub [::subs/ats-name]) " Job ID")
+                                :placeholder (str "Type to search jobs from " (<sub [::subs/ats-name]))
                                 :suggestions (<sub [::subs/ats-jobs])
+                                :value       (<sub [::subs/ats-search-term])
+                                :on-change   [::events/on-change-ats-search-term]
+                                :loading?    (<sub [::subs/ats-search-loading?])
                                 :on-select-suggestion [::events/edit-ats-job-id])])]]]))
 
 (defn company-profile-pod
@@ -496,9 +500,13 @@
      [:h1 (<sub [::subs/page-title])]
      [:div.split-content
       [:div.split-content__main
+
        [company-form admin?]
 
        [main-form admin?]
+
+       (when (<sub [::subs/show-integrations?])
+         [ats-pod])
 
        [vertical-views/verticals-pod
         {:on-verticals  (<sub [::subs/verticals])
@@ -506,8 +514,6 @@
          :toggle-event  [::events/toggle-vertical]
          :class-prefix  "job-edit"}]]
       [:div.job-edit__side-pods.split-content__side
-       (when (<sub [::subs/show-integrations?])
-         [ats-pod])
        (if admin?
          [settings-pod]
          [company-profile-pod])]]

@@ -78,14 +78,16 @@
             ::logo-uploading?             false
             ::search-address              ""
             ::workable-subdomain          ""
+            ::ats-search-term             nil
+            ::ats-search-results          []
             ::form-errors                 nil
             ::timezones                   [{}]
             ::region-restrictions         #{}}
+           (when-not editing? ;; if not editing, we want to reset any previous values
+             clean-form)
            (when-let [company (get-in db [::user/sub-db ::user/company])]
              {::company-id      (:id company)
-              ::company-package (keyword (:package company))})
-           (when-not editing? ;; if not editing, we want to reset any previous values
-             clean-form))))
+              ::company-package (keyword (:package company))}))))
 
 (defn relevant-fields
   [db]
@@ -218,3 +220,9 @@
            (map (comp last :path))
            (map (fn [t] (keyword "wh.company.profile" (name t))))
            (set)))
+
+(defn greenhouse-enabled? [db]
+  (get-in db [::company__integrations :greenhouse :enabled]))
+
+(defn workable-enabled? [db]
+  (get-in db [::company__integrations :workable :enabled]))

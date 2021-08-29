@@ -192,6 +192,7 @@
                  [:li {:class         class-suggestion
                        :on-click      #(when on-select-suggestion
                                          (handler))
+                       :name          label
                        :on-mouse-down #(when on-select-suggestion
                                          (handler))}
                   label]))
@@ -239,7 +240,7 @@
         focused (reagent/atom false)
         new?    (:new? options)]
     (fn [value {:keys [suggestions dirty? error force-error? read-only
-                      on-select-suggestion on-remove hide-icon?]
+                      on-select-suggestion on-remove hide-icon? loading?]
                :as   options}]
       (when (and (not (nil? dirty?))
                  (boolean? dirty?))
@@ -251,6 +252,8 @@
             ;;
             search-icon-class        (if new? styles/suggestions__search-icon "search-icon")
             search-icon-comp         (when suggestable? [icon "search-new" :class search-icon-class])
+            ;;
+            loader-icon-comp         (when loading? [:div.is-loading-spinner {:class styles/suggestions__loading}])
             ;;
             suggestions-list-options (cond-> options new? (assoc
                                                             :class styles/suggestions__suggestions
@@ -264,7 +267,7 @@
            [text-input-new value (merge options
                                         (text-field-input-options dirty focused options)
                                         {:class-input (util/mc styles/input styles/suggestions__input)})]
-           search-icon-comp
+           (or loader-icon-comp search-icon-comp)
            suggestions-list-comp
            close-icon-comp]
           [field-container (-> options
@@ -278,7 +281,7 @@
                          (when suggestable? " text-field-control--suggestable")
                          (when removable? " text-field-control--removable"))}
             (text-input value (merge options (text-field-input-options dirty focused options)))
-            search-icon-comp
+            (or loader-icon-comp search-icon-comp)
             suggestions-list-comp
             close-icon-comp]])))))
 
@@ -616,4 +619,3 @@
      (when avatar-url
        [:img.avatar {:src avatar-url
                      :alt "Uploaded avatar"}])]))
-
