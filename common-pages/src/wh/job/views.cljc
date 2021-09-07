@@ -224,7 +224,7 @@
     (let [logo (<sub [::subs/logo])]
       (if (or logo (<sub [::subs/loaded?]))
         (let [alt      (str (<sub [::subs/company-name]) " logo")
-              logo-img (wrap-img img logo {:alt alt :w 80 :h 80 :class "logo" :fit "clamp"})]
+              logo-img (wrap-img img logo {:alt alt :w 80 :h 80 :fit "clip" :class "logo"})]
           (if (<sub [::subs/profile-enabled?])
             [link logo-img :company :slug (<sub [::subs/company-slug])]
             logo-img))
@@ -417,7 +417,7 @@
   [:section.job__company-issues
    (let [logo (<sub [::subs/logo])]
      (if (and logo (<sub [::subs/loaded?]))
-       (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 40 :h 40 :class "logo"})
+       (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 40 :h 40 :fit "clip" :class "logo"})
        [:div.logo--skeleton]))
    [:p.cta
     "Interested in seeing how " (<sub [::subs/company-name]) " work? Contribute to their Open Source."]
@@ -510,7 +510,7 @@
    {:id "job__apply-sticky"}
    [:div.job__apply-sticky__logo
     (if-let [logo (<sub [::subs/logo])]
-      (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :class "logo"})
+      (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :fit "clip" :class "logo"})
       [icon "codi"])]
    [:div.job__apply-sticky__title (<sub [::subs/title])]
    (let [{:keys [text options]} (jc/apply-button-options {:applied? (<sub [::subs/applied?])

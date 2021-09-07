@@ -140,7 +140,7 @@
   (let [company (<sub [::subs/company])]
     [:div {:class (util/merge-classes "card" "company-pod" class)}
      [:div.company-header__top
-      [:div.logo (wrap-img img (:logo company) {})]
+      [:div.logo (wrap-img img (:logo company) {:fit "clip"})]
       [:h1 (<sub [::subs/header])]]
      [:div.company-header__github-links
       (for [org (<sub [::subs/github-orgs])]

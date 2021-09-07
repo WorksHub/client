@@ -134,7 +134,7 @@
 
     [:a {:class styles/company-info
          :href  (routes/path :company :params {:slug slug})}
-     (wrap-img img image-url {:w 40 :h 40 :class styles/company-info__logo})
+     (wrap-img img image-url {:w 40 :h 40 :fit "clip" :class styles/company-info__logo})
      [:h1 (util/smc styles/company-info__name) name]
      (when info-str
        [:span (util/smc styles/company-info__job-count) info-str])]))
@@ -142,7 +142,7 @@
 (defn company-info-small [{:keys [image-url name slug] :as _company}]
   [:a {:class styles/company-info--small
        :href  (routes/path :company :params {:slug slug})}
-   (wrap-img img image-url {:w 30 :h 30 :class styles/company-info--small__logo})
+   (wrap-img img image-url {:w 30 :h 30 :fit "clip" :class styles/company-info--small__logo})
    [:h1 (util/smc styles/company-info--small__name) name]])
 
 (def actions card-actions-components/actions)

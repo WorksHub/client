@@ -98,7 +98,7 @@
         [:div.issue__logo--skeleton]
         (wrap-img img (<sub [::subs/company-logo])
                   {:alt (str (<sub [::subs/company-name]) " logo")
-                   :w   64 :h 64 :class "issue__logo"}))
+                   :w 64 :h 64 :fit "clip" :class "issue__logo"}))
       [:h1.issue__title {:class (when skeleton? "skeleton")} (<sub [::subs/title])]]
      [infobox]
      [:div.issue__header-buttons.columns
@@ -216,7 +216,7 @@
      [:div.issue__start-work-sticky__inner
       [:div.issue__start-work-sticky__logo
        (if-let [logo (<sub [::subs/company-logo])]
-         (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :class "logo"})
+         (wrap-img img logo {:alt (str (<sub [::subs/company-name]) " logo") :w 24 :h 24 :fit "clip" :class "logo"})
          [icon "codi"])]
       [:div.issue__start-work-sticky__title
        (<sub [::subs/title])]

@@ -27,7 +27,7 @@
   [:section.companies__company.company-card
    [:div.companies__company__container
     [:div.company-profile__logo.is-hidden-mobile
-     (let [wrapped-logo (wrap-img img logo {:w 60 :h 60})]
+     (let [wrapped-logo (wrap-img img logo {:w 60 :h 60 :fit "clip"})]
        (if profile-enabled
          [link wrapped-logo  :company :slug slug]
          wrapped-logo))]
@@ -35,7 +35,7 @@
      [:div.company-profile__name
       (let [header [:div.is-flex
                     [:div.company-profile__logo.is-hidden-desktop
-                     (wrap-img img logo {:w 36 :h 36})]
+                     (wrap-img img logo {:w 36 :h 36 :fit "clip"})]
                     [:h2 {:class (when (and total-published-job-count (pos? total-published-job-count)) "truncate")} name]]]
         (if profile-enabled
           [link header :company :slug slug]

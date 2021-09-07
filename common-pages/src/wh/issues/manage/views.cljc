@@ -54,7 +54,7 @@
   [:div.repository-card
    [:div.is-flex
     [:div.logo (if-let [url owner-avatar]
-                 (wrap-img img url {})
+                 (wrap-img img url {:fit "clip"})
                  [:div.empty-logo])]
     [:div.info
      [:div.title [link (str owner "/" (:name repo)) :manage-repository-issues :repo-name (:name repo) :owner owner :class "a--hover-red"]]]]

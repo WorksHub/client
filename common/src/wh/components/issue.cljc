@@ -54,7 +54,7 @@
       [:span (str (:owner repo) " / " (:name repo))]
       edit-icon]
      [:div.is-flex
-      [:div.logo (wrap-img img logo {:fit "clamp"})]
+      [:div.logo (wrap-img img logo {:fit "clip"})]
       [:div.info
        [:div.header.is-hidden-mobile
         [:span (str (:owner repo) " / " (:name repo))]

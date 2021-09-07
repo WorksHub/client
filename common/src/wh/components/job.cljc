@@ -66,11 +66,11 @@
                                        (and user-is-company?
                                             (not user-is-owner?)))
                                {:disabled true}))]
-      (if (not user-is-owner?)
+      (if-not user-is-owner?
         (when published
           (let [job-page-path [:job
                                :params {:slug slug}
-                               :query-params (merge {"apply" true
+                               :query-params (merge {"apply"      true
                                                      :interaction 1}
                                                     (when apply-source
                                                       {"apply_source" apply-source}))]]
@@ -106,7 +106,7 @@
 
 (defn job-card--header
   [{:keys [id slug logo title display-location salary published] :as job}
-   {logo :logo company-name :name}
+   {company-logo :logo company-name :name}
    {:keys [logged-in? skeleton? liked? small? on-close user-is-owner? perks?]}]
   [:div.job-card__header
    [:a {:href (when (or published user-is-owner?) (routes/path :job :params {:slug slug}))}
@@ -127,9 +127,9 @@
        [:span display-location]]]
 
      [:div.logo
-      (if (or skeleton? (not logo))
+      (if (or skeleton? (not company-logo))
         [:div]
-        (wrap-img img logo {:alt (str company-name " logo") :w 48 :h 48 :fit "clamp"}))]]]])
+        (wrap-img img company-logo {:alt (str company-name " logo") :w 48 :h 48 :fit "clip"}))]]]])
 
 (def job-card-class
   {:cards ""

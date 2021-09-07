@@ -18,7 +18,7 @@
      [:div.column.is-flex
       [:div.logo
        (if logo
-         (wrap-img img logo {})
+         (wrap-img img logo {:fit "clip"})
          [:div.empty-logo])]
       [:div.info
        [:div.title [link name :company-dashboard :id id :class "a--hover-red"]]
@@ -80,7 +80,7 @@
         (for [company companies]
           ^{:key (:id company)}
           [:div.companies__result
-           [company-card (if (:skeleton? company) nil company)]])])
+           [company-card (when-not (:skeleton? company) company)]])])
      (when (<sub [::subs/show-load-more?])
        [:div.companies__load-more
         [:button.button.button--inverted

@@ -30,7 +30,7 @@
            (when logo
              (wrap-img img logo
                        {:alt (str (:name company) " logo")
-                        :w   64 :h 64 :class "issue__logo"}))
+                        :w 64 :h 64 :fit "clip" :class "issue__logo"}))
            [:span.issue__edit__title title]]]
          [:div.issue__edit__status
           [selector (<sub [::subs/pending-status])

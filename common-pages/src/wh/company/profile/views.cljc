@@ -126,7 +126,7 @@
      (header-link "How we work" "company-profile__how-we-work"))])
 
 (defn logo [{:keys [size]}]
-  (wrap-img img (<sub [::subs/logo]) {:w size :h size :fit "clip" :class "company-profile__logo-img"}))
+  (wrap-img img (<sub [::subs/logo]) {:w size :h size :fit "clip"}))
 
 (defn header
   [_admin-or-owner?]

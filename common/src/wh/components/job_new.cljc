@@ -149,7 +149,7 @@
           :data-test "company-logo"}
     (if (or skeleton? (not logo))
       [:div]
-      (wrap-img img logo {:alt (str company-name " logo") :w 40 :h 40 :fit "clamp"}))]])
+      (wrap-img img logo {:alt (str company-name " logo") :w 40 :h 40 :fit "clip"}))]])
 
 
 (defn- details
