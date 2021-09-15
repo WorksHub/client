@@ -13,8 +13,7 @@
     [wh.common.specs.date]
     [wh.common.specs.primitives]
     [wh.common.specs.repo]
-    [wh.common.specs.tags]
-    [wh.components.pagination :as pagination]))
+    [wh.common.specs.tags]))
 
 (s/def :wh.issue/id #?(:clj  sc/string-uuid
                        :cljs string?))

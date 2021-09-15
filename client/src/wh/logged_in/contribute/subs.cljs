@@ -1,12 +1,11 @@
 (ns wh.logged-in.contribute.subs
   (:require [cljs.spec.alpha :as s]
             [clojure.set :as set]
-            [clojure.string :as str]
             [markdown.core :refer [md->html]]
             [re-frame.core :refer [reg-sub]]
-            [wh.components.tag :refer [->tag tag->form-tag]]
             [wh.re-frame.subs :refer [<sub]]
             [wh.common.text :as txt]
+            [wh.components.tag :as comp-tag]
             [wh.logged-in.contribute.db :as contribute]
             [wh.pages.core :as pages]
             [wh.verticals :as verticals])
@@ -28,7 +27,7 @@
   (fn [_ _]
     (->> [:list-tags :tags]
          (get-in (<sub [:graphql/result :tags {}]))
-         (map ->tag))))
+         (map comp-tag/->tag))))
 
 (reg-sub
   ::selected-tag-ids
@@ -48,17 +47,7 @@
   :<- [::tag-search]
   :<- [::selected-tag-ids]
   (fn [[tags tag-search selected-tag-ids]]
-    (let [matching-but-not-selected
-          (filter (fn [tag] (and (or (str/blank? tag-search)
-                                    (str/includes? (str/lower-case (:label tag)) tag-search))
-                                (not (contains? selected-tag-ids (:id tag))))) tags)
-          selected-tags (->> tags
-                             (filter
-                               (fn [tag] (contains? selected-tag-ids (:id tag))))
-                             (map #(assoc % :selected true)))]
-      (->> (concat selected-tags matching-but-not-selected)
-           (map tag->form-tag)
-           (take (+ 20 (count selected-tag-ids)))))))
+    (comp-tag/select-tags tag-search tags {:include-ids selected-tag-ids})))
 
 (reg-sub
   ::author
@@ -153,8 +142,7 @@
 (reg-sub
   ::body-html
   :<- [::body]
-  (fn [body]
-    (md->html body)))
+  md->html)
 
 (reg-sub
   ::image-article-upload-status
@@ -346,8 +334,7 @@
   ::other-urls
   :<- [::author-info]
   (fn [ai _]
-    (->> (:other-urls ai)
-         (map :url))))
+    (map :url (:other-urls ai))))
 
 (reg-sub
   ::skills

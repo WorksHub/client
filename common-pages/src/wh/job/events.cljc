@@ -3,21 +3,20 @@
             [#?(:cljs cljs-time.format :clj clj-time.format) :as tf]
             [clojure.string :as str]
             [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
-            [wh.common.cases :as cases]
-            [wh.common.company :as companyc]
-            [wh.components.modal-publish-job :as modal-publish-job]
             #?(:cljs [wh.common.fx.google-maps])
+            [wh.common.cases :as cases]
+            [wh.common.company :as company]
             [wh.common.issue :refer [gql-issue->issue]]
             [wh.common.job :as common-job]
-            [wh.common.company :as company]
+            [wh.common.keywords :as keywords]
+            [wh.common.user :as user-common]
+            [wh.components.modal-publish-job :as modal-publish-job]
+            [wh.components.tag :as comp-tag]
             [wh.db :as db]
             [wh.graphql.jobs :as graphql-jobs]
-            [wh.components.tag :as tag]
-            [wh.components.modal-publish-job :as modal-publish-job]
             [wh.job.db :as job]
-            [wh.common.user :as user-common]
-            [wh.common.keywords :as keywords]
             #?(:cljs [wh.pages.core :refer [on-page-load]])
+            [wh.re-frame.events :as events]
             #?(:cljs [wh.user.db :as user])
             [wh.util :as util])
   (#?(:cljs :require-macros :clj :require)
@@ -53,7 +52,7 @@
 (defn translate-job [job]
   (as-> job job
         (cases/->kebab-case job)
-        (update job :tags #(map tag/->tag %))
+        (update job :tags #(map comp-tag/->tag %))
         (keywords/namespace-map "wh.job.db" job)))
 
 (defn admin-or-job-owner? [db]
@@ -124,7 +123,7 @@
 (reg-event-fx
   ::fetch-job-analytics-failure
   job-interceptors
-  (fn [{db :db} [_res]]))
+  (fn [_ _]))
 
 (reg-event-fx
  ::fetch-company
@@ -135,18 +134,17 @@
               :on-failure [::fetch-company-failure]}}))
 
 (reg-event-fx
- ::fetch-job-success
- db/default-interceptors
- (fn [{db :db} [publish-after-load? res]]
-   (let [job       (-> (get-in res [:data :job])
-                       translate-job)
-         ;; the current job is now the preset one
-         db        (update db ::job/sub-db
-                           merge job
-                           {::job/error       nil
-                            ::job/preset-slug (::job/slug job)})
-         can-edit? (company/can-edit-jobs-after-first-job-published? db)]
-     (merge
+  ::fetch-job-success
+  db/default-interceptors
+  (fn [{db :db} [publish-after-load? res]]
+    (let [job       (-> (get-in res [:data :job])
+                        translate-job)
+          ;; the current job is now the preset one
+          db        (update db ::job/sub-db
+                            merge job
+                            {::job/error       nil
+                             ::job/preset-slug (::job/slug job)})
+          can-edit? (company/can-edit-jobs-after-first-job-published? db)]
       {:db         db
        :dispatch-n [[::fetch-issues-and-analytics]
                     [::set-page-title]
@@ -156,7 +154,7 @@
                         [::modal-publish-job/toggle-modal]
                         [::publish-role]))
                     (when (admin-or-job-owner? db)
-                      [::fetch-company])]}))))
+                      [::fetch-company])]})))
 
 (reg-event-fx
  ::init-job-pixels
@@ -287,23 +285,23 @@
 (reg-event-fx
   ::publish-job-failure-internal
   db/default-interceptors
-  (fn [{db :db} [job-id failure-event retry-event resp]]
-    #?(:cljs
-       (let [reason          (some-> resp :errors first :message keyword)
-             redirect-to-job {:navigate [:edit-job :params {:id job-id} :query-params {:save 1}]
-                              :dispatch failure-event}]
-         (case reason
-           :invalid-job     redirect-to-job
-           :invalid-company redirect-to-job
-           :missing-permission
-           (if (user-common/admin? db)
-             ;; TODO admin popup could go here instead...
-             (do (js/alert "Company does not have permission to publish this role. Check their package.")
-                 {:dispatch failure-event})
-             (navigate-to-payment-setup job-id))
-           {:dispatch-n [[:error/set-global "There was an error publishing the role."
-                          retry-event]
-                         failure-event]})))))
+  (events/client-only-handler
+    (fn [{db :db} [job-id failure-event retry-event resp]]
+      (let [reason          (some-> resp :errors first :message keyword)
+            redirect-to-job {:navigate [:edit-job :params {:id job-id} :query-params {:save 1}]
+                             :dispatch failure-event}]
+        (case reason
+          :invalid-job redirect-to-job
+          :invalid-company redirect-to-job
+          :missing-permission
+          (if (user-common/admin? db)
+            ;; TODO admin popup could go here instead...
+            (do #?(:cljs (js/alert "Company does not have permission to publish this role. Check their package."))
+                {:dispatch failure-event})
+            (navigate-to-payment-setup job-id))
+          {:dispatch-n [[:error/set-global "There was an error publishing the role."
+                         retry-event]
+                        failure-event]})))))
 
 (reg-event-db
   ::show-admin-publish-prompt?
@@ -317,18 +315,17 @@
 
 (defn process-publish-role-intention
   [{:keys [db job-id permissions publish-events on-publish pending-offer] :as _args}]
-  #?(:cljs
-     (cond
-       (or (contains? permissions :can_publish)
-           (and (user-common/admin? db) pending-offer))
-       (merge (publish-job db job-id publish-events)
-              {:db (on-publish db)})
-       ;;
-       (user-common/admin? db)
-       (show-admin-publish-prompt!)
-       ;;
-       :else
-       (navigate-to-payment-setup job-id))))
+  (cond
+    (or (contains? permissions :can_publish)
+        (and (user-common/admin? db) pending-offer))
+    (merge (publish-job db job-id publish-events)
+           {:db (on-publish db)})
+    ;;
+    (user-common/admin? db)
+    (show-admin-publish-prompt!)
+    ;;
+    :else
+    (navigate-to-payment-setup job-id)))
 
 (reg-event-fx
   ::fetch-permissions
@@ -351,28 +348,29 @@
 (reg-event-fx
   ::publish-role
   db/default-interceptors
-  (fn [{db :db} [job-id redirect-to-payment?]]
-    (let [perms (job/company-permissions db)
-          job-id (or job-id (get-in db [::job/sub-db ::job/id]))
-          pending-offer (get-in db [::job/sub-db ::job/company :pending-offer])]
-      (process-publish-role-intention
-        {:db             db
-         :job-id         job-id
-         :permissions    perms
-         :pending-offer  pending-offer
-         :publish-events {:success [::publish-job-success redirect-to-payment?]
-                          :failure [::publish-job-failure]
-                          :retry   [::publish-role]}
-         :on-publish     (fn [db]
-                           (-> db
-                               (assoc-in [::job/sub-db ::job/publishing?] true)
-                               modal-publish-job/close-modal))}))))
+  (events/client-only-handler
+    (fn [{db :db} [job-id redirect-to-payment?]]
+      (let [perms         (job/company-permissions db)
+            job-id        (or job-id (get-in db [::job/sub-db ::job/id]))
+            pending-offer (get-in db [::job/sub-db ::job/company :pending-offer])]
+        (process-publish-role-intention
+          {:db             db
+           :job-id         job-id
+           :permissions    perms
+           :pending-offer  pending-offer
+           :publish-events {:success [::publish-job-success redirect-to-payment?]
+                            :failure [::publish-job-failure]
+                            :retry   [::publish-role]}
+           :on-publish     (fn [db]
+                             (-> db
+                                 (assoc-in [::job/sub-db ::job/publishing?] true)
+                                 modal-publish-job/close-modal))})))))
 
 (reg-event-fx
   ::attempt-publish-role
   db/default-interceptors
   (fn [{db :db} _]
-    (let [show-modal? (not (companyc/can-edit-jobs-after-first-job-published? db))]
+    (let [show-modal? (not (company/can-edit-jobs-after-first-job-published? db))]
       {:dispatch [(if show-modal?
                     ::modal-publish-job/toggle-modal
                     ::publish-role)]})))
@@ -601,11 +599,11 @@
 (reg-event-fx
   ::load-company-module-if-needed
   db/default-interceptors
-  (fn [{db :db} _]
-    #?(:cljs
-       (if (or (user-common/admin? db) (user-common/company? db))
-         {:load-and-dispatch [:company]}
-         {}))))
+  (events/client-only-handler
+    (fn [{db :db} _]
+      (if (or (user-common/admin? db) (user-common/company? db))
+        {:load-and-dispatch [:company]}
+        {}))))
 
 #?(:cljs
    (defmethod on-page-load :job [db]

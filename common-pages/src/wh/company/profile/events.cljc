@@ -1,18 +1,18 @@
 (ns wh.company.profile.events
   (:require
+    #?(:cljs [cljs.spec.alpha :as s]
+       :clj  [clojure.spec.alpha :as s])
+    #?(:cljs [ajax.json :as ajax-json])
+    #?(:cljs [goog.Uri :as uri])
+    #?(:cljs [wh.common.fx.google-maps])
+    #?(:cljs [wh.common.location :as location])
     #?(:cljs [wh.common.upload :as upload])
     #?(:cljs [wh.pages.core :refer [on-page-load] :as pages])
     #?(:cljs [wh.user.db :as user])
-    #?(:cljs [goog.Uri :as uri])
-    #?(:cljs [ajax.json :as ajax-json])
-    #?(:cljs [wh.common.fx.google-maps])
-    #?(:cljs [wh.common.location :as location])
-    #?(:cljs [cljs.spec.alpha :as s]
-       :clj  [clojure.spec.alpha :as s])
+    [clojure.string :as str]
     [re-frame.core :refer [path]]
     [wh.company.profile.db :as profile]
     [wh.db :as db]
-    [wh.components.tag :as tag]
     [wh.graphql-cache :as cache]
     [wh.graphql.company :refer [update-company-mutation-with-fields publish-company-profile-mutation]]
     [wh.graphql.jobs]
@@ -21,8 +21,8 @@
     [wh.common.user :as user-common]
     [wh.common.cases :as cases]
     [wh.common.errors :as errors]
-    [wh.util :as util]
-    [clojure.string :as str]))
+    [wh.components.tag :as comp-tag]
+    [wh.util :as util]))
 
 (def profile-interceptors (into db/default-interceptors
                                 [(path ::profile/sub-db)]))
@@ -271,7 +271,7 @@
                                 :list-tags
                                 :tags
                                 (filter #(contains? (set (:tag-ids changes)) (:id %)))
-                                (map tag/->tag)))
+                                (map comp-tag/->tag)))
               (dissoc :tag-ids))))
 
 (reg-event-fx
@@ -533,7 +533,7 @@
                               :list-tags
                               :tags
                               (filter #(contains? selected-tag-ids (:id %)))
-                              (map tag/->tag))]
+                              (map comp-tag/->tag))]
     (-> form-data
         (assoc :industry-tag (or (some #(when (= industry-tag (:id %)) (dissoc % :subtype)) selected-tags)
                                  (some #(when (= :industry (:type %))  (dissoc % :subtype)) selected-tags))

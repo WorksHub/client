@@ -13,7 +13,7 @@
             [wh.common.user :as user-common]
             [wh.company.create-job.db :as create-job]
             [wh.company.create-job.subs :as subs]
-            [wh.components.tag :as tag]
+            [wh.components.tag :as comp-tag]
             [wh.db :as db]
             [wh.graphql.company
              :refer [create-job-mutation
@@ -423,7 +423,7 @@
   (fn [{db :db} [company-id {{company :company} :data}]]
     (let [company (-> company
                       (cases/->kebab-case)
-                      (update :tags (partial map tag/->tag)))]
+                      (update :tags (partial map comp-tag/->tag)))]
       {:db       (assoc db
                         ::create-job/company (dissoc company :slug)
                         ::create-job/company-id company-id
@@ -546,7 +546,7 @@
   create-job-interceptors
   (fn [db [tagline]]
     (assoc db ::create-job/tagline
-           (apply str (take create-job/tagline-max-length tagline)))))
+           (str/join (take create-job/tagline-max-length tagline)))))
 
 (reg-event-fx
   ::edit-search-address

@@ -7,7 +7,7 @@
             [wh.common.text :as text]
             [wh.common.url :as url]
             [wh.common.user :as user-common]
-            [wh.components.tag :as tag]
+            [wh.components.tag :as comp-tag]
             [wh.logged-in.profile.db :as profile]
             [wh.re-frame.subs :refer [<sub]]
             [wh.subs :refer [with-unspecified-option]]
@@ -52,7 +52,7 @@
   ::interests
   :<- [::profile]
   (fn [profile _]
-    (map tag/->tag (::profile/interests profile))))
+    (map comp-tag/->tag (::profile/interests profile))))
 
 (reg-sub
   ::social-urls
@@ -429,14 +429,12 @@
 (reg-sub
   ::articles-count
   :<- [::contributions]
-  (fn [contributions]
-    (count contributions)))
+  count)
 
 (reg-sub
   ::issues-count
   :<- [::issues]
-  (fn [issues]
-    (count issues)))
+  count)
 
 (reg-sub
   ::last-seen
@@ -567,7 +565,7 @@
            (remove (comp selected-ids :id))
            (take max-tag-results)
            (concat selected)
-           (map tag/tag->form-tag)))))
+           (map comp-tag/tag->form-tag)))))
 
 (reg-sub
   ::interests-search-results
@@ -581,7 +579,7 @@
            (remove (comp selected-ids :id))
            (take max-tag-results)
            (concat selected)
-           (map tag/tag->form-tag)))))
+           (map comp-tag/tag->form-tag)))))
 
 (reg-sub
   ::candidate?

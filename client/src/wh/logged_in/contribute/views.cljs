@@ -13,6 +13,7 @@
                                                tags-field
                                                select-field
                                                custom-avatar-picker-outdated]]
+            [wh.components.tag :as comp-tag]
             [wh.components.verticals :as vertical-views]
             [wh.interop :as interop]
             [wh.logged-in.contribute.db :as contribute]
@@ -21,8 +22,7 @@
             [wh.logged-in.contribute.subs :as subs]
             [wh.pages.util :as putil]
             [wh.subs :refer [<sub]]
-            [wh.util :refer [merge-classes]]
-            [wh.util :as util]))
+            [wh.util :refer [merge-classes]]))
 
 (defn hero []
   [:div.contribute__hero
@@ -112,11 +112,10 @@
     (str (if (and (<sub [::subs/contribute-page?])
                   (not (<sub [:user/admin?]))) "Submit" "Save") " Article")]])
 
-(defn article-tags
-  []
+(defn article-tags []
   (let [tags-collapsed? (reagent/atom true)]
     (fn []
-      (let [tags (<sub [::subs/matching-tags])]
+      (let [tags (map comp-tag/tag->form-tag (<sub [::subs/matching-tags]))]
         [tags-field
          (<sub [::subs/tag-search])
          {:tags               tags
@@ -191,7 +190,7 @@
    [:h3 (publisher->string publisher)]
    (if url
      [:<>
-      [:div "Posted " (-> date time/str->human-time)]
+      [:div "Posted " (time/str->human-time date)]
       [:a {:href   url
            :target "_blank"
            :rel    "noopener"
@@ -209,7 +208,7 @@
     (let [all-publishers (keys publisher->string)
           cross-posts    (<sub [::subs/cross-posts])]
       (for [publisher all-publishers]
-        (let [cross-post (some #(if (= publisher (:publisher %)) % nil) cross-posts)]
+        (let [cross-post (some #(when (= publisher (:publisher %)) %) cross-posts)]
           [cross-post-card publisher cross-post])))]])
 
 

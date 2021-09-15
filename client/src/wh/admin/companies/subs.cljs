@@ -58,14 +58,16 @@
   (fn [[name-search search-term tags] _]
     (let [select-tags         (map #(if (contains? tags (:tag %))
                                       (assoc % :selected true)
-                                      %) companies/tags)
+                                      %)
+                                   companies/tags)
           conflicting-types   (set (map :type (filter #(and (:selected %)
                                                             (= :live-jobs (:type %))) select-tags)))
           removed-conflicts   (remove #(and (not (:selected %))
                                             (contains? conflicting-types (:type %))) select-tags)
           filtered-tags       (filter #(or (:selected %)
                                            (str/blank? search-term)
-                                           (str/includes? (str/lower-case (:tag %)) (str/lower-case search-term)))
+                                           (str/includes? (str/lower-case (:tag %))
+                                                          (str/lower-case search-term)))
                                       removed-conflicts)
           with-pending-search (if (str/blank? search-term)
                                 filtered-tags

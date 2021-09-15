@@ -10,7 +10,8 @@
                                         update-job-mutation]]
             [wh.job.db :as job]
             [wh.job.events :refer [process-publish-role-intention]]
-            [wh.pages.core :as pages :refer [on-page-load force-scroll-to-top!]]
+            [wh.pages.core :refer [on-page-load force-scroll-to-top!]]
+            [wh.re-frame.events :as events]
             [wh.user.db :as user]
             [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
@@ -83,8 +84,7 @@
   ::fetch-job-success
   payment-interceptors
   (fn [{db :db} [resp]]
-    (let [job (-> (get-in resp [:data :job])
-                  (cases/->kebab-case))]
+    (let [job (cases/->kebab-case (get-in resp [:data :job]))]
       (if (:valid job)
         {:db (assoc db ::payment/job job)}
         {:navigate [:edit-job
@@ -331,18 +331,19 @@
 (reg-event-fx
   ::publish-role
   db/default-interceptors
-  (fn [{db :db} [job-id]]
-    (let [perms (get-in db [::payment/sub-db ::payment/company :permissions])]
-      (process-publish-role-intention
-        {:db db
-         :job-id job-id
-         :permissions perms
-         ;;  :pending-offer pending-offer
-         :publish-events {:success [::launch-pad-publish-job-success job-id]
-                          :failure [::publish-job-failure job-id]
-                          :retry   [::publish-role job-id]}
-         :on-publish (fn [db]
-                       (assoc-in db [::payment/sub-db ::payment/job-states job-id] :loading))}))))
+  (events/client-only-handler
+    (fn [{db :db} [job-id]]
+      (let [perms (get-in db [::payment/sub-db ::payment/company :permissions])]
+        (process-publish-role-intention
+          {:db             db
+           :job-id         job-id
+           :permissions    perms
+           ;;  :pending-offer pending-offer
+           :publish-events {:success [::launch-pad-publish-job-success job-id]
+                            :failure [::publish-job-failure job-id]
+                            :retry   [::publish-role job-id]}
+           :on-publish     (fn [db]
+                             (assoc-in db [::payment/sub-db ::payment/job-states job-id] :loading))})))))
 
 (defmethod on-page-load :payment-setup [db]
   (let [job-id (subs/job-id db)]

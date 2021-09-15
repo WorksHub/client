@@ -14,9 +14,9 @@
             [wh.db :as db]
             [wh.graphql.company :refer [update-company-mutation]]
             [wh.job.events :refer [process-publish-role-intention]]
-            [wh.pages.core :as pages :refer [on-page-load]]
-            [wh.user.db :as user]
-            [wh.util :as util])
+            [wh.pages.core :refer [on-page-load]]
+            [wh.re-frame.events :as events]
+            [wh.user.db :as user])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
 
 (def company-interceptors (into db/default-interceptors
@@ -245,20 +245,21 @@
 (reg-event-fx
   ::publish-role
   db/default-interceptors
-  (fn [{db :db} [job-id redirect-to-payment?]]
-    (let [perms (get-in db [::sub-db/sub-db ::sub-db/permissions])
-          pending-offer (get-in db [::sub-db/sub-db ::sub-db/pending-offer])]
-      (process-publish-role-intention
-       {:db db
-        :job-id job-id
-        :permissions perms
-        :pending-offer pending-offer
-        :publish-events {:success [::publish-job-success job-id redirect-to-payment?]
-                         :failure [::publish-job-failure job-id]
-                         :retry   [::publish-role job-id]}
-        :on-publish (fn [db] (-> db
-                                 (update-in [::sub-db/sub-db ::sub-db/publishing-jobs] (comp #(conj % job-id) set))
-                                 modal-publish-job/close-modal))}))))
+  (events/client-only-handler
+    (fn [{db :db} [job-id redirect-to-payment?]]
+      (let [perms         (get-in db [::sub-db/sub-db ::sub-db/permissions])
+            pending-offer (get-in db [::sub-db/sub-db ::sub-db/pending-offer])]
+        (process-publish-role-intention
+          {:db             db
+           :job-id         job-id
+           :permissions    perms
+           :pending-offer  pending-offer
+           :publish-events {:success [::publish-job-success job-id redirect-to-payment?]
+                            :failure [::publish-job-failure job-id]
+                            :retry   [::publish-role job-id]}
+           :on-publish     (fn [db] (-> db
+                                        (update-in [::sub-db/sub-db ::sub-db/publishing-jobs] (comp #(conj % job-id) set))
+                                        modal-publish-job/close-modal))})))))
 
 (reg-event-fx
   ::update-company
@@ -271,7 +272,7 @@
   ::add-company-onboarding-msg
   db/default-interceptors
   (fn [{db :db} [msg]]
-    (let [new-wms (set (conj (get-in db [:wh.user.db/sub-db ::wh.user.db/company :onboarding-msgs]) msg))]
+    (let [new-wms (set (conj (get-in db [:wh.user.db/sub-db :wh.user.db/company :onboarding-msgs]) msg))]
       {:graphql {:query update-company-mutation
                  :variables {:update_company
                              {:id (company-id db)
@@ -282,4 +283,4 @@
   ::add-company-onboarding-msg-success
   db/default-interceptors
   (fn [db [new-wms]]
-    (assoc-in db [:wh.user.db/sub-db ::wh.user.db/company :onboarding-msgs] new-wms)))
+    (assoc-in db [:wh.user.db/sub-db :wh.user.db/company :onboarding-msgs] new-wms)))

@@ -453,21 +453,20 @@
 
 (defn profile-tag-field
   [_args]
-  (let [tags-collapsed?  (r/atom true)]
+  (let [tags-collapsed? (r/atom true)]
     (fn [{:keys [label placeholder tag-type tag-subtype]}]
       #?(:cljs
          (let [selected-tag-ids (<sub [::subs/selected-tag-ids tag-type tag-subtype])
-               matching-tags (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type}
-                                                                (when tag-subtype
-                                                                  {:subtype tag-subtype}))])
-               tag-search    (<sub [::subs/tag-search tag-type tag-subtype])]
+               matching-tags    (<sub [::subs/matching-tags {:include-ids selected-tag-ids
+                                                             :size        20
+                                                             :type        tag-type
+                                                             :subtype     tag-subtype}])
+               tag-search       (<sub [::subs/tag-search tag-type tag-subtype])]
            [:form.wh-formx.wh-formx__layout.company-profile__editing-tags
             {:on-submit #(.preventDefault %)}
             [tags-field
              tag-search
-             {:tags               (map #(if (contains? selected-tag-ids (:key %))
-                                          (assoc % :selected true)
-                                          %) matching-tags)
+             {:tags               (map tag/tag->form-tag matching-tags)
               :collapsed?         @tags-collapsed?
               :on-change          [::events/set-tag-search tag-type tag-subtype]
               :label              label
@@ -1200,7 +1199,9 @@
      (let [tags-collapsed? (r/atom true)]
        (fn [tag-type error-field label placeholder]
          (let [selected-tag-ids (<sub [::subs/selected-tag-ids--all-of-type tag-type true])
-               matching-tags    (<sub [::subs/matching-tags (merge {:include-ids selected-tag-ids :size 20 :type tag-type})])
+               matching-tags    (<sub [::subs/matching-tags {:include-ids selected-tag-ids
+                                                             :size        20
+                                                             :type        tag-type}])
                tag-search       (<sub [::subs/tag-search tag-type])]
            [:div
             {:class (util/merge-classes "company-profile__create-profile-step"
@@ -1212,9 +1213,7 @@
               :data-test (str "company-" (name tag-type) "-tags")}
              [tags-field
               tag-search
-              {:tags               (map #(if (contains? selected-tag-ids (:key %))
-                                           (assoc % :selected true)
-                                           %) matching-tags)
+              {:tags               (map tag/tag->form-tag matching-tags)
                :collapsed?         @tags-collapsed?
                :on-change          [::events/set-tag-search tag-type nil]
                :label              label

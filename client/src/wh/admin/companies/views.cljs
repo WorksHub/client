@@ -12,7 +12,7 @@
 (defn company-card
   [{:keys [name id logo manager vertical job-stats package application-state-frequencies] :as company}]
   (let [skeleton? (nil? company)
-        pending (:pending application-state-frequencies)]
+        pending   (:pending application-state-frequencies)]
     [:div.card.companies__company-card.columns
      {:class (when skeleton? "skeleton")}
      [:div.column.is-flex
@@ -45,7 +45,7 @@
         companies     (if (or (not results) loading-more?)
                         (concat (or results []) (map #(hash-map :id % :skeleton? true) (range 10)))
                         results)
-        tags (<sub [::subs/matching-tags])]
+        tags          (<sub [::subs/matching-tags])]
     [:div.main.companies
      [:h1 "Companies"]
      [:form.wh-formx
@@ -72,7 +72,7 @@
         [forms/select-field (<sub [::subs/sort])
          {:read-only (nil? results)
           :on-change [::events/select-sort]
-          :options (<sub [::subs/sort-options])}]]]]
+          :options   (<sub [::subs/sort-options])}]]]]
      (if (empty? companies)
        [:div.companies__empty
         [:h3 "No companies match your search terms."]]

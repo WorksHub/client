@@ -15,6 +15,7 @@
                      select-field text-field tags-field logo-field]]
             [wh.components.icons :refer [icon]]
             [wh.components.rich-text-field.loadable :refer [rich-text-field]]
+            [wh.components.tag :as comp-tag]
             [wh.components.verticals :as vertical-views]
             [wh.db :as db]
             [wh.interop.forms :as interop-forms]
@@ -62,8 +63,7 @@
      [link (str "Edit " (<sub [::subs/company__name])) :admin-edit-company :id company-id :class "a--underlined"]
      [link "Create a new company" :create-company :class "a--underlined"])])
 
-(defn remuneration
-  []
+(defn remuneration []
   (let [currency    (<sub [::subs/remuneration__currency])
         competitive (<sub [::subs/remuneration__competitive])]
     [:fieldset.job-edit__remuneration
@@ -111,11 +111,10 @@
                                            :label "Competitive")
                                     (util/smc styles/remuneration__checkbox))]]]))
 
-(defn skills
-  []
+(defn skills []
   [:fieldset.job-edit__skills
    [:h2 "Technologies & frameworks"]
-   (let [tags (<sub [::subs/matching-tags])]
+   (let [tags (map comp-tag/tag->form-tag (<sub [::subs/matching-tags]))]
      ;; TODO: use new tags-filter-field component here
      [tags-field
       (<sub [::subs/tag-search])
@@ -342,9 +341,7 @@
           {:keys [message show-error?]} (<sub [(error-sub-key :wh.company.profile/benefit-tags)])]
       [tags-field
        (<sub [::subs/benefits-search])
-       {:tags               (map #(if (contains? selected-tag-ids (:key %))
-                                    (assoc % :selected true)
-                                    %) matching-tags)
+       {:tags               (map comp-tag/tag->form-tag matching-tags)
         :id                 (db/key->id :wh.company.profile/benefit-tags)
         :collapsed?         @tags-collapsed?
         :on-change          [::events/set-benefits-search]

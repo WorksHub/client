@@ -42,3 +42,10 @@
      [_])
    :cljs
    (def inject-cofx re-frame/inject-cofx))
+
+#?(:clj
+   (defn client-only-handler [_]
+        (fn [_ _]))
+   :cljs
+   (defn client-only-handler [handler]
+        handler))

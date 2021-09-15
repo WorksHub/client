@@ -4,8 +4,7 @@
             [wh.interop :as interop]
             [wh.util :as util]))
 
-(defn ->tag
-  [m]
+(defn ->tag [m]
   (-> m
       (update :type keyword)
       (util/update* :subtype keyword)
@@ -64,7 +63,7 @@
 (defn- skeleton-tags
   [{:keys [skeleton-tags-n]
     :or   {skeleton-tags-n 6}
-    :as   opts}]
+    :as   _opts}]
   (map (fn [i]
          {:label   (apply str (repeat (+ 8 (rand-int 30)) " "))
           :key     i
@@ -93,3 +92,34 @@
                :label %
                :type "tech"))
          strs)))
+
+(def default-min-selected-tags 20)
+
+(defn select-tags
+  [tag-search tags {:keys [include-ids size type subtype]}]
+  {:pre [(or (nil? include-ids) (set? include-ids))
+         (or (nil? subtype) (and (some? type) (some? subtype)))]}
+  (let [tag-search    (-> (if (nil? type)
+                            tag-search
+                            (get-in tag-search [type subtype]))
+                          (or "")
+                          (str/lower-case))
+        type-matches? (fn [tag]
+                        (or (nil? type)
+                            (and (= type (:type tag))
+                                 (or (nil? subtype)
+                                     (= subtype (:subtype tag))))))
+        id-included?  (fn [tag] (contains? include-ids (:id tag)))
+        matching-but-not-selected
+                      (filter (fn [tag]
+                                (and (or (str/blank? tag-search)
+                                         (str/includes? (str/lower-case (:label tag))
+                                                        tag-search))
+                                     (type-matches? tag)
+                                     (not (id-included? tag))))
+                              tags)
+        selected-tags (->> tags
+                           (filter id-included?)
+                           (map #(assoc % :selected true)))
+        tags-to-take  (+ (or size default-min-selected-tags) (count include-ids))]
+    (take tags-to-take (concat selected-tags matching-but-not-selected))))

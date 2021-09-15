@@ -3,11 +3,11 @@
     [clojure.string :as str]
     [re-frame.core :refer [reg-sub reg-sub-raw]]
     [wh.common.issue :refer [gql-issue->issue]]
-    [wh.common.location :as location]
     [wh.common.job :as common-job]
+    [wh.common.location :as location]
     [wh.company.profile.db :as profile]
     [wh.components.stats.db :as stats]
-    [wh.components.tag :refer [->tag tag->form-tag]]
+    [wh.components.tag :as comp-tag]
     [wh.re-frame.subs :refer [<sub]])
   (#?(:clj :require :cljs :require-macros)
     [wh.re-frame.subs :refer [reaction]]))
@@ -54,7 +54,7 @@
   ::all-tags
   (fn [_ _]
     (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
-         (map ->tag)
+         (map comp-tag/->tag)
          (reaction))))
 
 (reg-sub-raw
@@ -62,7 +62,7 @@
   (fn [_ [_ tag-type]]
     (->> (get-in (<sub [:graphql/result :tags {}]) [:list-tags :tags])
          (filter #(= (str/lower-case (name tag-type)) (str/lower-case (name (:type %)))))
-         (map ->tag)
+         (map comp-tag/->tag)
          (reaction))))
 
 (reg-sub
@@ -309,12 +309,6 @@
   (fn [sub-db [_ tag-type tag-subtype]]
     (or (get-in sub-db [::profile/tag-search tag-type tag-subtype]) "")))
 
-(reg-sub
-  ::tag-search--map
-  :<- [::sub-db]
-  (fn [sub-db _]
-    (::profile/tag-search sub-db)))
-
 (reg-sub-raw
   ::current-tag-ids
   (fn [_ [_ tag-type tag-subtype]]
@@ -327,21 +321,16 @@
     (reaction
       (set (map :id (<sub [::tags--inverted type]))))))
 
-(reg-sub
+(reg-sub-raw
   ::matching-tags
-  :<- [::all-tags]
-  :<- [::tag-search--map]
-  (fn [[tags tag-search] [_ {:keys [include-ids size type subtype]}]]
-    (let [tag-search (str/lower-case (or (get-in tag-search [type subtype]) ""))
-          matching-but-not-included (filter (fn [tag] (and (or (str/blank? tag-search)
-                                                               (str/includes? (str/lower-case (:label tag)) tag-search))
-                                                           (= type (:type tag))
-                                                           (if subtype (= subtype (:subtype tag)) true)
-                                                           (not (contains? include-ids (:id tag))))) tags)
-          included-tags (filter (fn [tag] (contains? include-ids (:id tag))) tags)]
-      (->> (concat included-tags matching-but-not-included)
-           (map tag->form-tag)
-           (take (+ (or size 20) (count include-ids)))))))
+  (fn [_ [_ {:keys [include-ids size type subtype]}]]
+    (reaction
+      (let [tags       (<sub [::all-tags])
+            tag-search (<sub [::tag-search type subtype])]
+        (comp-tag/select-tags tag-search tags {:include-ids include-ids
+                                               :size        size
+                                               :type        type
+                                               :subtype     subtype})))))
 
 (reg-sub
   ::creating-tag?

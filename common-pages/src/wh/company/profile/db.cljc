@@ -6,8 +6,7 @@
         :cljs cljs.spec.alpha) :as s]
     [wh.common.specs.company]
     [wh.common.specs.location]
-    [wh.components.tag :as tag]
-    [wh.util :as util]))
+    [wh.components.tag :as comp-tag]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some details for the create profile view
@@ -74,5 +73,5 @@
 (defn ->company
   [m]
   (-> m
-      (update :tags (partial map tag/->tag))
+      (update :tags (partial map comp-tag/->tag))
       (update :size keyword)))

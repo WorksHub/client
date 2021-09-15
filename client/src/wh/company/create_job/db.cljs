@@ -9,7 +9,7 @@
             [wh.common.specs.primitives :as p]
             [wh.common.user :as user-common]
             [wh.components.forms.db :as forms]
-            [wh.components.tag :as tag]
+            [wh.components.tag :as comp-tag]
             [wh.db :as db]
             [wh.graphql-cache :as cache]
             [wh.user.db :as user]
@@ -192,7 +192,7 @@
                     :list-tags
                     :tags
                     (filter #(contains? selected-tag-ids (:id %)))
-                    (map tag/->tag))
+                    (map comp-tag/->tag))
                (->> (:tags (::company (::sub-db db)))
                     (remove #(= :benefit (:type %))))))}))
 

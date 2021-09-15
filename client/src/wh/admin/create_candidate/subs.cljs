@@ -7,7 +7,7 @@
             [wh.common.specs.location]
             [wh.common.specs.primitives :as p]
             [wh.common.url :as url]
-            [wh.components.tag :as tag]
+            [wh.components.tag :as comp-tag]
             [wh.re-frame.subs :refer [<sub]]
             [wh.subs :refer [error-sub-key]]))
 
@@ -114,8 +114,7 @@
   ::available-tags
   :<- [:graphql/result :tags {:type :tech}]
   (fn [tags _]
-    (map tag/->tag
-         (get-in tags [:list-tags :tags]))))
+    (map comp-tag/->tag (get-in tags [:list-tags :tags]))))
 
 (reg-sub
   ::has-location?
@@ -123,43 +122,31 @@
   (fn [db _]
     (not (str/blank? (::sub-db/location__country db)))))
 
-(defn match-tag [search selected-tag-ids]
-  (fn [tag]
-    (and (or (str/blank? search)
-             (str/includes? (str/lower-case (:label tag)) search))
-         (not (contains? selected-tag-ids (:id tag))))))
-
-;; TODO: refactor, and normalize with other tag selectors [ch4750]
 (defn take-tech-tags
   [selected-tags all-tags tag-search]
-  (let [selected-tag-ids          (set (map :id selected-tags))
-        matching-but-not-selected (filter
-                                    (match-tag tag-search selected-tag-ids) all-tags)
-        selected-tags             (->> all-tags
-                                       (filter
-                                         (fn [{id :id}] (contains? selected-tag-ids id)))
-                                       (map #(assoc % :selected true)))]
+  (let [selected-tag-ids (set (map :id selected-tags))]
+    (comp-tag/select-tags tag-search all-tags {:include-ids selected-tag-ids})))
 
-    (->> matching-but-not-selected
-         (concat selected-tags)
-         (map tag/tag->form-tag)
-         (take (+ 20 (count selected-tags))))))
-
+;; TODO: Doesn't seem to be used temporarily. See 5222.
 (reg-sub
   ::matching-tech-tags
   :<- [::tech-tag-search]
   :<- [::available-tags]
   :<- [::tech-tags]
   (fn [[tag-search all-tags selected-tags] _]
-    (take-tech-tags selected-tags all-tags tag-search)))
+    (map comp-tag/tag->form-tag
+         (take-tech-tags selected-tags all-tags tag-search))))
 
 (def all-company-tags
-  (->> ["Series A" "Startup" "Flexible working"
-        "Remote working" "Contract work" "Corporate"
-        "Offer sponsorship"]
-       (map #(hash-map :tag %))))
+  (map #(hash-map :tag %)
+       ["Series A"
+        "Startup"
+        "Flexible working"
+        "Remote working"
+        "Contract work"
+        "Corporate"
+        "Offer sponsorship"]))
 
-;; TODO: refactor, and normalize with other tag selectors [ch4750]
 (defn take-company-tags
   [num selected-tags all-tags search]
   (let [search            (some-> search (str/lower-case))

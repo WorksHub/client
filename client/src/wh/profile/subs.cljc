@@ -5,7 +5,7 @@
             [wh.common.subs :as _subs]
             [wh.common.time :as time]
             [wh.common.url :as url]
-            [wh.components.tag :as tag]
+            [wh.components.tag :as comp-tag]
             [wh.graphql-cache :as gql-cache]
             [wh.profile.db :as profile]
             [wh.profile.events :as profile-events]))
@@ -53,7 +53,7 @@
   ::interests
   :<- [::profile]
   (fn [profile _]
-    (map tag/->tag (:interests profile))))
+    (map comp-tag/->tag (:interests profile))))
 
 (reg-sub
   ::social
@@ -140,7 +140,7 @@
   :<- [:user/admin?]
   :<- [:wh/query-param "type"]
   (fn [[admin? type] _]
-    (and admin? (not (= type "public")))))
+    (and admin? (not= type "public"))))
 
 (reg-sub
   ::company-view?
