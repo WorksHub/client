@@ -100,6 +100,9 @@
 (defn published? [job]
   (boolean (:published job)))
 
+(defn approved? [job]
+  (boolean (:approved job)))
+
 (defn company-id
   "associated company's id"
   [job]

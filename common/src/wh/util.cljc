@@ -277,9 +277,9 @@
                                        (mod total-size batch-size)
                                        batch-size)]]
               (when (pos? batch-size)
-                (callback {:batch-index batch-index
-                           :batch-size batch-size
+                (callback {:batch-size batch-size
                            :offset offset
+                           :batch-index batch-index
                            :batch-count batch-count}))
               (when time-between-runs
                 (Thread/sleep time-between-runs))))))
