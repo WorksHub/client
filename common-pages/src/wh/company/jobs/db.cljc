@@ -4,6 +4,9 @@
 
 (def page-size 12)
 
+(def default-sort [{:field "last-modified"
+                    :order :DESC}])
+
 (defn company-slug
   [db]
   (get-in db [:wh.db/page-params :slug]))

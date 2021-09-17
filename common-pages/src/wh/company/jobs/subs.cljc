@@ -34,7 +34,10 @@
     (reaction
       (let [slug        (<sub [::company-slug])
             page-number (<sub [::page-number])
-            result      (<sub [:graphql/result :company-jobs-page {:slug slug :page_size jobs/page-size :page_number page-number}])]
+            result      (<sub [:graphql/result :company-jobs-page {:slug        slug
+                                                                   :page_size   jobs/page-size
+                                                                   :page_number page-number
+                                                                   :sort        jobs/default-sort}])]
         (:company result)))))
 
 (reg-sub

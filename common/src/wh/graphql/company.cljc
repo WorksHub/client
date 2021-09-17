@@ -79,12 +79,17 @@
                      {:variable/name "page_size"
                       :variable/type :Int!}
                      {:variable/name "page_number"
-                      :variable/type :Int!}]
-   :venia/queries [[:company {:slug :$slug}
-                    [[:jobs {:pageSize :$page_size :pageNumber :$page_number}
-                      [[:jobs
-                        [:fragment/jobCardFields]]
-                       [:pagination [:total]]]]]]]})
+                      :variable/type :Int!}
+                     {:variable/name "sort"
+                      :variable/type {:type/kind       :list
+                                      :type.list/items {:type/type :FieldSort}}}]
+   :venia/queries   [[:company {:slug :$slug}
+                      [[:jobs {:pageSize   :$page_size
+                               :pageNumber :$page_number
+                               :sort       :$sort}
+                        [[:jobs
+                          [:fragment/jobCardFields]]
+                         [:pagination [:total]]]]]]]})
 
 (defquery fetch-company-articles-page-query
   {:venia/operation {:operation/type :query

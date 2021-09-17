@@ -1,8 +1,7 @@
 (ns wh.company.jobs.events
   (:require
     #?(:cljs [wh.pages.core :refer [on-page-load] :as pages])
-    [wh.company.jobs.db :as jobs]
-    [wh.components.pagination :as pagination]))
+    [wh.company.jobs.db :as jobs]))
 
 (defn company-query [db]
   [:company-card {:slug (jobs/company-slug db)}])
@@ -10,7 +9,8 @@
 (defn jobs-query [db]
   [:company-jobs-page {:slug        (jobs/company-slug db)
                        :page_size   jobs/page-size
-                       :page_number (jobs/page-number db)}])
+                       :page_number (jobs/page-number db)
+                       :sort        jobs/default-sort}])
 
 #?(:cljs
    (defmethod on-page-load :company-jobs [db]
