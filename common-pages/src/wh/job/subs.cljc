@@ -4,9 +4,7 @@
             [clojure.string :as str]
             [re-frame.core :refer [reg-sub]]
             [wh.common.job :as jobc]
-            [wh.common.company :as company]
             [wh.components.stats.db :as stats]
-            [wh.graphql.jobs :as jobs]
             [wh.job.db :as job]
             [wh.routes :as routes]
             [wh.company.listing.db :as listing]
@@ -384,7 +382,7 @@
            (filter #(not= (:id %) (::job/id sub-db)))
            (take 3)
            (map jobc/translate-job)
-           (jobs/add-interactions liked-jobs applied-jobs))
+           (jobc/add-interactions liked-jobs applied-jobs))
       (map #(hash-map :id %) (range 3)))))
 
 (reg-sub

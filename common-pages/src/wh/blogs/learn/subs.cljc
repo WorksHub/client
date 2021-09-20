@@ -1,15 +1,13 @@
 (ns wh.blogs.learn.subs
-  (:require
-    [re-frame.core :refer [reg-sub]]
-    [wh.blogs.learn.db :as learn]
-    [wh.blogs.learn.events :as learn-events]
-    [wh.verticals :as verticals]
-    [wh.graphql.jobs :as jobs]
-    [wh.common.job :as jobc]
-    [wh.common.issue :refer [gql-issue->issue]]
-    [wh.components.pagination :as pagination]
-    [wh.graphql-cache :as graphql]
-    [wh.util :as util]))
+  (:require [re-frame.core :refer [reg-sub]]
+            [wh.blogs.learn.db :as learn]
+            [wh.blogs.learn.events :as learn-events]
+            [wh.verticals :as verticals]
+            [wh.common.issue :refer [gql-issue->issue]]
+            [wh.common.job :as job]
+            [wh.components.pagination :as pagination]
+            [wh.graphql-cache :as graphql]
+            [wh.util :as util]))
 
 (reg-sub
   ::db
@@ -117,9 +115,9 @@
                                      (if (learn/search-arguments? db) :jobs :promoted)])]
       (if (= state :executing)
         (util/maps-with-id amount-to-display)
-        (->> (jobs/add-interactions liked applied recommended)
-             (jobc/sort-by-user-score)
-             (map jobc/translate-job)
+        (->> (job/add-interactions liked applied recommended)
+             (job/sort-by-user-score)
+             (map job/translate-job)
              (take amount-to-display))))))
 
 (reg-sub

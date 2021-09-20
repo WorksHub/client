@@ -80,12 +80,15 @@
                       :variable/type :Int!}
                      {:variable/name "page_number"
                       :variable/type :Int!}
+                     {:variable/name "published"
+                      :variable/type :Boolean}
                      {:variable/name "sort"
                       :variable/type {:type/kind       :list
                                       :type.list/items {:type/type :FieldSort}}}]
    :venia/queries   [[:company {:slug :$slug}
                       [[:jobs {:pageSize   :$page_size
                                :pageNumber :$page_number
+                               :published  :$published
                                :sort       :$sort}
                         [[:jobs
                           [:fragment/jobCardFields]]

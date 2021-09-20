@@ -19,9 +19,9 @@
     [wh.db :as db]))
 
 (def page-mapping
-  {:company profile/page
-   :companies listing/page
-   :company-jobs jobs/page
+  {:company          profile/page
+   :companies        listing/page
+   :company-jobs     jobs/page
    :company-articles articles/page})
 
 (reg-event-db
@@ -32,6 +32,8 @@
 (swap! db/sub-dbs conj ::profile-db/sub-db ::listing-db/sub-db)
 
 (dispatch-sync [::initialize-page-mapping])
+(dispatch-sync [::jobs-events/initialize-db])
+
 (dispatch [:wh.pages.core/unset-loader])
 
 (db/redefine-app-db-spec!)

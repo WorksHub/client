@@ -8,7 +8,6 @@
     [wh.common.job :as common-job]
     [wh.common.issue :as common-issue]
     [wh.common.user :as common-user]
-    [wh.graphql.jobs :as jobs]
     [wh.re-frame.subs :refer [<sub]]
     [wh.util :as util])
   (#?(:clj :require :cljs :require-macros)
@@ -50,7 +49,7 @@
                      common-issue/gql-issue->issue
                      (get-in results [:query-issues :issues]))
            :jobs   (->> (:jobs results)
-                        (jobs/add-interactions liked-jobs applied-jobs)
+                        (common-job/add-interactions liked-jobs applied-jobs)
                         (common-job/sort-by-user-score)
                         (map common-job/translate-job))
            ;; this `remove` takes out 'this' blog from the recommendations

@@ -6,7 +6,7 @@
     #?(:cljs [goog.i18n.NumberFormat :as nf])))
 
 (defn format-job-location
-  [{:keys [city state country country-code] :as location} remote]
+  [{:keys [city state country country-code] :as _location} remote]
   (cond
     remote
     country
@@ -93,6 +93,13 @@
     (assoc job
            :display-location (format-job-location location remote)
            :display-salary (format-job-remuneration remuneration))))
+
+(defn add-interactions
+  [liked-jobs applied-jobs jobs]
+  (mapv #(assoc %
+                :liked (contains? liked-jobs (:id %))
+                :applied (contains? applied-jobs (:id %)))
+        jobs))
 
 (defn sort-by-user-score [jobs]
   (sort-by #(or (get % :user-score 0) 0) > jobs))

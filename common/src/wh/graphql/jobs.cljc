@@ -19,19 +19,12 @@
   {:venia/operation {:operation/type :query
                      :operation/name "recommended_jobs_for_job"}
    :venia/variables [{:variable/name "job_id" :variable/type :ID!}]
-   :venia/queries [[:jobs {:filter_type "recommended"
-                           :entity_type "job"
-                           :entity_id :$job_id
-                           :page_size 4
-                           :page_number 1}
-                    :fragment/jobCardFields]]})
-
-(defn add-interactions
-  [liked-jobs applied-jobs jobs]
-  (mapv #(assoc %
-                :liked (contains? liked-jobs (:id %))
-                :applied (contains? applied-jobs (:id %)))
-        jobs))
+   :venia/queries   [[:jobs {:filter_type "recommended"
+                             :entity_type "job"
+                             :entity_id   :$job_id
+                             :page_size   4
+                             :page_number 1}
+                      :fragment/jobCardFields]]})
 
 (def-query-template job-query
   {:venia/operation {:operation/type :query
@@ -40,9 +33,9 @@
                       :variable/type :ID}
                      {:variable/name "slug"
                       :variable/type :String}]
-   :venia/queries [[:job {:id :$id
-                          :slug :$slug}
-                    $fields]]})
+   :venia/queries   [[:job {:id   :$id
+                            :slug :$slug}
+                      $fields]]})
 
 (def-query-from-template job-query--default job-query
                          {:fields :fragment/jobFields})
@@ -63,5 +56,5 @@
                      :operation/type :query}
    :venia/variables [{:variable/name "id"
                       :variable/type :ID}]
-   :venia/queries [[:query_issues {:company_id :$id, :page_size 2}
-                    [[:issues [:id :title :level [:repo [:primary_language]]]]]]]})
+   :venia/queries   [[:query_issues {:company_id :$id, :page_size 2}
+                      [[:issues [:id :title :level [:repo [:primary_language]]]]]]]})

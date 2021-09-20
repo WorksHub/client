@@ -8,7 +8,6 @@
             [wh.components.pagination :as pagination]
             [wh.db :as db]
             [wh.graphql-cache :as gqlc]
-            [wh.graphql.jobs :as jobs]
             [wh.job.db :as job-db]
             [wh.jobs.jobsboard.db :as jobsboard]
             [wh.jobs.jobsboard.events :as events]
@@ -147,7 +146,7 @@
   :<- [:user/applied-jobs]
   (fn [[jobs-search liked-jobs applied-jobs] _]
     (->> (:jobs jobs-search)
-         (jobs/add-interactions liked-jobs applied-jobs)
+         (job/add-interactions liked-jobs applied-jobs)
          (map job/translate-job))))
 
 (reg-sub
@@ -157,15 +156,15 @@
   :<- [:user/applied-jobs]
   (fn [[jobs-search liked-jobs applied-jobs] _]
     (->> (:promoted jobs-search)
-         (jobs/add-interactions liked-jobs applied-jobs)
+         (job/add-interactions liked-jobs applied-jobs)
          (map job/translate-job))))
 
 (defn- checkbox-description
   [{:keys [value label cnt display-count?]
-    :or {display-count? true}}]
+    :or   {display-count? true}}]
   (let [cnt (or cnt 0)]
-    {:value    value
-     :label    (str (or label value) (when (and display-count? (pos? cnt)) (str " (" cnt ")")))}))
+    {:value value
+     :label (str (or label value) (when (and display-count? (pos? cnt)) (str " (" cnt ")")))}))
 
 (reg-sub
   :wh.search/available-role-types
@@ -221,23 +220,21 @@
   :wh.search/selected-tags
   :<- [:wh.search/tags]
   (fn [tags _]
-    (->> tags
-         (map #(str (slug/tag-label->slug %) ":tech")))))
+    (map #(str (slug/tag-label->slug %) ":tech") tags)))
 
 (reg-sub
   :wh.search/available-tags
   :<- [::filters]
   (fn [filters _]
-    (->>
-      (:wh.search/available-tags filters)
-      (map
-        (fn [{:keys [value attr count] :as tag}]
-          (merge
-            tag
-            {:label value
-             :slug  (slug/tag-label->slug value)
-             :type  "tech"})))
-      (sort-by :count >))))
+    (->> (:wh.search/available-tags filters)
+         (map
+           (fn [{:keys [value _attr _count] :as tag}]
+             (merge
+               tag
+               {:label value
+                :slug  (slug/tag-label->slug value)
+                :type  "tech"})))
+         (sort-by :count >))))
 
 ;; Non-existing tags is a list of tags that appeared in URL
 ;; but are not available in application DB. We want to display
@@ -247,8 +244,8 @@
   :<- [:wh.search/available-tags]
   :<- [:wh.search/tags]
   (fn [[available-tags tags] _]
-    (let [available-tags    (into #{} (map :value available-tags))
-          non-existing-tags (filter (complement available-tags) tags)]
+    (let [available-tags    (set (map :value available-tags))
+          non-existing-tags (remove available-tags tags)]
       (for [value non-existing-tags]
         {:label            value
          :slug             (slug/tag-label->slug value)
@@ -282,10 +279,10 @@
   :<- [::filters]
   :<- [:wh.search/country-names]
   (fn [[{:keys [wh.search/available-countries
-               wh.search/available-cities
-               wh.search/available-regions]}
-       country-names]
-      _]
+                wh.search/available-cities
+                wh.search/available-regions]}
+        country-names]
+       _]
     (->> available-cities
          (concat
            (map
@@ -453,7 +450,7 @@
   :<- [:wh.search/currency]
   (fn [[salary-range salary-from currency] _]
     (let [[min max] salary-range
-          symbol (currency-symbols currency)
+          symbol    (currency-symbols currency)
           local-min (or salary-from min)]
       (str symbol (format-number local-min) " – " symbol (format-number max)))))
 
@@ -464,7 +461,7 @@
   :<- [:wh.search/currency]
   (fn [[salary-range salary-from currency] _]
     (let [[min max] salary-range
-          symbol (currency-symbols currency)
+          symbol    (currency-symbols currency)
           local-min (or salary-from min)]
       [(str symbol (format-number local-min)) (str symbol (format-number max))])))
 

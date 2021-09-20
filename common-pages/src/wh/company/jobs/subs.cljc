@@ -1,14 +1,18 @@
 (ns wh.company.jobs.subs
   (:require [re-frame.core :refer [reg-sub reg-sub-raw]]
-            [wh.components.pagination :as pagination]
-            [wh.company.listing.db :as listing]
-            [wh.common.job :refer [format-job-location]]
-            [wh.company.profile.db :as profile]
-            [wh.re-frame.subs :refer [<sub]]
+            [wh.common.job :as job]
             [wh.company.jobs.db :as jobs]
-            [wh.graphql.jobs :as graphql-jobs])
+            [wh.company.listing.db :as listing]
+            [wh.company.profile.db :as profile]
+            [wh.components.pagination :as pagination]
+            [wh.re-frame.subs :refer [<sub]])
   (#?(:clj :require :cljs :require-macros)
    [wh.re-frame.subs :refer [reaction]]))
+
+(reg-sub
+  ::sub-db
+  (fn [db _]
+    (::jobs/sub-db db)))
 
 (reg-sub
   ::company-slug
@@ -28,16 +32,27 @@
             result (<sub [:graphql/result :company-card {:slug slug}])]
         (profile/->company (:company result))))))
 
+(reg-sub
+  ::show-unpublished?
+  :<- [:user/admin?]
+  :<- [:user/company?]
+  :<- [::sub-db]
+  (fn [[admin? company? sub-db] _]
+    (jobs/show-unpublished? admin? company? (::jobs/unpublished? sub-db))))
+
 (reg-sub-raw
   ::jobs-raw
-  (fn [db _]
+  (fn [_ _]
     (reaction
-      (let [slug        (<sub [::company-slug])
-            page-number (<sub [::page-number])
-            result      (<sub [:graphql/result :company-jobs-page {:slug        slug
-                                                                   :page_size   jobs/page-size
-                                                                   :page_number page-number
-                                                                   :sort        jobs/default-sort}])]
+      (let [slug              (<sub [::company-slug])
+            page-number       (<sub [::page-number])
+            show-unpublished? (<sub [::show-unpublished?])
+            published         (jobs/published show-unpublished?)
+            result            (<sub [:graphql/result :company-jobs-page {:slug        slug
+                                                                         :page_size   jobs/page-size
+                                                                         :page_number page-number
+                                                                         :published   published
+                                                                         :sort        jobs/default-sort}])]
         (:company result)))))
 
 (reg-sub
@@ -46,9 +61,10 @@
   :<- [:user/liked-jobs]
   :<- [:user/applied-jobs]
   (fn [[jobs-raw liked-jobs applied-jobs] _]
-    (->> (get-in jobs-raw [:jobs :jobs])
-         (map #(assoc % :display-location (format-job-location (:location %) (:remote %))))
-         (graphql-jobs/add-interactions liked-jobs applied-jobs))))
+    (some->> (get-in jobs-raw [:jobs :jobs])
+             (map #(assoc % :display-location
+                          (job/format-job-location (:location %) (:remote %))))
+             (job/add-interactions liked-jobs applied-jobs))))
 
 (reg-sub
   ::total-number-of-jobs
