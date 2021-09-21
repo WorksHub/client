@@ -6,6 +6,7 @@
             [wh.components.activities.company-promoted :as company-promoted]
             [wh.components.activities.company-published :as company-published]
             [wh.components.activities.components :as activities]
+            [wh.components.activities.interview-requests :as interview-requests]
             [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.issue-promoted :as issue-promoted]
             [wh.components.activities.issue-started :as issue-started]
@@ -63,6 +64,9 @@
 
 (defmethod activity-card [:promote "issue"] [activity opts]
   [issue-promoted/card (:object activity) (:actor activity) (:description activity) :promote opts])
+
+(defmethod activity-card [:interview_requests "company"] [activity opts]
+  [interview-requests/card (:object activity) (:actor activity) :interview_requests opts])
 
 (defmethod activity-card :default [_activity _opts]
   nil)

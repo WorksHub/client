@@ -46,3 +46,16 @@
      [components/button
       {:href (routes/path :company :params {:slug slug})}
       "View Profile"]]]])
+
+(defn jobs-list-card [{:keys [slug]} details]
+  [:<>
+   details
+   [components/footer :default
+    [components/footer-buttons
+     [components/button
+      {:href (routes/path :company-jobs :params {:slug slug})
+       :type :inverted}
+      "All jobs"]
+     [components/button
+      {:href (routes/path :company :params {:slug slug})}
+      "View Profile"]]]])

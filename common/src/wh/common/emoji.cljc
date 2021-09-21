@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]))
 
 (defn int->char [i]
-  #?(:clj (str (doto (StringBuilder.) (.appendCodePoint i)))
+  #?(:clj (str (doto (StringBuilder.) (.appendCodePoint ^int i)))
      :cljs (js/String.fromCodePoint i)))
 
 (defn char->int [c]
@@ -16,3 +16,5 @@
          (map (comp int->char (partial + 127397) char->int))
          (str/join ""))
     country-code))
+
+(def fire "\uD83D\uDD25")

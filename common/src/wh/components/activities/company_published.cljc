@@ -5,7 +5,7 @@
 (defn card [company actor type opts]
   [components/card type
    [components/header
-    [components/company-info actor]
+    [components/company-info actor :company type]
     [components/entity-description :company type]]
    [components/description (if (= type :publish)
                              "Recently published their public profile"

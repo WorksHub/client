@@ -38,6 +38,16 @@
                                                     :total_published_job_count]]]]
                          [:feed_company [:id :slug :name :description :size
                                          :total_published_job_count :logo :creation_date
+                                         [:feed_jobs [:id :title :slug :tagline :remote
+                                                      :sponsorship_offered :role_type :first_published
+                                                      :recent_interviews_count
+                                                      [:tags :fragment/tagFields]
+                                                      [:remuneration
+                                                       [:currency :time_period :equity
+                                                        :min :max :competitive]]
+                                                      [:location [:city :state :country]]
+                                                      [:job_company [:name :image_url :slug
+                                                                     :total_published_job_count]]]]
                                          [:locations [:city :country :country_code
                                                       :region :sub_region :state]]
                                          [:tags :fragment/tagFields]]]

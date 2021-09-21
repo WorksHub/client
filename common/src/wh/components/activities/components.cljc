@@ -13,7 +13,9 @@
             [wh.re-frame.events :refer [dispatch]]
             [wh.routes :as routes]
             [wh.styles.activities :as styles]
-            [wh.util :as util]))
+            [wh.util :as util]
+            #?(:clj  [clojure.core.match :refer [match]]
+               :cljs [cljs.core.match :refer-macros [match]])))
 
 (defn keyed-collection [children]
   (->> children
@@ -95,16 +97,18 @@
    :company "Hot Company "})
 
 (def promoted-entity-title
-  {:blog    "Article"
-   :issue   "Issue"
-   :company "Company"
-   :job     "Job"})
+  {:blog           "Article"
+   :issue          "Issue"
+   :company        "Company"
+   :job            "Job"
+   :company-hiring "Hiring Now"})
 
 (defn entity-description [type entity-type]
   (let [title (promoted-entity-title type)]
     [:div (util/smc styles/entity-description
                     [(= entity-type :highlight) styles/entity-description--highlight]
-                    [(= entity-type :promote) styles/entity-description--promote])
+                    [(= entity-type :promote) styles/entity-description--promote]
+                    [(= entity-type :interview-requests) styles/entity-description--interview-requests])
      (case entity-type
        :publish   (str "New " title)
        :highlight [:span (util/smc styles/entity-description--icon-wrapper)
@@ -115,31 +119,43 @@
                    [:span (util/smc styles/entity-description--adjective)
                     (promoted-entity-description type)]
                    [icons/icon "trends"
-                    :class styles/entity-description--icon]])]))
+                    :class styles/entity-description--icon]]
+       :interview-requests [:span (util/smc styles/entity-description--icon-wrapper)
+                            [:span (util/smc styles/entity-description--adjective) title]
+                            [icons/icon "trends" :class styles/entity-description--icon]])]))
 
-(defn company-info [{:keys [image-url name slug] :as company}]
-  (let [info-str (let [live-issues (get company :total-published-issue-count 0)
-                       job-count (get company :total-published-job-count 0)]
-                   (cond
-                     (pos? live-issues)
-                     (str "has " live-issues " " (text/pluralize live-issues "issue"))
-                     ;;
-                     (pos? job-count)
-                     (str "has " job-count " " (text/pluralize job-count "live job"))
-                     ;;
-                     (:creation-date company)
-                     (str "Joined " (-> (:creation-date company)
-                                        (time/str->time :date-time)
-                                        (time/human-time)))))]
+(defn company-info-stat [company-actor type verb]
+  (let [live-issues        (get company-actor :total-published-issue-count 0)
+        job-count          (get company-actor :total-published-job-count 0)
+        company-joined-msg (str "Joined " (some-> (:creation-date company-actor)
+                                                  (time/str->time :date-time)
+                                                  (time/human-time)))
+        live-jobs-msg      (str "has " job-count " " (text/pluralize job-count "live job"))
+        live-issues-msg    (str "has " live-issues " " (text/pluralize live-issues "issue"))]
+    (match [type verb]
+           [:company :interview-requests] live-jobs-msg
+           [:company _] company-joined-msg
+           [:job _] live-jobs-msg
+           [:issue _] live-issues-msg
+           :else company-joined-msg)))
 
-    [:a {:class styles/company-info
-         :href  (routes/path :company :params {:slug slug})}
-     (wrap-img img image-url {:w 40 :h 40 :fit "clip" :class styles/company-info__logo})
-     [:h1 (util/smc styles/company-info__name) name]
-     (when info-str
-       [:span (util/smc styles/company-info__job-count) info-str])]))
+(defn company-info
+  ([company-actor]
+   (company-info company-actor :company))
+  ([company-actor type]
+   (company-info company-actor type nil))
+  ([{:keys [image-url name slug] :as company-actor} type verb]
+   (assert (some? type))
+   (assert (some? verb))
+   (let [info-str (company-info-stat company-actor type verb)]
+     [:a {:class styles/company-info
+          :href  (routes/path :company :params {:slug slug})}
+      (wrap-img img image-url {:w 40 :h 40 :fit "clip" :class styles/company-info__logo})
+      [:h1 (util/smc styles/company-info__name) name]
+      (when info-str
+        [:span (util/smc styles/company-info__job-count) info-str])])))
 
-(defn company-info-small [{:keys [image-url name slug] :as _company}]
+(defn company-info-small [{:keys [image-url name slug]}]
   [:a {:class styles/company-info--small
        :href  (routes/path :company :params {:slug slug})}
    (wrap-img img image-url {:w 30 :h 30 :fit "clip" :class styles/company-info--small__logo})
@@ -203,7 +219,8 @@
 (defn card [type & children]
   [:div (merge (util/smc styles/card
                          [(= type :highlight) styles/card--highlight]
-                         [(= type :promote) styles/card--promote])
+                         [(= type :promote) styles/card--promote]
+                         [(= type :interview_requests) styles/card--interview-requests])
                {:data-test "activity"})
    (keyed-collection children)])
 
@@ -288,3 +305,10 @@
      (wrap-img img image-url {:w 40 :h 40 :class styles/promoter__logo})
      [:h1 (util/smc styles/promoter__name) name]
      [:span (util/smc styles/promoter__position) "Talent Manager, WorksHub"]]]))
+
+(defn ->interviews-display-value [{:keys [interviews-count interviews-period bold-count?]}]
+  (let [count-msg (str interviews-count " " (text/pluralize interviews-count "interview"))]
+    [:<>
+     (if bold-count? [:b count-msg] [:span count-msg])
+     " "
+     interviews-period]))

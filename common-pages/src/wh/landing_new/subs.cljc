@@ -100,7 +100,8 @@
 (defn translate-company [c]
   (-> c
       (assoc
-        :creation-date (time/human-time (time/str->time (:creation-date c) :date-time)))))
+        :creation-date (time/human-time (time/str->time (:creation-date c) :date-time)))
+      (update :feed-jobs #(map translate-job %))))
 
 (defn normalize-activity
   [{:keys [feed-company feed-issue feed-job feed-blog] :as activity}]

@@ -7,19 +7,26 @@
             [wh.styles.activities :as styles]
             [wh.util :as util]))
 
+
 (defn details
   ([job entity-type]
    (details job entity-type nil))
 
   ([{:keys [title slug remote sponsorship-offered display-location display-salary
-            tags role-type display-date]
+            tags role-type display-date recent-interviews-count interview-requests-period]
      :as   _job} entity-type actor]
    [components/inner-card
-    [components/title-with-icon
-     [components/title
-      {:href (routes/path :job :params {:slug slug})}
-      title]
-     [components/entity-icon "suitcase" entity-type]]
+    [:div
+     [components/title-with-icon
+      [components/title
+       {:href (routes/path :job :params {:slug slug})}
+       title]
+      [components/entity-icon "suitcase" entity-type]]
+
+     (when (= entity-type :interview-requests)
+       [:span {:class styles/job__recent-interviews-count}
+        [components/->interviews-display-value {:interviews-count  recent-interviews-count
+                                                :interviews-period interview-requests-period}]])]
 
     (when (= entity-type :promote)
       [components/company-info-small actor])

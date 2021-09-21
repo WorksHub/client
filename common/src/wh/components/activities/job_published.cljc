@@ -5,7 +5,7 @@
 (defn card [job actor type opts]
   [components/card type
    [components/header
-    [components/company-info actor]
+    [components/company-info actor :job type]
     [components/entity-description :job type]]
 
    [components/description {:type :cropped} (:tagline job)]
