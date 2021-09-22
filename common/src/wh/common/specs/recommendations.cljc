@@ -7,6 +7,7 @@
 (s/def :wh.recommendation/score (s/double-in :min 0.0 :max 1.0 :NaN false :infinite? false))
 (s/def :wh.recommendation/candidate-score :wh.recommendation/score)
 (s/def :wh.recommendation/company-score :wh.recommendation/score)
+(s/def :wh.recommendation/created-at :wh/date)
 
 (s/def :wh.recommendation/job
   (s/keys :req-un [:wh.job/id
@@ -30,7 +31,8 @@
 (s/def :wh/recommendation
   (s/keys :req-un [:wh.recommendation/user-id
                    :wh.recommendation/job-id
-                   :wh.recommendation/candidate-score]
+                   :wh.recommendation/candidate-score
+                   :wh.recommendation/created-at]
           :opt-un [:wh.recommendation/company-score]))
 
 (s/def :wh.recommendation/entity-id (s/or :blog-id :wh.blog/id

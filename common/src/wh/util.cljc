@@ -280,6 +280,9 @@
                 (callback {:batch-size batch-size
                            :offset offset
                            :batch-index batch-index
-                           :batch-count batch-count}))
+                           :batch-count batch-count
+                           ;; alias `batch-size` and `offset` so the name matches db query convention
+                           :limit batch-size
+                           :skip offset}))
               (when time-between-runs
                 (Thread/sleep time-between-runs))))))
