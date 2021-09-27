@@ -7,7 +7,6 @@
             [wh.styles.activities :as styles]
             [wh.util :as util]))
 
-
 (defn details
   ([job entity-type]
    (details job entity-type nil))
@@ -19,7 +18,11 @@
     [:div
      [components/title-with-icon
       [components/title
-       {:href (routes/path :job :params {:slug slug})}
+       {:href (routes/path :job
+                           :params {:slug slug}
+                           :query-params (if (= entity-type :interview-requests)
+                                           {:ref "interview-requests-activity"}
+                                           {}))}
        title]
       [components/entity-icon "suitcase" entity-type]]
 
@@ -42,7 +45,10 @@
      (when sponsorship-offered
        [components/text-with-icon {:icon "sponsorship"} "Sponsorship"])]
 
-    [components/tags tags]]))
+    [components/tags
+     tags
+     (when (= entity-type :interview-requests)
+       "interview-requests-activity")]]))
 
 (defn card-footer [{:keys [base-uri slug id title vertical facebook-app-id saved-jobs logged-in? job]}]
   [components/footer :compound

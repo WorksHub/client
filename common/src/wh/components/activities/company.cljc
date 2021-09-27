@@ -53,9 +53,9 @@
    [components/footer :default
     [components/footer-buttons
      [components/button
-      {:href (routes/path :company-jobs :params {:slug slug})
+      {:href (routes/path :company-jobs :params {:slug slug} :query-params {:ref "interview-requests-activity"})
        :type :inverted}
       "All jobs"]
      [components/button
-      {:href (routes/path :company :params {:slug slug})}
+      {:href (routes/path :company :params {:slug slug} :query-params {:ref "interview-requests-activity"})}
       "View Profile"]]]])

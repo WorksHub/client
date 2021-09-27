@@ -66,7 +66,7 @@
   [issue-promoted/card (:object activity) (:actor activity) (:description activity) :promote opts])
 
 (defmethod activity-card [:interview_requests "company"] [activity opts]
-  [interview-requests/card (:object activity) (:actor activity) :interview_requests opts])
+  [interview-requests/card (:object activity) (:actor activity) :interview-requests opts])
 
 (defmethod activity-card :default [_activity _opts]
   nil)

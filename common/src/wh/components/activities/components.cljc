@@ -68,18 +68,23 @@
    (when children
      [:p (util/smc (description-class type) class) children])))
 
-(defn tag-component [tag]
-  (let [href (routes/path :search :query-params {:query (:label tag)})]
+(defn tag-component [tag ref]
+  (let [href (routes/path :search
+                          :query-params (merge {:query (:label tag)}
+                                               (when ref {:ref ref})))]
+
     [tag/tag :a (-> tag
                     (assoc :href href)
                     (update :label str/lower-case))]))
 
 (defn tags
-  [tags]
-  [:ul (util/smc "tags" "tags--inline")
-   (for [tag (take 14 tags)] ;; FIXME magic number
-     ^{:key (:id tag)}
-     [tag-component tag])])
+  ([tags-list]
+   (tags tags-list nil))
+  ([tags-list ref]
+   [:ul (util/smc "tags" "tags--inline")
+    (for [tag (take 14 tags-list)]                               ;; FIXME magic number
+      ^{:key (:id tag)}
+      [tag-component tag ref])]))
 
 (defn entity-icon
   ([icon-name]
@@ -145,11 +150,13 @@
   ([company-actor type]
    (company-info company-actor type nil))
   ([{:keys [image-url name slug] :as company-actor} type verb]
-   (assert (some? type))
-   (assert (some? verb))
    (let [info-str (company-info-stat company-actor type verb)]
      [:a {:class styles/company-info
-          :href  (routes/path :company :params {:slug slug})}
+          :href  (routes/path :company
+                              :params {:slug slug}
+                              :query-params (if (= verb :interview-requests)
+                                              {:ref "interview-requests-activity"}
+                                              {}))}
       (wrap-img img image-url {:w 40 :h 40 :fit "clip" :class styles/company-info__logo})
       [:h1 (util/smc styles/company-info__name) name]
       (when info-str
@@ -220,7 +227,7 @@
   [:div (merge (util/smc styles/card
                          [(= type :highlight) styles/card--highlight]
                          [(= type :promote) styles/card--promote]
-                         [(= type :interview_requests) styles/card--interview-requests])
+                         [(= type :interview-requests) styles/card--interview-requests])
                {:data-test "activity"})
    (keyed-collection children)])
 
