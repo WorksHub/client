@@ -50,7 +50,7 @@
                               [:contributionCount
                                :date :weekday :color]]]]]]]]]]
 
-                     [:blogs {:creator_id :$id}
+                     [:blogs {:author_id :$id}
                       [[:blogs [:id :title :formattedDate
                                 :readingTime :upvoteCount :published]]]]
 
