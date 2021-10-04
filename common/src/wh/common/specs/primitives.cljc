@@ -2,6 +2,8 @@
   (:require [#?(:clj clojure.spec.alpha
                 :cljs cljs.spec.alpha) :as s]
             [clojure.string :as str]
+            #?(:clj [spec-tools.core :as st])
+            #?(:clj [clojure.spec.gen.alpha :as gen])
             [wh.common.url :as url]))
 
 (defn valid-email? [email]
@@ -41,3 +43,19 @@
                                                      :strings (s/coll-of string?)))))
 
 (s/def ::percentage (s/double-in :min 0 :max 100))
+
+#?(:clj
+   (s/def :wh/input-stream (st/spec
+                             (s/with-gen
+                               (s/conformer #(instance? java.io.InputStream %))
+                               #(gen/return (java.io.ByteArrayInputStream. (.getBytes "")))))))
+
+#?(:clj
+   (s/def :wh/content-type #{"application/msword"
+                             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                             "application/pdf"
+                             "application/json"
+                             "audio/ogg"
+                             "image/apng"
+                             "image/avif"
+                             "image/flif"}))

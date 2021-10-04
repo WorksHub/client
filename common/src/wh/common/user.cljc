@@ -137,6 +137,13 @@
           reverse
           first))
  
- ;; Check the errors array of a Graphql mutation for the no-user-found-with-email error
- (defn no-user-found-for-email? [resp]
-   (some (fn [err] (= (:message err) "no-user-found-with-email")) (:errors resp)))
+;; Check the errors array of a Graphql mutation for the no-user-found-with-email error
+(defn no-user-found-for-email? [resp]
+  (some (fn [err] (= (:message err) "no-user-found-with-email")) (:errors resp)))
+
+;;
+
+(defn cv-file-hash
+  "returns hash of cv file uploaded by a user"
+  [user]
+  (get-in user [:cv :file :hash]))

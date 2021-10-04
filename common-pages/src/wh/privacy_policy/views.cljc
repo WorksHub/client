@@ -37,6 +37,7 @@
          [:li "Google - events (which could include user data) is received via Analytics and stored in BigQuery"]
          [:li "Heroku - hosts our application, so user data passes through their servers"]
          [:li "Hubspot - we use to send transactional emails and as our main CRM when communicating with users"]
+         [:li "Affinda - helps us to parse data from CVs"]
          [:li "Mixpanel - we use to analyze user behaviour on our site"]
          [:li "MongoDB Atlas - hosts our databases, where user data is stored"]
          [:li "Neverbounce - we use to check for spam email addresses/domains"]
