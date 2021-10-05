@@ -36,18 +36,26 @@
            (select-tags "Clojure" default-tags {:include-ids #{2}}))))
 
   (testing "It is possible to filter tags by their type and/or subtype"
-    (is (empty? (select-tags "Clojure" default-tags
+    (is (empty? (select-tags "Clojure"
+                             default-tags
                              {:include-ids #{}
                               :type        :non-tech})))
     (is (= [{:id 1, :label "Clojure", :type :tech, :subtype :software}
             {:id 2, :label "Common Lisp", :type :tech, :subtype :software}
             {:id 3, :label "Smartphone", :type :tech, :subtype :gadget}]
-           (select-tags "" default-tags
+           (select-tags ""
+                        default-tags
                         {:include-ids #{}
                          :type        :tech})))
     (is (= [{:id 1, :label "Clojure", :type :tech, :subtype :software}
             {:id 2, :label "Common Lisp", :type :tech, :subtype :software}]
-           (select-tags "" default-tags
+           (select-tags ""
+                        default-tags
                         {:include-ids #{}
                          :type        :tech
-                         :subtype     :software})))))
+                         :subtype     :software})))
+    (is (= [{:id 1, :label "Clojure", :type :tech, :subtype :software}]
+           (select-tags "Clo"
+                        default-tags
+                        {:include-ids #{}
+                         :type        :tech})))))

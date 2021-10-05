@@ -55,7 +55,7 @@
              (when on-click
                (interop/on-click-fn #?(:cljs on-click
                                        :clj  (cond-> on-click
-                                               server-side-invert-on-click? add-invert)))))
+                                                     server-side-invert-on-click? add-invert)))))
       (when (and icon' with-icon?)
         [icons/icon icon'])
       [:span label]])))
@@ -99,11 +99,7 @@
   [tag-search tags {:keys [include-ids size type subtype]}]
   {:pre [(or (nil? include-ids) (set? include-ids))
          (or (nil? subtype) (and (some? type) (some? subtype)))]}
-  (let [tag-search    (-> (if (nil? type)
-                            tag-search
-                            (get-in tag-search [type subtype]))
-                          (or "")
-                          (str/lower-case))
+  (let [tag-search    (str/lower-case (or tag-search ""))
         type-matches? (fn [tag]
                         (or (nil? type)
                             (and (= type (:type tag))
