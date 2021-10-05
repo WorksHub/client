@@ -9,3 +9,4 @@
 (reg-sub ::error (fn [db] (login/error db)))
 (reg-sub ::email-sent? (fn [db] (login/email-sent? db)))
 (reg-sub ::error-message :<- [::error] (fn [status _] (login/status->error status)))
+(reg-sub ::show-password? :<- [:wh.subs/env] (comp not boolean #{:prod} first vector))

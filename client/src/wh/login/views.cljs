@@ -26,7 +26,7 @@
                :autoFocus   true}])
 
 (defn field-password []
-  (when (contains? #{:dev :stage} (<sub [:wh.subs/env]))
+  (when (<sub [::subs/show-password?])
     [auth/field {:type        :text
                  :placeholder "Password"
                  :aria-label  "Password"
