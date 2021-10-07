@@ -141,7 +141,8 @@
     [:div.blog-body.blog-section__width.blog-body__original-source
      [:p "Originally published on "
       [:a {:href (<sub [::subs/original-source])
-           :target "_blank" :rel "noopener"}
+           :target "_blank"
+           :rel "noopener nofollow"}
        (<sub [::subs/original-source-domain])]]]))
 
 (defn header []
