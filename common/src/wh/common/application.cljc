@@ -1,9 +1,18 @@
 (ns wh.common.application)
 
-(defn approved? [{:keys [state] :as _application}]
-  (boolean (some-> state
+(def state-hired :hired)
+(def state-approved :approved)
+
+(defn state [a] (:state a))
+
+(defn state? [s application]
+  (boolean (some-> application
+                   state
                    keyword
-                   (= :approved))))
+                   (= s))))
+
+(def approved? (partial state? state-approved))
+(def hired? (partial state? state-hired))
 
 (defn hubspot-deal-id [a] (get-in a [:hubspot :id]))
-(defn state [a] (:state a))
+
