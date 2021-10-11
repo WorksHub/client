@@ -32,7 +32,8 @@
   ([element-type
     {:keys [label type subtype id icon on-click href
             with-icon? inverted? interactive? server-side-invert-on-click?]
-     :or   {with-icon? true}
+     :or   {type       "tech"
+            with-icon? true}
      :as   t}
     {:keys [class] :as _opts}]
    (let [label-lc      (or (some-> label str/lower-case) "")
