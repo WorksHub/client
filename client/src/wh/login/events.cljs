@@ -51,14 +51,13 @@
       #_{:navigate [:login :params {:step :email} :query-params {:sent true}]}
       (cond
         (not (login/valid-email? email)) {:db (login/set-error db :invalid-arguments)}
-        (or (login/is-dev-env? db)
-            (login/is-stage-env? db))    {:dispatch [::login-as email password]}
-        :always                          {:db      (login/set-submitting db)
-                                          :graphql {:query      magic-link-mutation
-                                                    :variables  {:email    email
-                                                                 :redirect (login/redirect-url db)}
-                                                    :on-success [::send-login-link-handler true]
-                                                    :on-failure [::send-login-link-handler false]}}))))
+        (not (login/is-prod-env? db)) {:dispatch [::login-as email password]}
+        :always {:db      (login/set-submitting db)
+                 :graphql {:query      magic-link-mutation
+                           :variables  {:email    email
+                                        :redirect (login/redirect-url db)}
+                           :on-success [::send-login-link-handler true]
+                           :on-failure [::send-login-link-handler false]}}))))
 
 (reg-event-fx
   ::send-login-link-handler

@@ -24,12 +24,8 @@
 (defn is-step? [db step]
   (= step (get-in db [::db/page-params :step])))
 
-(defn is-dev-env? [db]
-  (and (= (:wh.settings/environment db) :dev)
-       (not (get-in db [::db/query-params "force-email"]))))
-
-(defn is-stage-env? [db]
-  (= (:wh.settings/environment db) :stage))
+(defn is-prod-env? [db]
+  (= (:wh.settings/environment db) :prod))
 
 (defn email-sent? [db]
   (get-in db [::db/query-params "sent"]))
