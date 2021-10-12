@@ -67,11 +67,12 @@
     * match-fn: the function used to check if a particular route exists
     * identity-fn: (optional) extract the route from value returned by match-fn"
   [dispatch-fn match-fn &
-   {:keys [processable-url? identity-fn state-fn prevent-default-when-no-match?]
+   {:keys [processable-url? identity-fn state-fn prevent-default-when-no-match? dispatch-for-route-data?]
     :or   {processable-url?               processable-url?
            identity-fn                    identity
            state-fn                       (constantly nil)
-           prevent-default-when-no-match? (constantly false)}}]
+           prevent-default-when-no-match? (constantly false)
+           dispatch-for-route-data?       (constantly true)}}]
 
   (let [event-keys (atom nil)]
     (reify
@@ -123,12 +124,13 @@
                                  (or (not (.hasAttribute el "data-pushy-ignore"))
                                      (= (.getAttribute el "data-pushy-ignore") "false"))
                                  ;; Only dispatch on left button click
-                                 (= 0 (.-button e)))
-                        (let [next-token (get-token-from-uri uri)]
-                          (if (identity-fn (match-fn next-token))
+                                 (zero? (.-button e)))
+                        (let [next-token (get-token-from-uri uri)
+                              route-data (identity-fn (match-fn next-token))]
+                          (if (dispatch-for-route-data? route-data)
                             ;; Dispatch!
                             (do
-                              (set-token! this next-token (or (-> el .-title) ""))
+                              (set-token! this next-token (or (.-title el) ""))
                               (.preventDefault e))
 
                             (when (prevent-default-when-no-match? next-token)

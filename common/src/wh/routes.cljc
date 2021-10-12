@@ -27,6 +27,7 @@
 (def no-footer-pages #{:register :register-company :payment-setup :login :invalid-magic-link})
 (def no-content #{:payment-setup :register :register-company})
 (def register-link-pages #{:register :register-company})
+(def nextjs-pages #{:series})
 
 ;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
 ;; The matching is actually left unchanged from the original implementation
@@ -208,7 +209,9 @@
                        ["admin/" {""         :admin-command-list
                                   [:command] :admin-command}]
                        ["prospect" :prospect]]]
-              ["health/" {[:commit-sha] :health-by-commit-sha}]]])
+              ["health/" {[:commit-sha] :health-by-commit-sha}]
+              ;; next js routes
+              ["series" :series]]])
 
 ;;TODO this config should pulled partially from wh.response.ssr/page-content map
 (def server-side-only-pages #{:employers

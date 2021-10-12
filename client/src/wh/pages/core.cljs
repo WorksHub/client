@@ -235,10 +235,14 @@
            (some? (re-matches (re-pattern (str "^" (.-origin js/location) ".*$"))
                               (str uri))))))
 
+(defn dispatch-for-route-data? [{:keys [handler] :as route-data}]
+  (and route-data (not (contains? routes/nextjs-pages handler))))
+
 (def pushy-instance (pushy/pushy set-page parse-url
                                  :processable-url? processable-url?
                                  :state-fn (fn []
-                                             (clj->js {:scroll-position (.-scrollTop (js/document.querySelector ".page-container"))}))))
+                                             (clj->js {:scroll-position (.-scrollTop (js/document.querySelector ".page-container"))}))
+                                 :dispatch-for-route-data? dispatch-for-route-data?))
 
 (defn navigate
   "Construct a URL from handler/params and set it as current via pushy.
