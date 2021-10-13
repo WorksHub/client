@@ -21,7 +21,7 @@
   ::number-of-padded-results
   :<- [::sub-db]
   (fn [sub-db _]
-    (:wh.jobs.jobsboard.db/number-of-padded-results sub-db)))
+    (or (:wh.jobs.jobsboard.db/number-of-padded-results sub-db) 0)))
 
 (reg-sub
   ::promoted-jobs
