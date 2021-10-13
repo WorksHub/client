@@ -5,15 +5,15 @@
 
 (ns wh.pages.router
   (:require
-   [re-frame.core :refer [dispatch-sync reg-event-db reg-sub]]
-   [reagent.core :as r]
-   [wh.common.tracking-pixels :as tracking-pixels]
-   [wh.components.not-found :as not-found]
-   [wh.db :as db]
-   [wh.how-it-works.views :as how-it-works]
-   [wh.landing-new.views :as home]
-   [wh.pages.core :as pages]
-   [wh.subs :as subs :refer [<sub run-sub]]))
+    [re-frame.core :refer [dispatch-sync reg-event-db reg-sub]]
+    [reagent.core :as r]
+    [wh.common.tracking-pixels :as tracking-pixels]
+    [wh.components.not-found :as not-found]
+    [wh.db :as db]
+    [wh.how-it-works.views :as how-it-works]
+    [wh.landing-new.views :as home]
+    [wh.pages.core :as pages]
+    [wh.subs :as subs :refer [<sub run-sub]]))
 
 (defn homepage-redirect [db]
   (cond (not (db/logged-in? db))      :homepage-not-logged-in
@@ -43,23 +43,27 @@
 
 (defn current-page []
   (r/create-class
-   {:component-did-update
-    #(let [scroll     (<sub [::subs/scroll])
-           logged-in? (<sub [:user/logged-in?])]
-       (when logged-in?
-         (tracking-pixels/add-registration-tracking-pixels))
-       (r/next-tick
-        (fn []
-          (when-not (<sub [::subs/initial-page?])
-            (pages/force-scroll-to-x! scroll)))))
+    {:component-did-mount
+     #(let [logged-in? (<sub [:user/logged-in?])]
+        (when logged-in?
+          (tracking-pixels/add-registration-tracking-pixels)))
+     :component-did-update
+     #(let [scroll     (<sub [::subs/scroll])
+            logged-in? (<sub [:user/logged-in?])]
+        (when logged-in?
+          (tracking-pixels/add-registration-tracking-pixels))
+        (r/next-tick
+          (fn []
+            (when-not (<sub [::subs/initial-page?])
+              (pages/force-scroll-to-x! scroll)))))
 
-    :reagent-render
-    (fn []
-      (let [_    (<sub [:wh/page-params])
-            page (<sub [::pages/page])]                     ;; this sub causes re-render when page-params changes
-        (when-let [page-handler (<sub [::current-page])]
-          (if (contains? #{:job :register} (<sub [::pages/page])) ;; TODO :see_no_evil:
-            [page-handler]
-            [:div.main-wrapper
-             {:class (str "main-wrapper--" (name page))}
-             [page-handler]]))))}))
+     :reagent-render
+     (fn []
+       (let [_    (<sub [:wh/page-params])
+             page (<sub [::pages/page])]                     ;; this sub causes re-render when page-params changes
+         (when-let [page-handler (<sub [::current-page])]
+           (if (contains? #{:job :register} (<sub [::pages/page])) ;; TODO :see_no_evil:
+             [page-handler]
+             [:div.main-wrapper
+              {:class (str "main-wrapper--" (name page))}
+              [page-handler]]))))}))

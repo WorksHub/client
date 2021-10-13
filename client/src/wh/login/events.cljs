@@ -115,7 +115,7 @@
     (case env
       :prod  (str "https://" vertical ".works-hub.com/stackoverflow-callback")
       :stage (str "https://works-hub-stage.herokuapp.com/stackoverflow-dispatch/" vertical pr-number)
-      :dev   (str "http://" vertical ".localdomain:3449/stackoverflow-callback"))))
+      :dev   (str "http://" vertical ".localdomain:8080/stackoverflow-callback"))))
 
 (defn stackoverflow-authorize-url
   [client-id env vertical]
@@ -155,7 +155,7 @@
     (case env
       :prod  (<< "~{base}&redirect_uri=https://functional.works-hub.com/github-dispatch/~{vertical}")
       :stage (<< "~{base}&redirect_uri=https://works-hub-stage.herokuapp.com/github-dispatch/~{vertical}~{pr-number}")
-      :dev   (<< "~{base}&redirect_uri=http://functional.localdomain:3449/github-dispatch/~{vertical}"))))
+      :dev   (<< "~{base}&redirect_uri=http://functional.localdomain:8080/github-dispatch/~{vertical}"))))
 
 (reg-event-fx
   ::go-github

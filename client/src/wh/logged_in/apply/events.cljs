@@ -3,17 +3,18 @@
             [wh.common.cases :as cases]
             [wh.common.graphql-queries :as graphql]
             [wh.common.keywords :as keywords]
+            [wh.common.user :as common-user]
             [wh.db :as db]
             [wh.events :as events]
             [wh.graphql.jobs :as graphql-jobs]
             [wh.logged-in.apply.db :as apply]
             [wh.logged-in.profile.location-events :as location-events]
-            [wh.register.events :as register-events]
             [wh.login.events :as login-events]
-            [wh.user.db :as user]
-            [wh.util :as util]
+            [wh.register.events :as register-events]
+            [wh.routes :as routes]
             [wh.routes :as r]
-            [wh.common.user :as common-user])
+            [wh.user.db :as user]
+            [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [deffragment defquery def-query-template def-query-from-template]]))
 
 (def apply-interceptors (into db/default-interceptors
@@ -221,8 +222,10 @@
 (reg-event-fx
   ::post-create-user-reload
   db/default-interceptors
-  (fn [_ _]
-    {:reload true}))
+  (fn [{db :db} _]
+    {:set-url (routes/path (:wh.db/page db)
+                           :params (:wh.db/page-params db)
+                           :query-params (assoc (:wh.db/query-params db) "apply" true))}))
 
 (reg-event-fx
   ::create-user-failure

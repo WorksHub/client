@@ -350,7 +350,8 @@
          :icon-class styles/highlight__icon
          :children   [:div
                       [:ul (util/smc styles/highlight__content)
-                       (map (fn [r] [:li (util/smc styles/highlight__list__element) r])
+                       (map (fn [r] [:li {:key   r
+                                         :class (util/mc styles/highlight__list__element)} r])
                             regions)]
 
                       (when timezones
@@ -360,8 +361,10 @@
                           "Timezones"]
                          [:ul (util/smc styles/highlight__content)
                           (map
-                            (partial job-timezone
-                                     (util/smc styles/highlight__list__element))
+                            (fn [r]
+                              (job-timezone
+                                {:key   r
+                                 :class (util/mc styles/highlight__list__element)} r))
                             timezones)]])]}]))
    ;;
    (let [role-type (<sub [::subs/role-type])]

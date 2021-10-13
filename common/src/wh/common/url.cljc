@@ -81,7 +81,7 @@
     "prod"  (str "https://" (name vertical) ".works-hub.com")
     "stage" (str "/?vertical=" (name vertical))
     ;;else
-    (str "http://" (name vertical) ".localdomain:3449")))
+    (str "http://" (name vertical) ".localdomain:8080")))
 
 (defn share-urls [args]
   (let [{:keys [text text-twitter text-linkedin url]} (util/fmap args bidi/url-encode)]
