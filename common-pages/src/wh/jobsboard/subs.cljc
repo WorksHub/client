@@ -18,6 +18,12 @@
     (:wh.jobs.jobsboard.db/jobs sub-db)))
 
 (reg-sub
+  ::number-of-padded-results
+  :<- [::sub-db]
+  (fn [sub-db _]
+    (:wh.jobs.jobsboard.db/number-of-padded-results sub-db)))
+
+(reg-sub
   ::promoted-jobs
   :<- [::sub-db]
   (fn [sub-db _]
@@ -62,10 +68,11 @@
   ::result-count-str
   :<- [::search-result-count]
   :<- [::search-label]
-  (fn [[count label] _]
+  :<- [::number-of-padded-results]
+  (fn [[count label padded-count] _]
     (let [label (if label (str "'" label "'") "your criteria")]
-      (if (zero? count)
-        (str "We found no jobs matching " label " \uD83D\uDE22")
+      (if (or (zero? count) (pos? padded-count))
+        (str "We found no jobs matching " label " \uD83D\uDE22 but we have other interesting things...")
         (str "We found " count " jobs matching " label)))))
 
 (reg-sub
