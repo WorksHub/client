@@ -147,16 +147,16 @@
   db/default-interceptors
   (fn [{db :db} _]
     (let [sub-db (::register/sub-db db)
-          db (update db :db #(update % ::register/sub-db dissoc ::register/error))]
+          db     (update db :db #(update % ::register/sub-db dissoc ::register/error))]
       (if (register/valid-company-form? sub-db)
-        {:db      (assoc-in db [::register/sub-db ::register/loading?] true)
-         :graphql (graphql/create-company-and-user-mutation
-                    sub-db
-                    ::create-company-and-user-success
-                    ::create-company-and-user-fail)
+        {:db                          (assoc-in db [::register/sub-db ::register/loading?] true)
+         :graphql                     (graphql/create-company-and-user-mutation
+                                        sub-db
+                                        ::create-company-and-user-success
+                                        ::create-company-and-user-fail)
          :analytics/agree-to-tracking true}
         (let [checked-db (assoc db ::register/sub-db (toggle-company-field-errors sub-db))
-              error (find-first-error-key checked-db register/company-fields-maps)]
+              error      (find-first-error-key checked-db register/company-fields-maps)]
           (merge
             {:db checked-db}
             (when error
@@ -165,12 +165,21 @@
 (reg-event-fx
   ::select-company-suggestion
   register-interceptors
-  (fn [db [new-company]]
+  (fn [_ [new-company]]
     {:dispatch [::register/company-name new-company true]}))
+
+(reg-event-fx
+  ::select-source-suggestion
+  register-interceptors
+  (fn [{db :db} [new-source]]
+    (let [other-mode? (= "other" new-source)]
+      (cond-> {:dispatch [::register/source (if other-mode? "" new-source) true]
+               :db       (assoc db ::register/other-mode? other-mode?)}
+              other-mode? (assoc :focus "#_wh_company_register_db_source input")))))
 
 (defn db->analytics-data                                    ;TODO this only works if user arrives from pricing page
   [db]
-  {:package (get-in db [::db/query-params "package"])
+  {:package        (get-in db [::db/query-params "package"])
    :billing-period (get-in db [::db/query-params "billing"])})
 
 (reg-event-fx

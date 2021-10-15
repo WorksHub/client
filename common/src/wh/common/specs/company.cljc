@@ -38,6 +38,7 @@
 (s/def :wh.company/profile-last-modified :wh/date)
 (s/def :wh.company/total-published-issue-count nat-int?)
 (s/def :wh.company/total-published-job-count nat-int?)
+(s/def :wh.company/source ::p/non-empty-string)
 
 (s/def :wh.company/tags (s/coll-of :wh/tag))
 (s/def :wh.company/tag-ids (s/coll-of :wh.tag/id))

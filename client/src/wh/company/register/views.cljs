@@ -42,8 +42,9 @@
              :on-blur   #(dispatch [::events/check key])}
             (when suggestions
               (let [[suggestions-sub suggestions-event] suggestions]
-                {:suggestions          (<sub [suggestions-sub])
-                 :on-select-suggestion [suggestions-event]})))]))
+                (when-let [s (<sub [suggestions-sub])]
+                  {:suggestions          s
+                   :on-select-suggestion [suggestions-event]}))))]))
 
 
 (defn company-signup-step-content []

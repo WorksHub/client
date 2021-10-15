@@ -82,3 +82,25 @@
   ::company-suggestions
   (fn [db _]
     (format-suggestions db ::register/company-name ::register/company-suggestions :name)))
+
+(def source-suggestions
+  (concat (map #(hash-map :id % :label %)
+               ["LinkedIn"
+                "Twitter"
+                "Organic Search (Google etc)"
+                "Paid Search (Google Ads etc)"
+                "Email"
+                "From WorksHub staff"
+                "Word of mouth"])
+          [{:label "Other (please specify)" :id "other"}]))
+
+(reg-sub
+  ::source-suggestions
+  (fn [db _]
+    (when-not (get-in db [::register/sub-db ::register/other-mode?])
+      source-suggestions)))
+
+(reg-sub
+  ::other-mode?
+  (fn [db _]
+    (get-in db [::register/sub-db ::register/other-mode?])))

@@ -1,15 +1,17 @@
 (ns wh.company.register.graphql
   (:require
     [clojure.string :as str]
+    [wh.common.text :as text]
     [wh.company.register.db :as register]
     [wh.util :as util]))
 
 (defn- register-db->graphql-create-company-input
   [db]
   (util/remove-nils
-   {:name    (str/trim (::register/company-name db))
-    :domain  (::register/company-domain db)
-    :package (::register/package db)}))
+    {:name    (str/trim (::register/company-name db))
+     :domain  (::register/company-domain db)
+     :package (::register/package db)
+     :source  (text/not-blank (::register/source db))}))
 
 (defn register-db->graphql-create-initial-company-user-input
   [db]

@@ -3,15 +3,19 @@
     [cljs.spec.alpha :as s]
     [wh.common.specs.primitives :as primitives]))
 
-(def company-subs [:wh.company.register.subs/company-suggestions
-                   :wh.company.register.events/select-company-suggestion])
+(def company-name-config [:wh.company.register.subs/company-suggestions
+                          :wh.company.register.events/select-company-suggestion])
+
+(def source-config [:wh.company.register.subs/source-suggestions
+                    :wh.company.register.events/select-source-suggestion])
 
 (def fields-properties [:label :key :initial :input :spec :suggestions])
 
 (def company-fields
-  [["* Your Name"    ::contact-name ""   :text     ::primitives/non-empty-string]
-   ["* Company Name" ::company-name ""   :text     ::primitives/non-empty-string company-subs]
-   ["* Your Email"   ::email        ""   :email    ::primitives/email]])
+  [["* Your Name"                  ::contact-name ""   :text     ::primitives/non-empty-string]
+   ["* Company Name"               ::company-name ""   :text     ::primitives/non-empty-string company-name-config]
+   ["* Your Email"                 ::email        ""   :email    ::primitives/email]
+   ["How did you hear about us?"   ::source       ""   :select   string? source-config]])
 
 (def make-fields-map (partial map (partial zipmap fields-properties)))
 (def make-empty-fields-map (partial into {} (map (juxt :key :initial))))
@@ -38,13 +42,15 @@
                                                          :clearbit/logo])))
 (s/def ::description ::primitives/non-empty-string)
 (s/def ::logo-uploading? boolean?)
+(s/def ::other-mode? boolean?)
 
 (s/def ::sub-db (s/keys :opt [::checked-form
                               ::loading?
                               ::error
                               ::company-id
                               ::company-suggestions
-                              ::logo-uploading?]))
+                              ::logo-uploading?
+                              ::other-mode?]))
 
 (defn default-db
   [db]
