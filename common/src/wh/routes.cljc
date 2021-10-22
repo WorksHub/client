@@ -85,8 +85,8 @@
               ["feed" :feed]
               ["hiring" :employers]
               ["hire-" {[:template] :employers}]
-              ["issues/" {""            :issues
-                          [:company-id] (bidi/tag :issues :issues-for-company-id)}]
+              ["issues" {""            :issues
+                         ["/" :company-id] (bidi/tag :issues :issues-for-company-id)}]
               ["issue/" {[:id] :issue}]
               [[[#".+" :language] "-issues"] :issues-by-language]
               ["how-it-works" :how-it-works]
@@ -103,25 +103,25 @@
               ["search" :search]
 
               ;; Mixed routes
-              ["learn/" {""            :learn               ;;Public SSR
-                         "create"      :contribute
-                         "saved"       :liked-blogs
-                         [:id]         :blog                ;;Public SSR
-                         [:id "/edit"] :contribute-edit}]
-              ["companies/" {""                    :companies        ;;Public SSR
-                             "new"                 :create-company
-                             "applications"        :company-applications
-                             [:slug]               :company          ;;Public SSR
-                             [:slug "/jobs"]       :company-jobs     ;;Public SSR
-                             [:slug "/articles"]   :company-articles ;;Public SSR
-                             [:id "/edit"]         :admin-edit-company
-                             [:id "/dashboard"]    :company-dashboard
-                             [:id "/applications"] :admin-company-applications
-                             [:id "/offer"]        :create-company-offer}]
-              ["jobs/" {""            :jobsboard ;;Public SSR
-                        "new"         :create-job
-                        [:slug]       :job       ;;Public SSR
-                        [:id "/edit"] :edit-job}]
+              ["learn" {""                :learn ;;Public SSR
+                        "/create"         :contribute
+                        "/saved"          :liked-blogs
+                        ["/" :id]         :blog ;;Public SSR
+                        ["/" :id "/edit"] :contribute-edit}]
+              ["companies" {""                        :companies ;;Public SSR
+                            "/new"                    :create-company
+                            "/applications"           :company-applications
+                            ["/" :slug]               :company ;;Public SSR
+                            ["/" :slug "/jobs"]       :company-jobs ;;Public SSR
+                            ["/" :slug "/articles"]   :company-articles ;;Public SSR
+                            ["/" :id "/edit"]         :admin-edit-company
+                            ["/" :id "/dashboard"]    :company-dashboard
+                            ["/" :id "/applications"] :admin-company-applications
+                            ["/" :id "/offer"]        :create-company-offer}]
+              ["jobs" {""            :jobsboard ;;Public SSR
+                       "/new"         :create-job
+                       ["/" :slug]       :job       ;;Public SSR
+                       ["/" :id "/edit"] :edit-job}]
 
               ;; Public pages - app.js required
               ["register" :register]

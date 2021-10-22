@@ -270,7 +270,7 @@
   []
   [:div.company-dashboard__profile-banner
    (if (<sub [::subs/profile-enabled?])
-     (let [amount (<sub [::subs/profile-completion-percentage])
+     (let [amount    (<sub [::subs/profile-completion-percentage])
            amount-pc (str amount "%")]
        [:div
         [:h2 "Your Company Profile"]
@@ -312,23 +312,23 @@
        [:img {:src "/images/hiw/company/hiw/hiw4.svg"
               :alt ""}]]])])
 
-(defn live-roles []
-  (into
-    [:section {:class "live-roles"}
-     [:div {:class "live-roles__header"}
-      [:h2
-       [:span "Live Roles | "]
-       [:a {:href  (routes/path :company-applications)
-            :class "a--underlined"}
-        "All Applications"]]]]
-    (roles-list (<sub [::subs/published-jobs]) true)))
+(defn see-all-jobs
+  []
+  [link [:button.button.button--inverted
+         "View all jobs"] :company-jobs :slug (<sub [::subs/slug])])
 
-(defn unpublished-roles []
-  (when-let [jobs (seq (<sub [::subs/unpublished-jobs]))]
-    (into
-      [:section {:class "unpublished-roles"}
-       [:h2 "Unpublished Roles"]]
-      (roles-list jobs false))))
+(defn live-roles []
+  [:section {:class "live-roles"}
+   [:div {:class "live-roles__header"}
+    [:h2
+     [:span "Recent Live Roles"]
+     [:span " | "]
+     [link "View All Applications" :company-applications :class "a--underlined"]
+     [:span " | "]
+     [link "View All Jobs" :company-jobs :slug (<sub [::subs/slug]) :class "a--underlined"]]]
+   (roles-list (<sub [::subs/published-jobs]) true)
+   [:div {:class "live-roles__footer"}
+    [see-all-jobs]]])
 
 (defmulti activity-item-content :type)
 
@@ -494,8 +494,7 @@
         [profile-banner]
         [:div.company-dashboard__grid
          [activity]
-         [live-roles]
-         [unpublished-roles]]])
+         [live-roles]]])
      (when (<sub [:wh.job/show-admin-publish-prompt?])
        [job/admin-publish-prompt
         (<sub [::subs/permissions])

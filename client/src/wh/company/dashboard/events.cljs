@@ -19,6 +19,8 @@
             [wh.user.db :as user])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
 
+(def default-page-size 12)
+
 (def company-interceptors (into db/default-interceptors
                                 [(path ::sub-db/sub-db)]))
 
@@ -38,6 +40,7 @@
    ;; TODO: unify those types into one
    :venia/variables [{:variable/name "company_id" :variable/type :ID}
                      {:variable/name "company_jobs_id" :variable/type :String!}
+                     {:variable/name "jobs_page_size" :variable/type :Int}
                      {:variable/name "end_date" :variable/type :String!}]
    :venia/queries   [[:company {:id :$company_id}
                       [:id :name :descriptionHtml :logo :package :permissions
@@ -59,7 +62,8 @@
                        [:payment [:billingPeriod]]]]
                      [:jobs {:filter_type "all"
                              :company_id  :$company_jobs_id
-                             :page_size   100
+                             :page_size   :$jobs_page_size
+                             :published   true
                              :page_number 1}
                       [:id :slug :title [:tags :fragment/tagFields] :published :firstPublished :creationDate :verticals
                        [:location [:city :state :country :countryCode]]
@@ -143,6 +147,7 @@
       {:graphql {:query      dashboard-query
                  :variables  {:company_id      id
                               :company_jobs_id id
+                              :jobs_page_size  default-page-size
                               :end_date        (-> (t/now) date->str)}
                  :on-success [::fetch-company-success]
                  :on-failure [::fetch-company-failure]}})))
