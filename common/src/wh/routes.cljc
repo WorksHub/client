@@ -7,6 +7,7 @@
     #?(:cljs [goog.Uri.QueryData :as query-data])
     [bidi.bidi :as bidi]
     [clojure.string :as str]
+    [clojure.walk :as walk]
     [wh.common.specs.primitives]
     [wh.common.text :as text]))
 
@@ -79,139 +80,152 @@
 ;; slashes. If a URL without the trailing slash is requested,
 ;; there will be a server-side redirect to the correct one.
 
-(def routes ["/"
-             ;;Public SSR Pages - no app.js required
-             [["" :homepage]
-              ["feed" :feed]
-              ["hiring" :employers]
-              ["hire-" {[:template] :employers}]
-              ["issues" {""            :issues
-                         ["/" :company-id] (bidi/tag :issues :issues-for-company-id)}]
-              ["issue/" {[:id] :issue}]
-              [[[#".+" :language] "-issues"] :issues-by-language]
-              ["how-it-works" :how-it-works]
-              [#{[:tag "-jobs-in-" :location]
-                 [:tag "-jobs"]
-                 ["jobs-in-" :location]} :pre-set-search]
-              [[[#".+" :tag] "-articles"] :learn-by-tag]
-              ["privacy-policy" :privacy-policy]
-              ["terms-of-service" :terms-of-service]
-              ["pricing" :pricing]
-              ["sitemap" :sitemap]
-              ["invalid-magic-link" :invalid-magic-link]
-              ["metrics" :metrics]
-              ["search" :search]
+(defn add-trailing-slashes-to-roots
+  [routes]
+  (walk/postwalk
+    (fn [x]
+      (if (and (vector? x)
+               (some-> x second map?)
+               (some-> x second (get "")))
+        (update x 1 #(let [root (get % "")]
+                       (assoc % "/" root)))
+        x))
+    routes))
 
-              ;; Mixed routes
-              ["learn" {""                :learn ;;Public SSR
-                        "/create"         :contribute
-                        "/saved"          :liked-blogs
-                        ["/" :id]         :blog ;;Public SSR
-                        ["/" :id "/edit"] :contribute-edit}]
-              ["companies" {""                        :companies ;;Public SSR
-                            "/new"                    :create-company
-                            "/applications"           :company-applications
-                            ["/" :slug]               :company ;;Public SSR
-                            ["/" :slug "/jobs"]       :company-jobs ;;Public SSR
-                            ["/" :slug "/articles"]   :company-articles ;;Public SSR
-                            ["/" :id "/edit"]         :admin-edit-company
-                            ["/" :id "/dashboard"]    :company-dashboard
-                            ["/" :id "/applications"] :admin-company-applications
-                            ["/" :id "/offer"]        :create-company-offer}]
-              ["jobs" {""            :jobsboard ;;Public SSR
-                       "/new"         :create-job
-                       ["/" :slug]       :job       ;;Public SSR
-                       ["/" :id "/edit"] :edit-job}]
+(def routes
+  (add-trailing-slashes-to-roots
+    ["/"
+     ;;Public SSR Pages - no app.js required
+     [["" :homepage]
+      ["feed" :feed]
+      ["hiring" :employers]
+      ["hire-" {[:template] :employers}]
+      ["issues" {""                :issues
+                 ["/" :company-id] (bidi/tag :issues :issues-for-company-id)}]
+      ["issue/" {[:id] :issue}]
+      [[[#".+" :language] "-issues"] :issues-by-language]
+      ["how-it-works" :how-it-works]
+      [#{[:tag "-jobs-in-" :location]
+         [:tag "-jobs"]
+         ["jobs-in-" :location]} :pre-set-search]
+      [[[#".+" :tag] "-articles"] :learn-by-tag]
+      ["privacy-policy" :privacy-policy]
+      ["terms-of-service" :terms-of-service]
+      ["pricing" :pricing]
+      ["sitemap" :sitemap]
+      ["invalid-magic-link" :invalid-magic-link]
+      ["metrics" :metrics]
+      ["search" :search]
 
-              ;; Public pages - app.js required
-              ["register" :register]
-              ["company-registration" :register-company]
-              ["login" {""               (with-params :login :step :root)
-                        "/"              (with-params :login :step :root)
-                        "/email"         (with-params :login :step :email)
-                        "/github"        (with-params :login :step :github)
-                        "/stackoverflow" (with-params :login :step :stackoverflow)
-                        "/twitter"       (with-params :login :step :twitter)}]
-              ["github-callback" :github-callback]
-              ["stackoverflow-callback" :stackoverflow-callback]
-              ["twitter-callback" :twitter-callback]
+      ;; Mixed routes
+      ["learn" {""                :learn ;;Public SSR
+                "/create"         :contribute
+                "/saved"          :liked-blogs
+                ["/" :id]         :blog  ;;Public SSR
+                ["/" :id "/edit"] :contribute-edit}]
+      ["companies" {""                        :companies        ;;Public SSR
+                    "/new"                    :create-company
+                    "/applications"           :company-applications
+                    ["/" :slug]               :company          ;;Public SSR
+                    ["/" :slug "/jobs"]       :company-jobs     ;;Public SSR
+                    ["/" :slug "/articles"]   :company-articles ;;Public SSR
+                    ["/" :id "/edit"]         :admin-edit-company
+                    ["/" :id "/dashboard"]    :company-dashboard
+                    ["/" :id "/applications"] :admin-company-applications
+                    ["/" :id "/offer"]        :create-company-offer}]
+      ["jobs" {""                :jobsboard ;;Public SSR
+               "/new"            :create-job
+               ["/" :slug]       :job       ;;Public SSR
+               ["/" :id "/edit"] :edit-job}]
 
-              ;;Private pages - app.js required
-              ["admin/" {"companies"  :admin-companies
-                         "learn"      :admin-articles
-                         "feed"       :feed-preview
-                         "promotions" {""                      :promotions-preview
-                                       ["/new/" :type "/" :id] :create-promotion}}]
-              ["candidates/" {""                    :candidates
-                              "new"                 :create-candidate
-                              [:id]                 :candidate
-                              [:id "/edit/header"]  :candidate-edit-header
-                              [:id "/edit/private"] :candidate-edit-private}]
-              ["users/" {[:id] :user}]
-              ["company-settings/" :edit-company]
-              ["company-issues/" {""                                      :company-issues
-                                  "repositories"                          :manage-issues
-                                  ["repositories/" :owner "/" :repo-name] :manage-repository-issues}]
-              ["saved" :liked]
-              ["liked" :liked] ;; deprecated
-              ["recommended" :recommended]
-              ["applied" :applied]
-              ["profile/" {""             :profile
-                           "edit/header"  :profile-edit-header
-                           "edit/private" :profile-edit-private
-                           "edit"         :profile-edit-company-user
-                           [:id]          (bidi/tag :profile :profile-by-id)}]
-              ["notifications/" {"settings" :notifications-settings}]
-              ["payment/" {"package"  (with-params :payment-setup :step :select-package)
-                           "confirm"  (with-params :payment-setup :step :pay-confirm)
-                           "complete" (with-params :payment-setup :step :pay-success)}]
-              ["tags" {"/edit" :tags-edit}]
+      ;; Public pages - app.js required
+      ["register" :register]
+      ["company-registration" :register-company]
+      ["login" {""               (with-params :login :step :root)
+                "/email"         (with-params :login :step :email)
+                "/github"        (with-params :login :step :github)
+                "/stackoverflow" (with-params :login :step :stackoverflow)
+                "/twitter"       (with-params :login :step :twitter)}]
+      ["github-callback" :github-callback]
+      ["stackoverflow-callback" :stackoverflow-callback]
+      ["twitter-callback" :twitter-callback]
 
-              ["tags-collection/" {[:id] :tags-collection}]
+      ;;Private pages - app.js required
+      ["admin/" {"companies"  :admin-companies
+                 "learn"      :admin-articles
+                 "feed"       :feed-preview
+                 "promotions" {""                      :promotions-preview
+                               ["/new/" :type "/" :id] :create-promotion}}]
+      ["candidates" {""                        :candidates
+                     "/new"                    :create-candidate
+                     ["/" :id]                 :candidate
+                     ["/" :id "/edit/header"]  :candidate-edit-header
+                     ["/" :id "/edit/private"] :candidate-edit-private}]
+      ["users/" {[:id] :user}]
+      ["company-settings/" :edit-company]
+      ["company-issues" {""                                       :company-issues
+                         "/repositories"                          :manage-issues
+                         ["/repositories/" :owner "/" :repo-name] :manage-repository-issues}]
+      ["saved" :liked]
+      ["liked" :liked] ;; deprecated
+      ["recommended" :recommended]
+      ["applied" :applied]
+      ["profile" {""              :profile
+                  "/edit/header"  :profile-edit-header
+                  "/edit/private" :profile-edit-private
+                  "/edit"         :profile-edit-company-user
+                  ["/" :id]       (bidi/tag :profile :profile-by-id)}]
+      ["notifications/" {"settings" :notifications-settings}]
+      ["payment/" {"package"  (with-params :payment-setup :step :select-package)
+                   "confirm"  (with-params :payment-setup :step :pay-confirm)
+                   "complete" (with-params :payment-setup :step :pay-success)}]
+      ["tags" {"/edit" :tags-edit}]
 
-              ;; Non UI routes - form submissions
-              ["create-company" :create-company-form]
+      ["tags-collection/" {[:id] :tags-collection}]
 
-              ;; Non UI routes - redirects, webhooks, API, xml
-              ["sitemap.xml" :sitemapxml]
-              ["robots.txt" :robots]
-              ["rss.xml" :rss]
-              ["jooble/" {[:region ".xml"] :jooble}]
-              ["magic-link/" {[:token] :magic-link}]
-              ["github-dispatch/" {[:board] :github-dispatch}]
-              ["stackoverflow-dispatch/" {[:board] :stackoverflow-dispatch}]
-              ["twitter-dispatch/" {[:board] :twitter-dispatch}]
-              ["github-app-connect" :connect-github-app]
-              ["oauth/" {"greenhouse"          :oauth-greenhouse
-                         "greenhouse-callback" :oauth-greenhouse-callback
-                         "greenhouse-landing"  :oauth-greenhouse-landing
-                         "workable"            :oauth-workable
-                         "workable-callback"   :oauth-workable-callback
-                         "workable-landing"    :oauth-workable-landing
-                         "slack"               :oauth-slack
-                         "slack-callback"      :oauth-slack-callback
-                         "slack-landing"       :oauth-slack-landing
-                         "twitter"             :oauth-twitter}]
-              ["documents/" {[:access-id "/" :doc-type] :document-access}]
-              ["api/" [["graphql" :graphql]
-                       ["graphql-schema" :graphql-schema]
-                       ["webhook/" {"github-app" :github-app-webhook}]
-                       ["analytics" :analytics]
-                       ["login-as" :login-as]
-                       ["logout" :logout]
-                       ["image" :image-upload]
-                       ["cv" {""                           :cv-upload
-                              ["/" :filename]              :cv-file
-                              ["/" :user-id "/" :filename] :cv-file-legacy}]
-                       ["cover-letter" {""              :cover-letter-upload
-                                        ["/" :filename] :cover-letter-file}]
-                       ["reset-fixtures" :reset-fixtures]
-                       ["admin/" {""         :admin-command-list
-                                  [:command] :admin-command}]
-                       ["prospect" :prospect]]]
-              ["health/" {[:commit-sha] :health-by-commit-sha}]
-              ;; next js routes
-              ["series" :series]]])
+      ;; Non UI routes - form submissions
+      ["create-company" :create-company-form]
+
+      ;; Non UI routes - redirects, webhooks, API, xml
+      ["sitemap.xml" :sitemapxml]
+      ["robots.txt" :robots]
+      ["rss.xml" :rss]
+      ["jooble/" {[:region ".xml"] :jooble}]
+      ["magic-link/" {[:token] :magic-link}]
+      ["github-dispatch/" {[:board] :github-dispatch}]
+      ["stackoverflow-dispatch/" {[:board] :stackoverflow-dispatch}]
+      ["twitter-dispatch/" {[:board] :twitter-dispatch}]
+      ["github-app-connect" :connect-github-app]
+      ["oauth/" {"greenhouse"          :oauth-greenhouse
+                 "greenhouse-callback" :oauth-greenhouse-callback
+                 "greenhouse-landing"  :oauth-greenhouse-landing
+                 "workable"            :oauth-workable
+                 "workable-callback"   :oauth-workable-callback
+                 "workable-landing"    :oauth-workable-landing
+                 "slack"               :oauth-slack
+                 "slack-callback"      :oauth-slack-callback
+                 "slack-landing"       :oauth-slack-landing
+                 "twitter"             :oauth-twitter}]
+      ["documents/" {[:access-id "/" :doc-type] :document-access}]
+      ["api/" [["graphql" :graphql]
+               ["graphql-schema" :graphql-schema]
+               ["webhook/" {"github-app" :github-app-webhook}]
+               ["analytics" :analytics]
+               ["login-as" :login-as]
+               ["logout" :logout]
+               ["image" :image-upload]
+               ["cv" {""                           :cv-upload
+                      ["/" :filename]              :cv-file
+                      ["/" :user-id "/" :filename] :cv-file-legacy}]
+               ["cover-letter" {""              :cover-letter-upload
+                                ["/" :filename] :cover-letter-file}]
+               ["reset-fixtures" :reset-fixtures]
+               ["admin" {""             :admin-command-list
+                         ["/" :command] :admin-command}]
+               ["prospect" :prospect]]]
+      ["health/" {[:commit-sha] :health-by-commit-sha}]
+      ;; next js routes
+      ["series" :series]]]))
 
 ;;TODO this config should pulled partially from wh.response.ssr/page-content map
 (def server-side-only-pages #{:employers
