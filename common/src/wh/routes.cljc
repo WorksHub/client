@@ -155,7 +155,8 @@
                  "learn"      :admin-articles
                  "feed"       :feed-preview
                  "promotions" {""                      :promotions-preview
-                               ["/new/" :type "/" :id] :create-promotion}}]
+                               ["/new/" :type "/" :id] :create-promotion}
+                 "tags"       :tags-edit}]
       ["candidates" {""                        :candidates
                      "/new"                    :create-candidate
                      ["/" :id]                 :candidate
@@ -179,7 +180,6 @@
       ["payment/" {"package"  (with-params :payment-setup :step :select-package)
                    "confirm"  (with-params :payment-setup :step :pay-confirm)
                    "complete" (with-params :payment-setup :step :pay-success)}]
-      ["tags" {"/edit" :tags-edit}]
 
       ["tags-collection/" {[:id] :tags-collection}]
 
