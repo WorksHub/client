@@ -77,10 +77,11 @@
 
 (reg-sub
   ::header-info
-  (fn [{:keys [wh.db/vertical :wh.db/search-label] :as db} _]
+  (fn [{:keys [wh.db/vertical wh.db/search-label wh.db/main-header] :as db} _]
     (let [search-term (get-in db [:wh.db/page-params :tag])]
       (-> (verticals/config vertical :jobsboard-header)
-          (update :title #(or search-label %))
+          (update :title #(or main-header %))
+          (update :subtitle #(or search-label %))
           (update :description #(get (verticals/config vertical :jobsboard-tag-desc) search-term %))))))
 
 (reg-sub

@@ -27,8 +27,7 @@
        :data-test "jobs-board-header"}
       [:div
        [:h1 title]
-       [:h2 subtitle]
-       [:h3 description]]])))
+       [:h2 subtitle]]])))
 
 (defn- skeleton-jobs [view-type]
   [:section.jobs-board__jobs-list

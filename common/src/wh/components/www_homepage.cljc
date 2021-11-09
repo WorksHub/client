@@ -87,7 +87,7 @@
      [:img {:src "/images/homepage/header.svg"
             :alt ""}]]]
    [:div.homepage__header__copy
-    [:h1  (data/www-hero-title market)]
+    [:h1 (data/www-hero-title market)]
     [:p data/www-hero-copy]
     (link [:button.button
            {:id "www-landing__hero"}

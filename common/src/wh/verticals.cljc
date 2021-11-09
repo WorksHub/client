@@ -23,6 +23,16 @@
 (def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/product-demo")
 (def demo-link             "https://app.hubspot.com/meetings/workshub/product-demo")
 
+(def vertical-functional "functional")
+(def vertical-blockchain "blockchain")
+(def vertical-javascript "javascript")
+(def vertical-ai "ai")
+(def vertical-golang "golang")
+(def vertical-java "java")
+(def vertical-python "python")
+(def vertical-remote "remote")
+(def vertical-company "www")
+
 (def vertical-config
   {"functional"
    {:platform-name        "Functional Works"
