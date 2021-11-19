@@ -15,3 +15,10 @@
                                        :only-mine            false
                                        :competitive          true
                                        :published            #{}}})
+
+(def ssr-jobs-path [:wh.jobs.jobsboard.db/sub-db :wh.jobs.jobsboard.db/jobs])
+
+(defn remove-ssr-jobs
+  "we remove ssr-jobs from app-db so :wh.search/searching? sub works correctly"
+  [app-db]
+  (assoc-in app-db ssr-jobs-path nil))

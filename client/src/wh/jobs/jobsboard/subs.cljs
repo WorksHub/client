@@ -24,6 +24,15 @@
   (fn [{:keys [jobs-search] :as _results} _]
     (:search-params jobs-search)))
 
+(reg-sub
+  ::ssr-jobs
+  (fn [db _]
+    (get-in db jobsboard/ssr-jobs-path)))
+
+(reg-sub
+  ::db
+  (fn [db _] db))
+
 ;; used e.g. on preset search pages
 (reg-sub
   ::search-tag
@@ -136,16 +145,21 @@
 
 (reg-sub
   :wh.search/searching?
-  (fn [db _]
-    (gqlc/cache-loading? events/jobs db)))
+  :<- [::ssr-jobs]
+  :<- [::db]
+  (fn [[ssr-jobs db] _]
+    (if ssr-jobs
+      false
+      (gqlc/cache-loading? events/jobs db))))
 
 (reg-sub
   ::jobs
   :<- [::jobs-search]
   :<- [:user/liked-jobs]
   :<- [:user/applied-jobs]
-  (fn [[jobs-search liked-jobs applied-jobs] _]
-    (->> (:jobs jobs-search)
+  :<- [::ssr-jobs]
+  (fn [[jobs-search liked-jobs applied-jobs ssr-jobs] _]
+    (->> (or (:jobs jobs-search) ssr-jobs)
          (job/add-interactions liked-jobs applied-jobs)
          (map job/translate-job))))
 
