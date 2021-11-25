@@ -1,7 +1,8 @@
 (ns wh.common.text
   (:require #?(:cljs [goog.string :as gstring])
             #?(:cljs [goog.string.format])
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  #?(:clj (:refer-clojure :exclude [format])))
 
 (defn pluralize
   ([n singular] (pluralize n singular (str singular "s")))
