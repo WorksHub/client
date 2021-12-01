@@ -964,8 +964,8 @@
                                            :else
                                            nil)}
                :on-success [::search-ats-jobs-success]
-               :on-failure [:error/set-global "Oops! Failed to retrieve external jobs" []]}
-     }))
+               :on-failure [:error/set-global "Oops! Failed to retrieve external jobs" []]}}))
+
 
 (def search-term-min-length 2)
 

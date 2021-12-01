@@ -223,7 +223,8 @@
                ["reset-fixtures" :reset-fixtures]
                ["admin" {""             :admin-command-list
                          ["/" :command] :admin-command}]
-               ["prospect" :prospect]]]
+               ["prospect" :prospect]
+               ["updates/token" :updates-token]]]
       ["health/" {[:commit-sha] :health-by-commit-sha}]
       ;; next js routes
       ["series" :series]]]))
