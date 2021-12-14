@@ -35,6 +35,7 @@
                                      :wh.location/country-code]
                             :opt-un [:wh.location/city
                                      :wh.location/sub-region
+                                     :wh.location/street
                                      :wh.location/region
                                      :wh.location/latitude
                                      :wh.location/longitude
