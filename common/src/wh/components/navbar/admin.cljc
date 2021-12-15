@@ -51,7 +51,11 @@
    {:path       (routes/path :applied)
     :icon-name  "applications"
     :icon-class styles/dropdown__link__icon-plus
-    :text       "Applied Jobs"}])
+    :text       "Applied Jobs"}
+   {:path       (routes/path :create-job-new)
+    :icon-name  "plus-circle"
+    :icon-class styles/dropdown__link__icon-plus
+    :text       "Create Job, New Form"}])
 
 (def company-admin-submenu-list
   [{:path       (routes/path :admin-companies)

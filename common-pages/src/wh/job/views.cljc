@@ -95,7 +95,12 @@
 
             ;;
             (and admin? published?)
-            (conj [promote/promote-button {:id (<sub [::subs/id]) :type :job}]))))
+            (conj [promote/promote-button {:id (<sub [::subs/id]) :type :job}])
+            admin?
+            (conj [link
+                   [:button.button.button--medium.button--inverted "Edit with new form"]
+                   :edit-job-new
+                   :slug (<sub [::subs/slug])]))))
 
 (defn buttons-user [{:keys [id condensed?]}]
   (let [name             (<sub [::subs/company-name])

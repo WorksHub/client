@@ -22,6 +22,11 @@
     (get-in db [::job/sub-db ::job/id])))
 
 (reg-sub
+  ::slug
+  (fn [db _]
+    (get-in db [::job/sub-db ::job/slug])))
+
+(reg-sub
   ::salary
   :<- [::sub-db]
   (fn [{:keys [::job/remuneration]} _]
