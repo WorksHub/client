@@ -27,7 +27,7 @@
     :icon-name         "logout"
     :text              "Logout"}])
 
-(def jobs-admin-submenu-list
+(defn jobs-admin-submenu-list [prod?]
   [{:path       (routes/path :jobsboard)
     :icon-name  "board-rectangles"
     :icon-class styles/dropdown__link__icon-jobsboard
@@ -52,10 +52,11 @@
     :icon-name  "applications"
     :icon-class styles/dropdown__link__icon-plus
     :text       "Applied Jobs"}
-   {:path       (routes/path :create-job-new)
-    :icon-name  "plus-circle"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Create Job, New Form"}])
+   (when-not prod?
+     {:path       (routes/path :create-job-new)
+      :icon-name  "plus-circle"
+      :icon-class styles/dropdown__link__icon-plus
+      :text       "Create Job, New Form"})])
 
 (def company-admin-submenu-list
   [{:path       (routes/path :admin-companies)
@@ -85,7 +86,7 @@
     [components/submenu
      {:text      "Jobs"
       :icon-name "suitcase"
-      :dropdown  jobs-admin-submenu-list}]
+      :dropdown  (jobs-admin-submenu-list (<sub [:wh/prod?]))}]
 
     [components/submenu
      {:text      "Articles"
@@ -126,7 +127,7 @@
     {:text     "Jobs"
      :route    :jobsboard
      :page     page
-     :dropdown jobs-admin-submenu-list}]
+     :dropdown (jobs-admin-submenu-list (<sub [:wh/prod?]))}]
 
    [components/link
     {:text  "Open Source Issues"

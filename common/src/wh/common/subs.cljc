@@ -175,3 +175,9 @@
   :wh/env
   (fn [db _]
     (:wh.settings/environment db)))
+
+(reg-sub
+  :wh/prod?
+  :<- [:wh/env]
+  (fn [env _] []
+    (= "prod" (name env))))

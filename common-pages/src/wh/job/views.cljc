@@ -77,6 +77,7 @@
         view-applications? (or (not show-unpublished?) force-view-applications?)
         publishing?        (<sub [::subs/publishing?])
         admin?             (<sub [:user/admin?])
+        company?           (<sub [:user/company?])
         published?         (<sub [::subs/published?])]
     (cond-> [:div
              (util/smc "job__admin-buttons" [condensed? "job__admin-buttons--condensed"])
@@ -96,7 +97,7 @@
             ;;
             (and admin? published?)
             (conj [promote/promote-button {:id (<sub [::subs/id]) :type :job}])
-            admin?
+            (or admin? (and company? (not (<sub [:wh/prod?]))))
             (conj [link
                    [:button.button.button--medium.button--inverted "Edit with new form"]
                    :edit-job-new

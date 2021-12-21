@@ -46,7 +46,7 @@
     :icon-class styles/dropdown__link__icon-person
     :text       "My Open Source Issues"}])
 
-(defn jobs-company-submenu-list [can-create?]
+(defn jobs-company-submenu-list [can-create? prod?]
   [{:path       (routes/path :jobsboard)
     :icon-name  "board-rectangles"
     :icon-class styles/dropdown__link__icon-jobsboard
@@ -62,7 +62,12 @@
    {:path       (routes/path :company-applications)
     :icon-name  "document-filled"
     :icon-class styles/dropdown__link__icon-document
-    :text       "All live Applications"}])
+    :text       "All live Applications"}
+   (when-not prod?
+     {:path       (routes/path :create-job-new)
+      :icon-name  "plus-circle"
+      :icon-class styles/dropdown__link__icon-plus
+      :text       "Create Job, New Form"})])
 
 (defn company-company-submenu-list [company-slug]
   [{:path       (routes/path :companies)
@@ -83,7 +88,9 @@
       [components/submenu
        {:text      "Jobs"
         :icon-name "suitcase"
-        :dropdown  (jobs-company-submenu-list can-create?)}]
+        :dropdown  (jobs-company-submenu-list
+                     can-create?
+                     (<sub [:wh/prod?]))}]
 
       [components/submenu
        {:text      "Issues"
@@ -119,7 +126,9 @@
       {:text     "Jobs"
        :route    :jobsboard
        :page     page
-       :dropdown (jobs-company-submenu-list can-create?)}]
+       :dropdown (jobs-company-submenu-list
+                   can-create?
+                   (<sub [:wh/prod?]))}]
 
      [components/link
       {:text     "Open Source Issues"
