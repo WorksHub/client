@@ -1,14 +1,12 @@
 (ns wh.graphql-cache
   (:require
-    #?(:clj [com.walmartlabs.lacinia.util :as lac-util])
     #?(:clj [taoensso.timbre :as log :refer [errorf]])
     #?(:clj [wh.graphql :as graphql])
     [re-frame.core :refer [reg-event-db reg-event-fx reg-sub]]
     [re-frame.registrar :refer [get-handler register-handler]]
     [wh.common.cases :as cases]
     [wh.common.time :as time]
-    [wh.db :as db]
-    [clojure.set :as set]))
+    [wh.db :as db]))
 
 (defn reg-query
   [id query]

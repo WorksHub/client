@@ -84,7 +84,7 @@
     (str "http://" (name vertical) ".localdomain:8080")))
 
 (defn share-urls [args]
-  (let [{:keys [text text-twitter text-linkedin url]} (util/fmap args bidi/url-encode)]
+  (let [{:keys [text text-twitter text-linkedin url]} (util/map-vals args bidi/url-encode)]
     {:twitter  (str "https://twitter.com/intent/tweet?text="
                     (or text-twitter text) "&url=" url)
      :facebook (str "http://www.facebook.com/sharer/sharer.php?u=" url)
