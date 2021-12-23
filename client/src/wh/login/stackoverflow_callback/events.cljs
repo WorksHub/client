@@ -95,7 +95,7 @@
                          [:stackoverflow_info
                           [:access_token
                            :account_id
-                           :tags]]]]
+                           :so_tags]]]]
                        [:user
                         [:id :image_url]]]]]})
 
