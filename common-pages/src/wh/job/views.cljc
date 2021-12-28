@@ -81,15 +81,14 @@
         published?         (<sub [::subs/published?])]
     (cond-> [:div
              (util/smc "job__admin-buttons" [condensed? "job__admin-buttons--condensed"])
+             (when show-unpublished?
+               [jc/publish-button {:publishing? publishing?
+                                   :on-click    [::events/attempt-publish-role]}])
              [edit-button can-edit?]
              [modal-publish-job/modal
               {:on-close               #(dispatch [::modal-publish-job/toggle-modal])
                :on-publish             #(dispatch [::events/publish-role])
                :on-publish-and-upgrade #(dispatch [::events/publish-role nil :redirect-to-payment])}]]
-            ;;
-            show-unpublished?
-            (conj [jc/publish-button {:publishing? publishing?
-                                      :on-click    [::events/attempt-publish-role]}])
             ;;
             view-applications?
             (conj [jc/view-applications-button {:href (<sub [::subs/view-applications-link])}])
@@ -304,9 +303,8 @@
   []
   (let [matching-users (<sub [::subs/matching-users])]
     [:section.job__company-action
-     (if (and matching-users (> matching-users 0))
-       [:p "We have " matching-users " active " (pluralize matching-users "member") " with 75%+ match rates for this role. What are you waiting for?"]
-       [:p "Calculating your matches..."])
+     (when (and matching-users (> matching-users 0))
+       [:p "We have " matching-users " active " (pluralize matching-users "member") " with 75%+ match rates for this role. What are you waiting for?"])
      [buttons]]))
 
 (defn admin-action
