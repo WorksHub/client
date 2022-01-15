@@ -38,7 +38,7 @@
    [:compensation [:amount :currency]]
    [:contributors [:id :name [:other_urls [:url]] [:github_info [:login]]]]
    [:repo [:owner :name :description :primary_language [:community [:readme_url :contributing_url]]]]
-   [:company [:id :name :logo]]
+   [:company [:id :name :logo :slug]]
    [:author [:login :name]]
    [:labels [:name]]])
 
