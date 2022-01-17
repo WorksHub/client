@@ -1,9 +1,10 @@
 (ns wh.search.events
   (:require ["algoliasearch" :as algoliasearch]
             [clojure.walk :as walk]
-            [re-frame.core :refer [reg-event-fx dispatch reg-fx]]
+            [re-frame.core :refer [dispatch reg-event-fx reg-fx]]
+            [wh.common.search :as search]
             [wh.db :as db]
-            [wh.pages.core :refer [on-page-load] :as pages]))
+            [wh.pages.core :refer [on-page-browser-nav on-page-load] :as pages]))
 
 (def client (algoliasearch "MVK698T35T" "bb5e4b1d90411ced5d34fc33c3a6e747"))
 
@@ -14,7 +15,7 @@
 
 (reg-event-fx
   ::fetch-data
-  (fn [{db :db} [_ query prefix]]
+  (fn [{_db :db} [_ query prefix]]
     {:search [query prefix]}))
 
 (reg-event-fx
@@ -104,9 +105,24 @@
         (.then (partial handle-success prefix))
         (.catch handle-failure))))
 
-(defmethod on-page-load :search [db]
-  (let [query  (get-in db [:wh.db/query-params "query"])
+(defn- search-related-events [db scroll-to-top?]
+  (let [query  (search/->search-term (:wh.db/page-params db) (:wh.db/query-params db))
         prefix (get db :wh.settings/algolia-index-prefix)]
-    [[:wh.events/scroll-to-top]
+    [(when scroll-to-top? [:wh.events/scroll-to-top])
      [::fetch-data query prefix]
      [:wh.components.navbar.events/set-search-value query]]))
+
+;; NB: This event is necessary to keep the `wh.components.navbar.navbar`
+;;     search box value in sync w/ the URI-specified search term, if any,
+;;     upon the browser navigation inside the universal search page.
+(reg-event-fx
+  ::trigger-search
+  db/default-interceptors
+  (fn [{db :db} [scroll-to-top?]]
+    {:dispatch-n (search-related-events db scroll-to-top?)}))
+
+(defmethod on-page-browser-nav :search [_db]
+  [::trigger-search false])
+
+(defmethod on-page-load :search [db]
+  (search-related-events db true))

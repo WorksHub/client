@@ -4,6 +4,7 @@
 ;; and scrolling back to proper positions when the back button is
 ;; pressed.
 
+;; TODO: Update this documentation accordingly to reflect new changes.
 ;; Here's an overview of how we achieve that and differences from
 ;; upstream pushy:
 
@@ -34,6 +35,8 @@
 ;;    we don't fire on-page-load events, which makes for a smoother
 ;;    user experience.
 
+;; 5. TODO: Add missing documentation for the `dispatch-for-route-data?`.
+
 (ns pushy.core
   (:require [clojure.string]
             [goog.events :as events])
@@ -55,7 +58,7 @@
     ;; Include query string in token
     (if (empty? query) path (str path "?" query))))
 
-(defn- processable-url? [uri]
+(defn processable-url? [uri]
   (and (not (clojure.string/blank? uri))                    ;; Blank URLs are not processable.
        (or (and (not (.hasScheme uri)) (not (.hasDomain uri))) ;; By default only process relative URLs + URLs matching window's origin
            (some? (re-matches (re-pattern (str "^" (.-origin js/location) ".*$"))
@@ -67,13 +70,19 @@
     * match-fn: the function used to check if a particular route exists
     * identity-fn: (optional) extract the route from value returned by match-fn"
   [dispatch-fn match-fn &
-   {:keys [processable-url? identity-fn state-fn prevent-default-when-no-match? dispatch-for-route-data?]
+   {:keys [processable-url? identity-fn prevent-default-when-no-match?
+           ;; custom params:
+           state-fn dispatch-for-route-data?]
     :or   {processable-url?               processable-url?
            identity-fn                    identity
-           state-fn                       (constantly nil)
            prevent-default-when-no-match? (constantly false)
-           dispatch-for-route-data?       (constantly true)}}]
-
+           ;; custom params defaults:
+           state-fn                       (constantly nil)
+           dispatch-for-route-data?       (constantly true)}}] ;; TODO: Shouldn't it be `identity`???
+  ;; NB: All modern browsers support History API uniformly nowadays.
+  ;;     There's no more need for hacky workarounds.
+  ;;     Manually tested in latest Chrome, Firefox and Safari 13.
+  (set! (.-scrollRestoration js/window.history) "auto")
   (let [event-keys (atom nil)]
     (reify
       IHistory

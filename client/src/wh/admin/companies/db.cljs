@@ -23,10 +23,10 @@
 (defn initialize-db
   [db]
   {::tag-search-collapsed? true
-   ::page-number 1
-   ::search (get-in db [::db/query-params "search"])
-   ::sort (keyword (get-in db [::db/query-params "sort"] "created"))
-   ::tags (some->
-           (get-in db [::db/query-params "tags"])
-           (str/split #",")
-           (set))})
+   ::page-number           1
+   ::search                (get-in db [::db/query-params "search"])
+   ::sort                  (keyword (get-in db [::db/query-params "sort"] "created"))
+   ::tags                  (some->
+                             (get-in db [::db/query-params "tags"])
+                             (str/split #",")
+                             (set))})

@@ -161,13 +161,13 @@
   (on-click-fn (jsf (copyStringToClipboard s))))
 
 (defn on-search-key []
-  (on-key-down-fn (jsf-argv (onSearchKey 'event 'onSearchQueryEdit))))
+  (on-key-down-fn (jsf-argv (SearchHints.onSearchKey 'event 'SearchHints.onSearchQueryEdit))))
 
 (defn on-search-query-edit []
-  (on-change-fn (jsf-argv (onSearchQueryEdit 'event))))
+  (on-change-fn (jsf-argv (SearchHints.onSearchQueryEdit 'event))))
 
 (defn on-search-focus []
-  (on-focus-fn (jsf-argv (onSearchFocus 'event))))
+  (on-focus-fn (jsf-argv (SearchHints.onSearchFocus 'event))))
 
 (defn multiple-on-click
   [& fns]

@@ -4,6 +4,7 @@
     #?(:cljs [wh.components.github :as github])
     [clojure.string :as str]
     [wh.common.data :as data]
+    [wh.common.subs]
     [wh.common.time :as time]
     [wh.components.common :refer [link img wrap-img]]
     [wh.components.faq :as faq]
@@ -228,5 +229,5 @@
     (<sub [::subs/current-page-number])
     (<sub [::subs/pagination])
     (<sub [:wh.subs/page])
-    (<sub [:wh.subs/query-params])
+    (<sub [:wh/query-params])
     (<sub [:wh/page-params])]])

@@ -1,7 +1,6 @@
 (ns wh.search.core
   (:require [cljs.loader :as loader]
             [re-frame.core :refer [dispatch-sync reg-event-db]]
-            [wh.common.user :as user-common]
             [wh.db :as db]
             [wh.search.views :as search-views]))
 

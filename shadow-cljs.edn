@@ -23,7 +23,7 @@
  :builds {:app {:target        :browser
                 :module-loader true
                 :modules
-                {:wh              {:init-fn wh.core/init}
+                {:wh              {:init-fn    wh.core/init}
                  :common          {:entries    [wh.common.core]
                                    :depends-on #{:wh}}
                  :venia           {:entries    [wh.venia.core]

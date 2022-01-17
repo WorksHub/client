@@ -17,7 +17,7 @@
             [wh.util :as util]))
 
 (defn add-search [tag]
-  (assoc tag :href (routes/path :search :query-params {:query (:label tag)})))
+  (assoc tag :href (routes/path :search :params {:query (:label tag)})))
 
 (defn company-card
   [{:keys [logo name slug tags size location description profile-enabled

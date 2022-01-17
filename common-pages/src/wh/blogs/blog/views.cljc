@@ -121,7 +121,7 @@
          (when other-urls [url-icons other-urls "author-info__other-urls"])]]
        (when (seq skill-names)
          [:div.author-info__tags
-          [tag/strs->tag-list :a skill-names  {:f #(assoc % :href (routes/path :search :query-params {:query (:label %)}))}]])])))
+          [tag/strs->tag-list :a skill-names  {:f #(assoc % :href (routes/path :search :params {:query (:label %)}))}]])])))
 
 (defn blog-info []
   [:div.blog-info

@@ -1,7 +1,7 @@
 (ns wh.admin.candidates.db
   (:require [cljs.spec.alpha :as s]
             [clojure.string :as str]
-            [wh.common.specs.primitives :as p]
+            [wh.common.specs.primitives]
             [wh.db :as db]))
 
 (def approval-statuses ["pending" "approved" "rejected"])
@@ -30,12 +30,12 @@
 
 (defn default-db [db]
   (let [query-params (::db/query-params db)
-        verticals (some-> query-params
-                          (get  "board")
-                          (str/split (re-pattern query-param-separator)))
-        statuses (some-> query-params
-                         (get  "approval-status")
-                         (str/split (re-pattern query-param-separator)))]
+        verticals    (some-> query-params
+                             (get "board")
+                             (str/split (re-pattern query-param-separator)))
+        statuses     (some-> query-params
+                             (get "approval-status")
+                             (str/split (re-pattern query-param-separator)))]
     {::search-term       (get query-params "search" "")
      ::page              (js/parseInt (get query-params "page" "1"))
      ::verticals         (set (or verticals [(::db/vertical db)]))

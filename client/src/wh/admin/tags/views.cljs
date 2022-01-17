@@ -4,21 +4,21 @@
     [wh.admin.tags.events :as events]
     [wh.admin.tags.subs :as subs]
     [wh.common.text :as text]
+    [wh.common.subs]
     [wh.components.forms.views :refer [text-field select-field]]
     [wh.components.icons :refer [icon]]
     [wh.components.not-found :as not-found]
     [wh.components.pagination :as pagination]
     [wh.components.tag :as tag]
     [wh.re-frame.events :refer [dispatch dispatch-sync]]
-    [wh.re-frame.subs :refer [<sub]]
-    [wh.util :as util]))
+    [wh.re-frame.subs :refer [<sub]]))
 
 (defn tag-row
   [_tag]
   (let [temp-label  (r/atom nil)
         temp-weight (r/atom nil)
         editing?    (r/atom false)]
-    (fn [{:keys [id label slug type subtype weight] :as tag}]
+    (fn [{:keys [_id label slug type subtype weight] :as tag}]
       [:div.edit-tags__tag-row
        {:class (when @editing? "edit-tags__tag-row--editing")}
        [:div.edit-tags__tag-row__primary
@@ -28,8 +28,8 @@
         [:a.a--underlined
          {:on-click #(swap! editing? not)}
          (if @editing? "Hide" "Edit")]]
-       (when @editing?
 
+       (when @editing?
          [:div.edit-tags__tag-row__editable
           [:div.is-flex.tag-label [:strong "Label"] [text-field (or @temp-label label)
                                                      {:on-change #(reset! temp-label %)}]
@@ -68,19 +68,15 @@
                     :max 1.0
                     :step 0.001
                     :value (or @temp-weight weight)
-                    :on-change #(reset! temp-weight (js/parseFloat (.. % -target -value)))}]]])
-
-       #_[:div.edit-tags__tag-row__actions ;; TODO add ability to delete tags?
-          [icon "delete"
-           :on-click #(dispatch [::events/delete-tag id])]]])))
+                    :on-change #(reset! temp-weight (js/parseFloat (.. % -target -value)))}]]])])))
 
 (def page-limit 30)
 
 (defn main []
   (fn []
-    (let [all-tags (<sub [::subs/all-tags])
-          query-params (<sub [:wh.subs/query-params])
-          current-page (js/parseInt (get query-params "page" "1"))
+    (let [all-tags             (<sub [::subs/all-tags])
+          query-params         (<sub [:wh/query-params])
+          current-page         (js/parseInt (get query-params "page" "1"))
           {:keys [tags total]} (<sub [::subs/all-tags--filtered current-page page-limit])]
       [:div.main.edit-tags
        [:h1 "Edit Tags"]
@@ -110,7 +106,11 @@
             [:h2 "No matching tags"])
           [:h2 "Loading..."])]
        (when (and (not-empty tags) (> total page-limit))
-         [pagination/pagination current-page (pagination/generate-pagination current-page (int (js/Math.ceil (/ total page-limit)))) :tags-edit query-params])])))
+         [pagination/pagination
+          current-page
+          (pagination/generate-pagination current-page (int (js/Math.ceil (/ total page-limit))))
+          :tags-edit
+          query-params])])))
 
 (defn page []
   (if (<sub [:user/admin?])

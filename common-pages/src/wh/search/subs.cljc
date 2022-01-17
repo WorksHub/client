@@ -1,6 +1,5 @@
 (ns wh.search.subs
   (:require [re-frame.core :refer [reg-sub]]
-            [wh.db :as db]
             [wh.search.components :as components]))
 
 (reg-sub
@@ -14,11 +13,11 @@
   ::sections-with-results
   :<- [::search-results]
   (fn [results _]
-    (->> components/sections-coll
-         (map
-           (fn [{:keys [id] :as tab}]
-             (assoc tab :search-result
-                    (get results id empty-result)))))))
+    (map
+      (fn [{:keys [id] :as tab}]
+        (assoc tab :search-result
+               (get results id empty-result)))
+      components/sections-coll)))
 
 
 (defn safe-sum [coll]
@@ -45,16 +44,13 @@
          vals
          (mapcat :hits)
          (mapcat :tags)
-         distinct
+         ;; leave only technology-related tags
          (filter #(#{"tech"} (:type %)))
+         ;; leave only distinct (by `objectID`)
+         (group-by :objectID)
+         (map (comp first val))
          ;; change algoia ids into tag ids
          (map #(assoc % :id (:objectID %)))
-         ;; magic number. too many tags would pollute UI. we want users to click
+         ;; too many tags would pollute UI. we want users to click
          ;; tags, not to spend half an hour scrolling through them
-         (take 9))))
-
-;; Used for server side render
-(reg-sub
-  ::query
-  (fn [db _]
-    (get-in db [:wh.db/page-params :query])))
+         (take components/max-displayed-tags))))

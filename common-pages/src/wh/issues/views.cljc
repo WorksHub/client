@@ -131,7 +131,7 @@
             [:div.issues__hiring-pod__job
              [link [:strong title] :job :slug slug]
              [:span (format-job-location location remote)]]))
-        [link [:button.button "View Jobs At This Company"] :jobsboard :query-params {:search company-name}]]
+        [link [:button.button "View Jobs At This Company"] :jobsboard-search :params {:query company-name}]]
        [:div.issues__hiring-pod__sign-up
         [:p "Sign up to Workshub to view all their available positions"]
         [link [:button.button "Get Started"] :register]])]))

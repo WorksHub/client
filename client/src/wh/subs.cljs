@@ -11,9 +11,9 @@
 (def <sub (comp deref re-frame.core/subscribe))
 
 (defn run-sub
-  "Runs subscription sub-v against db if it's defined; returns nil if not.
-  This is useful if a subscription like :user/admin? is defined in a module,
-  and we want to check for it if that module isn't possibly loaded."
+  "Runs subscription `sub-v` against `db` if it's defined; returns `nil` if not.
+   This is useful if a subscription like `:user/admin?` is defined in a module,
+   and we want to check for it if that module isn't possibly loaded."
   [db sub-v]
   (let [sub-name (first sub-v)]
     (when-let [sub-fn (rf-registrar/get-handler :sub sub-name)]
@@ -28,32 +28,17 @@
   ([options label]
    (constantly (into [{:id nil, :label label}] options))))
 
-;; TODO: remove the following three subscriptions and replace with ones defined in wh.common.subs
-(reg-sub ::vertical
+;; TODO: Not used anymore. May be safely removed.
+(reg-sub ::initial-page?
          (fn [db _]
-           (::db/vertical db)))
+           (<= (:wh.db/page-moves db) 1)))
 
-(reg-sub ::query-params
+(reg-sub ::page
          (fn [db _]
-           (::db/query-params db)))
-
-(reg-sub ::query-param
-         :<- [::query-params]
-         (fn [params [_ param]]
-           (get params param)))
-
-(reg-sub
-  ::initial-page?
-  (fn [db _]
-    (<= (:wh.db/page-moves db) 1)))
-
-(reg-sub
-  ::page
-  (fn [db _]
-    (:wh.db/page db)))
+           (:wh.db/page db)))
 
 (reg-sub ::blockchain?
-         :<- [::vertical]
+         :<- [:wh/vertical]
          (fn [vertical]
            (db/blockchain? vertical)))
 
@@ -61,6 +46,7 @@
          (fn [db _]
            (::db/loading? db)))
 
+;; TODO: Not used anymore. May be safely removed.
 (reg-sub ::scroll
          (fn [db _]
            (::db/scroll db)))
@@ -77,25 +63,16 @@
          (fn [db _]
            (not (contains? routes/no-footer-pages (::db/page db)))))
 
-(reg-sub ::show-blog-social-icons?
-         (fn [db _]
-           (= (::db/page db) :blog)))
-
-(reg-sub ::env
-         (fn [db _]
-           (:wh.settings/environment db)))
-
 (reg-sub ::version-mismatch
          (fn [db _]
            (::db/version-mismatch db)))
 
-;; The following subscriptions used to live in wh.user.subs, but are needed
-;; pervasively throughout the app.
+;; The following subscriptions used to live in `wh.user.subs`,
+;; but are needed pervasively throughout the app.
 
-(reg-sub
-  :company/has-permission? ; needed to render menu
-  (fn [db [_ permission]]
-    (db/has-permission? db permission)))
+(reg-sub :company/has-permission? ; needed to render menu
+         (fn [db [_ permission]]
+           (db/has-permission? db permission)))
 
 (reg-sub ::github-app-name
          (fn [db _]

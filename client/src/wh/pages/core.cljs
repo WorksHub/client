@@ -2,25 +2,25 @@
   (:require [bidi.bidi :as bidi]
             [cljs.loader :as loader]
             [clojure.string :as str]
-            [goog.Uri :as uri]
             [pushy.core :as pushy]
             [re-frame.core :refer [reg-fx reg-sub reg-event-db reg-event-fx dispatch dispatch-sync]]
             [re-frame.db :refer [app-db]]
+            [wh.common.url :as common-url]
             [wh.common.user :as user-common]
             [wh.db :as db]
             [wh.pages.modules :as modules]
             [wh.routes :as routes]
+            [wh.util :as util]
             [wh.verticals :as verticals]))
 
 (def default-route {:handler :not-found})
 (def default-page-size 24)
 
-;; If you came here looking for 'scroll-to-top' functionlity,
+;; If you came here looking for 'scroll-to-top' functionality,
 ;; be aware that although we're setting `scrollTop` of `documentElement`,
 ;; it's the `onscroll` event of `js/window` that is triggered when a scroll happens
 
-(defn force-scroll-to-x!
-  [x]
+(defn force-scroll-to-x! [x]
   (set! (.-scrollTop (.getElementById js/document "app")) x)
   (set! (.-scrollTop (.-documentElement js/document)) x)
   (set! (.-scrollTop (.-body js/document)) x))
@@ -30,30 +30,24 @@
     (.-title js/document)
     (str page-name " | " (get-in verticals/vertical-config [vertical :platform-name]))))
 
-(defn force-scroll-to-top!
-  []
+(defn force-scroll-to-top! []
   (force-scroll-to-x! 0))
 
 (defmulti on-page-load
   "Returns a vector of events to dispatch when a page is shown."
   ::db/page)
 
-;;other on-page-load method are installed from their events ns. e.g wh.blogs.learn.events/on-page-load
-(defmethod on-page-load :default [_db]
-  [])
+;; NB: Other `on-page-load` methods are installed from their events ns,
+;;     e.g `wh.blogs.learn.events/on-page-load`.
+(defmethod on-page-load :default [_db] [])
 
-(defn parse-query-params
-  "Returns query params as a Clojure map."
-  ([] (parse-query-params js/window.location))
-  ([uri]
-   (let [params (-> uri uri/parse .getQueryData)]
-     (->> (interleave (.getKeys params) (.getValues params))
-          (partition 2)
-          (reduce (fn [a [k v]]
-                    (if (contains? a k)
-                      (update a k #(if (coll? %) (conj % v) [% v]))
-                      (assoc  a k v)))
-                  {})))))
+(defmulti on-page-browser-nav
+  "Returns an event to dispatch upon the on-page browser navigation."
+  ::db/page)
+
+;; NB: Other `on-page-browser-nav` methods are installed from their events ns,
+;;     e.g `wh.search.events/on-page-browser-nav`.
+(defmethod on-page-browser-nav :default [_db] nil)
 
 (defn- module-for [handler]
   (modules/module-for handler (get-in @app-db [:wh.user.db/sub-db :wh.user.db/type])))
@@ -88,7 +82,7 @@
 ;; use the :navigate fx defined below.
 (reg-event-fx ::set-page
               db/default-interceptors
-              (fn [{db :db} [{:keys [handler params uri route-params query-params] :as _m} history-state]]
+              (fn [{db :db} [{:keys [handler params route-params query-params uri] :as _route} history-state]]
                 (let [handler   (resolve-handler db handler)
                       page-info {:page-name (routes/handler->name handler)
                                  :vertical  (:wh.db/vertical db)}]
@@ -96,48 +90,62 @@
                     :not-found
                     {:db         (assoc db
                                         ::db/page :not-found
-                                        ::db/loading? false)
+                                        ::db/loading? false) ; it might've been set in pre-rendered app-db
                      :page-title page-info}
-                                        ; it might've been set in pre-rendered app-db
+
                     :login
                     (let [current-path (bidi/url-encode (routes/path handler :params params :query-params query-params))
                           login-step   (if (= :company (module-for handler)) :email :root)] ;; if company, show email login
                       {:navigate   [:login :params {:step login-step} :query-params {:redirect current-path}]
                        :page-title page-info})
+
                     ;; otherwise
                     (let [new-page?     (not= (::db/page db) handler)
                           initial-load? (::db/initial-load? db)
                           scroll        (if history-state (aget history-state "scroll-position") 0)
-                          new-db        (cond-> (-> db (assoc ::db/page handler
-                                                              ::db/page-params (merge params route-params {})
-                                                              ::db/query-params (or query-params {})
-                                                              ::db/uri uri
-                                                              ::db/scroll scroll)
-                                                    (update ::db/page-moves inc))
-                                                (not (contains? #{:jobsboard :pre-set-search} handler))
-                                                (assoc ::db/search-term ""))]
+                          ;; TODO: Come up with a universal way of replacing '+'s in route params' values with `bidi`?
+                          route-params' (util/update* route-params :query #(str/replace % "+" " "))
+                          new-db        (-> db
+                                            (assoc ::db/page handler
+                                                   ::db/page-params (merge params route-params' {})
+                                                   ::db/query-params (or query-params {})
+                                                   ::db/uri uri
+                                                   ::db/scroll scroll)
+                                            (update ::db/page-moves inc))
+                          on-page-load? (nil? history-state)
+                          on-page-nav   (when-not (or initial-load?
+                                                      ;; NB: This should not normally be a part of the condition,
+                                                      ;;     but our custom Pushy history state tx implementation
+                                                      ;;     will cause `on-page-load` event on the latest entry
+                                                      ;;     in the chain of forward-button events. So I decided
+                                                      ;;     to pretend this is a new page load just in order to
+                                                      ;;     avoid duplicate events triggering (`on-page-load` +
+                                                      ;;     `on-page-browser-nav`).
+                                                      on-page-load?)
+                                          (on-page-browser-nav new-db))]
                       (cond-> {:db                 new-db
                                :analytics/pageview true
-                               :analytics/track    [(str (routes/handler->name handler) " Viewed") (merge params query-params route-params) true]
+                               :analytics/track    [(str (routes/handler->name handler) " Viewed")
+                                                    (merge params query-params route-params)
+                                                    true]
                                :dispatch-n         [[:error/close-global]
+                                                    on-page-nav
                                                     [::disable-no-scroll]
                                                     [:wh.events/show-chat? true]]}
-                              (not initial-load?) (assoc :page-title page-info)
-                              ;; this forces scrolling to top when moving forward to a new page
-                              ;; but does nothing when moving backward
-                              ;; TODO is this something we want to support? (:scroll-to-x fx?)
-                              ;; at the moment the `:component-did-update` in `pages.router/current-page`
-                              ;; only seems to fire once and never again
+                              (not initial-load?)
+                              (assoc :page-title page-info)
+                              ;; This forces scrolling to top when moving forward to a new page,
+                              ;; but does nothing when moving backwards. We leverage a built-in
+                              ;; `scrollRestoration` to keep & restore the scroll position.
                               (and new-page? (zero? scroll))
                               (assoc :scroll-to-top true)
-                              ;; We only fire on-page-load events when we didn't receive a back-button
-                              ;; navigation (i.e. history-state is nil). See pushy/core.cljs.
-                              (nil? history-state)
+                              ;; We only fire `on-page-load` events when we didn't receive a back-button
+                              ;; navigation (i.e. `history-state` is `nil`). See `pushy/core.cljs`.
+                              on-page-load?
                               (update :dispatch-n
-                                      (fn [dispatch-events]
-                                        (concat dispatch-events
-                                                (cond-> (on-page-load new-db)
-                                                        initial-load? (conj [:wh.events/set-initial-load false])))))))))))
+                                      #(let [events (cond-> (on-page-load new-db)
+                                                            initial-load? (conj [:wh.events/set-initial-load false]))]
+                                         (concat % events)))))))))
 
 ;; Internal event meant to be triggered by :navigate only.
 
@@ -146,11 +154,17 @@
            (::db/page db)))
 
 (defn- parse-url [url]
-  (assoc
-    (or (bidi/match-route routes/routes url)
-        default-route)
-    :query-params (parse-query-params url)
-    :uri url))
+  (let [query-params (common-url/uri->query-params url)]
+    (assoc
+      (or (bidi/match-route routes/routes url)
+          default-route)
+      ;; TODO: Shouldn't it also check `url` URI 'path' for a `query`?
+      ;;       If true, it makes sense to re-write this via delegating
+      ;;       to the shared `wh.common.search/->search-term` fn.
+      :params (when (contains? query-params "search")
+                {:query (get query-params "search")})
+      :query-params query-params
+      :uri url)))
 
 (defn load-and-dispatch [[module event]]
   (let [db           @re-frame.db/app-db
@@ -160,8 +174,8 @@
                          (= (:wh.db/page db) :twitter-callback)
                          (and (zero? (:wh.db/page-moves db))
                               (:wh.db/server-side-rendered? db)))]
-
-    (when (and (not skip-loader?) (not (loader/loaded? module)))
+    (when (and (not skip-loader?)
+               (not (loader/loaded? module)))
       (dispatch [::set-loader]))
     ;; If we don't wrap the loader/load call in setTimeout and happen to
     ;; invoke this from an /admin/... URL, cljs-base is not yet fully loaded
@@ -177,14 +191,12 @@
 
 (reg-fx :load-and-dispatch load-and-dispatch)
 
-(defn get-app-ssr-scroll-value
-  []
+(defn get-app-ssr-scroll-value []
   (if-let [app-ssr (js/document.getElementById "app-ssr")]
     (max (.-scrollY js/window) (.-scrollTop app-ssr))
     (max (.-scrollY js/window) 0)))
 
-(defn show-app!
-  []
+(defn show-app! []
   (when-let [app-ssr (js/document.getElementById "app-ssr")]
     (let [scroll-value (get-app-ssr-scroll-value)
           app          (js/document.getElementById "app")]
@@ -229,11 +241,8 @@
 
 (defn processable-url? [uri]
   (and (not (contains? routes/server-side-only-paths (.getPath uri))) ;; we tell pushy to leave alone server side rendered pages
-       ;; the following is the default implementation for 'processable-url?' from Pushy, we want to preserve that behavior
-       (not (clojure.string/blank? uri)) ;; Blank URLs are not processable.
-       (or (and (not (.hasScheme uri)) (not (.hasDomain uri))) ;; By default only process relative URLs + URLs matching window's origin
-           (some? (re-matches (re-pattern (str "^" (.-origin js/location) ".*$"))
-                              (str uri))))))
+       ;; while preserving the default behavior
+       (pushy/processable-url? uri)))
 
 (defn dispatch-for-route-data? [{:keys [handler] :as route-data}]
   (and route-data (not (contains? routes/nextjs-pages handler))))
@@ -241,13 +250,13 @@
 (def pushy-instance (pushy/pushy set-page parse-url
                                  :processable-url? processable-url?
                                  :state-fn (fn []
-                                             (clj->js {:scroll-position (.-scrollTop (js/document.querySelector ".page-container"))}))
+                                             (clj->js {:scroll-position (.-scrollTop (.-documentElement js/document))}))
                                  :dispatch-for-route-data? dispatch-for-route-data?))
 
 (defn navigate
-  "Construct a URL from handler/params and set it as current via pushy.
-  This will trigger setting ::db/page and ::db/page-params as appropriate."
-  [[handler & {:keys [params query-params anchor]}]]
+  "Construct a URI from `handler` & `opts` and set it as current via Pushy.
+   This will trigger setting ::db/page and ::db/page-params as appropriate."
+  [[handler & {:keys [params query-params anchor] :as _opts}]]
   (when-let [token (routes/path handler
                                 :params params
                                 :query-params query-params

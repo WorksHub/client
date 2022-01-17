@@ -4,6 +4,7 @@
             [re-frame.core :refer [reg-fx reg-event-db reg-event-fx inject-cofx]]
             [re-frame.db :refer [app-db]]
             [wh.common.fx]
+            [wh.common.url :as common-url]
             [wh.company.create-job.common-events]
             [wh.components.error.events]
             [wh.db :as db]
@@ -12,8 +13,8 @@
             [wh.util :as util])
   (:require-macros [wh.graphql-macros :refer [defquery]]))
 
-;; This is for external URLs only (e.g., GitHub callouts). For
-;; internal navigation, see :navigate.
+;; This is for external URLs only (e.g. GitHub callouts).
+;; For internal navigation, see `:navigate`.
 (reg-fx
   :set-url
   (fn [url]
@@ -22,7 +23,7 @@
 (reg-event-fx
   :graphql/success
   db/default-interceptors
-  (fn [_ [response]]
+  (fn [_ [_response]]
     {:dispatch [::pages/unset-loader]}))
 
 (reg-event-fx
@@ -40,21 +41,22 @@
 
 (reg-event-fx
   :init
-  (conj db/default-interceptors (inject-cofx :cookie/get [:wh_tracking_consent]))
+  (conj db/default-interceptors
+        (inject-cofx :cookie/get [:wh_tracking_consent]))
   (fn [{{consent :wh_tracking_consent} :cookie/get, db :db} _]
     (when (empty? db)
       (let [tracking-consent? (= "true" consent)
-            server-side-db (-> (.getElementById js/document "data-init")
-                               (.-text)
-                               r/read-string)
-            query-params (pages/parse-query-params)
-            db (merge
-                 (db/default-db server-side-db)
-                 {::db/query-params      query-params
-                  ::db/tracking-consent? tracking-consent?})]
-        (cond-> {:db         db
+            server-side-db    (-> (.getElementById js/document "data-init")
+                                  (.-text)
+                                  r/read-string)
+            query-params      (common-url/uri->query-params js/window.location)
+            db                (merge
+                                (db/default-db server-side-db)
+                                {::db/query-params      query-params
+                                 ::db/tracking-consent? tracking-consent?})]
+        (cond-> {:db                 db
                  :analytics/identify db
-                 :dispatch-n [[:wh.pages.router/initialize-page-mapping]]})))))
+                 :dispatch-n         [[:wh.pages.router/initialize-page-mapping]]})))))
 
 (reg-event-db
   ::set-initial-load
@@ -167,10 +169,11 @@
   ::contribute
   db/default-interceptors
   (fn [_ _]
-    {:show-auth-popup {:context :homepage-contribute
+    {:show-auth-popup {:context  :homepage-contribute
                        :redirect [:contribute]}}))
 
-;; Defined here rather than in wh.register.events because we need to trigger this before loading register module.
+;; Defined here rather than in `wh.register.events` because
+;; we need to trigger these before loading register module.
 (reg-event-fx
   :register/track-start
   db/default-interceptors

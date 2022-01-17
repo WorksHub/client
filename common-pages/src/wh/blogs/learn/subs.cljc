@@ -79,17 +79,17 @@
 (reg-sub
   ::total-pages
   (fn [db _]
-    (let [params (learn/params db)
-          search-term (learn/search-term db)
-          query-name (if search-term
-                       :search_blogs
-                       :blogs)
+    (let [params           (learn/params db)
+          search-term      (learn/search-term db)
+          query-name       (if search-term
+                             :search_blogs
+                             :blogs)
           total-blogs-path (if search-term
                              [:search-blogs :pagination :total]
                              [:blogs :pagination :total])
-          result (graphql/result db query-name params)
-          count (or (get-in result total-blogs-path) learn/page-size)]
-      #?(:clj (int (Math/ceil (/ count learn/page-size)))
+          result           (graphql/result db query-name params)
+          count            (or (get-in result total-blogs-path) learn/page-size)]
+      #?(:clj  (int (Math/ceil (/ count learn/page-size)))
          :cljs (js/Math.ceil (/ count learn/page-size))))))
 
 ;; less blogs -> less recommendation

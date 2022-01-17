@@ -1,4 +1,5 @@
 (ns wh.components.package-selector
+  (:refer-clojure :exclude [atom])
   (:require #?(:cljs [reagent.core :as r])
             #?(:cljs [wh.components.click-outside :as co])
             [clojure.set :as set]

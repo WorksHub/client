@@ -1,28 +1,21 @@
 (ns wh.blogs.learn.views
   (:require
-    #?(:cljs [reagent.core :as r])
     [re-frame.core :refer [dispatch]]
     [wh.blogs.learn.db :as learn-db]
+    [wh.blogs.learn.events :as events]
     [wh.blogs.learn.subs :as subs]
     [wh.blogs.learn.components :as learn-components]
     [wh.components.buttons-page-navigation :as buttons-page-navigation]
-    [wh.components.cards :refer [blog-row]]
     [wh.components.carousel :refer [carousel]]
     [wh.components.icons :as icons]
     [wh.components.issue :as issue]
     [wh.components.job :refer [job-card]]
-    [wh.components.newsletter.core :as newsletter]
     [wh.components.pagination :refer [pagination]]
     [wh.components.pods.candidates :as candidate-pods]
-    [wh.components.recommendation-cards :as recommendation-cards]
-    [wh.components.tag :as tag]
     [wh.styles.blogs :as styles]
-    [wh.interop :as interop]
     [wh.re-frame :as rf]
     [wh.re-frame.subs :refer [<sub]]
-    [wh.routes :as routes]
-    [wh.slug :as slug]
-    [wh.util :as util]))
+    [wh.routes :as routes]))
 
 (defn learn-header
   []
@@ -38,10 +31,10 @@
         steps  (for [issue issues]
                  ^{:key (:id issue)}
                  [issue/issue-card issue {:small? true}])]
-    (when-not (= (count issues) 0)
+    (when-not (zero? (count issues))
       [:div.recommendation.recommendation--mobile.recommendation--issues.is-hidden-desktop
        [:h2.recommendation__title "Recommended Issues"]
-       [carousel steps {:arrows? true
+       [carousel steps {:arrows?         true
                         :arrows-position :bottom}]])))
 
 (defn recommended-jobs-mobile []
@@ -50,43 +43,39 @@
         has-applied? (some? (<sub [:user/applied-jobs]))
         company-id   (<sub [:user/company-id])
         admin?       (<sub [:user/admin?])
-        steps (for [job jobs]
-                ^{:key (:id job)}
-                [job-card job {:logged-in?        logged-in?
-                               :small?            true
-                               :user-has-applied? has-applied?
-                               :user-is-company?  (not (nil? company-id))
-                               :user-is-owner?    (or admin? (= company-id (:company-id job)))}])]
-    (when-not (= (count jobs) 0)
+        steps        (for [job jobs]
+                       ^{:key (:id job)}
+                       [job-card job {:logged-in?        logged-in?
+                                      :small?            true
+                                      :user-has-applied? has-applied?
+                                      :user-is-company?  (not (nil? company-id))
+                                      :user-is-owner?    (or admin? (= company-id (:company-id job)))}])]
+    (when-not (zero? (count jobs))
       [:div.recommendation.recommendation--mobile.is-hidden-desktop
        [:h2.recommendation__title "Recommended Jobs"]
-       [carousel steps {:arrows? true
+       [carousel steps {:arrows?         true
                         :arrows-position :bottom}]])))
 
 (defn search-btn [search?]
-  (let [icon-name (if search? "search-new" "close")
+  (let [icon-name  (if search? "search-new" "close")
         aria-label (if search? "Search button" "Reset search")]
     [:button.search-button
      {:aria-label aria-label
-      :data-test "blog-search-button"}
+      :data-test  "blog-search-button"}
      [icons/icon icon-name]]))
 
 (defn search []
-  (let [search-term (<sub [::subs/search-term])
+  (let [search-term  (<sub [::subs/search-term])
         local-search (rf/atom search-term)]
     (fn []
-      (let [search-term (<sub [::subs/search-term])
+      (let [search-term      (<sub [::subs/search-term])
             search? #?(:cljs (or (nil? @local-search)
                                  (not= @local-search search-term))
-                       :clj true)]
+                       :clj  true)]
         [:form.wh-formx.articles-page__search-form
-         #?(:cljs {:on-submit (if search?
-                                #(do (.preventDefault %)
-                                     (dispatch [:wh.events/nav--query-params {learn-db/search-query-name @local-search
-                                                                              "page"                     1}]))
-                                #(do (.preventDefault %)
-                                     (dispatch [:wh.events/nav--query-params {"page" 1}])
-                                     (reset! local-search nil)))})
+         (merge {:action (routes/path :learn :query-params {learn-db/search-query-name ""})}
+                #?(:cljs {:on-submit #(do (.preventDefault %)
+                                          (dispatch [::events/search-articles @local-search]))}))
          [:input.input
           (merge {:name        learn-db/search-query-name
                   :placeholder "Search articles..."
@@ -117,11 +106,12 @@
        [learn-components/blog-comp ctx blog]))])
 
 (defn page []
-  (let [blogs      (<sub [::subs/all-blogs])
-        tag        (<sub [:wh/page-param :tag])
-        tags       (<sub [::subs/tagbox-tags])
-        loading?   (<sub [::subs/all-blogs-loading?])
-        logged-in? (<sub [:user/logged-in?])]
+  (let [blogs       (<sub [::subs/all-blogs])
+        page-params (<sub [:wh/page-params])
+        tag         (:tag page-params)
+        tags        (<sub [::subs/tagbox-tags])
+        loading?    (<sub [::subs/all-blogs-loading?])
+        logged-in?  (<sub [:user/logged-in?])]
     [:div {:class     styles/page
            :data-test "page"}
      (when-not logged-in?
@@ -142,15 +132,9 @@
        [pagination
         (<sub [::subs/current-page])
         (<sub [::subs/pagination])
-        (if tag :learn-by-tag :learn)
+        (if tag :learn-by-tag :learn-search)
         (<sub [:wh/query-params])
-        (when tag {:tag tag})]]
+        page-params]]
       [:div.is-hidden-mobile
        [learn-components/tag-picker-comp tags]
-       [candidate-pods/candidate-cta]
-       #_[recommendation-cards/jobs {:jobs           (<sub [::subs/recommended-jobs])
-                                     :logged-in?     (<sub [:user/logged-in?])
-                                     :instant-apply? (some? (<sub [:user/applied-jobs]))
-                                     :company-id     (<sub [:user/company-id])
-                                     :admin?         (<sub [:user/admin?])}]
-       #_[recommendation-cards/issues {:issues (<sub [::subs/recommended-issues])}]]]]))
+       [candidate-pods/candidate-cta]]]]))

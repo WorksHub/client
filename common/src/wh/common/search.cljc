@@ -1,6 +1,27 @@
 (ns wh.common.search
-  (:require [clojure.string :as str]
+  (:require [bidi.bidi :as bidi]
+            [clojure.string :as str]
             [wh.util :as util]))
+
+(defn- parse-param [param]
+  (if (some? param)
+    ;; NB: Probably there is a more elegant way
+    ;; of achieving this w/ `bidi` protocols,
+    ;; but we don't care much anymore...
+    (str/replace (bidi/url-decode param) "+" " ")
+    ""))
+
+(defn ->search-term
+  "Retrieves the current 'search-term' from both path and query params.
+   It first looks for the `query` parameter in the passed `params` map.
+   Then for the `param-name` (\"search\" by default) in `query-params`.
+   NB: It also decodes the params values, accounting for \"+\" as well."
+  ([params query-params]
+   (->search-term params query-params "search"))
+  ([{:keys [query] :as _params} query-params param-name]
+   (if (str/blank? query)
+     (or (some-> query-params (get param-name) parse-param) "")
+     (parse-param query))))
 
 (defn string-params->boolean [params]
   (let [truthy? #(= % "true")]

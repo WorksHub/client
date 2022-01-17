@@ -30,23 +30,36 @@
 (def autocomplete-k #?(:cljs :autoComplete
                        :clj  :autocomplete))
 
-(def search-id "navbar__search-input")
+(def search-id-prefix "navbar__search-text-")
+(def search-submit-id "navbar__search-submit")
 
-(defn search [_]
-  (let [navbar-search-id (str search-id (util/random-uuid))]
+(defn search
+  "The universal search box that searches throughout all entity types (jobs, companies, articles, issues).
+   Use the `:wh.components.navbar.events/set-search-value` event to update the \"universal-search\" query."
+  [_]
+  (let [navbar-search-id (str search-id-prefix (util/random-uuid))]
     (fn [type]
       (let [search-value (<sub [::subs/search-value])]
-        [:form (merge {:method :get
-                       :action (routes/path :search)
+        [:form (merge {;; NB: It was `:get` before, which resulted in automatic query string appending,
+                       ;;     thus was dropped in favor of `:post`, which itself was improperly SSR'ed
+                       ;;     on a public 'index.html' page as "method=":post" of the <forms>, falling
+                       ;;     its submit back to HTTP GET (and an automatically appended query string).
+                       :method "post"
+                       ;; NB: Only gets called (as an ordinary HTML <form> submit) on a SSR'ed version
+                       ;;     of a public page (e.g. 'index.html'). The `:query` path param have to be
+                       ;;     appended manually, before triggering the form submit.
+                       :action (routes/path :search :params {:query ""})
                        :class  (util/mc
                                  styles/search__wrapper
                                  [(= type :small-menu-no-mobile) styles/no-mobile]
                                  [(= type :navbar) styles/no-mobile])}
                       #?(:cljs {:on-submit
                                 (fn [e]
-                                  (.preventDefault e)
-                                  (js/hideMenu)
-                                  (dispatch [:wh.search/search-with-value search-value]))}))
+                                  ;; NB: We get the HTML attribute value here intentionally, since user might
+                                  ;;     change it via the "search hints" dropdown bypassing the `:on-change`.
+                                  (let [search-value (.-value (.getElementById js/document navbar-search-id))]
+                                    (dispatch [:wh.search/search-with-value search-value]))
+                                  (.preventDefault e))}))
          [icon "search-new" :class styles/search__search-icon]
          [:input (merge
                    {:class         (util/mc
@@ -57,7 +70,7 @@
                     :id            navbar-search-id
                     :data-test     "job-search"
                     :type          "text"
-                    :name          "query"
+                    :name          "search"
                     :placeholder   "Search…"
                     :value         search-value
                     autocomplete-k "off"}
@@ -66,12 +79,18 @@
                    (interop/on-search-query-edit)
                    #?(:cljs {:on-change
                              (fn [e]
-                               (js/onSearchQueryEdit e)
+                               (js/SearchHints.onSearchQueryEdit e)
                                (dispatch-sync [:wh.components.navbar.events/set-search-value
                                                (.-value (.-target e))]))}))]
-         (when search-value
+         #?(:cljs
+            ;; NB: A presence of this HTML element is checked in the `search_hints.js` script
+            ;;     to find out whether we are on the SSR'ed version of the page (and thus are
+            ;;     to submit the HTML <form> directly) or not (and thus are to use this btn).
+            [:input.visually-hidden {:id   search-submit-id
+                                     :type "submit"}])
+         (when-not (empty? search-value)
            [:a
-            (merge {:href  (routes/path :search)
+            (merge {:href  (routes/path :search :params {:query ""})
                     :class styles/search__clear-icon}
                    #?(:cljs {:on-click
                              #(set! (.-value (.getElementById js/document navbar-search-id)))}))
@@ -174,8 +193,8 @@
    [:div (util/smc styles/small-menu__search-wrapper)
     [search :small-menu]]])
 
-(defn navbar-right [{:keys [logged-in? content? candidate? company?
-                            admin? register? query-params]}]
+(defn navbar-right [{:keys [logged-in? content?
+                            candidate? company? admin? register?]}]
   (cond
     logged-in?
     [:div (util/smc styles/navbar__right)
@@ -258,7 +277,7 @@
    [menu-for-mobile-and-tablet opts]])
 
 (defn top-bar
-  [{:keys [env vertical logged-in? query-params page user-type] :as _args}]
+  [{:keys [env vertical logged-in? params query-params page user-type] :as _args}]
   (let [candidate? (user-common/candidate-type? user-type)
         company?   (user-common/company-type? user-type)
         admin?     (user-common/admin-type? user-type)
@@ -272,5 +291,6 @@
              :company?     company?
              :admin?       admin?
              :logged-in?   logged-in?
+             :params       params
              :query-params query-params
              :register?    register?}]))

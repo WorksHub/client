@@ -1,6 +1,6 @@
 (ns wh.search.components
+  (:refer-clojure :exclude [atom])
   (:require #?(:cljs [wh.pages.core :as pages])
-            [clojure.string :as str]
             [re-frame.core :refer [dispatch]]
             [wh.components.side-card.components :as c]
             [wh.components.skeletons.components :as skeletons]
@@ -9,7 +9,6 @@
             [wh.routes :as routes]
             [wh.styles.search :as styles]
             [wh.util :as util]))
-
 
 (defn job-result [{:keys [title company tagline slug]}]
   [:li
@@ -45,10 +44,10 @@
      [:span (util/smc styles/result-card__description) (:name company)]
      [:span (util/smc styles/result-card__title) title]]]])
 
-(defn article-result [{:keys [title author objectID] :as article}]
+(defn article-result [{:keys [title author objectID] :as _article}]
   [:li
    [:a {:class (util/mc styles/result-card)
-        :href (routes/path :blog :params {:id objectID})}
+        :href  (routes/path :blog :params {:id objectID})}
     [:div (util/smc styles/result-card__content)
      [:span (util/smc styles/result-card__title) title]
      [:span (util/smc styles/result-card__sub-title) author]]]])
@@ -75,7 +74,8 @@
                  :section/name "Jobs"
                  :cta-text     (fn [x] (str "More " x " Jobs"))
                  :cta-link     (fn [x]
-                                 (routes/path :jobsboard :query-params {:search x}))}
+                                 (when (some? x)
+                                   (routes/path :jobsboard-search :params {:query x})))}
                 {:id           :companies
                  :menu/name    "Companies"
                  :section/name "Companies"
@@ -95,7 +95,7 @@
 (def sections-coll
   (filter :section/name tabs-coll))
 
-(defn tabs [{:keys [go-to-tab]}]
+(defn tabs [{:keys [_go-to-tab]}]
   (let [active-tab (atom (-> tabs-coll first :id))]
     (fn [{:keys [go-to-tab]}]
       (let [active-tab-val #{@active-tab}]
@@ -127,7 +127,6 @@
 (defn skeleton-results
   ([]
    (skeleton-results 3))
-
   ([n]
    [:<>
     (map
@@ -136,12 +135,12 @@
         [skeleton-result])
       (range n))]))
 
-(defn results-section [{:keys [search-result cta-link cta-text] :as section} query]
+(defn results-section [{:keys [id search-result cta-text cta-link] :as section} query]
   (let [hits-counted (get search-result :nbHits 0)
         hits         (get search-result :hits)
         empty        (get search-result :empty)]
     [:section {:class styles/results-section
-               :id    (name (:id section))}
+               :id    (name id)}
      [:div (util/smc styles/results-section__header)
       [:h1 (util/smc styles/results-section__header__title)
        (:section/name section)
@@ -160,7 +159,7 @@
 
         (for [{:keys [objectID] :as hit} hits]
           ^{:key objectID}
-          [(result-by-type (:id section)) hit]))]]))
+          [(result-by-type id) hit]))]]))
 
 (defn sections-separated [sections query]
   [:<>
@@ -175,8 +174,16 @@
               ^{:key id}
               [results-section tab query]))))])
 
-(defn tags-section [tags]
-  [:div {:data-test "search-results-tags"}
-   (for [{:keys [label] :as tag} tags]
-     [tag/tag :a
-      (assoc tag :on-click #(dispatch [:wh.search/search-with-value label]))])])
+(def max-displayed-tags 9)
+
+(defn tags-section
+  ([results-count]
+   (tags-section results-count nil))
+  ([results-count tags]
+   [:div {:data-test "search-results-tags"}
+    (if (or (nil? tags) (nil? results-count))
+      [skeletons/tags max-displayed-tags]
+      (for [{:keys [objectID label] :as tag} tags]
+        ^{:key objectID}
+        [tag/tag :a
+         (assoc tag :on-click #(dispatch [:wh.search/search-with-value label]))]))]))

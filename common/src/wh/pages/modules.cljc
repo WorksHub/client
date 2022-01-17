@@ -44,7 +44,9 @@
    :issues-by-language         :issues
    :job                        :jobs
    :jobsboard                  :jobs
+   :jobsboard-search           :jobs
    :learn                      :blogs
+   :learn-search               :blogs
    :learn-by-tag               :blogs
    :liked-blogs                :blogs
    :login                      :login

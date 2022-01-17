@@ -3,56 +3,60 @@ import {
     loadAnalytics,
     storeReferralData,
     initServerTracking,
-    getCookie
-} from './analytics';
-import { initTags } from './tags';
+    getCookie,
+} from './analytics'
+import { initTags } from './tags'
 
 function init() {
     /* tracking */
-    var consent = getCookie('wh_tracking_consent');
-    var aid = getCookie('wh_aid');
-    storeReferralData();
+    const consent = getCookie('wh_tracking_consent')
+    const aid = getCookie('wh_aid')
+    storeReferralData()
 
     if (!consent) {
-        showTrackingPopup();
+        showTrackingPopup()
     } else {
         if (!aid) {
-            initServerTracking(r => loadAnalytics());
+            initServerTracking(_r => loadAnalytics())
         } else {
-            loadAnalytics();
+            loadAnalytics()
         }
     }
 
     /* tags */
-    const tagBoxes = document.getElementsByClassName('tags-container--wants-js-tags');
+    const tagBoxes = document.getElementsByClassName('tags-container--wants-js-tags')
 
     if (tagBoxes && tagBoxes.length > 0) {
         Array.from(tagBoxes).forEach(tagBox => {
-            const tagsUrl = tagBox.getAttribute('data-tags-url');
-            initTags(tagBox, null, null, null, null, null, tagsUrl);
-        });
+            const tagsUrl = tagBox.getAttribute('data-tags-url')
+            initTags(tagBox, null, null, null, null, null, tagsUrl)
+        })
     }
 }
 
 /*--------------------------------------------------------------------------*/
 
 function whLoaded() {
-    return typeof wh != 'undefined' && typeof wh.core != 'undefined';
+    return typeof wh != 'undefined' && typeof wh.core != 'undefined'
 }
 
-window.addEventListener('DOMContentLoaded', event => {
-    init();
-    // load immediately if we can
+window.addEventListener('DOMContentLoaded', _event => {
+    init()
+    // in dev env the `shadow-cljs` loads & inits the "wh" ns
+    if (window.SHADOW_ENV !== undefined) {
+        return
+    }
+    // initialize immediately, if we can (when app is loaded)
     if (whLoaded()) {
-        wh.core.init();
+        wh.core.init()
     }
     // alternatively, start interval and try again every 50ms
     else {
-        var i = setInterval(function () {
+        const i = setInterval(function () {
             if (whLoaded()) {
-                wh.core.init();
-                clearInterval(i);
+                wh.core.init()
+                clearInterval(i)
             }
-        }, 50);
+        }, 50)
     }
-});
+})

@@ -2,19 +2,12 @@
   (:require
     [cljs.loader :as loader]
     [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
-    [reagent.core :as reagent]
-    [wh.company.articles.db :as articles-db]
-    [wh.company.articles.events :as articles-events]
     [wh.company.articles.views :as articles]
-    [wh.company.events :as _company_events]
-    [wh.company.jobs.db :as jobs-db]
     [wh.company.jobs.events :as jobs-events]
     [wh.company.jobs.views :as jobs]
     [wh.company.listing.db :as listing-db]
-    [wh.company.listing.events :as listing-events]
     [wh.company.listing.views :as listing]
     [wh.company.profile.db :as profile-db]
-    [wh.company.profile.events :as profile-events]
     [wh.company.profile.views :as profile]
     [wh.db :as db]))
 

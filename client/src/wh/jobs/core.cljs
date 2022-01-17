@@ -1,17 +1,15 @@
 (ns wh.jobs.core
   (:require [cljs.loader :as loader]
             [re-frame.core :refer [dispatch dispatch-sync reg-event-db]]
-            [reagent.core :as reagent]
             [wh.db :as db]
-            [wh.job.events :as job-events]
             [wh.job.views :as job]
-            [wh.jobs.jobsboard.events :as jobsboard-events]
             [wh.jobsboard.views :as jobsboard]))
 
 (def page-mapping
-  {:job            job/page
-   :jobsboard      jobsboard/jobsboard-page
-   :pre-set-search jobsboard/preset-search-page})
+  {:job              job/page
+   :jobsboard        jobsboard/jobsboard-page
+   :jobsboard-search jobsboard/jobsboard-page
+   :pre-set-search   jobsboard/preset-search-page})
 
 (reg-event-db
   ::initialize-page-mapping

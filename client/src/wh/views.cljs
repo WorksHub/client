@@ -2,6 +2,7 @@
   (:require ["smoothscroll-polyfill"]
             [clojure.walk :as walk]
             [reagent.core :as r]
+            [wh.common.subs]
             [wh.components.banner :as banner]
             [wh.components.error.subs :as error-subs]
             [wh.components.error.views :refer [global-status-box]]
@@ -29,11 +30,14 @@
         restricted-links (when-not (<sub [:company/has-permission?
                                           :can_see_applications])
                            #{:company-applications})
-        query-params     (walk/keywordize-keys (<sub [::subs/query-params]))
-        logged-in?       (<sub [:user/logged-in?])]
+        params           (<sub [:wh/page-params])
+        query-params     (walk/keywordize-keys (<sub [:wh/query-params]))
+        logged-in?       (<sub [:user/logged-in?])
+        vertical         (<sub [:wh/vertical])]
 
     (if (<sub [::subs/version-mismatch])
       [version-mismatch]
+
       [:div.main-panel
        [user-views/consent-popup]
        [apply-views/overlay-apply]
@@ -41,9 +45,10 @@
        [banner/banner {:page       page
                        :logged-in? logged-in?}]
        [navbar/top-bar
-        {:env               (<sub [::subs/env])
-         :vertical          (<sub [::subs/vertical])
+        {:env               (<sub [:wh/env])
+         :vertical          vertical
          :logged-in?        logged-in?
+         :params            params
          :query-params      query-params
          :page              page
          :user-type         user-type
@@ -59,7 +64,7 @@
             [loader]]]
           [current-page])
         (when (<sub [::subs/show-footer?])
-          [footer/footer (<sub [::subs/vertical]) logged-in?])]])))
+          [footer/footer vertical logged-in?])]])))
 
 (defonce remove-all-bsl-locks-when-app-loads
   (js/disableNoScroll))

@@ -14,7 +14,7 @@
             [wh.jobs.jobsboard.search-results :as search-results]
             [wh.jobsboard.db :as jobsboard-ssr]
             [wh.landing-new.events :as landing-events]
-            [wh.pages.core :as pages]
+            [wh.pages.core :refer [on-page-browser-nav on-page-load]]
             [wh.util :as util]))
 
 (def jobsboard-interceptors (into db/default-interceptors
@@ -26,8 +26,9 @@
   (fn [_ _]
     jobsboard/default-db))
 
+;;
 
-(defn get-db-filters [{:keys [preset-search? db]}]
+(defn- get-db-filters [{:keys [preset-search? db]}]
   (let [cities    (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/cities])
         regions   (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/regions])
         countries (get-in db [::jobsboard/sub-db ::jobsboard/search :wh.search/countries])
@@ -49,8 +50,10 @@
       (util/update-in* [:remuneration :max] js/parseInt)
       (util/update-in* [:remuneration :competitive] util/string->boolean))))
 
+(defn- get-db-search-term [db]
+  (search/->search-term (::db/page-params db) (::db/query-params db)))
 
-(defn get-query-variables [db]
+(defn- get-query-variables [db]
   (let [initial-load?    (::db/initial-load? db)
         preset-search?   (= :pre-set-search (::db/page db))
         preset-search    (if initial-load?
@@ -64,12 +67,12 @@
                            (inc page-from-params)
                            page-from-params)
         filters          (cases/->camel-case db-filters)]
-    {:search_term     (or (get-in db [::db/query-params "search"]) "")
+    {:search_term     (get-db-search-term db)
      :preset_search   (when preset-search? preset-search)
      :page            page
      :filters         filters
      :promoted_amount 2
-     :vertical        (:wh.db/vertical db)}))
+     :vertical        (::db/vertical db)}))
 
 (reg-query :jobs queries/jobs-query)
 
@@ -98,6 +101,8 @@
         (assoc-in db' [::jobsboard/sub-db ::jobsboard/search :wh.search/filters]
                   (search-results/get-search-filters result))
         db'))))
+
+;;
 
 (reg-event-db
   :wh.search/set-query
@@ -188,11 +193,14 @@
                         :wh.search/remote      false})
      :dispatch [:wh.search/search]}))
 
+;;
+
 (reg-event-db
   :wh.search/initialize-widgets
   db/default-interceptors
   (fn [db _]
-    (let [params                (:wh.db/query-params db)
+    (let [params                (::db/query-params db)
+          query                 (get-db-search-term db)
           val                   (fn [k] (some-> (params k) (str/split #";") (first)))
           val-int               (fn [k] (some-> (val k) (js/parseInt)))
           val-set               (fn [k] (set (when-let [v (params k)] (str/split v #";"))))
@@ -200,26 +208,26 @@
           val-bool-default-true (fn [k] (not= (params k) "false"))
           rem-min               (val-int "remuneration.min")
           rem-max               (val-int "remuneration.max")]
-      (-> db
-          ;; if we came here from pre-set search, we reset the term because we have the query in url
-          (assoc :wh.db/search-term nil)
-          (update-in [::jobsboard/sub-db ::jobsboard/search] merge
-                     {:wh.search/query        (params "search")
-                      :wh.search/tags         (val-set "tags")
-                      :wh.search/role-types   (val-set "role-type")
-                      :wh.search/cities       (val-set "location.city")
-                      :wh.search/regions      (val-set "location.region")
-                      :wh.search/countries    (val-set "location.country-code")
-                      :wh.search/remote       (val-bool "remote")
-                      :wh.search/sponsorship  (val-bool "sponsorship-offered")
-                      :wh.search/competitive  (val-bool-default-true "remuneration.competitive")
-                      :wh.search/salary       (js/parseInt (params "remuneration.min"))
-                      :wh.search/salary-type  (get {"Yearly" :year, "Daily" :day}
-                                                   (params "remuneration.time-period"))
-                      :wh.search/salary-range (when (and rem-min rem-max)
-                                                [rem-min rem-max])
-                      :wh.search/salary-from  rem-min
-                      :wh.search/currency     (val "remuneration.currency")})))))
+      (update-in db [::jobsboard/sub-db ::jobsboard/search]
+                 merge
+                 {:wh.search/query        query
+                  :wh.search/tags         (val-set "tags")
+                  :wh.search/role-types   (val-set "role-type")
+                  :wh.search/cities       (val-set "location.city")
+                  :wh.search/regions      (val-set "location.region")
+                  :wh.search/countries    (val-set "location.country-code")
+                  :wh.search/remote       (val-bool "remote")
+                  :wh.search/sponsorship  (val-bool "sponsorship-offered")
+                  :wh.search/competitive  (val-bool-default-true "remuneration.competitive")
+                  :wh.search/salary       (js/parseInt (params "remuneration.min"))
+                  :wh.search/salary-type  (get {"Yearly" :year, "Daily" :day}
+                                               (params "remuneration.time-period"))
+                  :wh.search/salary-range (when (and rem-min rem-max)
+                                            [rem-min rem-max])
+                  :wh.search/salary-from  rem-min
+                  :wh.search/currency     (val "remuneration.currency")}))))
+
+;;
 
 (defn- salary-params
   "helps to compose a query params object to use when we build a url to redirect to"
@@ -235,7 +243,7 @@
           currency (assoc :remuneration.currency currency)
           (not competitive?) (assoc :remuneration.competitive false)))
 
-(defn- search-params
+(defn- ->navigate-params-for-jobs-search
   [criteria query-only? app-db]
   (let [criteria                         (cond-> criteria query-only? (select-keys [:wh.search/query]))
         {:keys [:wh.search/query :wh.search/tags :wh.search/role-types
@@ -243,10 +251,10 @@
                 :wh.search/cities :wh.search/countries :wh.search/regions
                 :wh.search/salary-type :wh.search/only-mine :wh.search/published
                 :wh.search/competitive]} criteria
-        view-type                        (get-in app-db [:wh.db/query-params jobsboard-ssr/view-type-param])]
-    [:jobsboard
+        view-type                        (get-in app-db [::db/query-params jobsboard-ssr/view-type-param])]
+    [:jobsboard-search
+     :params {:query query}
      :query-params (cond-> {}
-                           (not (str/blank? query))                (assoc :search query)
                            remote                                  (assoc :remote "true")
                            sponsorship                             (assoc :sponsorship-offered "true")
                            (seq tags)                              (assoc :tags (str/join ";" tags))
@@ -264,21 +272,52 @@
   :wh.search/search
   db/default-interceptors
   (fn [{db :db} [query-only?]]
-    {:navigate (search-params
+    {:navigate (->navigate-params-for-jobs-search
                  (get-in db [::jobsboard/sub-db ::jobsboard/search])
-                 query-only? db)}))
+                 query-only?
+                 db)}))
+
+;;
+
+(defn- ->set-universal-search-value-event [db]
+  (let [query (get-db-search-term db)]
+    [:wh.components.navbar.events/set-search-value query]))
 
 
-(defmethod pages/on-page-load :jobsboard [db]
-  (concat [[:wh.search/initialize-widgets]
-           [::set-jobs-query]
-           (into [:graphql/query]
-                 (if (user-common/candidate? db)
-                   (landing-events/recommended-jobs db)
-                   (landing-events/recent-jobs db)))]))
+(reg-event-fx
+  ::restore-search-box-state
+  db/default-interceptors
+  (fn [{db :db} _]
+    {:dispatch-n [[:wh.search/initialize-widgets]
+                  (->set-universal-search-value-event db)]}))
 
-(defmethod pages/on-page-load :pre-set-search [_db]
-  [[::set-jobs-query]])
+(defmethod on-page-browser-nav :jobsboard [_db]
+  [::restore-search-box-state])
+
+(defmethod on-page-browser-nav :jobsboard-search [_db]
+  [::restore-search-box-state])
+
+
+(defn- jobsboard-search-related-events [db]
+  [[:wh.search/initialize-widgets]
+   (->set-universal-search-value-event db)
+   [::set-jobs-query]
+   (into [:graphql/query]
+         (if (user-common/candidate? db)
+           (landing-events/recommended-jobs db)
+           (landing-events/recent-jobs db)))])
+
+(defmethod on-page-load :jobsboard [db]
+  (jobsboard-search-related-events db))
+
+(defmethod on-page-load :jobsboard-search [db]
+  (jobsboard-search-related-events db))
+
+(defmethod on-page-load :pre-set-search [db]
+  [(->set-universal-search-value-event db)
+   [::set-jobs-query]])
+
+;;
 
 (defn- update-min-max
   "updates possible values for salary selector"

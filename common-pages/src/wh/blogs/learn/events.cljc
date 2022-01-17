@@ -1,6 +1,6 @@
 (ns wh.blogs.learn.events
   (:require
-    [re-frame.core :refer [dispatch path reg-event-db reg-event-fx]]
+    [re-frame.core :refer [reg-event-fx]]
     [wh.blogs.learn.db :as learn]
     [wh.db :as db]
     [wh.graphql-cache :refer [reg-query]]
@@ -9,22 +9,22 @@
     [wh.graphql-macros :refer [defquery]]))
 
 (defquery blogs-query
-          {:venia/operation {:operation/type :query
-                             :operation/name "blogs"}
-           :venia/variables [{:variable/name "page_number"
-                              :variable/type :Int}
-                             {:variable/name "page_size"
-                              :variable/type :Int}
-                             {:variable/name "tag"
-                              :variable/type :String}
-                             {:variable/name "vertical_blogs"
-                              :variable/type :vertical}]
-           :venia/queries   [[:blogs {:tag         :$tag
-                                      :page_size   :$page_size
-                                      :page_number :$page_number
-                                      :vertical    :$vertical_blogs}
-                              [[:pagination [:total]]
-                               [:blogs :fragment/blogCardFields]]]]})
+  {:venia/operation {:operation/type :query
+                     :operation/name "blogs"}
+   :venia/variables [{:variable/name "page_number"
+                      :variable/type :Int}
+                     {:variable/name "page_size"
+                      :variable/type :Int}
+                     {:variable/name "tag"
+                      :variable/type :String}
+                     {:variable/name "vertical_blogs"
+                      :variable/type :vertical}]
+   :venia/queries   [[:blogs {:tag         :$tag
+                              :page_size   :$page_size
+                              :page_number :$page_number
+                              :vertical    :$vertical_blogs}
+                      [[:pagination [:total]]
+                       [:blogs :fragment/blogCardFields]]]]})
 (reg-query :blogs blogs-query)
 (def std-blogs-path [:blogs :blogs])
 
@@ -109,6 +109,13 @@
 (defn issues [db]
   [:recommended_issues (learn/articles-issues-params db)])
 
+(reg-event-fx
+  ::search-articles
+  db/default-interceptors
+  (fn [_ [query]]
+    {:dispatch [:wh.events/nav :learn-search
+                :params {:query (or query "")}
+                :query-params {"page" 1}]}))
 
 (reg-event-fx
   ::load-blogs
@@ -126,15 +133,21 @@
   db/default-interceptors
   (fn [{db :db} _]
     {:page-title {:page-name (str "Articles: " (:tag (learn/params db)))
-                  :vertical (:wh.db/vertical db)}}))
+                  :vertical  (:wh.db/vertical db)}}))
+
+(defn- loading-events [_db]
+  [[:wh.pages.core/unset-loader]
+   [::load-blogs]])
 
 #?(:cljs
    (defmethod on-page-load :learn [db]
-     [[:wh.pages.core/unset-loader]
-      [::load-blogs]]))
+     (loading-events db)))
+
+#?(:cljs
+   (defmethod on-page-load :learn-search [db]
+     (loading-events db)))
 
 #?(:cljs
    (defmethod on-page-load :learn-by-tag [db]
-     [[:wh.pages.core/unset-loader]
-      [::load-blogs]
-      [::set-learn-by-tag-title]]))
+     (conj (loading-events db)
+           [::set-learn-by-tag-title])))

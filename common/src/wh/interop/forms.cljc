@@ -2,8 +2,7 @@
   (:require
     [clojure.string :as str]
     [wh.interop :refer [->jsfn unparse-arg]]
-    [wh.re-frame.events :refer [dispatch]]
-    [wh.util :as util]))
+    [wh.re-frame.events :refer [dispatch]]))
 
 (defn on-change-fn
   [jsf]

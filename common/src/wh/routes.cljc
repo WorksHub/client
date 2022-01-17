@@ -1,19 +1,20 @@
 (ns wh.routes
   (:require
-    #?(:clj [clojure.spec.alpha :as s])
-    #?(:clj [ring.util.codec :as codec])
+    [#?(:clj  clojure.spec.alpha
+        :cljs cljs.spec.alpha) :as s]
     #?(:clj [taoensso.timbre :refer [warn]])
-    #?(:cljs [cljs.spec.alpha :as s])
-    #?(:cljs [goog.Uri.QueryData :as query-data])
     [bidi.bidi :as bidi]
     [clojure.string :as str]
     [clojure.walk :as walk]
     [wh.common.specs.primitives]
-    [wh.common.text :as text]))
+    [wh.common.text :as text]
+    [wh.common.url :as url]
+    [wh.util :as util]))
 
 (def company-landing-page "https://www.works-hub.com")
 (def pages-with-loader #{:homepage
                          :learn
+                         :learn-search
                          :blog
                          :github-callback
                          :stackoverflow-callback
@@ -23,6 +24,7 @@
                          :profile
                          :pre-set-search
                          :jobsboard
+                         :jobsboard-search
                          :contribute-edit})
 
 (def no-footer-pages #{:register :register-company :payment-setup :login :invalid-magic-link})
@@ -30,10 +32,10 @@
 (def register-link-pages #{:register :register-company})
 (def nextjs-pages #{:series :create-job-new :edit-job-new})
 
-;; Here we overwrite the behavior of Bidi's wrt Pattern matching with sets.
+;; Here we overwrite the behavior of Bidi's wrt `Pattern` matching with sets.
 ;; The matching is actually left unchanged from the original implementation
 ;; and we only deal with the unmatching. In Bidi's original behavior, when
-;; multiple Alternates are provided, unmatching happens only on the first
+;; multiple `Alternates` are provided, unmatching happens only on the first
 ;; alternative. We change this behavior to try and see if any of the supplied
 ;; alternatives has exactly the params that we supply. If we found some, we use
 ;; the first. If none are found, we revert to the original behavior.
@@ -47,7 +49,7 @@
           (sort-by count > this)))
   (unmatch-pattern [this {:keys [params] :as s}]
     (if-let [match (first (filter (fn [pattern] (= (set (keys params))
-                                                  (set (filter keyword? pattern))))
+                                                   (set (filter keyword? pattern))))
                                   this))]
       (bidi/unmatch-pattern match s)
       (bidi/unmatch-pattern (first this) s))))
@@ -61,8 +63,7 @@
 ;; so we define our own.
 
 (defn with-params
-  "Returns a Matched that adds the specified params
-  to the handler."
+  "Returns a `Matched` that adds the specified params to the handler."
   [handler & params]
   (let [params-map (apply hash-map params)]
     (reify
@@ -115,14 +116,18 @@
       ["sitemap" :sitemap]
       ["invalid-magic-link" :invalid-magic-link]
       ["metrics" :metrics]
-      ["search" :search]
+      ;; NB: Simple `["/" :query]` won't work for queries with spaces ("%20" or "+"):
+      ;;     `(bidi/match-route routes "/search/Clojure%20Script")` will return `nil`.
+      ;;     See 'https://github.com/juxt/bidi/issues/147' for more details.
+      ["search" {["/" [#"[^/]*" :query]] :search}]
 
       ;; Mixed routes
-      ["learn" {""                :learn ;;Public SSR
-                "/create"         :contribute
-                "/saved"          :liked-blogs
-                ["/" :id]         :blog  ;;Public SSR
-                ["/" :id "/edit"] :contribute-edit}]
+      ["learn" {""                             :learn           ;;Public SSR
+                ["/search/" [#"[^/]*" :query]] :learn-search    ;;Public SSR
+                "/create"                      :contribute
+                "/saved"                       :liked-blogs
+                ["/" :id]                      :blog            ;;Public SSR
+                ["/" :id "/edit"]              :contribute-edit}]
       ["companies" {""                        :companies        ;;Public SSR
                     "/new"                    :create-company
                     "/applications"           :company-applications
@@ -133,10 +138,11 @@
                     ["/" :id "/dashboard"]    :company-dashboard
                     ["/" :id "/applications"] :admin-company-applications
                     ["/" :id "/offer"]        :create-company-offer}]
-      ["jobs" {""                :jobsboard ;;Public SSR
-               "/new"            :create-job
-               ["/" :slug]       :job       ;;Public SSR
-               ["/" :id "/edit"] :edit-job}]
+      ["jobs" {""                             :jobsboard        ;;Public SSR
+               ["/search/" [#"[^/]*" :query]] :jobsboard-search ;;Public SSR
+               "/new"                         :create-job
+               ["/" :slug]                    :job              ;;Public SSR
+               ["/" :id "/edit"]              :edit-job}]
 
       ;; Public pages - app.js required
       ["register" :register]
@@ -256,7 +262,9 @@
                                                ;;:issues CH3615
                                                :job
                                                :jobsboard
+                                               :jobsboard-search
                                                :learn
+                                               :learn-search
                                                :learn-by-tag
                                                :pre-set-search
                                                :user})
@@ -264,45 +272,57 @@
 
 (def server-side-only-paths (set (map #(bidi/path-for routes %) server-side-only-pages)))
 
-(defn serialize-query-params
-  "Serializes a map as query params string."
-  [m]
-  #?(:clj
-     (codec/form-encode m))
-  #?(:cljs
-     (let [usp (js/URLSearchParams.)]
-       (run! (fn [[k v]]
-               (if (coll? v)
-                 (run! (fn [v'] (.append usp (name k) v')) v)
-                 (.append usp (name k) v))) m)
-       (.toString usp))))
+(defn prepare-path-param [param]
+  (if (some? param)
+    ;; NB: Probably there is a more elegant way
+    ;; of achieving this w/ `bidi` protocols,
+    ;; but we don't care much anymore...
+    (if (string? param)
+      (-> (str/replace param "+" " ")
+          (bidi/url-encode)
+          (str/replace "%20" "+"))
+      param)
+    ""))
 
-(s/fdef serialize-query-params
-        :args (s/cat :m :http/query-params)
-        :ret string?)
+(defn prepare-path-params [m]
+  (-> m
+      (util/map-vals prepare-path-param)
+      seq
+      flatten))
 
-(defn path [handler & {:keys [params query-params anchor] :as opts}]
+(s/fdef prepare-path-params
+  :args (s/cat :m :http.path/params)
+  :ret (s/coll-of (s/or :kwd keyword? :str string?)))
+
+(def default-path "")
+
+(def ^:private path-error-msg "Unable to construct URI for '%s' handler and '%s' opts.")
+
+(defn path
+  "Constructs a URI for a particular web `handler` and kwargs `opts` which may include
+   `params` (path variables), `query-params` (parsed query string) or `anchor` (fragment)."
+  [handler & {:keys [params query-params anchor] :as opts}]
   (try
-    (cond->
-      (when handler (apply bidi/path-for routes handler (flatten (seq params))))
-      (seq query-params)      (str "?" (serialize-query-params query-params))
-      (text/not-blank anchor) (str "#" anchor))
-    (catch #?(:clj Exception) #?(:cljs js/Object) _e
-           (let [message (str "Unable to construct link: " (pr-str (assoc opts :handler handler)))]
-             #?(:clj (warn message))
-             #?(:cljs (js/console.warn message)))
-           "")))
-
+    (cond-> (if handler
+              (apply bidi/path-for routes handler (prepare-path-params params))
+              default-path)
+            (seq query-params)      (str "?" (url/serialize-query-params query-params))
+            (text/not-blank anchor) (str "#" anchor))
+    (catch #?(:clj Exception :cljs js/Error) _
+      (let [message (text/format path-error-msg handler opts)]
+        #?(:clj  (warn message)
+           :cljs (js/console.warn message)))
+      default-path)))
 
 (s/fdef path
-        :args (s/cat :handler keyword?
-                     :kwargs (s/keys* :opt-un [:http.path/params
-                                               :http/query-params]))
-        :ret string?)
+  :args (s/cat :handler keyword?
+               :kwargs (s/keys* :opt-un [:http.path/params
+                                         :http/query-params]))
+  :ret string?)
 
 (s/fdef bidi/path-for
-        :args (s/cat :routes vector?
-                     :handler keyword?)
+  :args (s/cat :routes vector?
+               :handler keyword?)
   :ret string?)
 
 (defn handler->name [handler]

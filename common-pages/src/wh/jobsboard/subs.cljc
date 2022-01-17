@@ -4,8 +4,6 @@
             [wh.jobsboard.db :as jobsboard]
             [wh.verticals :as verticals]))
 
-;; TODO: a lot of these may probably be shared with wh.jobs.jobsboard.subs
-
 (reg-sub
   ::sub-db
   (fn [db _]
@@ -48,12 +46,6 @@
     (conj (get sub-db :wh.jobs.jobsboard.db/currencies []) "*")))
 
 (reg-sub
-  ::search-term
-  :<- [::sub-db]
-  (fn [sub-db _]
-    (:wh.jobs.jobsboard.db/search-term-for-results sub-db)))
-
-(reg-sub
   ::search-result-count
   :<- [::sub-db]
   (fn [sub-db _]
@@ -90,7 +82,7 @@
     (keyword (get-in db [:wh.db/query-params jobsboard/view-type-param] "cards"))))
 
 (reg-sub
-  ::role-types
+  ::available-role-types
   (fn [_ _]
     (for [role-type job-db/role-types]
       {:value role-type

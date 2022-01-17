@@ -1,6 +1,5 @@
 (ns wh.slug
-  (:require [bidi.bidi :as bidi]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]))
 
 (defn slug [s]
   "We currently have this function and wh.url/slugify (clojure only).
@@ -10,9 +9,6 @@
       (str/trim)
       (str/replace #"\," "-")
       (str/replace #"\s+" "-")))
-
-(defn slug+encode [s]
-  (bidi/url-encode (slug s)))
 
 (defn tag-label->slug [s]
   (-> s

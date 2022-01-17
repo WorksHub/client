@@ -2,7 +2,7 @@
   (:require #?(:cljs ["rc-slider" :as slider])
             #?(:cljs [reagent.core :as r])
             #?(:cljs [wh.jobs.jobsboard.subs :as subs]
-               :clj [wh.jobsboard.subs :as subs])
+               :clj  [wh.jobsboard.subs :as subs])
             [wh.components.buttons-page-navigation :as buttons-page-navigation]
             [wh.components.forms :as forms]
             [wh.components.icons :as icons :refer [icon]]
@@ -50,13 +50,13 @@
    {:on-clear  #?(:cljs #(do
                            (dispatch [:wh.search/set-query nil])
                            (dispatch [:wh.search/search]))
-                  :clj nil)
+                  :clj  nil)
     :pristine? #?(:cljs (<sub [::subs/query-pristine?])
-                  :clj true)
+                  :clj  true)
     :value     #?(:cljs (<sub [::subs/current-query])
-                  :clj "")
+                  :clj  "")
     :on-change #?(:cljs #(dispatch [:wh.search/set-query (aget % "target" "value")])
-                  :clj nil)
+                  :clj  nil)
     :on-enter  (interop-forms/add-input-value-to-url :search :wh.search/search)}])
 
 (defn location-box* [{:keys [on-clear pristine? locations selected id
@@ -83,9 +83,9 @@
   [location-box*
    (merge opts
           {:on-tag-select (interop-forms/add-tag-value-to-url ::events/on-location-select)}
-          #?(:clj {:pristine?          true
-                   :init-from-js-tags? true
-                   :tags-url           (routes/path :tags-collection :params {:id :locations})}
+          #?(:clj  {:pristine?          true
+                    :init-from-js-tags? true
+                    :tags-url           (routes/path :tags-collection :params {:id :locations})}
              :cljs {:on-clear  #(dispatch [:wh.search/clear-locations-and-perks])
                     :pristine? (<sub [::subs/locations-pristine?])
                     :locations (<sub [:wh.search/available-locations])
@@ -115,9 +115,9 @@
   [tags-box*
    (merge opts
           {:on-tag-select (interop-forms/add-tag-value-to-url ::events/on-tag-select)}
-          #?(:clj {:pristine?          true
-                   :init-from-js-tags? true
-                   :tags-url           (routes/path :tags-collection :params {:id :jobs})}
+          #?(:clj  {:pristine?          true
+                    :init-from-js-tags? true
+                    :tags-url           (routes/path :tags-collection :params {:id :jobs})}
              :cljs {:on-clear  #(dispatch [:wh.search/clear-tags])
                     :pristine? (<sub [::subs/tags-pristine?])
                     :tags      (<sub [:wh.search/visible-tags])
@@ -139,10 +139,10 @@
 
 (defn role-type-box []
   [role-type-box*
-   #?(:clj {:pristine? true
-            :values    #{}
-            :on-change #(interop-forms/add-check-value-to-url :role-type %)
-            :options   (<sub [::subs/role-types])}
+   #?(:clj  {:pristine? true
+             :values    #{}
+             :on-change #(interop-forms/add-check-value-to-url :role-type %)
+             :options   (<sub [::subs/available-role-types])}
       :cljs {:on-clear  #(dispatch [:wh.search/clear-role-types])
              :pristine? (<sub [::subs/role-types-pristine?])
              :values    (<sub [:wh.search/role-types])
@@ -202,7 +202,7 @@
 
     [:div (util/smc styles/salary__currency-selector-wrapper)
      (let [options #?(:cljs (<sub [:wh.search/currencies])
-                      :clj (<sub [::subs/currencies]))]
+                      :clj  (<sub [::subs/currencies]))]
        [forms/select-field
         {:options     options
          :value       #?(:cljs (<sub [:wh.search/currency]) :clj nil)
@@ -231,8 +231,8 @@
                               :year 1000
                               1)
                  :on-change #(dispatch [:wh.search/set-salary-from (js->clj %)])}])
-       :clj [:span (util/smc styles/compensation-interval)
-             "Choose compensation interval"])
+       :clj  [:span (util/smc styles/compensation-interval)
+              "Choose compensation interval"])
 
     (let [competitive? #?(:cljs (<sub [:wh.search/show-competitive?]) :clj true)]
       [:div.search__box
@@ -282,7 +282,7 @@
     [icons/icon "close" :class styles/filter-header__close-icon]]])
 
 
-(defn search-box [{:keys [mobile?] :as args}]
+(defn search-box [{:keys [mobile?] :as _args}]
   [:section#search-box (util/smc styles/search-box
                                  [mobile? styles/search-box--overlay]
                                  ;; search-box--hidden will be used by external js to toggle overlay

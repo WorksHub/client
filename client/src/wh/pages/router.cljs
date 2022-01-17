@@ -13,7 +13,7 @@
     [wh.how-it-works.views :as how-it-works]
     [wh.landing-new.views :as home]
     [wh.pages.core :as pages]
-    [wh.subs :as subs :refer [<sub run-sub]]))
+    [wh.subs :refer [<sub run-sub]]))
 
 (defn homepage-redirect [db]
   (cond (not (db/logged-in? db))      :homepage-not-logged-in
@@ -41,26 +41,23 @@
         (:page mapping)
         mapping))))
 
+(defn- add-tracking-pixels-for-logged-in-user []
+  (let [logged-in? (<sub [:user/logged-in?])]
+    (when logged-in?
+      (tracking-pixels/add-registration-tracking-pixels))))
+
 (defn current-page []
   (r/create-class
     {:component-did-mount
-     #(let [logged-in? (<sub [:user/logged-in?])]
-        (when logged-in?
-          (tracking-pixels/add-registration-tracking-pixels)))
+     add-tracking-pixels-for-logged-in-user
+
      :component-did-update
-     #(let [scroll     (<sub [::subs/scroll])
-            logged-in? (<sub [:user/logged-in?])]
-        (when logged-in?
-          (tracking-pixels/add-registration-tracking-pixels))
-        (r/next-tick
-          (fn []
-            (when-not (<sub [::subs/initial-page?])
-              (pages/force-scroll-to-x! scroll)))))
+     add-tracking-pixels-for-logged-in-user
 
      :reagent-render
      (fn []
-       (let [_    (<sub [:wh/page-params])
-             page (<sub [::pages/page])]                     ;; this sub causes re-render when page-params changes
+       (let [_    (<sub [:wh/page-params]) ;; this sub causes re-render when `:wh.db/page-params` change
+             page (<sub [::pages/page])]
          (when-let [page-handler (<sub [::current-page])]
            (if (contains? #{:job :register} (<sub [::pages/page])) ;; TODO :see_no_evil:
              [page-handler]

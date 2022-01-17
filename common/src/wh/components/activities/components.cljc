@@ -24,11 +24,11 @@
                       (with-meta child {:key idx})))))
 
 (def button-class
-  {:filled              (util/mc styles/button)
-   :filled-short        (util/mc styles/button styles/button--short)
-   :dark                (util/mc styles/button styles/button--dark)
-   :inverted            (util/mc styles/button styles/button--inverted)
-   :inverted-highlighed (util/mc styles/button styles/button--inverted-highlighted)})
+  {:filled               (util/mc styles/button)
+   :filled-short         (util/mc styles/button styles/button--short)
+   :dark                 (util/mc styles/button styles/button--dark)
+   :inverted             (util/mc styles/button styles/button--inverted)
+   :inverted-highlighted (util/mc styles/button styles/button--inverted-highlighted)})
 
 (defn button [{:keys [type href event-handlers on-click]
                :or   {type :filled event-handlers {}}}
@@ -69,9 +69,8 @@
      [:p (util/smc (description-class type) class) children])))
 
 (defn tag-component [tag ref]
-  (let [href (routes/path :search
-                          :query-params (merge {:query (:label tag)}
-                                               (when ref {:ref ref})))]
+  (let [href (routes/path :search :params {:query (:label tag)}
+                          :query-params (when ref {:ref ref}))]
 
     [tag/tag :a (-> tag
                     (assoc :href href)

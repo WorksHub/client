@@ -4,9 +4,9 @@
             [re-frame.core :refer [reg-sub]]
             [wh.common.data :refer [currency-symbols]]
             [wh.common.job :as job]
+            [wh.common.subs]
             [wh.common.user :as user-common]
             [wh.components.pagination :as pagination]
-            [wh.db :as db]
             [wh.graphql-cache :as gqlc]
             [wh.job.db :as job-db]
             [wh.jobs.jobsboard.db :as jobsboard]
@@ -56,7 +56,7 @@
   ::jobsboard
   :<- [::results]
   (fn [{:keys [jobs-search] :as _results} _]
-    (search-results/get-jobsboard-db jobs-search (:search-params jobs-search))))
+    (search-results/get-jobsboard-db jobs-search)))
 
 (reg-sub
   ::admin?
@@ -103,7 +103,7 @@
 
 (reg-sub
   ::header-title
-  :<- [:wh.subs/vertical]
+  :<- [:wh/vertical]
   :<- [::search-label]
   (fn [[vertical search-label] _]
     (or search-label
@@ -111,14 +111,14 @@
 
 (reg-sub
   ::header-subtitle
-  :<- [:wh.subs/vertical]
+  :<- [:wh/vertical]
   (fn [vertical _]
     (or (:subtitle (verticals/config vertical :jobsboard-header))
         "Browse jobs for software engineers and developers")))
 
 (reg-sub
   ::header-description
-  :<- [:wh.subs/vertical]
+  :<- [:wh/vertical]
   :<- [::search-term]
   (fn [[vertical search-term] _]
     (or (get (verticals/config vertical :jobsboard-tag-desc) search-term)
@@ -182,7 +182,7 @@
 
 (reg-sub
   :wh.search/available-role-types
-  (fn [_db _]
+  (fn [_ _]
     (for [role-type job-db/role-types]
       {:value role-type
        :label role-type})))
@@ -358,23 +358,17 @@
 
 (reg-sub
   ::view-type
-  :<- [:wh.subs/query-params]
-  (fn [params]
-    (keyword (get params jobsboard-ssr/view-type-param "cards"))))
+  :<- [:wh/query-params]
+  (fn [query-params]
+    (keyword (get query-params jobsboard-ssr/view-type-param "cards"))))
 
 (reg-sub
-  ::pagination-query-params
-  :<- [:wh.subs/query-params]
+  ::page-params
+  :<- [:wh/page-params]
   :<- [::search-term]
-  (fn [[query-params search-term] _]
-    (if (str/blank? search-term)
-      query-params
-      (assoc query-params "search" search-term))))
-
-(reg-sub
-  :wh.subs/search-navbar?
-  (fn [db _]
-    (= (::db/page db) :jobsboard)))
+  (fn [[params search-term] _]
+    ;; NB: While `:query` param may have `nil` value, it must be passed.
+    (assoc params :query (when-not (str/blank? search-term) search-term))))
 
 (reg-sub
   :wh.search/currency

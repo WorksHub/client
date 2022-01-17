@@ -32,7 +32,7 @@
        [:div {:class classname-skeleton}
         (reduce (fn [a _] (conj a [:div {:style (width)}])) [:div] (range 10))]))))
 
-;; If you came here looking for 'on-scroll' functionlity,
+;; If you came here looking for 'on-scroll' functionality,
 ;; be aware that although we're hooking the `onscroll` event of `js/window`
 ;; it's `scrollTop` field of `documentElement` that has the correct scroll offset
 

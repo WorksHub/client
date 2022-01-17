@@ -3,8 +3,8 @@
     #?(:clj [wh.config :as config])
     #?(:cljs [re-frame.core :refer [dispatch]])
     #?(:cljs [wh.events])
-    #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
     #?(:cljs [wh.subs :as subs :refer [<sub]])
+    [wh.common.subs]
     [wh.components.icons :refer [icon]]))
 
 (defn app-name []
@@ -12,7 +12,7 @@
   #?(:cljs (<sub [:wh.subs/github-app-name])))
 
 (defn state-query-param []
-  #?(:cljs (let [env (<sub [:wh.subs/env])
+  #?(:cljs (let [env (<sub [:wh/env])
                  pr-number (some-> (re-find #"-\d+" js/window.location.href)
                                    (subs 1))]
              (when (and (= :stage env) pr-number)

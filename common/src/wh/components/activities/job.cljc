@@ -77,7 +77,7 @@
                             :params {:slug slug}
                             :query-params {:apply       "true"
                                            :interaction 1}]]
-       {:type :inverted-highlighed
+       {:type :inverted-highlighted
         :href (apply routes/path job-page-params)})
      "Apply Now"]
     [components/button

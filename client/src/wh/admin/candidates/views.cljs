@@ -97,7 +97,11 @@
        (into [:div]
             (for [candidate (<sub [::subs/search-results])]
               [candidate-pod candidate]))
-       [pagination/pagination (<sub [::subs/current-page]) (<sub [::subs/pagination]) :candidates (<sub [::subs/query-params])]])]])
+       [pagination/pagination
+        (<sub [::subs/current-page])
+        (<sub [::subs/pagination])
+        :candidates
+        (<sub [::subs/query-params])]])]])
 
 (defn page []
   (if (<sub [:user/admin?])

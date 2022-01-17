@@ -10,11 +10,12 @@
   [admin? {:keys [facets max-salary min-salary published role-type
                   salary-type-mapping search-params user-email]}]
   (cond->
-    #:wh.search{:remote            (boolean (get-in search-params [:filters :remote]))
+    #:wh.search{:query             (:query search-params)
+                :remote            (boolean (get-in search-params [:filters :remote]))
                 :sponsorship       (boolean (get-in search-params [:filters :sponsorshipOffered]))
                 :only-mine         (boolean (and user-email (= user-email (get-in search-params [:filters :manager]))))
                 :role-types        (if role-type
-                                     (set [role-type]) ;; TODO now we only pass one, should we get more?
+                                     (set [role-type])
                                      (get-in jobsboard/default-db [::jobsboard/search :wh.search/role-types]))
                 :published         (if published
                                      (set [published])
@@ -24,7 +25,6 @@
                 :salary-type       (or (get salary-type-mapping (get-in search-params [:filters :remuneration :timePeriod]))
                                        (get-in jobsboard/default-db [::jobsboard/search :wh.search/salary-type]))
                 :salary-range      (when (and min-salary max-salary) [min-salary max-salary])
-                :query             (:query search-params)
                 :remote-count      (->> (facets "remote") (filter #(= (:value %) "true")) first :count)
                 :sponsorship-count (->> (facets "sponsorship-offered") (filter #(= (:value %) "true")) first :count)}
     admin? (assoc :wh.search/mine-count (->> (facets "manager") (filter #(= (:value %) user-email)) first :count)
@@ -42,7 +42,7 @@
      :user-email          user-email}))
 
 
-(defn get-jobsboard-db [jobs-search search-params]
+(defn get-jobsboard-db [jobs-search]
   #:wh.jobs.jobsboard.db{:jobs                     (mapv job/translate-job
                                                          (:jobs jobs-search))
                          :promoted-jobs            (mapv job/translate-job

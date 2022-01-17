@@ -31,7 +31,7 @@
 
 (reg-sub-raw
   ::articles-raw
-  (fn [db _]
+  (fn [_db _]
     (reaction
       (let [slug        (<sub [::company-slug])
             page-number (<sub [::page-number])

@@ -53,7 +53,9 @@
                 :issues-by-language
                 :job
                 :jobsboard
+                :jobsboard-search
                 :learn
+                :learn-search
                 :liked-blogs
                 :learn-by-tag
                 :liked
@@ -91,7 +93,6 @@
 (s/def ::page-params map?) ; arbitrary page parameters, see routes.cljc
 (s/def ::query-params (s/map-of string? (s/or :str string?
                                               :coll (s/coll-of string?))))
-(s/def ::search-term (s/nilable string?))        ; pre-set search only
 (s/def ::loading? boolean?)
 (s/def ::tracking-consent? boolean?)
 (s/def ::errors (s/coll-of string?))
