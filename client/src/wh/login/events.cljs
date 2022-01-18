@@ -112,10 +112,11 @@
 ;; copy of integration.stackoverflow/stackoverflow-redirect-url
 (defn stackoverflow-redirect-url [url env vertical]
   (let [pr-number (re-find #"-\d+" url)]
+    ;; TODO: This is now broken. Need to fix by replacing a `pr-number` with the Release Env ID.
     (case env
       :prod  (str "https://" vertical ".works-hub.com/stackoverflow-callback")
-      :stage (str "https://works-hub-stage.herokuapp.com/stackoverflow-dispatch/" vertical pr-number)
-      :dev   (str "http://" vertical ".localdomain:8080/stackoverflow-callback"))))
+      :stage (str "https://" vertical ".staging.works-hub.com/stackoverflow-dispatch/" vertical pr-number)
+      :dev   (str "http://"  vertical ".localdomain:8080/stackoverflow-callback"))))
 
 (defn stackoverflow-authorize-url
   [client-id env vertical]
@@ -152,9 +153,10 @@
   [client-id env vertical]
   (let [base      (<< "https://github.com/login/oauth/authorize?client_id=~{client-id}&scope=user:email")
         pr-number (re-find #"-\d+" js/window.location.href)]
+    ;; TODO: This is now broken. Need to fix by replacing a `pr-number` with the Release Env ID.
     (case env
       :prod  (<< "~{base}&redirect_uri=https://functional.works-hub.com/github-dispatch/~{vertical}")
-      :stage (<< "~{base}&redirect_uri=https://works-hub-stage.herokuapp.com/github-dispatch/~{vertical}~{pr-number}")
+      :stage (<< "~{base}&redirect_uri=https://functional.staging.works-hub.com/github-dispatch/~{vertical}~{pr-number}")
       :dev   (<< "~{base}&redirect_uri=http://functional.localdomain:8080/github-dispatch/~{vertical}"))))
 
 (reg-event-fx
