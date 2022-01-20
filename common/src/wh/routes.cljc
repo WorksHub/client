@@ -71,7 +71,9 @@
          :cljs bidi/Matched)
       (resolve-handler [this m]
         (when-let [res (bidi/succeed handler m)]
-          (assoc res :params params-map)))
+          (assoc res :params params-map
+                     ;; because bidi/make-handler takes :route-params after matching with bidi/match-route*
+                     :route-params params-map)))
       (unresolve-handler [this m]
         (when (and (= handler (:handler m))
                    (= params-map (select-keys (:params m) (keys params-map))))
