@@ -59,15 +59,15 @@
     :icon-name  "plus-circle"
     :icon-class styles/dropdown__link__icon-plus
     :text       "Post a new Job"}
-   {:path       (routes/path :company-applications)
-    :icon-name  "document-filled"
-    :icon-class styles/dropdown__link__icon-document
-    :text       "All live Applications"}
    (when-not prod?
      {:path       (routes/path :create-job-new)
       :icon-name  "plus-circle"
       :icon-class styles/dropdown__link__icon-plus
-      :text       "Create Job, New Form"})])
+      :text       "Post a new Job, Beta"})
+   {:path       (routes/path :company-applications)
+    :icon-name  "document-filled"
+    :icon-class styles/dropdown__link__icon-document
+    :text       "All live Applications"}])
 
 (defn company-company-submenu-list [company-slug]
   [{:path       (routes/path :companies)

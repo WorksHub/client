@@ -52,6 +52,33 @@
                   :string string?)
             (s/or :string string?
                   :strings (s/coll-of string?))))
+(s/def ::query-params-without-vector-values
+  (s/map-of (s/or :keyword keyword?
+                  :string string?)
+            (s/or :string string?
+                  :strings string?)))
+
+(defn concat-vector-values
+  "Concatenates vector values of the `query-params` map to ';'-separated
+   strings while deduplicating their constituent parts.
+
+     `{\"tags\" [\"clojure\" \"scala\"], \"remote\" \"true\"}` ->
+     `{\"tags\" \"clojure;scala\", \"remote\" \"true\"}`
+
+   Returns the same `query-params` in case there are no vectored values."
+  [query-params]
+  (if (some (comp vector? second) query-params)
+    (reduce (fn [m [k v]]
+              (assoc m k (if (vector? v)
+                           (->> v (distinct) (str/join ";"))
+                           v)))
+            {}
+            query-params)
+    query-params))
+
+(s/fdef concat-vector-values
+  :args (s/cat :query-params ::query-params)
+  :ret ::query-params-without-vector-values)
 
 #?(:cljs (declare uri->query-params))
 

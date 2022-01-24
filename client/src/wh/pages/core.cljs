@@ -105,10 +105,11 @@
                           scroll        (if history-state (aget history-state "scroll-position") 0)
                           ;; TODO: Come up with a universal way of replacing '+'s in route params' values with `bidi`?
                           route-params' (util/update* route-params :query #(str/replace % "+" " "))
+                          query-params' (or (common-url/concat-vector-values query-params) {})
                           new-db        (-> db
                                             (assoc ::db/page handler
                                                    ::db/page-params (merge params route-params' {})
-                                                   ::db/query-params (or query-params {})
+                                                   ::db/query-params query-params'
                                                    ::db/uri uri
                                                    ::db/scroll scroll)
                                             (update ::db/page-moves inc))

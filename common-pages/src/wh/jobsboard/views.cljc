@@ -154,10 +154,10 @@
          (<sub [::subs/result-count-str])]
 
         [jobs-board
-         (merge {:params    params
-                 :view-type view-type}
-                #?(:clj  {:route        :jobsboard-search
-                          :query-params query-params}
+         (merge {:params       params
+                 :query-params query-params
+                 :view-type    view-type}
+                #?(:clj  {:route :jobsboard-search}
                    :cljs {:preset-search? preset-search?}))]]]]]))
 
 
