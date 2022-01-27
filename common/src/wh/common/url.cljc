@@ -91,7 +91,7 @@
        (let [parsed (codec/form-decode query-string)]
          (if (string? parsed)
            {(if (str/blank? parsed) " " parsed) ""} ; matches `goog.Uri` output
-           parsed))
+           (util/map-vals parsed #(or % "")))) ; matches `goog.Uri` output
        {}))
   #?(:cljs
      (let [uri (uri/create nil nil nil nil nil query-string nil false)]
@@ -128,10 +128,11 @@
 
 (defn serialize-query-params
   "Serializes a \"query params\" map into URI's query string.
+   Filters out query params with no value, i.e. `nil`.
    Results in `nil` for `nil` or empty map."
   [m]
   #?(:clj
-     (if (map? m) (codec/form-encode m) ""))
+     (if (map? m) (-> m (util/remove-nils) (codec/form-encode)) ""))
   #?(:cljs
      (let [usp (js/URLSearchParams.)]
        (run! (fn [[k v]]
