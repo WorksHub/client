@@ -236,8 +236,8 @@
       ["health/" {[:commit-sha] :health-by-commit-sha}]
       ;; next js routes
       ["series" :series]
-      ["jobnew" {"/create"           :create-job-new
-                 ["/" :slug "/edit"] :edit-job-new}]]]))
+      ["jobs-new" {"/create"           :create-job-new
+                   ["/" :slug "/edit"] :edit-job-new}]]]))
 
 ;;TODO this config should pulled partially from wh.response.ssr/page-content map
 (def server-side-only-pages #{:employers
