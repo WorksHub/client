@@ -1,9 +1,9 @@
 (ns wh.common.job
   (:require
+    #?(:cljs [goog.i18n.NumberFormat :as nf])
     [clojure.string :as str]
     [wh.common.cases :as cases]
-    [wh.common.data :as data]
-    #?(:cljs [goog.i18n.NumberFormat :as nf])))
+    [wh.common.data :as data]))
 
 (defn format-job-location
   [{:keys [city state country country-code] :as _location} remote]
@@ -110,8 +110,10 @@
 (defn approved? [job]
   (boolean (:approved job)))
 
+(defn ats-job-id? [job]
+  (boolean (:ats-job-id job)))
+
 (defn company-id
   "associated company's id"
   [job]
   (:company-id job))
-
