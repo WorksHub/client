@@ -172,6 +172,6 @@
             :rel    "noopener"}
         (icon logo)])]
     [:div.footer__legal
-     [:div.footer__legal__item "© 2020 " (verticals/config vertical :platform-name)]
+     [:div.footer__legal__item "© 2022 " (verticals/config vertical :platform-name)]
      [:div.footer__legal__item [:a {:href (routes/path :privacy-policy)} [:span "Privacy Policy"]]]
      [:div.footer__legal__item [:a {:href "https://www.works-hub.com"} [:span "Developed by WorksHub"]]]]]])
