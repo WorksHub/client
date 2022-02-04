@@ -41,8 +41,7 @@
      [:button.button label])])
 
 (defn page []
-  (let [vertical       (<sub [:wh/vertical])
-        billing-period (keyword (or (<sub [:wh/query-param "billing-period"])
+  (let [billing-period (keyword (or (<sub [:wh/query-param "billing-period"])
                                     (name data/default-billing-period)))]
     [:div.pricing
      [:div.public-content
