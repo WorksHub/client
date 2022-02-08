@@ -5,6 +5,13 @@
             [wh.verticals :as verticals]))
 
 (reg-sub
+  ::page-params
+  :<- [:wh/page-params]
+  (fn [params _]
+    ;; NB: While `:query` param may have `nil` value, it must be passed.
+    (update params :query #(or % ""))))
+
+(reg-sub
   ::sub-db
   (fn [db _]
     (:wh.jobs.jobsboard.db/sub-db db)))

@@ -105,7 +105,7 @@
                  (<sub [::subs/pagination])
                  (when-not preset-search? :jobsboard-search)
                  query-params
-                 (<sub [::subs/page-params])]))]))
+                 params]))]))
 
 (defn navigation [view-type params query-params logged-in?]
   [components/navigation
@@ -126,7 +126,7 @@
         view-type              (<sub [::subs/view-type])
         preset-search?         false
         query-params           (<sub [:wh/query-params])
-        params                 (<sub [:wh/page-params])
+        params                 (<sub [::subs/page-params])
         jobs-loaded?           (seq (<sub [::subs/jobs]))
         promoted-jobs-present? (seq (<sub [::subs/promoted-jobs]))
         searching? #?(:cljs    (<sub [:wh.search/searching?])
@@ -163,7 +163,7 @@
 
 (defn preset-search-page []
   (let [view-type           (<sub [::subs/view-type])
-        params              (<sub [:wh/page-params])
+        params              (<sub [::subs/page-params])
         query-params        (<sub [:wh/query-params])
         searching? #?(:cljs (<sub [:wh.search/searching?])
                       :clj  false)
