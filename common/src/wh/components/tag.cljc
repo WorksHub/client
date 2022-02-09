@@ -32,11 +32,11 @@
   ([element-type
     {:keys [label type subtype id icon on-click href
             with-icon? inverted? interactive? server-side-invert-on-click?]
-     :or   {type       "tech"
-            with-icon? true}
+     :or   {with-icon? true}
      :as   t}
     {:keys [class] :as _opts}]
-   (let [label-lc      (or (some-> label str/lower-case) "")
+   (let [type'         (or type "tech")
+         label-lc      (or (some-> label str/lower-case) "")
          standard-icon (when (labels-with-icons label-lc)
                          (str label-lc "-tag"))
          icon'         (or icon standard-icon)]
@@ -49,7 +49,7 @@
                                               (when inverted? "tag--inverted")
                                               (when interactive? "tag--interactive")
                                               (when (= :button element-type) "tag--button")
-                                              (str "tag--type-" (if t (name type) "skeleton"))
+                                              (str "tag--type-" (if t (name type') "skeleton"))
                                               (when-not t "tag--skeleton")
                                               (when subtype (str "tag--subtype-" (name subtype))))}
              (when href {:href href})
