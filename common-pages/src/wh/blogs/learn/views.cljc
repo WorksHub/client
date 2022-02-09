@@ -134,7 +134,7 @@
         (<sub [::subs/pagination])
         (if tag :learn-by-tag :learn-search)
         (<sub [:wh/query-params])
-        page-params]]
+        (update page-params :query #(or % ""))]]
       [:div.is-hidden-mobile
        [learn-components/tag-picker-comp tags]
        [candidate-pods/candidate-cta]]]]))
