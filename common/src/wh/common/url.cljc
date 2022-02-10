@@ -91,7 +91,7 @@
        (let [parsed (codec/form-decode query-string)]
          (if (string? parsed)
            {(if (str/blank? parsed) " " parsed) ""} ; matches `goog.Uri` output
-           (util/map-vals parsed #(or % "")))) ; matches `goog.Uri` output
+           (util/map-vals #(or % "") parsed))) ; matches `goog.Uri` output
        {}))
   #?(:cljs
      (let [uri (uri/create nil nil nil nil nil query-string nil false)]
@@ -205,7 +205,7 @@
     (str "http://" (name vertical) ".localdomain:8080")))
 
 (defn share-urls [args]
-  (let [{:keys [text text-twitter text-linkedin url]} (util/map-vals args bidi/url-encode)]
+  (let [{:keys [text text-twitter text-linkedin url]} (util/map-vals bidi/url-encode args)]
     {:twitter  (str "https://twitter.com/intent/tweet?text="
                     (or text-twitter text) "&url=" url)
      :facebook (str "http://www.facebook.com/sharer/sharer.php?u=" url)

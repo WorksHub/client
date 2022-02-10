@@ -287,10 +287,10 @@
     ""))
 
 (defn prepare-path-params [m]
-  (-> m
-      (util/map-vals prepare-path-param)
-      seq
-      flatten))
+  (->> m
+       (util/map-vals prepare-path-param)
+       seq
+       flatten))
 
 (s/fdef prepare-path-params
   :args (s/cat :m :http.path/params)

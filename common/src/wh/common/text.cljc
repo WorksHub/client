@@ -8,6 +8,11 @@
   ([n singular] (pluralize n singular (str singular "s")))
   ([n singular plural] (if (= n 1) singular plural)))
 
+(defn singularize [s]
+  (if (str/ends-with? s "ies")
+      (str/replace s #"ies$" "y")
+      (str/replace s #"s$" "")))
+
 (defn not-blank
   "Same as `not-empty` but checks strings aren't blank"
   [s]

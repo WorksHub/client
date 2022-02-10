@@ -277,7 +277,7 @@
 (defn map-vals
   "Applies `f` to each value inside a map `m`.
    Keeps the metadata of the source map."
-  [m f]
+  [f m]
   (copy-meta m (encore/map-vals f m)))
 
 ;; from https://github.com/Vincit/venia/issues/34
