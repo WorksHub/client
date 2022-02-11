@@ -215,10 +215,10 @@
   [m k f & args]
   (apply update-in* m [k] f args))
 
-(defn update-vals
+(defn update-vals*
   "Update many values under many keys in map"
   [m ks & args]
-  (reduce (fn [m k] (apply update m k args)) m ks))
+  (reduce (fn [m k] (apply update* m k args)) m ks))
 
 (defn merge-classes
   [& classes]
