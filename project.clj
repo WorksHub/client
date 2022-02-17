@@ -52,4 +52,4 @@
   :sass {:src              "client/styles/"
          :output-directory "client/resources/public"}
 
-  :min-lein-version "2.5.0")
+  :min-lein-version "2.9.1")
