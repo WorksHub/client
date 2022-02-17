@@ -1,6 +1,7 @@
 (ns wh.components.footer
   (:require
     [wh.common.data :as data]
+    [wh.common.url :as url]
     [wh.components.icons :refer [icon]]
     [wh.routes :as routes]
     [wh.slug :as slug]
@@ -38,9 +39,9 @@
                {:title "Register company"
                 :route [:register-company]}
                {:title "Pricing and plans"
-                :href  (str routes/company-landing-page "/pricing")}
+                :href  (str url/company-landing-page (routes/path :pricing))}
                {:title "Request a demo"
-                :href  verticals/demo-link}
+                :href  url/demo-link}
                {:title "Terms of Service"
                 :route [:terms-of-service]}]})
 
@@ -103,7 +104,7 @@
                          :rel    "noopener"}) title])]
      [:div.footer__sitemap__list
       [:div "Jobs"]
-      (for [label (verticals/config vertical :footer-job-links)]
+      (for [label (verticals/config vertical :footer-job-links)] ;; TODO [FEATURE-298]: Make them dynamic as well.
         [:a {:key  (str label "-jobs")
              :href (routes/path :pre-set-search :params {:tag (str (slug/slug label))})}
          (str label " jobs")])]
@@ -119,7 +120,7 @@
        "Remote Jobs"]]
      [:div.footer__sitemap__list
       [:div "Articles"]
-      (for [tag (verticals/config vertical :footer-article-links)]
+      (for [tag (verticals/config vertical :footer-article-links)] ;; TODO [FEATURE-298]: Make them dynamic as well.
         [:a {:key  (str tag "-articles")
              :href (routes/path :learn-by-tag :params {:tag (slug/tag-label->slug tag)})}
          (str tag " articles")])]]))
@@ -174,4 +175,4 @@
     [:div.footer__legal
      [:div.footer__legal__item "© 2022 " (verticals/config vertical :platform-name)]
      [:div.footer__legal__item [:a {:href (routes/path :privacy-policy)} [:span "Privacy Policy"]]]
-     [:div.footer__legal__item [:a {:href "https://www.works-hub.com"} [:span "Developed by WorksHub"]]]]]])
+     [:div.footer__legal__item [:a {:href url/company-landing-page} [:span "Developed by WorksHub"]]]]]])

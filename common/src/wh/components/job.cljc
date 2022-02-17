@@ -1,12 +1,13 @@
 (ns wh.components.job
   (:require [clojure.string :as str]
             [wh.common.job :as jobc]
+            [wh.common.subs]
             [wh.components.cards :refer [match-circle]]
             [wh.components.common :refer [wrap-img img]]
             [wh.components.icons :refer [icon]]
             [wh.components.tag :as tag]
-            [wh.interop :as interop]
             [wh.re-frame.events :refer [dispatch]]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.util :as util]))
@@ -41,9 +42,13 @@
 
 
 (defn job-card--tag [tag]
-  (let [href (routes/path :pre-set-search :params {:tag (slug/slug (:slug tag))})
-        tag  (assoc tag :href href)
-        tag  (update tag :label str/lower-case)]
+  (let [vertical-tags (<sub [:wh/vertical-tags-ids])
+        add-nofollow? (not (contains? vertical-tags (:id tag)))
+        href          (routes/path :pre-set-search :params {:tag (slug/slug (:slug tag))})
+        tag           (cond-> (-> tag
+                                  (assoc :href href)
+                                  (update :label str/lower-case))
+                              add-nofollow? (assoc :rel "nofollow"))]
     [tag/tag :a tag]))
 
 (defn job-card--tags

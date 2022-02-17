@@ -30,7 +30,7 @@
   ([element-type t]
    [tag element-type t nil])
   ([element-type
-    {:keys [label type subtype id icon on-click href
+    {:keys [label type subtype id icon on-click href rel
             with-icon? inverted? interactive? server-side-invert-on-click?]
      :or   {with-icon? true}
      :as   t}
@@ -53,6 +53,7 @@
                                               (when-not t "tag--skeleton")
                                               (when subtype (str "tag--subtype-" (name subtype))))}
              (when href {:href href})
+             (when rel  {:rel  rel})
              (when on-click
                (interop/on-click-fn #?(:cljs on-click
                                        :clj  (cond-> on-click

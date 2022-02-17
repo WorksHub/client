@@ -9,7 +9,6 @@
             [wh.components.loader :refer [loader]]
             [wh.components.not-found :as not-found]
             [wh.components.pagination :as pagination]
-            [wh.routes :refer [path]]
             [wh.subs :refer [<sub]]))
 
 (defn approval->str [{:keys [source time status]}]

@@ -10,6 +10,7 @@
             [wh.common.data :as data]
             [wh.common.numbers :as numbers]
             [wh.common.text :refer [pluralize]]
+            [wh.common.url :as url]
             [wh.company.payment.events :as events]
             [wh.company.payment.subs :as subs]
             [wh.company.views :refer [int->dollars]]
@@ -549,7 +550,7 @@ On next screen you can republish jobs that you want."]]])
                            :event [::events/setup-step-forward]}]
                [authorize-card-button nil]]]
              [:div
-              [:a {:href   verticals/take-off-meeting-link
+              [:a {:href   url/take-off-meeting-link
                    :target "_blank"
                    :rel    "noopener"
                    :on-click #(reset! clicked? true)}

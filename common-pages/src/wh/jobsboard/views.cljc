@@ -114,7 +114,7 @@
     :on-list-type-change #?(:clj  (fn [type]
                                     {:href (routes/path
                                              :jobsboard-search
-                                             :params params
+                                             :params (merge {:query ""} params)
                                              :query-params (assoc query-params "view-type" (name type)))})
                             :cljs (fn [type]
                                     {:on-click #(dispatch [:wh.events/nav--set-query-param

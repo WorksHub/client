@@ -211,3 +211,8 @@
      :facebook (str "http://www.facebook.com/sharer/sharer.php?u=" url)
      :linkedin (str "https://www.linkedin.com/shareArticle?mini=true&url="
                     url "&title=" (or text-linkedin text) "&summary=&origin=")}))
+
+(def company-landing-page "https://www.works-hub.com")
+
+(def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/product-demo")
+(def demo-link             "https://app.hubspot.com/meetings/workshub/product-demo")

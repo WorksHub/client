@@ -1,7 +1,7 @@
 (ns wh.sitemap.views
   (:require
-    [wh.sitemap.subs :as subs]
     [wh.re-frame.subs :refer [<sub]]
+    [wh.sitemap.subs]
     [wh.verticals :as verticals]))
 
 (defn sitemap-page [vertical links]

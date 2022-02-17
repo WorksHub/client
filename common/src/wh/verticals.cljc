@@ -3,26 +3,6 @@
     [clojure.set :as set]
     [wh.common.data :as data]))
 
-(def ordered-job-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python" "remote"])
-(def ordered-blog-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python" "remote" "www"])
-(def ordered-issue-verticals ["functional" "blockchain" "javascript" "ai" "golang" "java" "python" "remote" "www"])
-
-;;This should be used to allow admins to publish job for future verticals.
-;; You also need to make sure that the vertical is added to grapql spec
-(def future-job-verticals (set ordered-job-verticals))
-(def future-blog-verticals (set ordered-blog-verticals))
-
-(def all-verticals (set/union future-job-verticals future-blog-verticals))
-
-(def available-job-verticals (set ordered-job-verticals))
-(def available-blog-verticals (set ordered-blog-verticals))
-
-(def default-vertical "functional")
-(def company-vertical "www")
-
-(def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/product-demo")
-(def demo-link             "https://app.hubspot.com/meetings/workshub/product-demo")
-
 (def vertical-functional "functional")
 (def vertical-blockchain "blockchain")
 (def vertical-javascript "javascript")
@@ -33,8 +13,24 @@
 (def vertical-remote "remote")
 (def vertical-company "www")
 
+(def default-vertical vertical-functional)
+
+;; Available verticals
+(def ordered-job-verticals   [vertical-functional vertical-blockchain vertical-javascript vertical-ai vertical-golang vertical-java vertical-python vertical-remote])
+(def ordered-blog-verticals  [vertical-functional vertical-blockchain vertical-javascript vertical-ai vertical-golang vertical-java vertical-python vertical-remote vertical-company])
+(def ordered-issue-verticals [vertical-functional vertical-blockchain vertical-javascript vertical-ai vertical-golang vertical-java vertical-python vertical-remote vertical-company])
+
+;; This should be used to allow admins to publish jobs for future verticals.
+;; You also need to make sure that the vertical is added to GraphQL spec!
+(def future-job-verticals (set ordered-job-verticals))
+(def future-blog-verticals (set ordered-blog-verticals))
+
+(def all-verticals (set/union future-job-verticals future-blog-verticals))
+
+
+;; TODO [FEATURE-298]: Pick footer links out of the vertical-associated tags.
 (def vertical-config
-  {"functional"
+  {vertical-functional
    {:platform-name        "Functional Works"
     :label-name           "Functional programming"
     :description          "Browse functional programming jobs, salaries, blogs and learning resources! Scala jobs, Clojure jobs, Haskell jobs and more."
@@ -55,7 +51,7 @@
                            "reasonml" "Look for front-end and full-stack roles working with ReasonML"}
     :articles-tags        ["scala" "clojure" "elm" "haskell" "ocaml" "rust" "erlang" "elixir" "F#"]}
 
-   "blockchain"
+   vertical-blockchain
    {:platform-name        "Blockchain Works"
     :label-name           "Blockchain"
     :description          "Browse blockchain news, jobs, salaries and learning resources! Jobs in the United States, UK and more."
@@ -73,7 +69,7 @@
                            "solidity"   "Look for developer roles working with Solidity"}
     :articles-tags        ["ethereum" "blockchain" "api" "cryptography" "cryptocurrency" "bitcoin" "distributed systems" "scala" "akka" "solidity"]}
 
-   "javascript"
+   vertical-javascript
    {:platform-name        "JavaScript Works"
     :label-name           "Javascript"
     :description          "Browse javascript jobs, salaries, blogs and learning resources! Jobs in the United States, UK and more."
@@ -92,7 +88,7 @@
                            "typescript" "Look for front-end and full-stack roles working with Typescript"}
     :articles-tags        ["elm" "javascript" "react" "graphql" "purescript" "vue" "angular" "frameworks" "html5" "css" "react"]}
 
-   "ai"
+   vertical-ai
    {:platform-name        "Ai Works"
     :label-name           "Artificial Intelligence"
     :description          "Browse artificial intelligence, machine learning, deep learning jobs and learning resources! Put your Python, R, Spark and Scala skills to work. Jobs in the US, UK and multiple locations."
@@ -111,7 +107,7 @@
                            "machine learning"        "Look for Machine Learning roles working with Python, R, Tensorflow and more"}
     :articles-tags        ["spark" "Python" "Hadoop" "Data analysis" "Artificial Intelligence" "Reinforcement Learning" "Deep Learning" "Machine Learning" "Tensorflow" "Data Science"]}
 
-   "golang"
+   vertical-golang
    {:platform-name        "Golang Works"
     :label-name           "Golang"
     :description          "Browse Golang jobs, salaries, blogs and learning resources!"
@@ -127,7 +123,7 @@
     :jobsboard-tag-desc   {"golang" "Look for Golang developer roles working with Docker, Kubernetes and more"}
     :articles-tags        ["go" "docker" "microservices" "security" "devsecops" "Containers" "distributed systems" "google cloud" "cybersecurity" "golang" "mongodb"]}
 
-   "java"
+   vertical-java
    {:platform-name        "Java Works"
     :label-name           "Java"
     :description          "Browse Java developer jobs, salaries, blogs and learning resources! Java jobs, articles and more."
@@ -145,7 +141,7 @@
                            "akka"  "Look for backend roles working with Akka"}
     :articles-tags        ["android" "ethereum" "functional programming" "scala" "haskell" "java" "clojure" "Akka" "Cluster" "Scala" "Docker" "OOP"]}
 
-   "python"
+   vertical-python
    {:platform-name        "Python Works"
     :label-name           "Python"
     :description          "Browse Python programming jobs, salaries, blogs and learning resources! Python jobs, Flask jobs, Ansible jobs and more."
@@ -162,7 +158,7 @@
                            "ansible" "Look for DevOps roles working with Ansible"}
     :articles-tags        ["python" "django" "data science" "databases" "blockchain" "data" "Data Science" "AWS" "Cloud" "Relational Database" "Spark" "Books"]}
 
-   "remote"
+   vertical-remote
    {:platform-name        "Remote Works"
     :label-name           "Remote"
     :description          "Browse remote programming jobs, salaries, blogs and learning resources!"
@@ -182,7 +178,7 @@
                            "javascript" "Look for front-end, full-stack and backend roles working with JavaScript"}
     :articles-tags        ["hiring" "startups" "remote working" "open source" "opensource" "remote"]}
 
-   "www"
+   vertical-company
    {:platform-name        "WorksHub"
     :label-name           "WorksHub"
     :description          data/www-hero-copy
@@ -195,6 +191,7 @@
                            :subtitle    "Browse jobs for developers working across a wide range of technologies"
                            :description "Look for front-end, full-stack and backend roles"}
     :articles-tags        ["android" "ethereum" "elm" "javascript" "go" "docker" "microservices" "clojure" "clojurescript" "security" "devsecops"]}})
+
 
 (defn config [vertical k]
   (get-in vertical-config [(name vertical) k]))

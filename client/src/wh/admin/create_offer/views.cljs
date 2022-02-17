@@ -6,6 +6,7 @@
     [wh.admin.create-offer.db :as create-offer]
     [wh.admin.create-offer.events :as events]
     [wh.admin.create-offer.subs :as subs]
+    [wh.common.url :as url]
     [wh.components.forms.views :refer [text-field select-field]]
     [wh.components.icons :refer [icon]]
     [wh.db :as db]
@@ -38,7 +39,7 @@
      [:textarea
       {:id id
        :read-only true
-       :value (str "https://www.works-hub.com"
+       :value (str url/company-landing-page
                    (routes/path :payment-setup :params {:step :pay-confirm} :query-params {:package "take_off"
                                                                                            :billing (name (<sub [::subs/billing-period]))}))}]
      [:a {:on-click #(do

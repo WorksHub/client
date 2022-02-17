@@ -207,13 +207,15 @@
   "Only calls `update-in` if key exists"
   [m ks f & args]
   (if (contains-in? m ks)
-    (apply (partial update-in m ks f) args)
+    (apply update-in m ks f args)
     m))
 
 (defn update*
   "Only calls `update` if key exists"
   [m k f & args]
-  (apply update-in* m [k] f args))
+  (if (contains? m k)
+    (apply update m k f args)
+    m))
 
 (defn update-vals*
   "Update many values under many keys in map"

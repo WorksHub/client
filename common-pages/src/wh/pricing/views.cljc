@@ -1,5 +1,6 @@
 (ns wh.pricing.views
   (:require [wh.common.data :as data]
+            [wh.common.url :as url]
             [wh.components.faq :as faq]
             [wh.components.forms :refer [fake-radio-buttons]]
             [wh.components.package-selector :refer [package-selector]]
@@ -8,13 +9,12 @@
             [wh.pricing.subs :as subs]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.util :as util]
-            [wh.verticals :as verticals]))
+            [wh.util :as util]))
 
 (defn demo-button []
   (fn [secondary? label package billing-period]
     [:a {:href (if (= :take_off package)
-                 verticals/take-off-meeting-link
+                 url/take-off-meeting-link
                  (routes/path :register-company
                               :query-params
                               (cond-> {}

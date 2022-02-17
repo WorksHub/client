@@ -1,7 +1,6 @@
 (ns wh.components.common
   (:require
-    #?(:clj  [wh.config :as config])
-    #?(:cljs [re-frame.core :refer [subscribe]])
+    #?(:clj [wh.config :as config])
     [clojure.string :as str]
     [wh.common.subs]
     [wh.common.url :as url]
@@ -61,7 +60,7 @@
    (when src
      (let [img-hash          (some-> src (str/split #"/") last)
            params            {:fit fit :crop crop :auto auto}
-           conf-env #?(:cljs @(subscribe [:wh/env])
+           conf-env #?(:cljs (<sub [:wh/env])
                        :clj  (keyword (config/get :environment)))
            env               (if (= :prod conf-env)
                                conf-env

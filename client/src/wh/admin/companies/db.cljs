@@ -6,7 +6,7 @@
     [wh.verticals :as verticals]))
 
 (def tags
-  (concat (map #(hash-map :type :vertical :tag (str % " works")) verticals/available-job-verticals)
+  (concat (map #(hash-map :type :vertical :tag (str % " works")) verticals/ordered-job-verticals)
           (map #(hash-map :type :manager  :tag %) (vals data/managers))
           (map #(hash-map :type :package  :tag %) (map (fn [p] (str/replace (name p) #"_" " ")) data/packages))
           [{:type :manager   :tag "no manager"}]

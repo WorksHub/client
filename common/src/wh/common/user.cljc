@@ -1,6 +1,7 @@
 (ns wh.common.user
   (:require [clojure.string :as str]
             [wh.common.keywords :as keywords]
+            [wh.common.url :as url]
             [wh.util :as util])
   (#?(:clj :require :cljs :require-macros)
     [wh.graphql-macros :refer [defquery]]))
@@ -8,13 +9,18 @@
 (defn absolute-image-url [image-url]
   (if (and (not (str/blank? image-url))
            (str/starts-with? image-url "/images/"))
-    (str "https://www.works-hub.com" image-url)
+    (str url/company-landing-page image-url)
     image-url))
+
+(def ^:private png-avatar-url-re
+  (re-pattern (str "^" (absolute-image-url "/images/avatar-([0-9])+.png") "$")))
+(def ^:private svg-avatar-url-re
+  (re-pattern "^/images/avatar-([0-9])+.svg$"))
 
 (defn predefined-avatar? [image-url]
   (and (not (str/blank? image-url))
-       (or (re-matches #"^https://www.works-hub.com/images/avatar-([0-9])+.png$" image-url)
-           (re-matches #"^/images/avatar-([0-9])+.svg$" image-url))))
+       (or (re-matches png-avatar-url-re image-url)
+           (re-matches svg-avatar-url-re image-url))))
 
 (defn url->predefined-avatar [url]
   (when-let [[_ i] (predefined-avatar? url)]
@@ -22,7 +28,7 @@
        :clj  (Integer/parseInt i))))
 
 (defn avatar-url [i]
-  (str "https://www.works-hub.com/images/avatar-" i ".png"))
+  (absolute-image-url (str "/images/avatar-" i ".png")))
 
 (defn random-avatar-url []
   (avatar-url (inc (rand-int 5))))

@@ -61,8 +61,7 @@
 (reg-sub
   :user/github-connected?
   (fn [db _]
-    (-> (get-in db [:wh.user.db/sub-db :wh.user.db/github-id])
-        boolean)))
+    (boolean (get-in db [:wh.user.db/sub-db :wh.user.db/github-id]))))
 
 (reg-sub
   :user/company-connected-github?
@@ -181,3 +180,14 @@
   :<- [:wh/env]
   (fn [env _] []
     (= "prod" (name env))))
+
+(reg-sub
+  :wh/vertical-tags
+  (fn [db _]
+    (:wh.db/vertical-tags db)))
+
+(reg-sub
+  :wh/vertical-tags-ids
+  :<- [:wh/vertical-tags]
+  (fn [vertical-tags _]
+    (set (map :id vertical-tags))))

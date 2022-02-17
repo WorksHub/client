@@ -11,7 +11,6 @@
     [wh.common.url :as url]
     [wh.util :as util]))
 
-(def company-landing-page "https://www.works-hub.com")
 (def pages-with-loader #{:homepage
                          :learn
                          :learn-search
@@ -272,8 +271,6 @@
                                                :user})
                                                ;;:pricing CH3618
 
-(def server-side-only-paths (set (map #(bidi/path-for routes %) server-side-only-pages)))
-
 (defn prepare-path-param [param]
   (if (some? param)
     ;; NB: Probably there is a more elegant way
@@ -326,6 +323,8 @@
   :args (s/cat :routes vector?
                :handler keyword?)
   :ret string?)
+
+(def server-side-only-paths (set (map path server-side-only-pages)))
 
 (defn handler->name [handler]
   (when handler

@@ -3,12 +3,14 @@
             [clojure.string :as str]
             [wh.common.job :as jobc]
             [wh.common.specs.company :as company]
+            [wh.common.subs]
             [wh.common.time :as time]
             [wh.components.cards :refer [draw-shape]]
             [wh.components.common :refer [wrap-img img]]
             [wh.components.icons :refer [icon]]
             [wh.components.tag :as tag]
             [wh.re-frame.events :refer [dispatch]]
+            [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
             [wh.slug :as slug]
             [wh.styles.job-card :as styles]
@@ -16,10 +18,13 @@
 
 
 (defn- tag [tag]
-  (let [href (routes/path :pre-set-search :params {:tag (slug/slug (:slug tag))})
-        tag  (-> tag
-                 (assoc :href href)
-                 (update :label str/lower-case))]
+  (let [vertical-tags (<sub [:wh/vertical-tags-ids])
+        add-nofollow? (not (contains? vertical-tags (:id tag)))
+        href          (routes/path :pre-set-search :params {:tag (slug/slug (:slug tag))})
+        tag           (cond-> (-> tag
+                                  (assoc :href href)
+                                  (update :label str/lower-case))
+                              add-nofollow? (assoc :rel "nofollow"))]
     [tag/tag :a tag]))
 
 (defn- tags [tags]
