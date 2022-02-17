@@ -19,6 +19,7 @@ double-check the spelling and grammar."]
 
     [components/upload-button {:text       "Upload cover letter"
                                :data-test  "upload-cover-letter"
+                               :input-name "cover-letter"
                                :inverted?  true
                                :uploading? (<sub [::subs/cover-letter-uploading?])
                                :on-change  (upload/handler

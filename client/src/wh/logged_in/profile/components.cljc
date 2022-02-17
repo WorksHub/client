@@ -107,13 +107,13 @@
              (when data-test {:data-test data-test}))
    text])
 
-(defn upload-button [{:keys [text uploading? on-change data-test inverted?]}]
+(defn upload-button [{:keys [text input-name uploading? on-change data-test inverted?]}]
   (if uploading?
     [small-button {:disabled true :inverted? inverted?} "Uploading..."]
     [:label {:class (util/mc styles/button styles/button--small
                              [inverted? styles/button--inverted])}
      [:input.visually-hidden {:type      "file"
-                              :name      "avatar"
+                              :name      input-name
                               :on-change on-change
                               :data-test data-test}]
      [:span text]]))

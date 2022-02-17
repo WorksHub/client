@@ -128,7 +128,7 @@
      [:label.file-label.animatable
       [:input.file-input {:id        "application-bot_upload-cv"
                           :type      "file"
-                          :name      "avatar"
+                          :name      "cv"
                           :disabled  (not current-step?)
                           :data-test "upload-cv"
                           :on-change (when current-step?
@@ -196,7 +196,7 @@
      [:label.file-label.animatable
       [:input.file-input {:id        "application-bot_upload-cover-letter"
                           :type      "file"
-                          :name      "avatar"
+                          :name      "cover-letter"
                           :disabled  updating?
                           :on-change (upload/handler
                                        :launch [::profile-events/cover-letter-upload]

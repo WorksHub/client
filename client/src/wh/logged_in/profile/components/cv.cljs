@@ -23,6 +23,7 @@ You can update it anytime from your profile."]
                                  :uploading? (<sub [::subs/cv-uploading?])
                                  :inverted?  true
                                  :data-test  "upload-resume"
+                                 :input-name "resume"
                                  :on-change  (upload/handler
                                                :launch [::events/cv-upload]
                                                :on-upload-start [::events/cv-upload-start]

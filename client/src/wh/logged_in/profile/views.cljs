@@ -196,7 +196,7 @@
      [:button.button {:disabled true} "Uploading..."]
      [:label.file-label.profile-section__upload-document__label
       [:input.file-input {:type      "file"
-                          :name      "avatar"
+                          :name      "document"
                           :on-change on-change}]
       [:span.file-cta.button
        [:span.file-label (str "Upload " document-name)]]])])
@@ -452,6 +452,7 @@
      [components/section-buttons
       [components/upload-button {:text       "Upload cover letter"
                                  :data-test  "upload-cover-letter"
+                                 :input-name "cover-letter"
                                  :uploading? (<sub [::subs/cover-letter-uploading?])
                                  :on-change  (upload/handler
                                                :launch [::events/cover-letter-upload]
@@ -525,6 +526,7 @@
         (when-not editing-cv-link?
           [components/upload-button {:text       (if cv-link "Replace with file" "Change file")
                                      :data-test  "upload-resume"
+                                     :input-name "resume"
                                      :uploading? (<sub [::subs/cv-uploading?])
                                      :on-change  (upload/handler
                                                    :launch [::events/cv-upload]
