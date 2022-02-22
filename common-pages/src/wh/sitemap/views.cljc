@@ -48,11 +48,11 @@
            [:span.sitemap__link [:a {:href url} title]])]])]
     [:section
      [:h2 "Jobs by location"]
-     (for [part (:location links)]
+     (for [{:keys [title url links]} (:location links)]
        [:div
-        [:h3.sitemap__vertical [:a {:url part} (:title part)]]
+        [:h3.sitemap__vertical (if (some? url) [:a {:href url} title] title)]
         [:div.sitemap__container
-         (for [l (:links part)]
+         (for [l links]
            [:span.sitemap__link [:a {:href (:url l)} (:title l)]])]])]
     [:section
      [:h2 "Articles"]
