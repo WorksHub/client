@@ -17,15 +17,15 @@
   [:span (util/smc styles/upvotes__icon-wrapper)
    [icons/icon "rocketship" :class styles/upvotes__icon]])
 
-(defn upvotes-comp [ctx {:keys [upvote-count] :as blog}]
+(defn upvotes-comp [_ctx {:keys [upvote-count] :as _blog}]
   [:div (util/smc styles/upvotes)
    [rocket-icon]
    [:div (util/smc styles/secondary-text) upvote-count " boosts"]])
 
-(defn date-and-read-time-comp [ctx {:keys [formatted-date reading-time] :as blog}]
+(defn date-and-read-time-comp [_ctx {:keys [formatted-date reading-time] :as _blog}]
   [:div (util/smc styles/secondary-text) formatted-date " • " reading-time " min read"])
 
-(defn author-comp [ctx {:keys [author-info] :as blog}]
+(defn author-comp [_ctx {:keys [author-info] :as _blog}]
   (when author-info
     [:a {:class styles/author
          :href  (routes/path :user :params {:id (:id author-info)})}
@@ -34,7 +34,7 @@
               :src   image-url}])
      [:div (util/smc styles/secondary-text styles/author__name) (:name author-info)]]))
 
-(defn image-comp [ctx {:keys [feature published] :as blog}]
+(defn image-comp [ctx {:keys [feature published] :as _blog}]
   (let [imgix-url (components-common/base-img feature)]
     (cond
       (:loading? ctx)
@@ -49,7 +49,7 @@
       [:img {:src   imgix-url
              :class styles/blog__image}])))
 
-(defn title-comp [ctx {:keys [id title] :as blog}]
+(defn title-comp [ctx {:keys [id title] :as _blog}]
   (cond
     (:loading? ctx)
     [:div (util/smc styles/blog__title styles/blog__title--skeleton)]
@@ -68,20 +68,26 @@
      [date-and-read-time-comp ctx blog]
      [upvotes-comp ctx blog]]))
 
+(defn ->tag-comp [vertical-tags tag]
+  (let [href          (routes/path :learn-by-tag :params {:tag (:slug tag)})
+        add-nofollow? (not (contains? vertical-tags (:id tag)))]
+    (cond-> (assoc tag :href href)
+            add-nofollow? (assoc :rel "nofollow"))))
+
 (defn tags-comp [ctx blog]
   (cond
     (:loading? ctx)
     [tag/tag-list :a nil {:skeleton? true}]
     :else
-    [tag/tag-list
-     :a
-     (->> (:tags blog)
-          (map #(assoc % :href (routes/path :learn-by-tag :params {:tag (:slug %)}))))
-     {:class         styles/blog__tag
-      :class-wrapper styles/blog__tags}]))
+    (let [vertical-tags (<sub [:wh/vertical-tags-ids])]
+      [tag/tag-list
+       :a
+       (map (partial ->tag-comp vertical-tags) (:tags blog))
+       {:class         styles/blog__tag
+        :class-wrapper styles/blog__tags}])))
 
 (defn actions-comp
-  [{:keys [test? logged-in? loading?] :as ctx}
+  [{:keys [test? logged-in? loading?] :as _ctx}
    {:keys [id title author-info] :as blog}]
   (let [executing?      (<sub [::blogs-like/executing? blog])
         liked?          (<sub [::blogs-like/liked-by-user? blog])
