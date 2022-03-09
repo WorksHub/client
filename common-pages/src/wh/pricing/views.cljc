@@ -14,7 +14,7 @@
 (defn demo-button []
   (fn [secondary? label package billing-period]
     [:a {:href (if (= :take_off package)
-                 url/take-off-meeting-link
+                 url/demo-link
                  (routes/path :register-company
                               :query-params
                               (cond-> {}

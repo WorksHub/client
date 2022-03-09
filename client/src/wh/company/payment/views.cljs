@@ -550,7 +550,7 @@ On next screen you can republish jobs that you want."]]])
                            :event [::events/setup-step-forward]}]
                [authorize-card-button nil]]]
              [:div
-              [:a {:href   url/take-off-meeting-link
+              [:a {:href   url/demo-link
                    :target "_blank"
                    :rel    "noopener"
                    :on-click #(reset! clicked? true)}

@@ -1,11 +1,11 @@
 (ns wh.common.url
   (:require #?(:clj  [ring.util.codec :as codec])
             #?(:clj  [taoensso.timbre :refer [error]])
-            #?(:cljs [goog.Uri :as uri])
             [#?(:clj  clojure.spec.alpha
                 :cljs cljs.spec.alpha) :as s]
             [#?(:clj  clojure.spec.gen.alpha
                 :cljs cljs.spec.gen.alpha) :as gen]
+            #?(:cljs [goog.Uri :as uri])
             [bidi.bidi :as bidi]
             [clojure.string :as str]
             [wh.common.text :as text]
@@ -214,5 +214,4 @@
 
 (def company-landing-page "https://www.works-hub.com")
 
-(def take-off-meeting-link "https://app.hubspot.com/meetings/workshub/product-demo")
-(def demo-link             "https://app.hubspot.com/meetings/workshub/product-demo")
+(def demo-link             "https://meetings.hubspot.com/workshub/take-off-demo")
