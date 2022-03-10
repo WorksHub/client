@@ -1,0 +1,6 @@
+(ns wh.notification-settings.styles)
+(def text "styles__text--329rk")
+(def submittable-radio "styles__submittable-radio--19KuT")
+(def wh-formx "styles__wh-formx--eTgvs")
+(def field "styles__field--210Ge")
+(def label "styles__label--yTsyl")

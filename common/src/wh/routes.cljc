@@ -116,6 +116,7 @@
       ["pricing" :pricing]
       ["sitemap" :sitemap]
       ["invalid-magic-link" :invalid-magic-link]
+      ["notification-settings" :notification-settings]
       ["metrics" :metrics]
       ;; NB: Simple `["/" :query]` won't work for queries with spaces ("%20" or "+"):
       ;;     `(bidi/match-route routes "/search/Clojure%20Script")` will return `nil`.
@@ -193,6 +194,7 @@
 
       ;; Non UI routes - form submissions
       ["create-company" :create-company-form]
+      ["update-notification-settings" :notification-settings-form]
 
       ;; Non UI routes - redirects, webhooks, API, xml
       ["sitemap.xml" :sitemapxml]
@@ -241,6 +243,7 @@
 ;;TODO this config should pulled partially from wh.response.ssr/page-content map
 (def server-side-only-pages #{:employers
                               :invalid-magic-link
+                              :notification-settings
                               :not-found
                               :privacy-policy
                               :sitemap

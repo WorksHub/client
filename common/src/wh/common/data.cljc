@@ -632,7 +632,7 @@
    "nick@functionalworks.com"])
 
 (def default-notification-settings
-  {:matching-job {:frequency "daily"}})
+  {:matching-job {:frequency "weekly"}})
 
 (def take-off-offers
   {:a {:fixed 15000 :percentage 0}

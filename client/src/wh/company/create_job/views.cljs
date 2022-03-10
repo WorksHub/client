@@ -187,7 +187,7 @@
       [text-field (:label timezone)
        {:id                   (db/key->id ::create-job/timezone)
         :placeholder          "Type and select from list"
-        :no-error?            true
+        :hide-error?          true
         :suggestions          suggestions
         :on-select-suggestion on-select-suggestion
         :on-change            on-change}]]

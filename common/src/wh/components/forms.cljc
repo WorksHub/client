@@ -13,7 +13,7 @@
 (defn field-container
   "A generic container for a field. Wraps one or more controls in a
   container widget. Provides support for labels and help messages."
-  [{:keys [label class error help id inline? solo? hide-error? data-test]} & controls]
+  [{:keys [label label-class class error help id inline? solo? hide-error? data-test]} & controls]
   (vec
     (concat
       [:div
@@ -26,10 +26,13 @@
                      class)
         :data-test data-test}
        (when label
-         [(if error
-            :label.label.field--invalid
-            :label.label)
-          {:class (when inline? "is-pulled-left")} label])]
+         [:label
+          {:class (util/mc
+                    "label"
+                    label-class
+                    (when inline? "is-pulled-left")
+                    (when error "field--invalid"))}
+          label])]
       (when help
         [[:div.help help]])
       (conj (mapv (fn [control] [:div.control control]) controls)
@@ -145,7 +148,7 @@
                   (let [error (and @dirty (not @focused) error)]
                     [:div
                      (merge {:id    id
-                             :class (util/merge-classes
+                             :class (util/mc
                                       "tags-container tags-container--alternative"
                                       [collapsable? "tags-container--collapsed"]
                                       [new-design? "tags-container--new-design"]
@@ -342,12 +345,11 @@
    (for [{:keys [id label href]} data-list]
      ^{:key id}
      [:a
-      {:class
-             (util/mc "radio"
-                      (when (= id value)
-                        "radio--checked"))
-       :href href
-       :id   id}
+      {:class (util/mc "radio"
+                       (when (= id value)
+                         "radio--checked"))
+       :href  href
+       :id    id}
       (when (= id value)
         [:div.radio__checked])
       [:div.radio__label label]])])
@@ -363,9 +365,10 @@
             :let                   [el-id (str name- i)]]
         [:label.radio-item
          {:for el-id}
-         [:input (merge {:id   el-id
-                         :type "radio"
-                         :name name-}
+         [:input (merge {:id      el-id
+                         :type    "radio"
+                         :name    name-
+                         :data-id id}
                         (when (= value id)
                           {:checked true})
                         (when on-change

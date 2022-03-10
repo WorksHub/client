@@ -26,7 +26,7 @@
             [wh.common.user :as common-user]
             [wh.components.icons :refer [icon]]
             [wh.styles.form :as styles]
-            [wh.util :as util :refer [merge-classes]])
+            [wh.util :as util])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defn target-value [^js/Event ev _]
@@ -46,29 +46,32 @@
 (defn field-container
   "A generic container for a field. Wraps one or more controls in a
   container widget. Provides support for labels and help messages."
-  [{:keys [label class error help id inline? data-test no-error?] :as _options} & controls]
+  [{:keys [label label-class class error help id inline? hide-error? data-test] :as _options} & controls]
   (vec
     (concat
       [:div
        {:id        id
-        :class     (merge-classes
+        :class     (util/mc
                      "field"
                      (when (> (count controls) 1) "grouped")
                      (when error "field--errored")
                      class)
         :data-test data-test}
        (when label
-         [(if (string? error)
-            :label.label.field--invalid
-            :label.label)
-          {:class (when inline? "is-pulled-left")} label])]
+         [:label
+          {:class (util/mc
+                    "label"
+                    label-class
+                    (when inline? "is-pulled-left")
+                    (when (string? error) "field--invalid"))}
+          label])]
 
       (when help
         [[:div.help help]])
 
       (mapv (fn [control] [:div.control control]) controls)
 
-      (when-not no-error?
+      (when-not hide-error?
         [(if (string? error)
            [:div.field__error.field--invalid error]
            [:div.field__error.field--invalid.is-invisible "errors go here"])]))))
@@ -309,10 +312,11 @@
   "Like checkbox-field, but with a different markup."
   [value {:keys [label disabled indeterminate? on-change class label-class] :as options}]
   (let [id (or (:id options) (name (gensym)))]
-    [:div.checkbox {:class (util/merge-classes
-                             class
-                             (when disabled "checkbox--disabled")
-                             (when indeterminate? "checkbox--indeterminate"))}
+    [:div {:class (util/mc
+                    "checkbox"
+                    class
+                    (when disabled "checkbox--disabled")
+                    (when indeterminate? "checkbox--indeterminate"))}
      [:input
       (merge
         {:type "checkbox"
@@ -439,9 +443,9 @@
 (defn tag
   [{:keys [tag count selected class] :as full-tag}
    {:keys [read-only on-tag-click data-test] :as opts}]
-  [:li {:class     (merge-classes "tag"
-                                  (when selected "tag--selected")
-                                  class)
+  [:li {:class     (util/mc "tag"
+                            (when selected "tag--selected")
+                            class)
         :on-click  #(when-not read-only (on-tag-click full-tag))
         :data-test data-test}
    (if count (<< "~{tag} (~{count})") tag)
@@ -468,7 +472,7 @@
 
             on-toggle-collapse (or on-toggle-collapse #(swap! -collapsed? not))]
         [:div
-         {:class (merge-classes
+         {:class (util/mc
                    "tags-container"
                    (when collapsed? "tags-container--collapsed")
                    (when (string? error) "tags-container--errored"))}
@@ -586,8 +590,8 @@
 (defn toggle
   [{:keys [value on-change data-test]}]
   [:div
-   {:class (util/merge-classes "toggle"
-                               (when value "toggle--enabled"))}
+   {:class (util/mc "toggle"
+                    (when value "toggle--enabled"))}
    [:div.toggle__track]
    [:div.toggle__thumb-wrapper
     [:div.toggle__thumb

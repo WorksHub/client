@@ -20,47 +20,46 @@
 // In days of uncertainty find @Andrzej Fricze
 
 // css vars
-import './root.sass';
+import './root.sass'
 
 // pages
-import './landing.sass';
-import './stream_preview.sass';
-import './iconsset.sass';
-import './register.sass';
-import './profile.sass';
-import './promotions.sass';
+import './landing.sass'
+import './stream_preview.sass'
+import './iconsset.sass'
+import './register.sass'
+import './profile.sass'
+import './promotions.sass'
 
 // components
-import './branding.sass';
-import './attract_card.sass';
-import './stat_card.sass';
-import './activities.sass';
-import './signin_buttons.sass';
-import './tag_selector.sass';
-import './side_card.sass';
-import './side_card_mobile.sass';
-import './skeletons.sass';
-import './landing_user_dashboard.sass';
-import './navbar.sass';
-import './search.sass';
-import './not_found.sass';
-import './modal.sass';
-import './form.sass';
-import './banner.sass';
-import './tasks.sass';
-import './modal_publish_job.sass';
-import './payment.sass';
-import './job_card.sass';
-import './job.sass';
-import './blogs.sass';
-import './create_job.sass';
-import './blogs.sass';
-import './card_actions.sass';
+import './branding.sass'
+import './attract_card.sass'
+import './stat_card.sass'
+import './activities.sass'
+import './signin_buttons.sass'
+import './tag_selector.sass'
+import './side_card.sass'
+import './side_card_mobile.sass'
+import './skeletons.sass'
+import './landing_user_dashboard.sass'
+import './navbar.sass'
+import './search.sass'
+import './not_found.sass'
+import './modal.sass'
+import './form.sass'
+import './banner.sass'
+import './tasks.sass'
+import './modal_publish_job.sass'
+import './payment.sass'
+import './job_card.sass'
+import './job.sass'
+import './blogs.sass'
+import './create_job.sass'
+import './blogs.sass'
+import './card_actions.sass'
 
-
-
-import '../src/wh/logged_in/contribute/styles.sass';
-import '../../common/src/wh/components/buttons_page_navigation_styles.sass';
-import '../../common/src/wh/components/newsletter/styles.sass';
-import '../../common-pages/src/wh/blogs/blog/styles.sass';
-import '../../common-pages/src/wh/jobsboard/styles.sass';
+import '../src/wh/logged_in/contribute/styles.sass'
+import '../../common/src/wh/components/buttons_page_navigation_styles.sass'
+import '../../common/src/wh/components/newsletter/styles.sass'
+import '../../common-pages/src/wh/blogs/blog/styles.sass'
+import '../../common-pages/src/wh/jobsboard/styles.sass'
+import '../../common-pages/src/wh/notification_settings/styles.sass'
