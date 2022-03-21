@@ -15,4 +15,5 @@
 (def hired? (partial state? state-hired))
 
 (defn hubspot-deal-id [a] (get-in a [:hubspot :id]))
+(defn has-conversation? [a] (boolean (:conversation-id a)))
 
