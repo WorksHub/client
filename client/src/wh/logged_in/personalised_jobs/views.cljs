@@ -43,6 +43,7 @@
                            (for [job part]
                              [:div.column.is-4
                               [job-card job (merge {:user-has-applied? has-applied?
+                                                    :conversation      (<sub [::subs/conversation (:id job)])
                                                     :highlighted?      (= selected-job-id (:id job))
                                                     :logged-in?        true
                                                     :apply-source      (str "personalized-jobs-" (name type-of-jobs) "-job")}

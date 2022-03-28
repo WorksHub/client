@@ -176,6 +176,11 @@
     (:wh.settings/environment db)))
 
 (reg-sub
+  :wh/conversations-enabled?
+  (fn [db _]
+    (:wh.settings/conversations-enabled? db)))
+
+(reg-sub
   :wh/prod?
   :<- [:wh/env]
   (fn [env _] []

@@ -23,7 +23,10 @@
                  :applied (remove #(= % :userScore) jobs/job-card-fields)
                  (conj jobs/job-card-fields :score))
         jobs-query [:jobs params fields]
-        applications-query [:candidate_applications [:jobId :state]]]
+        applications-query [:candidate_applications [:jobId
+                                                     :state
+                                                     :conversationId
+                                                     [:conversation [:id]]]]]
     {:venia/queries (case type-of-jobs
                       :applied [jobs-query applications-query]
                       [jobs-query])}))
@@ -64,6 +67,7 @@
       {:db       (assoc db ::personalised-jobs/jobs (if candidate-applications
                                                       (add-application-state updated-jobs candidate-applications)
                                                       updated-jobs)
+                        ::personalised-jobs/applications candidate-applications
                         ::personalised-jobs/show-load-more? (>= (count new-jobs) pages/default-page-size))
        :dispatch [::pages/unset-loader ::fetch-personalised-jobs-success]})))
 

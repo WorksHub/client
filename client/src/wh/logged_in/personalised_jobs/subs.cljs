@@ -16,6 +16,19 @@
   (fn [[sub-db liked-jobs applied-jobs] _]
     (job/add-interactions liked-jobs applied-jobs (::personalised-jobs/jobs sub-db))))
 
+(reg-sub
+  ::applications
+  :<- [::personalised-jobs]
+  (fn [sub-db _]
+    (::personalised-jobs/applications sub-db)))
+
+(reg-sub
+  ::conversation
+  :<- [::applications]
+  (fn [applications [_ id]]
+    (when-let [application (some #(if (= (:job-id %) id) % nil) applications)]
+      (:conversation application))))
+
 ;; unsure what to call these, as :user/liked-jobs is a sub etc, 
 ;; but as they're namespaced separated , it isn't an IMMEDIATE issue...
 

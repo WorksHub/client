@@ -4,6 +4,7 @@
             [wh.common.subs]
             [wh.components.cards :refer [match-circle]]
             [wh.components.common :refer [wrap-img img]]
+            [wh.components.conversation-link.core :as conversation-link]
             [wh.components.icons :refer [icon]]
             [wh.components.tag :as tag]
             [wh.re-frame.events :refer [dispatch]]
@@ -154,7 +155,7 @@
            liked display-salary remuneration remote sponsorship-offered id]
     :or   {published true}
     :as   job}
-   {:keys [liked? applied? user-is-owner? small? view-type logged-in? on-close highlighted?]
+   {:keys [liked? applied? user-is-owner? small? view-type logged-in? on-close highlighted? conversation]
     :or   {liked?            (or liked false)   ;; old style job handlers added 'liked' bool to the job itself
            applied?          (or applied false) ;; old style job handlers added 'applied' bool to the job itself
            user-is-owner?    false
@@ -199,7 +200,9 @@
                           :saved?   liked?}])]
 
      [job-card--header (assoc job :salary salary) company (assoc opts :perks? perks?)]
-
+     [conversation-link/link
+      {:conversations-enabled? (<sub [:wh/conversations-enabled?])}
+      conversation]
      [:div.tagline
       (when-not small?
         [:div.tagline-content tagline])]

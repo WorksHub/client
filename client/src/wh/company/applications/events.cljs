@@ -38,7 +38,8 @@
                      [:pagination [:total]]]]]})
 
 (def base-application-fields
-  [:state :timestamp :score :userId :jobId :note
+  [:state :timestamp :score :userId :jobId :note :conversationId
+   [:conversation [:id]]
    [:coverLetter [:link [:file [:url :name]]]]
    [:user [:name :email
            [:cv [:link [:file [:url :name]]]]

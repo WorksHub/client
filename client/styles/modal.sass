@@ -9,7 +9,7 @@
   right: 40px
   bottom: 40px
   width: 100%
-  height: 100%
+  height: min-content
   max-height: calc(100% - var(--header-height))
   overflow: auto
   background-color: white
@@ -33,6 +33,7 @@
   right: 0
   bottom: 0
   background-color: $background-overlay
+  z-index: $modal-z-index
 
 .header
   position: relative
@@ -114,6 +115,7 @@
 
   &:hover
     background: $primary-red-hover
+    color: $text-white
 
   &--secondary
     background: $white

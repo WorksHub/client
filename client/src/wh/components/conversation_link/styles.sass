@@ -1,0 +1,24 @@
+@import 'colours'
+
+.link
+  height: 32px
+  width: fit-content
+  background: $white
+  border-radius: 4px
+  margin-top: 12px
+  box-sizing: border-box
+  color: $primary-red
+  border: 1px solid $primary-red
+  padding: 0 20px
+  font-size: 13px
+  font-weight: 600
+  align-items: center
+  display: flex
+  justify-content: center
+
+  &:hover
+    color: $primary-red-hover
+    border: 1px solid $primary-red-hover
+
+  & > :global(.icon)
+    margin-right: 6px

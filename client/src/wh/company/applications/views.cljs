@@ -7,8 +7,10 @@
             [wh.company.applications.subs :as subs]
             [wh.components.cards :refer [match-circle]]
             [wh.components.common :refer [link link-user]]
+            [wh.components.conversation-link.core :as conversation-link]
             [wh.components.forms.views :as forms]
             [wh.components.icons :refer [icon]]
+            [wh.components.modal :as modal]
             [wh.components.overlay.views :refer [popup-wrapper]]
             [wh.components.tabs.views :refer [tabs]]
             [wh.routes :as routes]
@@ -110,7 +112,7 @@
    [:div.company-name name] [:div (str \u2002 "- " title)]])
 
 (defn application-card
-  [{:keys [user-id timestamp display-location other-urls email skills score cv cover-letter state note job cv-downloadable? cover-letter-downloadable?]
+  [{:keys [user-id conversation timestamp display-location other-urls email skills score cv cover-letter state note job cv-downloadable? cover-letter-downloadable?]
     :as   app} job-id]
   (let [admin?    (<sub [:user/admin?])
         skeleton? (empty? app)
@@ -144,6 +146,10 @@
                                                                     :download cover-letter-downloadable?}
            (when-not skeleton? "View Cover Letter")]
           [:i "No Cover Letter provided"])]]
+      (when-not skeleton?
+        [conversation-link/link
+         {:conversations-enabled? (<sub [:wh/conversations-enabled?])}
+         conversation])
       (when (and job admin?)
         (format-job-title job))]
      (if skeleton?
@@ -204,38 +210,90 @@
            :on-pass (set-application-state! job-id user-id :pass)
            :on-hire (set-application-state! job-id user-id :hire)]))]]))
 
-(defn get-in-touch-overlay
-  ;; TODO PACKAGES replace this logic with perms?
-  [& {:keys [job candidate-name candidate-email on-ok]}]
-  (let [{:keys [package manager]} (<sub [:wh.user.subs/company])
-        manager-name              (when manager (get-manager-name manager))]
+;;
+
+(defn- candidate-email-link
+  [{:keys [job candidate-email] :as _opts}]
+  [:p
+   [:a.a--underlined
+    {:href (str "mailto:" candidate-email "?subject=Requesting interview regarding "
+                (if (:title job)
+                  (str (:title job) " role")
+                  "multiple roles"))}
+    candidate-email]])
+
+(defn- message-for-take-off-clients
+  [{:keys [job candidate-name] :as _opts}]
+  (let [{:keys [manager]} (<sub [:wh.user.subs/company])
+        manager-name (when manager (get-manager-name manager))]
+    (if manager
+      [:span "Your manager "
+       [:a.a--underlined
+        {:href (str "mailto:" manager "?subject=Requesting interview with " candidate-name " regarding "
+                    (if (:title job)
+                      (str (:title job) " role")
+                      "multiple roles"))}
+        manager-name]
+       " will be in touch about this candidate \uD83D\uDCAB"]
+      "Your manager will be in touch about this candidate \uD83D\uDCAB")))
+
+(defn- message-for-general-clients
+  [{:keys [candidate-name] :as _opts}]
+  [:span [:span "This is " [:strong (str candidate-name "'s")] " email address."]
+   [:br]
+   [:span "Please introduce yourself \uD83E\uDD1D"]])
+
+(defn- overlay-no-conversations
+  "shown if conversation feature is not enabled"
+  [{:keys [on-ok] :as opts}]
+  (let [{:keys [package]} (<sub [:wh.user.subs/company])]
     [popup-wrapper
      {:id    :get-in-touch
       :on-ok on-ok
       :class "company-applications"}
      [:h1 "Great!"]
      [:p (if (= "take_off" package)
-           (if manager
-             [:span "Your manager "
-              [:a.a--underlined
-               {:href (str "mailto:" manager "?subject=Requesting interview with " candidate-name " regarding "
-                           (if (:title job)
-                             (str (:title job) " role")
-                             "multiple roles"))}
-               manager-name]
-              " will be in touch about this candidate \uD83D\uDCAB"]
-             "Your manager will be in touch about this candidate \uD83D\uDCAB")
-           [:span [:span "This is " [:strong (str candidate-name "'s")] " email address."]
-            [:br]
-            [:span "Please introduce yourself \uD83E\uDD1D"]])]
-     (when (not= "take_off" package)
-       [:p
-        [:a.a--underlined
-         {:href (str "mailto:" candidate-email "?subject=Requesting interview regarding "
-                     (if (:title job)
-                       (str (:title job) " role")
-                       "multiple roles"))}
-         candidate-email]])]))
+           [message-for-take-off-clients opts]
+           [:<>
+            [message-for-general-clients opts]
+            [:br] [:br]
+            [candidate-email-link opts]])]]))
+
+(defn- overlay-with-conversations [{:keys [on-ok candidate-email] :as opts}]
+  (let [{:keys [package]} (<sub [:wh.user.subs/company])]
+    [modal/modal {:open? true
+                  :on-request-close on-ok
+                  :label "Get in touch"}
+     [modal/header {:title "Get in touch"
+                    :on-close on-ok}]
+     (if (= "take_off" package)
+       [:<>
+        [modal/body
+         [message-for-take-off-clients opts]]
+        [modal/footer
+         [modal/button {:text     "Ok"
+                        :on-click on-ok}]]]
+       [:<>
+        [modal/body
+         [:div
+          [:p "You can message a candidate directly using " [:b "conversations"] " on our platform."]
+          [:p "Or write to a candidate:"
+           [:br]
+           [:a {:href (str "mailto:" candidate-email)
+                :style {:text-decoration "underline"}} candidate-email]]]]
+        [modal/footer
+         [modal/button {:text     "Use email"
+                        :type     :secondary
+                        :on-click on-ok}]
+         [modal/button {:text     "Open conversation"
+                        :href     (routes/path :conversations)}]]])]))
+
+(defn get-in-touch-overlay [& opts]
+  (if (<sub [:wh/conversations-enabled?])
+    [overlay-with-conversations opts]
+    [overlay-no-conversations opts]))
+
+;;
 
 (defn state->verb
   [s]
