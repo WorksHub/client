@@ -59,7 +59,9 @@
    :venia/variables [{:variable/name "input"
                       :variable/type :set_application_state_input_input!}]
    :venia/queries   [[:set_application_state {:set_application_state_input :$input}
-                      [:states]]]})
+                      [:states
+                       [:applications [:id
+                                       :conversation_id]]]]]})
 
 (def set-application-note-mutation
   {:venia/operation {:operation/type :mutation
