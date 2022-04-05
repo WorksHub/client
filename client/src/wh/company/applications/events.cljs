@@ -413,8 +413,11 @@
 (reg-event-fx
   ::set-application-state-success
   db/default-interceptors
-  (fn [{db :db} [job-id-or-ids user-id state _resp]]
-    (let [user-and-job (get-user-and-job db user-id (when-not (sequential? job-id-or-ids) job-id-or-ids))]
+  (fn [{db :db} [job-id-or-ids user-id state resp]]
+    (let [job-id (when-not (sequential? job-id-or-ids) job-id-or-ids)
+          user-and-job (get-user-and-job db user-id job-id)
+          updated-applications (get-in resp [:data :set_application_state :applications])
+          connected-application (some #(when (= (:job_id %) job-id) %) updated-applications)]
       ;; remove the application because it's no longer in this state
       ;; (only applicable for 'applications' whereas we just re-query 'applications-by-job' in the case of company view)
       (merge {:db (remove-application db user-id job-id-or-ids)
@@ -425,7 +428,8 @@
                                     ;; is a special event, only to be used on the company view (epic fail?)
                                     [[::fetch-application-state-frequencies]])
                                   (when (and job-id-or-ids (= state "get_in_touch") (not (user-common/admin? db)))
-                                    [[::show-get-in-touch-overlay user-and-job]]))}))))
+                                    [[::show-get-in-touch-overlay (merge user-and-job
+                                                                         {:conversation-id (:conversation_id connected-application)})]]))}))))
 
 (reg-event-fx
   ::set-application-state-failure

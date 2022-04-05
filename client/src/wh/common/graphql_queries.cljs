@@ -61,7 +61,8 @@
    :venia/queries   [[:set_application_state {:set_application_state_input :$input}
                       [:states
                        [:applications [:id
-                                       :conversation_id]]]]]})
+                                       :conversation_id
+                                       :job_id]]]]]})
 
 (def set-application-note-mutation
   {:venia/operation {:operation/type :mutation

@@ -259,7 +259,7 @@
             [:br] [:br]
             [candidate-email-link opts]])]]))
 
-(defn- overlay-with-conversations [{:keys [on-ok candidate-email] :as opts}]
+(defn- overlay-with-conversations [{:keys [on-ok candidate-email conversation-id] :as opts}]
   (let [{:keys [package]} (<sub [:wh.user.subs/company])]
     [modal/modal {:open? true
                   :on-request-close on-ok
@@ -286,7 +286,9 @@
                         :type     :secondary
                         :on-click on-ok}]
          [modal/button {:text     "Open conversation"
-                        :href     (routes/path :conversations)}]]])]))
+                        :href     (if conversation-id
+                                    (routes/path :conversation :params {:id conversation-id})
+                                    (routes/path :conversations))}]]])]))
 
 (defn get-in-touch-overlay [& opts]
   (if (<sub [:wh/conversations-enabled?])
@@ -477,6 +479,7 @@
          (let [data (<sub [::subs/get-in-touch-overlay-data])]
            [get-in-touch-overlay
             :job (:job data)
+            :conversation-id (:conversation-id data)
             :candidate-name (get-in data [:user :name])
             :candidate-email (get-in data [:user :email])
             :on-ok #(dispatch [::events/hide-get-in-touch-overlay])]))

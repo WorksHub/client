@@ -39,6 +39,7 @@
                        [:applied [:timestamp
                                   :state
                                   :note
+                                  :conversationId
                                   [:coverLetter [:link [:file [:url]]]]
                                   [:job [:id :slug :title [:company [:name]]]]]]
                        [:contributionsCollection

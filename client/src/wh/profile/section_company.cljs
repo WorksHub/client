@@ -1,7 +1,7 @@
 (ns wh.profile.section-company
   (:require [re-frame.core :refer [dispatch]]
+            [wh.company.applications.views :refer [get-in-touch-overlay]]
             [wh.components.common :refer [link]]
-            [wh.components.modal :as modal]
             [wh.logged-in.profile.components :as components]
             [wh.profile.db :as profile]
             [wh.profile.events :as events]
@@ -83,24 +83,17 @@
          [manager-note note]])]
      (when current? [control-buttons opts])]))
 
-(defn modal-user-info [{:keys [user on-modal-close modal-opened?]}]
-  [modal/modal {:open? modal-opened?
-                :on-request-close #()
-                :label "Get in touch"}
-   [modal/header {:title "Get in touch"
-                  :on-close on-modal-close}]
-   [modal/body
-    [:div "This is " (:name user) "'s email address."]
-    [components/underline-link {:href (str "mailto:" (:email user))
-                                :text (:email user)}]
-    [:div "Please introduce yourself."]]
-   [modal/footer
-    [modal/button {:text "Ok"
-                   :on-click on-modal-close}]]])
-
-(defn controls [{:keys [current-application other-applications] :as opts}]
+(defn controls
+  [{:keys [current-application other-applications modal-opened? on-modal-close user]
+    :as opts}]
   [:<>
-   [modal-user-info opts]
+   (when modal-opened?
+     [get-in-touch-overlay
+      :job (:job current-application)
+      :candidate-name (:name user)
+      :candidate-email (:email user)
+      :on-ok on-modal-close
+      :conversation-id (:conversation-id current-application)])
    [components/section-custom {:type :company}
     [components/sec-title "Applications"]
     [:div {:class styles/subsection__wrapper}
