@@ -146,10 +146,7 @@
    ;; three
    [:div.columns.homepage__step
     [:div.column.homepage__step__description
-     [:span "Have " [:strong "Open Source Issues"] " that need attention? Connect your company GitHub account and add issues to start building your talent pool and get more qualified applications."]
-     (link [:button.button.button--inverted
-            {:id "www-landing__walkthrough__opensource"}
-            "View Open Source Issues"] :issues :company-id "workshub-f0774")]
+     [:span "Have " [:strong "Open Source software"] " that need attention? Connect your company GitHub account and start building your talent pool and get more qualified applications."]]
     [:div.column.homepage__step__img
      [:img {:src "/images/homepage/walkthrough03.svg"
             :alt ""}]]]
@@ -255,15 +252,12 @@
         (integrations)
         [:div.homepage__feature-ctas
          ;; TODO ABOUT US PAGE
-         #_(link [:button.button.button--inverted
-                  "Discover how we're different"] :pricing)
          (link [:button.button
                 {:id "www-landing__barriers-try"}
                 get-started-cta-string] get-started-route)]]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--start"]
        [hiw/stats :company false get-started-route]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--mid"]
-       [hiw/benefits :company false get-started-route]
        [animated-hr "/images/homepage/rocket.svg" "homepage__animated-hr__rocket homepage__animated-hr__rocket--end"]
        [:div.homepage__middle-content__container
         (walkthrough get-started-route)]

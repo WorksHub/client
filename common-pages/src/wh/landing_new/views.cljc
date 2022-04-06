@@ -7,8 +7,8 @@
             [wh.components.activities.company-published :as company-published]
             [wh.components.activities.components :as activities]
             [wh.components.activities.interview-requests :as interview-requests]
-            [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.issue-promoted :as issue-promoted]
+            [wh.components.activities.issue-published :as issue-published]
             [wh.components.activities.issue-started :as issue-started]
             [wh.components.activities.job-promoted :as job-promoted]
             [wh.components.activities.job-published :as job-published]
@@ -103,8 +103,6 @@
                         :jobs-loading?         jobs-loading?
                         :company?              company?
                         :show-recommendations? show-recommendations?}]
-      [side-cards/osi-how-it-works]
-      [side-cards/recent-issues issues issues-loading? company?]
       [side-cards/top-ranking-users users users-loading?]]
      [side-cards/top-ranking {:blogs        blogs
                               :companies    companies
@@ -124,8 +122,6 @@
                      :loading?              jobs-loading?
                      :company?              company?
                      :show-recommendations? show-recommendations?}]
-   [side-cards/osi-how-it-works]
-   [side-cards/recent-issues issues issues-loading? company?]
    [side-cards/top-ranking-users users users-loading?]])
 
 (defn user-dashboard [candidate?]
@@ -171,8 +167,6 @@
        ^{:key (:id activity)} [:div (activity-card activity opts)])
      (when (and display-additional-info? (not logged-in?))
        [attract-card/signin])
-     (when display-additional-info?
-       [stat-card/about-open-source vertical])
      (for [activity group3]
        ^{:key (:id activity)} [:div (activity-card activity opts)])
      (when display-additional-info?

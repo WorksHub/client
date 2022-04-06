@@ -33,15 +33,7 @@
     :text              "Logout"}])
 
 (def issues-company-submenu-list
-  [{:path       (routes/path :issues)
-    :icon-name  "git"
-    :icon-class styles/dropdown__link__icon-issues
-    :text       "All Open Source Issues"}
-   {:path       (routes/path :manage-issues)
-    :icon-name  "plus-circle"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Post an Issue"}
-   {:path       (routes/path :company-issues)
+  [{:path       (routes/path :company-issues)
     :icon-name  "person"
     :icon-class styles/dropdown__link__icon-person
     :text       "My Open Source Issues"}])
@@ -129,12 +121,6 @@
        :dropdown (jobs-company-submenu-list
                    can-create?
                    (<sub [:wh/prod?]))}]
-
-     [components/link
-      {:text     "Open Source Issues"
-       :route    :issues
-       :page     page
-       :dropdown issues-company-submenu-list}]
 
      (let [company-slug (<sub [::subs/company-slug])]
        [components/link {:text     "Company"

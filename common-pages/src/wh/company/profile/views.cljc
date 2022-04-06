@@ -271,8 +271,8 @@
     {:src "/images/hiw/header.svg"
      :alt ""}]
    [:div.company-profile__banner-cta__copy
-    [:h2 "Use Open Source Issues to find your next hire"]
-    [:p "Connect your company GitHub account and add tasks to your job descriptions to get more qualified applications."]
+    [:h2 "Use Open Source to find your next hire"]
+    [:p "Connect your company GitHub account and add open-source projects to your profile to get more qualified applications."]
     #?(:cljs [github/install-github-app {:class "company-profile__cta-button"}])]])
 
 (defn issues
@@ -286,7 +286,7 @@
        (if (not-empty issues)
          [:div
           [:div.is-flex
-           [:h2 "Open source issues from this company"]
+           [:h2 "Open source from this company"]
            [link "View all"
             :issues-for-company-id :company-id (<sub [::subs/id])
             :class "a--underlined"]]

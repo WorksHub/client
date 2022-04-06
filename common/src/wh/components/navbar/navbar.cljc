@@ -234,10 +234,6 @@
      :route :jobsboard
      :page  page}]
    [components/link
-    {:text  "Open Source Issues"
-     :route :issues
-     :page  page}]
-   [components/link
     {:text  "Articles"
      :route :learn
      :page  page}]

@@ -83,9 +83,7 @@
       [:img {:src "/images/hiw/header.svg"
              :alt ""}]]]
     [:div.how-it-works__header__copy
-     [:h1 (if github?
-            "Use Open Source Issues to find your next hire"
-            "Use Open Source to hire or get hired")]
+     [:h1 "Use Open Source to hire or get hired"]
      [:p data/www-hero-copy]
      (if github?
        [github-button nil]
@@ -121,11 +119,7 @@
     [:div.how-it-works__explanation__inner
      [:div.how-it-works__explanation__copy
       [:h2 (if (= :company selected-site) "COMPANIES" "CANDIDATES")]
-      [:h3 "How it works"]
-      [link [:button.button.button--inverted.button--public
-             "View all open source issues"]
-       :issues
-       :class "is-hidden-mobile"]]
+      [:h3 "How it works"]]
      [:div.how-it-works__explanation__steps
       (let [steps (get data/how-it-works-explanation-steps selected-site)]
         (doall
@@ -154,22 +148,6 @@
      (for [item items]
        ^{:key (:img item)}
        [benefit item]))])
-
-(defn benefits
-  ([selected-site github?]
-   [benefits selected-site github? :register])
-  ([selected-site github? get-started-route]
-   [:div.how-it-works__benefits.how-it-works__benefits--company
-    [:div.how-it-works__benefits__inner
-     [:h2 "OPEN SOURCE ISSUES"]
-     [:h3 "What's in it for you?"]
-     (benefits-list (get data/how-it-works-benefits selected-site) {})
-     [:div.how-it-works__benefits__buttons
-      [link
-       [:button.button.button--inverted.button--public
-        "View all open source issues"]
-       :issues]
-      [get-started-link github? get-started-route {:label "Get Started for Free"}]]]]))
 
 (defn stats-ball
   [[title para icon-logo] colour]
@@ -219,20 +197,13 @@
     [:div.how-it-works__faq__inner
      [:h2 "FAQs"]
      [:h3 "What else would you like to know?"]
-     [faq/faq-component (get data/how-it-works-questions selected-site) selected-site]
-     [:div.how-it-works__faq__buttons
-      [link
-       [:button.button.button--inverted.button--public
-        "View all open source issues"]
-       :issues]
-      [get-started-link github? get-started-route]]]]))
+     [faq/faq-component (get data/how-it-works-questions selected-site) selected-site]]]))
 
 (defn render
   [selected-site github?]
   [:div.how-it-works
    [header selected-site github?]
    [explanation selected-site github?]
-   [benefits selected-site github?]
    [stats selected-site github?]
    [faq selected-site github?]])
 
@@ -244,7 +215,7 @@
   []
   [:div.pod.how-it-works-pod.how-it-works-pod--choice
    [:div.how-it-works-pod__basic-info-container
-    [:h2 "Use Open Source Issues to hire or get hired"]
+    [:h2 "Use Open Source to hire or get hired"]
     [:p.is-hidden-mobile "To find out more, please tell us about yourself"]
     [:p.is-hidden-desktop "Please tell us if you're a "]
     [link [:button.button
@@ -261,7 +232,7 @@
   []
   [:div.pod.how-it-works-pod.how-it-works-pod--basic
    [:div.how-it-works-pod__basic-info-container
-    [:h2 "Use Open Source Issues to hire or get hired"]
+    [:h2 "Use Open Source to hire or get hired"]
     [link [:button.button "How it works"] :how-it-works]]
    [:div.how-it-works-pod__img
     [:img {:src "/images/hiw/header.svg"
@@ -318,9 +289,6 @@
           txt]])
       {:arrows? arrows?}]
 
-     (when (= mode :candidate)
-       [link [:button.button.button--inverted "view all open source issues"]
-        :issues])
      [link [:button.button "Tell me more"] :how-it-works :query-params (when (= mode :candidate) {:site "candidate"})]]))
 
 (defn pod--candidate

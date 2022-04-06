@@ -2,7 +2,6 @@
   (:require
     #?(:cljs [wh.components.github :as github])
     #?(:cljs [wh.components.overlay.views :refer [popup-wrapper]])
-    [wh.components.tag :as tag]
     [wh.common.data :as data]
     [wh.common.job :refer [format-job-location]]
     [wh.components.common :refer [link img wrap-img]]
@@ -10,15 +9,16 @@
     [wh.components.icons :refer [icon]]
     [wh.components.issue :as issue]
     [wh.components.pagination :as pagination]
+    [wh.components.tag :as tag]
     [wh.how-it-works.views :as how-it-works]
     [wh.interop.forms :as interop-forms]
-    [wh.pages.issue.edit.views :as edit-issue]
     [wh.issues.events :as events]
-    [wh.routes :as routes]
-    [wh.slug :as slug]
     [wh.issues.subs :as subs]
+    [wh.pages.issue.edit.views :as edit-issue]
     [wh.re-frame.events :refer [dispatch]]
     [wh.re-frame.subs :refer [<sub]]
+    [wh.routes :as routes]
+    [wh.slug :as slug]
     [wh.util :as util]))
 
 (defn webhook-info []
@@ -54,9 +54,8 @@
      [:div
       [:div.manage-issues]]]
     [:div.admin-pod.card.pod
-     [:h2 "Get started with Open Source Issues"]
+     [:h2 "Get started with Open Source"]
      [:p.is-flex "Your GitHub is integrated" [icon "cutout-tick"]]
-     [:p "All that’s left to do is select the repositories and issues you want to publish on WorksHub"]
      #?(:cljs [:div.github-info__manage
                (if (<sub [:user/company-connected-github?]) ;; TODO same as below
                  [link [:button.button "Manage Issues"] :manage-issues

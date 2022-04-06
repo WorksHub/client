@@ -32,24 +32,6 @@
         [c/card-tag {:label (str "$" amount)
                      :type  "funding"}]))]])
 
-(defn recent-issues [issues loading? company?]
-  [:section {:class     style/section
-             :data-test "side-issues"}
-   [c/section-title "Live Open Source Issues"]
-   (if loading?
-     [c/section-elements-skeleton {:type :tags}]
-     [c/section-elements issues card-issue])
-   (when-not loading?
-     [:div {:class (util/mc style/footer style/footer--issues)}
-      [c/section-button {:title "All open source issues"
-                         :href  (routes/path :issues)}]
-      [c/footer-link {:text      "Post your"
-                      :bold-text "open source issue here"
-                      :href      (if company?
-                                   (routes/path :company-issues)
-                                   (routes/path :register-company
-                                                :query-params {:redirect (name :company-issues)}))}]])])
-
 ;; -----------------------------------------------
 
 (defn format-user-date
@@ -267,12 +249,12 @@
                       :class (util/mc style/tabs__input style/tabs__input--companies)
                       :type  "radio"
                       :name  input-name}
-               (= :companies default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
+                     (= :companies default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:input (cond-> {:id    input2-id
                       :class (util/mc style/tabs__input style/tabs__input--blogs)
                       :type  "radio"
                       :name  input-name}
-               (= :blogs default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
+                     (= :blogs default-tab) (assoc #?(:clj :checked :cljs :default-checked) true))]
      [:nav {:class style/tabs__wrapper}
       [:ul {:class style/tabs}
        [:li
@@ -282,18 +264,6 @@
      [:section {:class style/tabs__content}
       [top-ranking-companies companies redirect logged-in? query-params loading?]
       [top-ranking-blogs blogs loading?]]]))
-
-;; ─────────────────────────────────────────────────────────────────────────────
-
-(defn osi-how-it-works
-  []
-  [:section (util/smc style/section style/section--centered)
-   [:img {:class (util/mc style/header-image)
-          :src   "/images/hiw/card.svg"}]
-   [:h3 (util/smc style/footer__title) "Want to know how open source issues work?"]
-   [c/section-button {:title "Find out now"
-                      :href  (routes/path :how-it-works)
-                      :type  :dark}]])
 
 ;; ─────────────────────────────────────────────────────────────────────────────
 

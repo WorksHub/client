@@ -129,11 +129,6 @@
      :page     page
      :dropdown (jobs-admin-submenu-list (<sub [:wh/prod?]))}]
 
-   [components/link
-    {:text  "Open Source Issues"
-     :route :issues
-     :page  page}]
-
    [components/link {:text     "Companies"
                      :route    :admin-companies
                      :page     page

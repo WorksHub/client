@@ -795,8 +795,6 @@
   {:company
    [{:title "How do I get started?"
      :answer "With one click you can connect your company GitHub account, choose which repositories and issues you would like to be displayed.  These issues can be used to test, engage, and develop your own community of Software Engineers. With 84% of our users more open to joining a company whose open source they had already contributed to and 90% more likely to consider companies with open source code it’s a great way to increase your hiring pipeline."}
-    {:title "Why should I post our open source issues?"
-     :answer "Open source issues is a way of engaging and testing our pool of talent before hiring them full time.  It allows you to build a community of engineers who are interested in the tech you are using and the work you are doing.  89% of the engineers on WorksHub want to work with open source software so It’s the quickest way to engage our talent pools."}
     {:title "How do I prepare my repositories?"
      :answer "In order to get contributions to your repo, our engineers will need to set up a basic build environment. We recommend setting up a detailed README that documents the pull request acceptance guidelines and how to set up the dev environment.  If you want feedback on your issues before pushing them live get in touch with the WorksHub team at: hello@works-hub.com\n"}
     {:title "How do I fund an issue and what do you charge for it?"

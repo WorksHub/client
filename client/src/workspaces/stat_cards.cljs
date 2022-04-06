@@ -18,7 +18,6 @@
                         :grid-gap "10px"
                         :width    "100%"}}
           [stat-card/about-applications (nth (vec verticals/all-verticals) @vertical-idx)]
-          [stat-card/about-open-source (nth (vec verticals/all-verticals) @vertical-idx)]
           [stat-card/about-salary-increase (nth (vec verticals/all-verticals) @vertical-idx)]]]))))
 
 (defonce init (ws/mount))

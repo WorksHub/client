@@ -692,7 +692,7 @@
 
     [:ul (util/smc styles/cta__list)
      [:li "Link to GitHub to show off your productivity"]
-     [:li "Get access to our open source issues feature - another way we can help you find the perfect role"]]
+     [:li "Contribute to open source - another way we can help you find the perfect role"]]
 
     [:a {:data-pushy-ignore "true"
          :class             (util/mc styles/button

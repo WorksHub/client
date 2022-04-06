@@ -219,8 +219,7 @@
             top-blogs
             top-companies
             top-tags
-            top-users
-            recent-issues]
+            top-users]
            (if (user-common/candidate? db)
              [recommended-jobs
               user-stats]

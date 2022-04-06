@@ -60,8 +60,4 @@
    :add_integration  {:title    "Connect your integrations"
                       :subtitle "WorksHub can integrate with popular services such as Greenhouse and Slack."
                       :icon     "settings"
-                      :time     2}
-   :add_issue        {:title    "Get started with Open Source Issues"
-                      :subtitle "Scope talent by using issues from your open source projects."
-                      :icon     "git"
                       :time     2}})

@@ -302,7 +302,7 @@
        [:h2 "Want to improve your monthly stats? Complete your company profile now"]
        [:p "It's totally free and will help you..."]
        [:ul
-        [:li [icon "cutout-tick"] "improve interest in your jobs and open source issues"]
+        [:li [icon "cutout-tick"] "improve interest in your jobs and open source"]
         [:li [icon "cutout-tick"] "engage with more passive candidates"]
         [:li [icon "cutout-tick"] "tell our community all about your company culture and working environment"]]
        [link [:button.button
