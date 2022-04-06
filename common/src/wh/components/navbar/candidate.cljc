@@ -5,7 +5,7 @@
             [wh.components.navbar.subs :as subs]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.styles.navbar :as styles]
+            [wh.components.navbar.styles :as styles]
             [wh.util :as util]))
 
 (def candidate-jobs-submenu-list
@@ -105,14 +105,16 @@
      :page  page}]])
 
 (defn profile-menu []
-  [:div {:class styles/user-profile-container}
-   [:a {:href  (routes/path :profile)
-        :class styles/user-profile}
-    (if-let [profile-image (<sub [::subs/profile-image])]
-      [:img {:class styles/profile-image
-             :src   profile-image}]
+  [:<>
+   [navbar-shared/conversations-link {}]
+   [:div {:class styles/user-profile-container}
+    [:a {:href  (routes/path :profile)
+         :class styles/user-profile}
+     (if-let [profile-image (<sub [::subs/profile-image])]
+       [:img {:class styles/profile-image
+              :src   profile-image}]
 
-      [:div {:class styles/profile-image}])
-    [components/arrow-down]]
+       [:div {:class styles/profile-image}])
+     [components/arrow-down]]
 
-   [components/dropdown-list candidate-profile-submenu-list]])
+    [components/dropdown-list candidate-profile-submenu-list]]])

@@ -1,6 +1,9 @@
 (ns wh.components.navbar.shared
-  (:require [wh.routes :as routes]
-            [wh.styles.navbar :as styles]))
+  (:require [wh.components.icons :refer [icon]]
+            [wh.routes :as routes]
+            [wh.components.navbar.styles :as styles]
+            [wh.re-frame.subs :refer [<sub]]
+            [wh.util :as util]))
 
 (def articles-submenu-list
   [{:path       (routes/path :learn)
@@ -21,3 +24,10 @@
          :icon-name  "document-filled"
          :icon-class styles/dropdown__link__icon-document
          :text       "Unpublished articles"}))
+
+(defn conversations-link [{:keys [class]}]
+  (when (<sub [:wh/conversations-enabled?])
+    [:a {:class (util/mc styles/nav-element styles/nav-element--conversations class)
+         :href (routes/path :conversations)}
+     [icon "message-circle"
+      :class styles/nav-icon]]))

@@ -7,7 +7,7 @@
             [wh.components.navbar.tasks :as navbar-tasks]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.styles.navbar :as styles]
+            [wh.components.navbar.styles :as styles]
             [wh.util :as util]))
 
 (defn company-profile-submenu-list [company-slug]
@@ -151,20 +151,21 @@
        :route    :learn
        :page     page
        :dropdown navbar-shared/articles-submenu-list}]
-
      [notifications {}]]))
 
 (defn profile-menu []
   (let [company-slug (<sub [::subs/company-slug])]
-    [:div {:class styles/user-profile-container}
-     [:a {:href  (routes/path :company :params {:slug company-slug})
-          :class styles/user-profile}
+    [:<>
+     [navbar-shared/conversations-link {}]
+     [:div {:class styles/user-profile-container}
+      [:a {:href  (routes/path :company :params {:slug company-slug})
+           :class styles/user-profile}
 
-      (if-let [profile-image (<sub [::subs/profile-image])]
-        [:img {:class styles/profile-image
-               :src   profile-image}]
+       (if-let [profile-image (<sub [::subs/profile-image])]
+         [:img {:class styles/profile-image
+                :src   profile-image}]
 
-        [:div {:class styles/profile-image}])
-      [components/arrow-down]]
+         [:div {:class styles/profile-image}])
+       [components/arrow-down]]
 
-     [components/dropdown-list (company-profile-submenu-list company-slug)]]))
+      [components/dropdown-list (company-profile-submenu-list company-slug)]]]))

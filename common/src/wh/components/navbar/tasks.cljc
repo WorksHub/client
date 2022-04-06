@@ -2,7 +2,7 @@
   (:require #?(:cljs [reagent.core :as r])
             [wh.common.data :as data]
             [wh.common.data.company-profile :as company-data]
-            [wh.styles.navbar :as navbar-styles]
+            [wh.components.navbar.styles :as navbar-styles]
             [wh.styles.tasks :as styles]
             [wh.components.common :refer [link]]
             [wh.components.icons :as icon]
@@ -70,11 +70,11 @@
                                   (reset! open? false)))
                   unfinished? (pos? (unfinished-task-count))
                   _           (.addEventListener js/document "click" handler)]
-       [:div {:class (util/mc navbar-styles/notification class)
+       [:div {:class (util/mc navbar-styles/nav-element navbar-styles/nav-element--notifications class)
               :ref   #(reset! !ref %)}
 
         [icon/icon "bell"
-         :class navbar-styles/bell-icon
+         :class navbar-styles/nav-icon
          :on-click #(swap! open? not)]
 
         (when unfinished?

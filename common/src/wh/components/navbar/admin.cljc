@@ -6,7 +6,7 @@
             [wh.components.navbar.subs :as subs]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.styles.navbar :as styles]
+            [wh.components.navbar.styles :as styles]
             [wh.util :as util]))
 
 (def admin-profile-submenu-list

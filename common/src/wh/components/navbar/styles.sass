@@ -33,11 +33,13 @@ $font-family: Montserrat, serif
 
   &__right
     display: grid
-    grid-gap: 40px
     margin-left: auto
     align-items: center
     grid-auto-flow: column
     height: 100%
+
+    +tablet
+      grid-gap: 40px
 
   &__buttons
     display: grid
@@ -584,23 +586,21 @@ $font-family: Montserrat, serif
     &:hover
       background: $grey100
 
-.notification
+.nav-element
   display: none
-  @media screen and (min-width: 350px)
-    display: flex
+
+  &--conversations
+    @media screen and (min-width: 350px)
+      display: flex
+
+  &--notifications
+    @media screen and (min-width: 1250px)
+      display: flex
 
   height: 100%
   align-items: center
   padding: 0 16px
   position: relative
-
-  .bell-icon
-    cursor: pointer
-    fill: $text-black
-    width: 24px
-    height: 24px
-    &:hover
-      fill: $primary-red
 
   .unfinished-marker
     width: 8px
@@ -613,3 +613,12 @@ $font-family: Montserrat, serif
     left: 13px
     +tablet
       top: 24px
+
+.nav-icon
+  cursor: pointer
+  fill: $text-black
+  width: 24px
+  height: 24px
+  &:hover
+    fill: $primary-red
+    color: $primary-red

@@ -3,7 +3,7 @@
             [wh.components.icons :as icons :refer [icon]]
             [wh.interop :as interop]
             [wh.routes :as routes]
-            [wh.styles.navbar :as styles]
+            [wh.components.navbar.styles :as styles]
             [wh.util :as util]))
 
 (defn arrow-down []

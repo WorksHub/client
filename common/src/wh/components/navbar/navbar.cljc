@@ -10,11 +10,12 @@
             [wh.components.navbar.candidate :as candidate]
             [wh.components.navbar.company :as company]
             [wh.components.navbar.components :as components]
+            [wh.components.navbar.shared :as navbar-shared]
             [wh.components.navbar.subs :as subs]
             [wh.interop :as interop]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.styles.navbar :as styles]
+            [wh.components.navbar.styles :as styles]
             [wh.util :as util]))
 
 (defn logo [vertical env]
@@ -198,8 +199,6 @@
   (cond
     logged-in?
     [:div (util/smc styles/navbar__right)
-     (when company? [company/notifications {:class styles/no-desktop}])
-
      [search :small-menu-no-mobile]
      [:div (util/smc styles/navbar__buttons)
       (when candidate? [button-write-article])
