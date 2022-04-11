@@ -568,7 +568,6 @@
   (let [is-company?          (<sub [:user/company?])
         is-owner?            (<sub [::subs/owner?])
         contributions?       (boolean (<sub [::subs/contributions-collection]))
-        issues               (<sub [::subs/issues])
         contributions        (<sub [::subs/contributions])
         cover-letter-data    (<sub [::subs/cover-letter-data])
         {:keys
@@ -637,11 +636,7 @@
 
      (if (seq contributions)
        [components/section-articles contributions :private]
-       [components/articles-cta])
-
-     (if (seq issues)
-       [components/section-issues issues :private]
-       [components/oss-cta])]))
+       [components/articles-cta])]))
 
 (defn view-page []
   [components/container

@@ -618,27 +618,6 @@
         [small-link {:text "Write article"
                      :href (routes/path :contribute)}]])]))
 
-;; issues ----------------------------------------------------------
-
-(defn section-issues [issues type]
-  (let [public? (= type :public)
-        message (if public? "User hasn't started working on any issue yet. "
-                    "You haven't started working on any issue yet")]
-    [section
-     [internal-anchor "issues"]
-     [sec-title "Open Source Issues"]
-     (if (seq issues)
-       (for [issue issues]
-         ^{:key (:id issue)}
-         [issue-card issue])
-       [:p message
-        (when public? [underline-link
-                       {:text "Browse all issues" :href (routes/path :issues)}])])
-     (when-not public?
-       [section-buttons
-        [small-link {:text "Explore issues"
-                     :href (routes/path :issues)}]])]))
-
 (defn articles-cta []
   [section (util/smc styles/cta)
    [:div (util/smc styles/cta__content)
@@ -661,29 +640,6 @@
     [:img {:src   "/images/profile/girl.png"
            :class (util/mc styles/cta__image)}]]])
 
-(defn oss-cta []
-  [section (util/smc styles/cta styles/cta__container)
-   [:div (util/smc styles/cta__content)
-    [:h1 (util/smc styles/cta__title)
-     "Contribute to open source"]
-
-    [:ul (util/smc styles/cta__list)
-     [:li "Get paid to learn new technologies by working on open source issues"]
-     [:li "The more contributions you make, the higher ranking your profile"]
-     [:li "Working on open source projects is the best way to confirm your skills"]]
-
-    [:a {:data-pushy-ignore "true"
-         :class             (util/mc styles/button
-                                     styles/button--inverted
-                                     styles/cta__button--full)
-         :href              (routes/path :issues)}
-     "Get started with open source"]]
-
-   [:div (util/smc styles/cta__image__container--computer-guy
-                   styles/cta__image__container)
-    [:img {:src   "/images/profile/computer_guy2.png"
-           :class (util/mc styles/cta__image)}]]])
-
 (defn connect-gh-cta []
   [section (util/smc styles/cta styles/cta__container)
    [:div (util/smc styles/cta__content)
@@ -692,7 +648,7 @@
 
     [:ul (util/smc styles/cta__list)
      [:li "Link to GitHub to show off your productivity"]
-     [:li "Contribute to open source - another way we can help you find the perfect role"]]
+     [:li "Help companies to see technologies you are comfortable with"]]
 
     [:a {:data-pushy-ignore "true"
          :class             (util/mc styles/button

@@ -447,12 +447,7 @@
       {:number 3
        :id     "company-onboarding--integrations"
        :task   :add_integration
-       :path   [:edit-company]}]
-     [company-onboarding-action
-      {:number 4
-       :id     "company-onboarding--issues"
-       :task   :add_issue
-       :path   [:company-issues]}]]]])
+       :path   [:edit-company]}]]]])
 
 
 (defmulti error->message identity)

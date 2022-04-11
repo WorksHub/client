@@ -73,10 +73,6 @@
   (let [articles (<sub [::subs/blogs])]
     [components/section-articles articles :public]))
 
-(defn section-issues []
-  (let [issues (<sub [::subs/issues])]
-    [components/section-issues issues :public]))
-
 (defn profile-column []
   [components/profile (<sub [::subs/profile])
    {:twitter       (<sub [::subs/social :twitter])
@@ -128,6 +124,5 @@
          [section-skills]
          [section-private-details]
          [section-contributions]
-         [section-articles]
-         [section-issues]])])
+         [section-articles]])])
    [show-auth-popup-ssr]])
