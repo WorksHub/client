@@ -28,35 +28,37 @@
     :text              "Logout"}])
 
 (defn jobs-admin-submenu-list [prod?]
-  [{:path       (routes/path :jobsboard)
-    :icon-name  "board-rectangles"
-    :icon-class styles/dropdown__link__icon-jobsboard
-    :text       "Jobsboard"}
-   {:path       (routes/path :homepage)
-    :icon-name  "document-filled"
-    :icon-class styles/dropdown__link__icon-document
-    :text       "All live Applications"}
-   {:path       (routes/path :create-job)
-    :icon-name  "plus-circle"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Post a new Job"}
-   (when-not prod?
-     {:path       (routes/path :create-job-new)
+  (remove
+    nil?
+    [{:path       (routes/path :jobsboard)
+      :icon-name  "board-rectangles"
+      :icon-class styles/dropdown__link__icon-jobsboard
+      :text       "Jobsboard"}
+     {:path       (routes/path :homepage)
+      :icon-name  "document-filled"
+      :icon-class styles/dropdown__link__icon-document
+      :text       "All live Applications"}
+     {:path       (routes/path :create-job)
       :icon-name  "plus-circle"
       :icon-class styles/dropdown__link__icon-plus
-      :text       "Post a new Job, Beta"})
-   {:path       (routes/path :recommended)
-    :icon-name  "recommend"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Recommended Jobs"}
-   {:path       (routes/path :liked)
-    :icon-name  "bookmark"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Saved Jobs"}
-   {:path       (routes/path :applied)
-    :icon-name  "applications"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Applied Jobs"}])
+      :text       "Post a new Job"}
+     (when-not prod?
+       {:path       (routes/path :create-job-new)
+        :icon-name  "plus-circle"
+        :icon-class styles/dropdown__link__icon-plus
+        :text       "Post a new Job, Beta"})
+     {:path       (routes/path :recommended)
+      :icon-name  "recommend"
+      :icon-class styles/dropdown__link__icon-plus
+      :text       "Recommended Jobs"}
+     {:path       (routes/path :liked)
+      :icon-name  "bookmark"
+      :icon-class styles/dropdown__link__icon-plus
+      :text       "Saved Jobs"}
+     {:path       (routes/path :applied)
+      :icon-name  "applications"
+      :icon-class styles/dropdown__link__icon-plus
+      :text       "Applied Jobs"}]))
 
 (def company-admin-submenu-list
   [{:path       (routes/path :admin-companies)

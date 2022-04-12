@@ -39,27 +39,29 @@
     :text       "My Open Source Issues"}])
 
 (defn jobs-company-submenu-list [can-create? prod?]
-  [{:path       (routes/path :jobsboard)
-    :icon-name  "board-rectangles"
-    :icon-class styles/dropdown__link__icon-jobsboard
-    :text       "Jobsboard"}
-   {:path       (if can-create?
-                  (routes/path :create-job)
-                  (routes/path :payment-setup
-                               :params {:step :select-package}
-                               :query-params {:action "publish"}))
-    :icon-name  "plus-circle"
-    :icon-class styles/dropdown__link__icon-plus
-    :text       "Post a new Job"}
-   (when-not prod?
-     {:path       (routes/path :create-job-new)
+  (remove
+    nil?
+    [{:path       (routes/path :jobsboard)
+      :icon-name  "board-rectangles"
+      :icon-class styles/dropdown__link__icon-jobsboard
+      :text       "Jobsboard"}
+     {:path       (if can-create?
+                    (routes/path :create-job)
+                    (routes/path :payment-setup
+                                 :params {:step :select-package}
+                                 :query-params {:action "publish"}))
       :icon-name  "plus-circle"
       :icon-class styles/dropdown__link__icon-plus
-      :text       "Post a new Job, Beta"})
-   {:path       (routes/path :company-applications)
-    :icon-name  "document-filled"
-    :icon-class styles/dropdown__link__icon-document
-    :text       "All live Applications"}])
+      :text       "Post a new Job"}
+     (when-not prod?
+       {:path       (routes/path :create-job-new)
+        :icon-name  "plus-circle"
+        :icon-class styles/dropdown__link__icon-plus
+        :text       "Post a new Job, Beta"})
+     {:path       (routes/path :company-applications)
+      :icon-name  "document-filled"
+      :icon-class styles/dropdown__link__icon-document
+      :text       "All live Applications"}]))
 
 (defn company-company-submenu-list [company-slug]
   [{:path       (routes/path :companies)
