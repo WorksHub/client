@@ -3,11 +3,11 @@
             [wh.components.icons :as icons]
             [wh.components.navbar.components :as components]
             [wh.components.navbar.shared :as navbar-shared]
+            [wh.components.navbar.styles :as styles]
             [wh.components.navbar.subs :as subs]
             [wh.components.navbar.tasks :as navbar-tasks]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.components.navbar.styles :as styles]
             [wh.util :as util]))
 
 (defn company-profile-submenu-list [company-slug]
@@ -144,7 +144,7 @@
 (defn profile-menu []
   (let [company-slug (<sub [::subs/company-slug])]
     [:<>
-     [navbar-shared/conversations-link {}]
+     #_[navbar-shared/conversations-link {}]
      [:div {:class styles/user-profile-container}
       [:a {:href  (routes/path :company :params {:slug company-slug})
            :class styles/user-profile}

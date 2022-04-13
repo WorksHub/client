@@ -2,10 +2,10 @@
   (:require [wh.components.icons :as icons]
             [wh.components.navbar.components :as components]
             [wh.components.navbar.shared :as navbar-shared]
+            [wh.components.navbar.styles :as styles]
             [wh.components.navbar.subs :as subs]
             [wh.re-frame.subs :refer [<sub]]
             [wh.routes :as routes]
-            [wh.components.navbar.styles :as styles]
             [wh.util :as util]))
 
 (def candidate-jobs-submenu-list
@@ -102,7 +102,7 @@
 
 (defn profile-menu []
   [:<>
-   [navbar-shared/conversations-link {}]
+   #_[navbar-shared/conversations-link {}]
    [:div {:class styles/user-profile-container}
     [:a {:href  (routes/path :profile)
          :class styles/user-profile}

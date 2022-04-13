@@ -1,8 +1,9 @@
 (ns wh.components.navbar.shared
-  (:require [wh.components.icons :refer [icon]]
-            [wh.routes :as routes]
+  (:require [wh.common.subs] ;; TODO: Isn't it necessary?
+            [wh.components.icons :refer [icon]]
             [wh.components.navbar.styles :as styles]
             [wh.re-frame.subs :refer [<sub]]
+            [wh.routes :as routes]
             [wh.util :as util]))
 
 (def articles-submenu-list

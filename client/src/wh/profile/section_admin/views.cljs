@@ -28,7 +28,8 @@
 
 (defn approval [{:keys [status source time]}]
   [:div
-   [:div (str/capitalize status)]
+   (when status
+     [:div (str/capitalize status)])
    (when source
      [:div {:class styles/admin__secondary-text}
       (time/str->human-time time)
