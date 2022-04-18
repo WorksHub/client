@@ -64,7 +64,7 @@
   (let [version (app-version)
         header-version (.getResponseHeader xhrio "x-workshub-version")]
     (cond
-      (and version (not (str/blank? header-version)) (not= version header-version)) (dispatch [:graphql/version-mismatch])
+      #_(and version (not (str/blank? header-version)) (not= version header-version)) #_(dispatch [:graphql/version-mismatch])
       success? (on-success response xhrio)
       :otherwise (let [details (merge
                                  {:uri             (.getLastUri xhrio)
