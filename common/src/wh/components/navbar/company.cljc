@@ -144,7 +144,7 @@
 (defn profile-menu []
   (let [company-slug (<sub [::subs/company-slug])]
     [:<>
-     #_[navbar-shared/conversations-link {}]
+     [navbar-shared/conversations-link {}]
      [:div {:class styles/user-profile-container}
       [:a {:href  (routes/path :company :params {:slug company-slug})
            :class styles/user-profile}

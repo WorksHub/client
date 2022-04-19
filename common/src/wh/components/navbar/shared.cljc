@@ -1,5 +1,5 @@
 (ns wh.components.navbar.shared
-  (:require [wh.common.subs] ;; TODO: Isn't it necessary?
+  (:require [wh.common.subs]
             [wh.components.icons :refer [icon]]
             [wh.components.navbar.styles :as styles]
             [wh.re-frame.subs :refer [<sub]]

@@ -102,7 +102,7 @@
 
 (defn profile-menu []
   [:<>
-   #_[navbar-shared/conversations-link {}]
+   [navbar-shared/conversations-link {}]
    [:div {:class styles/user-profile-container}
     [:a {:href  (routes/path :profile)
          :class styles/user-profile}
