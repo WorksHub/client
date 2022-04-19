@@ -38,6 +38,11 @@
                                 "admin"     :company
                                 ;; when there is no user type (i.e. not logged in)
                                 nil         :landing-page}
+   :test-cache                 {"candidate" :logged-in
+                                "company"   :company
+                                "admin"     :company
+                                ;; when there is no user type (i.e. not logged in)
+                                nil         :landing-page}
    :homepage-dashboard         :logged-in
    :issue                      :issues
    :issues                     :issues

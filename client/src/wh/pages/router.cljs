@@ -23,6 +23,7 @@
 
 (def initial-page-mapping
   {:homepage               {:redirect-fn homepage-redirect}
+   :test-cache             {:redirect-fn homepage-redirect}
    :homepage-not-logged-in home/page
    :how-it-works           how-it-works/page
    :not-found              not-found/not-found-page})

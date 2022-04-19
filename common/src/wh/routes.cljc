@@ -12,6 +12,7 @@
     [wh.util :as util]))
 
 (def pages-with-loader #{:homepage
+                         :test-cache
                          :learn
                          :learn-search
                          :blog
@@ -99,6 +100,7 @@
     ["/"
      ;;Public SSR Pages - no app.js required
      [["" :homepage]
+      ["test-cache" :test-cache]
       ["feed" :feed]
       ["hiring" :employers]
       ["hire-" {[:template] :employers}]
@@ -263,6 +265,7 @@
                                                :employers
                                                :feed
                                                :homepage
+                                               :test-cache
                                                :how-it-works
                                                ;;:issue CH3610
                                                ;;:issues CH3615

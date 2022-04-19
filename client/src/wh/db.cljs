@@ -43,6 +43,7 @@
                 :stackoverflow-callback
                 :twitter-callback
                 :homepage
+                :test-cache
                 :homepage-company-dashboard
                 :homepage-dashboard
                 :homepage-not-logged-in
