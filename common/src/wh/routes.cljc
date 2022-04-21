@@ -236,7 +236,8 @@
                          ["/" :command] :admin-command}]
                ["prospect" :prospect]
                ["updates/token" :updates-token]]]
-      ["health/" {[:commit-sha] :health-by-commit-sha}]
+      ["health" {""                :health-check
+                 ["/" :commit-sha] :health-by-commit-sha}]
       ;; next js routes
       ["series" :series]
       ["jobs-new" {"/create"           :create-job-new
