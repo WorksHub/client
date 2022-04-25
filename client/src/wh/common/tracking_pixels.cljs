@@ -17,12 +17,14 @@
 
 (defn add-to-page! [elms']
   (let [id          "tracking-pixels"
+        class       "visually-hidden"
         _rm-wrapper (some-> js/document
                             (.getElementById id)
                             (.remove))
         wrapper     (.createElement js/document "div")
         elms        (remove nil? elms')]
     (set! (.-id wrapper) id)
+    (.add (.-classList wrapper) class)
     (doseq [elm elms]
       (.appendChild wrapper elm))
     (.appendChild js/document.body wrapper)))
