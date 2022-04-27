@@ -84,7 +84,7 @@
              (when show-unpublished?
                [jc/publish-button {:publishing? publishing?
                                    :on-click    [::events/attempt-publish-role]}])
-             [edit-button can-edit?]
+             (when-not admin? [edit-button can-edit?])
              [modal-publish-job/modal
               {:on-close               #(dispatch [::modal-publish-job/toggle-modal])
                :on-publish             #(dispatch [::events/publish-role])
@@ -98,7 +98,7 @@
             (conj [promote/promote-button {:id (<sub [::subs/id]) :type :job}])
             (or admin? (and company? (not (<sub [:wh/prod?]))))
             (conj [link
-                   [:button.button.button--medium.button--inverted "Edit with new form"]
+                   [:button.button.button--medium.button--inverted "Edit"]
                    :edit-job-new
                    :slug (<sub [::subs/slug])]))))
 

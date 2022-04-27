@@ -27,7 +27,7 @@
     :icon-name         "logout"
     :text              "Logout"}])
 
-(defn jobs-admin-submenu-list [prod?]
+(defn jobs-admin-submenu-list []
   (remove
     nil?
     [{:path       (routes/path :jobsboard)
@@ -38,15 +38,10 @@
       :icon-name  "document-filled"
       :icon-class styles/dropdown__link__icon-document
       :text       "All live Applications"}
-     {:path       (routes/path :create-job)
+     {:path       (routes/path :create-job-new)
       :icon-name  "plus-circle"
       :icon-class styles/dropdown__link__icon-plus
       :text       "Post a new Job"}
-     (when-not prod?
-       {:path       (routes/path :create-job-new)
-        :icon-name  "plus-circle"
-        :icon-class styles/dropdown__link__icon-plus
-        :text       "Post a new Job, Beta"})
      {:path       (routes/path :recommended)
       :icon-name  "recommend"
       :icon-class styles/dropdown__link__icon-plus
@@ -88,7 +83,7 @@
     [components/submenu
      {:text      "Jobs"
       :icon-name "suitcase"
-      :dropdown  (jobs-admin-submenu-list (<sub [:wh/prod?]))}]
+      :dropdown  (jobs-admin-submenu-list)}]
 
     [components/submenu
      {:text      "Articles"
@@ -129,7 +124,7 @@
     {:text     "Jobs"
      :route    :jobsboard
      :page     page
-     :dropdown (jobs-admin-submenu-list (<sub [:wh/prod?]))}]
+     :dropdown (jobs-admin-submenu-list)}]
 
    [components/link {:text     "Companies"
                      :route    :admin-companies
@@ -149,15 +144,17 @@
      :dropdown candidates-admin-submenu-list}]])
 
 (defn profile-menu []
-  [:div {:class styles/user-profile-container}
-   [:a {:href  (routes/path :profile)
-        :class styles/user-profile}
+  [:<>
+   [navbar-shared/conversations-link {}]
+   [:div {:class styles/user-profile-container}
+    [:a {:href  (routes/path :profile)
+         :class styles/user-profile}
 
-    (if-let [profile-image (<sub [::subs/profile-image])]
-      [:img {:class styles/profile-image
-             :src   profile-image}]
+     (if-let [profile-image (<sub [::subs/profile-image])]
+       [:img {:class styles/profile-image
+              :src   profile-image}]
 
-      [:div {:class styles/profile-image}])
-    [components/arrow-down]]
+       [:div {:class styles/profile-image}])
+     [components/arrow-down]]
 
-   [components/dropdown-list admin-profile-submenu-list]])
+    [components/dropdown-list admin-profile-submenu-list]]])
