@@ -436,10 +436,8 @@
         "lisa.redmond"    "Lisa Redmond"
         "natasha"         "Tash Laybourne"
         "nick"            "Nick Maraj"
-        "nick.walker"     "Nick Walker"
         "patrick"         "Patrick Gubbey"
         "sarah"           "Sarah Hunter"
-        "sheryl"          "Sheryl Martin"
         "sophie"          "Sophie Ayres"}
        (map (fn [[k v]] [(->email k) v]))
        (into {})))
