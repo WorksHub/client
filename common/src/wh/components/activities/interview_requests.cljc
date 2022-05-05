@@ -5,7 +5,9 @@
             [wh.common.emoji :as emoji]))
 
 (defn card [company actor type _opts]
-  (let [interviews-count          (reduce + (map :recent-interviews-count (:feed-jobs company)))
+  (let [interviews-count          (->> (:feed-jobs company)
+                                       (map :recent-interviews-count)
+                                       (reduce +))
         interview-requests-period "last week"]
     [components/card type
      [components/header
