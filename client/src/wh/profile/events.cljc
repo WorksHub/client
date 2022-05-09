@@ -28,7 +28,6 @@
                        $profile-fields
                        :id :imageUrl :name :summary :percentile :published
                        :created :lastSeen :updated :visaStatus :visaStatusOther
-
                        [:interests :fragment/tagFields]
                        [:otherUrls [:url]]
                        [:currentLocation [:city :administrative :country :countryCode
