@@ -30,7 +30,7 @@
 (def no-footer-pages #{:register :register-company :payment-setup :login :invalid-magic-link})
 (def no-content #{:payment-setup :register :register-company})
 (def register-link-pages #{:register :register-company})
-(def nextjs-pages #{:series :create-job-new :edit-job-new :conversations :conversation})
+(def nextjs-pages #{:series :create-job-new :edit-job-new :conversations :conversation :terms-of-service})
 
 ;; Here we overwrite the behavior of Bidi's wrt `Pattern` matching with sets.
 ;; The matching is actually left unchanged from the original implementation
@@ -252,7 +252,6 @@
                               :not-found
                               :privacy-policy
                               :sitemap
-                              :terms-of-service
                               :metrics
                               :oauth-greenhouse
                               :oauth-slack
