@@ -56,7 +56,6 @@ import './create_job.sass'
 import './blogs.sass'
 import './card_actions.sass'
 
-
 import '../../common/src/wh/components/buttons_page_navigation_styles.sass'
 import '../../common/src/wh/components/navbar/styles.sass'
 import '../../common/src/wh/components/newsletter/styles.sass'
