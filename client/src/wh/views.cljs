@@ -45,14 +45,14 @@
        [banner/banner {:page       page
                        :logged-in? logged-in?}]
        [navbar/top-bar
-        {:env               (<sub [:wh/env])
-         :vertical          vertical
-         :logged-in?        logged-in?
-         :params            params
-         :query-params      query-params
-         :page              page
-         :user-type         user-type
-         :restricted-links  restricted-links}]
+        {:env              (<sub [:wh/env])
+         :vertical         vertical
+         :logged-in?       logged-in?
+         :params           params
+         :query-params     query-params
+         :page             page
+         :user-type        user-type
+         :restricted-links restricted-links}]
 
        [:div.page-container
         (when (<sub [::error-subs/message])
