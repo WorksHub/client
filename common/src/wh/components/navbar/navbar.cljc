@@ -1,6 +1,8 @@
 (ns wh.components.navbar.navbar
-  (:require #?(:cljs [re-frame.core :refer [dispatch dispatch-sync]])
-            #?(:cljs [wh.components.navbar.events])
+  (:require #?(:cljs [wh.components.navbar.events])
+            #?(:cljs [reagent.core :as r])
+            #?(:cljs [wh.messaging.unread-status :as unread-status])
+            [re-frame.core :refer [dispatch dispatch-sync]]
             [wh.common.url :as url]
             [wh.common.user :as user-common]
             [wh.components.attract-card :as attract-card]
@@ -194,26 +196,36 @@
    [:div (util/smc styles/small-menu__search-wrapper)
     [search :small-menu]]])
 
-(defn navbar-right [{:keys [logged-in? content?
-                            candidate? company? admin? register?]}]
+(defn navbar-right-logged-in []
+  #?(:cljs
+     (r/create-class
+       {:component-did-mount #(dispatch [:wh.messaging.unread-status/fetch-unread-status])
+
+        :reagent-render
+        (fn [{:keys [candidate? company? admin?]}]
+          [:div (util/smc styles/navbar__right)
+           [search :small-menu-no-mobile]
+           [:div (util/smc styles/navbar__buttons)
+            (when candidate? [button-write-article])
+
+            (cond
+              company?
+              [company/profile-menu]
+
+              candidate?
+              [candidate/profile-menu]
+
+              admin?
+              [admin/profile-menu])
+
+            [mobile-toggle-navigation-button]]])})))
+
+(defn navbar-right [{:keys [logged-in? content? register?
+                            _candidate? _company? _admin?]
+                     :as args}]
   (cond
     logged-in?
-    [:div (util/smc styles/navbar__right)
-     [search :small-menu-no-mobile]
-     [:div (util/smc styles/navbar__buttons)
-      (when candidate? [button-write-article])
-
-      (cond
-        company?
-        [company/profile-menu]
-
-        candidate?
-        [candidate/profile-menu]
-
-        admin?
-        [admin/profile-menu])
-
-      [mobile-toggle-navigation-button]]]
+    [navbar-right-logged-in args]
 
     (or content? register?)
     [:div (util/smc styles/navbar__right)
