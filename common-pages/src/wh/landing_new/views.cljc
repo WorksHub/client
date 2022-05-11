@@ -1,5 +1,6 @@
 (ns wh.landing-new.views
   (:require #?(:cljs [wh.pages.core :refer [load-and-dispatch]])
+            #?(:cljs [wh.messaging.unread-status :as unread-status])
             [wh.common.url :as url]
             [wh.components.activities.article-promoted :as article-promoted]
             [wh.components.activities.article-published :as article-published]
@@ -18,6 +19,7 @@
             [wh.components.stat-card :as stat-card]
             [wh.components.tag-selector.tag-selector :as tag-selector]
             [wh.landing-new.components :as components]
+            [wh.landing-new.unread-messages.view :as unread-messages]
             [wh.landing-new.subs :as subs]
             [wh.re-frame.subs :refer [<sub]]
             [wh.styles.landing :as styles]
@@ -127,8 +129,11 @@
 (defn user-dashboard [candidate?]
   (when candidate?
     [:<>
+     (when (pos? (<sub [:wh.messaging.unread-status/unread-conversations-count]))
+       [unread-messages/unread-messages])
      [components/user-dashboard]
      [:hr {:class styles/separator}]]))
+
 
 (defn activities-loading [candidate?]
   (into [:div {:class styles/main-column}

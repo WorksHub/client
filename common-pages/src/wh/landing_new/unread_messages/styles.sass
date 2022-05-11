@@ -1,0 +1,35 @@
+@import colours
+@import 'mixins'
+
+.card
+  background: white
+  border-radius: 8px
+  padding: 20px
+  font-size: 16px
+  line-height: 24px
+  font-weight: 600
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  justify-content: center
+  gap: 16px
+
+  +tablet
+    justify-content: space-between
+    gap: 0
+
+.red-dot
+  width: 10px
+  min-width: 10px
+  height: 10px
+  min-height: 10px
+  background: $primary-red
+  border-radius: 50%
+
+.wrapper
+  display: flex
+  gap: 16px
+  align-items: center
+
+.button
+  margin-left: auto
